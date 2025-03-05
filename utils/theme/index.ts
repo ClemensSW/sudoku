@@ -1,12 +1,45 @@
-// Re-export von colors, typography, spacing für direkten Import
+// Fix for utils/theme/index.ts
+import { useColorScheme } from "react-native";
 import colors from "./colors";
 import typography from "./typography";
-import { spacing } from "./spacing";
 import shadows from "./shadows";
-import { Theme } from "./types";
 
-// Export theme elements
-export { colors, typography, spacing, shadows };
+// Define spacing values
+export const spacing = {
+  none: 0,
+  xxs: 2,
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+  huge: 40,
+  massive: 48,
+  giant: 64,
+
+  // Board
+  boardMargin: 16,
+  cellPadding: 2,
+  gridLineWidth: 1,
+  gridBoldLineWidth: 2,
+
+  // Layout
+  screenPadding: 16,
+  sectionGap: 24,
+  itemGap: 12,
+
+  // Buttons
+  buttonHeight: 48,
+  buttonPadding: 12,
+  buttonBorderRadius: 8,
+
+  // Number pad
+  numberPadButtonSize: 48,
+  numberPadButtonMargin: 4,
+  numberPadButtonBorderRadius: 24,
+};
 
 // Radius presets for rounded corners
 export const radius = {
@@ -27,8 +60,20 @@ export const timing = {
   slow: 500,
 };
 
-// Export from ThemeProvider
-export * from "./ThemeProvider";
+// Basic theme hook for direct use
+export const useTheme = () => {
+  const colorScheme = useColorScheme();
+  const themeColors = colorScheme === "dark" ? colors.dark : colors.light;
 
-// Legacy function - verweist nun auf den neuen Hook in ThemeProvider
-export { useTheme as default } from "./ThemeProvider";
+  return {
+    colors: themeColors,
+    spacing,
+    typography,
+    radius,
+    shadows,
+    timing,
+    isDark: colorScheme === "dark",
+  };
+};
+
+export default useTheme;

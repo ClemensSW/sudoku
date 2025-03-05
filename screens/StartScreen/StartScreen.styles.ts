@@ -1,6 +1,5 @@
+// screens/StartScreen/StartScreen.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing, radius } from "@/utils/theme";
-import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
@@ -14,25 +13,25 @@ export default StyleSheet.create({
   },
   titleContainer: {
     alignItems: "center",
-    marginBottom: spacing.xxxl,
+    marginBottom: 64, // Direct value instead of spacing.xxxl
   },
   title: {
-    fontSize: typography.size.xxxl,
-    fontWeight: typography.weight.bold,
-    marginBottom: spacing.xs,
+    fontSize: 32, // Direct value instead of typography.size.xxxl
+    fontWeight: "bold",
+    marginBottom: 4, // Direct value instead of spacing.xs
   },
   subtitle: {
-    fontSize: typography.size.lg,
-    fontWeight: typography.weight.semibold,
+    fontSize: 18, // Direct value instead of typography.size.lg
+    fontWeight: "600", // Direct value instead of typography.weight.semibold
     textAlign: "center",
   },
   logoContainer: {
-    marginBottom: spacing.xxxl,
+    marginBottom: 64, // Direct value instead of spacing.xxxl
   },
   logoPlaceholder: {
     width: 160,
     height: 160,
-    borderRadius: radius.md,
+    borderRadius: 8, // Direct value instead of radius.md
     justifyContent: "center",
     alignItems: "center",
   },
@@ -50,24 +49,24 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   gridNumber: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
+    fontSize: 20, // Direct value instead of typography.size.xl
+    fontWeight: "bold",
   },
   difficultyContainer: {
     width: "100%",
     alignItems: "center",
-    marginBottom: spacing.xxl,
+    marginBottom: 48, // Direct value instead of spacing.xxl
   },
   difficultyTitle: {
-    fontSize: typography.size.md,
-    fontWeight: typography.weight.regular,
-    marginBottom: spacing.md,
+    fontSize: 16, // Direct value instead of typography.size.md
+    fontWeight: "normal", // Direct value instead of typography.weight.regular
+    marginBottom: 16, // Direct value instead of spacing.md
   },
   buttonContainer: {
     width: "100%",
     alignItems: "center",
   },
   startButton: {
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: 32, // Direct value instead of spacing.xl
   },
 });

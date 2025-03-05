@@ -1,16 +1,15 @@
+// components/Timer/Timer.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing } from "@/utils/theme";
-import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
-    marginVertical: spacing.sm,
+    marginVertical: 8, // Direct value instead of spacing.sm
     alignItems: "center",
     justifyContent: "center",
   },
   timerText: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.semibold,
+    fontSize: 20, // Direct value instead of typography.size.xl
+    fontWeight: "600", // Direct value instead of typography.weight.semibold
     fontVariant: ["tabular-nums"], // Monospace für gleichmäßige Zahlen
   },
 });

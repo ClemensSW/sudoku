@@ -1,6 +1,5 @@
+// components/Header/Header.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing } from "@/utils/theme";
-import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
@@ -27,17 +26,17 @@ export default StyleSheet.create({
   },
 
   title: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.semibold,
+    fontSize: 20, // Direct value instead of typography.size.xl
+    fontWeight: "600", // Direct value instead of typography.weight.semibold
   },
 
   subtitle: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.regular,
-    marginTop: spacing.xxs,
+    fontSize: 14, // Direct value instead of typography.size.sm
+    fontWeight: "normal", // Direct value instead of typography.weight.regular
+    marginTop: 2, // Direct value instead of spacing.xxs
   },
 
   iconButton: {
-    padding: spacing.xs,
+    padding: 4, // Direct value instead of spacing.xs
   },
 });

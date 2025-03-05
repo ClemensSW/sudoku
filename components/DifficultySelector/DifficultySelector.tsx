@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
-import { Difficulty } from '@/utils/sudoku';
-import styles from './DifficultySelector.styles';
-import { useTheme } from '@/utils/theme';
+import React from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import { Difficulty } from "@/utils/sudoku";
+import styles from "./DifficultySelector.styles";
+import { useTheme } from "@/utils/theme";
 
 interface DifficultySelectorProps {
   currentDifficulty: Difficulty;
@@ -17,24 +17,24 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  
+
   // Übersetzungen für die Schwierigkeitsgrade
   const difficultyLabels: Record<Difficulty, string> = {
-    easy: 'Leicht',
-    medium: 'Mittel',
-    hard: 'Schwer',
-    expert: 'Experte',
+    easy: "Leicht",
+    medium: "Mittel",
+    hard: "Schwer",
+    expert: "Experte",
   };
 
   const renderDifficultyButton = (difficulty: Difficulty) => {
     const isSelected = currentDifficulty === difficulty;
-    
+
     return (
       <TouchableOpacity
         style={[
           styles.button,
           isSelected && styles.selectedButton,
-          { 
+          {
             backgroundColor: isSelected ? colors.primary : colors.surface,
             borderColor: isSelected ? colors.primary : colors.border,
           },
@@ -58,10 +58,10 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({
 
   return (
     <View style={styles.container}>
-      {renderDifficultyButton('easy')}
-      {renderDifficultyButton('medium')}
-      {renderDifficultyButton('hard')}
-      {renderDifficultyButton('expert')}
+      {renderDifficultyButton("easy")}
+      {renderDifficultyButton("medium")}
+      {renderDifficultyButton("hard")}
+      {renderDifficultyButton("expert")}
     </View>
   );
 };

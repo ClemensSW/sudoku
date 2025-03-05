@@ -1,14 +1,14 @@
+// app/_layout.tsx
 import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
-import { ThemeProvider } from "@/utils/theme/ThemeProvider";
 
 export default function AppLayout() {
   return (
-    <ThemeProvider>
+    <SafeAreaProvider>
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#ffffff" }, // Default white background
           animation: "fade",
         }}
       >
@@ -16,6 +16,6 @@ export default function AppLayout() {
         <Stack.Screen name="game" />
         <Stack.Screen name="(game)" />
       </Stack>
-    </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

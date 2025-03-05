@@ -1,19 +1,18 @@
+// components/DifficultySelector/DifficultySelector.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing, radius } from "@/utils/theme";
-import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: 324,
-    marginVertical: spacing.md,
+    marginVertical: 16, // Direct value instead of spacing.md
   },
 
   button: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.md,
+    paddingVertical: 4, // Direct value instead of spacing.xs
+    paddingHorizontal: 8, // Direct value instead of spacing.sm
+    borderRadius: 8, // Direct value
     borderWidth: 1,
   },
 
@@ -22,8 +21,8 @@ export default StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.medium,
+    fontSize: 14, // Direct value instead of typography.size.sm
+    fontWeight: "500", // Direct value instead of typography.weight.medium
   },
 
   selectedButtonText: {

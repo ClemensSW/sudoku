@@ -1,26 +1,21 @@
-// Spacing system - Alle konstanten werte definieren
+// utils/theme/spacing.ts
+// Define spacing constants
 
 // Base spacing units
-const BASE = {
+export const spacing = {
   none: 0,
   xxs: 2,
   xs: 4,
   sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
-  huge: 40,
-  massive: 48,
-  giant: 64,
-};
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+  xxxl: 64,
+  huge: 80,
+  massive: 96,
+  giant: 128,
 
-// Vereinfachte Spacing-Struktur ohne verschachtelte Objekte
-export const spacing = {
-  ...BASE,
-
-  // Flattened values for backwards compatibility
   // Board
   boardMargin: 16,
   cellPadding: 2,
@@ -42,3 +37,5 @@ export const spacing = {
   numberPadButtonMargin: 4,
   numberPadButtonBorderRadius: 24,
 };
+
+export default spacing;

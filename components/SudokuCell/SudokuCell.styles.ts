@@ -1,3 +1,4 @@
+// components/SudokuCell/SudokuCell.styles.ts
 import { StyleSheet } from "react-native";
 import { spacing } from "@/utils/theme";
 import typography from "@/utils/theme/typography";
@@ -8,17 +9,17 @@ export default StyleSheet.create({
     height: 36,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: spacing.xxs / 2,
+    borderWidth: 1, // Direct value instead of spacing.xxs / 2
     borderColor: "#ccc",
   },
 
   // Gitter-Styling
   bottomBorder: {
-    borderBottomWidth: spacing.xxs,
+    borderBottomWidth: 2, // Direct value instead of spacing.xxs
     borderBottomColor: "#000",
   },
   rightBorder: {
-    borderRightWidth: spacing.xxs,
+    borderRightWidth: 2, // Direct value instead of spacing.xxs
     borderRightColor: "#000",
   },
 
@@ -65,7 +66,7 @@ export default StyleSheet.create({
     flexWrap: "wrap",
     width: "100%",
     height: "100%",
-    padding: spacing.xxs / 2,
+    padding: 1, // Direct value instead of spacing.xxs / 2
   },
   noteText: {
     fontSize: typography.size.xs / 1.3,

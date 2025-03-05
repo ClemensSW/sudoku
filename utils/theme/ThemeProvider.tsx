@@ -1,14 +1,21 @@
+// utils/theme/ThemeProvider.tsx
 import React, { createContext, useContext, ReactNode } from "react";
 import { useColorScheme } from "react-native";
 import colors from "./colors";
 import typography from "./typography";
-import { spacing } from "./spacing";
 import shadows from "./shadows";
-import { radius, timing } from "./index";
+import { spacing, radius, timing } from "./index";
 import { Theme } from "./types";
 
-// Create a context with a default empty theme
-const ThemeContext = createContext<Theme | undefined>(undefined);
+// Create a context with a default theme
+const ThemeContext = createContext<Theme>({
+  colors: colors.light,
+  typography,
+  spacing,
+  radius,
+  shadows,
+  timing,
+});
 
 // Provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
@@ -33,19 +40,5 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 // Hook for components to use the theme
 export const useTheme = (): Theme => {
   const context = useContext(ThemeContext);
-
-  if (context === undefined) {
-    // Fallback theme if used outside of provider
-    const fallbackColors = colors["light"];
-    return {
-      colors: fallbackColors,
-      typography,
-      spacing,
-      radius,
-      shadows,
-      timing,
-    };
-  }
-
   return context;
 };

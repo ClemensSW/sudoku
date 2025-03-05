@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { spacing, typography, radius } from "@/utils/theme";
+import { spacing, radius } from "@/utils/theme";
+import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
@@ -9,19 +10,20 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: spacing.layout.screenPadding,
+    paddingHorizontal: 16,
   },
   titleContainer: {
     alignItems: "center",
     marginBottom: spacing.xxxl,
   },
   title: {
-    ...typography.variant.heading1,
+    fontSize: typography.size.xxxl,
     fontWeight: typography.weight.bold,
     marginBottom: spacing.xs,
   },
   subtitle: {
-    ...typography.variant.subtitle1,
+    fontSize: typography.size.lg,
+    fontWeight: typography.weight.semibold,
     textAlign: "center",
   },
   logoContainer: {
@@ -48,7 +50,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   gridNumber: {
-    ...typography.variant.heading3,
+    fontSize: typography.size.xl,
     fontWeight: typography.weight.bold,
   },
   difficultyContainer: {
@@ -57,7 +59,8 @@ export default StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   difficultyTitle: {
-    ...typography.variant.body1,
+    fontSize: typography.size.md,
+    fontWeight: typography.weight.regular,
     marginBottom: spacing.md,
   },
   buttonContainer: {

@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { spacing, typography, radius } from "@/utils/theme";
+import { spacing, radius } from "@/utils/theme";
+import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
@@ -21,7 +22,7 @@ export default StyleSheet.create({
   },
 
   buttonText: {
-    ...typography.variant.body2,
+    fontSize: typography.size.sm,
     fontWeight: typography.weight.medium,
   },
 

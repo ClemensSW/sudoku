@@ -1,39 +1,42 @@
-import { StyleSheet } from 'react-native';
-import { spacing, typography } from '@/utils/theme';
+import { StyleSheet } from "react-native";
+import { spacing } from "@/utils/theme";
+import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     height: 56,
-    paddingHorizontal: spacing.layout.screenPadding,
+    paddingHorizontal: 16,
   },
-  
+
   leftContainer: {
     width: 40,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
-  
+
   titleContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  
+
   rightContainer: {
     width: 40,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
-  
+
   title: {
-    ...typography.variant.heading3,
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.semibold,
   },
-  
+
   subtitle: {
-    ...typography.variant.body2,
+    fontSize: typography.size.sm,
+    fontWeight: typography.weight.regular,
     marginTop: spacing.xxs,
   },
-  
+
   iconButton: {
     padding: spacing.xs,
   },

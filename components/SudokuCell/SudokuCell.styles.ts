@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { typography, spacing } from "@/utils/theme";
+import { spacing } from "@/utils/theme";
+import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   cell: {
@@ -46,7 +47,7 @@ export default StyleSheet.create({
 
   // Text-Styling
   cellText: {
-    ...typography.variant.cellValue,
+    fontSize: typography.size.lg,
   },
   selectedCellText: {
     // Farbe wird dynamisch gesetzt
@@ -67,7 +68,7 @@ export default StyleSheet.create({
     padding: spacing.xxs / 2,
   },
   noteText: {
-    ...typography.variant.cellNotes,
+    fontSize: typography.size.xs / 1.3,
     width: "33%",
     height: "33%",
     textAlign: "center",

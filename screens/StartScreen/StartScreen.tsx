@@ -8,7 +8,7 @@ import {
   Animated,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useTheme } from "@/utils/theme";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
@@ -42,8 +42,10 @@ const StartScreen: React.FC = () => {
 
   const handleStartGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // Hier Navigation zur Game-Seite
+    // Korrekter Format: ohne führenden Schrägstrich
     router.push({
-      pathname: "/(game)",
+      pathname: "game",
       params: { difficulty: selectedDifficulty },
     });
   };

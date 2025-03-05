@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { shadows, spacing } from "@/utils/theme";
+import { spacing } from "@/utils/theme";
+import shadows from "@/utils/theme/shadows";
 
 export default StyleSheet.create({
   boardContainer: {

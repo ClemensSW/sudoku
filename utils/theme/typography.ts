@@ -1,5 +1,5 @@
 // Typography configuration
-export const typography = {
+const typography = {
   // Font families
   fontFamily: {
     primary: "System", // Uses system default font
@@ -109,4 +109,6 @@ export const typography = {
   },
 };
 
+// Export als Standard und benannt, um Import-Flexibilität zu bieten
 export default typography;
+export { typography };

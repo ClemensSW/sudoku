@@ -1,22 +1,21 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
-import { colors } from "@/utils/theme";
+import { ThemeProvider } from "@/utils/theme/ThemeProvider";
 
 export default function AppLayout() {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? colors.dark : colors.light;
-
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: theme.background },
-        animation: "fade",
-      }}
-    >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="game" />
-    </Stack>
+    <ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: "#ffffff" }, // Default white background
+          animation: "fade",
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="game" />
+        <Stack.Screen name="(game)" />
+      </Stack>
+    </ThemeProvider>
   );
 }

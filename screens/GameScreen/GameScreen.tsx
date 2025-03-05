@@ -29,7 +29,6 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import Header from "@/components/Header/Header";
 import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
-import DifficultySelector from "@/components/DifficultySelector/DifficultySelector";
 import Timer from "@/components/Timer/Timer";
 import Button from "@/components/Button/Button";
 
@@ -149,31 +148,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }, 500);
   }, [difficulty]);
-
-  // Change difficulty
-  const handleDifficultyChange = (newDifficulty: Difficulty) => {
-    if (difficulty !== newDifficulty) {
-      // Ask if user wants to start a new game
-      Alert.alert(
-        "Schwierigkeitsgrad ändern",
-        "Möchtest du ein neues Spiel mit dem gewählten Schwierigkeitsgrad starten?",
-        [
-          {
-            text: "Abbrechen",
-            style: "cancel",
-          },
-          {
-            text: "Neues Spiel",
-            onPress: () => {
-              setDifficulty(newDifficulty);
-              // Start new game after state update
-              setTimeout(() => startNewGame(), 0);
-            },
-          },
-        ]
-      );
-    }
-  };
 
   // Select a cell
   const handleCellPress = (row: number, col: number) => {
@@ -314,7 +288,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         [
           {
             text: "Neues Spiel",
-            onPress: startNewGame,
+            onPress: () => {
+              // Navigiere zurück zur Startseite
+              router.navigate("../");
+            },
           },
         ]
       );
@@ -374,12 +351,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           },
           {
             text: "Zum Menü",
-            onPress: () => router.back(),
+            onPress: () => {
+              // Navigiere zwei Ebenen zurück
+              router.navigate("../");
+            },
           },
         ]
       );
     } else {
-      router.back();
+      // Navigiere zwei Ebenen zurück
+      router.navigate("../");
     }
   };
 
@@ -443,7 +424,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                 Alert.alert("Optionen", "Was möchtest du tun?", [
                   {
                     text: "Neues Spiel",
-                    onPress: startNewGame,
+                    onPress: () => {
+                      // Navigiere zurück zur Startseite
+                      router.navigate("../");
+                    },
                   },
                   {
                     text: "Automatische Notizen",
@@ -541,17 +525,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
             <Animated.View
               style={[styles.controlsContainer, controlsAnimatedStyle]}
             >
-              <Animated.View
-                style={{ width: "100%" }}
-                entering={FadeInUp.delay(800).duration(500)}
-              >
-                <DifficultySelector
-                  currentDifficulty={difficulty}
-                  onSelectDifficulty={handleDifficultyChange}
-                  disabled={isGameRunning && !isGameComplete}
-                />
-              </Animated.View>
-
               <Animated.View entering={FadeInUp.delay(900).duration(500)}>
                 <NumberPad
                   onNumberPress={handleNumberPress}
@@ -581,13 +554,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                             style: "cancel",
                           },
                           {
-                            text: "Neu starten",
-                            onPress: startNewGame,
+                            text: "Zum Hauptmenü",
+                            onPress: () => {
+                              // Navigiere zurück zur Startseite
+                              router.navigate("../");
+                            },
                           },
                         ]
                       );
                     } else {
-                      startNewGame();
+                      // Navigiere zurück zur Startseite
+                      router.navigate("../");
                     }
                   }}
                   variant="primary"

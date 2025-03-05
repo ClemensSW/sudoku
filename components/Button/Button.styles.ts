@@ -1,24 +1,34 @@
 import { StyleSheet } from "react-native";
-import typography from "@/utils/theme/typography";
-import shadows from "@/utils/theme/shadows";
+import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   button: {
-    height: 48,
+    height: 52,
     minWidth: 120,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: spacing.lg,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    ...shadows.sm,
   },
 
   buttonText: {
-    fontSize: typography.size.md,
-    fontWeight: typography.weight.semibold,
-    lineHeight: typography.lineHeight.tight,
-    letterSpacing: typography.letterSpacing.wide,
+    fontSize: 16,
+    fontWeight: "600",
     textAlign: "center",
+  },
+
+  // Animation container
+  animatedContainer: {
+    overflow: "hidden",
+  },
+
+  // Icon styling
+  iconLeft: {
+    marginRight: spacing.xs,
+  },
+
+  iconRight: {
+    marginLeft: spacing.xs,
   },
 });

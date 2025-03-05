@@ -1,7 +1,5 @@
-// components/SudokuCell/SudokuCell.styles.ts
 import { StyleSheet } from "react-native";
 import { spacing } from "@/utils/theme";
-import typography from "@/utils/theme/typography";
 
 export default StyleSheet.create({
   cell: {
@@ -9,81 +7,97 @@ export default StyleSheet.create({
     height: 36,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1, // Direct value instead of spacing.xxs / 2
-    borderColor: "#ccc",
+    borderWidth: 0.5,
   },
 
   // Gitter-Styling
   bottomBorder: {
-    borderBottomWidth: 2, // Direct value instead of spacing.xxs
-    borderBottomColor: "#000",
-  },
-  rightBorder: {
-    borderRightWidth: 2, // Direct value instead of spacing.xxs
-    borderRightColor: "#000",
+    borderBottomWidth: 1.5,
   },
 
-  // Zellen-Status-Styling
+  rightBorder: {
+    borderRightWidth: 1.5,
+  },
+
+  // Cell state styling
   selectedCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   relatedCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   sameValueCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   initialCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   errorCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   hintCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
+
   successCell: {
-    // Farbe wird dynamisch gesetzt
+    // Handled with dynamic colors
   },
 
   // Text-Styling
   cellText: {
-    fontSize: typography.size.lg,
-  },
-  selectedCellText: {
-    // Farbe wird dynamisch gesetzt
-  },
-  initialCellText: {
-    fontWeight: typography.weight.bold,
-  },
-  errorCellText: {
-    // Farbe wird dynamisch gesetzt
+    fontSize: 20,
+    fontWeight: "400",
   },
 
-  // Notiz-Styling
+  selectedCellText: {
+    // Handled with dynamic colors
+  },
+
+  initialCellText: {
+    fontWeight: "700",
+  },
+
+  errorCellText: {
+    // Handled with dynamic colors
+  },
+
+  // Notes grid styling
   notesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     width: "100%",
     height: "100%",
-    padding: 1, // Direct value instead of spacing.xxs / 2
+    padding: 2,
   },
+
   noteText: {
-    fontSize: typography.size.xs / 1.3,
+    fontSize: 9,
     width: "33%",
     height: "33%",
     textAlign: "center",
+    textAlignVertical: "center",
   },
+
   activeNote: {
     opacity: 1,
   },
+
   inactiveNote: {
     opacity: 0,
   },
 
   // Cell content
   cellValue: {
-    fontSize: typography.size.lg,
     textAlign: "center",
+  },
+
+  // Animation container for cell
+  cellContainer: {
+    overflow: "hidden",
   },
 });

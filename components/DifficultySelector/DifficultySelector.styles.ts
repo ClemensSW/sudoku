@@ -1,31 +1,59 @@
-// components/DifficultySelector/DifficultySelector.styles.ts
 import { StyleSheet } from "react-native";
+import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
+    marginVertical: spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+
+  segmentedControlContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: 324,
-    marginVertical: 16, // Direct value instead of spacing.md
+    height: 44,
+    width: "92%", // Slightly narrower than parent for visual balance
+    maxWidth: 360,
+    borderRadius: 12,
+    overflow: "hidden",
+    position: "relative",
+  },
+
+  difficultyButtonsRow: {
+    flexDirection: "row",
+    flex: 1,
+    position: "relative",
+    zIndex: 2,
   },
 
   button: {
-    paddingVertical: 4, // Direct value instead of spacing.xs
-    paddingHorizontal: 8, // Direct value instead of spacing.sm
-    borderRadius: 8, // Direct value
-    borderWidth: 1,
-  },
-
-  selectedButton: {
-    // Farbe wird dynamisch gesetzt
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
   },
 
   buttonText: {
-    fontSize: 14, // Direct value instead of typography.size.sm
-    fontWeight: "500", // Direct value instead of typography.weight.medium
+    fontSize: 14,
+    fontWeight: "500",
+    textAlign: "center",
   },
 
   selectedButtonText: {
-    // Farbe wird dynamisch gesetzt
+    fontWeight: "700",
+  },
+
+  // Animated sliding indicator that moves to selected position
+  animatedIndicator: {
+    position: "absolute",
+    top: 4,
+    bottom: 4,
+    borderRadius: 8,
+    zIndex: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
 });

@@ -1,9 +1,10 @@
-// Light theme colors
+// Modern color palettes with better contrast ratios for both modes
 const lightColors = {
   // Primary colors
-  primary: "#4361EE",
+  primary: "#4361EE", // Vibrant blue that stands out
   primaryLight: "#738BFF",
   primaryDark: "#3046C0",
+  secondary: "#F72585", // Vibrant accent for highlights
 
   // UI elements
   background: "#FFFFFF",
@@ -19,6 +20,7 @@ const lightColors = {
   cellBackgroundError: "#FFEBEE",
   cellBackgroundSuccess: "#E8F5E9",
   cellBackgroundHint: "#FFF8E1",
+  cellBackgroundSameValue: "#E8F0FE",
 
   // Grid
   gridLine: "#CFD8DC",
@@ -26,14 +28,14 @@ const lightColors = {
 
   // Text
   textPrimary: "#212121",
-  textSecondary: "#5C5C5C",
+  textSecondary: "#424242",
   textLight: "#757575",
   textOnPrimary: "#FFFFFF",
   textCellNormal: "#212121",
   textCellInitial: "#000000",
   textCellSelected: "#FFFFFF",
   textCellError: "#D32F2F",
-  textCellNotes: "#757575",
+  textCellNotes: "#616161",
 
   // UI elements
   button: "#4361EE",
@@ -62,12 +64,13 @@ const lightColors = {
   numberPadButtonTextSelected: "#FFFFFF",
 };
 
-// Dark theme colors
+// Dark theme with improved contrast for better readability
 const darkColors = {
   // Primary colors
-  primary: "#4361EE",
+  primary: "#4361EE", // Keeping the same primary for brand consistency
   primaryLight: "#738BFF",
   primaryDark: "#3046C0",
+  secondary: "#F72585", // Same vibrant accent
 
   // UI elements
   background: "#121212",
@@ -83,21 +86,22 @@ const darkColors = {
   cellBackgroundError: "#4A2C2C",
   cellBackgroundSuccess: "#2C3E2E",
   cellBackgroundHint: "#4A412C",
+  cellBackgroundSameValue: "#2D3748",
 
   // Grid
   gridLine: "#444444",
   gridBold: "#CCCCCC",
 
-  // Text
-  textPrimary: "#E1E1E1",
-  textSecondary: "#BBBBBB",
-  textLight: "#999999",
+  // Text - improved contrast for dark mode
+  textPrimary: "#FFFFFF",
+  textSecondary: "#E0E0E0",
+  textLight: "#BDBDBD",
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#E1E1E1",
+  textCellNormal: "#FFFFFF",
   textCellInitial: "#FFFFFF",
   textCellSelected: "#FFFFFF",
   textCellError: "#FF8A80",
-  textCellNotes: "#BBBBBB",
+  textCellNotes: "#BDBDBD",
 
   // UI elements
   button: "#4361EE",
@@ -121,7 +125,7 @@ const darkColors = {
 
   // Number pad
   numberPadButton: "#3A3A3A",
-  numberPadButtonText: "#E1E1E1",
+  numberPadButtonText: "#FFFFFF",
   numberPadButtonSelected: "#4361EE",
   numberPadButtonTextSelected: "#FFFFFF",
 };

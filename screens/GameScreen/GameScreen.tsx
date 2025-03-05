@@ -2,15 +2,30 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Alert,
-  SafeAreaView,
   ScrollView,
+  Text,
   useWindowDimensions,
+  SafeAreaView,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { StatusBar } from "expo-status-bar";
+import { Feather } from "@expo/vector-icons";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  SlideInLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
+
 import { useTheme } from "@/utils/theme/ThemeProvider";
 
-// Komponenten
+// Components
 import Header from "@/components/Header/Header";
 import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
@@ -18,7 +33,7 @@ import DifficultySelector from "@/components/DifficultySelector/DifficultySelect
 import Timer from "@/components/Timer/Timer";
 import Button from "@/components/Button/Button";
 
-// Spiellogik
+// Game logic
 import {
   SudokuBoard as SudokuBoardType,
   CellPosition,
@@ -38,17 +53,17 @@ import styles from "./GameScreen.styles";
 
 interface GameScreenProps {
   initialDifficulty?: Difficulty;
-  navigation?: any; // Optional, falls wir Navigation verwenden
+  navigation?: any;
 }
 
-const GameScreen: React.FC<GameScreenProps> = ({
-  initialDifficulty,
-  navigation,
-}) => {
+const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const theme = useTheme();
+  const colors = theme.colors;
   const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
 
-  // Spielzustand
+  // Game state
   const [board, setBoard] = useState<SudokuBoardType>([]);
   const [solution, setSolution] = useState<number[][]>([]);
   const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null);
@@ -60,47 +75,85 @@ const GameScreen: React.FC<GameScreenProps> = ({
   const [gameTime, setGameTime] = useState(0);
   const [noteModeActive, setNoteModeActive] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Spiel initialisieren
+  // Animation values
+  const headerOpacity = useSharedValue(0);
+  const controlsOpacity = useSharedValue(0);
+
+  // Initialize game
   useEffect(() => {
-    startNewGame();
+    // Start with a slight delay to allow the screen transition
+    setTimeout(() => {
+      startNewGame();
+    }, 300);
   }, []);
 
-  // Prüfen, ob das Spiel abgeschlossen ist
+  // Check if game is complete
   useEffect(() => {
     if (board.length > 0 && isBoardComplete(board)) {
       handleGameComplete();
     }
   }, [board]);
 
-  // Aktualisiere die verwendeten Zahlen für die Anzeige im NumPad
+  // Update used numbers for NumPad
   useEffect(() => {
     if (board.length > 0) {
       updateUsedNumbers();
     }
   }, [board]);
 
-  // Neues Spiel starten
+  // Animated styles
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: headerOpacity.value,
+    };
+  });
+
+  const controlsAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: controlsOpacity.value,
+    };
+  });
+
+  // Start a new game
   const startNewGame = useCallback(() => {
-    // Generiere ein neues Spiel mit dem aktuellen Schwierigkeitsgrad
-    const { board: newBoard, solution: newSolution } = generateGame(difficulty);
+    setIsLoading(true);
 
-    setBoard(newBoard);
-    setSolution(newSolution);
-    setSelectedCell(null);
-    setIsGameComplete(false);
-    setGameTime(0);
-    setIsGameRunning(true);
-    setNoteModeActive(false);
+    // Generate a new game with current difficulty
+    setTimeout(() => {
+      const { board: newBoard, solution: newSolution } =
+        generateGame(difficulty);
 
-    // Vibriere als Feedback
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setBoard(newBoard);
+      setSolution(newSolution);
+      setSelectedCell(null);
+      setIsGameComplete(false);
+      setGameTime(0);
+      setIsGameRunning(true);
+      setNoteModeActive(false);
+      setIsLoading(false);
+
+      // Animate in the UI elements
+      headerOpacity.value = withTiming(1, {
+        duration: 600,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      });
+
+      controlsOpacity.value = withTiming(1, {
+        duration: 600,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      });
+
+      // Give haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }, 500);
   }, [difficulty]);
 
-  // Schwierigkeitsgrad ändern
+  // Change difficulty
   const handleDifficultyChange = (newDifficulty: Difficulty) => {
     if (difficulty !== newDifficulty) {
-      // Frage, ob ein neues Spiel gestartet werden soll
+      // Ask if user wants to start a new game
       Alert.alert(
         "Schwierigkeitsgrad ändern",
         "Möchtest du ein neues Spiel mit dem gewählten Schwierigkeitsgrad starten?",
@@ -113,7 +166,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
             text: "Neues Spiel",
             onPress: () => {
               setDifficulty(newDifficulty);
-              // Starte nach State-Update ein neues Spiel
+              // Start new game after state update
               setTimeout(() => startNewGame(), 0);
             },
           },
@@ -122,36 +175,36 @@ const GameScreen: React.FC<GameScreenProps> = ({
     }
   };
 
-  // Zelle auswählen
+  // Select a cell
   const handleCellPress = (row: number, col: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedCell({ row, col });
   };
 
-  // Nummer in Zelle eintragen
+  // Enter a number in a cell
   const handleNumberPress = (number: number) => {
     if (!selectedCell || isGameComplete) return;
 
     const { row, col } = selectedCell;
 
-    // Prüfe, ob die Zelle initial ist (vorgegebene Zahlen können nicht geändert werden)
+    // Check if cell is initial (preset numbers can't be changed)
     if (board[row][col].isInitial) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    // Entweder setzen wir eine Zahl oder fügen eine Notiz hinzu
+    // Either set a number or add a note
     if (noteModeActive) {
-      // Notiz hinzufügen/entfernen
+      // Add/remove note
       const updatedBoard = toggleCellNote(board, row, col, number);
       setBoard(updatedBoard);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
-      // Zahl setzen
+      // Set number
       const previousValue = board[row][col].value;
       const updatedBoard = setCellValue(board, row, col, number);
 
-      // Wenn die Zahl erfolgreich gesetzt wurde, entferne sie als Notiz in verwandten Zellen
+      // If number was successfully set, remove it as a note in related cells
       if (updatedBoard[row][col].value === number && previousValue !== number) {
         const boardWithUpdatedNotes = removeNoteFromRelatedCells(
           updatedBoard,
@@ -162,54 +215,54 @@ const GameScreen: React.FC<GameScreenProps> = ({
         setBoard(boardWithUpdatedNotes);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       } else if (!updatedBoard[row][col].isValid) {
-        // Ungültiger Zug
+        // Invalid move
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     }
   };
 
-  // Zelle löschen
+  // Erase a cell
   const handleErasePress = () => {
     if (!selectedCell || isGameComplete) return;
 
     const { row, col } = selectedCell;
 
-    // Prüfe, ob die Zelle initial ist
+    // Check if cell is initial
     if (board[row][col].isInitial) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    // Lösche die Zelle
+    // Clear the cell
     const updatedBoard = clearCellValue(board, row, col);
     setBoard(updatedBoard);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  // Notiziermodus umschalten
+  // Toggle note mode
   const toggleNoteMode = () => {
     setNoteModeActive(!noteModeActive);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  // Hinweis geben
+  // Provide a hint
   const handleHintPress = () => {
     if (!selectedCell || isGameComplete) {
-      // Wenn keine Zelle ausgewählt ist, suche nach einer Zelle, die einen Hinweis benötigt
+      // If no cell is selected, find a cell that needs a hint
       const hintCell = getHint(board, solution);
 
       if (hintCell) {
-        // Wähle die Zelle aus
+        // Select the cell
         setSelectedCell(hintCell);
 
-        // Zeige eine Nachricht
+        // Show a message
         Alert.alert(
           "Hinweis",
           "Diese Zelle solltest du als nächstes ausfüllen. Drücke erneut auf den Hinweis-Button, um die richtige Zahl zu sehen.",
           [{ text: "OK" }]
         );
       } else {
-        // Keine Fehlerhaften Zellen gefunden
+        // No errors found
         Alert.alert(
           "Keine Fehler gefunden",
           "Dein Sudoku sieht gut aus! Fahre so fort.",
@@ -220,7 +273,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       return;
     }
 
-    // Wenn eine Zelle ausgewählt ist, fülle sie mit der korrekten Zahl
+    // If a cell is selected, fill it with the correct number
     const { row, col } = selectedCell;
 
     if (board[row][col].isInitial) {
@@ -230,30 +283,30 @@ const GameScreen: React.FC<GameScreenProps> = ({
       return;
     }
 
-    // Löse die Zelle
+    // Solve the cell
     const updatedBoard = solveCell(board, solution, row, col);
     setBoard(updatedBoard);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
-  // Alle Notizen automatisch aktualisieren
+  // Auto-update all notes
   const handleAutoNotesPress = () => {
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
-  // Spielabschluss
+  // Game completion handler
   const handleGameComplete = () => {
     if (isGameComplete) return;
 
     setIsGameComplete(true);
     setIsGameRunning(false);
 
-    // Gib dem Spieler Feedback
+    // Give feedback to player
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-    // Zeige eine Erfolgsmeldung
+    // Show success message
     setTimeout(() => {
       Alert.alert(
         "Glückwunsch!",
@@ -268,16 +321,16 @@ const GameScreen: React.FC<GameScreenProps> = ({
     }, 500);
   };
 
-  // Aktualisiere Timer
+  // Update timer
   const handleTimeUpdate = (time: number) => {
     setGameTime(time);
   };
 
-  // Aktualisiere verwendete Zahlen
+  // Update used numbers for the NumPad
   const updateUsedNumbers = () => {
     const counts: { [key: number]: number } = {};
 
-    // Zähle jede Zahl im Board
+    // Count each number in the board
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         const value = board[row][col].value;
@@ -287,7 +340,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
       }
     }
 
-    // Zahlen, die 9 mal vorkommen, werden als "verwendet" markiert
+    // Numbers that appear 9 times are "used"
     const used: number[] = [];
     for (let num = 1; num <= 9; num++) {
       if (counts[num] === 9) {
@@ -298,7 +351,7 @@ const GameScreen: React.FC<GameScreenProps> = ({
     setUsedNumbers(used);
   };
 
-  // Zeit formatieren (MM:SS)
+  // Format time (MM:SS)
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -308,118 +361,263 @@ const GameScreen: React.FC<GameScreenProps> = ({
       .padStart(2, "0")}`;
   };
 
-  // Falls das Board noch nicht geladen ist
+  // Handle back navigation
+  const handleBackPress = () => {
+    if (isGameRunning && !isGameComplete) {
+      Alert.alert(
+        "Zurück zum Hauptmenü?",
+        "Dein aktueller Spielfortschritt geht verloren.",
+        [
+          {
+            text: "Abbrechen",
+            style: "cancel",
+          },
+          {
+            text: "Zum Menü",
+            onPress: () => router.back(),
+          },
+        ]
+      );
+    } else {
+      router.back();
+    }
+  };
+
+  // If board is not yet loaded
   if (board.length === 0) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: colors.background }]}
+        edges={["top"]}
       >
-        <StatusBar style="auto" />
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
         <View style={styles.loadingContainer}>
-          {/* Hier könnte ein Ladeindikator sein */}
+          <Animated.View
+            entering={FadeIn.duration(500)}
+            style={{ alignItems: "center" }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "600",
+                color: colors.textPrimary,
+                marginBottom: 16,
+              }}
+            >
+              Sudoku vorbereiten...
+            </Text>
+            <Animated.View entering={FadeIn.delay(300).duration(500)}>
+              <Feather name="loader" size={32} color={colors.primary} />
+            </Animated.View>
+          </Animated.View>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <StatusBar style="auto" />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      <Header
-        title="Sudoku"
-        subtitle={`Schwierigkeit: ${
-          difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
-        }`}
-        rightAction={{
-          icon: "settings",
-          onPress: () => {
-            // Hier könnte ein Einstellungsmenü geöffnet werden
-            Alert.alert("Optionen", "Was möchtest du tun?", [
-              {
-                text: "Neues Spiel",
-                onPress: startNewGame,
-              },
-              {
-                text: "Automatische Notizen",
-                onPress: handleAutoNotesPress,
-              },
-              {
-                text: "Abbrechen",
-                style: "cancel",
-              },
-            ]);
-          },
-        }}
+      {/* Background decoration */}
+      <Animated.View
+        style={[
+          styles.topDecoration,
+          { backgroundColor: colors.primary, opacity: 0.04 },
+        ]}
+        entering={FadeIn.duration(800)}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.gameContainer}>
-          <View style={styles.timerContainer}>
-            <Timer
-              isRunning={isGameRunning && !isGameComplete}
-              initialTime={gameTime}
-              onTimeUpdate={handleTimeUpdate}
-            />
-          </View>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <Animated.View style={headerAnimatedStyle}>
+          <Header
+            title="Sudoku"
+            subtitle={`Schwierigkeit: ${
+              difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
+            }`}
+            onBackPress={handleBackPress}
+            rightAction={{
+              icon: "settings",
+              onPress: () => {
+                // Show settings menu
+                Alert.alert("Optionen", "Was möchtest du tun?", [
+                  {
+                    text: "Neues Spiel",
+                    onPress: startNewGame,
+                  },
+                  {
+                    text: "Automatische Notizen",
+                    onPress: handleAutoNotesPress,
+                  },
+                  {
+                    text: "Abbrechen",
+                    style: "cancel",
+                  },
+                ]);
+              },
+            }}
+          />
+        </Animated.View>
 
-          <View style={styles.boardContainer}>
-            <SudokuBoard
-              board={board}
-              selectedCell={selectedCell}
-              onCellPress={handleCellPress}
-            />
-          </View>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: Math.max(insets.bottom, 20) },
+          ]}
+        >
+          <View style={styles.gameContainer}>
+            {/* Game statistics row */}
+            <Animated.View
+              style={styles.gameStatsContainer}
+              entering={FadeInDown.delay(400).duration(500)}
+            >
+              <Animated.View
+                style={[
+                  styles.statItem,
+                  {
+                    backgroundColor: theme.isDark
+                      ? colors.surface
+                      : "rgba(0,0,0,0.03)",
+                  },
+                ]}
+                entering={SlideInLeft.delay(500).duration(400)}
+              >
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.textSecondary }]}
+                >
+                  Schwierigkeit
+                </Text>
+              </Animated.View>
 
-          <View style={styles.controlsContainer}>
-            <DifficultySelector
-              currentDifficulty={difficulty}
-              onSelectDifficulty={handleDifficultyChange}
-              disabled={isGameRunning && !isGameComplete}
-            />
+              <Animated.View
+                style={styles.timerContainer}
+                entering={FadeInDown.delay(600).duration(500)}
+              >
+                <Timer
+                  isRunning={isGameRunning && !isGameComplete}
+                  initialTime={gameTime}
+                  onTimeUpdate={handleTimeUpdate}
+                />
+              </Animated.View>
 
-            <NumberPad
-              onNumberPress={handleNumberPress}
-              onErasePress={handleErasePress}
-              onNoteToggle={toggleNoteMode}
-              onHintPress={handleHintPress}
-              noteModeActive={noteModeActive}
-              disabledNumbers={usedNumbers}
-              showHint={true}
-            />
+              <Animated.View
+                style={[
+                  styles.statItem,
+                  {
+                    backgroundColor: theme.isDark
+                      ? colors.surface
+                      : "rgba(0,0,0,0.03)",
+                  },
+                ]}
+                entering={SlideInLeft.delay(700)
+                  .duration(400)
+                  .withInitialValues({
+                    transform: [{ translateX: 20 }],
+                  })}
+              >
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  {9 - usedNumbers.length}
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.textSecondary }]}
+                >
+                  Verbleibend
+                </Text>
+              </Animated.View>
+            </Animated.View>
 
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Neues Spiel"
-                onPress={() => {
-                  if (isGameRunning && !isGameComplete) {
-                    Alert.alert(
-                      "Neues Spiel starten?",
-                      "Das aktuelle Spiel wird beendet.",
-                      [
-                        {
-                          text: "Abbrechen",
-                          style: "cancel",
-                        },
-                        {
-                          text: "Neu starten",
-                          onPress: startNewGame,
-                        },
-                      ]
-                    );
-                  } else {
-                    startNewGame();
-                  }
-                }}
-                variant="primary"
+            <View style={styles.boardContainer}>
+              <SudokuBoard
+                board={board}
+                selectedCell={selectedCell}
+                onCellPress={handleCellPress}
+                isLoading={isLoading}
               />
             </View>
+
+            <Animated.View
+              style={[styles.controlsContainer, controlsAnimatedStyle]}
+            >
+              <Animated.View
+                style={{ width: "100%" }}
+                entering={FadeInUp.delay(800).duration(500)}
+              >
+                <DifficultySelector
+                  currentDifficulty={difficulty}
+                  onSelectDifficulty={handleDifficultyChange}
+                  disabled={isGameRunning && !isGameComplete}
+                />
+              </Animated.View>
+
+              <Animated.View entering={FadeInUp.delay(900).duration(500)}>
+                <NumberPad
+                  onNumberPress={handleNumberPress}
+                  onErasePress={handleErasePress}
+                  onNoteToggle={toggleNoteMode}
+                  onHintPress={handleHintPress}
+                  noteModeActive={noteModeActive}
+                  disabledNumbers={usedNumbers}
+                  showHint={true}
+                />
+              </Animated.View>
+
+              <Animated.View
+                style={styles.buttonContainer}
+                entering={FadeInUp.delay(1000).duration(500)}
+              >
+                <Button
+                  title="Neues Spiel"
+                  onPress={() => {
+                    if (isGameRunning && !isGameComplete) {
+                      Alert.alert(
+                        "Neues Spiel starten?",
+                        "Das aktuelle Spiel wird beendet.",
+                        [
+                          {
+                            text: "Abbrechen",
+                            style: "cancel",
+                          },
+                          {
+                            text: "Neu starten",
+                            onPress: startNewGame,
+                          },
+                        ]
+                      );
+                    } else {
+                      startNewGame();
+                    }
+                  }}
+                  variant="primary"
+                  style={styles.button}
+                  icon={
+                    <Feather
+                      name="refresh-cw"
+                      size={18}
+                      color={colors.buttonText}
+                    />
+                  }
+                  iconPosition="left"
+                />
+
+                <Button
+                  title="Auto-Notizen"
+                  onPress={handleAutoNotesPress}
+                  variant="outline"
+                  style={styles.button}
+                  icon={
+                    <Feather name="edit-2" size={18} color={colors.primary} />
+                  }
+                  iconPosition="left"
+                />
+              </Animated.View>
+            </Animated.View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 };
 

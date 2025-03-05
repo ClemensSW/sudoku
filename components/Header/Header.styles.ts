@@ -1,16 +1,18 @@
-// components/Header/Header.styles.ts
 import { StyleSheet } from "react-native";
+import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    height: 56,
-    paddingHorizontal: 16,
+    justifyContent: "space-between",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
 
   leftContainer: {
-    width: 40,
+    minWidth: 40,
     alignItems: "flex-start",
   },
 
@@ -21,22 +23,28 @@ export default StyleSheet.create({
   },
 
   rightContainer: {
-    width: 40,
+    minWidth: 40,
     alignItems: "flex-end",
   },
 
   title: {
-    fontSize: 20, // Direct value instead of typography.size.xl
-    fontWeight: "600", // Direct value instead of typography.weight.semibold
+    fontSize: 22,
+    fontWeight: "700",
+    textAlign: "center",
   },
 
   subtitle: {
-    fontSize: 14, // Direct value instead of typography.size.sm
-    fontWeight: "normal", // Direct value instead of typography.weight.regular
-    marginTop: 2, // Direct value instead of spacing.xxs
+    fontSize: 14,
+    fontWeight: "500",
+    marginTop: spacing.xxs,
+    textAlign: "center",
   },
 
   iconButton: {
-    padding: 4, // Direct value instead of spacing.xs
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

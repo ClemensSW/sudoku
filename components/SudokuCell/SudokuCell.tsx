@@ -1,8 +1,17 @@
-import React, { memo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { memo, useEffect } from "react";
+import { Text, TouchableOpacity, View, Pressable } from "react-native";
 import { SudokuCell as SudokuCellType } from "@/utils/sudoku";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSequence,
+  withDelay,
+  Easing,
+  FadeIn,
+} from "react-native-reanimated";
 import styles from "./SudokuCell.styles";
-import { useTheme } from "@/utils/theme";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface SudokuCellProps {
   cell: SudokuCellType;
@@ -25,6 +34,46 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+
+  // Animation values
+  const scale = useSharedValue(1);
+  const bgOpacity = useSharedValue(0);
+
+  // Trigger animations when cell changes
+  useEffect(() => {
+    if (cell.highlight === "hint" || cell.highlight === "success") {
+      // Pulse animation for hint or success
+      scale.value = withSequence(
+        withTiming(1.1, { duration: 150 }),
+        withTiming(1, { duration: 150 })
+      );
+
+      // Fade in the background
+      bgOpacity.value = withSequence(
+        withTiming(1, { duration: 200 }),
+        withDelay(800, withTiming(0.5, { duration: 400 }))
+      );
+    } else if (cell.value !== 0 && !cell.isInitial) {
+      // Small scale animation when value is entered
+      scale.value = withSequence(
+        withTiming(1.05, { duration: 100 }),
+        withTiming(1, { duration: 150 })
+      );
+    }
+  }, [cell.value, cell.highlight]);
+
+  // Animated styles
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const backgroundAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: cell.highlight ? bgOpacity.value : 1,
+    };
+  });
 
   // Bestimme die Styling-Klasse basierend auf dem Zustand der Zelle
   const getCellStyle = () => {
@@ -93,6 +142,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
               cell.notes.includes(num)
                 ? styles.activeNote
                 : styles.inactiveNote,
+              { color: colors.textCellNotes },
             ]}
           >
             {cell.notes.includes(num) ? num : ""}
@@ -109,7 +159,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     if (cell.highlight === "success") return colors.cellBackgroundSuccess;
     if (isSelected) return colors.cellBackgroundSelected;
     if (sameValueHighlight && cell.value !== 0)
-      return colors.cellBackgroundRelated;
+      return colors.cellBackgroundSameValue;
     if (isRelated) return colors.cellBackgroundRelated;
     if (cell.isInitial) return colors.cellBackgroundInitial;
     return colors.cellBackground;
@@ -122,29 +172,43 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     return colors.textCellNormal;
   };
 
+  const getBorderColor = () => {
+    if (isSelected) return colors.primary;
+    return colors.gridLine;
+  };
+
   const dynamicStyles = {
     cell: {
       backgroundColor: getCellBackgroundColor(),
+      borderColor: getBorderColor(),
     },
     text: {
       color: getCellTextColor(),
     },
   };
 
+  // The main cell rendering
   return (
-    <TouchableOpacity
+    <Pressable
       style={[...getCellStyle(), dynamicStyles.cell]}
       onPress={() => onPress(row, col)}
-      activeOpacity={0.7}
+      android_ripple={{ color: "rgba(0, 0, 0, 0.1)", borderless: true }}
     >
-      {cell.value !== 0 ? (
-        <Text style={[...getTextStyle(), dynamicStyles.text, styles.cellValue]}>
-          {cell.value}
-        </Text>
-      ) : (
-        renderNotes()
-      )}
-    </TouchableOpacity>
+      <Animated.View
+        style={[styles.cellContainer, animatedStyles, backgroundAnimatedStyle]}
+      >
+        {cell.value !== 0 ? (
+          <Animated.Text
+            style={[...getTextStyle(), dynamicStyles.text, styles.cellValue]}
+            entering={FadeIn.duration(200)}
+          >
+            {cell.value}
+          </Animated.Text>
+        ) : (
+          renderNotes()
+        )}
+      </Animated.View>
+    </Pressable>
   );
 };
 

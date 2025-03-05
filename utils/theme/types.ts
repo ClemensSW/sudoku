@@ -6,6 +6,7 @@ export interface ThemeColors {
   primary: string;
   primaryLight: string;
   primaryDark: string;
+  secondary: string; // Added secondary color
 
   // UI elements
   background: string;
@@ -21,6 +22,7 @@ export interface ThemeColors {
   cellBackgroundError: string;
   cellBackgroundSuccess: string;
   cellBackgroundHint: string;
+  cellBackgroundSameValue: string; // Added for same value highlighting
 
   // Grid
   gridLine: string;
@@ -101,12 +103,41 @@ export interface ThemeSpacing {
   numberPadButtonBorderRadius: number;
 }
 
+// Radius interface for border radius consistency
+export interface ThemeRadius {
+  none: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  xxl: number;
+  round: number;
+}
+
+// Shadow interface for elevation consistency
+export interface ThemeShadows {
+  none: any;
+  sm: any;
+  md: any;
+  lg: any;
+  xl: any;
+}
+
+// Timing interface for animations
+export interface ThemeTiming {
+  quick: number;
+  normal: number;
+  slow: number;
+}
+
 // Der vollständige Theme-Typ
 export interface Theme {
   colors: ThemeColors;
   spacing: ThemeSpacing;
   typography: any; // TypeScript-Definition für Typography kann bei Bedarf hinzugefügt werden
-  radius: Record<string, number>;
-  shadows: Record<string, any>;
-  timing: Record<string, number>;
+  radius: ThemeRadius;
+  shadows: ThemeShadows;
+  timing: ThemeTiming;
+  isDark: boolean; // Added to easily check if we're in dark mode
 }

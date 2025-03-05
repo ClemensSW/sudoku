@@ -1,6 +1,11 @@
-// utils/theme/ThemeProvider.tsx
-import React, { createContext, useContext, ReactNode } from "react";
-import { useColorScheme } from "react-native";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useColorScheme, AppState, AppStateStatus } from "react-native";
 import colors from "./colors";
 import typography from "./typography";
 import shadows from "./shadows";
@@ -15,12 +20,32 @@ const ThemeContext = createContext<Theme>({
   radius,
   shadows,
   timing,
+  isDark: false,
 });
 
 // Provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const colorScheme = useColorScheme();
+  const systemColorScheme = useColorScheme();
+  const [colorScheme, setColorScheme] = useState(systemColorScheme);
+
+  // Update color scheme when system preference changes
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextAppState: AppStateStatus) => {
+        if (nextAppState === "active") {
+          setColorScheme(systemColorScheme);
+        }
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [systemColorScheme]);
+
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
+  const isDark = colorScheme === "dark";
 
   // Construct the theme object
   const theme: Theme = {
@@ -30,6 +55,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     radius,
     shadows,
     timing,
+    isDark,
   };
 
   return (
@@ -40,5 +66,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 // Hook for components to use the theme
 export const useTheme = (): Theme => {
   const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
   return context;
 };

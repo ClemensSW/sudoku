@@ -1,15 +1,46 @@
-// components/Timer/Timer.styles.ts
 import { StyleSheet } from "react-native";
+import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
-    marginVertical: 8, // Direct value instead of spacing.sm
     alignItems: "center",
     justifyContent: "center",
   },
+
+  timerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: 20,
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  timerBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
+  },
+
   timerText: {
-    fontSize: 20, // Direct value instead of typography.size.xl
-    fontWeight: "600", // Direct value instead of typography.weight.semibold
-    fontVariant: ["tabular-nums"], // Monospace für gleichmäßige Zahlen
+    fontSize: 20,
+    fontWeight: "600",
+    fontVariant: ["tabular-nums"], // Monospace for consistent numbers
+  },
+
+  timerIcon: {
+    marginRight: spacing.xs,
+  },
+
+  pulseCircle: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    opacity: 0,
   },
 });

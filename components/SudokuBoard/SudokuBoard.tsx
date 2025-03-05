@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
 import SudokuCell from "@/components/SudokuCell/SudokuCell";
-import Animated, { 
-  FadeIn, 
-  FadeOut, 
-  Layout, 
-  useAnimatedStyle, 
-  useSharedValue, 
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout,
+  useAnimatedStyle,
+  useSharedValue,
   withTiming,
-  Easing
+  Easing,
 } from "react-native-reanimated";
 import styles from "./SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -30,11 +30,11 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const [isReady, setIsReady] = useState(false);
-  
+
   // Animation values
   const scale = useSharedValue(0.95);
   const opacity = useSharedValue(0);
-  
+
   // Animate board entry
   useEffect(() => {
     if (board.length > 0 && !isReady) {
@@ -52,7 +52,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       }, 100);
     }
   }, [board, isReady]);
-  
+
   // Animate board when loading state changes
   useEffect(() => {
     if (isLoading) {
@@ -67,7 +67,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       });
     }
   }, [isLoading]);
-  
+
   // Animated styles
   const boardAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -97,24 +97,23 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
         { backgroundColor: colors.boardBackground },
       ]}
     >
-      <Animated.View 
-        style={[
-          styles.boardAnimationContainer,
-          boardAnimatedStyle
-        ]}
+      <Animated.View
+        style={[styles.boardAnimationContainer, boardAnimatedStyle]}
       >
         <View style={styles.boardWrapper}>
-          <View 
+          <View
             style={[
-              styles.board, 
-              { 
+              styles.board,
+              {
                 borderColor: colors.gridBold,
-                backgroundColor: theme.isDark ? colors.surface : colors.background
-              }
+                backgroundColor: theme.isDark
+                  ? colors.surface
+                  : colors.background,
+              },
             ]}
           >
             {board.map((row, rowIndex) => (
-              <Animated.View 
+              <Animated.View
                 key={`row-${rowIndex}`}
                 style={styles.row}
                 layout={Layout}
@@ -147,18 +146,15 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                 })}
               </Animated.View>
             ))}
-            
+
             {/* Loading overlay */}
             {isLoading && (
-              <Animated.View 
+              <Animated.View
                 style={styles.loadingOverlay}
                 entering={FadeIn.duration(200)}
                 exiting={FadeOut.duration(200)}
               >
-                <ActivityIndicator 
-                  size="large" 
-                  color={colors.primary} 
-                />
+                <ActivityIndicator size="large" color={colors.primary} />
               </Animated.View>
             )}
           </View>

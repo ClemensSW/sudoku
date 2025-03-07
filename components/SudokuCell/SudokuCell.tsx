@@ -1,17 +1,15 @@
 import React, { memo, useEffect } from "react";
-import { Text, TouchableOpacity, View, Pressable } from "react-native";
+import { Text, Pressable, View } from "react-native";
 import { SudokuCell as SudokuCellType } from "@/utils/sudoku";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
-  withDelay,
   Easing,
   FadeIn,
 } from "react-native-reanimated";
 import styles from "./SudokuCell.styles";
-import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface SudokuCellProps {
   cell: SudokuCellType;
@@ -32,13 +30,9 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   sameValueHighlight = false,
   onPress,
 }) => {
-  const theme = useTheme();
-  const colors = theme.colors;
-
   // Animation values
   const scale = useSharedValue(1);
-  const bgOpacity = useSharedValue(0);
-
+  
   // Trigger animations when cell changes
   useEffect(() => {
     if (cell.highlight === "hint" || cell.highlight === "success") {
@@ -46,12 +40,6 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       scale.value = withSequence(
         withTiming(1.1, { duration: 150 }),
         withTiming(1, { duration: 150 })
-      );
-
-      // Fade in the background
-      bgOpacity.value = withSequence(
-        withTiming(1, { duration: 200 }),
-        withDelay(800, withTiming(0.5, { duration: 400 }))
       );
     } else if (cell.value !== 0 && !cell.isInitial) {
       // Small scale animation when value is entered
@@ -69,39 +57,27 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     };
   });
 
-  const backgroundAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: cell.highlight ? bgOpacity.value : 1,
-    };
-  });
-
-  // Bestimme die Styling-Klasse basierend auf dem Zustand der Zelle
-  const getCellStyle = () => {
+  // Berechne Zellstile basierend auf Zustand
+  const getCellStyles = () => {
     const cellStyles = [styles.cell];
-
-    // Gitterlinien
+    
+    // Grenzen für 3x3 Boxen
     if ((row + 1) % 3 === 0 && row !== 8) {
       cellStyles.push(styles.bottomBorder);
     }
     if ((col + 1) % 3 === 0 && col !== 8) {
       cellStyles.push(styles.rightBorder);
     }
-
-    // Zellenhervorhebung
+    
+    // Zellstatus-spezifische Styles
     if (isSelected) {
       cellStyles.push(styles.selectedCell);
-    } else if (sameValueHighlight && cell.value !== 0) {
+    } else if (sameValueHighlight) {
       cellStyles.push(styles.sameValueCell);
     } else if (isRelated) {
       cellStyles.push(styles.relatedCell);
     }
-
-    // Zellentyp
-    if (cell.isInitial) {
-      cellStyles.push(styles.initialCell);
-    }
-
-    // Spezielles Highlighting
+    
     if (cell.highlight === "error") {
       cellStyles.push(styles.errorCell);
     } else if (cell.highlight === "hint") {
@@ -109,26 +85,28 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     } else if (cell.highlight === "success") {
       cellStyles.push(styles.successCell);
     }
-
+    
+    // Keine spezielle Hervorhebung mehr für vorgegebene Zellen (isInitial)
+    
     return cellStyles;
   };
 
-  // Bestimme die Textfarbe
-  const getTextStyle = () => {
+  // Textstil basierend auf Zellstatus
+  const getTextStyles = () => {
     const textStyles = [styles.cellText];
-
-    if (isSelected) {
-      textStyles.push(styles.selectedCellText);
-    } else if (cell.isInitial) {
-      textStyles.push(styles.initialCellText);
-    } else if (!cell.isValid) {
-      textStyles.push(styles.errorCellText);
+    
+    if (!cell.isValid) {
+      textStyles.push(styles.errorText);
     }
-
+    
+    if (cell.isInitial) {
+      textStyles.push(styles.initialText); // Behalte fette Schrift für vorgegebene Zahlen
+    }
+    
     return textStyles;
   };
 
-  // Rendere die Notizen, wenn die Zelle leer ist
+  // Render Notizen wenn Zelle leer ist
   const renderNotes = () => {
     if (cell.value !== 0 || cell.notes.length === 0) return null;
 
@@ -139,10 +117,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
             key={`note-${num}`}
             style={[
               styles.noteText,
-              cell.notes.includes(num)
-                ? styles.activeNote
-                : styles.inactiveNote,
-              { color: colors.textCellNotes },
+              cell.notes.includes(num) ? styles.activeNote : styles.inactiveNote
             ]}
           >
             {cell.notes.includes(num) ? num : ""}
@@ -152,54 +127,16 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     );
   };
 
-  // Bestimme dynamische Farben basierend auf dem Zustand
-  const getCellBackgroundColor = () => {
-    if (cell.highlight === "error") return colors.cellBackgroundError;
-    if (cell.highlight === "hint") return colors.cellBackgroundHint;
-    if (cell.highlight === "success") return colors.cellBackgroundSuccess;
-    if (isSelected) return colors.cellBackgroundSelected;
-    if (sameValueHighlight && cell.value !== 0)
-      return colors.cellBackgroundSameValue;
-    if (isRelated) return colors.cellBackgroundRelated;
-    if (cell.isInitial) return colors.cellBackgroundInitial;
-    return colors.cellBackground;
-  };
-
-  const getCellTextColor = () => {
-    if (isSelected) return colors.textCellSelected;
-    if (!cell.isValid) return colors.textCellError;
-    if (cell.isInitial) return colors.textCellInitial;
-    return colors.textCellNormal;
-  };
-
-  const getBorderColor = () => {
-    if (isSelected) return colors.primary;
-    return colors.gridLine;
-  };
-
-  const dynamicStyles = {
-    cell: {
-      backgroundColor: getCellBackgroundColor(),
-      borderColor: getBorderColor(),
-    },
-    text: {
-      color: getCellTextColor(),
-    },
-  };
-
-  // The main cell rendering
   return (
     <Pressable
-      style={[...getCellStyle(), dynamicStyles.cell]}
+      style={getCellStyles()}
       onPress={() => onPress(row, col)}
-      android_ripple={{ color: "rgba(0, 0, 0, 0.1)", borderless: true }}
+      android_ripple={{ color: "rgba(255, 255, 255, 0.2)", borderless: true }}
     >
-      <Animated.View
-        style={[styles.cellContainer, animatedStyles, backgroundAnimatedStyle]}
-      >
+      <Animated.View style={[styles.cellContent, animatedStyles]}>
         {cell.value !== 0 ? (
           <Animated.Text
-            style={[...getTextStyle(), dynamicStyles.text, styles.cellValue]}
+            style={getTextStyles()}
             entering={FadeIn.duration(200)}
           >
             {cell.value}
@@ -212,9 +149,8 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   );
 };
 
-// Performance-Optimierung mit React.memo, um unnötige Renderings zu vermeiden
+// Performance-Optimierung
 export default memo(SudokuCell, (prevProps, nextProps) => {
-  // Nur neu rendern, wenn sich relevante Props ändern
   return (
     JSON.stringify(prevProps.cell) === JSON.stringify(nextProps.cell) &&
     prevProps.isSelected === nextProps.isSelected &&

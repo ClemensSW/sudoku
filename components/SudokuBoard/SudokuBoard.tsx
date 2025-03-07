@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
 import SudokuCell from "@/components/SudokuCell/SudokuCell";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  Layout,
-  useAnimatedStyle,
-  useSharedValue,
+import Animated, { 
+  FadeIn, 
+  FadeOut, 
+  Layout, 
+  useAnimatedStyle, 
+  useSharedValue, 
   withTiming,
-  Easing,
+  Easing
 } from "react-native-reanimated";
 import styles from "./SudokuBoard.styles";
-import { useTheme } from "@/utils/theme/ThemeProvider";
+import { SUDOKU_COLORS, BOARD_STYLES } from "@/utils/theme/sudokuTheme";
 
 interface SudokuBoardProps {
   board: SudokuBoardType;
@@ -27,18 +27,15 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   onCellPress,
   isLoading = false,
 }) => {
-  const theme = useTheme();
-  const colors = theme.colors;
   const [isReady, setIsReady] = useState(false);
-
+  
   // Animation values
   const scale = useSharedValue(0.95);
   const opacity = useSharedValue(0);
-
+  
   // Animate board entry
   useEffect(() => {
     if (board.length > 0 && !isReady) {
-      // Initial load animation
       setTimeout(() => {
         scale.value = withTiming(1, {
           duration: 400,
@@ -52,7 +49,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       }, 100);
     }
   }, [board, isReady]);
-
+  
   // Animate board when loading state changes
   useEffect(() => {
     if (isLoading) {
@@ -67,7 +64,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       });
     }
   }, [isLoading]);
-
+  
   // Animated styles
   const boardAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -89,72 +86,52 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     return isInSameRow || isInSameCol || isInSameBox;
   };
 
-  // Render the board
   return (
-    <View
-      style={[
-        styles.boardContainer,
-        { backgroundColor: colors.boardBackground },
-      ]}
-    >
-      <Animated.View
-        style={[styles.boardAnimationContainer, boardAnimatedStyle]}
-      >
+    <View style={styles.boardContainer}>
+      <Animated.View style={[styles.boardAnimationContainer, boardAnimatedStyle]}>
         <View style={styles.boardWrapper}>
-          <View
-            style={[
-              styles.board,
-              {
-                borderColor: colors.gridBold,
-                backgroundColor: theme.isDark
-                  ? colors.surface
-                  : colors.background,
-              },
-            ]}
-          >
-            {board.map((row, rowIndex) => (
-              <Animated.View
-                key={`row-${rowIndex}`}
-                style={styles.row}
-                layout={Layout}
-                entering={FadeIn.delay(50 * rowIndex).duration(200)}
-              >
-                {row.map((cell, colIndex) => {
-                  const isSelected =
-                    selectedCell &&
-                    selectedCell.row === rowIndex &&
-                    selectedCell.col === colIndex;
+          {/* Hauptbrett mit blauem Hintergrund aus Theme */}
+          <View style={[styles.board, {backgroundColor: SUDOKU_COLORS.primary}]}>
+            {/* Grid-Inhalt */}
+            <View style={[styles.gridContainer, {borderColor: BOARD_STYLES.borderColor}]}>
+              {board.map((row, rowIndex) => (
+                <View key={`row-${rowIndex}`} style={styles.row}>
+                  {row.map((cell, colIndex) => {
+                    const isSelected = selectedCell && 
+                      selectedCell.row === rowIndex && 
+                      selectedCell.col === colIndex;
+                    
+                    // Gleiche Zahlen nur hervorheben, wenn nicht in gleicher Spalte/Zeile/Box und wenn ausgewählt
+                    const sameValue = selectedCell && 
+                      cell.value !== 0 && 
+                      !isRelatedCell(rowIndex, colIndex) &&
+                      board[selectedCell.row][selectedCell.col].value === cell.value;
 
-                  return (
-                    <SudokuCell
-                      key={`cell-${rowIndex}-${colIndex}`}
-                      cell={cell}
-                      row={rowIndex}
-                      col={colIndex}
-                      isSelected={isSelected}
-                      isRelated={isRelatedCell(rowIndex, colIndex)}
-                      sameValueHighlight={
-                        selectedCell &&
-                        cell.value !== 0 &&
-                        board[selectedCell.row][selectedCell.col].value ===
-                          cell.value &&
-                        !isSelected // Don't highlight the selected cell itself
-                      }
-                      onPress={onCellPress}
-                    />
-                  );
-                })}
-              </Animated.View>
-            ))}
-
-            {/* Loading overlay */}
+                    return (
+                      <SudokuCell
+                        key={`cell-${rowIndex}-${colIndex}`}
+                        cell={cell}
+                        row={rowIndex}
+                        col={colIndex}
+                        isSelected={isSelected}
+                        isRelated={isRelatedCell(rowIndex, colIndex)}
+                        sameValueHighlight={sameValue}
+                        onPress={onCellPress}
+                      />
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+            
+            {/* Loading Overlay */}
             {isLoading && (
-              <Animated.View
+              <Animated.View 
                 style={styles.loadingOverlay}
                 entering={FadeIn.duration(200)}
                 exiting={FadeOut.duration(200)}
               >
-                <ActivityIndicator size="large" color={colors.primary} />
+                <ActivityIndicator size="large" color={SUDOKU_COLORS.white} />
               </Animated.View>
             )}
           </View>

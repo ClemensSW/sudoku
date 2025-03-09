@@ -6,6 +6,7 @@ import {
   Text,
   useWindowDimensions,
   SafeAreaView,
+  StyleSheet,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -29,6 +30,7 @@ import Header from "@/components/Header/Header";
 import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
 import Timer from "@/components/Timer/Timer";
+import SettingsScreen from "@/screens/SettingsScreen/SettingsScreen";
 
 // Game logic
 import {
@@ -45,6 +47,9 @@ import {
   autoUpdateNotes,
   removeNoteFromRelatedCells,
 } from "@/utils/sudoku";
+
+// Storage
+import { updateStatsAfterGame, loadSettings } from "@/utils/storage";
 
 import styles from "./GameScreen.styles";
 
@@ -76,12 +81,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [noteModeActive, setNoteModeActive] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  // NEU: State für verbleibende Hinweise
+  // State für verbleibende Hinweise
   const [hintsRemaining, setHintsRemaining] = useState(INITIAL_HINTS);
+  // State für Settings-Modal
+  const [showSettings, setShowSettings] = useState(false);
+  // State für Spieleinstellungen
+  const [highlightRelatedCells, setHighlightRelatedCells] = useState(true);
+  const [showMistakes, setShowMistakes] = useState(true);
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
   // Animation values
   const headerOpacity = useSharedValue(1); // Start with header visible
   const controlsOpacity = useSharedValue(0);
+
+  // Lade Einstellungen
+  useEffect(() => {
+    const loadGameSettings = async () => {
+      try {
+        const settings = await loadSettings();
+        if (settings) {
+          setHighlightRelatedCells(settings.highlightRelatedCells);
+          setShowMistakes(settings.showMistakes);
+          setVibrationEnabled(settings.vibration);
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    };
+
+    loadGameSettings();
+  }, []);
 
   // Initialize game
   useEffect(() => {
@@ -135,7 +164,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       setIsGameRunning(true);
       setNoteModeActive(false);
       setIsLoading(false);
-      // NEU: Setze Hinweise zurück
+      // Setze Hinweise zurück
       setHintsRemaining(INITIAL_HINTS);
 
       // No need to animate opacity if starting at 1
@@ -147,13 +176,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       });
 
       // Give haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (vibrationEnabled) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
     }, 500);
-  }, [difficulty]);
+  }, [difficulty, vibrationEnabled]);
 
   // Select a cell
   const handleCellPress = (row: number, col: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
     setSelectedCell({ row, col });
   };
 
@@ -165,7 +198,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Check if cell is initial (preset numbers can't be changed)
     if (board[row][col].isInitial) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      if (vibrationEnabled) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
       return;
     }
 
@@ -174,7 +209,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       // Add/remove note
       const updatedBoard = toggleCellNote(board, row, col, number);
       setBoard(updatedBoard);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (vibrationEnabled) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
     } else {
       // Set number
       const previousValue = board[row][col].value;
@@ -189,10 +226,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           number
         );
         setBoard(boardWithUpdatedNotes);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } else if (!updatedBoard[row][col].isValid) {
+        if (vibrationEnabled) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
+      } else if (!updatedBoard[row][col].isValid && showMistakes) {
         // Invalid move
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        if (vibrationEnabled) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        }
       }
     }
   };
@@ -205,27 +246,35 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Check if cell is initial
     if (board[row][col].isInitial) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      if (vibrationEnabled) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
       return;
     }
 
     // Clear the cell
     const updatedBoard = clearCellValue(board, row, col);
     setBoard(updatedBoard);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
   };
 
   // Toggle note mode
   const toggleNoteMode = () => {
     setNoteModeActive(!noteModeActive);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
   };
 
-  // Provide a hint - NEU: Mit Begrenzung der Hinweise
+  // Provide a hint - Mit Begrenzung der Hinweise
   const handleHintPress = () => {
     // Prüfen, ob noch Hinweise verfügbar sind
     if (hintsRemaining <= 0) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      if (vibrationEnabled) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
       Alert.alert(
         "Keine Hinweise mehr",
         "Du hast deine 3 Hinweise bereits aufgebraucht.",
@@ -276,25 +325,34 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     // Solve the cell
     const updatedBoard = solveCell(board, solution, row, col);
     setBoard(updatedBoard);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (vibrationEnabled) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
   };
 
   // Auto-update all notes
   const handleAutoNotesPress = () => {
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
   };
 
   // Game completion handler
-  const handleGameComplete = () => {
+  const handleGameComplete = async () => {
     if (isGameComplete) return;
 
     setIsGameComplete(true);
     setIsGameRunning(false);
 
+    // Aktualisiere Statistiken
+    await updateStatsAfterGame(true, difficulty, gameTime);
+
     // Give feedback to player
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (vibrationEnabled) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
 
     // Show success message
     setTimeout(() => {
@@ -380,6 +438,44 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
+  // Handle Settings Button Press
+  const handleSettingsPress = () => {
+    setShowSettings(true);
+  };
+
+  // Handle Settings Close
+  const handleSettingsClose = () => {
+    setShowSettings(false);
+  };
+
+  // Handle Game Quit from Settings
+  const handleQuitFromSettings = () => {
+    setShowSettings(false);
+    router.navigate("../");
+  };
+
+  // Handle Auto Notes from Settings
+  const handleAutoNotesFromSettings = () => {
+    if (board.length === 0) return;
+
+    const updatedBoard = autoUpdateNotes(board);
+    setBoard(updatedBoard);
+    setShowSettings(false);
+
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+
+    // Feedback anzeigen
+    setTimeout(() => {
+      Alert.alert(
+        "Notizen aktualisiert",
+        "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.",
+        [{ text: "OK" }]
+      );
+    }, 300);
+  };
+
   // If board is not yet loaded
   if (board.length === 0) {
     return (
@@ -432,39 +528,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
             onBackPress={handleBackPress}
             rightAction={{
               icon: "settings",
-              onPress: () => {
-                // Erweitertes Einstellungsmenü
-                Alert.alert("Optionen", "Was möchtest du tun?", [
-                  {
-                    text: "Neues Spiel",
-                    onPress: () => {
-                      if (isGameRunning && !isGameComplete) {
-                        Alert.alert(
-                          "Neues Spiel starten?",
-                          "Das aktuelle Spiel wird beendet.",
-                          [
-                            { text: "Abbrechen", style: "cancel" },
-                            {
-                              text: "Bestätigen",
-                              onPress: () => router.navigate("../"),
-                            },
-                          ]
-                        );
-                      } else {
-                        router.navigate("../");
-                      }
-                    },
-                  },
-                  {
-                    text: "Automatische Notizen",
-                    onPress: handleAutoNotesPress,
-                  },
-                  {
-                    text: "Abbrechen",
-                    style: "cancel",
-                  },
-                ]);
-              },
+              onPress: handleSettingsPress,
             }}
           />
         </Animated.View>
@@ -494,6 +558,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                 selectedCell={selectedCell}
                 onCellPress={handleCellPress}
                 isLoading={isLoading}
+                highlightRelated={highlightRelatedCells}
+                showErrors={showMistakes}
               />
             </View>
 
@@ -512,13 +578,21 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                   hintsRemaining={hintsRemaining}
                 />
               </Animated.View>
-
-              {/* Untere Buttons wurden entfernt, da diese Funktionen
-                  über die Einstellungen verfügbar sind */}
             </Animated.View>
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Settings */}
+      {showSettings && (
+        <View style={StyleSheet.absoluteFill}>
+          <SettingsScreen
+            onBackToGame={handleSettingsClose}
+            onQuitGame={handleQuitFromSettings}
+            onAutoNotes={handleAutoNotesFromSettings}
+          />
+        </View>
+      )}
     </View>
   );
 };

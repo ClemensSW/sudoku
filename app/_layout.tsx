@@ -34,6 +34,7 @@ export default function AppLayout() {
           >
             <Stack.Screen name="index" />
             <Stack.Screen name="game" />
+            <Stack.Screen name="settings" />
             <Stack.Screen name="(game)" />
           </Stack>
         </ThemeProvider>

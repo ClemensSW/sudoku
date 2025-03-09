@@ -1,0 +1,471 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Switch,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+  StyleSheet,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { Feather } from "@expo/vector-icons";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  SlideInUp,
+} from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import Header from "@/components/Header/Header";
+import StatisticsDisplay from "@/components/StatisticsDisplay/StatisticsDisplay";
+import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
+import { loadSettings, saveSettings, loadStats } from "@/utils/storage";
+import { GameSettings, GameStats } from "@/utils/storage";
+
+import styles from "./SettingsScreen.styles";
+
+interface SettingsScreenProps {
+  onBackToGame?: () => void;
+  onQuitGame?: () => void;
+  onAutoNotes?: () => void;
+}
+
+const SettingsScreen: React.FC<SettingsScreenProps> = ({
+  onBackToGame,
+  onQuitGame,
+  onAutoNotes,
+}) => {
+  const theme = useTheme();
+  const colors = theme.colors;
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
+
+  // State für Einstellungen und Statistiken
+  const [settings, setSettings] = useState<GameSettings | null>(null);
+  const [stats, setStats] = useState<GameStats | null>(null);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Lade Einstellungen und Statistiken beim Laden
+  useEffect(() => {
+    const loadData = async () => {
+      const loadedSettings = await loadSettings();
+      const loadedStats = await loadStats();
+
+      setSettings(loadedSettings);
+      setStats(loadedStats);
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  // Behandle Änderungen an Einstellungen
+  const handleSettingChange = async (
+    key: keyof GameSettings,
+    value: boolean | string
+  ) => {
+    if (!settings) return;
+
+    const updatedSettings = { ...settings, [key]: value };
+    setSettings(updatedSettings);
+    await saveSettings(updatedSettings);
+
+    // Haptisches Feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  // Automatisch alle Notizen füllen
+  const handleAutoNotes = () => {
+    if (onAutoNotes) {
+      onAutoNotes();
+      handleBack();
+
+      // Feedback anzeigen
+      setTimeout(() => {
+        Alert.alert(
+          "Notizen aktualisiert",
+          "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.",
+          [{ text: "OK" }]
+        );
+      }, 300);
+    }
+  };
+
+  // Zurück-Navigation
+  const handleBack = () => {
+    if (onBackToGame) {
+      onBackToGame();
+    } else {
+      router.back();
+    }
+  };
+
+  // Spiel abbrechen
+  const handleQuitGame = () => {
+    Alert.alert(
+      "Spiel beenden?",
+      "Bist du sicher, dass du das aktuelle Spiel beenden möchtest? Dein Fortschritt geht verloren.",
+      [
+        {
+          text: "Abbrechen",
+          style: "cancel",
+        },
+        {
+          text: "Beenden",
+          style: "destructive",
+          onPress: () => {
+            if (onQuitGame) {
+              onQuitGame();
+            } else {
+              router.navigate("/");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  // Ladebildschirm
+  if (isLoading) {
+    return (
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          styles.container,
+          { backgroundColor: colors.background },
+        ]}
+        entering={SlideInUp.duration(300)}
+      >
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <SafeAreaView edges={["top"]} style={{ width: "100%" }}>
+          <Header title="Einstellungen" onBackPress={handleBack} />
+        </SafeAreaView>
+        <View style={styles.loadingContainer}>
+          <Feather name="loader" size={24} color={colors.primary} />
+        </View>
+      </Animated.View>
+    );
+  }
+
+  return (
+    <Animated.View
+      style={[
+        StyleSheet.absoluteFill,
+        styles.container,
+        { backgroundColor: colors.background },
+      ]}
+      entering={SlideInUp.duration(300)}
+    >
+      <StatusBar style={theme.isDark ? "light" : "dark"} />
+
+      {/* Header */}
+      <SafeAreaView edges={["top"]} style={{ width: "100%" }}>
+        <Header title="Einstellungen" onBackPress={handleBack} />
+      </SafeAreaView>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 20 },
+        ]}
+      >
+        {/* Statistik-Bereich */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(100).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Statistiken
+          </Text>
+          {stats && <StatisticsDisplay stats={stats} />}
+        </Animated.View>
+
+        {/* Spieleinstellungen */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(200).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Spieleinstellungen
+          </Text>
+
+          {settings && (
+            <View
+              style={[styles.settingsGroup, { borderColor: colors.border }]}
+            >
+              {/* Fehler anzeigen */}
+              <View
+                style={[
+                  styles.settingRow,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <View style={styles.settingTextContainer}>
+                  <Text
+                    style={[styles.settingTitle, { color: colors.textPrimary }]}
+                  >
+                    Fehler anzeigen
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Falsche Zahlen hervorheben
+                  </Text>
+                </View>
+                <Switch
+                  value={settings.showMistakes}
+                  onValueChange={(value) =>
+                    handleSettingChange("showMistakes", value)
+                  }
+                  trackColor={{
+                    false: colors.buttonDisabled,
+                    true: colors.primary,
+                  }}
+                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                />
+              </View>
+
+              {/* Verwandte Zellen hervorheben */}
+              <View
+                style={[
+                  styles.settingRow,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <View style={styles.settingTextContainer}>
+                  <Text
+                    style={[styles.settingTitle, { color: colors.textPrimary }]}
+                  >
+                    Zellen hervorheben
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Zeile, Spalte und Box hervorheben
+                  </Text>
+                </View>
+                <Switch
+                  value={settings.highlightRelatedCells}
+                  onValueChange={(value) =>
+                    handleSettingChange("highlightRelatedCells", value)
+                  }
+                  trackColor={{
+                    false: colors.buttonDisabled,
+                    true: colors.primary,
+                  }}
+                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                />
+              </View>
+
+              {/* Vibration */}
+              <View style={styles.settingRow}>
+                <View style={styles.settingTextContainer}>
+                  <Text
+                    style={[styles.settingTitle, { color: colors.textPrimary }]}
+                  >
+                    Vibration
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Haptisches Feedback beim Tippen
+                  </Text>
+                </View>
+                <Switch
+                  value={settings.vibration}
+                  onValueChange={(value) =>
+                    handleSettingChange("vibration", value)
+                  }
+                  trackColor={{
+                    false: colors.buttonDisabled,
+                    true: colors.primary,
+                  }}
+                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                />
+              </View>
+            </View>
+          )}
+        </Animated.View>
+
+        {/* Hilfe-Bereich */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(300).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Hilfe und Tools
+          </Text>
+
+          <View
+            style={[
+              styles.settingsGroup,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            {/* Automatische Notizen */}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleAutoNotes}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.primary}15` },
+                ]}
+              >
+                <Feather name="edit-3" size={20} color={colors.primary} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Automatische Notizen
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Mögliche Zahlen als Notizen eintragen
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+
+            {/* Spielanleitung */}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { borderTopWidth: 1, borderTopColor: colors.border },
+              ]}
+              onPress={() => setShowHowToPlay(true)}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.info}15` },
+                ]}
+              >
+                <Feather name="help-circle" size={20} color={colors.info} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Spielanleitung
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Lerne, wie man Sudoku spielt
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
+        {/* Aktionen-Bereich */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(400).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Aktionen
+          </Text>
+
+          <View
+            style={[
+              styles.settingsGroup,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            {/* Spiel beenden */}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleQuitGame}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.error}20` },
+                ]}
+              >
+                <Feather name="x-circle" size={20} color={colors.error} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text style={[styles.actionTitle, { color: colors.error }]}>
+                  Spiel beenden
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Zurück zum Hauptmenü
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
+        {/* Versions-Info */}
+        <Animated.View
+          style={styles.versionContainer}
+          entering={FadeIn.delay(500).duration(500)}
+        >
+          <Text style={[styles.versionText, { color: colors.textSecondary }]}>
+            Sudoku v1.0.0
+          </Text>
+        </Animated.View>
+      </ScrollView>
+
+      {/* Modal mit Spielanleitung */}
+      {showHowToPlay && (
+        <View style={StyleSheet.absoluteFill}>
+          <HowToPlayModal
+            visible={showHowToPlay}
+            onClose={() => setShowHowToPlay(false)}
+          />
+        </View>
+      )}
+    </Animated.View>
+  );
+};
+
+export default SettingsScreen;

@@ -24,6 +24,7 @@ export type GameStats = {
   bestTimeEasy: number;
   bestTimeMedium: number;
   bestTimeHard: number;
+  bestTimeExpert: number; // NEU: Expert hinzugefügt
   currentStreak: number;
   longestStreak: number;
 };
@@ -108,10 +109,11 @@ export const loadStats = async (): Promise<GameStats> => {
   }
 };
 
-// Aktualisiere Statistiken nach einem Spielende
+// In utils/storage.ts die updateStatsAfterGame Funktion aktualisieren:
+
 export const updateStatsAfterGame = async (
   won: boolean,
-  difficulty: "easy" | "medium" | "hard",
+  difficulty: "easy" | "medium" | "hard" | "expert",
   timeElapsed: number
 ): Promise<void> => {
   try {
@@ -141,6 +143,13 @@ export const updateStatsAfterGame = async (
         timeElapsed < currentStats.bestTimeHard
       ) {
         updatedStats.bestTimeHard = timeElapsed;
+      } else if (
+        difficulty === "expert" &&
+        (timeElapsed < currentStats.bestTimeExpert ||
+          !currentStats.bestTimeExpert ||
+          currentStats.bestTimeExpert === Infinity)
+      ) {
+        updatedStats.bestTimeExpert = timeElapsed;
       }
     }
 

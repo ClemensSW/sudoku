@@ -92,6 +92,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   // NEU: State für Fehler-Tracking
   const [errorsRemaining, setErrorsRemaining] = useState(MAX_ERRORS);
+  // NEU: State für Auto-Notizen-Tracking
+  const [autoNotesUsed, setAutoNotesUsed] = useState(false);
 
   // Animation values
   const headerOpacity = useSharedValue(1); // Start with header visible
@@ -171,6 +173,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       setHintsRemaining(INITIAL_HINTS);
       // NEU: Setze Fehler zurück
       setErrorsRemaining(MAX_ERRORS);
+      // NEU: Zurücksetzen des autoNotesUsed Flags
+      setAutoNotesUsed(false);
 
       // No need to animate opacity if starting at 1
       headerOpacity.value = 1;
@@ -219,8 +223,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     setIsGameComplete(true);
     setIsGameRunning(false);
 
-    // Aktualisiere Statistiken (nicht gewonnen)
-    await updateStatsAfterGame(false, difficulty, gameTime);
+    // Aktualisiere Statistiken (nicht gewonnen) nur wenn keine Auto-Notizen verwendet wurden
+    await updateStatsAfterGame(false, difficulty, gameTime, autoNotesUsed);
 
     // Feedback für Game Over
     if (vibrationEnabled) {
@@ -229,19 +233,23 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Zeige Game Over Nachricht
     setTimeout(() => {
-      Alert.alert(
-        "Spiel beendet!",
-        "Du hast zu viele Fehler gemacht. Versuche es erneut!",
-        [
-          {
-            text: "Neues Spiel",
-            onPress: () => {
-              // Navigiere zurück zur Startseite
-              router.navigate("../");
-            },
+      let message = "Du hast zu viele Fehler gemacht. Versuche es erneut!";
+
+      // Wenn Auto-Notizen verwendet wurden, zeige einen Hinweis an
+      if (autoNotesUsed) {
+        message +=
+          "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
+      }
+
+      Alert.alert("Spiel beendet!", message, [
+        {
+          text: "Neues Spiel",
+          onPress: () => {
+            // Navigiere zurück zur Startseite
+            router.navigate("../");
           },
-        ]
-      );
+        },
+      ]);
     }, 500);
   };
 
@@ -394,24 +402,35 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
-  // Auto-update all notes
+  // NEU: Aktualisierte Auto-Notizen Funktion
   const handleAutoNotesPress = () => {
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
+
+    // Markieren, dass Auto-Notizen verwendet wurden
+    setAutoNotesUsed(true);
+
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
+
+    // Nur eine Benachrichtigung anzeigen
+    Alert.alert(
+      "Automatische Notizen",
+      "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
+      [{ text: "OK" }]
+    );
   };
 
-  // Game completion handler
+  // NEU: Aktualisierte Game Completion Handler
   const handleGameComplete = async () => {
     if (isGameComplete) return;
 
     setIsGameComplete(true);
     setIsGameRunning(false);
 
-    // Aktualisiere Statistiken
-    await updateStatsAfterGame(true, difficulty, gameTime);
+    // Aktualisiere Statistiken mit dem autoNotesUsed Flag
+    await updateStatsAfterGame(true, difficulty, gameTime, autoNotesUsed);
 
     // Give feedback to player
     if (vibrationEnabled) {
@@ -420,19 +439,23 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Show success message
     setTimeout(() => {
-      Alert.alert(
-        "Glückwunsch!",
-        `Du hast das Sudoku in ${formatTime(gameTime)} gelöst!`,
-        [
-          {
-            text: "Neues Spiel",
-            onPress: () => {
-              // Navigiere zurück zur Startseite
-              router.navigate("../");
-            },
+      let message = `Du hast das Sudoku in ${formatTime(gameTime)} gelöst!`;
+
+      // Wenn Auto-Notizen verwendet wurden, zeige einen Hinweis an
+      if (autoNotesUsed) {
+        message +=
+          "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
+      }
+
+      Alert.alert("Glückwunsch!", message, [
+        {
+          text: "Neues Spiel",
+          onPress: () => {
+            // Navigiere zurück zur Startseite
+            router.navigate("../");
           },
-        ]
-      );
+        },
+      ]);
     }, 500);
   };
 
@@ -518,23 +541,28 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     router.navigate("../");
   };
 
-  // Handle Auto Notes from Settings
+  // NEU: Aktualisierte Auto-Notizen-Funktion von Settings
   const handleAutoNotesFromSettings = () => {
     if (board.length === 0) return;
 
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
+
+    // Markieren, dass Auto-Notizen verwendet wurden
+    setAutoNotesUsed(true);
+
     setShowSettings(false);
 
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    // Feedback anzeigen
+    // Nur eine Benachrichtigung anzeigen
+    // Verwende setTimeout, um die Meldung erst nach dem Schließen der Einstellungen anzuzeigen
     setTimeout(() => {
       Alert.alert(
         "Notizen aktualisiert",
-        "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.",
+        "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
         [{ text: "OK" }]
       );
     }, 300);

@@ -46,6 +46,7 @@ const DEFAULT_STATS: GameStats = {
   bestTimeEasy: Infinity,
   bestTimeMedium: Infinity,
   bestTimeHard: Infinity,
+  bestTimeExpert: Infinity,
   currentStreak: 0,
   longestStreak: 0,
 };
@@ -109,14 +110,20 @@ export const loadStats = async (): Promise<GameStats> => {
   }
 };
 
-// In utils/storage.ts die updateStatsAfterGame Funktion aktualisieren:
-
+// Aktualisierte Funktion mit autoNotesUsed Parameter
 export const updateStatsAfterGame = async (
   won: boolean,
   difficulty: "easy" | "medium" | "hard" | "expert",
-  timeElapsed: number
+  timeElapsed: number,
+  autoNotesUsed: boolean = false // Neuer Parameter zur Verfolgung, ob automatische Notizen verwendet wurden
 ): Promise<void> => {
   try {
+    // Wenn automatische Notizen verwendet wurden, aktualisieren wir die Statistiken nicht
+    if (autoNotesUsed) {
+      console.log("Auto notes were used - not updating statistics");
+      return;
+    }
+
     const currentStats = await loadStats();
 
     const updatedStats: GameStats = {

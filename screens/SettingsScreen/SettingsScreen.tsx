@@ -46,13 +46,13 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  // State für Einstellungen und Statistiken
+  // State for settings and statistics
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [stats, setStats] = useState<GameStats | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Lade Einstellungen und Statistiken beim Laden
+  // Load settings and statistics
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
@@ -66,7 +66,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     loadData();
   }, []);
 
-  // Behandle Änderungen an Einstellungen
+  // Handle settings changes
   const handleSettingChange = async (
     key: keyof GameSettings,
     value: boolean | string
@@ -77,28 +77,21 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     setSettings(updatedSettings);
     await saveSettings(updatedSettings);
 
-    // Haptisches Feedback
+    // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  // Automatisch alle Notizen füllen
+  // Auto-fill all notes
   const handleAutoNotes = () => {
     if (onAutoNotes) {
       onAutoNotes();
       handleBack();
 
-      // Feedback anzeigen
-      setTimeout(() => {
-        Alert.alert(
-          "Notizen aktualisiert",
-          "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.",
-          [{ text: "OK" }]
-        );
-      }, 300);
+      
     }
   };
 
-  // Zurück-Navigation
+  // Back navigation
   const handleBack = () => {
     if (onBackToGame) {
       onBackToGame();
@@ -107,7 +100,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     }
   };
 
-  // Spiel abbrechen
+  // Quit game
   const handleQuitGame = () => {
     Alert.alert(
       "Spiel beenden?",
@@ -132,7 +125,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     );
   };
 
-  // Ladebildschirm
+  // Loading screen
   if (isLoading) {
     return (
       <Animated.View
@@ -177,7 +170,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        {/* Statistik-Bereich */}
+        {/* Statistics Section with Enhanced Display */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(100).duration(500)}
@@ -188,7 +181,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {stats && <StatisticsDisplay stats={stats} />}
         </Animated.View>
 
-        {/* Spieleinstellungen */}
+        {/* Game Settings */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(200).duration(500)}
@@ -201,7 +194,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <View
               style={[styles.settingsGroup, { borderColor: colors.border }]}
             >
-              {/* Fehler anzeigen */}
+              {/* Show Errors */}
               <View
                 style={[
                   styles.settingRow,
@@ -236,7 +229,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 />
               </View>
 
-              {/* Verwandte Zellen hervorheben */}
+              {/* Highlight related cells */}
               <View
                 style={[
                   styles.settingRow,
@@ -304,7 +297,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           )}
         </Animated.View>
 
-        {/* Hilfe-Bereich */}
+        {/* Help & Tools Section */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(300).duration(500)}
@@ -319,7 +312,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
-            {/* Automatische Notizen */}
+            {/* Auto Notes */}
             <TouchableOpacity
               style={styles.actionButton}
               onPress={handleAutoNotes}
@@ -354,7 +347,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               />
             </TouchableOpacity>
 
-            {/* Spielanleitung */}
+            {/* How to Play */}
             <TouchableOpacity
               style={[
                 styles.actionButton,
@@ -394,7 +387,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </View>
         </Animated.View>
 
-        {/* Aktionen-Bereich */}
+        {/* Actions Section */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(400).duration(500)}
@@ -409,7 +402,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
-            {/* Spiel beenden */}
+            {/* Quit Game */}
             <TouchableOpacity
               style={styles.actionButton}
               onPress={handleQuitGame}
@@ -444,7 +437,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </View>
         </Animated.View>
 
-        {/* Versions-Info */}
+        {/* Version Info */}
         <Animated.View
           style={styles.versionContainer}
           entering={FadeIn.delay(500).duration(500)}
@@ -455,7 +448,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </Animated.View>
       </ScrollView>
 
-      {/* Modal mit Spielanleitung */}
+      {/* How to Play Modal */}
       {showHowToPlay && (
         <View style={StyleSheet.absoluteFill}>
           <HowToPlayModal

@@ -16,7 +16,6 @@ import Animated, {
   FadeIn,
   FadeInDown,
   FadeInUp,
-  SlideInLeft,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -30,7 +29,6 @@ import Header from "@/components/Header/Header";
 import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
 import Timer from "@/components/Timer/Timer";
-import Button from "@/components/Button/Button";
 
 // Game logic
 import {
@@ -55,6 +53,9 @@ interface GameScreenProps {
   navigation?: any;
 }
 
+// Konstante für die maximale Anzahl an Hinweisen pro Spiel
+const INITIAL_HINTS = 3;
+
 const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -75,9 +76,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [noteModeActive, setNoteModeActive] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // NEU: State für verbleibende Hinweise
+  const [hintsRemaining, setHintsRemaining] = useState(INITIAL_HINTS);
 
   // Animation values
-  const headerOpacity = useSharedValue(0);
+  const headerOpacity = useSharedValue(1); // Start with header visible
   const controlsOpacity = useSharedValue(0);
 
   // Initialize game
@@ -95,7 +98,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   }, [board]);
 
-  // Update used numbers for NumPad
+  // Update used numbers for NumPad (benötigt für disabled numbers im NumPad)
   useEffect(() => {
     if (board.length > 0) {
       updateUsedNumbers();
@@ -132,12 +135,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       setIsGameRunning(true);
       setNoteModeActive(false);
       setIsLoading(false);
+      // NEU: Setze Hinweise zurück
+      setHintsRemaining(INITIAL_HINTS);
 
-      // Animate in the UI elements
-      headerOpacity.value = withTiming(1, {
-        duration: 600,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+      // No need to animate opacity if starting at 1
+      headerOpacity.value = 1;
 
       controlsOpacity.value = withTiming(1, {
         duration: 600,
@@ -219,8 +221,19 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  // Provide a hint
+  // Provide a hint - NEU: Mit Begrenzung der Hinweise
   const handleHintPress = () => {
+    // Prüfen, ob noch Hinweise verfügbar sind
+    if (hintsRemaining <= 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        "Keine Hinweise mehr",
+        "Du hast deine 3 Hinweise bereits aufgebraucht.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     if (!selectedCell || isGameComplete) {
       // If no cell is selected, find a cell that needs a hint
       const hintCell = getHint(board, solution);
@@ -256,6 +269,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       ]);
       return;
     }
+
+    // Reduziere die Anzahl der verbleibenden Hinweise
+    setHintsRemaining((prev) => prev - 1);
 
     // Solve the cell
     const updatedBoard = solveCell(board, solution, row, col);
@@ -303,7 +319,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     setGameTime(time);
   };
 
-  // Update used numbers for the NumPad
+  // Update used numbers for the NumPad (benötigt für disabled numbers im NumPad)
   const updateUsedNumbers = () => {
     const counts: { [key: number]: number } = {};
 
@@ -371,7 +387,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         style={[styles.container, { backgroundColor: colors.background }]}
         edges={["top"]}
       >
-        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
         <View style={styles.loadingContainer}>
           <Animated.View
             entering={FadeIn.duration(500)}
@@ -398,7 +414,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={theme.isDark ? "light" : "dark"} />
+      <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       {/* Background decoration */}
       <Animated.View
@@ -413,20 +429,30 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         <Animated.View style={headerAnimatedStyle}>
           <Header
             title="Sudoku"
-            subtitle={`Schwierigkeit: ${
-              difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
-            }`}
             onBackPress={handleBackPress}
             rightAction={{
               icon: "settings",
               onPress: () => {
-                // Show settings menu
+                // Erweitertes Einstellungsmenü
                 Alert.alert("Optionen", "Was möchtest du tun?", [
                   {
                     text: "Neues Spiel",
                     onPress: () => {
-                      // Navigiere zurück zur Startseite
-                      router.navigate("../");
+                      if (isGameRunning && !isGameComplete) {
+                        Alert.alert(
+                          "Neues Spiel starten?",
+                          "Das aktuelle Spiel wird beendet.",
+                          [
+                            { text: "Abbrechen", style: "cancel" },
+                            {
+                              text: "Bestätigen",
+                              onPress: () => router.navigate("../"),
+                            },
+                          ]
+                        );
+                      } else {
+                        router.navigate("../");
+                      }
                     },
                   },
                   {
@@ -450,67 +476,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           ]}
         >
           <View style={styles.gameContainer}>
-            {/* Game statistics row */}
+            {/* Timer */}
             <Animated.View
-              style={styles.gameStatsContainer}
+              style={styles.timerContainer}
               entering={FadeInDown.delay(400).duration(500)}
             >
-              <Animated.View
-                style={[
-                  styles.statItem,
-                  {
-                    backgroundColor: theme.isDark
-                      ? colors.surface
-                      : "rgba(0,0,0,0.03)",
-                  },
-                ]}
-                entering={SlideInLeft.delay(500).duration(400)}
-              >
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-                </Text>
-                <Text
-                  style={[styles.statLabel, { color: colors.textSecondary }]}
-                >
-                  Schwierigkeit
-                </Text>
-              </Animated.View>
-
-              <Animated.View
-                style={styles.timerContainer}
-                entering={FadeInDown.delay(600).duration(500)}
-              >
-                <Timer
-                  isRunning={isGameRunning && !isGameComplete}
-                  initialTime={gameTime}
-                  onTimeUpdate={handleTimeUpdate}
-                />
-              </Animated.View>
-
-              <Animated.View
-                style={[
-                  styles.statItem,
-                  {
-                    backgroundColor: theme.isDark
-                      ? colors.surface
-                      : "rgba(0,0,0,0.03)",
-                  },
-                ]}
-                entering={SlideInLeft.delay(700)
-                  .duration(400)
-                  .withInitialValues({
-                    transform: [{ translateX: 20 }],
-                  })}
-              >
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {9 - usedNumbers.length}
-                </Text>
-                <Text
-                  style={[styles.statLabel, { color: colors.textSecondary }]}
-                >
-                  Verbleibend
-                </Text>
-              </Animated.View>
+              <Timer
+                isRunning={isGameRunning && !isGameComplete}
+                initialTime={gameTime}
+                onTimeUpdate={handleTimeUpdate}
+              />
             </Animated.View>
 
             <View style={styles.boardContainer}>
@@ -534,62 +509,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                   noteModeActive={noteModeActive}
                   disabledNumbers={usedNumbers}
                   showHint={true}
+                  hintsRemaining={hintsRemaining}
                 />
               </Animated.View>
 
-              <Animated.View
-                style={styles.buttonContainer}
-                entering={FadeInUp.delay(1000).duration(500)}
-              >
-                <Button
-                  title="Neues Spiel"
-                  onPress={() => {
-                    if (isGameRunning && !isGameComplete) {
-                      Alert.alert(
-                        "Neues Spiel starten?",
-                        "Das aktuelle Spiel wird beendet.",
-                        [
-                          {
-                            text: "Abbrechen",
-                            style: "cancel",
-                          },
-                          {
-                            text: "Zum Hauptmenü",
-                            onPress: () => {
-                              // Navigiere zurück zur Startseite
-                              router.navigate("../");
-                            },
-                          },
-                        ]
-                      );
-                    } else {
-                      // Navigiere zurück zur Startseite
-                      router.navigate("../");
-                    }
-                  }}
-                  variant="primary"
-                  style={styles.button}
-                  icon={
-                    <Feather
-                      name="refresh-cw"
-                      size={18}
-                      color={colors.buttonText}
-                    />
-                  }
-                  iconPosition="left"
-                />
-
-                <Button
-                  title="Auto-Notizen"
-                  onPress={handleAutoNotesPress}
-                  variant="outline"
-                  style={styles.button}
-                  icon={
-                    <Feather name="edit-2" size={18} color={colors.primary} />
-                  }
-                  iconPosition="left"
-                />
-              </Animated.View>
+              {/* Untere Buttons wurden entfernt, da diese Funktionen
+                  über die Einstellungen verfügbar sind */}
             </Animated.View>
           </View>
         </ScrollView>

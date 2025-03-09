@@ -4,60 +4,94 @@ import { spacing } from "@/utils/theme";
 export default StyleSheet.create({
   container: {
     width: "100%",
-    maxWidth: 360,
-    marginVertical: spacing.lg,
+    paddingHorizontal: 8, // Reduziert auf 8px für mehr Platz
+    marginVertical: spacing.md, // Reduziert für mehr Platz
     alignSelf: "center",
   },
 
-  topRow: {
+  // Action Buttons Row
+  actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
+    justifyContent: "space-evenly",
     marginBottom: spacing.md,
+    width: "100%",
+  },
+
+  // Container für jeden ActionButton und Label
+  actionButtonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 70,
   },
 
   actionButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 52,
+    height: 52,
+    borderRadius: 14, // Moderne, leicht abgerundete Ecken
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 3,
+    marginBottom: 4, // Abstand zum Label
+    position: "relative", // Für das Badge
   },
 
-  activeActionButton: {
-    // Will be set via dynamic colors
+  actionButtonLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    marginTop: 2,
+    textAlign: "center",
   },
 
-  numbersContainer: {
+  // Hinweis Counter Badge - Jetzt in Primärfarbe
+  hintCountBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: "white",
+  },
+
+  hintCountText: {
+    color: "white",
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+
+  // Zahlen in einer Reihe - Größer und mit weniger Abstand
+  numbersRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
     justifyContent: "space-between",
-    padding: 4,
-  },
-
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
-    marginBottom: 8,
+    height: 72, // Erhöht für größere Buttons
   },
 
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  numberButtonContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 1, // Minimaler Abstand zwischen Buttons
+  },
+
+  numberButton: {
+    width: 60, // Deutlich größer
+    height: 60, // Deutlich größer
+    borderRadius: 12, // Moderne, leicht abgerundete Ecken
     justifyContent: "center",
     alignItems: "center",
-    margin: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
     elevation: 2,
   },
 
@@ -65,13 +99,13 @@ export default StyleSheet.create({
     opacity: 0.5,
   },
 
-  buttonText: {
-    fontSize: 24,
+  numberButtonText: {
+    fontSize: 22, // Größere Schrift für bessere Lesbarkeit
     fontWeight: "600",
   },
 
   disabledButtonText: {
-    // Will be set via dynamic colors
+    // Wird durch dynamische Farben gesetzt
   },
 
   // Animation wrapper

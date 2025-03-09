@@ -23,42 +23,30 @@ export default StyleSheet.create({
   gameContainer: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.xl,
+    paddingHorizontal: 8, // Reduzierter horizontaler Abstand für mehr Platz
+    paddingBottom: spacing.md,
   },
 
   timerContainer: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
+    width: "100%",
+    marginTop: spacing.md,
+    marginBottom: spacing.sm, // Kleiner für besseren Platz
     alignItems: "center",
-    flexDirection: "row",
     justifyContent: "center",
   },
 
   boardContainer: {
     width: "100%",
     alignItems: "center",
-    marginBottom: spacing.lg,
+    paddingHorizontal: 8, // 8px Randabstand wie gewünscht
+    marginBottom: spacing.sm, // Kleinerer Abstand zum NumberPad für mehr Platz
   },
 
   controlsContainer: {
-    flex: 1,
+    width: "100%",
     alignItems: "center",
-    width: "100%",
-    justifyContent: "space-between",
-  },
-
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: spacing.lg,
-    width: "100%",
-    gap: spacing.md,
-  },
-
-  button: {
-    flex: 1,
-    maxWidth: 170,
+    justifyContent: "flex-start",
+    paddingHorizontal: 0, // Kein zusätzliches Padding
   },
 
   // Background decorative elements
@@ -71,33 +59,5 @@ export default StyleSheet.create({
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     zIndex: -1,
-  },
-
-  gameStatsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-
-  statItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.sm,
-    borderRadius: 12,
-    width: 100,
-  },
-
-  statValue: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-
-  statLabel: {
-    fontSize: 12,
-    fontWeight: "500",
-    textAlign: "center",
   },
 });

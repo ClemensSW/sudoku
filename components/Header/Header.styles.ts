@@ -1,3 +1,4 @@
+// components/Header/Header.styles.ts
 import { StyleSheet } from "react-native";
 import { spacing } from "@/utils/theme";
 
@@ -9,6 +10,17 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+    // Enhance visibility with a subtle shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    // Ensure it's positioned at the top
+    position: "relative",
+    top: 0,
+    left: 0,
+    right: 0,
   },
 
   leftContainer: {

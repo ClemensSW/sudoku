@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 // Verwende dieselbe Berechnung wie im Board
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const BOARD_SIZE = Math.min(width * 0.9, 400);
 const GRID_SIZE = BOARD_SIZE * 0.95;
 const CELL_SIZE = GRID_SIZE / 9;

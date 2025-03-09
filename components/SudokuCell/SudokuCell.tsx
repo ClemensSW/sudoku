@@ -32,7 +32,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 }) => {
   // Animation values
   const scale = useSharedValue(1);
-  
+
   // Trigger animations when cell changes
   useEffect(() => {
     if (cell.highlight === "hint" || cell.highlight === "success") {
@@ -60,7 +60,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   // Berechne Zellstile basierend auf Zustand
   const getCellStyles = () => {
     const cellStyles = [styles.cell];
-    
+
     // Grenzen für 3x3 Boxen
     if ((row + 1) % 3 === 0 && row !== 8) {
       cellStyles.push(styles.bottomBorder);
@@ -68,7 +68,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     if ((col + 1) % 3 === 0 && col !== 8) {
       cellStyles.push(styles.rightBorder);
     }
-    
+
     // Zellstatus-spezifische Styles
     if (isSelected) {
       cellStyles.push(styles.selectedCell);
@@ -77,7 +77,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     } else if (isRelated) {
       cellStyles.push(styles.relatedCell);
     }
-    
+
     if (cell.highlight === "error") {
       cellStyles.push(styles.errorCell);
     } else if (cell.highlight === "hint") {
@@ -85,24 +85,24 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     } else if (cell.highlight === "success") {
       cellStyles.push(styles.successCell);
     }
-    
+
     // Keine spezielle Hervorhebung mehr für vorgegebene Zellen (isInitial)
-    
+
     return cellStyles;
   };
 
   // Textstil basierend auf Zellstatus
   const getTextStyles = () => {
     const textStyles = [styles.cellText];
-    
+
     if (!cell.isValid) {
       textStyles.push(styles.errorText);
     }
-    
+
     if (cell.isInitial) {
       textStyles.push(styles.initialText); // Behalte fette Schrift für vorgegebene Zahlen
     }
-    
+
     return textStyles;
   };
 
@@ -117,7 +117,9 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
             key={`note-${num}`}
             style={[
               styles.noteText,
-              cell.notes.includes(num) ? styles.activeNote : styles.inactiveNote
+              cell.notes.includes(num)
+                ? styles.activeNote
+                : styles.inactiveNote,
             ]}
           >
             {cell.notes.includes(num) ? num : ""}

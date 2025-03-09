@@ -1,5 +1,7 @@
 export { default as Button } from "./Button/Button";
 export { default as DifficultySelector } from "./DifficultySelector/DifficultySelector";
+export { default as ErrorIndicator } from "./ErrorIndicator/ErrorIndicator";
+export { default as GameStatusBar } from "./GameStatusBar/GameStatusBar";
 export { default as Header } from "./Header/Header";
 export { default as NumberPad } from "./NumberPad/NumberPad";
 export { default as SudokuBoard } from "./SudokuBoard/SudokuBoard";

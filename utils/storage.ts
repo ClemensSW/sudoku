@@ -123,13 +123,14 @@ export const updateStatsAfterGame = async (
       ...currentStats,
       gamesPlayed: currentStats.gamesPlayed + 1,
       gamesWon: won ? currentStats.gamesWon + 1 : currentStats.gamesWon,
+      // Streak nur erhöhen, wenn Spiel gewonnen, sonst auf 0 zurücksetzen
       currentStreak: won ? currentStats.currentStreak + 1 : 0,
       longestStreak: won
         ? Math.max(currentStats.longestStreak, currentStats.currentStreak + 1)
         : currentStats.longestStreak,
     };
 
-    // Aktualisiere Bestzeit, falls zutreffend
+    // Aktualisiere Bestzeit nur wenn das Spiel gewonnen wurde
     if (won) {
       if (difficulty === "easy" && timeElapsed < currentStats.bestTimeEasy) {
         updatedStats.bestTimeEasy = timeElapsed;

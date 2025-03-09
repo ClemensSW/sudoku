@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
 import SudokuCell from "@/components/SudokuCell/SudokuCell";
-import Animated, { 
-  FadeIn, 
-  FadeOut, 
-  Layout, 
-  useAnimatedStyle, 
-  useSharedValue, 
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout,
+  useAnimatedStyle,
+  useSharedValue,
   withTiming,
-  Easing
+  Easing,
 } from "react-native-reanimated";
 import styles from "./SudokuBoard.styles";
 import { SUDOKU_COLORS, BOARD_STYLES } from "@/utils/theme/sudokuTheme";
@@ -19,6 +19,8 @@ interface SudokuBoardProps {
   selectedCell: CellPosition | null;
   onCellPress: (row: number, col: number) => void;
   isLoading?: boolean;
+  highlightRelated?: boolean;
+  showErrors?: boolean;
 }
 
 const SudokuBoard: React.FC<SudokuBoardProps> = ({
@@ -26,13 +28,15 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   selectedCell,
   onCellPress,
   isLoading = false,
+  highlightRelated = true,
+  showErrors = true,
 }) => {
   const [isReady, setIsReady] = useState(false);
-  
+
   // Animation values
   const scale = useSharedValue(0.95);
   const opacity = useSharedValue(0);
-  
+
   // Animate board entry
   useEffect(() => {
     if (board.length > 0 && !isReady) {
@@ -49,7 +53,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       }, 100);
     }
   }, [board, isReady]);
-  
+
   // Animate board when loading state changes
   useEffect(() => {
     if (isLoading) {
@@ -64,7 +68,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       });
     }
   }, [isLoading]);
-  
+
   // Animated styles
   const boardAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -75,7 +79,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
 
   // Check if the cell is related to the selected cell
   const isRelatedCell = (row: number, col: number): boolean => {
-    if (!selectedCell) return false;
+    if (!selectedCell || !highlightRelated) return false;
 
     const isInSameRow = selectedCell.row === row;
     const isInSameCol = selectedCell.col === col;
@@ -88,24 +92,36 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
 
   return (
     <View style={styles.boardContainer}>
-      <Animated.View style={[styles.boardAnimationContainer, boardAnimatedStyle]}>
+      <Animated.View
+        style={[styles.boardAnimationContainer, boardAnimatedStyle]}
+      >
         <View style={styles.boardWrapper}>
           {/* Hauptbrett mit blauem Hintergrund aus Theme */}
-          <View style={[styles.board, {backgroundColor: SUDOKU_COLORS.primary}]}>
+          <View
+            style={[styles.board, { backgroundColor: SUDOKU_COLORS.primary }]}
+          >
             {/* Grid-Inhalt */}
-            <View style={[styles.gridContainer, {borderColor: BOARD_STYLES.borderColor}]}>
+            <View
+              style={[
+                styles.gridContainer,
+                { borderColor: BOARD_STYLES.borderColor },
+              ]}
+            >
               {board.map((row, rowIndex) => (
                 <View key={`row-${rowIndex}`} style={styles.row}>
                   {row.map((cell, colIndex) => {
-                    const isSelected = selectedCell && 
-                      selectedCell.row === rowIndex && 
+                    const isSelected =
+                      selectedCell &&
+                      selectedCell.row === rowIndex &&
                       selectedCell.col === colIndex;
-                    
+
                     // Gleiche Zahlen nur hervorheben, wenn nicht in gleicher Spalte/Zeile/Box und wenn ausgewählt
-                    const sameValue = selectedCell && 
-                      cell.value !== 0 && 
+                    const sameValue =
+                      selectedCell &&
+                      cell.value !== 0 &&
                       !isRelatedCell(rowIndex, colIndex) &&
-                      board[selectedCell.row][selectedCell.col].value === cell.value;
+                      board[selectedCell.row][selectedCell.col].value ===
+                        cell.value;
 
                     return (
                       <SudokuCell
@@ -117,16 +133,17 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                         isRelated={isRelatedCell(rowIndex, colIndex)}
                         sameValueHighlight={sameValue}
                         onPress={onCellPress}
+                        showErrors={showErrors}
                       />
                     );
                   })}
                 </View>
               ))}
             </View>
-            
+
             {/* Loading Overlay */}
             {isLoading && (
-              <Animated.View 
+              <Animated.View
                 style={styles.loadingOverlay}
                 entering={FadeIn.duration(200)}
                 exiting={FadeOut.duration(200)}

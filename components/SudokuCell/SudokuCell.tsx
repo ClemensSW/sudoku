@@ -19,6 +19,7 @@ interface SudokuCellProps {
   isRelated: boolean;
   sameValueHighlight?: boolean;
   onPress: (row: number, col: number) => void;
+  showErrors?: boolean;
 }
 
 const SudokuCell: React.FC<SudokuCellProps> = ({
@@ -29,6 +30,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   isRelated,
   sameValueHighlight = false,
   onPress,
+  showErrors = true,
 }) => {
   // Animation values
   const scale = useSharedValue(1);
@@ -78,7 +80,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       cellStyles.push(styles.relatedCell);
     }
 
-    if (cell.highlight === "error") {
+    if (showErrors && cell.highlight === "error") {
       cellStyles.push(styles.errorCell);
     } else if (cell.highlight === "hint") {
       cellStyles.push(styles.hintCell);
@@ -95,7 +97,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   const getTextStyles = () => {
     const textStyles = [styles.cellText];
 
-    if (!cell.isValid) {
+    if (showErrors && !cell.isValid) {
       textStyles.push(styles.errorText);
     }
 
@@ -157,6 +159,7 @@ export default memo(SudokuCell, (prevProps, nextProps) => {
     JSON.stringify(prevProps.cell) === JSON.stringify(nextProps.cell) &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.isRelated === nextProps.isRelated &&
-    prevProps.sameValueHighlight === nextProps.sameValueHighlight
+    prevProps.sameValueHighlight === nextProps.sameValueHighlight &&
+    prevProps.showErrors === nextProps.showErrors
   );
 });

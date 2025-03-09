@@ -29,7 +29,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import Header from "@/components/Header/Header";
 import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
-import Timer from "@/components/Timer/Timer";
+import GameStatusBar from "@/components/GameStatusBar/GameStatusBar";
 import SettingsScreen from "@/screens/SettingsScreen/SettingsScreen";
 
 // Game logic
@@ -58,8 +58,9 @@ interface GameScreenProps {
   navigation?: any;
 }
 
-// Konstante für die maximale Anzahl an Hinweisen pro Spiel
+// Konstanten für das Spiel
 const INITIAL_HINTS = 3;
+const MAX_ERRORS = 3;
 
 const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const theme = useTheme();
@@ -89,6 +90,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [highlightRelatedCells, setHighlightRelatedCells] = useState(true);
   const [showMistakes, setShowMistakes] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  // NEU: State für Fehler-Tracking
+  const [errorsRemaining, setErrorsRemaining] = useState(MAX_ERRORS);
 
   // Animation values
   const headerOpacity = useSharedValue(1); // Start with header visible
@@ -166,6 +169,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       setIsLoading(false);
       // Setze Hinweise zurück
       setHintsRemaining(INITIAL_HINTS);
+      // NEU: Setze Fehler zurück
+      setErrorsRemaining(MAX_ERRORS);
 
       // No need to animate opacity if starting at 1
       headerOpacity.value = 1;
@@ -188,6 +193,56 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     setSelectedCell({ row, col });
+  };
+
+  // NEU: Funktion zum Behandeln eines Fehlers
+  const handleError = () => {
+    // Reduziere die Anzahl der verbleibenden Fehler
+    const newErrorsRemaining = errorsRemaining - 1;
+    setErrorsRemaining(newErrorsRemaining);
+
+    // Haptisches Feedback für Fehler
+    if (vibrationEnabled) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+
+    // Wenn keine Fehler mehr übrig sind, beende das Spiel
+    if (newErrorsRemaining <= 0) {
+      handleGameOver();
+    }
+  };
+
+  // NEU: Game Over Handler
+  const handleGameOver = async () => {
+    if (isGameComplete) return;
+
+    setIsGameComplete(true);
+    setIsGameRunning(false);
+
+    // Aktualisiere Statistiken (nicht gewonnen)
+    await updateStatsAfterGame(false, difficulty, gameTime);
+
+    // Feedback für Game Over
+    if (vibrationEnabled) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+
+    // Zeige Game Over Nachricht
+    setTimeout(() => {
+      Alert.alert(
+        "Spiel beendet!",
+        "Du hast zu viele Fehler gemacht. Versuche es erneut!",
+        [
+          {
+            text: "Neues Spiel",
+            onPress: () => {
+              // Navigiere zurück zur Startseite
+              router.navigate("../");
+            },
+          },
+        ]
+      );
+    }, 500);
   };
 
   // Enter a number in a cell
@@ -217,6 +272,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       const previousValue = board[row][col].value;
       const updatedBoard = setCellValue(board, row, col, number);
 
+      // NEU: Überprüfe, ob der Zug einen Fehler verursacht hat
+      const isErrorMove =
+        updatedBoard[row][col].value === number &&
+        !updatedBoard[row][col].isValid;
+
       // If number was successfully set, remove it as a note in related cells
       if (updatedBoard[row][col].value === number && previousValue !== number) {
         const boardWithUpdatedNotes = removeNoteFromRelatedCells(
@@ -226,7 +286,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           number
         );
         setBoard(boardWithUpdatedNotes);
-        if (vibrationEnabled) {
+
+        // NEU: Wenn die Zahl falsch ist und Fehleranzeige aktiviert ist
+        if (isErrorMove && showMistakes) {
+          handleError();
+        } else if (vibrationEnabled) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }
       } else if (!updatedBoard[row][col].isValid && showMistakes) {
@@ -540,17 +604,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           ]}
         >
           <View style={styles.gameContainer}>
-            {/* Timer */}
-            <Animated.View
-              style={styles.timerContainer}
-              entering={FadeInDown.delay(400).duration(500)}
-            >
-              <Timer
-                isRunning={isGameRunning && !isGameComplete}
-                initialTime={gameTime}
-                onTimeUpdate={handleTimeUpdate}
-              />
-            </Animated.View>
+            {/* NEU: GameStatusBar anstelle von Timer */}
+            <GameStatusBar
+              isRunning={isGameRunning && !isGameComplete}
+              initialTime={gameTime}
+              onTimeUpdate={handleTimeUpdate}
+              errorsRemaining={errorsRemaining}
+              maxErrors={MAX_ERRORS}
+            />
 
             <View style={styles.boardContainer}>
               <SudokuBoard

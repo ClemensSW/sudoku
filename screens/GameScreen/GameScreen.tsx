@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
-  Alert,
   ScrollView,
   Text,
   useWindowDimensions,
@@ -24,6 +23,17 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
+import {
+  gameCompletionAlert,
+  gameOverAlert,
+  hintCellAlert,
+  noErrorsAlert,
+  initialCellAlert,
+  noHintsAlert,
+  autoNotesAlert,
+  quitGameAlert,
+} from "@/components/CustomAlert/AlertHelpers";
 
 // Components
 import Header from "@/components/Header/Header";
@@ -68,6 +78,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { showAlert } = useAlert();
 
   // Game state
   const [board, setBoard] = useState<SudokuBoardType>([]);
@@ -231,25 +242,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
 
-    // Zeige Game Over Nachricht
+    // Zeige Game Over Nachricht mit Custom Alert
     setTimeout(() => {
-      let message = "Du hast zu viele Fehler gemacht. Versuche es erneut!";
-
-      // Wenn Auto-Notizen verwendet wurden, zeige einen Hinweis an
-      if (autoNotesUsed) {
-        message +=
-          "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
-      }
-
-      Alert.alert("Spiel beendet!", message, [
-        {
-          text: "Neues Spiel",
-          onPress: () => {
-            // Navigiere zurück zur Startseite
-            router.navigate("../");
-          },
-        },
-      ]);
+      const alertConfig = gameOverAlert(autoNotesUsed, () =>
+        router.navigate("../")
+      );
+      showAlert(alertConfig);
     }, 500);
   };
 
@@ -347,11 +345,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       if (vibrationEnabled) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
-      Alert.alert(
-        "Keine Hinweise mehr",
-        "Du hast deine 3 Hinweise bereits aufgebraucht.",
-        [{ text: "OK" }]
-      );
+      showAlert(noHintsAlert());
       return;
     }
 
@@ -364,18 +358,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         setSelectedCell(hintCell);
 
         // Show a message
-        Alert.alert(
-          "Hinweis",
-          "Diese Zelle solltest du als nächstes ausfüllen. Drücke erneut auf den Hinweis-Button, um die richtige Zahl zu sehen.",
-          [{ text: "OK" }]
-        );
+        showAlert(hintCellAlert());
       } else {
         // No errors found
-        Alert.alert(
-          "Keine Fehler gefunden",
-          "Dein Sudoku sieht gut aus! Fahre so fort.",
-          [{ text: "OK" }]
-        );
+        showAlert(noErrorsAlert());
       }
 
       return;
@@ -385,9 +371,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     const { row, col } = selectedCell;
 
     if (board[row][col].isInitial) {
-      Alert.alert("Hinweis", "Diese Zelle ist bereits korrekt ausgefüllt.", [
-        { text: "OK" },
-      ]);
+      showAlert(initialCellAlert());
       return;
     }
 
@@ -415,11 +399,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
 
     // Nur eine Benachrichtigung anzeigen
-    Alert.alert(
-      "Automatische Notizen",
-      "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
-      [{ text: "OK" }]
-    );
+    showAlert(autoNotesAlert());
+  };
+
+  // Format time (MM:SS)
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   // NEU: Aktualisierte Game Completion Handler
@@ -437,25 +427,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    // Show success message
+    // Show success message with custom alert
     setTimeout(() => {
-      let message = `Du hast das Sudoku in ${formatTime(gameTime)} gelöst!`;
-
-      // Wenn Auto-Notizen verwendet wurden, zeige einen Hinweis an
-      if (autoNotesUsed) {
-        message +=
-          "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
-      }
-
-      Alert.alert("Glückwunsch!", message, [
-        {
-          text: "Neues Spiel",
-          onPress: () => {
-            // Navigiere zurück zur Startseite
-            router.navigate("../");
-          },
-        },
-      ]);
+      const alertConfig = gameCompletionAlert(
+        formatTime(gameTime),
+        autoNotesUsed,
+        () => router.navigate("../")
+      );
+      showAlert(alertConfig);
     }, 500);
   };
 
@@ -489,35 +468,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     setUsedNumbers(used);
   };
 
-  // Format time (MM:SS)
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
   // Handle back navigation
   const handleBackPress = () => {
     if (isGameRunning && !isGameComplete) {
-      Alert.alert(
-        "Zurück zum Hauptmenü?",
-        "Dein aktueller Spielfortschritt geht verloren.",
-        [
-          {
-            text: "Abbrechen",
-            style: "cancel",
-          },
-          {
-            text: "Zum Menü",
-            onPress: () => {
-              // Navigiere zwei Ebenen zurück
-              router.navigate("../");
-            },
-          },
-        ]
+      // Show custom confirmation alert
+      showAlert(
+        quitGameAlert(
+          () => router.navigate("../"), // onConfirm
+          undefined // onCancel (default behavior)
+        )
       );
     } else {
       // Navigiere zwei Ebenen zurück
@@ -557,14 +516,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    // Nur eine Benachrichtigung anzeigen
-    // Verwende setTimeout, um die Meldung erst nach dem Schließen der Einstellungen anzuzeigen
+    // Verzögert die Anzeige der Benachrichtigung, um das Schließen der Einstellungen abzuwarten
     setTimeout(() => {
-      Alert.alert(
-        "Notizen aktualisiert",
-        "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
-        [{ text: "OK" }]
-      );
+      showAlert(autoNotesAlert());
     }, 300);
   };
 

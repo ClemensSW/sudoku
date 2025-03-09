@@ -6,7 +6,6 @@ import {
   Switch,
   TouchableOpacity,
   SafeAreaView,
-  Alert,
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -22,6 +21,8 @@ import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
+import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import Header from "@/components/Header/Header";
 import StatisticsDisplay from "@/components/StatisticsDisplay/StatisticsDisplay";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
@@ -45,6 +46,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { showAlert } = useAlert();
 
   // State for settings and statistics
   const [settings, setSettings] = useState<GameSettings | null>(null);
@@ -86,8 +88,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     if (onAutoNotes) {
       onAutoNotes();
       handleBack();
-
-      
     }
   };
 
@@ -100,28 +100,16 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     }
   };
 
-  // Quit game
+  // Quit game - Using custom alert
   const handleQuitGame = () => {
-    Alert.alert(
-      "Spiel beenden?",
-      "Bist du sicher, dass du das aktuelle Spiel beenden möchtest? Dein Fortschritt geht verloren.",
-      [
-        {
-          text: "Abbrechen",
-          style: "cancel",
-        },
-        {
-          text: "Beenden",
-          style: "destructive",
-          onPress: () => {
-            if (onQuitGame) {
-              onQuitGame();
-            } else {
-              router.navigate("/");
-            }
-          },
-        },
-      ]
+    showAlert(
+      quitGameAlert(() => {
+        if (onQuitGame) {
+          onQuitGame();
+        } else {
+          router.navigate("/");
+        }
+      })
     );
   };
 
@@ -225,7 +213,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
                 />
               </View>
 
@@ -260,7 +248,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
                 />
               </View>
 
@@ -290,7 +278,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor={theme.isDark ? colors.background : "#FFFFFF"}
+                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
                 />
               </View>
             </View>

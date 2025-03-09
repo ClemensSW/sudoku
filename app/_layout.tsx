@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
 import { ThemeProvider } from "@/utils/theme/ThemeProvider";
+import { AlertProvider } from "@/components/CustomAlert/AlertProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Platform } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
@@ -23,20 +24,22 @@ export default function AppLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          {/* Statusleiste komplett ausblenden */}
-          <StatusBar hidden={true} />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: "fade",
-              contentStyle: { backgroundColor: "transparent" }, // Prevents white flash during transitions
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="game" />
-            <Stack.Screen name="settings" />
-            <Stack.Screen name="(game)" />
-          </Stack>
+          <AlertProvider>
+            {/* Statusleiste komplett ausblenden */}
+            <StatusBar hidden={true} />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: "fade",
+                contentStyle: { backgroundColor: "transparent" }, // Prevents white flash during transitions
+              }}
+            >
+              <Stack.Screen name="index" />
+              <Stack.Screen name="game" />
+              <Stack.Screen name="settings" />
+              <Stack.Screen name="(game)" />
+            </Stack>
+          </AlertProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

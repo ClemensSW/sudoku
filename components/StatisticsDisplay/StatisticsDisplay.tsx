@@ -315,7 +315,7 @@ const StatisticsDisplay: React.FC<StatisticsDisplayProps> = ({ stats }) => {
               />
             </View>
             <Text style={styles.levelProgressText}>
-              {totalXP} / {nextLevelXP} XP ({levelProgress}%)
+              {totalXP} / {nextLevelXP} XP
             </Text>
           </View>
         </View>

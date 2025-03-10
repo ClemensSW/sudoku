@@ -23,6 +23,8 @@ interface NumberPadProps {
   hintsRemaining?: number; // Anzahl verbleibender Hinweise
 }
 
+type ButtonKey = string;
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const NumberPad: React.FC<NumberPadProps> = ({
@@ -39,15 +41,21 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const colors = theme.colors;
 
   // Map für tracking animation values by button
-  const buttonScales = React.useRef(
+  const buttonScales = React.useRef<
+    Map<ButtonKey, Animated.SharedValue<number>>
+  >(
     new Map([
       ["note", useSharedValue(1)],
       ["erase", useSharedValue(1)],
       ["hint", useSharedValue(1)],
-      ...Array.from({ length: 9 }, (_, i) => [
-        String(i + 1),
-        useSharedValue(1),
-      ]),
+      ...Array.from(
+        { length: 9 },
+        (_, i) =>
+          [String(i + 1), useSharedValue(1)] as [
+            ButtonKey,
+            Animated.SharedValue<number>
+          ]
+      ),
     ])
   ).current;
 
@@ -84,7 +92,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
   };
 
   // Create animated style for a specific button
-  const getAnimatedStyle = (key: string) => {
+  const getAnimatedStyle = (key: ButtonKey) => {
     const scale = buttonScales.get(key);
 
     return useAnimatedStyle(() => {

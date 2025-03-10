@@ -1,5 +1,12 @@
 import React, { memo, useEffect } from "react";
-import { Text, Pressable, View } from "react-native";
+import {
+  Text,
+  Pressable,
+  View,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 import { SudokuCell as SudokuCellType } from "@/utils/sudoku";
 import Animated, {
   useAnimatedStyle,
@@ -61,7 +68,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
   // Berechne Zellstile basierend auf Zustand
   const getCellStyles = () => {
-    const cellStyles = [styles.cell];
+    const cellStyles: Array<ViewStyle | any> = [styles.cell];
 
     // Grenzen für 3x3 Boxen
     if ((row + 1) % 3 === 0 && row !== 8) {
@@ -95,7 +102,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
   // Textstil basierend auf Zellstatus
   const getTextStyles = () => {
-    const textStyles = [styles.cellText];
+    const textStyles: Array<TextStyle | any> = [styles.cellText];
 
     if (showErrors && !cell.isValid) {
       textStyles.push(styles.errorText);

@@ -110,18 +110,20 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
               {board.map((row, rowIndex) => (
                 <View key={`row-${rowIndex}`} style={styles.row}>
                   {row.map((cell, colIndex) => {
-                    const isSelected =
+                    const isSelected = !!(
                       selectedCell &&
                       selectedCell.row === rowIndex &&
-                      selectedCell.col === colIndex;
+                      selectedCell.col === colIndex
+                    );
 
                     // Gleiche Zahlen nur hervorheben, wenn nicht in gleicher Spalte/Zeile/Box und wenn ausgewählt
-                    const sameValue =
+                    const sameValue = !!(
                       selectedCell &&
                       cell.value !== 0 &&
                       !isRelatedCell(rowIndex, colIndex) &&
                       board[selectedCell.row][selectedCell.col].value ===
-                        cell.value;
+                        cell.value
+                    );
 
                     return (
                       <SudokuCell

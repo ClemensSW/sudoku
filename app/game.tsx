@@ -8,14 +8,19 @@ export default function GameRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    // Korrigierter Routenpfad: ohne führenden Schrägstrich
-    const route = difficulty
-      ? { pathname: "(game)", params: { difficulty } }
-      : "(game)";
-
-    router.replace(route);
+    // Use separate logic paths for better type safety
+    if (difficulty) {
+      // When we have a difficulty parameter, use the properly typed object format
+      router.replace({
+        pathname: "/(game)" as const, // Use 'as const' to ensure literal type
+        params: { difficulty },
+      });
+    } else {
+      // Simple string path when no parameters are needed
+      router.replace("/(game)");
+    }
   }, [difficulty, router]);
 
-  // Zeige nichts an während der Weiterleitung
+  // Show nothing during redirect
   return null;
 }

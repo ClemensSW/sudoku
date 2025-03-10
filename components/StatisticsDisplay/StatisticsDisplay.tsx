@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { View, Text, ScrollView, Dimensions } from "react-native";
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   FadeIn,
@@ -30,7 +30,7 @@ const getBestTime = (time: number): string => {
   return time === Infinity ? "--:--" : formatTime(time);
 };
 
-// Bar chart for best times comparison - Direktere Implementierung
+// Bar chart for best times comparison - TypeScript-kompatible Version
 const BestTimesChart = ({ stats }: { stats: GameStats }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -54,10 +54,10 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
 
   console.log("Max time for scaling:", maxTime);
 
-  // Calculate percentage directly
-  const getBarPercentage = (time: number): string => {
-    if (time <= 0 || time === Infinity) return "0%";
-    return `${Math.round((time / maxTime) * 100)}%`;
+  // Calculate percentage directly - now returns a number between 0 and 1
+  const getBarPercentage = (time: number): number => {
+    if (time <= 0 || time === Infinity) return 0;
+    return time / maxTime;
   };
 
   // Debugging percent values
@@ -68,13 +68,13 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
     expert: getBarPercentage(stats.bestTimeExpert),
   });
 
-  // Bar data with direct percentages
+  // Bar data with numeric percentages
   const difficulties: {
     key: Difficulty;
     name: string;
     color: string;
     time: number;
-    percentage: string;
+    percentage: number;
   }[] = [
     {
       key: "easy",
@@ -106,6 +106,10 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
     },
   ];
 
+  // Berechne die maximale Breite für die Skalierung
+  // Hier nehmen wir an, dass die chartBarBackground ungefähr 200 Einheiten breit ist
+  const MAX_BAR_WIDTH = 200;
+
   return (
     <Animated.View
       style={[styles.bestTimesContainer, { backgroundColor: colors.surface }]}
@@ -117,6 +121,9 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
 
       <View style={styles.chartContainer}>
         {difficulties.map((diff, index) => {
+          // Berechne die reale Breite basierend auf dem Prozentsatz
+          const barWidth = diff.percentage * MAX_BAR_WIDTH;
+
           return (
             <Animated.View
               key={diff.key}
@@ -141,16 +148,15 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
                   },
                 ]}
               >
-                {/* Direkte Prozentangabe für die Balkenbreite */}
-                <Animated.View
+                {/* Verwende reguläre View mit fester Anzahl an Pixeln */}
+                <View
                   style={[
                     styles.chartBar,
                     {
                       backgroundColor: diff.color,
-                      width: diff.percentage,
+                      width: barWidth,
                     },
                   ]}
-                  entering={FadeIn.delay(600 + index * 100).duration(600)}
                 />
               </View>
 

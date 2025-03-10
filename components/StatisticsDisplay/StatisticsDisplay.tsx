@@ -5,13 +5,10 @@ import Animated, {
   FadeIn,
   FadeInUp,
   FadeInDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { GameStats, Difficulty } from "@/utils/sudoku";
+import { Difficulty } from "@/utils/sudoku";
+import { GameStats } from "@/utils/storage"; // Import von storage statt sudoku
 import { CircularProgress } from "@/components/CircularProgress/CircularProgress";
 import styles from "./StatisticsDisplay.styles";
 
@@ -33,88 +30,79 @@ const getBestTime = (time: number): string => {
   return time === Infinity ? "--:--" : formatTime(time);
 };
 
-// Bar chart for best times comparison
+// Bar chart for best times comparison - Direktere Implementierung
 const BestTimesChart = ({ stats }: { stats: GameStats }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  const { width } = Dimensions.get("window");
-  const chartWidth = width - 64;
 
   // Max time for scaling (use largest non-infinity time or default to 15 minutes)
-  const timesArray = [
-    stats.bestTimeEasy === Infinity ? 0 : stats.bestTimeEasy,
-    stats.bestTimeMedium === Infinity ? 0 : stats.bestTimeMedium,
-    stats.bestTimeHard === Infinity ? 0 : stats.bestTimeHard,
-    stats.bestTimeExpert === Infinity ? 0 : stats.bestTimeExpert,
-  ];
+  const validTimes = [
+    stats.bestTimeEasy > 0 ? stats.bestTimeEasy : 0,
+    stats.bestTimeMedium > 0 ? stats.bestTimeMedium : 0,
+    stats.bestTimeHard > 0 ? stats.bestTimeHard : 0,
+    stats.bestTimeExpert > 0 ? stats.bestTimeExpert : 0,
+  ].filter((time) => time > 0);
 
-  const maxTime = Math.max(...timesArray) || 900; // 15 minutes default if all are Infinity
+  const maxTime = validTimes.length > 0 ? Math.max(...validTimes) : 900; // 15 minutes default
 
-  // Animation values
-  const barWidth1 = useSharedValue(0);
-  const barWidth2 = useSharedValue(0);
-  const barWidth3 = useSharedValue(0);
-  const barWidth4 = useSharedValue(0);
+  console.log("Raw best times:", {
+    easy: stats.bestTimeEasy,
+    medium: stats.bestTimeMedium,
+    hard: stats.bestTimeHard,
+    expert: stats.bestTimeExpert,
+  });
 
-  // Start animations when component mounts
-  useEffect(() => {
-    const easyWidth =
-      stats.bestTimeEasy === Infinity
-        ? 0
-        : (stats.bestTimeEasy / maxTime) * chartWidth;
-    const mediumWidth =
-      stats.bestTimeMedium === Infinity
-        ? 0
-        : (stats.bestTimeMedium / maxTime) * chartWidth;
-    const hardWidth =
-      stats.bestTimeHard === Infinity
-        ? 0
-        : (stats.bestTimeHard / maxTime) * chartWidth;
-    const expertWidth =
-      stats.bestTimeExpert === Infinity
-        ? 0
-        : (stats.bestTimeExpert / maxTime) * chartWidth;
+  console.log("Max time for scaling:", maxTime);
 
-    setTimeout(() => {
-      barWidth1.value = withTiming(easyWidth, {
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-      });
-      barWidth2.value = withTiming(mediumWidth, {
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-      });
-      barWidth3.value = withTiming(hardWidth, {
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-      });
-      barWidth4.value = withTiming(expertWidth, {
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-      });
-    }, 300);
-  }, []);
+  // Calculate percentage directly
+  const getBarPercentage = (time: number): string => {
+    if (time <= 0 || time === Infinity) return "0%";
+    return `${Math.round((time / maxTime) * 100)}%`;
+  };
 
-  // Animated styles
-  const barStyle1 = useAnimatedStyle(() => ({ width: barWidth1.value }));
-  const barStyle2 = useAnimatedStyle(() => ({ width: barWidth2.value }));
-  const barStyle3 = useAnimatedStyle(() => ({ width: barWidth3.value }));
-  const barStyle4 = useAnimatedStyle(() => ({ width: barWidth4.value }));
+  // Debugging percent values
+  console.log("Calculated percentages:", {
+    easy: getBarPercentage(stats.bestTimeEasy),
+    medium: getBarPercentage(stats.bestTimeMedium),
+    hard: getBarPercentage(stats.bestTimeHard),
+    expert: getBarPercentage(stats.bestTimeExpert),
+  });
 
+  // Bar data with direct percentages
   const difficulties: {
     key: Difficulty;
     name: string;
     color: string;
-    style: any;
+    time: number;
+    percentage: string;
   }[] = [
-    { key: "easy", name: "Leicht", color: colors.success, style: barStyle1 },
-    { key: "medium", name: "Mittel", color: colors.warning, style: barStyle2 },
-    { key: "hard", name: "Schwer", color: colors.error, style: barStyle3 },
+    {
+      key: "easy",
+      name: "Leicht",
+      color: colors.success,
+      time: stats.bestTimeEasy,
+      percentage: getBarPercentage(stats.bestTimeEasy),
+    },
+    {
+      key: "medium",
+      name: "Mittel",
+      color: colors.warning,
+      time: stats.bestTimeMedium,
+      percentage: getBarPercentage(stats.bestTimeMedium),
+    },
+    {
+      key: "hard",
+      name: "Schwer",
+      color: colors.error,
+      time: stats.bestTimeHard,
+      percentage: getBarPercentage(stats.bestTimeHard),
+    },
     {
       key: "expert",
       name: "Experte",
       color: colors.secondary,
-      style: barStyle4,
+      time: stats.bestTimeExpert,
+      percentage: getBarPercentage(stats.bestTimeExpert),
     },
   ];
 
@@ -129,15 +117,6 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
 
       <View style={styles.chartContainer}>
         {difficulties.map((diff, index) => {
-          const time =
-            diff.key === "easy"
-              ? stats.bestTimeEasy
-              : diff.key === "medium"
-              ? stats.bestTimeMedium
-              : diff.key === "hard"
-              ? stats.bestTimeHard
-              : stats.bestTimeExpert;
-
           return (
             <Animated.View
               key={diff.key}
@@ -162,17 +141,21 @@ const BestTimesChart = ({ stats }: { stats: GameStats }) => {
                   },
                 ]}
               >
+                {/* Direkte Prozentangabe für die Balkenbreite */}
                 <Animated.View
                   style={[
                     styles.chartBar,
-                    { backgroundColor: diff.color },
-                    diff.style,
+                    {
+                      backgroundColor: diff.color,
+                      width: diff.percentage,
+                    },
                   ]}
+                  entering={FadeIn.delay(600 + index * 100).duration(600)}
                 />
               </View>
 
               <Text style={[styles.chartValue, { color: colors.textPrimary }]}>
-                {getBestTime(time)}
+                {getBestTime(diff.time)}
               </Text>
             </Animated.View>
           );

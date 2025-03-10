@@ -75,8 +75,8 @@ export const BOARD_SIZE = 9;
 export const BOX_SIZE = 3;
 export const VALID_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-// Datenstruktur für die Statistik
-export interface GameStats {
+// Datenstruktur für die Statistik - Umbenannt, um Konflikte zu vermeiden
+export interface SudokuGameStats {
   games: {
     total: number;
     completed: number;

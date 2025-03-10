@@ -110,17 +110,23 @@ export const loadStats = async (): Promise<GameStats> => {
   }
 };
 
-// Aktualisierte Funktion mit autoNotesUsed Parameter
+// Aktualisierte Funktion mit verbesserter Bestzeiten-Logik
 export const updateStatsAfterGame = async (
   won: boolean,
   difficulty: "easy" | "medium" | "hard" | "expert",
   timeElapsed: number,
-  autoNotesUsed: boolean = false // Neuer Parameter zur Verfolgung, ob automatische Notizen verwendet wurden
+  autoNotesUsed: boolean = false
 ): Promise<void> => {
   try {
     // Wenn automatische Notizen verwendet wurden, aktualisieren wir die Statistiken nicht
     if (autoNotesUsed) {
       console.log("Auto notes were used - not updating statistics");
+      return;
+    }
+
+    // Zeit muss größer als 0 sein, um gültig zu sein
+    if (timeElapsed <= 0) {
+      console.log("Invalid time (0 or negative), not updating statistics");
       return;
     }
 
@@ -139,28 +145,40 @@ export const updateStatsAfterGame = async (
 
     // Aktualisiere Bestzeit nur wenn das Spiel gewonnen wurde
     if (won) {
-      if (difficulty === "easy" && timeElapsed < currentStats.bestTimeEasy) {
+      // Behandle alle Schwierigkeitsgrade gleich mit konsistenter Logik
+      // Aktualisiere Zeit wenn: aktuelle Zeit ungültig (0 oder Infinity) ODER neue Zeit besser ist
+      if (
+        difficulty === "easy" &&
+        (currentStats.bestTimeEasy <= 0 ||
+          currentStats.bestTimeEasy === Infinity ||
+          timeElapsed < currentStats.bestTimeEasy)
+      ) {
         updatedStats.bestTimeEasy = timeElapsed;
       } else if (
         difficulty === "medium" &&
-        timeElapsed < currentStats.bestTimeMedium
+        (currentStats.bestTimeMedium <= 0 ||
+          currentStats.bestTimeMedium === Infinity ||
+          timeElapsed < currentStats.bestTimeMedium)
       ) {
         updatedStats.bestTimeMedium = timeElapsed;
       } else if (
         difficulty === "hard" &&
-        timeElapsed < currentStats.bestTimeHard
+        (currentStats.bestTimeHard <= 0 ||
+          currentStats.bestTimeHard === Infinity ||
+          timeElapsed < currentStats.bestTimeHard)
       ) {
         updatedStats.bestTimeHard = timeElapsed;
       } else if (
         difficulty === "expert" &&
-        (timeElapsed < currentStats.bestTimeExpert ||
-          !currentStats.bestTimeExpert ||
-          currentStats.bestTimeExpert === Infinity)
+        (currentStats.bestTimeExpert <= 0 ||
+          currentStats.bestTimeExpert === Infinity ||
+          timeElapsed < currentStats.bestTimeExpert)
       ) {
         updatedStats.bestTimeExpert = timeElapsed;
       }
     }
 
+    console.log("Saving updated stats:", updatedStats);
     await saveStats(updatedStats);
   } catch (error) {
     console.error("Error updating statistics:", error);

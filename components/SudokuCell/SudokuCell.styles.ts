@@ -16,33 +16,30 @@ export default StyleSheet.create({
     height: CELL_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderWidth: 0.5, // Dünnere normalen Grenzen für besseren Kontrast zu Blockgrenzen
+    borderColor: "rgba(255, 255, 255, 0.2)", // Subtilere Farbe für normale Zellgrenzen
     backgroundColor: "transparent",
+    zIndex: 1, // Niedrigerer z-index als die Blockgrenzen
   },
 
-  // Zellgrenzen für 3x3 Boxen
-  rightBorder: {
-    borderRightWidth: 2,
-    borderRightColor: "rgba(255, 255, 255, 0.6)",
-  },
-
-  bottomBorder: {
-    borderBottomWidth: 2,
-    borderBottomColor: "rgba(255, 255, 255, 0.6)",
-  },
-
-  // Zellzustände mit verbesserten Kontrasten
+  // Zellzustände mit deutlicheren visuellen Unterschieden
   selectedCell: {
-    backgroundColor: "rgba(255, 255, 255, 0.35)", // Leicht erhöhter Kontrast
+    backgroundColor: "rgba(255, 255, 255, 0.4)", // Stärkerer Kontrast für ausgewählte Zelle
   },
 
   relatedCell: {
-    backgroundColor: "rgba(255, 255, 255, 0.15)", // Leicht erhöhter Kontrast
+    backgroundColor: "rgba(255, 255, 255, 0.15)", // Subtiler Kontrast für Zeile/Spalte/Box
   },
 
   sameValueCell: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Leicht erhöhter Kontrast
+    // Kein Hintergrund für Zellen mit gleichen Werten
+    backgroundColor: "transparent",
+  },
+
+  // Neuer Style für Text in Zellen mit gleichem Wert
+  sameValueText: {
+    color: "rgba(130, 210, 255, 1)", // Helles Blau, das zum Design passt
+    fontWeight: "700",
   },
 
   errorCell: {

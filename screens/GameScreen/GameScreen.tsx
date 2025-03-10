@@ -4,9 +4,9 @@ import {
   ScrollView,
   Text,
   useWindowDimensions,
-  SafeAreaView,
   StyleSheet,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context"; // Korrekter Import von SafeAreaView
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";

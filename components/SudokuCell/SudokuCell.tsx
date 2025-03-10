@@ -70,12 +70,15 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   const getCellStyles = () => {
     const cellStyles: Array<ViewStyle | any> = [styles.cell];
 
-    // Grenzen für 3x3 Boxen
-    if ((row + 1) % 3 === 0 && row !== 8) {
-      cellStyles.push(styles.bottomBorder);
-    }
-    if ((col + 1) % 3 === 0 && col !== 8) {
-      cellStyles.push(styles.rightBorder);
+    // Die 3x3 Boxgrenzen werden jetzt durch absolute Elemente im Board umgesetzt
+    // Wir behalten hier nur die Blockfärbung
+
+    // Subtile Blockfärbung - für bessere visuelle Trennung der 3x3 Blöcke
+    const blockRow = Math.floor(row / 3);
+    const blockCol = Math.floor(col / 3);
+    if ((blockRow + blockCol) % 2 === 1) {
+      // Alternierend leicht dunklere Blöcke für bessere visuelle Unterscheidung - sehr subtil
+      cellStyles.push({ backgroundColor: "rgba(0, 0, 0, 0.03)" });
     }
 
     // Zellstatus-spezifische Styles
@@ -110,6 +113,11 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
     if (cell.isInitial) {
       textStyles.push(styles.initialText); // Behalte fette Schrift für vorgegebene Zahlen
+    }
+
+    // Hervorhebung der gleichen Zahlen mit einer anderen Textfarbe statt Hintergrund
+    if (sameValueHighlight) {
+      textStyles.push(styles.sameValueText);
     }
 
     return textStyles;

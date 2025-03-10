@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import styles from "./SudokuBoard.styles";
+import styles, { BOARD_SIZE, GRID_SIZE, CELL_SIZE } from "./SudokuBoard.styles"; // CELL_SIZE importieren
 import { SUDOKU_COLORS, BOARD_STYLES } from "@/utils/theme/sudokuTheme";
 
 interface SudokuBoardProps {
@@ -104,9 +104,43 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
             <View
               style={[
                 styles.gridContainer,
-                { borderColor: BOARD_STYLES.borderColor },
+                { borderColor: "#FFFFFF" }, // Überschreibe explizit alle Theme-Einstellungen
               ]}
             >
+              {/* 3x3 Blockgrenzen als absolute Elemente */}
+              {/* Horizontale Linien */}
+              <View
+                style={[
+                  styles.gridLine,
+                  styles.horizontalGridLine,
+                  { top: CELL_SIZE * 3 },
+                ]}
+              />
+              <View
+                style={[
+                  styles.gridLine,
+                  styles.horizontalGridLine,
+                  { top: CELL_SIZE * 6 },
+                ]}
+              />
+
+              {/* Vertikale Linien */}
+              <View
+                style={[
+                  styles.gridLine,
+                  styles.verticalGridLine,
+                  { left: CELL_SIZE * 3 },
+                ]}
+              />
+              <View
+                style={[
+                  styles.gridLine,
+                  styles.verticalGridLine,
+                  { left: CELL_SIZE * 6 },
+                ]}
+              />
+
+              {/* Zeilen und Zellen rendern */}
               {board.map((row, rowIndex) => (
                 <View key={`row-${rowIndex}`} style={styles.row}>
                   {row.map((cell, colIndex) => {
@@ -116,11 +150,15 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                       selectedCell.col === colIndex
                     );
 
-                    // Gleiche Zahlen nur hervorheben, wenn nicht in gleicher Spalte/Zeile/Box und wenn ausgewählt
+                    // Gleiche Zahlen hervorheben, wenn die Zelle nicht ausgewählt ist, einen Wert hat und
+                    // der Wert mit der ausgewählten Zelle übereinstimmt
                     const sameValue = !!(
                       selectedCell &&
                       cell.value !== 0 &&
-                      !isRelatedCell(rowIndex, colIndex) &&
+                      !(
+                        selectedCell.row === rowIndex &&
+                        selectedCell.col === colIndex
+                      ) && // Nicht die ausgewählte Zelle selbst
                       board[selectedCell.row][selectedCell.col].value ===
                         cell.value
                     );

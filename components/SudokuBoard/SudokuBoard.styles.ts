@@ -52,7 +52,7 @@ export default StyleSheet.create({
   // Stil für Gridlinien
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     zIndex: 5, // Höherer z-index als Zellen
   },
 

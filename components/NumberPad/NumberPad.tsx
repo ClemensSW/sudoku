@@ -7,7 +7,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./NumberPad.styles";
@@ -20,10 +19,8 @@ interface NumberPadProps {
   noteModeActive: boolean;
   disabledNumbers?: number[];
   showHint?: boolean;
-  hintsRemaining?: number; // Anzahl verbleibender Hinweise
+  hintsRemaining?: number;
 }
-
-type ButtonKey = string;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -40,71 +37,47 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Map für tracking animation values by button
-  const buttonScales = React.useRef<
-    Map<ButtonKey, Animated.SharedValue<number>>
-  >(
-    new Map([
-      ["note", useSharedValue(1)],
-      ["erase", useSharedValue(1)],
-      ["hint", useSharedValue(1)],
-      ...Array.from(
-        { length: 9 },
-        (_, i) =>
-          [String(i + 1), useSharedValue(1)] as [
-            ButtonKey,
-            Animated.SharedValue<number>
-          ]
-      ),
-    ])
-  ).current;
+  // Feste Farbwerte für Button-Design - unabhängig vom Theme-System
+  const BUTTON_BLUE = "#4361EE";
+  const BUTTON_TEXT_WHITE = "#FFFFFF";
 
-  // Handle button press with animation and haptic feedback
+  // Individuelle Animation-Werte für jeden Button
+  const noteScale = useSharedValue(1);
+  const eraseScale = useSharedValue(1);
+  const hintScale = useSharedValue(1);
+
+  // Animation-Werte für Zahlenbuttons als Array
+  const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
+
+  // Button-Animation-Handler
   const handleButtonPress = (
-    type: "number" | "action",
-    value: number | string,
-    callback: () => void,
-    disabled = false
+    scaleValue: Animated.SharedValue<number>,
+    callback: () => void
   ) => {
-    if (disabled) return;
+    scaleValue.value = withSpring(0.9, { damping: 9, stiffness: 400 });
 
-    // Get shared value for this button
-    const buttonKey = typeof value === "number" ? String(value) : value;
-    const scale = buttonScales.get(buttonKey);
+    setTimeout(() => {
+      scaleValue.value = withSpring(1, { damping: 12, stiffness: 400 });
+    }, 100);
 
-    if (scale) {
-      // Play press animation
-      scale.value = withSpring(0.9, { damping: 9, stiffness: 400 });
-      setTimeout(() => {
-        scale.value = withSpring(1, { damping: 12, stiffness: 400 });
-      }, 100);
+    // Haptisches Feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      // Trigger haptic feedback
-      if (type === "number") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      } else {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      }
-
-      // Call the callback
-      callback();
-    }
+    // Callback ausführen
+    callback();
   };
 
-  // Create animated style for a specific button
-  const getAnimatedStyle = (key: ButtonKey) => {
-    const scale = buttonScales.get(key);
-
+  // Animation-Styles erstellen
+  const getAnimatedStyle = (index: number) => {
     return useAnimatedStyle(() => {
       return {
-        transform: [{ scale: scale?.value || 1 }],
+        transform: [{ scale: numberScales[index].value }],
       };
     });
   };
 
-  // Render action buttons (note, erase, hint)
+  // Render action buttons
   const renderActionButtons = () => {
-    // Prüfen, ob Hinweise verfügbar sind
     const hintDisabled = hintsRemaining <= 0;
 
     return (
@@ -124,12 +97,12 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 borderWidth: noteModeActive ? 2 : 0,
                 borderColor: colors.primary,
               },
-              getAnimatedStyle("note"),
+              useAnimatedStyle(() => ({
+                transform: [{ scale: noteScale.value }],
+              })),
             ]}
-            onPress={() => handleButtonPress("action", "note", onNoteToggle)}
-            android_ripple={{
-              color: "rgba(255,255,255,0.2)",
-              borderless: true,
+            onPress={() => {
+              handleButtonPress(noteScale, onNoteToggle);
             }}
           >
             <MaterialCommunityIcons
@@ -141,19 +114,13 @@ const NumberPad: React.FC<NumberPadProps> = ({
             />
           </AnimatedPressable>
           <Text
-            style={[
-              styles.actionButtonLabel,
-              {
-                color: noteModeActive ? colors.primary : colors.textSecondary,
-                fontWeight: noteModeActive ? "600" : "500",
-              },
-            ]}
+            style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
           >
             Notiz
           </Text>
         </Animated.View>
 
-        {/* Löschen-Button (Radiergummi) */}
+        {/* Löschen-Button */}
         <Animated.View
           style={styles.actionButtonContainer}
           entering={FadeInUp.delay(200).duration(400)}
@@ -166,10 +133,13 @@ const NumberPad: React.FC<NumberPadProps> = ({
                   ? colors.surface
                   : colors.numberPadButton,
               },
-              getAnimatedStyle("erase"),
+              useAnimatedStyle(() => ({
+                transform: [{ scale: eraseScale.value }],
+              })),
             ]}
-            onPress={() => handleButtonPress("action", "erase", onErasePress)}
-            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
+            onPress={() => {
+              handleButtonPress(eraseScale, onErasePress);
+            }}
           >
             <MaterialCommunityIcons
               name="eraser"
@@ -184,7 +154,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
           </Text>
         </Animated.View>
 
-        {/* Hinweis-Button mit Counter */}
+        {/* Hinweis-Button */}
         {showHint && onHintPress && (
           <Animated.View
             style={styles.actionButtonContainer}
@@ -200,15 +170,17 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     ? colors.surface
                     : colors.numberPadButton,
                 },
-                getAnimatedStyle("hint"),
+                useAnimatedStyle(() => ({
+                  transform: [{ scale: hintScale.value }],
+                })),
               ]}
-              onPress={() =>
-                handleButtonPress("action", "hint", onHintPress, hintDisabled)
-              }
+              onPress={() => {
+                if (!hintDisabled) {
+                  handleButtonPress(hintScale, onHintPress);
+                }
+              }}
               disabled={hintDisabled}
-              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
             >
-              {/* Hinweis-Icon */}
               <MaterialCommunityIcons
                 name="lightbulb-outline"
                 size={24}
@@ -219,7 +191,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 }
               />
 
-              {/* Hinweis-Counter-Badge im Primärfarbenschema */}
               {!hintDisabled && (
                 <View
                   style={[
@@ -251,13 +222,12 @@ const NumberPad: React.FC<NumberPadProps> = ({
 
   // Render number buttons in a single row
   const renderNumberButtons = () => {
-    // Moderne Anordnung: eine Reihe mit Zahlen von 1-9
     return (
       <View style={styles.numbersRow}>
         {Array.from({ length: 9 }, (_, i) => {
           const num = i + 1;
           const isDisabled = disabledNumbers.includes(num);
-          const delay = 200 + i * 30; // Leicht verzögerte Animation
+          const delay = 200 + i * 30;
 
           return (
             <Animated.View
@@ -267,41 +237,40 @@ const NumberPad: React.FC<NumberPadProps> = ({
             >
               <AnimatedPressable
                 style={[
-                  styles.numberButton,
-                  isDisabled && styles.disabledButton,
                   {
+                    // Direkte Inline-Styles mit hart kodierten Werten
+                    width: "100%",
+                    height: 60,
+                    borderRadius: 12,
+                    justifyContent: "center",
+                    alignItems: "center",
                     backgroundColor: isDisabled
                       ? colors.buttonDisabled
-                      : theme.isDark
-                      ? colors.surface
-                      : colors.numberPadButton,
+                      : BUTTON_BLUE,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
                   },
-                  getAnimatedStyle(String(num)),
+                  getAnimatedStyle(i),
                 ]}
-                onPress={() =>
-                  handleButtonPress(
-                    "number",
-                    num,
-                    () => onNumberPress(num),
-                    isDisabled
-                  )
-                }
-                disabled={isDisabled}
-                android_ripple={{
-                  color: "rgba(0,0,0,0.1)",
-                  borderless: true,
+                onPress={() => {
+                  if (!isDisabled) {
+                    handleButtonPress(numberScales[i], () =>
+                      onNumberPress(num)
+                    );
+                  }
                 }}
+                disabled={isDisabled}
               >
                 <Text
-                  style={[
-                    styles.numberButtonText,
-                    isDisabled && styles.disabledButtonText,
-                    {
-                      color: isDisabled
-                        ? colors.buttonTextDisabled
-                        : colors.numberPadButtonText,
-                    },
-                  ]}
+                  style={{
+                    // Direkte Inline-Styles für den Text
+                    fontSize: 24,
+                    fontWeight: "600",
+                    color: BUTTON_TEXT_WHITE,
+                  }}
                 >
                   {num}
                 </Text>

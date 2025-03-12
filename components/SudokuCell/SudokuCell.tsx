@@ -1,22 +1,14 @@
-import React, { memo, useEffect } from "react";
-import {
-  Text,
-  Pressable,
-  View,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
+import React, { memo } from "react";
+import { Text, Pressable, View, StyleSheet, TextStyle } from "react-native";
 import { SudokuCell as SudokuCellType } from "@/utils/sudoku";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
-  Easing,
   FadeIn,
 } from "react-native-reanimated";
-import styles from "./SudokuCell.styles";
+import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
   cell: SudokuCellType;
@@ -43,7 +35,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   const scale = useSharedValue(1);
 
   // Trigger animations when cell changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (cell.highlight === "hint" || cell.highlight === "success") {
       // Pulse animation for hint or success
       scale.value = withSequence(
@@ -66,61 +58,44 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     };
   });
 
-  // Berechne Zellstile basierend auf Zustand
-  const getCellStyles = () => {
-    const cellStyles: Array<ViewStyle | any> = [styles.cell];
-
-    // Die 3x3 Boxgrenzen werden jetzt durch absolute Elemente im Board umgesetzt
-    // Wir behalten hier nur die Blockfärbung
-
-    // Subtile Blockfärbung - für bessere visuelle Trennung der 3x3 Blöcke
-    const blockRow = Math.floor(row / 3);
-    const blockCol = Math.floor(col / 3);
-    if ((blockRow + blockCol) % 2 === 1) {
-      // Alternierend leicht dunklere Blöcke für bessere visuelle Unterscheidung - sehr subtil
-      cellStyles.push({ backgroundColor: "rgba(0, 0, 0, 0.03)" });
-    }
-
-    // Zellstatus-spezifische Styles
-    if (isSelected) {
-      cellStyles.push(styles.selectedCell);
-    } else if (sameValueHighlight) {
-      cellStyles.push(styles.sameValueCell);
-    } else if (isRelated) {
-      cellStyles.push(styles.relatedCell);
-    }
-
+  // Berechne Hintergrund basierend auf Zustand
+  const getBackgroundStyle = () => {
     if (showErrors && cell.highlight === "error") {
-      cellStyles.push(styles.errorCell);
+      return baseStyles.errorBackground;
     } else if (cell.highlight === "hint") {
-      cellStyles.push(styles.hintCell);
+      return baseStyles.hintBackground;
     } else if (cell.highlight === "success") {
-      cellStyles.push(styles.successCell);
+      return baseStyles.successBackground;
+    } else if (isSelected) {
+      return baseStyles.selectedBackground;
+    } else if (sameValueHighlight) {
+      return baseStyles.sameValueBackground;
+    } else if (isRelated) {
+      return baseStyles.relatedBackground;
     }
-
-    // Keine spezielle Hervorhebung mehr für vorgegebene Zellen (isInitial)
-
-    return cellStyles;
+    return null;
   };
 
-  // Textstil basierend auf Zellstatus
-  const getTextStyles = () => {
-    const textStyles: Array<TextStyle | any> = [styles.cellText];
+  // Text-Styles für verschiedene Zustände
+  const getCellTextStyle = () => {
+    // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
+    let style: TextStyle = {
+      ...baseStyles.cellText,
+    };
 
+    // Farbe basierend auf Zustand
     if (showErrors && !cell.isValid) {
-      textStyles.push(styles.errorText);
+      style.color = "#FF9A9A"; // Fehler-Farbe
+    } else if (sameValueHighlight) {
+      style.color = "#738BFF"; // Gleiche Werte
     }
 
-    if (cell.isInitial) {
-      textStyles.push(styles.initialText); // Behalte fette Schrift für vorgegebene Zahlen
+    // Schriftgewicht basierend auf Zustand
+    if (cell.isInitial || sameValueHighlight) {
+      style.fontWeight = "700";
     }
 
-    // Hervorhebung der gleichen Zahlen mit einer anderen Textfarbe statt Hintergrund
-    if (sameValueHighlight) {
-      textStyles.push(styles.sameValueText);
-    }
-
-    return textStyles;
+    return style;
   };
 
   // Render Notizen wenn Zelle leer ist
@@ -128,15 +103,15 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     if (cell.value !== 0 || cell.notes.length === 0) return null;
 
     return (
-      <View style={styles.notesContainer}>
+      <View style={baseStyles.notesContainer}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <Text
             key={`note-${num}`}
             style={[
-              styles.noteText,
+              baseStyles.noteText,
               cell.notes.includes(num)
-                ? styles.activeNote
-                : styles.inactiveNote,
+                ? baseStyles.activeNote
+                : baseStyles.inactiveNote,
             ]}
           >
             {cell.notes.includes(num) ? num : ""}
@@ -148,18 +123,21 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
   return (
     <Pressable
-      style={getCellStyles()}
+      style={baseStyles.cellContainer}
       onPress={() => onPress(row, col)}
-      android_ripple={{ color: "rgba(255, 255, 255, 0.2)", borderless: true }}
     >
-      <Animated.View style={[styles.cellContent, animatedStyles]}>
+      {/* Hintergrund-Layer für Hervorhebungen */}
+      {getBackgroundStyle() && (
+        <View style={[baseStyles.cellBackground, getBackgroundStyle()]} />
+      )}
+
+      {/* Grenzen-Layer - immer konsistent */}
+      <View style={baseStyles.cellBorder} />
+
+      {/* Inhalts-Layer mit Text oder Notizen */}
+      <Animated.View style={[baseStyles.cellContent, animatedStyles]}>
         {cell.value !== 0 ? (
-          <Animated.Text
-            style={getTextStyles()}
-            entering={FadeIn.duration(200)}
-          >
-            {cell.value}
-          </Animated.Text>
+          <Text style={getCellTextStyle()}>{cell.value}</Text>
         ) : (
           renderNotes()
         )}

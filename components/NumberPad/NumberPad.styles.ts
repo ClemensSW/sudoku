@@ -4,8 +4,8 @@ import { spacing } from "@/utils/theme";
 export default StyleSheet.create({
   container: {
     width: "100%",
-    paddingHorizontal: 8, // Reduziert auf 8px für mehr Platz
-    marginVertical: spacing.md, // Reduziert für mehr Platz
+    paddingHorizontal: 8,
+    marginVertical: spacing.md,
     alignSelf: "center",
   },
 
@@ -27,7 +27,7 @@ export default StyleSheet.create({
   actionButton: {
     width: 52,
     height: 52,
-    borderRadius: 14, // Moderne, leicht abgerundete Ecken
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -35,8 +35,8 @@ export default StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 2,
     elevation: 3,
-    marginBottom: 4, // Abstand zum Label
-    position: "relative", // Für das Badge
+    marginBottom: 4,
+    position: "relative",
   },
 
   actionButtonLabel: {
@@ -46,7 +46,7 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
-  // Hinweis Counter Badge - Jetzt in Primärfarbe
+  // Hinweis Counter Badge
   hintCountBadge: {
     position: "absolute",
     top: -5,
@@ -66,50 +66,20 @@ export default StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // Zahlen in einer Reihe - Größer und mit weniger Abstand
+  // Zahlen in einer Reihe - nur Container-Style
   numbersRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: 72, // Erhöht für größere Buttons
+    height: 70,
   },
 
+  // Nur der Container für den Button, keine Styles für den Button selbst
   numberButtonContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 1, // Minimaler Abstand zwischen Buttons
-  },
-
-  numberButton: {
-    width: 60, // Deutlich größer
-    height: 60, // Deutlich größer
-    borderRadius: 12, // Moderne, leicht abgerundete Ecken
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-
-  disabledButton: {
-    opacity: 0.5,
-  },
-
-  numberButtonText: {
-    fontSize: 22, // Größere Schrift für bessere Lesbarkeit
-    fontWeight: "600",
-  },
-
-  disabledButtonText: {
-    // Wird durch dynamische Farben gesetzt
-  },
-
-  // Animation wrapper
-  animatedContainer: {
-    overflow: "hidden",
+    paddingHorizontal: 2, // Reduzierter Abstand (0.5%)
   },
 });

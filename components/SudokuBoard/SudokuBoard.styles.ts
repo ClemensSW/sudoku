@@ -2,9 +2,9 @@ import { StyleSheet, Dimensions } from "react-native";
 
 // Berechnen der optimalen Board-Größe basierend auf Bildschirmbreite
 const { width } = Dimensions.get("window");
-export const BOARD_SIZE = Math.min(width * 0.9, 400); // 90% der Bildschirmbreite, maximal 400px
-export const GRID_SIZE = BOARD_SIZE * 0.95; // Etwas kleiner als das Board für Padding
-export const CELL_SIZE = GRID_SIZE / 9; // Gleichmäßige Zellgröße
+export const BOARD_SIZE = Math.min(width * 0.9, 400);
+export const GRID_SIZE = BOARD_SIZE * 0.95;
+export const CELL_SIZE = GRID_SIZE / 9;
 
 export default StyleSheet.create({
   boardContainer: {
@@ -22,7 +22,7 @@ export default StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    // Äußerer Schatten beibehalten, aber subtiler
+    // Subtiler Schatten
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.2,
@@ -35,6 +35,7 @@ export default StyleSheet.create({
     height: BOARD_SIZE,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#1E2233", // Dunklerer, eher anthrazitfarbener Hintergrund mit leichtem Blauton
     borderWidth: 0,
   },
 
@@ -42,30 +43,29 @@ export default StyleSheet.create({
     width: GRID_SIZE,
     height: GRID_SIZE,
     flexDirection: "column",
-    borderWidth: 2.5,
-    borderColor: "#FFFFFF", // Vollständig weiße Außengrenze
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.25)", // Subtilere Außenränder
     overflow: "hidden",
     borderRadius: 8,
-    // Entferne den inneren Schatten
   },
 
   // Stil für Gridlinien
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    zIndex: 5, // Höherer z-index als Zellen
+    backgroundColor: "rgba(255, 255, 255, 0.2)", // Subtilere Linien
+    zIndex: 5,
   },
 
   // Horizontale Linien zwischen den 3x3-Blöcken
   horizontalGridLine: {
     width: GRID_SIZE,
-    height: 2.5,
+    height: 1.5, // Dünner
     left: 0,
   },
 
   // Vertikale Linien zwischen den 3x3-Blöcken
   verticalGridLine: {
-    width: 2.5,
+    width: 1.5, // Dünner
     height: GRID_SIZE,
     top: 0,
   },
@@ -77,7 +77,11 @@ export default StyleSheet.create({
 
   // Loading overlay
   loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.4)",

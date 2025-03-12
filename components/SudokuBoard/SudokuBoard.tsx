@@ -5,14 +5,12 @@ import SudokuCell from "@/components/SudokuCell/SudokuCell";
 import Animated, {
   FadeIn,
   FadeOut,
-  Layout,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import styles, { BOARD_SIZE, GRID_SIZE, CELL_SIZE } from "./SudokuBoard.styles"; // CELL_SIZE importieren
-import { SUDOKU_COLORS, BOARD_STYLES } from "@/utils/theme/sudokuTheme";
+import styles, { CELL_SIZE } from "./SudokuBoard.styles";
 
 interface SudokuBoardProps {
   board: SudokuBoardType;
@@ -96,17 +94,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
         style={[styles.boardAnimationContainer, boardAnimatedStyle]}
       >
         <View style={styles.boardWrapper}>
-          {/* Hauptbrett mit blauem Hintergrund aus Theme */}
-          <View
-            style={[styles.board, { backgroundColor: SUDOKU_COLORS.primary }]}
-          >
+          {/* Hauptbrett mit dunkelgrauem Hintergrund für Dark Mode */}
+          <View style={styles.board}>
             {/* Grid-Inhalt */}
-            <View
-              style={[
-                styles.gridContainer,
-                { borderColor: "#FFFFFF" }, // Überschreibe explizit alle Theme-Einstellungen
-              ]}
-            >
+            <View style={styles.gridContainer}>
               {/* 3x3 Blockgrenzen als absolute Elemente */}
               {/* Horizontale Linien */}
               <View
@@ -150,15 +141,14 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                       selectedCell.col === colIndex
                     );
 
-                    // Gleiche Zahlen hervorheben, wenn die Zelle nicht ausgewählt ist, einen Wert hat und
-                    // der Wert mit der ausgewählten Zelle übereinstimmt
+                    // Gleiche Zahlen hervorheben
                     const sameValue = !!(
                       selectedCell &&
                       cell.value !== 0 &&
                       !(
                         selectedCell.row === rowIndex &&
                         selectedCell.col === colIndex
-                      ) && // Nicht die ausgewählte Zelle selbst
+                      ) &&
                       board[selectedCell.row][selectedCell.col].value ===
                         cell.value
                     );
@@ -188,7 +178,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                 entering={FadeIn.duration(200)}
                 exiting={FadeOut.duration(200)}
               >
-                <ActivityIndicator size="large" color={SUDOKU_COLORS.white} />
+                <ActivityIndicator size="large" color="#FFFFFF" />
               </Animated.View>
             )}
           </View>

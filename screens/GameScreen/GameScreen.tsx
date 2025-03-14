@@ -543,7 +543,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                 marginBottom: 16,
               }}
             >
-              Sudoku vorbereiten...
+              Sudoku generieren...
             </Text>
             <Animated.View entering={FadeIn.delay(300).duration(500)}>
               <Feather name="loader" size={32} color={colors.primary} />

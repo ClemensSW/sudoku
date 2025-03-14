@@ -34,6 +34,7 @@ interface SettingsScreenProps {
   onBackToGame?: () => void;
   onQuitGame?: () => void;
   onAutoNotes?: () => void;
+  onSettingsChanged?: (key: keyof GameSettings, value: boolean | string) => void; // NEU: Callback für Einstellungsänderungen
   fromGame?: boolean;
 }
 
@@ -41,6 +42,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBackToGame,
   onQuitGame,
   onAutoNotes,
+  onSettingsChanged, // NEU: Callback für Einstellungsänderungen
   fromGame = false,
 }) => {
   const theme = useTheme();
@@ -83,6 +85,11 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    // NEU: Benachrichtige GameScreen über die Änderung
+    if (onSettingsChanged) {
+      onSettingsChanged(key, value);
+    }
   };
 
   const handleAutoNotes = () => {
@@ -293,7 +300,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       { color: colors.textSecondary },
                     ]}
                   >
-                    Falsche Zahlen hervorheben
+                    Offensichtlich falsche Zahlen hervorheben
                   </Text>
                 </View>
                 <Switch

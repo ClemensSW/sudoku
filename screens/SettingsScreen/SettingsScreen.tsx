@@ -14,7 +14,6 @@ import { Feather } from "@expo/vector-icons";
 import Animated, {
   FadeIn,
   FadeInDown,
-  FadeInUp,
   SlideInUp,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -35,12 +34,14 @@ interface SettingsScreenProps {
   onBackToGame?: () => void;
   onQuitGame?: () => void;
   onAutoNotes?: () => void;
+  fromGame?: boolean;
 }
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBackToGame,
   onQuitGame,
   onAutoNotes,
+  fromGame = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -48,13 +49,15 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const router = useRouter();
   const { showAlert } = useAlert();
 
-  // State for settings and statistics
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [stats, setStats] = useState<GameStats | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load settings and statistics
+  // Determine if we should show game-specific features
+  // We show them when opened from a game (both properties must exist)
+  const showGameFeatures = fromGame && !!onAutoNotes && !!onQuitGame;
+
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
@@ -68,7 +71,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     loadData();
   }, []);
 
-  // Handle settings changes
   const handleSettingChange = async (
     key: keyof GameSettings,
     value: boolean | string
@@ -83,7 +85,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  // Auto-fill all notes
   const handleAutoNotes = () => {
     if (onAutoNotes) {
       onAutoNotes();
@@ -91,7 +92,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     }
   };
 
-  // Back navigation
   const handleBack = () => {
     if (onBackToGame) {
       onBackToGame();
@@ -100,20 +100,18 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     }
   };
 
-  // Quit game - Using custom alert
   const handleQuitGame = () => {
     showAlert(
       quitGameAlert(() => {
         if (onQuitGame) {
           onQuitGame();
         } else {
-          router.navigate("/");
+          router.replace("/");
         }
       })
     );
   };
 
-  // Loading screen
   if (isLoading) {
     return (
       <Animated.View
@@ -146,7 +144,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      {/* Header */}
       <SafeAreaView edges={["top"]} style={{ width: "100%" }}>
         <Header title="Einstellungen" onBackPress={handleBack} />
       </SafeAreaView>
@@ -158,10 +155,105 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        {/* Statistics Section with Enhanced Display */}
+        {/* Help & Tools Section - MOVED TO TOP */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(100).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            {showGameFeatures ? "Hilfe und Tools" : "Hilfe"}
+          </Text>
+
+          <View
+            style={[
+              styles.settingsGroup,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            {/* Auto Notes - Only show when in a game context */}
+            {showGameFeatures && (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={handleAutoNotes}
+              >
+                <View
+                  style={[
+                    styles.actionIconContainer,
+                    { backgroundColor: `${colors.primary}15` },
+                  ]}
+                >
+                  <Feather name="edit-3" size={20} color={colors.primary} />
+                </View>
+                <View style={styles.actionTextContainer}>
+                  <Text
+                    style={[styles.actionTitle, { color: colors.textPrimary }]}
+                  >
+                    Automatische Notizen
+                  </Text>
+                  <Text
+                    style={[
+                      styles.actionDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Mögliche Zahlen als Notizen eintragen
+                  </Text>
+                </View>
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            )}
+
+            {/* How to Play */}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                showGameFeatures && {
+                  borderTopWidth: 1,
+                  borderTopColor: colors.border,
+                },
+              ]}
+              onPress={() => setShowHowToPlay(true)}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.info}15` },
+                ]}
+              >
+                <Feather name="help-circle" size={20} color={colors.info} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Spielanleitung
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Lerne, wie man Sudoku spielt
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
+        {/* Statistics Section */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(200).duration(500)}
         >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Statistiken
@@ -172,7 +264,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         {/* Game Settings */}
         <Animated.View
           style={styles.section}
-          entering={FadeInDown.delay(200).duration(500)}
+          entering={FadeInDown.delay(300).duration(500)}
         >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Spieleinstellungen
@@ -213,7 +305,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
+                  thumbColor="#FFFFFF"
                 />
               </View>
 
@@ -248,7 +340,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
+                  thumbColor="#FFFFFF"
                 />
               </View>
 
@@ -278,152 +370,64 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     false: colors.buttonDisabled,
                     true: colors.primary,
                   }}
-                  thumbColor="#FFFFFF" // Immer weiß, unabhängig vom Theme
+                  thumbColor="#FFFFFF"
                 />
               </View>
             </View>
           )}
         </Animated.View>
 
-        {/* Help & Tools Section */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(300).duration(500)}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Hilfe und Tools
-          </Text>
-
-          <View
-            style={[
-              styles.settingsGroup,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
+        {/* Actions Section - Only show when in a game context */}
+        {showGameFeatures && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(400).duration(500)}
           >
-            {/* Auto Notes */}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleAutoNotes}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.primary}15` },
-                ]}
-              >
-                <Feather name="edit-3" size={20} color={colors.primary} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Automatische Notizen
-                </Text>
-                <Text
-                  style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  Mögliche Zahlen als Notizen eintragen
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              Aktionen
+            </Text>
 
-            {/* How to Play */}
-            <TouchableOpacity
+            <View
               style={[
-                styles.actionButton,
-                { borderTopWidth: 1, borderTopColor: colors.border },
+                styles.settingsGroup,
+                { backgroundColor: colors.surface, borderColor: colors.border },
               ]}
-              onPress={() => setShowHowToPlay(true)}
             >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.info}15` },
-                ]}
+              {/* Quit Game */}
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={handleQuitGame}
               >
-                <Feather name="help-circle" size={20} color={colors.info} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Spielanleitung
-                </Text>
-                <Text
+                <View
                   style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
+                    styles.actionIconContainer,
+                    { backgroundColor: `${colors.error}20` },
                   ]}
                 >
-                  Lerne, wie man Sudoku spielt
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-
-        {/* Actions Section */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(400).duration(500)}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Aktionen
-          </Text>
-
-          <View
-            style={[
-              styles.settingsGroup,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
-          >
-            {/* Quit Game */}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleQuitGame}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.error}20` },
-                ]}
-              >
-                <Feather name="x-circle" size={20} color={colors.error} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text style={[styles.actionTitle, { color: colors.error }]}>
-                  Spiel beenden
-                </Text>
-                <Text
-                  style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  Zurück zum Hauptmenü
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
+                  <Feather name="x-circle" size={20} color={colors.error} />
+                </View>
+                <View style={styles.actionTextContainer}>
+                  <Text style={[styles.actionTitle, { color: colors.error }]}>
+                    Spiel beenden
+                  </Text>
+                  <Text
+                    style={[
+                      styles.actionDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Zurück zum Hauptmenü
+                  </Text>
+                </View>
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        )}
 
         {/* Version Info */}
         <Animated.View

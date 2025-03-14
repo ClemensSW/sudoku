@@ -4,14 +4,16 @@ import { useRouter } from "expo-router";
 
 export default function SettingsRoute() {
   const router = useRouter();
-
+  
   const handleBack = () => {
     router.back();
   };
 
-  const handleQuit = () => {
-    router.replace("/");
-  };
-
-  return <SettingsScreen onBackToGame={handleBack} onQuitGame={handleQuit} />;
+  return (
+    <SettingsScreen 
+      onBackToGame={handleBack}
+      // No onQuitGame or onAutoNotes props when opened from start screen
+      fromGame={false}
+    />
+  );
 }

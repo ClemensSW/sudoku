@@ -1,3 +1,4 @@
+// components/Button/Button.tsx
 import React from "react";
 import {
   TouchableOpacity,
@@ -97,11 +98,11 @@ const Button: React.FC<ButtonProps> = ({
     onPress();
   };
 
-  // Dynamische Styles basierend auf Variant und Status
+  // Dynamic styles based on variant and status
   const getButtonStyle = () => {
     const buttonStyles: ViewStyle[] = [styles.button];
 
-    // Variant-spezifische Styles
+    // Variant-specific styles
     switch (variant) {
       case "primary":
         buttonStyles.push({
@@ -138,7 +139,7 @@ const Button: React.FC<ButtonProps> = ({
         buttonStyles.push({ backgroundColor: colors.primary });
     }
 
-    // Status-spezifische Styles
+    // Status-specific styles
     if (disabled) {
       buttonStyles.push({
         backgroundColor:
@@ -151,7 +152,7 @@ const Button: React.FC<ButtonProps> = ({
       });
     }
 
-    // Benutzerdefinierte Styles
+    // Custom styles
     if (style) {
       buttonStyles.push(style);
     }
@@ -159,7 +160,7 @@ const Button: React.FC<ButtonProps> = ({
     return buttonStyles;
   };
 
-  // Dynamische Text-Styles
+  // Dynamic text styles
   const getTextStyle = () => {
     const textStyles: TextStyle[] = [styles.buttonText];
 
@@ -198,7 +199,7 @@ const Button: React.FC<ButtonProps> = ({
     return textStyles;
   };
 
-  // Kombiniere alle Styles
+  // Combine all styles
   const buttonStyles = getButtonStyle();
   const titleStyles = getTextStyle();
 

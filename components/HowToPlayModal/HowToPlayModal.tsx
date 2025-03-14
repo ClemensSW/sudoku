@@ -1,10 +1,10 @@
+// components/HowToPlayModal/HowToPlayModal.tsx
 import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  StyleSheet,
   SafeAreaView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -80,7 +80,6 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
   return (
     <Animated.View
       style={[
-        StyleSheet.absoluteFill,
         styles.modalContainer,
         { backgroundColor: colors.background },
       ]}
@@ -238,7 +237,7 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
                 </View>
               </View>
               <Text
-                style={[styles.visualExplanation, { color: colors.buttonText }]}
+                style={[styles.visualExplanation, { color: colors.textPrimary }]}
               >
                 Beispiel eines Sudoku-Puzzles
               </Text>

@@ -1,132 +1,135 @@
-// Optimized color palettes for the best Sudoku experience
+// utils/theme/colors.ts
+// Modern color palette optimized for readability and aesthetics
+
+// Light theme colors
 const lightColors = {
   // Primary colors
-  primary: "#4361EE", // Vibrant blue that stands out
-  primaryLight: "#738BFF",
-  primaryDark: "#3046C0",
-  secondary: "#F72585", // Vibrant accent for highlights
+  primary: "#4C63E6", // Vibrant blue that matches the design in the image
+  primaryLight: "#7989FF",
+  primaryDark: "#304BD6",
+  secondary: "#F64A7A", // Vibrant accent for highlights
 
   // UI elements
   background: "#FFFFFF",
-  surface: "#F5F7FA",
+  surface: "#F8F9FA",
   card: "#FFFFFF",
-  boardBackground: "#F9F9F9", // Light neutral background for board
+  boardBackground: "#F9F9FB", // Light neutral background for board
 
-  // Cell colors - Optimal contrast and clear visual hierarchy
-  cellBackground: "#FFFFFF", // Pure white for empty cells
-  cellBackgroundInitial: "#F0F4FF", // Light blue tint for initial cells
-  cellBackgroundSelected: "#BBDEFB", // Medium blue for selected cell
-  cellBackgroundRelated: "#E3F2FD", // Light blue for related cells
-  cellBackgroundError: "#FFEBEE", // Light red for errors
-  cellBackgroundSuccess: "#E8F5E9", // Light green for success
-  cellBackgroundHint: "#FFF9C4", // Light yellow for hints
-  cellBackgroundSameValue: "#E1F5FE", // Light cyan for same values
+  // Cell colors
+  cellBackground: "#FFFFFF", 
+  cellBackgroundInitial: "#F0F4FF",
+  cellBackgroundSelected: "#BBDEFB", 
+  cellBackgroundRelated: "#E3F2FD", 
+  cellBackgroundError: "#FFEBEE", 
+  cellBackgroundSuccess: "#E8F5E9", 
+  cellBackgroundHint: "#FFF9C4", 
+  cellBackgroundSameValue: "#E1F5FE", 
 
-  // Grid - Clear visual structure
-  gridLine: "#CFD8DC", // Light gray for cell borders
-  gridBold: "#90A4AE", // Darker gray for 3x3 box borders
+  // Grid
+  gridLine: "#D0D7DF", 
+  gridBold: "#90A4AE", 
 
-  // Text - High contrast for readability
-  textPrimary: "#212121",
-  textSecondary: "#424242",
-  textLight: "#757575",
+  // Text
+  textPrimary: "#1A1F36",
+  textSecondary: "#4A5568",
+  textLight: "#718096",
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#2C3E50", // Dark blue-gray for regular numbers
-  textCellInitial: "#000000", // Black for initial values for emphasis
-  textCellSelected: "#2C3E50", // Same as normal for consistency
-  textCellError: "#D32F2F", // Bold red for errors
-  textCellNotes: "#5C6BC0", // Indigo for notes - stands out but not too much
+  textCellNormal: "#2C3E50", 
+  textCellInitial: "#1A1F36", 
+  textCellSelected: "#2C3E50", 
+  textCellError: "#E53E3E", 
+  textCellNotes: "#5C6BC0", 
 
   // UI elements
-  button: "#4361EE",
+  button: "#4C63E6",
   buttonText: "#FFFFFF",
-  buttonDisabled: "#BDBDBD",
-  buttonTextDisabled: "#757575",
-  buttonSuccess: "#4CAF50",
-  buttonDanger: "#F44336",
+  buttonDisabled: "#CBD5E0",
+  buttonTextDisabled: "#A0AEC0",
+  buttonSuccess: "#38A169",
+  buttonDanger: "#E53E3E",
 
   // Status colors
-  success: "#4CAF50",
-  error: "#F44336",
-  warning: "#FF9800",
-  info: "#2196F3",
+  success: "#38A169",
+  error: "#E53E3E",
+  warning: "#DD6B20",
+  info: "#3182CE",
 
   // Misc
-  border: "#E0E0E0",
-  divider: "#EEEEEE",
+  border: "#E2E8F0",
+  divider: "#EDF2F7",
   shadow: "rgba(0, 0, 0, 0.1)",
   overlay: "rgba(0, 0, 0, 0.5)",
 
   // Number pad
   numberPadButton: "#F0F3F9",
-  numberPadButtonText: "#212121",
-  numberPadButtonSelected: "#4361EE",
+  numberPadButtonText: "#1A1F36",
+  numberPadButtonSelected: "#4C63E6",
   numberPadButtonTextSelected: "#FFFFFF",
 };
 
-// Dark theme optimized for Sudoku gameplay
+// Dark theme optimized for eye comfort
 const darkColors = {
   // Primary colors
-  primary: "#4361EE", // Keeping the same primary for brand consistency
-  primaryLight: "#738BFF",
-  primaryDark: "#3046C0",
-  secondary: "#F72585", // Same vibrant accent
+  primary: "#4C63E6", // Keep the same primary for brand consistency
+  primaryLight: "#7989FF",
+  primaryDark: "#304BD6",
+  secondary: "#F64A7A",
 
   // UI elements
-  background: "#121212",
-  surface: "#1E1E1E",
-  card: "#2C2C2C",
-  boardBackground: "#1A1A1A", // Dark neutral background for board
+  background: "#0F172A",
+  surface: "#1E293B",
+  card: "#2D3748",
+  boardBackground: "#1A202C",
 
-  // Cell colors - Good contrast with dark theme
-  cellBackground: "#2C2C2C", // Dark gray for empty cells
-  cellBackgroundInitial: "#263238", // Darker blue-gray for initial cells
-  cellBackgroundSelected: "#3949AB", // Medium-dark indigo for selected
-  cellBackgroundRelated: "#1A237E70", // Semi-transparent dark blue
-  cellBackgroundError: "#B7191970", // Semi-transparent dark red
-  cellBackgroundSuccess: "#1B5E2070", // Semi-transparent dark green
-  cellBackgroundHint: "#F9A82570", // Semi-transparent amber for hints
-  cellBackgroundSameValue: "#0D47A170", // Semi-transparent dark blue
+  // Cell colors
+  cellBackground: "#2D3748", 
+  cellBackgroundInitial: "#2C3B52", 
+  cellBackgroundSelected: "#3949AB", 
+  cellBackgroundRelated: "#1A237E70", 
+  cellBackgroundError: "#B7191970", 
+  cellBackgroundSuccess: "#1B5E2070", 
+  cellBackgroundHint: "#F9A82570", 
+  cellBackgroundSameValue: "#0D47A170", 
 
-  // Grid - Clear structure even in dark mode
-  gridLine: "#424242", // Medium gray for cell borders
-  gridBold: "#9E9E9E", // Light gray for 3x3 box borders
+  // Grid
+  gridLine: "#4A5568", 
+  gridBold: "#A0AEC0", 
 
-  // Text - High contrast for readability in dark mode
-  textPrimary: "#FFFFFF",
-  textSecondary: "#E0E0E0",
-  textLight: "#BDBDBD",
+  // Text
+  textPrimary: "#F7FAFC",
+  textSecondary: "#E2E8F0",
+  textLight: "#CBD5E0",
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#FFFFFF", // White for regular numbers
-  textCellInitial: "#90CAF9", // Light blue for initial values - stands out
-  textCellSelected: "#FFFFFF", // White for selected cell text
-  textCellError: "#EF9A9A", // Light red for errors - more visible on dark
-  textCellNotes: "#B39DDB", // Light purple for notes
+  textCellNormal: "#F7FAFC", 
+  textCellInitial: "#90CAF9", 
+  textCellSelected: "#FFFFFF", 
+  textCellError: "#FEB2B2", 
+  textCellNotes: "#B794F4", 
 
   // UI elements
-  button: "#4361EE",
+  button: "#4C63E6",
   buttonText: "#FFFFFF",
-  buttonDisabled: "#5C5C5C",
-  buttonTextDisabled: "#8F8F8F",
-  buttonSuccess: "#4CAF50",
-  buttonDanger: "#F44336",
+  buttonDisabled: "#4A5568",
+  buttonTextDisabled: "#A0AEC0",
+  buttonSuccess: "#48BB78",
+  buttonDanger: "#F56565",
 
   // Status colors
-  success: "#66BB6A",
-  error: "#EF5350",
-  warning: "#FFA726",
-  info: "#42A5F5",
+  success: "#48BB78",
+  error: "#F56565",
+  warning: "#ED8936",
+  info: "#4299E1",
 
   // Misc
-  border: "#444444",
-  divider: "#333333",
+  border: "#4A5568",
+  divider: "#2D3748",
   shadow: "rgba(0, 0, 0, 0.3)",
   overlay: "rgba(0, 0, 0, 0.7)",
 
   // Number pad
-  numberPadButton: "#3A3A3A",
-  numberPadButtonText: "#FFFFFF",
-  numberPadButtonSelected: "#4361EE",
+  numberPadButton: "#2D3748",
+  numberPadButtonText: "#F7FAFC",
+  numberPadButtonSelected: "#4C63E6",
   numberPadButtonTextSelected: "#FFFFFF",
 };
 

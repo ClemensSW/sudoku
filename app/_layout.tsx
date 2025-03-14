@@ -11,11 +11,9 @@ import * as NavigationBar from "expo-navigation-bar";
 
 export default function AppLayout() {
   useEffect(() => {
-    // Verstecke die Navigationsleiste auf Android
+    // Hide navigation bar on Android for cleaner look
     if (Platform.OS === "android") {
-      // Diese Zeile versteckt die untere Navigationsleiste
       NavigationBar.setVisibilityAsync("hidden");
-      // Falls du die Leiste trotzdem manchmal benötigst, kannst du sie transparent machen
       NavigationBar.setBackgroundColorAsync("transparent");
     }
   }, []);
@@ -25,13 +23,14 @@ export default function AppLayout() {
       <SafeAreaProvider>
         <ThemeProvider>
           <AlertProvider>
-            {/* Statusleiste komplett ausblenden */}
+            {/* Hide status bar for cleaner look */}
             <StatusBar hidden={true} />
             <Stack
               screenOptions={{
-                headerShown: false,
-                animation: "fade",
-                contentStyle: { backgroundColor: "transparent" }, // Prevents white flash during transitions
+                headerShown: false, // Hide header
+                animation: "fade", // Use fade animation for transitions
+                contentStyle: { backgroundColor: "transparent" }, // Transparent background
+                animationDuration: 300, // Smooth animation
               }}
             >
               <Stack.Screen name="index" />

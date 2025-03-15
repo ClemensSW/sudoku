@@ -1,7 +1,14 @@
 // components/Tutorial/pages/BasicRulesPage.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSequence,
+  runOnJS,
+} from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
@@ -33,18 +40,13 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   const theme = useTheme();
   const { colors } = theme;
 
-  // Example completed grid for demonstration
-  const exampleGrid = [
-    [6, 7, 2, 5, 3, 1, 9, 8, 4],
-    [8, 3, 1, 6, 4, 9, 2, 5, 7],
-    [5, 4, 9, 8, 2, 7, 6, 1, 3],
-    [1, 5, 7, 4, 9, 6, 8, 3, 2],
-    [3, 9, 6, 2, 1, 8, 7, 4, 5],
-    [2, 8, 4, 7, 5, 3, 1, 9, 6],
-    [4, 1, 5, 9, 6, 2, 3, 7, 8],
-    [7, 6, 3, 1, 8, 5, 4, 2, 9],
-    [9, 2, 8, 3, 7, 4, 5, 6, 1],
-  ];
+  // Empty grid as a base
+  const emptyGrid = Array(9)
+    .fill(0)
+    .map(() => Array(9).fill(0));
+
+  // State for grid that will show numbers only in highlighted cells
+  const [displayGrid, setDisplayGrid] = useState(emptyGrid);
 
   // Animation state for highlighting different parts
   const [highlightState, setHighlightState] = useState<{
@@ -53,27 +55,132 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
     block?: [number, number];
   }>({});
 
-  // Cycle through highlighting examples
+  // State to track if we should show the missing number
+  const [showMissingNumber, setShowMissingNumber] = useState(false);
+
+  // Arrays with exactly one missing number
+  const rowValues = [1, 5, 7, 4, 9, 0, 8, 3, 2]; // Missing 6 at index 5
+  const colValues = [9, 2, 6, 8, 7, 1, 3, 4, 0]; // Missing 5 at index 8
+  const blockValues = [
+    [7, 6, 3],
+    [9, 2, 8],
+    [5, 1, 0], // Missing 4 at [2, 2]
+  ];
+
+  // Complete arrays with all numbers
+  const completeRowValues = [1, 5, 7, 4, 9, 6, 8, 3, 2];
+  const completeColValues = [9, 2, 6, 8, 7, 1, 3, 4, 5];
+  const completeBlockValues = [
+    [7, 6, 3],
+    [9, 2, 8],
+    [5, 1, 4],
+  ];
+
+  // Update display grid based on highlights and animation state
   useEffect(() => {
+    // Start with an empty grid
+    const newGrid = Array(9)
+      .fill(0)
+      .map(() => Array(9).fill(0));
+
+    // Add numbers to highlighted row
+    if (highlightState.row !== undefined) {
+      const row = highlightState.row;
+      const valuesToUse = showMissingNumber ? completeRowValues : rowValues;
+
+      for (let col = 0; col < 9; col++) {
+        newGrid[row][col] = valuesToUse[col];
+      }
+    }
+
+    // Add numbers to highlighted column
+    else if (highlightState.column !== undefined) {
+      const col = highlightState.column;
+      const valuesToUse = showMissingNumber ? completeColValues : colValues;
+
+      for (let row = 0; row < 9; row++) {
+        newGrid[row][col] = valuesToUse[row];
+      }
+    }
+
+    // Add numbers to highlighted block
+    else if (highlightState.block) {
+      const blockRow = Math.floor(highlightState.block[0] / 3) * 3;
+      const blockCol = Math.floor(highlightState.block[1] / 3) * 3;
+      const valuesToUse = showMissingNumber ? completeBlockValues : blockValues;
+
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          newGrid[blockRow + r][blockCol + c] = valuesToUse[r][c];
+        }
+      }
+    }
+
+    setDisplayGrid(newGrid);
+  }, [highlightState, showMissingNumber]);
+
+  // Cycle through highlighting examples with missing number animation
+  useEffect(() => {
+    // Simplify to just three basic animations plus clear
     const animations = [
-      // Highlight a row
-      { row: 3 },
-      // Highlight a column
-      { column: 6 },
-      // Highlight a 3x3 block
-      { block: [7, 1] as [number, number] },
-      // Clear highlights
-      {},
+      // Highlight a row with row number
+      { row: 3, column: undefined, block: undefined },
+      // Highlight a column with column number
+      { row: undefined, column: 6, block: undefined },
+      // Highlight a block with coordinates
+      { row: undefined, column: undefined, block: [7, 1] as [number, number] },
+      // Clear all highlights
+      { row: undefined, column: undefined, block: undefined },
     ];
 
     let currentAnimation = 0;
+    // Store all timeout IDs for proper cleanup
+    const timeoutIds: NodeJS.Timeout[] = [];
 
-    const animationInterval = setInterval(() => {
+    const runAnimation = () => {
+      // First hide the missing number
+      setShowMissingNumber(false);
+
+      // Set the current highlight state
       setHighlightState(animations[currentAnimation]);
-      currentAnimation = (currentAnimation + 1) % animations.length;
-    }, 2000);
 
-    return () => clearInterval(animationInterval);
+      // Only show missing number if we have a highlight
+      const hasHighlight =
+        animations[currentAnimation].row !== undefined ||
+        animations[currentAnimation].column !== undefined ||
+        animations[currentAnimation].block !== undefined;
+
+      if (hasHighlight) {
+        // Show the missing number after a delay
+        const timeout1 = setTimeout(() => {
+          setShowMissingNumber(true);
+        }, 1500); // Longer delay to better see the missing number
+        timeoutIds.push(timeout1);
+
+        // Move to next animation after showing completed set
+        const timeout2 = setTimeout(() => {
+          currentAnimation = (currentAnimation + 1) % animations.length;
+          runAnimation();
+        }, 3000); // Total duration for each animation
+        timeoutIds.push(timeout2);
+      } else {
+        // If we're in the empty state, move to next more quickly
+        const timeout3 = setTimeout(() => {
+          currentAnimation = (currentAnimation + 1) % animations.length;
+          runAnimation();
+        }, 1000);
+        timeoutIds.push(timeout3);
+      }
+    };
+
+    // Start the animation sequence
+    runAnimation();
+
+    // Cleanup function
+    return () => {
+      // Clear all timeouts
+      timeoutIds.forEach((id) => clearTimeout(id));
+    };
   }, []);
 
   return (
@@ -89,13 +196,14 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
         entering={FadeIn.duration(500)}
       >
         <AnimatedBoard
-          grid={exampleGrid}
+          grid={displayGrid}
           highlightRow={highlightState.row}
           highlightColumn={highlightState.column}
           highlightBlock={highlightState.block}
           highlightRowColor={ROW_COLOR_BG}
           highlightColumnColor={COLUMN_COLOR_BG}
           highlightBlockColor={BLOCK_COLOR_BG}
+          // Remove highlightCell prop completely if it exists
         />
 
         <Animated.View

@@ -33,54 +33,46 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
   const insets = useSafeAreaInsets();
 
   return (
-    <Animated.View 
-      style={[
-        styles.container
-      ]}
-      entering={FadeIn.duration(300)}
-    >
+    <Animated.View style={[styles.container]} entering={FadeIn.duration(300)}>
       {/* Header with safe area padding */}
-      <View style={[
-        styles.header, 
-        { paddingTop: Math.max(insets.top, 16) }
-      ]}>
-        <TouchableOpacity 
-          style={styles.backButton} 
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>
+        <TouchableOpacity
+          style={styles.backButton}
           onPress={onBack}
           disabled={isFirstPage}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Feather 
-            name="chevron-left" 
-            size={24} 
-            color={isFirstPage ? "transparent" : colors.textPrimary} 
+          <Feather
+            name="chevron-left"
+            size={24}
+            color={isFirstPage ? "transparent" : colors.textPrimary}
           />
         </TouchableOpacity>
-        
+
         <Text style={[styles.title, { color: colors.textPrimary }]}>
           {title}
         </Text>
-        
+
         <View style={styles.rightPlaceholder} />
       </View>
 
       {/* Scrollable content */}
-      <View style={styles.content}>
-        {children}
-      </View>
+      <View style={styles.content}>{children}</View>
 
       {/* Navigation Buttons with bottom safe area padding */}
-      <View style={[
-        styles.buttonsContainer,
-        { paddingBottom: Math.max(insets.bottom, 16) }
-      ]}>
+      <View
+        style={[
+          styles.buttonsContainer,
+          { paddingBottom: Math.max(insets.bottom, 16) },
+        ]}
+      >
         {!isFirstPage && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.button, 
+              styles.button,
               styles.backBtn,
-              { backgroundColor: colors.surface, borderColor: colors.border }
-            ]} 
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
             onPress={onBack}
           >
             <Text style={[styles.buttonText, { color: colors.textPrimary }]}>
@@ -88,13 +80,13 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
             </Text>
           </TouchableOpacity>
         )}
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[
-            styles.button, 
+            styles.button,
             styles.nextBtn,
-            { backgroundColor: colors.primary }
-          ]} 
+            { backgroundColor: colors.primary },
+          ]}
           onPress={onNext}
         >
           <Text style={[styles.buttonText, { color: colors.buttonText }]}>

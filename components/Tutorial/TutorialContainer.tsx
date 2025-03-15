@@ -7,11 +7,11 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "./TutorialPage";
 import TutorialProgress from "./components/TutorialProgress";
 
-// Import individual pages
+// Import individual pages - TipsPage is removed
 import BasicRulesPage from "./pages/BasicRulesPage";
 import GameplayPage from "./pages/GameplayPage";
 import NotesPage from "./pages/NotesPage";
-import TipsPage from "./pages/TipsPage";
+// TipsPage import removed
 
 interface TutorialContainerProps {
   onComplete: () => void;
@@ -27,12 +27,12 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
   const { colors } = theme;
   const insets = useSafeAreaInsets();
 
-  // Tutorial pages
+  // Tutorial pages - TipsPage removed
   const pages = [
     { id: "basics", component: BasicRulesPage },
     { id: "gameplay", component: GameplayPage },
     { id: "notes", component: NotesPage },
-    { id: "tips", component: TipsPage },
+    // TipsPage entry removed
   ];
 
   const goToNextPage = useCallback(() => {
@@ -57,7 +57,7 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      {/* Progress Indicator - positioned at the top */}
+      {/* Progress Indicator */}
       <View style={[styles.progressContainer, { marginTop: insets.top + 56 }]}>
         <TutorialProgress
           currentStep={currentPage + 1}
@@ -96,3 +96,15 @@ const styles = StyleSheet.create({
 });
 
 export default TutorialContainer;
+
+// components/Tutorial/index.ts
+// Update the exports to remove TipsPage
+export { default as TutorialContainer } from "./TutorialContainer";
+export { default as TutorialPage } from "./TutorialPage";
+export { default as TutorialProgress } from "./components/TutorialProgress";
+export { default as AnimatedBoard } from "./components/AnimatedBoard";
+
+// Export pages
+export { default as BasicRulesPage } from "./pages/BasicRulesPage";
+export { default as GameplayPage } from "./pages/GameplayPage";
+export { default as NotesPage } from "./pages/NotesPage";

@@ -93,14 +93,14 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     setGridState([...exampleGrid.map((row) => [...row])]);
     setSelectedCell(null);
 
-    // Animation mit langen Pausen zwischen den Schritten
+    // Animation mit kürzeren Pausen zwischen den Schritten (angepasst an BasicRulesPage)
     setTimeout(() => {
       // Step 1: Zelle auswählen - die Hervorhebung der verwandten Zellen
       // geschieht automatisch in der SudokuBoardDemo-Komponente
       setSelectedCell([targetRow, targetCol]);
       setStepNumber(1);
 
-      // Sehr lange Pause vor dem nächsten Schritt
+      // Kürzere Pause vor dem nächsten Schritt
       setTimeout(() => {
         // Step 2: Nummer auswählen
         numberScales[targetIndex].value = withSequence(
@@ -111,7 +111,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
 
         setStepNumber(2);
 
-        // Lange Pause vor dem Platzieren der Zahl
+        // Kürzere Pause vor dem Platzieren der Zahl
         setTimeout(() => {
           // Step 3: Zahl in der Zelle anzeigen
           const newGrid = [...gridState];
@@ -119,17 +119,17 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           setGridState(newGrid);
           setStepNumber(3);
 
-          // Sehr lange Pause am Ende, dann Animation zurücksetzen und neu starten
+          // Kürzere Pause am Ende, dann Animation zurücksetzen und neu starten
           animationRef.current = setTimeout(() => {
             setAnimationRunning(false);
 
             // Warten und dann Animation neu starten
             animationRef.current = setTimeout(() => {
               startAnimation();
-            }, 3000);
-          }, 5000);
-        }, 4000);
-      }, 5000);
+            }, 1500);
+          }, 2500);
+        }, 2500);
+      }, 2000);
     }, 500);
   };
 
@@ -137,11 +137,11 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const getInstructionText = () => {
     switch (stepNumber) {
       case 1:
-        return "1. Wähle eine leere Zelle aus";
+        return "Wähle eine leere Zelle aus";
       case 2:
-        return "2. Nur die Zahl 5 kann hier platziert werden";
+        return "Welche Zahl passt in die Zelle?";
       case 3:
-        return "3. Die Zahl 5 passt perfekt in die Zelle";
+        return "Die Zahl 5 passt perfekt in die Zelle";
       default:
         return "";
     }
@@ -299,8 +299,9 @@ const styles = StyleSheet.create({
   // Animation helper elements
   arrowContainer: {
     position: "absolute",
-    top: "50%",
-    alignSelf: "center",
+  bottom: 170, // Position it above the number pad
+  alignSelf: "center",
+  zIndex: 10,
   },
   arrow: {
     transform: [{ rotate: "180deg" }],

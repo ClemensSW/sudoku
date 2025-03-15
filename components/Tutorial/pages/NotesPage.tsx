@@ -86,8 +86,8 @@ const NotesPage: React.FC<NotesPageProps> = ({
           entering={FadeIn.delay(300).duration(500)}
         >
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
-            Tippen auf den Notizen-Button, um Notizen zu möglichen Ziffern
-            hinzuzufügen oder zu entfernen.
+            Notizen visualisieren Möglichkeiten und verwandeln komplexe Sudokus
+            in lösbare Strategieaufgaben.
           </Text>
         </Animated.View>
       </View>

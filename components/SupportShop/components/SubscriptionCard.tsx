@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,10 +8,11 @@ import Animated, {
   withDelay,
   Easing,
   FadeInUp,
-} from 'react-native-reanimated';
-import { Feather } from '@expo/vector-icons';
-import { Product } from '@/utils/billing/BillingManager';
-import styles from './SubscriptionCard.styles';
+} from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { Product } from "@/utils/billing/BillingManager";
+import styles from "./SubscriptionCard.styles";
 
 interface SubscriptionCardProps {
   subscription: Product;
@@ -28,14 +29,17 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   isBestValue = false,
   disabled = false,
 }) => {
+  const theme = useTheme();
+  const { colors } = theme;
+
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const shinePosition = useSharedValue(-100);
-  
+
   // Calculate savings (for yearly subscription display)
-  const isYearly = subscription.productId.includes('yearly');
-  
+  const isYearly = subscription.productId.includes("yearly");
+
   // Setup animations
   useEffect(() => {
     // Animated shine for best value
@@ -50,11 +54,11 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
             easing: Easing.out(Easing.ease),
           })
         );
-        
+
         // Schedule next animation
         setTimeout(animateShine, 5000 + Math.random() * 2000);
       };
-      
+
       animateShine();
     }
   }, [isBestValue]);
@@ -92,10 +96,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
 
   const shineAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotate: '25deg' },
-        { translateX: shinePosition.value },
-      ],
+      transform: [{ rotate: "25deg" }, { translateX: shinePosition.value }],
     };
   });
 
@@ -112,23 +113,39 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         disabled={disabled}
         style={[
           styles.container,
-          { 
-            borderColor: subscription.color + '40',
-            backgroundColor: disabled ? 'rgba(0,0,0,0.03)' : 'white' 
-          }
+          {
+            borderColor: theme.isDark
+              ? "rgba(255,255,255,0.15)"
+              : subscription.color + "40",
+            backgroundColor: theme.isDark
+              ? colors.card
+              : disabled
+              ? "rgba(0,0,0,0.03)"
+              : "white",
+          },
         ]}
       >
         {/* Animated shine effect for best value */}
         {isBestValue && (
-          <Animated.View style={[styles.shine, shineAnimatedStyle]} />
+          <Animated.View
+            style={[
+              styles.shine,
+              shineAnimatedStyle,
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(255,255,255,0.3)",
+              },
+            ]}
+          />
         )}
-        
+
         {/* Best value badge */}
         {isBestValue && (
-          <View 
+          <View
             style={[
               styles.bestValueBadge,
-              { backgroundColor: subscription.color }
+              { backgroundColor: subscription.color },
             ]}
           >
             <Text style={styles.bestValueText}>Beste Wahl</Text>
@@ -138,10 +155,13 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         <View style={styles.innerContainer}>
           <View style={styles.row}>
             {/* Icon */}
-            <View 
+            <View
               style={[
-                styles.iconContainer, 
-                { backgroundColor: subscription.color + '15' }
+                styles.iconContainer,
+                {
+                  backgroundColor:
+                    subscription.color + (theme.isDark ? "30" : "15"),
+                },
               ]}
             >
               <Text style={styles.icon}>{subscription.icon}</Text>
@@ -149,19 +169,25 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
 
             {/* Content */}
             <View style={styles.contentContainer}>
-              <Text 
+              <Text
                 style={[
-                  styles.title, 
-                  { color: disabled ? '#999' : '#222' }
+                  styles.title,
+                  {
+                    color: disabled ? colors.textSecondary : colors.textPrimary,
+                  },
                 ]}
               >
                 {subscription.title}
               </Text>
-              
-              <Text 
+
+              <Text
                 style={[
                   styles.description,
-                  { color: disabled ? '#999' : '#666' }
+                  {
+                    color: disabled
+                      ? colors.textSecondary
+                      : colors.textSecondary,
+                  },
                 ]}
                 numberOfLines={2}
               >
@@ -172,38 +198,48 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         </View>
 
         {/* Price bar */}
-        <View 
+        <View
           style={[
             styles.priceBar,
-            { backgroundColor: subscription.color + '15' }
+            {
+              backgroundColor: theme.isDark
+                ? "rgba(255,255,255,0.1)"
+                : subscription.color + "15",
+            },
           ]}
         >
-          <Text 
+          <Text
             style={[
-              styles.price, 
-              { color: subscription.color }
+              styles.price,
+              { color: theme.isDark ? "white" : subscription.color },
             ]}
           >
             {subscription.price}
           </Text>
-          
+
           {isYearly && (
-            <View 
+            <View
               style={[
                 styles.savings,
-                { backgroundColor: subscription.color + '30' }
+                {
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.15)"
+                    : subscription.color + "30",
+                },
               ]}
             >
-              <Text style={{ color: subscription.color }}>
+              <Text
+                style={{ color: theme.isDark ? "white" : subscription.color }}
+              >
                 Spare 17%
               </Text>
             </View>
           )}
-          
-          <View 
+
+          <View
             style={[
               styles.subscribeButton,
-              { backgroundColor: subscription.color }
+              { backgroundColor: subscription.color },
             ]}
           >
             <Text style={styles.subscribeText}>Abonnieren</Text>

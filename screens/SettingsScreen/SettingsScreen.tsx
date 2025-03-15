@@ -462,7 +462,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <View
                 style={[
                   styles.actionIconContainer,
-                  { backgroundColor: "#FFDD0030" },
+                  { backgroundColor: "#FFDD00" },
                 ]}
               >
                 <Text style={{ fontSize: 24 }}>☕</Text>
@@ -471,7 +471,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <Text
                   style={[styles.actionTitle, { color: colors.textPrimary }]}
                 >
-                  Entwicklung unterstützen
+                  Kostenlos spielen
                 </Text>
                 <Text
                   style={[
@@ -479,7 +479,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     { color: colors.textSecondary },
                   ]}
                 >
-                  Kostenlos gespielt, freiwillig unterstützt
+                  Entwicklung freiwillig unterstützen
                 </Text>
               </View>
               <Feather

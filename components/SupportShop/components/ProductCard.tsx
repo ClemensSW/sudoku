@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,11 +8,11 @@ import Animated, {
   withDelay,
   Easing,
   FadeInRight,
-} from 'react-native-reanimated';
-import { useTheme } from '@/utils/theme/ThemeProvider';
-import { Product } from '@/utils/billing/BillingManager';
-import { getRandomProductDescription } from '../utils/supportMessages';
-import styles from './ProductCard.styles';
+} from "react-native-reanimated";
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { Product } from "@/utils/billing/BillingManager";
+import { getRandomProductDescription } from "../utils/supportMessages";
+import styles from "./ProductCard.styles";
 
 interface ProductCardProps {
   product: Product;
@@ -31,14 +31,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
-  
+
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const shinePosition = useSharedValue(-100);
-  
+
   // Use random description if available
-  const description = getRandomProductDescription(product.productId) || product.description;
+  const description =
+    getRandomProductDescription(product.productId) || product.description;
 
   // Setup animations
   useEffect(() => {
@@ -54,11 +55,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             easing: Easing.out(Easing.ease),
           })
         );
-        
+
         // Schedule next animation
         setTimeout(animateShine, 6000 + Math.random() * 4000);
       };
-      
+
       animateShine();
     }
   }, [isPopular]);
@@ -96,10 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const shineAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotate: '25deg' },
-        { translateX: shinePosition.value },
-      ],
+      transform: [{ rotate: "25deg" }, { translateX: shinePosition.value }],
     };
   });
 
@@ -116,50 +114,54 @@ const ProductCard: React.FC<ProductCardProps> = ({
         disabled={disabled}
         style={[
           styles.container,
-          { 
-            borderColor: theme.isDark ? 'rgba(255,255,255,0.15)' : product.color + '30',
-            backgroundColor: theme.isDark ? colors.card : '#FFFFFF'
-          }
+          {
+            borderColor: theme.isDark
+              ? "rgba(255,255,255,0.15)"
+              : product.color + "30",
+            backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
+          },
         ]}
       >
         {/* Animated shine effect for popular items */}
         {isPopular && (
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.shine, 
-              shineAnimatedStyle, 
-              { 
-                backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)' 
-              }
-            ]} 
+              styles.shine,
+              shineAnimatedStyle,
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(255,255,255,0.3)",
+              },
+            ]}
           />
         )}
 
         <View style={styles.innerContainer}>
           {/* Icon */}
-          <View 
+          <View
             style={[
-              styles.iconContainer, 
-              { backgroundColor: product.color + (theme.isDark ? '30' : '15') }
+              styles.iconContainer,
+              { backgroundColor: product.color + (theme.isDark ? "30" : "15") },
             ]}
           >
             <Text style={styles.icon}>{product.icon}</Text>
           </View>
 
           {/* Content */}
-          <Text 
+          <Text
             style={[
-              styles.title, 
-              { color: disabled ? colors.textSecondary : colors.textPrimary }
+              styles.title,
+              { color: disabled ? colors.textSecondary : colors.textPrimary },
             ]}
           >
             {product.title}
           </Text>
-          
-          <Text 
+
+          <Text
             style={[
               styles.description,
-              { color: disabled ? colors.textSecondary : colors.textSecondary }
+              { color: disabled ? colors.textSecondary : colors.textSecondary },
             ]}
             numberOfLines={3}
           >
@@ -167,22 +169,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </Text>
 
           {/* Price */}
-          <View 
+          <View
             style={[
               styles.priceContainer,
-              { 
-                backgroundColor: theme.isDark 
-                  ? 'rgba(255,255,255,0.15)' 
-                  : product.color + '20'
-              }
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(255,255,255,0.15)"
+                  : product.color + "20",
+              },
             ]}
           >
-            <Text 
+            <Text
               style={[
-                styles.price, 
-                { 
-                  color: theme.isDark ? 'white' : product.color 
-                }
+                styles.price,
+                {
+                  color: theme.isDark ? "white" : product.color,
+                },
               ]}
             >
               {product.price}

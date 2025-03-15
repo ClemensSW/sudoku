@@ -31,15 +31,14 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   highlightColumn,
   highlightBlock,
   highlightCell,
-  highlightRowColor = "rgba(255, 152, 0, 0.3)", // Orange default
-  highlightColumnColor = "rgba(233, 30, 99, 0.3)", // Pink default
-  highlightBlockColor = "rgba(76, 175, 80, 0.3)", // Green default
+  highlightRowColor = "rgba(76, 99, 230, 0.35)", // Vibrant blue
+  highlightColumnColor = "rgba(255, 64, 129, 0.35)", // Vibrant pink
+  highlightBlockColor = "rgba(76, 175, 80, 0.35)", // Vibrant green
   showNotes = false,
   notes = {},
   animationDelay = 0,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
 
   // Animation values
   const scale = useSharedValue(0.9);
@@ -70,7 +69,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     if (highlightCell && highlightCell[0] === row && highlightCell[1] === col) {
       return {
         highlighted: true,
-        color: colors.cellBackgroundSelected,
+        color: "rgba(66, 133, 244, 0.5)", // Google blue for selected cell
       };
     }
 
@@ -139,8 +138,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
             key={`note-${row}-${col}-${num}`}
             style={[
               styles.noteText,
-              { color: colors.textCellNotes },
-              !cellNotes.includes(num) && styles.hiddenNote,
+              cellNotes.includes(num) ? styles.activeNote : styles.hiddenNote,
             ]}
           >
             {num}
@@ -152,7 +150,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
 
   return (
     <Animated.View style={[styles.container, boardStyle]}>
-      <View style={[styles.board, { backgroundColor: "#1E2233" }]}>
+      <View style={styles.board}>
         {grid.map((row, rowIndex) => (
           <View key={`row-${rowIndex}`} style={styles.row}>
             {row.map((cell, colIndex) => {
@@ -187,15 +185,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
 
                   {/* Cell content */}
                   {isInitial ? (
-                    <Text
-                      style={[
-                        styles.cellText,
-                        {
-                          color: "#FFFFFF",
-                          fontWeight: "700",
-                        },
-                      ]}
-                    >
+                    <Text style={[styles.cellText, styles.initialText]}>
                       {cell}
                     </Text>
                   ) : showNotes ? (
@@ -225,6 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1.5,
     borderColor: "rgba(255, 255, 255, 0.25)",
+    backgroundColor: "#1E2233",
     padding: 3,
     overflow: "hidden",
   },
@@ -260,6 +251,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#FFFFFF",
   },
+  initialText: {
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
   notesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -273,6 +268,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
     padding: 1,
+  },
+  activeNote: {
+    color: "rgba(255, 255, 255, 0.8)",
   },
   hiddenNote: {
     opacity: 0,

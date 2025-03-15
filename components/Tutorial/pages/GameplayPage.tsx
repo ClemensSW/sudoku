@@ -1,7 +1,7 @@
 // components/Tutorial/pages/GameplayPage.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
@@ -38,59 +38,8 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   ];
   
   // Demo animation state
-  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
-  const [animationStep, setAnimationStep] = useState(0);
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>([2, 6]);
   
-  // Simulate gameplay interaction
-  useEffect(() => {
-    const animationSteps = [
-      () => setSelectedCell(null),
-      () => setSelectedCell([2, 6]), // Select a cell
-      () => setSelectedCell([4, 4]), // Select another cell
-      () => setSelectedCell([7, 4]), // Select a third cell
-      () => setSelectedCell(null),   // Reset
-    ];
-    
-    const stepInterval = setInterval(() => {
-      animationSteps[animationStep]();
-      setAnimationStep((prev) => (prev + 1) % animationSteps.length);
-    }, 2500);
-    
-    return () => clearInterval(stepInterval);
-  }, [animationStep]);
-  
-  // Render number pad mockup
-  const renderNumberPad = () => {
-    return (
-      <View style={styles.numberPadContainer}>
-        <View style={styles.numberRow}>
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <View
-              key={`num-${num}`}
-              style={[
-                styles.numberButton,
-                { backgroundColor: colors.primary }
-              ]}
-            >
-              <Text style={[styles.numberText, { color: colors.buttonText }]}>
-                {num}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <Animated.View 
-          style={styles.gestureHint}
-          entering={FadeInUp.delay(500).duration(500)}
-        >
-          <Feather name="arrow-up" size={18} color={colors.textSecondary} />
-          <Text style={[styles.gestureText, { color: colors.textSecondary }]}>
-            Tippe auf eine Zahl
-          </Text>
-        </Animated.View>
-      </View>
-    );
-  };
-
   return (
     <TutorialPage
       title="Spielablauf"
@@ -107,81 +56,35 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           <AnimatedBoard 
             grid={exampleGrid}
             highlightCell={selectedCell}
-            highlightRow={selectedCell?.[0]}
-            highlightColumn={selectedCell?.[1]}
           />
-          
-          {selectedCell && (
-            <Animated.View 
-              style={styles.cellHint}
-              entering={FadeIn.duration(300)}
-            >
-              <Feather name="arrow-down" size={18} color={colors.textSecondary} />
-              <Text style={[styles.hintText, { color: colors.textSecondary }]}>
-                Ausgewählte Zelle
-              </Text>
-            </Animated.View>
-          )}
         </Animated.View>
         
         <Animated.View 
-          style={styles.instructionsContainer}
-          entering={FadeInUp.delay(300).duration(500)}
+          style={styles.instructionContainer}
+          entering={FadeIn.delay(300).duration(500)}
         >
-          <Text style={[styles.instructionTitle, { color: colors.textPrimary }]}>
-            So spielst du:
+          <Text style={[styles.instruction, { color: colors.textPrimary }]}>
+            Wähle eine Zelle und tippe auf die gewünschte Zahl, um die Zelle zu füllen.
           </Text>
-          
-          <View style={styles.instructionStep}>
-            <View 
-              style={[
-                styles.stepNumber, 
-                { backgroundColor: colors.primary }
-              ]}
-            >
-              <Text style={[styles.stepNumberText, { color: colors.buttonText }]}>
-                1
-              </Text>
-            </View>
-            <Text style={[styles.instructionText, { color: colors.textPrimary }]}>
-              Wähle eine Zelle durch Antippen
-            </Text>
-          </View>
-          
-          <View style={styles.instructionStep}>
-            <View 
-              style={[
-                styles.stepNumber, 
-                { backgroundColor: colors.primary }
-              ]}
-            >
-              <Text style={[styles.stepNumberText, { color: colors.buttonText }]}>
-                2
-              </Text>
-            </View>
-            <Text style={[styles.instructionText, { color: colors.textPrimary }]}>
-              Tippe auf eine Zahl im Ziffernblock
-            </Text>
-          </View>
-          
-          <View style={styles.instructionStep}>
-            <View 
-              style={[
-                styles.stepNumber, 
-                { backgroundColor: colors.primary }
-              ]}
-            >
-              <Text style={[styles.stepNumberText, { color: colors.buttonText }]}>
-                3
-              </Text>
-            </View>
-            <Text style={[styles.instructionText, { color: colors.textPrimary }]}>
-              Verwandte Zellen werden automatisch hervorgehoben
-            </Text>
-          </View>
         </Animated.View>
         
-        {renderNumberPad()}
+        {/* Number Pad Example */}
+        <View style={styles.numberPadExample}>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <View
+              key={`numpad-${num}`}
+              style={[
+                styles.numberButton,
+                { 
+                  backgroundColor: colors.primary,
+                  shadowColor: colors.primary,
+                }
+              ]}
+            >
+              <Text style={styles.numberButtonText}>{num}</Text>
+            </View>
+          ))}
+        </View>
       </View>
     </TutorialPage>
   );
@@ -190,83 +93,48 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
   },
   boardContainer: {
     alignItems: "center",
-    marginTop: spacing.md,
   },
-  cellHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: spacing.xs,
-  },
-  hintText: {
-    fontSize: 14,
-    marginLeft: spacing.xs,
-    fontWeight: "500",
-  },
-  instructionsContainer: {
-    marginTop: spacing.xl,
-    paddingHorizontal: spacing.md,
-  },
-  instructionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: spacing.md,
-    textAlign: "center",
-  },
-  instructionStep: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  stepNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: spacing.sm,
-  },
-  stepNumberText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  instructionText: {
-    fontSize: 16,
-    flex: 1,
-  },
-  numberPadContainer: {
-    marginTop: spacing.xl,
-    alignItems: "center",
-  },
-  numberRow: {
-    flexDirection: "row",
-    justifyContent: "center",
+  instructionContainer: {
     marginTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  instruction: {
+    fontSize: 18,
+    fontWeight: "500",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  numberPadExample: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: spacing.xl,
+    width: "80%",
+    maxWidth: 360,
   },
   numberButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 42,
+    height: 42,
+    borderRadius: 8,
+    margin: 4,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  numberText: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  gestureHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: spacing.xs,
-  },
-  gestureText: {
-    fontSize: 14,
-    marginLeft: spacing.xs,
-  },
+  numberButtonText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "600",
+  }
 });
 
 export default GameplayPage;

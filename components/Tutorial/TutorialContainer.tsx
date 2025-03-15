@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "./TutorialPage";
 import TutorialProgress from "./components/TutorialProgress";
@@ -24,6 +25,7 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
   const [currentPage, setCurrentPage] = useState(0);
   const theme = useTheme();
   const { colors } = theme;
+  const insets = useSafeAreaInsets();
 
   // Tutorial pages
   const pages = [
@@ -55,6 +57,14 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
+      {/* Progress Indicator - positioned at the top */}
+      <View style={[styles.progressContainer, { marginTop: insets.top + 56 }]}>
+        <TutorialProgress
+          currentStep={currentPage + 1}
+          totalSteps={pages.length}
+        />
+      </View>
+
       {/* Main Content */}
       <View style={styles.pageContainer}>
         <CurrentPageComponent
@@ -62,14 +72,6 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
           onBack={goToPreviousPage}
           isFirstPage={currentPage === 0}
           isLastPage={currentPage === pages.length - 1}
-        />
-      </View>
-
-      {/* Tutorial Progress */}
-      <View style={styles.progressContainer}>
-        <TutorialProgress
-          currentStep={currentPage + 1}
-          totalSteps={pages.length}
         />
       </View>
     </View>
@@ -85,10 +87,11 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     position: "absolute",
-    bottom: 0,
     left: 0,
     right: 0,
     zIndex: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

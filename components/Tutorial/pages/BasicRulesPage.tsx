@@ -1,7 +1,7 @@
 // components/Tutorial/pages/BasicRulesPage.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Animated, { FadeIn, FadeInRight } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
@@ -15,14 +15,14 @@ interface BasicRulesPageProps {
 }
 
 // Define colors for highlighting
-const ROW_COLOR = "#FF9800"; // Orange
-const COLUMN_COLOR = "#E91E63"; // Pink
-const BLOCK_COLOR = "#4CAF50"; // Green
+const ROW_COLOR = "#4C63E6"; // Vibrant blue
+const COLUMN_COLOR = "#FF4081"; // Vibrant pink
+const BLOCK_COLOR = "#4CAF50"; // Vibrant green
 
 // Semi-transparent versions for board highlighting
-const ROW_COLOR_BG = "rgba(255, 152, 0, 0.3)";
-const COLUMN_COLOR_BG = "rgba(233, 30, 99, 0.3)";
-const BLOCK_COLOR_BG = "rgba(76, 175, 80, 0.3)";
+const ROW_COLOR_BG = "rgba(76, 99, 230, 0.35)";
+const COLUMN_COLOR_BG = "rgba(255, 64, 129, 0.35)";
+const BLOCK_COLOR_BG = "rgba(76, 175, 80, 0.35)";
 
 const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   onNext,
@@ -100,7 +100,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 
         <Animated.View
           style={styles.explanationContainer}
-          entering={FadeInRight.delay(300).duration(500)}
+          entering={FadeIn.delay(300).duration(500)}
         >
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
             Das Ziel eines Sudoku-Puzzles ist es, das 9 x 9 Raster so zu füllen,
@@ -131,13 +131,6 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
             alle Zahlen von 1 bis 9 ohne Wiederholung enthält.
-          </Text>
-
-          <Text
-            style={[styles.explanationNotes, { color: colors.textSecondary }]}
-          >
-            Beginne mit den Zahlen, die bereits als Hinweis enthalten sind, und
-            finde die richtige Lösung für jede Zelle.
           </Text>
         </Animated.View>
       </Animated.View>
@@ -173,12 +166,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     marginHorizontal: 4,
-  },
-  explanationNotes: {
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: spacing.md,
-    fontStyle: "italic",
   },
 });
 

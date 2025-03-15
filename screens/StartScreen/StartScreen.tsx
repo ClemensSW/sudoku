@@ -1,6 +1,13 @@
 // screens/StartScreen/StartScreen.tsx
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -58,8 +65,16 @@ const StartScreen: React.FC = () => {
   };
 
   const handleShowHighScores = () => {
-    router.push("/settings");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    // Using setTimeout to ensure the UI has time to update first
+    setTimeout(() => {
+      try {
+        router.push("/settings");
+      } catch (error) {
+        console.error("Navigation error:", error);
+      }
+    }, 50);
   };
 
   return (
@@ -72,18 +87,32 @@ const StartScreen: React.FC = () => {
         style={styles.backgroundImage}
       />
 
-      {/* Top buttons */}
-      <SafeAreaView style={{ width: "100%" }}>
-        <View style={[styles.topButtonsContainer, { paddingTop: insets.top }]}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={handleShowHighScores}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Feather name="award" size={24} color={colors.primary} />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      {/* Standalone Button with absolute positioning */}
+      <View
+        style={{
+          position: "absolute",
+          top: insets.top + 16,
+          right: 16,
+          zIndex: 9999,
+        }}
+      >
+        <TouchableOpacity
+          onPress={handleShowHighScores}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            borderWidth: 1,
+            borderColor: colors.primary,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          activeOpacity={0.7}
+        >
+          <Feather name="award" size={24} color={colors.primary} />
+        </TouchableOpacity>
+      </View>
 
       <SafeAreaView style={styles.safeArea}>
         <Animated.View style={styles.content} entering={FadeIn.duration(500)}>
@@ -118,10 +147,16 @@ const StartScreen: React.FC = () => {
 
       {/* Difficulty Selection Modal */}
       {showDifficultyModal && (
-        <View style={styles.modalOverlay}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowDifficultyModal(false)}
+        >
           <Animated.View
             style={[styles.modalContent, { backgroundColor: colors.card }]}
             entering={FadeIn.duration(300)}
+            // This prevents touches on the modal content from closing the modal
+            onTouchEnd={(e) => e.stopPropagation()}
           >
             <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
               Neues Spiel
@@ -183,6 +218,8 @@ const StartScreen: React.FC = () => {
               style={[
                 styles.modalCTAButton,
                 { backgroundColor: colors.primary },
+                // Add more bottom margin since we removed the cancel button
+                { marginBottom: 8 },
               ]}
               onPress={handleStartWithDifficulty}
             >
@@ -190,23 +227,8 @@ const StartScreen: React.FC = () => {
                 Los geht's!
               </Text>
             </TouchableOpacity>
-
-            {/* Cancel button */}
-            <TouchableOpacity
-              style={styles.modalCancelButton}
-              onPress={() => setShowDifficultyModal(false)}
-            >
-              <Text
-                style={[
-                  styles.modalCancelText,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                Abbrechen
-              </Text>
-            </TouchableOpacity>
           </Animated.View>
-        </View>
+        </TouchableOpacity>
       )}
 
       {/* How To Play Modal */}

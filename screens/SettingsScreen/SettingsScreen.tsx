@@ -242,15 +242,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <Text
                   style={[styles.actionTitle, { color: colors.textPrimary }]}
                 >
-                  Spielanleitung
-                </Text>
-                <Text
-                  style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  Lerne, wie man Sudoku spielt
+                  Wie man spielt
                 </Text>
               </View>
               <Feather

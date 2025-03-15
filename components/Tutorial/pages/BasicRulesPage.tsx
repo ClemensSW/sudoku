@@ -185,7 +185,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 
   return (
     <TutorialPage
-      title="Wie gespielt wird"
+      title="Wie man spielt"
       onNext={onNext}
       onBack={onBack}
       isFirstPage={isFirstPage}

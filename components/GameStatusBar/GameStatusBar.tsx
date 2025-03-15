@@ -11,6 +11,7 @@ interface GameStatusBarProps {
   onTimeUpdate?: (time: number) => void;
   errorsRemaining: number;
   maxErrors: number;
+  showErrors?: boolean; // Neue Prop für Fehleranzeige
 }
 
 const GameStatusBar: React.FC<GameStatusBarProps> = ({
@@ -19,20 +20,22 @@ const GameStatusBar: React.FC<GameStatusBarProps> = ({
   onTimeUpdate,
   errorsRemaining,
   maxErrors,
+  showErrors = true, // Standardwert true
 }) => {
   return (
-    <Animated.View 
+    <Animated.View
       style={styles.container}
       entering={FadeInDown.delay(400).duration(500)}
     >
       <View style={styles.content}>
-        <ErrorIndicator 
-          errorsRemaining={errorsRemaining} 
-          maxErrors={maxErrors} 
+        <ErrorIndicator
+          errorsRemaining={errorsRemaining}
+          maxErrors={maxErrors}
+          showErrors={showErrors} // Übergebe den Status an ErrorIndicator
         />
-        
-        <Timer 
-          isRunning={isRunning} 
+
+        <Timer
+          isRunning={isRunning}
           initialTime={initialTime}
           onTimeUpdate={onTimeUpdate}
         />

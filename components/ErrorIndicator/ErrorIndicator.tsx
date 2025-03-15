@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
@@ -15,11 +15,13 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 interface ErrorIndicatorProps {
   errorsRemaining: number;
   maxErrors: number;
+  showErrors?: boolean; // Neue Prop für Fehleranzeige
 }
 
 const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
   errorsRemaining,
   maxErrors,
+  showErrors = true, // Standardwert true
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -52,7 +54,28 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
     return colors.primary;
   };
 
-  // Renderbereich für Fehlerindikatoren (Herzen)
+  // Wenn Fehler nicht angezeigt werden, zeige Herz mit Unendlichkeitssymbol
+  if (!showErrors) {
+    return (
+      <Animated.View style={styles.container} entering={FadeIn.duration(500)}>
+        <View style={styles.heartsRow}>
+          <View style={styles.heartContainer}>
+            <Feather name="heart" size={20} color={colors.primary} />
+          </View>
+          <Text
+            style={[
+              styles.infinityText,
+              { color: colors.textSecondary, marginLeft: 4 },
+            ]}
+          >
+            ∞
+          </Text>
+        </View>
+      </Animated.View>
+    );
+  }
+
+  // Renderbereich für Fehlerindikatoren (Herzen) - original Verhalten
   const renderHearts = () => {
     return Array.from({ length: maxErrors }).map((_, index) => {
       const isFilled = index < errorsRemaining;

@@ -31,7 +31,7 @@ import {
   noHintsAlert,
   autoNotesAlert,
   quitGameAlert,
-  gameOverAlert,
+  gameOverAlert, // Hinzugefügt: fehlender Import
   // gameCompletionAlert wurde entfernt, da wir jetzt die Modal-Komponente verwenden
 } from "@/components/CustomAlert/AlertHelpers";
 
@@ -67,6 +67,8 @@ import {
   GameSettings,
   GameStats,
 } from "@/utils/storage";
+
+import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 
 import styles from "./GameScreen.styles";
 
@@ -106,6 +108,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [showSettings, setShowSettings] = useState(false);
   // State für Spieleinstellungen
   const [highlightRelatedCells, setHighlightRelatedCells] = useState(true);
+  const [highlightSameValues, setHighlightSameValues] = useState(true); // Neue Einstellung
   const [showMistakes, setShowMistakes] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   // State für Fehler-Tracking
@@ -124,30 +127,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   // Hilfsfunktion für Haptisches Feedback
   const triggerHapticFeedback = useCallback(
     (type: "light" | "medium" | "heavy" | "success" | "error" | "warning") => {
-      if (!vibrationEnabled) return;
-
-      switch (type) {
-        case "light":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          break;
-        case "medium":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          break;
-        case "heavy":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          break;
-        case "success":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          break;
-        case "error":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-          break;
-        case "warning":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          break;
-      }
+      triggerHaptic(type);
     },
-    [vibrationEnabled]
+    []
   );
 
   // Callback-Funktion für Settings-Änderungen
@@ -157,10 +139,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   ) => {
     if (key === "highlightRelatedCells") {
       setHighlightRelatedCells(value as boolean);
+    } else if (key === "highlightSameValues") {
+      setHighlightSameValues(value as boolean);
     } else if (key === "showMistakes") {
       setShowMistakes(value as boolean);
     } else if (key === "vibration") {
       setVibrationEnabled(value as boolean);
+      // Cache aktualisieren, damit die Änderung sofort wirksam wird
+      setVibrationEnabledCache(value as boolean);
     }
   };
 
@@ -171,8 +157,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         const settings = await loadSettings();
         if (settings) {
           setHighlightRelatedCells(settings.highlightRelatedCells);
+          setHighlightSameValues(settings.highlightSameValues);
           setShowMistakes(settings.showMistakes);
           setVibrationEnabled(settings.vibration);
+          // Cache für Vibration aktualisieren
+          setVibrationEnabledCache(settings.vibration);
         }
 
         const stats = await loadStats();
@@ -669,6 +658,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
               onTimeUpdate={handleTimeUpdate}
               errorsRemaining={errorsRemaining}
               maxErrors={MAX_ERRORS}
+              showErrors={showMistakes}
             />
 
             <View style={styles.boardContainer}>
@@ -678,6 +668,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                 onCellPress={handleCellPress}
                 isLoading={isLoading}
                 highlightRelated={highlightRelatedCells}
+                highlightSameValues={highlightSameValues}
                 showErrors={showMistakes}
               />
             </View>

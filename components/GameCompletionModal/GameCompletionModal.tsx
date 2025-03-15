@@ -21,6 +21,7 @@ import { GameStats } from "@/utils/storage";
 import Button from "@/components/Button/Button";
 import styles from "./GameCompletionModal.styles";
 import { spacing } from "@/utils/theme";
+import { triggerHaptic } from "@/utils/haptics";
 
 interface GameCompletionModalProps {
   visible: boolean;
@@ -152,8 +153,8 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   useEffect(() => {
     if (visible) {
       // Trigger haptic feedback for success
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
+      triggerHaptic("success");
+      
       // Verzögerung zur Vermeidung von Animationskonflikten
       setTimeout(() => {
         // Start animations

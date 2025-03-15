@@ -22,6 +22,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { triggerHaptic } from "@/utils/haptics";
 
 // Define button types with different visual styles
 export type ButtonType =
@@ -89,19 +90,19 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   useEffect(() => {
     if (visible) {
       setIsVisible(true);
-      // Provide haptic feedback based on alert type
+      // Provide haptic feedback based on alert type mit der neuen Utility
       switch (type) {
         case "success":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          triggerHaptic("success");
           break;
         case "error":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          triggerHaptic("error");
           break;
         case "warning":
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          triggerHaptic("warning");
           break;
         default:
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          triggerHaptic("medium");
       }
     }
   }, [visible, type]);

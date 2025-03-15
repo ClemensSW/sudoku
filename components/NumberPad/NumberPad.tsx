@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import Animated, {
   FadeInUp,
   useAnimatedStyle,
@@ -9,6 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { triggerHaptic } from "@/utils/haptics"; // Neue Haptic-Utility importieren
 import styles from "./NumberPad.styles";
 
 interface NumberPadProps {
@@ -60,8 +60,8 @@ const NumberPad: React.FC<NumberPadProps> = ({
       scaleValue.value = withSpring(1, { damping: 12, stiffness: 400 });
     }, 100);
 
-    // Haptisches Feedback
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Haptisches Feedback mit neuer Utility
+    triggerHaptic("light");
 
     // Callback ausführen
     callback();

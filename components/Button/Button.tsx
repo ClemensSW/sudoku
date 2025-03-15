@@ -17,6 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./Button.styles";
+import { triggerHaptic } from "@/utils/haptics";
 
 type ButtonVariant =
   | "primary"
@@ -82,17 +83,8 @@ const Button: React.FC<ButtonProps> = ({
     if (disabled || loading) return;
 
     if (withHaptic) {
-      switch (hapticType) {
-        case "light":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          break;
-        case "medium":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          break;
-        case "heavy":
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          break;
-      }
+      // Nutze die neue Haptic-Utility
+      triggerHaptic(hapticType || "light");
     }
 
     onPress();

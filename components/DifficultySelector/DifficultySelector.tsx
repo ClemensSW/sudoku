@@ -17,6 +17,7 @@ import * as Haptics from "expo-haptics";
 import { Difficulty } from "@/utils/sudoku";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./DifficultySelector.styles";
+import { triggerHaptic } from "@/utils/haptics";
 
 interface DifficultySelectorProps {
   currentDifficulty: Difficulty;
@@ -49,7 +50,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({
   const handleSelectDifficulty = (difficulty: Difficulty) => {
     if (disabled || difficulty === currentDifficulty) return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerHaptic("light");
     onSelectDifficulty(difficulty);
   };
 
@@ -94,10 +95,10 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({
                 style={[
                   styles.buttonText,
                   {
-                    color: isSelected ? 
-                      colors.textOnPrimary : 
-                      colors.textPrimary,
-                    fontWeight: isSelected ? '700' : '400'
+                    color: isSelected
+                      ? colors.textOnPrimary
+                      : colors.textPrimary,
+                    fontWeight: isSelected ? "700" : "400",
                   },
                 ]}
               >

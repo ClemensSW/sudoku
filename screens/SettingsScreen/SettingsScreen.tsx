@@ -28,6 +28,7 @@ import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import SupportShop from "@/components/SupportShop/SupportShop";
 import { loadSettings, saveSettings, loadStats } from "@/utils/storage";
 import { GameSettings, GameStats } from "@/utils/storage";
+import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 
 import styles from "./SettingsScreen.styles";
 
@@ -88,8 +89,15 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     setSettings(updatedSettings);
     await saveSettings(updatedSettings);
 
-    // Haptic feedback
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Haptic feedback mit neuer Utility - aber nur wenn Vibration nicht gerade deaktiviert wird
+    if (!(key === "vibration" && value === false)) {
+      triggerHaptic("light");
+    }
+
+    // Wenn die Vibrations-Einstellung geändert wird, aktualisiere auch den Cache
+    if (key === "vibration") {
+      setVibrationEnabledCache(value as boolean);
+    }
 
     // Benachrichtige GameScreen über die Änderung
     if (onSettingsChanged) {
@@ -278,41 +286,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <View
               style={[styles.settingsGroup, { borderColor: colors.border }]}
             >
-              {/* Show Errors */}
-              <View
-                style={[
-                  styles.settingRow,
-                  { borderBottomColor: colors.border },
-                ]}
-              >
-                <View style={styles.settingTextContainer}>
-                  <Text
-                    style={[styles.settingTitle, { color: colors.textPrimary }]}
-                  >
-                    Fehler anzeigen
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Offensichtlich falsche Zahlen hervorheben
-                  </Text>
-                </View>
-                <Switch
-                  value={settings.showMistakes}
-                  onValueChange={(value) =>
-                    handleSettingChange("showMistakes", value)
-                  }
-                  trackColor={{
-                    false: colors.buttonDisabled,
-                    true: colors.primary,
-                  }}
-                  thumbColor="#FFFFFF"
-                />
-              </View>
-
               {/* Highlight related cells */}
               <View
                 style={[
@@ -339,6 +312,76 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   value={settings.highlightRelatedCells}
                   onValueChange={(value) =>
                     handleSettingChange("highlightRelatedCells", value)
+                  }
+                  trackColor={{
+                    false: colors.buttonDisabled,
+                    true: colors.primary,
+                  }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+
+              {/* Highlight same values */}
+              <View
+                style={[
+                  styles.settingRow,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <View style={styles.settingTextContainer}>
+                  <Text
+                    style={[styles.settingTitle, { color: colors.textPrimary }]}
+                  >
+                    Gleiche Zahlen hervorheben
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Alle Zellen mit gleichen Werten markieren
+                  </Text>
+                </View>
+                <Switch
+                  value={settings.highlightSameValues}
+                  onValueChange={(value) =>
+                    handleSettingChange("highlightSameValues", value)
+                  }
+                  trackColor={{
+                    false: colors.buttonDisabled,
+                    true: colors.primary,
+                  }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+
+              {/* Show Errors */}
+              <View
+                style={[
+                  styles.settingRow,
+                  { borderBottomColor: colors.border },
+                ]}
+              >
+                <View style={styles.settingTextContainer}>
+                  <Text
+                    style={[styles.settingTitle, { color: colors.textPrimary }]}
+                  >
+                    Fehler anzeigen
+                  </Text>
+                  <Text
+                    style={[
+                      styles.settingDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Offensichtlich falsche Zahlen hervorheben
+                  </Text>
+                </View>
+                <Switch
+                  value={settings.showMistakes}
+                  onValueChange={(value) =>
+                    handleSettingChange("showMistakes", value)
                   }
                   trackColor={{
                     false: colors.buttonDisabled,

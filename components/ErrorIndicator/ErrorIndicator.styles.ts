@@ -17,4 +17,11 @@ export default StyleSheet.create({
   heartContainer: {
     marginHorizontal: 3,
   },
+
+  // Stil für das Unendlichkeitssymbol
+  infinityText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: -3, // Leicht angepasst für bessere vertikale Ausrichtung
+  },
 });

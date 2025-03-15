@@ -26,6 +26,7 @@ import Button from "@/components/Button/Button";
 import DifficultySelector from "@/components/DifficultySelector/DifficultySelector";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import styles from "./StartScreen.styles";
+import { triggerHaptic } from "@/utils/haptics";
 
 const { width } = Dimensions.get("window");
 
@@ -42,11 +43,11 @@ const StartScreen: React.FC = () => {
 
   const handleDifficultyChange = (difficulty: Difficulty) => {
     setSelectedDifficulty(difficulty);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerHaptic("light");
   };
 
   const handleStartGame = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    triggerHaptic("medium");
     setShowDifficultyModal(true);
   };
 
@@ -61,11 +62,11 @@ const StartScreen: React.FC = () => {
 
   const handleOpenHowToPlay = () => {
     setShowHowToPlay(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerHaptic("light");
   };
 
   const handleShowHighScores = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerHaptic("light");
 
     // Using setTimeout to ensure the UI has time to update first
     setTimeout(() => {

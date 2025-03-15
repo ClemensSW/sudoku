@@ -33,6 +33,7 @@ export type GameStats = {
 export type GameSettings = {
   highlightRelatedCells: boolean;
   showMistakes: boolean;
+  highlightSameValues: boolean; // Neue Einstellung hinzufügen
   autoNotes: boolean;
   darkMode: "system" | "light" | "dark";
   vibration: boolean;
@@ -55,6 +56,7 @@ const DEFAULT_STATS: GameStats = {
 const DEFAULT_SETTINGS: GameSettings = {
   highlightRelatedCells: true,
   showMistakes: true,
+  highlightSameValues: true, // Standardmäßig aktiviert
   autoNotes: false,
   darkMode: "system",
   vibration: true,

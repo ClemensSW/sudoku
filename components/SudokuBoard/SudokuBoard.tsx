@@ -18,6 +18,7 @@ interface SudokuBoardProps {
   onCellPress: (row: number, col: number) => void;
   isLoading?: boolean;
   highlightRelated?: boolean;
+  highlightSameValues?: boolean;
   showErrors?: boolean;
 }
 
@@ -27,6 +28,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   onCellPress,
   isLoading = false,
   highlightRelated = true,
+  highlightSameValues = true,
   showErrors = true,
 }) => {
   const [isReady, setIsReady] = useState(false);
@@ -88,6 +90,19 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     return isInSameRow || isInSameCol || isInSameBox;
   };
 
+  // Neue Funktion, um zu prüfen, ob eine Zelle den gleichen Wert hat wie die ausgewählte Zelle
+  const hasSameValue = (row: number, col: number): boolean => {
+    if (!selectedCell || !highlightSameValues) return false;
+
+    const selectedValue = board[selectedCell.row][selectedCell.col].value;
+    return (
+      selectedValue !== 0 &&
+      board[row][col].value === selectedValue &&
+      board[row][col].value !== 0 &&
+      !(selectedCell.row === row && selectedCell.col === col)
+    );
+  };
+
   return (
     <View style={styles.boardContainer}>
       <Animated.View
@@ -142,16 +157,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                     );
 
                     // Gleiche Zahlen hervorheben
-                    const sameValue = !!(
-                      selectedCell &&
-                      cell.value !== 0 &&
-                      !(
-                        selectedCell.row === rowIndex &&
-                        selectedCell.col === colIndex
-                      ) &&
-                      board[selectedCell.row][selectedCell.col].value ===
-                        cell.value
-                    );
+                    const sameValue = hasSameValue(rowIndex, colIndex);
 
                     return (
                       <SudokuCell

@@ -1,22 +1,21 @@
 // components/Tutorial/pages/GameplayPage.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Animated, {
   FadeIn,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSequence,
-  withDelay,
   Easing,
-  interpolateColor,
-  runOnJS,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
-import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
+
+// Manuell implementiertes SudokuBoard für die Tutorial-Animation
+import SudokuBoardDemo from "./SudokuBoardDemo";
 
 interface GameplayPageProps {
   onNext: () => void;
@@ -26,7 +25,6 @@ interface GameplayPageProps {
 }
 
 const BUTTON_BLUE = "#4361EE"; // Match the game's blue color
-const ANIMATION_DURATION = 800;
 
 const GameplayPage: React.FC<GameplayPageProps> = ({
   onNext,
@@ -37,48 +35,51 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const theme = useTheme();
   const { colors } = theme;
 
-  // Example grid with some initial numbers
+  // Ein gültiges Sudoku mit eindeutiger Lösung in der Mitte (nur 5 passt)
   const exampleGrid = [
-    [6, 0, 2, 0, 0, 1, 9, 0, 0],
-    [0, 3, 0, 0, 0, 0, 0, 5, 0],
-    [0, 0, 0, 0, 0, 0, 6, 0, 3],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 2, 0, 0, 0, 4, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 6, 3, 0, 0, 0, 4, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0, 0],
+    [0, 0, 0, 1, 7, 3, 0, 0, 0],
+    [1, 2, 3, 4, 0, 6, 7, 8, 9],
+    [0, 0, 0, 2, 9, 8, 0, 0, 0],
+    [0, 0, 0, 0, 4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 6, 0, 0, 0, 0],
+    [0, 0, 0, 0, 8, 0, 0, 0, 0],
   ];
 
   // Animation state
-  const [selectedCell, setSelectedCell] = useState<
-    [number, number] | undefined
-  >([4, 2]);
-  const [filledValue, setFilledValue] = useState<number | null>(null);
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
+    null
+  );
   const [animationRunning, setAnimationRunning] = useState(false);
   const [stepNumber, setStepNumber] = useState(0);
 
   // Create mutable grid
-  const [gridState, setGridState] = useState(
-    JSON.parse(JSON.stringify(exampleGrid))
-  );
+  const [gridState, setGridState] = useState([
+    ...exampleGrid.map((row) => [...row]),
+  ]);
+
+  // Target cell and value
+  const targetRow = 4;
+  const targetCol = 4;
+  const targetValue = 5;
+  const targetIndex = targetValue - 1; // Array index for button 5 is 4
 
   // Animation values
   const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
-  const activeNumberIndex = useRef(3); // 4 will be highlighted (index 3)
+  const animationRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Start demo animation on component mount
+  // Start demo animation on component mount with delay
   useEffect(() => {
     startAnimation();
 
-    // Loop the animation
-    const intervalId = setInterval(() => {
-      if (!animationRunning) {
-        startAnimation();
+    return () => {
+      // Cleanup any running timers
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
       }
-    }, 10000);
-
-    return () => clearInterval(intervalId);
+    };
   }, []);
 
   // Start the animation sequence
@@ -89,49 +90,61 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     setStepNumber(0);
 
     // Reset grid to initial state
-    setGridState(JSON.parse(JSON.stringify(exampleGrid)));
-    setFilledValue(null);
+    setGridState([...exampleGrid.map((row) => [...row])]);
+    setSelectedCell(null);
 
-    // Start animation sequence
+    // Animation mit langen Pausen zwischen den Schritten
     setTimeout(() => {
-      // Step 1: Select a cell
-      setSelectedCell([4, 2]);
+      // Step 1: Zelle auswählen - die Hervorhebung der verwandten Zellen
+      // geschieht automatisch in der SudokuBoardDemo-Komponente
+      setSelectedCell([targetRow, targetCol]);
       setStepNumber(1);
 
-      // Step 2: Press a number button (after delay)
+      // Sehr lange Pause vor dem nächsten Schritt
       setTimeout(() => {
-        // Animate the button press
-        const index = activeNumberIndex.current;
-        numberScales[index].value = withSequence(
-          withTiming(0.8, { duration: 150 }),
-          withTiming(1.1, { duration: 200 }),
-          withTiming(1, { duration: 150 })
+        // Step 2: Nummer auswählen
+        numberScales[targetIndex].value = withSequence(
+          withTiming(0.8, { duration: 300 }),
+          withTiming(1.1, { duration: 300 }),
+          withTiming(1, { duration: 300 })
         );
 
         setStepNumber(2);
 
-        // Step 3: Show number in the cell
+        // Lange Pause vor dem Platzieren der Zahl
         setTimeout(() => {
-          // Update the grid with the new value
+          // Step 3: Zahl in der Zelle anzeigen
           const newGrid = [...gridState];
-          newGrid[4][2] = 4; // Set the cell value to 4
+          newGrid[targetRow][targetCol] = targetValue;
           setGridState(newGrid);
-          setFilledValue(4);
           setStepNumber(3);
 
-          // Step 4: Animation complete
-          setTimeout(() => {
+          // Sehr lange Pause am Ende, dann Animation zurücksetzen und neu starten
+          animationRef.current = setTimeout(() => {
             setAnimationRunning(false);
-            setStepNumber(0);
-          }, 3000);
-        }, 800);
-      }, 1500);
+
+            // Warten und dann Animation neu starten
+            animationRef.current = setTimeout(() => {
+              startAnimation();
+            }, 3000);
+          }, 5000);
+        }, 4000);
+      }, 5000);
     }, 500);
   };
 
-  // Single instruction text that doesn't change layout
+  // Get instruction text based on current step
   const getInstructionText = () => {
-    return "Wähle eine leere Zelle und tippe dann auf eine passende Zahl";
+    switch (stepNumber) {
+      case 1:
+        return "1. Wähle eine leere Zelle aus";
+      case 2:
+        return "2. Nur die Zahl 5 kann hier platziert werden";
+      case 3:
+        return "3. Die Zahl 5 passt perfekt in die Zelle";
+      default:
+        return "";
+    }
   };
 
   // Render function for the number pad buttons - exactly as in the game
@@ -140,19 +153,11 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
       <View style={styles.numberPadContainer}>
         <View style={styles.numbersRow}>
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
-            const isActive = num === 4; // The number 4 will be active
-
             // Create animated style for each button
             const animatedStyle = useAnimatedStyle(() => {
               return {
                 transform: [{ scale: numberScales[index].value }],
-                backgroundColor:
-                  isActive && stepNumber >= 2
-                    ? withDelay(
-                        stepNumber === 2 ? 300 : 0,
-                        withTiming(BUTTON_BLUE, { duration: 300 })
-                      )
-                    : BUTTON_BLUE,
+                backgroundColor: BUTTON_BLUE,
               };
             });
 
@@ -207,10 +212,11 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           style={styles.boardContainer}
           entering={FadeIn.duration(500)}
         >
-          <AnimatedBoard
-            grid={gridState}
-            highlightCell={selectedCell}
-            showAnimation={true}
+          <SudokuBoardDemo
+            puzzle={gridState}
+            initialPuzzle={exampleGrid}
+            selectedCell={selectedCell}
+            onCellPress={() => {}} // Dummy function, wir brauchen keine Interaktion
           />
         </Animated.View>
 
@@ -223,10 +229,10 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           </Text>
         </Animated.View>
 
-        {/* Number Pad with game-accurate styling */}
+        {/* Number Pad mit stilgetreuem Styling */}
         {renderNumberButtons()}
 
-        {/* Visual indicator: arrow pointing from number pad to board */}
+        {/* Visuelle Anzeige: Pfeil vom NumberPad zum Board */}
         {stepNumber === 2 && (
           <Animated.View
             style={styles.arrowContainer}
@@ -257,15 +263,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   instructionContainer: {
+    width: "100%",
+    height: 60, // Feste Höhe für konsistentes Layout
     marginTop: 8,
     marginBottom: 28,
     paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   instruction: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     textAlign: "center",
-    lineHeight: 24,
+    lineHeight: 22,
   },
   // Number pad styling to exactly match the real game
   numberPadContainer: {
@@ -280,19 +290,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 70,
-  },
-  buttonContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 2,
-    height: 60,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   buttonText: {
     fontSize: 24,

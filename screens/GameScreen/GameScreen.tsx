@@ -25,14 +25,14 @@ import Animated, {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import {
-  gameCompletionAlert,
-  gameOverAlert,
   hintCellAlert,
   noErrorsAlert,
   initialCellAlert,
   noHintsAlert,
   autoNotesAlert,
   quitGameAlert,
+  gameOverAlert,
+  // gameCompletionAlert wurde entfernt, da wir jetzt die Modal-Komponente verwenden
 } from "@/components/CustomAlert/AlertHelpers";
 
 // Components
@@ -41,6 +41,7 @@ import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
 import NumberPad from "@/components/NumberPad/NumberPad";
 import GameStatusBar from "@/components/GameStatusBar/GameStatusBar";
 import SettingsScreen from "@/screens/SettingsScreen/SettingsScreen";
+import GameCompletionModal from "@/components/GameCompletionModal";
 
 // Game logic
 import {
@@ -59,7 +60,13 @@ import {
 } from "@/utils/sudoku";
 
 // Storage
-import { updateStatsAfterGame, loadSettings, GameSettings } from "@/utils/storage";
+import {
+  updateStatsAfterGame,
+  loadSettings,
+  loadStats,
+  GameSettings,
+  GameStats,
+} from "@/utils/storage";
 
 import styles from "./GameScreen.styles";
 
@@ -101,42 +108,49 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [highlightRelatedCells, setHighlightRelatedCells] = useState(true);
   const [showMistakes, setShowMistakes] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
-  // NEU: State für Fehler-Tracking
+  // State für Fehler-Tracking
   const [errorsRemaining, setErrorsRemaining] = useState(MAX_ERRORS);
-  // NEU: State für Auto-Notizen-Tracking
+  // State für Auto-Notizen-Tracking
   const [autoNotesUsed, setAutoNotesUsed] = useState(false);
+  // State für Game Completion Modal
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  // State für Game Stats
+  const [gameStats, setGameStats] = useState<GameStats | null>(null);
 
   // Animation values
   const headerOpacity = useSharedValue(1); // Start with header visible
   const controlsOpacity = useSharedValue(0);
 
   // Hilfsfunktion für Haptisches Feedback
-  const triggerHapticFeedback = useCallback((type: 'light' | 'medium' | 'heavy' | 'success' | 'error' | 'warning') => {
-    if (!vibrationEnabled) return;
-    
-    switch (type) {
-      case 'light':
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        break;
-      case 'medium':
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        break;
-      case 'heavy':
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        break;
-      case 'success':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        break;
-      case 'error':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        break;
-      case 'warning':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        break;
-    }
-  }, [vibrationEnabled]);
+  const triggerHapticFeedback = useCallback(
+    (type: "light" | "medium" | "heavy" | "success" | "error" | "warning") => {
+      if (!vibrationEnabled) return;
 
-  // NEU: Callback-Funktion für Settings-Änderungen
+      switch (type) {
+        case "light":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          break;
+        case "medium":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        case "heavy":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          break;
+        case "success":
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          break;
+        case "error":
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          break;
+        case "warning":
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          break;
+      }
+    },
+    [vibrationEnabled]
+  );
+
+  // Callback-Funktion für Settings-Änderungen
   const handleSettingsChanged = (
     key: keyof GameSettings,
     value: boolean | string
@@ -150,9 +164,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
-  // Lade Einstellungen
+  // Lade Einstellungen und Statistiken
   useEffect(() => {
-    const loadGameSettings = async () => {
+    const loadGameData = async () => {
       try {
         const settings = await loadSettings();
         if (settings) {
@@ -160,12 +174,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           setShowMistakes(settings.showMistakes);
           setVibrationEnabled(settings.vibration);
         }
+
+        const stats = await loadStats();
+        setGameStats(stats);
       } catch (error) {
-        console.error("Error loading settings:", error);
+        console.error("Error loading game data:", error);
       }
     };
 
-    loadGameSettings();
+    loadGameData();
   }, []);
 
   // Initialize game
@@ -190,6 +207,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   }, [board]);
 
+  // Überwache Änderungen am Modal-Status
+  useEffect(() => {
+    console.log("showCompletionModal geändert:", showCompletionModal);
+  }, [showCompletionModal]);
+
   // Animated styles
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -205,6 +227,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
   // Start a new game
   const startNewGame = useCallback(() => {
+    console.log("Starte neues Spiel (startNewGame)");
+
+    // Verstecke das Modal zuerst, wenn es angezeigt wird
+    if (showCompletionModal) {
+      console.log(
+        "Modal wird geschlossen, bevor ein neues Spiel gestartet wird"
+      );
+      setShowCompletionModal(false);
+    }
+
     setIsLoading(true);
 
     // Generate a new game with current difficulty
@@ -222,9 +254,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       setIsLoading(false);
       // Setze Hinweise zurück
       setHintsRemaining(INITIAL_HINTS);
-      // NEU: Setze Fehler zurück
+      // Setze Fehler zurück
       setErrorsRemaining(MAX_ERRORS);
-      // NEU: Zurücksetzen des autoNotesUsed Flags
+      // Zurücksetzen des autoNotesUsed Flags
       setAutoNotesUsed(false);
 
       // No need to animate opacity if starting at 1
@@ -236,24 +268,24 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       });
 
       // Give haptic feedback
-      triggerHapticFeedback('success');
+      triggerHapticFeedback("success");
     }, 500);
-  }, [difficulty, triggerHapticFeedback]);
+  }, [difficulty, triggerHapticFeedback, showCompletionModal]);
 
   // Select a cell
   const handleCellPress = (row: number, col: number) => {
-    triggerHapticFeedback('light');
+    triggerHapticFeedback("light");
     setSelectedCell({ row, col });
   };
 
-  // NEU: Funktion zum Behandeln eines Fehlers
+  // Funktion zum Behandeln eines Fehlers
   const handleError = () => {
     // Reduziere die Anzahl der verbleibenden Fehler
     const newErrorsRemaining = errorsRemaining - 1;
     setErrorsRemaining(newErrorsRemaining);
 
     // Haptisches Feedback für Fehler
-    triggerHapticFeedback('error');
+    triggerHapticFeedback("error");
 
     // Wenn keine Fehler mehr übrig sind, beende das Spiel
     if (newErrorsRemaining <= 0) {
@@ -261,7 +293,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
-  // NEU: Game Over Handler
+  // Game Over Handler
   const handleGameOver = async () => {
     if (isGameComplete) return;
 
@@ -272,14 +304,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     await updateStatsAfterGame(false, difficulty, gameTime, autoNotesUsed);
 
     // Feedback für Game Over
-    triggerHapticFeedback('error');
+    triggerHapticFeedback("error");
 
-    // Zeige Game Over Nachricht mit Custom Alert
+    // Reload stats for the GameCompletionModal
+    const updatedStats = await loadStats();
+    setGameStats(updatedStats);
+
+    // Zeige Game Over Nachricht mit CustomAlert
     setTimeout(() => {
-      const alertConfig = gameOverAlert(autoNotesUsed, () =>
-        router.navigate("../")
-      );
-      showAlert(alertConfig);
+      showAlert(gameOverAlert(autoNotesUsed, () => router.navigate("../")));
     }, 500);
   };
 
@@ -291,7 +324,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Check if cell is initial (preset numbers can't be changed)
     if (board[row][col].isInitial) {
-      triggerHapticFeedback('error');
+      triggerHapticFeedback("error");
       return;
     }
 
@@ -300,13 +333,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       // Add/remove note
       const updatedBoard = toggleCellNote(board, row, col, number);
       setBoard(updatedBoard);
-      triggerHapticFeedback('light');
+      triggerHapticFeedback("light");
     } else {
       // Set number
       const previousValue = board[row][col].value;
       const updatedBoard = setCellValue(board, row, col, number);
 
-      // NEU: Überprüfe, ob der Zug einen Fehler verursacht hat
+      // Überprüfe, ob der Zug einen Fehler verursacht hat
       const isErrorMove =
         updatedBoard[row][col].value === number &&
         !updatedBoard[row][col].isValid;
@@ -321,15 +354,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         );
         setBoard(boardWithUpdatedNotes);
 
-        // NEU: Wenn die Zahl falsch ist und Fehleranzeige aktiviert ist
+        // Wenn die Zahl falsch ist und Fehleranzeige aktiviert ist
         if (isErrorMove && showMistakes) {
           handleError();
         } else {
-          triggerHapticFeedback('medium');
+          triggerHapticFeedback("medium");
         }
       } else if (!updatedBoard[row][col].isValid && showMistakes) {
         // Invalid move
-        triggerHapticFeedback('error');
+        triggerHapticFeedback("error");
       }
     }
   };
@@ -342,27 +375,27 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     // Check if cell is initial
     if (board[row][col].isInitial) {
-      triggerHapticFeedback('error');
+      triggerHapticFeedback("error");
       return;
     }
 
     // Clear the cell
     const updatedBoard = clearCellValue(board, row, col);
     setBoard(updatedBoard);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback("light");
   };
 
   // Toggle note mode
   const toggleNoteMode = () => {
     setNoteModeActive(!noteModeActive);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback("light");
   };
 
   // Provide a hint - Mit Begrenzung der Hinweise
   const handleHintPress = () => {
     // Prüfen, ob noch Hinweise verfügbar sind
     if (hintsRemaining <= 0) {
-      triggerHapticFeedback('error');
+      triggerHapticFeedback("error");
       showAlert(noHintsAlert());
       return;
     }
@@ -399,10 +432,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     // Solve the cell
     const updatedBoard = solveCell(board, solution, row, col);
     setBoard(updatedBoard);
-    triggerHapticFeedback('success');
+    triggerHapticFeedback("success");
   };
 
-  // NEU: Aktualisierte Auto-Notizen Funktion
+  // Aktualisierte Auto-Notizen Funktion
   const handleAutoNotesPress = () => {
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
@@ -410,7 +443,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     // Markieren, dass Auto-Notizen verwendet wurden
     setAutoNotesUsed(true);
 
-    triggerHapticFeedback('medium');
+    triggerHapticFeedback("medium");
 
     // Nur eine Benachrichtigung anzeigen
     showAlert(autoNotesAlert());
@@ -426,10 +459,14 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       .padStart(2, "0")}`;
   };
 
-  // NEU: Aktualisierte Game Completion Handler
+  // Aktualisierte Game Completion Handler
   const handleGameComplete = async () => {
-    if (isGameComplete) return;
+    if (isGameComplete) {
+      console.log("Spiel ist bereits abgeschlossen");
+      return;
+    }
 
+    console.log("Spiel abgeschlossen, zeige Erfolgsbildschirm");
     setIsGameComplete(true);
     setIsGameRunning(false);
 
@@ -437,17 +474,22 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     await updateStatsAfterGame(true, difficulty, gameTime, autoNotesUsed);
 
     // Give feedback to player
-    triggerHapticFeedback('success');
+    triggerHapticFeedback("success");
 
-    // Show success message with custom alert
-    setTimeout(() => {
-      const alertConfig = gameCompletionAlert(
-        formatTime(gameTime),
-        autoNotesUsed,
-        () => router.navigate("../")
-      );
-      showAlert(alertConfig);
-    }, 500);
+    try {
+      // Reload stats for the GameCompletionModal
+      const updatedStats = await loadStats();
+      setGameStats(updatedStats);
+      console.log("Statistiken geladen:", JSON.stringify(updatedStats));
+
+      // Show success message with new completion modal - längere Verzögerung
+      setTimeout(() => {
+        console.log("Zeige Erfolgsmodal nach Verzögerung");
+        setShowCompletionModal(true);
+      }, 800); // Längere Verzögerung für bessere Stabilität
+    } catch (error) {
+      console.error("Fehler beim Anzeigen des Erfolgsbildschirms:", error);
+    }
   };
 
   // Update timer
@@ -512,7 +554,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     router.navigate("../");
   };
 
-  // NEU: Aktualisierte Auto-Notizen-Funktion von Settings
+  // Aktualisierte Auto-Notizen-Funktion von Settings
   const handleAutoNotesFromSettings = () => {
     if (board.length === 0) return;
 
@@ -524,12 +566,36 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
     setShowSettings(false);
 
-    triggerHapticFeedback('medium');
+    triggerHapticFeedback("medium");
 
     // Verzögert die Anzeige der Benachrichtigung, um das Schließen der Einstellungen abzuwarten
     setTimeout(() => {
       showAlert(autoNotesAlert());
     }, 300);
+  };
+
+  // Handlers for GameCompletionModal mit zusätzlicher Verzögerung
+  const handleCompletionModalClose = () => {
+    console.log("Modal wird geschlossen (handleCompletionModalClose)");
+
+    // Erst nach kurzer Verzögerung schließen, um Animationen zu ermöglichen
+    setTimeout(() => {
+      setShowCompletionModal(false);
+    }, 100);
+  };
+
+  const handleNavigateToHome = () => {
+    console.log("Zurück zum Hauptmenü (handleNavigateToHome)");
+
+    // Erst nach kurzer Verzögerung schließen, um Animationen zu ermöglichen
+    setTimeout(() => {
+      setShowCompletionModal(false);
+
+      // Kurze Verzögerung vor der Navigation
+      setTimeout(() => {
+        router.navigate("../");
+      }, 100);
+    }, 100);
   };
 
   // If board is not yet loaded
@@ -596,7 +662,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           ]}
         >
           <View style={styles.gameContainer}>
-            {/* NEU: GameStatusBar anstelle von Timer */}
+            {/* GameStatusBar */}
             <GameStatusBar
               isRunning={isGameRunning && !isGameComplete}
               initialTime={gameTime}
@@ -635,6 +701,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Game Completion Modal */}
+      <GameCompletionModal
+        visible={showCompletionModal}
+        onClose={handleCompletionModalClose}
+        onNewGame={startNewGame}
+        onContinue={handleNavigateToHome}
+        timeElapsed={gameTime}
+        difficulty={difficulty}
+        autoNotesUsed={autoNotesUsed}
+        stats={gameStats}
+      />
 
       {/* Settings */}
       {showSettings && (

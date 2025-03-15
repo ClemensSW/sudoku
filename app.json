@@ -15,7 +15,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1E2233"
       },
       "softwareKeyboardLayoutMode": "pan",
       "statusBar": {
@@ -30,18 +30,12 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
-    ],
+    "splash": {
+      "image": "./assets/images/background/mountains_blue.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#1E2233"
+    },
+    "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
     },

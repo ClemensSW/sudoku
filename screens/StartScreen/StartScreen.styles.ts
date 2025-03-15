@@ -7,6 +7,9 @@ const { width, height } = Dimensions.get("window");
 export default StyleSheet.create({
   container: {
     flex: 1,
+    position: "relative",
+    width: "100%",
+    height: "100%",
   },
 
   safeArea: {
@@ -14,21 +17,23 @@ export default StyleSheet.create({
   },
 
   backgroundImage: {
-    position: 'absolute',
-    width: width,
-    height: height,
-    top: 0,
-    left: 0,
-    resizeMode: 'cover',
-  },
-
-  topButtonsContainer: {
-    position: 'absolute',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
     top: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    bottom: 0,
+    resizeMode: "cover",
+  },
+
+  topButtonsContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     zIndex: 10,
@@ -38,9 +43,9 @@ export default StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    justifyContent: "center",
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -51,42 +56,37 @@ export default StyleSheet.create({
   content: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center", // Geändert zu center, um Elemente zu zentrieren
     paddingHorizontal: spacing.md,
-    paddingTop: height * 0.1,
-    paddingBottom: height * 0.08,
   },
 
   titleContainer: {
     alignItems: "center",
     justifyContent: "center",
-    flex: 0.3,
-    paddingTop: height * 0.05,
+    marginBottom: spacing.lg, // Abstand zwischen Titel und Button - anpassbar
   },
-  
+
   title: {
     fontSize: 60,
     fontWeight: "800",
     textAlign: "center",
     letterSpacing: 2,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 5,
   },
-  
+
   // New container for the How To Play button
   howToPlayContainer: {
     alignItems: "center",
     justifyContent: "center",
-    flex: 0.4,
+    marginVertical: spacing.lg,
   },
 
   buttonContainer: {
     width: "100%",
     alignItems: "center",
     paddingHorizontal: spacing.xl,
-    flex: 0.3,
-    justifyContent: "flex-end",
   },
 
   startButton: {
@@ -103,26 +103,26 @@ export default StyleSheet.create({
 
   // Modal styles
   modalOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
 
   modalContent: {
-    width: '90%',
+    width: "90%",
     maxWidth: 400,
     borderRadius: radius.xl,
     padding: spacing.xl,
     paddingTop: spacing.xl,
     paddingBottom: spacing.lg,
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
@@ -132,48 +132,48 @@ export default StyleSheet.create({
 
   modalTitle: {
     fontSize: 28,
-    fontWeight: '800',
+    fontWeight: "800",
     marginBottom: spacing.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   modalSubtitle: {
     fontSize: 16,
     marginBottom: spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
     opacity: 0.8,
   },
 
   difficultyButtonsContainer: {
-    width: '100%',
+    width: "100%",
     marginVertical: spacing.md,
     borderRadius: radius.lg,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    overflow: "hidden",
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
     marginBottom: spacing.xl,
   },
 
   difficultyButton: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
-    width: '100%',
-    alignItems: 'center',
-    position: 'relative',
+    width: "100%",
+    alignItems: "center",
+    position: "relative",
     height: 56,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 
   difficultyButtonText: {
     fontSize: 19,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
 
   selectedIndicator: {
     width: 6,
-    position: 'absolute',
-    top: '15%',
-    bottom: '15%',
+    position: "absolute",
+    top: "15%",
+    bottom: "15%",
     left: 0,
     borderTopRightRadius: 3,
     borderBottomRightRadius: 3,
@@ -181,11 +181,11 @@ export default StyleSheet.create({
 
   // Prominent CTA Button
   modalCTAButton: {
-    width: '100%',
+    width: "100%",
     height: 60,
     borderRadius: radius.xl,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: spacing.lg,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
@@ -196,7 +196,7 @@ export default StyleSheet.create({
 
   modalCTAText: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
 
@@ -208,7 +208,7 @@ export default StyleSheet.create({
 
   modalCancelText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     opacity: 0.7,
   },
 });

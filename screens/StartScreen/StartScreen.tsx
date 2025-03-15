@@ -1,12 +1,6 @@
 // screens/StartScreen/StartScreen.tsx
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -16,8 +10,6 @@ import Animated, {
   FadeIn,
   FadeInDown,
   FadeInUp,
-  SlideInDown,
-  BounceIn,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 
@@ -36,7 +28,8 @@ const StartScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
 
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
@@ -70,10 +63,8 @@ const StartScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
-      <StatusBar style={theme.isDark ? "light" : "dark"} />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       {/* Background Image */}
       <Image
@@ -82,17 +73,19 @@ const StartScreen: React.FC = () => {
       />
 
       {/* Top buttons */}
-      <View style={[styles.topButtonsContainer, { paddingTop: insets.top }]}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={handleShowHighScores}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather name="award" size={24} color={colors.primary} />
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={{ width: "100%" }}>
+        <View style={[styles.topButtonsContainer, { paddingTop: insets.top }]}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={handleShowHighScores}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="award" size={24} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
-      <View style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea}>
         <Animated.View style={styles.content} entering={FadeIn.duration(500)}>
           {/* SUDOKU Title */}
           <Animated.View
@@ -103,11 +96,11 @@ const StartScreen: React.FC = () => {
               SUDOKU
             </Text>
           </Animated.View>
-          
+
           {/* New Game Button */}
           <Animated.View
             style={styles.buttonContainer}
-            entering={SlideInDown.delay(600).duration(800)}
+            entering={FadeInDown.delay(600).duration(800)}
           >
             <Button
               title="Neues Spiel"
@@ -121,7 +114,7 @@ const StartScreen: React.FC = () => {
             />
           </Animated.View>
         </Animated.View>
-      </View>
+      </SafeAreaView>
 
       {/* Difficulty Selection Modal */}
       {showDifficultyModal && (
@@ -133,8 +126,10 @@ const StartScreen: React.FC = () => {
             <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
               Neues Spiel
             </Text>
-            <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-            Wie fordernd soll dein Sudoku sein?
+            <Text
+              style={[styles.modalSubtitle, { color: colors.textSecondary }]}
+            >
+              Wie fordernd soll dein Sudoku sein?
             </Text>
 
             <View style={styles.difficultyButtonsContainer}>
@@ -142,7 +137,7 @@ const StartScreen: React.FC = () => {
               {["easy", "medium", "hard", "expert"].map((diff, index) => {
                 const difficultyOption = diff as Difficulty;
                 const isSelected = selectedDifficulty === difficultyOption;
-                
+
                 // Map the difficulty to German
                 const difficultyLabels: Record<Difficulty, string> = {
                   easy: "Leicht",
@@ -156,24 +151,24 @@ const StartScreen: React.FC = () => {
                     key={diff}
                     style={[
                       styles.difficultyButton,
-                      index < 3 && { 
-                        borderBottomWidth: 1, 
-                        borderBottomColor: colors.border 
+                      index < 3 && {
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.border,
                       },
-                      isSelected && { 
-                        backgroundColor: `${colors.primary}15` 
-                      }
+                      isSelected && {
+                        backgroundColor: `${colors.primary}15`,
+                      },
                     ]}
                     onPress={() => handleDifficultyChange(difficultyOption)}
                   >
                     <Text
                       style={[
-                        styles.difficultyButtonText, 
+                        styles.difficultyButtonText,
                         { color: colors.textPrimary },
-                        isSelected && { 
-                          color: colors.primary, 
-                          fontWeight: '700' 
-                        }
+                        isSelected && {
+                          color: colors.primary,
+                          fontWeight: "700",
+                        },
                       ]}
                     >
                       {difficultyLabels[difficultyOption]}
@@ -182,12 +177,12 @@ const StartScreen: React.FC = () => {
                 );
               })}
             </View>
-            
+
             {/* Large, prominent CTA button */}
             <TouchableOpacity
               style={[
                 styles.modalCTAButton,
-                { backgroundColor: colors.primary }
+                { backgroundColor: colors.primary },
               ]}
               onPress={handleStartWithDifficulty}
             >
@@ -195,13 +190,18 @@ const StartScreen: React.FC = () => {
                 Los geht's!
               </Text>
             </TouchableOpacity>
-            
+
             {/* Cancel button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.modalCancelButton}
               onPress={() => setShowDifficultyModal(false)}
             >
-              <Text style={[styles.modalCancelText, { color: colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.modalCancelText,
+                  { color: colors.textSecondary },
+                ]}
+              >
                 Abbrechen
               </Text>
             </TouchableOpacity>
@@ -216,7 +216,7 @@ const StartScreen: React.FC = () => {
           onClose={() => setShowHowToPlay(false)}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

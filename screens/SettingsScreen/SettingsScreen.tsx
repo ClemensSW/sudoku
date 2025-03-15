@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
-  Linking,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -26,6 +25,7 @@ import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import Header from "@/components/Header/Header";
 import StatisticsDisplay from "@/components/StatisticsDisplay/StatisticsDisplay";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
+import SupportShop from "@/components/SupportShop/SupportShop";
 import { loadSettings, saveSettings, loadStats } from "@/utils/storage";
 import { GameSettings, GameStats } from "@/utils/storage";
 
@@ -38,7 +38,7 @@ interface SettingsScreenProps {
   onSettingsChanged?: (
     key: keyof GameSettings,
     value: boolean | string
-  ) => void; // NEU: Callback für Einstellungsänderungen
+  ) => void;
   fromGame?: boolean;
 }
 
@@ -46,7 +46,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBackToGame,
   onQuitGame,
   onAutoNotes,
-  onSettingsChanged, // NEU: Callback für Einstellungsänderungen
+  onSettingsChanged,
   fromGame = false,
 }) => {
   const theme = useTheme();
@@ -58,6 +58,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [stats, setStats] = useState<GameStats | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showSupportShop, setShowSupportShop] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
@@ -90,7 +91,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    // NEU: Benachrichtige GameScreen über die Änderung
+    // Benachrichtige GameScreen über die Änderung
     if (onSettingsChanged) {
       onSettingsChanged(key, value);
     }
@@ -440,11 +441,14 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
 
-        {/* Support Section / Buy me a Coffee */}
+        {/* Support Section */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(400).duration(500)}
         >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Unterstützung
+          </Text>
           <View
             style={[
               styles.settingsGroup,
@@ -453,15 +457,12 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           >
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                Linking.openURL("https://www.buymeacoffee.com/3bI3ho09vI");
-              }}
+              onPress={() => setShowSupportShop(true)}
             >
               <View
                 style={[
                   styles.actionIconContainer,
-                  { backgroundColor: "#FFDD00" },
+                  { backgroundColor: "#FFDD0030" },
                 ]}
               >
                 <Text style={{ fontSize: 24 }}>☕</Text>
@@ -470,7 +471,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <Text
                   style={[styles.actionTitle, { color: colors.textPrimary }]}
                 >
-                  Buy me a Coffee
+                  Entwicklung unterstützen
                 </Text>
                 <Text
                   style={[
@@ -482,7 +483,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 </Text>
               </View>
               <Feather
-                name="external-link"
+                name="chevron-right"
                 size={20}
                 color={colors.textSecondary}
               />
@@ -509,6 +510,11 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             onClose={() => setShowHowToPlay(false)}
           />
         </View>
+      )}
+
+      {/* Support Shop Modal */}
+      {showSupportShop && (
+        <SupportShop onClose={() => setShowSupportShop(false)} />
       )}
     </Animated.View>
   );

@@ -137,7 +137,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const getInstructionText = () => {
     switch (stepNumber) {
       case 1:
-        return "Wähle eine leere Zelle aus";
+        return "Du wählst eine leere Zelle aus";
       case 2:
         return "Welche Zahl passt in die Zelle?";
       case 3:
@@ -299,9 +299,9 @@ const styles = StyleSheet.create({
   // Animation helper elements
   arrowContainer: {
     position: "absolute",
-  bottom: 170, // Position it above the number pad
-  alignSelf: "center",
-  zIndex: 10,
+    bottom: 170, // Position it above the number pad
+    alignSelf: "center",
+    zIndex: 10,
   },
   arrow: {
     transform: [{ rotate: "180deg" }],

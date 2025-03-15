@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
+  Linking,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -34,7 +35,10 @@ interface SettingsScreenProps {
   onBackToGame?: () => void;
   onQuitGame?: () => void;
   onAutoNotes?: () => void;
-  onSettingsChanged?: (key: keyof GameSettings, value: boolean | string) => void; // NEU: Callback für Einstellungsänderungen
+  onSettingsChanged?: (
+    key: keyof GameSettings,
+    value: boolean | string
+  ) => void; // NEU: Callback für Einstellungsänderungen
   fromGame?: boolean;
 }
 
@@ -85,7 +89,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     // NEU: Benachrichtige GameScreen über die Änderung
     if (onSettingsChanged) {
       onSettingsChanged(key, value);
@@ -435,6 +439,56 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             </View>
           </Animated.View>
         )}
+
+        {/* Support Section / Buy me a Coffee */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(400).duration(500)}
+        >
+          <View
+            style={[
+              styles.settingsGroup,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                Linking.openURL("https://www.buymeacoffee.com/3bI3ho09vI");
+              }}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: "#FFDD00" },
+                ]}
+              >
+                <Text style={{ fontSize: 24 }}>☕</Text>
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Buy me a Coffee
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Kostenlos gespielt, freiwillig unterstützt
+                </Text>
+              </View>
+              <Feather
+                name="external-link"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
 
         {/* Version Info */}
         <Animated.View

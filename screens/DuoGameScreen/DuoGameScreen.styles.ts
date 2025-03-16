@@ -97,14 +97,6 @@ export default StyleSheet.create({
     color: "#4CAF50", // Green for completed
     marginTop: 4,
   },
-  // For player hearts display
-  heartsContainer: {
-    flexDirection: "row",
-    marginTop: spacing.xs,
-  },
-  heartIcon: {
-    marginHorizontal: 2,
-  },
   // Hint counter
   hintCounter: {
     flexDirection: "row",

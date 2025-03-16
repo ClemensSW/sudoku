@@ -56,7 +56,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const difficulty = routeDifficulty || initialDifficulty;
 
   // Constants
-  const MAX_LIVES = 3;
   const MAX_HINTS = 3;
 
   // Game state
@@ -76,8 +75,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   } | null>(null);
   const [player1Complete, setPlayer1Complete] = useState(false);
   const [player2Complete, setPlayer2Complete] = useState(false);
-  const [player1Lives, setPlayer1Lives] = useState(MAX_LIVES);
-  const [player2Lives, setPlayer2Lives] = useState(MAX_LIVES);
   const [player1NoteMode, setPlayer1NoteMode] = useState(false);
   const [player2NoteMode, setPlayer2NoteMode] = useState(false);
 
@@ -186,8 +183,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         setPlayer2Cell(null);
         setPlayer1Complete(false);
         setPlayer2Complete(false);
-        setPlayer1Lives(MAX_LIVES);
-        setPlayer2Lives(MAX_LIVES);
         setPlayer1NoteMode(false);
         setPlayer2NoteMode(false);
 
@@ -287,24 +282,15 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
 
     // Handle result of the move
     if (!isValid) {
-      // Invalid move - reduce lives
+      // Invalid move - provide feedback
       triggerHaptic("error");
-
-      if (player === 1) {
-        const newLives = player1Lives - 1;
-        setPlayer1Lives(newLives);
-
-        if (newLives <= 0) {
-          handlePlayerLost(1);
-        }
-      } else {
-        const newLives = player2Lives - 1;
-        setPlayer2Lives(newLives);
-
-        if (newLives <= 0) {
-          handlePlayerLost(2);
-        }
-      }
+      
+      // Show feedback but don't reduce lives
+      Alert.alert(
+        "Ungültiger Zug",
+        `Diese Zahl kann hier nicht platziert werden.`,
+        [{ text: "OK" }]
+      );
     } else {
       // Valid move - good feedback
       triggerHaptic("medium");
@@ -492,19 +478,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     );
   };
 
-  // Handle player losing (out of lives)
-  const handlePlayerLost = (player: 1 | 2) => {
-    setIsGameRunning(false);
-    triggerHaptic("error");
-
-    setTimeout(() => {
-      Alert.alert(`Spieler ${player} hat verloren`, `Keine Leben mehr übrig.`, [
-        { text: "Neues Spiel", onPress: startNewGame },
-        { text: "Zum Menü", onPress: () => router.replace("/duo") },
-      ]);
-    }, 500);
-  };
-
   // Handle game completion
   const handleGameComplete = () => {
     setIsGameRunning(false);
@@ -547,8 +520,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             onNoteToggle={handleNoteToggle}
             onHint={handleHint}
             noteMode={player2NoteMode}
-            lives={player2Lives}
-            maxLives={MAX_LIVES}
             disabled={player2Complete}
             hintsRemaining={player2Hints}
           />
@@ -570,8 +541,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             onNoteToggle={handleNoteToggle}
             onHint={handleHint}
             noteMode={player1NoteMode}
-            lives={player1Lives}
-            maxLives={MAX_LIVES}
             disabled={player1Complete}
             hintsRemaining={player1Hints}
           />

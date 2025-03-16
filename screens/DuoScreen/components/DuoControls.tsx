@@ -22,10 +22,8 @@ interface DuoControlsProps {
   onNoteToggle: (player: 1 | 2) => void;
   onHint: (player: 1 | 2) => void;
   noteMode: boolean;
-  lives: number;
-  maxLives?: number;
   disabled?: boolean;
-  hintsRemaining: number; // Added hints remaining
+  hintsRemaining: number;
 }
 
 const DuoControls: React.FC<DuoControlsProps> = ({
@@ -35,8 +33,6 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   onNoteToggle,
   onHint,
   noteMode,
-  lives,
-  maxLives = 3,
   disabled = false,
   hintsRemaining = 3,
 }) => {
@@ -46,37 +42,11 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
 
-  // Create heart indicators for lives - matching standard game appearance
-  const renderHearts = () => {
-    // Use the correct color from the theme to match the standard game
-    const activeHeartColor = colors.error;
-    const inactiveHeartColor = "rgba(255,255,255,0.2)";
-
-    return (
-      <View style={styles.heartsRow}>
-        {Array.from({ length: maxLives }).map((_, index) => (
-          <Feather
-            key={`heart-${index}`}
-            name="heart"
-            size={16}
-            color={index < lives ? activeHeartColor : inactiveHeartColor}
-            style={styles.heartIcon}
-          />
-        ))}
-      </View>
-    );
-  };
-
   return (
     <Animated.View
       style={[styles.container, position === "top" && styles.topContainer]}
       entering={FadeIn.duration(500)}
     >
-      {/* Hearts indicators (without player labels) */}
-      <View style={styles.heartsContainer}>
-        {renderHearts()}
-      </View>
-
       {/* Action buttons row - smaller size */}
       <View
         style={[styles.actionsRow, position === "top" && styles.rotatedView]}
@@ -192,17 +162,6 @@ const styles = StyleSheet.create({
   rotatedView: {
     transform: [{ rotate: "180deg" }],
   },
-  heartsContainer: {
-    alignItems: "center",
-    marginVertical: 4,
-  },
-  heartsRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  heartIcon: {
-    marginHorizontal: 2,
-  },
   actionsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -214,7 +173,7 @@ const styles = StyleSheet.create({
     width: 50, // Smaller size
   },
   actionButton: {
-    width: 40, // Smaller size
+    width: 80, // Smaller size
     height: 40, // Smaller size
     borderRadius: 8,
     justifyContent: "center",

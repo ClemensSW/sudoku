@@ -1,3 +1,4 @@
+// screens/DuoGameScreen/DuoGameScreen.styles.ts
 import { StyleSheet } from "react-native";
 import { spacing } from "@/utils/theme";
 
@@ -11,6 +12,7 @@ export default StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 16,
   },
   loadingContainer: {
     flex: 1,
@@ -20,36 +22,26 @@ export default StyleSheet.create({
   gameContainer: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: 4, // Reduced horizontal padding
     paddingBottom: spacing.md,
   },
   turnIndicator: {
-    padding: spacing.sm,
-    marginVertical: spacing.xs,
-    borderRadius: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    marginVertical: 8,
+    borderRadius: 20,
     alignItems: "center",
+    justifyContent: "center",
   },
   turnText: {
     fontSize: 18,
     fontWeight: "700",
   },
   player1Color: {
-    color: "#4CAF50", // Green for player 1
+    color: "#FFD700", // Gold for player 1
   },
   player2Color: {
-    color: "#FFC107", // Yellow for player 2
-  },
-  boardContainer: {
-    width: "100%",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    marginBottom: spacing.sm,
-  },
-  controlsContainer: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 0,
+    color: "#32CD32", // Lime green for player 2
   },
   // Background decorative elements
   topDecoration: {
@@ -94,4 +86,15 @@ export default StyleSheet.create({
     width: "100%",
     marginVertical: spacing.sm,
   },
+  completedText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#4CAF50", // Green for completed
+    marginTop: 4,
+  },
+  gameTimer: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginVertical: 8,
+  }
 });

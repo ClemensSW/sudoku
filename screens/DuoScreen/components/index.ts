@@ -1,5 +1,3 @@
-// Export der Duo-Komponenten
-import DuoBoard from "./DuoBoard";
-import DuoControls from "./DuoControls";
-
-export { DuoBoard, DuoControls };
+// screens/DuoScreen/components/index.ts
+export { default as DuoBoard } from './DuoBoard';
+export { default as DuoControls } from './DuoControls';

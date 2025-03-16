@@ -1,124 +1,114 @@
 // screens/DuoScreen/components/DuoBoardVisualizer/DuoBoardVisualizer.tsx
 import React from "react";
 import { View, Text, Image } from "react-native";
-import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
+import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
 import styles from "./DuoBoardVisualizer.styles";
-
-// Demo puzzle numbers for visualization
-const DEMO_NUMBERS = [
-  [5, 3, 0, 0, 7, 0, 0, 0, 0],
-  [6, 0, 0, 1, 9, 5, 0, 0, 0],
-  [0, 9, 8, 0, 0, 0, 0, 6, 0],
-  [8, 0, 0, 0, 6, 0, 0, 0, 3],
-  [4, 0, 0, 8, 0, 3, 0, 0, 1],
-  [7, 0, 0, 0, 2, 0, 0, 0, 6],
-  [0, 6, 0, 0, 0, 0, 2, 8, 0],
-  [0, 0, 0, 4, 1, 9, 0, 0, 5],
-  [0, 0, 0, 0, 8, 0, 0, 7, 9],
-];
 
 interface DuoBoardVisualizerProps {}
 
 const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
-  const theme = useTheme();
-  const colors = theme.colors;
+  // Unsere Hauptfarben
+  const PLAYER1_COLOR = "#CAD9D4"; // Salbei
+  const PLAYER2_COLOR = "#F4F0E4"; // Creme
+  const TEXT_COLOR = "#2D3748";    // Dunkelgrau
 
-  // Render a demo board cell
-  const renderDemoCell = (row: number, col: number) => {
-    const isP1Area = row > 4 || (row === 4 && col > 4);
-    const isP2Area = row < 4 || (row === 4 && col < 4);
-    const isMiddleCell = row === 4 && col === 4;
-    const value = DEMO_NUMBERS[row][col];
-
+  // Beispielzahlen für Spieler 1 (unten)
+  const renderPlayer1Numbers = () => {
     return (
-      <View
-        key={`cell-${row}-${col}`}
-        style={[
-          styles.demoCell,
-          isMiddleCell && styles.middleCell,
-          isP1Area && styles.player1Cell,
-          isP2Area && styles.player2Cell,
-        ]}
-      >
-        {isMiddleCell ? (
-          // Yin Yang icon in the middle
-          <View style={styles.yinYangContainer}>
-            <Image
-              source={require("@/assets/images/icons/yin-yang.png")}
-              style={styles.yinYangImage}
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          value > 0 && (
-            <Text
-              style={[
-                styles.demoCellText,
-                { color: colors.textPrimary },
-                isP2Area && styles.rotatedText,
-              ]}
-            >
-              {value}
-            </Text>
-          )
-        )}
+      <View style={styles.numberGroup}>
+        <View style={styles.numberCell}>
+          <Text style={styles.numberText}>2</Text>
+        </View>
+        <View style={styles.numberCell}>
+          <Text style={styles.numberText}>9</Text>
+        </View>
+        <View style={styles.numberCell}>
+          <Text style={styles.numberText}>4</Text>
+        </View>
+      </View>
+    );
+  };
+
+  // Beispielzahlen für Spieler 2 (oben, gedreht)
+  const renderPlayer2Numbers = () => {
+    return (
+      <View style={styles.numberGroup}>
+        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
+          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>5</Text>
+        </View>
+        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
+          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>3</Text>
+        </View>
+        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
+          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>7</Text>
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={styles.boardContainer}>
-      {/* Player 2 Label */}
+    <Animated.View 
+      style={styles.boardContainer}
+      entering={FadeIn.duration(800)}
+    >
+      {/* Player 2 Label (oben) */}
       <View style={styles.playerIndicator}>
-        <View style={[styles.playerTag, { backgroundColor: colors.warning }]}>
-          <Feather
-            name="user"
-            size={14}
-            color="#fff"
-            style={styles.playerIcon}
-          />
-          <Text style={styles.playerText}>SPIELER 2</Text>
+        <View style={[styles.playerTag, { backgroundColor: PLAYER2_COLOR }]}>
+          <Feather name="user" size={16} color={TEXT_COLOR} style={styles.playerIcon} />
+          <Text style={[styles.playerText, { color: TEXT_COLOR }]}>SPIELER 2</Text>
         </View>
       </View>
 
-      {/* Demo Sudoku Board */}
-      <View
-        style={[
-          styles.demoBoard,
-          {
-            backgroundColor: theme.isDark
-              ? "rgba(255,255,255,0.05)"
-              : "rgba(0,0,0,0.02)",
-            borderColor: theme.isDark
-              ? "rgba(255,255,255,0.1)"
-              : "rgba(0,0,0,0.1)",
-          },
-        ]}
+      {/* Abstraktes Konzept-Brett */}
+      <Animated.View 
+        style={styles.conceptBoardContainer}
+        entering={SlideInUp.delay(300).duration(500)}
       >
-        {/* Board grid for visualization */}
-        <View style={styles.grid}>
-          {DEMO_NUMBERS.map((row, rowIndex) => (
-            <View key={`row-${rowIndex}`} style={styles.demoRow}>
-              {row.map((_, colIndex) => renderDemoCell(rowIndex, colIndex))}
-            </View>
-          ))}
-        </View>
-      </View>
+        <View style={styles.conceptBoard}>
+          {/* Spieler 2 Bereich (oben, cremeweiß) */}
+          <View style={[styles.playerArea, styles.player2Area]}>
+            {renderPlayer2Numbers()}
+          </View>
 
-      {/* Player 1 Label */}
-      <View style={styles.playerIndicator}>
-        <View style={[styles.playerTag, { backgroundColor: colors.primary }]}>
-          <Feather
-            name="user"
-            size={14}
-            color="#fff"
-            style={styles.playerIcon}
+          {/* Spieler 1 Bereich (unten, salbei) */}
+          <View style={[styles.playerArea, styles.player1Area]}>
+            {renderPlayer1Numbers()}
+          </View>
+        </View>
+
+        {/* Mittellinie zwischen den Spielerbereichen */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+        </View>
+
+        {/* Yin-Yang Symbol in der Mitte */}
+        <View style={styles.yinYangContainer}>
+          <Image
+            source={require("@/assets/images/icons/yin-yang.png")}
+            style={styles.yinYangImage}
+            resizeMode="contain"
           />
-          <Text style={styles.playerText}>SPIELER 1</Text>
+        </View>
+
+        {/* Richtungspfeile für beide Spieler */}
+        <View style={[styles.arrowContainer, styles.topArrow]}>
+          <Feather name="arrow-down" size={18} color={TEXT_COLOR} style={{ transform: [{ rotate: "180deg" }] }} />
+        </View>
+        
+        <View style={[styles.arrowContainer, styles.bottomArrow]}>
+          <Feather name="arrow-down" size={18} color={TEXT_COLOR} />
+        </View>
+      </Animated.View>
+
+      {/* Player 1 Label (unten) */}
+      <View style={styles.playerIndicator}>
+        <View style={[styles.playerTag, { backgroundColor: PLAYER1_COLOR }]}>
+          <Feather name="user" size={16} color={TEXT_COLOR} style={styles.playerIcon} />
+          <Text style={[styles.playerText, { color: TEXT_COLOR }]}>SPIELER 1</Text>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

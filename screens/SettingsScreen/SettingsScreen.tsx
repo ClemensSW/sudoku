@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
+  BackHandler, // BackHandler importieren
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -73,6 +74,26 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
     loadData();
   }, []);
+
+  // Füge den BackHandler hinzu, um den Android-Zurück-Button abzufangen
+  useEffect(() => {
+    // Nur für Android und wenn wir vom Spiel kommen
+    if (fromGame && onBackToGame) {
+      // BackHandler-Listener hinzufügen
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          // Zurück zum Spiel, statt der Standard-Navigation zu folgen
+          onBackToGame();
+          // true zurückgeben, um zu signalisieren, dass wir den Zurück-Button behandelt haben
+          return true;
+        }
+      );
+
+      // Listener entfernen beim Aufräumen
+      return () => backHandler.remove();
+    }
+  }, [fromGame, onBackToGame]);
 
   const handleSettingChange = async (
     key: keyof GameSettings,

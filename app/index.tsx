@@ -12,7 +12,7 @@ export default function Index() {
     // Kurze Verzögerung, dann zur Startseite wechseln
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // 2 Sekunden Ladezeit
+    }, 1); // 2 Sekunden Ladezeit
 
     return () => clearTimeout(timer);
   }, []);

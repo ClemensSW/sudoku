@@ -5,6 +5,7 @@ import {
   Text,
   useWindowDimensions,
   StyleSheet,
+  BackHandler,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -200,6 +201,27 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   useEffect(() => {
     console.log("showCompletionModal geändert:", showCompletionModal);
   }, [showCompletionModal]);
+
+  // BackHandler für Android-Zurück-Taste
+  useEffect(() => {
+    const backAction = () => {
+      // Wenn das Spiel läuft und nicht abgeschlossen ist, zeige den Bestätigungsdialog
+      if (isGameRunning && !isGameComplete) {
+        handleBackPress();
+        return true; // true zurückgeben um den Standard-Back-Verhalten zu verhindern
+      }
+      return false; // false zurückgeben um den Standard-Back-Verhalten zu erlauben
+    };
+
+    // BackHandler-Listener hinzufügen
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    // Listener entfernen beim Aufräumen
+    return () => backHandler.remove();
+  }, [isGameRunning, isGameComplete]);
 
   // Animated styles
   const headerAnimatedStyle = useAnimatedStyle(() => {

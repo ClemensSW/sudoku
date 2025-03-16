@@ -1,13 +1,7 @@
 // components/BottomNavigation/BottomNavigation.tsx
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import { useRouter, usePathname } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter, usePathname, useSegments } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,7 +9,6 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
 
 interface BottomNavigationProps {
-  // Optional: für bestimmte Szenarien können wir die Navigation explizit ausblenden
   visible?: boolean;
 }
 
@@ -24,19 +17,35 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  // useSegments gibt uns ein Array mit den Teilen des Pfads
+  const segments = useSegments();
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const [showNavigation, setShowNavigation] = useState(true);
 
-  // Bestimme auf welchen Routen die Navigation angezeigt werden soll - alles andere ist ausgeblendet
-  const shouldShowNavigation = () => {
-    // Nur für diese spezifischen Hauptrouten anzeigen
-    const allowedPaths = ["/", "/index", "/duo", "/leistung"];
-    return visible && allowedPaths.includes(pathname);
-  };
+  // Prüfen, ob die Navigation angezeigt werden soll
+  useEffect(() => {
+    // Die Hauptrouten, bei denen wir die Navigation anzeigen wollen
+    const mainRoutes = ["index", "", "duo", "leistung"];
 
-  // Navigation vollständig ausblenden, wenn sie nicht angezeigt werden soll
-  if (!shouldShowNavigation()) {
+    // Wenn der erste Teil des Pfads "game" ist oder wenn wir in der (game) Gruppe sind
+    const isGameRoute =
+      segments.length > 0 &&
+      (segments[0] === "game" || segments[0] === "(game)");
+
+    // Prüfen, ob der aktuelle Pfad eine Hauptroute ist
+    const isMainRoute =
+      segments.length === 1 && mainRoutes.includes(segments[0]);
+
+    // Nur auf Hauptrouten anzeigen und nicht auf Spielrouten
+    setShowNavigation(
+      visible && !isGameRoute && (isMainRoute || pathname === "/")
+    );
+  }, [pathname, segments, visible]);
+
+  // Wenn wir die Navigation nicht anzeigen sollen, geben wir null zurück
+  if (!showNavigation) {
     return null;
   }
 

@@ -111,13 +111,14 @@ export default StyleSheet.create({
   // Shine effect that moves across the visualizer
   shineEffect: {
     position: "absolute",
-    top: -100,
-    left: -300,
-    width: 80,
-    height: VISUALIZER_HEIGHT + 200,
+    top: -150,
+    left: -500, // Weiter links beginnen
+    width: 60, // Etwas breiter machen
+    height: VISUALIZER_HEIGHT + 300, // Länger machen, um komplette Diagonale abzudecken
     backgroundColor: "white",
     transform: [{ rotate: "30deg" }],
     zIndex: 10,
+    opacity: 0.3, // Transparenz beibehalten
   },
   boardTop: {
     height: "50%",

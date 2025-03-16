@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -15,6 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Difficulty } from "@/utils/sudoku";
 import { triggerHaptic } from "@/utils/haptics";
+import { BlurView } from "expo-blur";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -74,10 +76,13 @@ const DuoScreen: React.FC = () => {
     slideValue.value = withRepeat(
       withDelay(
         1000,
-        withTiming(width, { duration: 1600, easing: Easing.inOut(Easing.ease) })
+        withTiming(width + 800, { // Viel größerer Endwert, damit es über das ganze Board geht
+          duration: 2600, // Längere Dauer
+          easing: Easing.inOut(Easing.ease)
+        })
       ),
-      -1, // infinite repeat
-      false // don't reverse
+      -1, // Endlos wiederholen
+      false
     );
 
     // Player glow effect
@@ -227,7 +232,7 @@ const DuoScreen: React.FC = () => {
                 Sudoku Duo
               </Text>
               <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-              Sudoku wird zu zweit zum Abenteuer!
+                Sudoku wird zu zweit zum Abenteuer!
               </Text>
             </Animated.View>
 
@@ -517,52 +522,57 @@ const DuoScreen: React.FC = () => {
 
             {/* Feature cards - Each focused on practical gameplay benefits */}
             <Animated.View
-  style={styles.featuresContainer}
-  entering={FadeInDown.delay(400).duration(600)}
->
-  <View style={styles.featureCardsContainer}>
-    {/* Hier nur noch eine zentrale Feature-Karte */}
-    <Animated.View
-      style={[
-        styles.featureCard,
-        {
-          backgroundColor: theme.isDark
-            ? colors.surface
-            : "#FFFFFF",
-          borderLeftColor: colors.success,
-        },
-      ]}
-      entering={FadeInUp.delay(900).duration(400)}
-    >
-      <View
-        style={[
-          styles.featureIconContainer,
-          { backgroundColor: `${colors.success}15` },
-        ]}
-      >
-        <Feather name="rotate-ccw" size={24} color={colors.success} />
-      </View>
-      <View style={styles.featureContent}>
-        <Text
-          style={[
-            styles.featureTitle,
-            { color: colors.textPrimary },
-          ]}
-        >
-          Perfekt für Spieleabende
-        </Text>
-        <Text
-          style={[
-            styles.featureDescription,
-            { color: colors.textSecondary },
-          ]}
-        >
-          Fordert euch gegenseitig heraus mit gedrehter Ansicht für Spieler 2 - ideal für jeden Spieltisch!
-        </Text>
-      </View>
-    </Animated.View>
-  </View>
-</Animated.View>
+              style={styles.featuresContainer}
+              entering={FadeInDown.delay(400).duration(600)}
+            >
+              <View style={styles.featureCardsContainer}>
+                {/* Hier nur noch eine zentrale Feature-Karte */}
+                <Animated.View
+                  style={[
+                    styles.featureCard,
+                    {
+                      backgroundColor: theme.isDark
+                        ? colors.surface
+                        : "#FFFFFF",
+                      borderLeftColor: colors.success,
+                    },
+                  ]}
+                  entering={FadeInUp.delay(900).duration(400)}
+                >
+                  <View
+                    style={[
+                      styles.featureIconContainer,
+                      { backgroundColor: `${colors.success}15` },
+                    ]}
+                  >
+                    <Feather
+                      name="rotate-ccw"
+                      size={24}
+                      color={colors.success}
+                    />
+                  </View>
+                  <View style={styles.featureContent}>
+                    <Text
+                      style={[
+                        styles.featureTitle,
+                        { color: colors.textPrimary },
+                      ]}
+                    >
+                      Perfekt für Spieleabende
+                    </Text>
+                    <Text
+                      style={[
+                        styles.featureDescription,
+                        { color: colors.textSecondary },
+                      ]}
+                    >
+                      Fordert euch gegenseitig heraus mit gedrehter Ansicht für
+                      Spieler 2 - ideal für jeden Spieltisch!
+                    </Text>
+                  </View>
+                </Animated.View>
+              </View>
+            </Animated.View>
 
             {/* Start button - Animated and more prominent */}
             <Animated.View
@@ -593,13 +603,21 @@ const DuoScreen: React.FC = () => {
         </ScrollView>
       </SafeAreaView>
 
-      {/* Simplified difficulty selection modal - matching normal mode */}
+      {/* Simplified difficulty selection modal with BlurView */}
       {showDifficultyModal && (
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { backgroundColor: "transparent" }]}
           activeOpacity={1}
           onPress={() => setShowDifficultyModal(false)}
         >
+          <BlurView
+            intensity={25}
+            tint={theme.isDark ? "dark" : "light"}
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: "rgba(0, 0, 0, 0.3)" },
+            ]}
+          />
           <Animated.View
             style={[styles.modalContent, { backgroundColor: colors.card }]}
             entering={FadeIn.duration(200)}

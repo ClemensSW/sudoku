@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
@@ -212,13 +213,21 @@ const StartScreen: React.FC = () => {
         </View>
       </SafeAreaView>
 
-      {/* Difficulty Selection Modal */}
+      {/* Difficulty Selection Modal with BlurView */}
       {showDifficultyModal && (
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { backgroundColor: "transparent" }]}
           activeOpacity={1}
           onPress={() => setShowDifficultyModal(false)}
         >
+          <BlurView
+            intensity={15}
+            tint={theme.isDark ? "dark" : "light"}
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: "rgba(0, 0, 0, 0.3)" },
+            ]}
+          />
           <View
             style={[styles.modalContent, { backgroundColor: colors.card }]}
             onTouchEnd={(e) => e.stopPropagation()}

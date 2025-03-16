@@ -1,69 +1,132 @@
-// screens/DuoGameScreen/components/DuoBoard.styles.ts
-import { StyleSheet } from "react-native";
+// screens/DuoScreen/components/DuoBoard.styles.ts
+import { StyleSheet, Dimensions } from "react-native";
 import { spacing } from "@/utils/theme";
+
+// Compute optimal board size based on screen width
+const { width } = Dimensions.get("window");
+export const BOARD_SIZE = Math.min(width * 0.9, 360);
+export const CELL_SIZE = BOARD_SIZE / 9;
 
 export default StyleSheet.create({
   boardContainer: {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: spacing.lg,
+    marginVertical: spacing.md,
     position: "relative",
   },
   board: {
-    width: 320,
-    height: 320,
+    width: BOARD_SIZE,
+    height: BOARD_SIZE,
+    backgroundColor: "#1E2233", // Darker anthracite background
+    borderRadius: 12,
+    overflow: "hidden",
     borderWidth: 2,
-    borderColor: "#000",
-    flexDirection: "column",
+    borderColor: "rgba(255,255,255,0.25)",
   },
   row: {
     flexDirection: "row",
-    height: 35.5, // Gesamthöhe / 9
+    height: CELL_SIZE,
   },
   cell: {
-    width: 35.5, // Gesamtbreite / 9
-    height: 35.5,
+    width: CELL_SIZE,
+    height: CELL_SIZE,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+    borderWidth: 0.5,
+    borderColor: "rgba(255,255,255,0.15)",
   },
-  player1Cell: {
-    backgroundColor: "rgba(72, 209, 104, 0.1)", // Leicht grün für Spieler 1
-  },
-  player2Cell: {
-    backgroundColor: "rgba(255, 196, 0, 0.1)", // Leicht gelb für Spieler 2
-  },
-  fixedCell: {
-    backgroundColor: "#e0e0e0", // Grau für vorausgefüllte Zellen
-  },
-  fixedCellText: {
+  cellText: {
     fontSize: 18,
-    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  player1Area: {
+    backgroundColor: "rgba(76, 175, 80, 0.1)", // Light green for player 1
+  },
+  player2Area: {
+    backgroundColor: "rgba(255, 193, 7, 0.1)", // Light yellow for player 2
+  },
+  divider: {
+    height: 2,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    width: "100%",
+    position: "absolute",
+    top: BOARD_SIZE / 2,
+  },
+  gridLine: {
+    position: "absolute",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    zIndex: 5,
+  },
+  horizontalGridLine: {
+    width: BOARD_SIZE,
+    height: 1.5,
+    left: 0,
+  },
+  verticalGridLine: {
+    width: 1.5,
+    height: BOARD_SIZE,
+    top: 0,
+  },
+  rotatedView: {
+    transform: [{ rotate: "180deg" }],
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rotatedText: {
+    transform: [{ rotate: "180deg" }],
   },
   rotatedCell: {
     transform: [{ rotate: "180deg" }],
     width: "100%",
     height: "100%",
   },
-  rotatedText: {
-    transform: [{ rotate: "180deg" }],
-  },
   playerLabel: {
-    position: "absolute",
-    padding: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: spacing.sm,
-    backgroundColor: "rgba(0,0,0,0.1)",
+    marginVertical: spacing.sm,
   },
   player1Label: {
-    top: -40,
     transform: [{ rotate: "180deg" }],
+    position: "absolute",
+    top: -40,
   },
   player2Label: {
+    position: "absolute",
     bottom: -40,
   },
+  playerLabelText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
   playerText: {
-    fontWeight: "bold",
-    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  fixedCell: {
+    backgroundColor: "rgba(255,255,255,0.1)",
+  },
+  fixedCellText: {
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+  sharedCell: {
+    backgroundColor: "rgba(100, 100, 255, 0.15)", // Special blue for the shared middle cell
+  },
+  borderRight: {
+    borderRightWidth: 2,
+    borderRightColor: "rgba(255,255,255,0.25)",
+  },
+  borderBottom: {
+    borderBottomWidth: 2,
+    borderBottomColor: "rgba(255,255,255,0.25)",
   },
 });

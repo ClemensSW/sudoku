@@ -23,32 +23,33 @@ const DuoScreen: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
-  
+
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<Difficulty>("medium");
 
   // Schwierigkeitsgrade mit Beschreibungen
   const difficultyOptions: DifficultyOption[] = [
-    { 
-      id: "easy", 
-      name: "Leicht", 
-      description: "Perfekt für Anfänger und lockeres Spielen." 
+    {
+      id: "easy",
+      name: "Leicht",
+      description: "Perfekt für Anfänger und lockeres Spielen.",
     },
-    { 
-      id: "medium", 
-      name: "Mittel", 
-      description: "Ausgewogene Herausforderung für die meisten Spieler." 
+    {
+      id: "medium",
+      name: "Mittel",
+      description: "Ausgewogene Herausforderung für die meisten Spieler.",
     },
-    { 
-      id: "hard", 
-      name: "Schwer", 
-      description: "Forderndes Spiel für erfahrene Sudoku-Fans." 
+    {
+      id: "hard",
+      name: "Schwer",
+      description: "Forderndes Spiel für erfahrene Sudoku-Fans.",
     },
-    { 
-      id: "expert", 
-      name: "Experte", 
-      description: "Die ultimative Herausforderung für Sudoku-Meister." 
-    }
+    {
+      id: "expert",
+      name: "Experte",
+      description: "Die ultimative Herausforderung für Sudoku-Meister.",
+    },
   ];
 
   // Handler für Settings-Button
@@ -72,11 +73,17 @@ const DuoScreen: React.FC = () => {
   const handleStartWithDifficulty = () => {
     triggerHaptic("medium");
     setShowDifficultyModal(false);
-    
+
+    console.log(
+      "Navigation zu /duo-game mit Schwierigkeit:",
+      selectedDifficulty
+    );
+
     // Navigation zum Duo-Spiel mit ausgewähltem Schwierigkeitsgrad
-    router.push({
+    // Verwende expliziten Pfad und replace statt push
+    router.replace({
       pathname: "/duo-game",
-      params: { difficulty: selectedDifficulty }
+      params: { difficulty: selectedDifficulty },
     });
   };
 
@@ -112,7 +119,8 @@ const DuoScreen: React.FC = () => {
                 Sudoku Duo-Modus
               </Text>
               <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                Fordere einen Freund heraus oder spielt zusammen auf demselben Gerät
+                Fordere einen Freund heraus oder spielt zusammen auf demselben
+                Gerät
               </Text>
             </View>
 
@@ -228,11 +236,12 @@ const DuoScreen: React.FC = () => {
                       { color: colors.textSecondary },
                     ]}
                   >
-                    Einer spielt die obere Hälfte, einer die untere. Wer zuerst fertig ist, gewinnt.
+                    Einer spielt die obere Hälfte, einer die untere. Wer zuerst
+                    fertig ist, gewinnt.
                   </Text>
                 </View>
               </View>
-              
+
               <View style={styles.featureItem}>
                 <View
                   style={[
@@ -254,11 +263,12 @@ const DuoScreen: React.FC = () => {
                       { color: colors.textSecondary },
                     ]}
                   >
-                    Gemeinsamer Spielspaß auf einem Gerät. Das Sudoku wird in zwei Bereiche geteilt.
+                    Gemeinsamer Spielspaß auf einem Gerät. Das Sudoku wird in
+                    zwei Bereiche geteilt.
                   </Text>
                 </View>
               </View>
-              
+
               <View style={styles.featureItem}>
                 <View
                   style={[
@@ -280,7 +290,8 @@ const DuoScreen: React.FC = () => {
                       { color: colors.textSecondary },
                     ]}
                   >
-                    Spieler 1 sieht die Zahlen um 180° gedreht, um gegenüber von Spieler 2 zu sitzen.
+                    Spieler 1 sieht die Zahlen um 180° gedreht, um gegenüber von
+                    Spieler 2 zu sitzen.
                   </Text>
                 </View>
               </View>
@@ -324,10 +335,14 @@ const DuoScreen: React.FC = () => {
               Wählt gemeinsam einen passenden Schwierigkeitsgrad
             </Text>
 
-            <View 
+            <View
               style={[
-                styles.difficultyButtonsContainer, 
-                { backgroundColor: theme.isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }
+                styles.difficultyButtonsContainer,
+                {
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)",
+                },
               ]}
             >
               {difficultyOptions.map((option, index) => {
@@ -360,17 +375,17 @@ const DuoScreen: React.FC = () => {
                       >
                         {option.name}
                       </Text>
-                      
-                      <Text 
+
+                      <Text
                         style={[
-                          styles.difficultyDescription, 
-                          { color: colors.textSecondary }
+                          styles.difficultyDescription,
+                          { color: colors.textSecondary },
                         ]}
                       >
                         {option.description}
                       </Text>
                     </View>
-                    
+
                     {isSelected && (
                       <Feather name="check" size={20} color={colors.primary} />
                     )}
@@ -390,12 +405,17 @@ const DuoScreen: React.FC = () => {
                 Zusammen spielen!
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.modalCancelButton}
               onPress={() => setShowDifficultyModal(false)}
             >
-              <Text style={[styles.modalCancelText, { color: colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.modalCancelText,
+                  { color: colors.textSecondary },
+                ]}
+              >
                 Abbrechen
               </Text>
             </TouchableOpacity>

@@ -4,10 +4,10 @@ import { spacing, radius } from "@/utils/theme";
 
 const { width, height } = Dimensions.get("window");
 
-// Calculate sizes for the game visualizer
+// Calculate sizes for the game visualizer - more compact
 const VISUALIZER_WIDTH = width * 0.9;
-const VISUALIZER_HEIGHT = VISUALIZER_WIDTH * 1.2;
-const GRID_CELL_SIZE = VISUALIZER_WIDTH / 12; // Smaller cells for visibility
+const VISUALIZER_HEIGHT = VISUALIZER_WIDTH * 0.9; // Reduced height ratio for compactness
+const GRID_CELL_SIZE = VISUALIZER_WIDTH / 12;
 
 export default StyleSheet.create({
   container: {
@@ -54,11 +54,11 @@ export default StyleSheet.create({
   },
   titleContainer: {
     alignItems: "center",
-    marginBottom: spacing.xl,
+    marginBottom: spacing.xl, // Increased margin
   },
   duoLogo: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: spacing.md, // Increased margin
   },
   logoIconContainer: {
     width: 48,
@@ -74,14 +74,14 @@ export default StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 38,
+    fontSize: 36, // Slightly smaller
     fontWeight: "800",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 8, // Reduced margin
     letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16, // Slightly smaller
     textAlign: "center",
     opacity: 0.8,
     maxWidth: 300,
@@ -89,15 +89,15 @@ export default StyleSheet.create({
     color: "#fff",
   },
 
-  // Game Visualizer - Premium animated version
+  // Game Visualizer - Compact but professional version
   gameVisualizerContainer: {
     width: "100%",
     alignItems: "center",
-    marginBottom: spacing.xl,
+    marginBottom: spacing.xxl, // Significantly increased margin
   },
   gameVisualizer: {
     width: VISUALIZER_WIDTH,
-    height: VISUALIZER_HEIGHT,
+    height: "100%", // Will be constrained by parent
     borderRadius: radius.xl,
     overflow: "hidden",
     position: "relative",
@@ -112,13 +112,13 @@ export default StyleSheet.create({
   shineEffect: {
     position: "absolute",
     top: -150,
-    left: -500, // Weiter links beginnen
-    width: 60, // Etwas breiter machen
-    height: VISUALIZER_HEIGHT + 300, // Länger machen, um komplette Diagonale abzudecken
+    left: -500,
+    width: 60,
+    height: VISUALIZER_HEIGHT + 300,
     backgroundColor: "white",
     transform: [{ rotate: "30deg" }],
     zIndex: 10,
-    opacity: 0.3, // Transparenz beibehalten
+    opacity: 0.3,
   },
   boardTop: {
     height: "50%",
@@ -147,18 +147,18 @@ export default StyleSheet.create({
   playerContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: spacing.md,
+    padding: spacing.sm, // Smaller padding
     borderRadius: radius.lg,
     backgroundColor: "rgba(255,255,255,0.1)",
     zIndex: 5,
   },
   playerAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40, // Smaller avatar
+    height: 40, // Smaller avatar
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 6, // Reduced spacing
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -166,56 +166,8 @@ export default StyleSheet.create({
     elevation: 4,
   },
   playerName: {
-    fontSize: 16,
+    fontSize: 14, // Smaller text
     fontWeight: "700",
-  },
-
-  // Example sudoku cells in each player's area
-  sudokuExampleContainer: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    zIndex: 1,
-  },
-  sudokuRow: {
-    flexDirection: "row",
-  },
-  sudokuCell: {
-    width: 30,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    margin: 1,
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  sudokuCellText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "white",
-  },
-  sudokuCellTextRotated: {
-    transform: [{ rotate: "180deg" }],
-  },
-
-  // Grid overlay to subtly illustrate the board
-  gridOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.05,
-    padding: spacing.md,
-  },
-  gridRow: {
-    flexDirection: "row",
-    flex: 1,
-  },
-  gridCell: {
-    flex: 1,
-    borderWidth: 0.5,
-    margin: 0.5,
   },
 
   // VS divider and badge
@@ -232,11 +184,11 @@ export default StyleSheet.create({
     position: "absolute",
     left: "50%",
     top: "50%",
-    marginLeft: -28,
-    marginTop: -28,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    marginLeft: -24, // Smaller offset for smaller badge
+    marginTop: -24, // Smaller offset for smaller badge
+    width: 48, // Smaller badge
+    height: 48, // Smaller badge
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
@@ -247,16 +199,35 @@ export default StyleSheet.create({
     elevation: 10,
   },
   versusText: {
-    fontSize: 18,
+    fontSize: 16, // Smaller text
     fontWeight: "800",
     color: "white",
   },
 
-  // How it works section
+  // Scroll indicator - More visible with better spacing
+  scrollIndicator: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.xl,
+    marginBottom: spacing.xxl, // Much more space below
+    paddingVertical: 12, // More touch area
+    width: '100%',
+  },
+  scrollIndicatorContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollHint: {
+    fontSize: 16, // Larger text
+    marginTop: 6,
+    fontWeight: "500",
+  },
+
+  // How it works section - Repositioned after CTA
   howItWorksContainer: {
     width: "100%",
-    marginTop: spacing.lg,
-    marginBottom: spacing.xl,
+    marginTop: spacing.xl, // More space above this section
+    marginBottom: spacing.lg,
   },
   howItWorksTitle: {
     fontSize: 20,
@@ -329,17 +300,18 @@ export default StyleSheet.create({
     lineHeight: 20,
   },
 
-  // Call to action
+  // Call to action - More generous spacing
   ctaContainer: {
     width: "100%",
     paddingHorizontal: 16,
     alignItems: "center",
-    marginVertical: spacing.xl,
+    marginTop: spacing.xl,
+    marginBottom: spacing.xl, // Increased margin
   },
   ctaButton: {
     width: "100%",
-    maxWidth: 300,
-    height: 64,
+    maxWidth: 320, // Slightly wider for better proportion
+    height: 64, // Taller button for better tap area
     borderRadius: radius.xl,
     justifyContent: "center",
     alignItems: "center",
@@ -351,12 +323,12 @@ export default StyleSheet.create({
     elevation: 8,
   },
   ctaButtonText: {
-    fontSize: 18,
+    fontSize: 20, // Slightly larger text
     fontWeight: "700",
     color: "white",
   },
 
-  // Modal for difficulty selection - simplified and modernized
+  // Modal for difficulty selection
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",

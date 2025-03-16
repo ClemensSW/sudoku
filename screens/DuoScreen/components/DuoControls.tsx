@@ -42,15 +42,14 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
 
+  // For top player (Player 2), entire container is rotated 180 degrees
   return (
     <Animated.View
       style={[styles.container, position === "top" && styles.topContainer]}
       entering={FadeIn.duration(500)}
     >
-      {/* Action buttons row - smaller size */}
-      <View
-        style={[styles.actionsRow, position === "top" && styles.rotatedView]}
-      >
+      {/* Action buttons row */}
+      <View style={styles.actionsRow}>
         {/* Hint button */}
         <View style={styles.actionButtonWrapper}>
           <TouchableOpacity
@@ -124,9 +123,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
       </View>
 
       {/* Number buttons row - horizontal layout */}
-      <View
-        style={[styles.numbersRow, position === "top" && styles.rotatedView]}
-      >
+      <View style={styles.numbersRow}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <TouchableOpacity
             key={`num-${player}-${num}`}
@@ -157,9 +154,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topContainer: {
-    transform: [{ rotate: "180deg" }],
-  },
-  rotatedView: {
     transform: [{ rotate: "180deg" }],
   },
   actionsRow: {

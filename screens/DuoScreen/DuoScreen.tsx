@@ -39,6 +39,11 @@ const DuoScreen: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
+  
+  // Reference to scroll view to enable programmatic scrolling
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  // Reference to the How It Works section
+  const howItWorksRef = React.useRef<View>(null);
 
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] =
@@ -49,6 +54,7 @@ const DuoScreen: React.FC = () => {
   const rotateValue = useSharedValue(0);
   const slideValue = useSharedValue(-80);
   const opacityValue = useSharedValue(0.5);
+  const scrollIndicatorOpacity = useSharedValue(1);
 
   // Start animations on component mount
   useEffect(() => {
@@ -76,12 +82,12 @@ const DuoScreen: React.FC = () => {
     slideValue.value = withRepeat(
       withDelay(
         1000,
-        withTiming(width + 800, { // Viel größerer Endwert, damit es über das ganze Board geht
-          duration: 2600, // Längere Dauer
+        withTiming(width + 800, {
+          duration: 2600,
           easing: Easing.inOut(Easing.ease)
         })
       ),
-      -1, // Endlos wiederholen
+      -1,
       false
     );
 
@@ -91,8 +97,18 @@ const DuoScreen: React.FC = () => {
         withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
         withTiming(0.5, { duration: 2000, easing: Easing.inOut(Easing.ease) })
       ),
-      -1, // infinite repeat
-      true // reverse
+      -1,
+      true
+    );
+
+    // Scroll indicator fade animation
+    scrollIndicatorOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.4, { duration: 1000 }),
+        withTiming(1, { duration: 1000 })
+      ),
+      -1,
+      true
     );
   }, []);
 
@@ -115,6 +131,10 @@ const DuoScreen: React.FC = () => {
 
   const playerGlowStyle = useAnimatedStyle(() => ({
     opacity: opacityValue.value,
+  }));
+
+  const scrollIndicatorStyle = useAnimatedStyle(() => ({
+    opacity: scrollIndicatorOpacity.value
   }));
 
   // Difficulty options with German names for display
@@ -194,9 +214,10 @@ const DuoScreen: React.FC = () => {
         </View>
 
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={{
             paddingBottom: 120, // Extra padding to avoid bottom nav overlap
-            flexGrow: 1,
+            minHeight: height - 120, // Ensure content fills the screen
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -228,18 +249,25 @@ const DuoScreen: React.FC = () => {
                 </View>
               </Animated.View>
 
-              <Text style={[styles.title, { color: colors.textPrimary }]}>
+              <Text
+                style={[styles.title, { color: colors.textPrimary }]}
+              >
                 Sudoku Duo
               </Text>
-              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.subtitle,
+                  { color: colors.textSecondary, marginTop: 12 }
+                ]}
+              >
                 Sudoku wird zu zweit zum Abenteuer!
               </Text>
             </Animated.View>
 
-            {/* Game visualization - Focused on explaining gameplay */}
+            {/* Compact Game visualization */}
             <Animated.View
-              style={styles.gameVisualizerContainer}
-              entering={FadeInDown.delay(200).duration(600)}
+              style={[styles.gameVisualizerContainer, { height: height * 0.28 }]} // Reduced height
+              entering={FadeInDown.delay(200).springify()}
             >
               <View
                 style={[
@@ -249,6 +277,7 @@ const DuoScreen: React.FC = () => {
                     borderColor: theme.isDark
                       ? `${colors.primary}30`
                       : `${colors.primary}20`,
+                    height: "100%",
                   },
                 ]}
               >
@@ -279,39 +308,9 @@ const DuoScreen: React.FC = () => {
                     >
                       <Feather name="user" size={20} color="white" />
                     </View>
-                    <Text
-                      style={[styles.playerName, { color: colors.textPrimary }]}
-                    >
+                    <Text style={[styles.playerName, { color: colors.textPrimary }]}>
                       Spieler 2
                     </Text>
-                  </View>
-
-                  {/* Sudoku cells in Player 2 area - rotated */}
-                  <View style={styles.sudokuExampleContainer}>
-                    <View style={styles.sudokuRow}>
-                      {[7, 2, 6].map((num, i) => (
-                        <View
-                          key={`p2-cell-${i}`}
-                          style={[
-                            styles.sudokuCell,
-                            {
-                              borderColor: theme.isDark
-                                ? "rgba(255,255,255,0.1)"
-                                : "rgba(0,0,0,0.1)",
-                            },
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.sudokuCellText,
-                              styles.sudokuCellTextRotated,
-                            ]}
-                          >
-                            {num}
-                          </Text>
-                        </View>
-                      ))}
-                    </View>
                   </View>
                 </View>
 
@@ -339,54 +338,10 @@ const DuoScreen: React.FC = () => {
                     >
                       <Feather name="user" size={20} color="white" />
                     </View>
-                    <Text
-                      style={[styles.playerName, { color: colors.textPrimary }]}
-                    >
+                    <Text style={[styles.playerName, { color: colors.textPrimary }]}>
                       Spieler 1
                     </Text>
                   </View>
-
-                  {/* Sudoku cells in Player 1 area */}
-                  <View style={styles.sudokuExampleContainer}>
-                    <View style={styles.sudokuRow}>
-                      {[3, 9, 4].map((num, i) => (
-                        <View
-                          key={`p1-cell-${i}`}
-                          style={[
-                            styles.sudokuCell,
-                            {
-                              borderColor: theme.isDark
-                                ? "rgba(255,255,255,0.1)"
-                                : "rgba(0,0,0,0.1)",
-                            },
-                          ]}
-                        >
-                          <Text style={styles.sudokuCellText}>{num}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                </View>
-
-                {/* Grid overlay to subtly illustrate sudoku board */}
-                <View style={styles.gridOverlay}>
-                  {Array.from({ length: 9 }).map((_, index) => (
-                    <View key={`grid-row-${index}`} style={styles.gridRow}>
-                      {Array.from({ length: 9 }).map((_, colIndex) => (
-                        <View
-                          key={`grid-cell-${index}-${colIndex}`}
-                          style={[
-                            styles.gridCell,
-                            {
-                              borderColor: theme.isDark
-                                ? "rgba(255,255,255,0.03)"
-                                : "rgba(0,0,0,0.03)",
-                            },
-                          ]}
-                        />
-                      ))}
-                    </View>
-                  ))}
                 </View>
 
                 {/* VS divider */}
@@ -412,113 +367,163 @@ const DuoScreen: React.FC = () => {
                   <Text style={styles.versusText}>VS</Text>
                 </Animated.View>
               </View>
-
-              {/* How it works section - Clear explanation of gameplay */}
-              <View style={styles.howItWorksContainer}>
-                <Text
-                  style={[
-                    styles.howItWorksTitle,
-                    { color: colors.textPrimary },
-                  ]}
-                >
-                  So funktioniert's:
-                </Text>
-
-                <View style={styles.howItWorksList}>
-                  <Animated.View
-                    style={styles.howItWorksItem}
-                    entering={FadeInUp.delay(400).duration(400)}
-                  >
-                    <View
-                      style={[
-                        styles.howItWorksIcon,
-                        { backgroundColor: `${colors.primary}15` },
-                      ]}
-                    >
-                      <Feather name="users" size={20} color={colors.primary} />
-                    </View>
-                    <Text
-                      style={[
-                        styles.howItWorksText,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Zwei Spieler lösen ein Sudoku auf demselben Gerät
-                    </Text>
-                  </Animated.View>
-
-                  <Animated.View
-                    style={styles.howItWorksItem}
-                    entering={FadeInUp.delay(500).duration(400)}
-                  >
-                    <View
-                      style={[
-                        styles.howItWorksIcon,
-                        { backgroundColor: `${colors.secondary}15` },
-                      ]}
-                    >
-                      <Feather name="grid" size={20} color={colors.secondary} />
-                    </View>
-                    <Text
-                      style={[
-                        styles.howItWorksText,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Spieler 1 löst die untere Hälfte, Spieler 2 die obere
-                    </Text>
-                  </Animated.View>
-
-                  <Animated.View
-                    style={styles.howItWorksItem}
-                    entering={FadeInUp.delay(600).duration(400)}
-                  >
-                    <View
-                      style={[
-                        styles.howItWorksIcon,
-                        { backgroundColor: `${colors.success}15` },
-                      ]}
-                    >
-                      <Feather
-                        name="rotate-ccw"
-                        size={20}
-                        color={colors.success}
-                      />
-                    </View>
-                    <Text
-                      style={[
-                        styles.howItWorksText,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Die Zahlen werden für Spieler 2 gedreht angezeigt
-                    </Text>
-                  </Animated.View>
-
-                  <Animated.View
-                    style={styles.howItWorksItem}
-                    entering={FadeInUp.delay(700).duration(400)}
-                  >
-                    <View
-                      style={[
-                        styles.howItWorksIcon,
-                        { backgroundColor: `${colors.warning}15` },
-                      ]}
-                    >
-                      <Feather name="award" size={20} color={colors.warning} />
-                    </View>
-                    <Text
-                      style={[
-                        styles.howItWorksText,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Wer zuerst seinen Bereich löst, gewinnt die Runde
-                    </Text>
-                  </Animated.View>
-                </View>
-              </View>
             </Animated.View>
+
+            {/* Start button - Moved up, above the fold */}
+            <Animated.View
+              style={[styles.ctaContainer, pulseButtonStyle]}
+              entering={FadeInUp.delay(300).duration(600)}
+            >
+              <TouchableOpacity
+                style={[
+                  styles.ctaButton,
+                  {
+                    backgroundColor: colors.primary,
+                    shadowColor: colors.primary,
+                  },
+                ]}
+                onPress={handleStartGame}
+                activeOpacity={0.8}
+              >
+                <Feather
+                  name="play"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 12 }}
+                />
+                <Text style={styles.ctaButtonText}>Jetzt spielen</Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            {/* Scroll Indicator - Now touchable to auto-scroll */}
+            <TouchableOpacity
+              style={[styles.scrollIndicator]}
+              onPress={() => {
+                // Weiter nach unten scrollen, um den vollständigen Inhalt zu zeigen
+                scrollViewRef.current?.scrollTo({ y: height * 0.9, animated: true });
+              }}
+            >
+              <Animated.View 
+                style={[styles.scrollIndicatorContent, scrollIndicatorStyle]}
+                entering={FadeIn.delay(1000).duration(400)}
+              >
+                <Feather name="chevrons-down" size={24} color={colors.textSecondary} />
+                <Text style={[styles.scrollHint, { color: colors.textSecondary }]}>
+                  Mehr erfahren
+                </Text>
+              </Animated.View>
+            </TouchableOpacity>
+
+            {/* Spacer to ensure content below is initially hidden */}
+            <View style={{ height: 200 }} />
+
+            {/* How it works section - Moved below CTA and with ref */}
+            <View 
+              ref={howItWorksRef}
+              style={styles.howItWorksContainer}>
+              <Text
+                style={[
+                  styles.howItWorksTitle,
+                  { color: colors.textPrimary },
+                ]}
+              >
+                So funktioniert's:
+              </Text>
+
+              <View style={styles.howItWorksList}>
+                <Animated.View
+                  style={styles.howItWorksItem}
+                  entering={FadeInUp.delay(400).duration(400)}
+                >
+                  <View
+                    style={[
+                      styles.howItWorksIcon,
+                      { backgroundColor: `${colors.primary}15` },
+                    ]}
+                  >
+                    <Feather name="users" size={20} color={colors.primary} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.howItWorksText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Zwei Spieler lösen ein Sudoku auf demselben Gerät
+                  </Text>
+                </Animated.View>
+
+                <Animated.View
+                  style={styles.howItWorksItem}
+                  entering={FadeInUp.delay(500).duration(400)}
+                >
+                  <View
+                    style={[
+                      styles.howItWorksIcon,
+                      { backgroundColor: `${colors.secondary}15` },
+                    ]}
+                  >
+                    <Feather name="grid" size={20} color={colors.secondary} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.howItWorksText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Spieler 1 löst die untere Hälfte, Spieler 2 die obere
+                  </Text>
+                </Animated.View>
+
+                <Animated.View
+                  style={styles.howItWorksItem}
+                  entering={FadeInUp.delay(600).duration(400)}
+                >
+                  <View
+                    style={[
+                      styles.howItWorksIcon,
+                      { backgroundColor: `${colors.success}15` },
+                    ]}
+                  >
+                    <Feather
+                      name="rotate-ccw"
+                      size={20}
+                      color={colors.success}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.howItWorksText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Die Zahlen werden für Spieler 2 gedreht angezeigt
+                  </Text>
+                </Animated.View>
+
+                <Animated.View
+                  style={styles.howItWorksItem}
+                  entering={FadeInUp.delay(700).duration(400)}
+                >
+                  <View
+                    style={[
+                      styles.howItWorksIcon,
+                      { backgroundColor: `${colors.warning}15` },
+                    ]}
+                  >
+                    <Feather name="award" size={20} color={colors.warning} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.howItWorksText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Wer zuerst seinen Bereich löst, gewinnt die Runde
+                  </Text>
+                </Animated.View>
+              </View>
+            </View>
 
             {/* Feature cards - Each focused on practical gameplay benefits */}
             <Animated.View
@@ -526,7 +531,6 @@ const DuoScreen: React.FC = () => {
               entering={FadeInDown.delay(400).duration(600)}
             >
               <View style={styles.featureCardsContainer}>
-                {/* Hier nur noch eine zentrale Feature-Karte */}
                 <Animated.View
                   style={[
                     styles.featureCard,
@@ -546,7 +550,7 @@ const DuoScreen: React.FC = () => {
                     ]}
                   >
                     <Feather
-                      name="rotate-ccw"
+                      name="users"
                       size={24}
                       color={colors.success}
                     />
@@ -573,37 +577,11 @@ const DuoScreen: React.FC = () => {
                 </Animated.View>
               </View>
             </Animated.View>
-
-            {/* Start button - Animated and more prominent */}
-            <Animated.View
-              style={[styles.ctaContainer, pulseButtonStyle]}
-              entering={FadeInUp.delay(1000).duration(600)}
-            >
-              <TouchableOpacity
-                style={[
-                  styles.ctaButton,
-                  {
-                    backgroundColor: colors.primary,
-                    shadowColor: colors.primary,
-                  },
-                ]}
-                onPress={handleStartGame}
-                activeOpacity={0.8}
-              >
-                <Feather
-                  name="play"
-                  size={24}
-                  color="white"
-                  style={{ marginRight: 12 }}
-                />
-                <Text style={styles.ctaButtonText}>Jetzt spielen</Text>
-              </TouchableOpacity>
-            </Animated.View>
           </View>
         </ScrollView>
       </SafeAreaView>
 
-      {/* Simplified difficulty selection modal with BlurView */}
+      {/* Difficulty selection modal with BlurView */}
       {showDifficultyModal && (
         <TouchableOpacity
           style={[styles.modalOverlay, { backgroundColor: "transparent" }]}

@@ -3,32 +3,25 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   Dimensions,
-  Pressable,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
-} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import Button from "@/components/Button/Button";
-import DifficultySelector from "@/components/DifficultySelector/DifficultySelector";
+import Background from "@/components/Background/Background";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import styles from "./StartScreen.styles";
 import { triggerHaptic } from "@/utils/haptics";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const StartScreen: React.FC = () => {
   const router = useRouter();
@@ -40,6 +33,13 @@ const StartScreen: React.FC = () => {
     useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+
+  // Berechnung für Layout
+  const bottomNavHeight = 56;
+  const contentBottomMargin =
+    Platform.OS === "ios"
+      ? bottomNavHeight + insets.bottom + 10 // iOS braucht mehr Abstand
+      : bottomNavHeight + 10; // Android braucht weniger
 
   const handleDifficultyChange = (difficulty: Difficulty) => {
     setSelectedDifficulty(difficulty);
@@ -60,11 +60,6 @@ const StartScreen: React.FC = () => {
     });
   };
 
-  const handleOpenHowToPlay = () => {
-    setShowHowToPlay(true);
-    triggerHaptic("light");
-  };
-
   // Handler für Settings
   const handleShowSettings = () => {
     triggerHaptic("light");
@@ -81,19 +76,16 @@ const StartScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
-      {/* Background Image */}
-      <Image
-        source={require("@/assets/images/background/mountains_blue.png")}
-        style={styles.backgroundImage}
-      />
+      {/* Hintergrund */}
+      <Background variant="blue" />
 
-      {/* Settings-Button in der oberen rechten Ecke (ersetzt Award-Button) */}
+      {/* Settings-Button in der oberen rechten Ecke */}
       <View
         style={{
           position: "absolute",
           top: insets.top + 16,
           right: 16,
-          zIndex: 9999,
+          zIndex: 10,
         }}
       >
         <TouchableOpacity
@@ -114,23 +106,27 @@ const StartScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <SafeAreaView style={styles.safeArea}>
-        <Animated.View style={styles.content} entering={FadeIn.duration(500)}>
+      {/* SafeArea und Content */}
+      <SafeAreaView style={[styles.safeArea]} edges={["top"]}>
+        <View
+          style={[
+            styles.content,
+            {
+              marginBottom: contentBottomMargin, // Platz für BottomNav
+              flex: 1,
+              justifyContent: "center",
+            },
+          ]}
+        >
           {/* SUDOKU Title */}
-          <Animated.View
-            style={styles.titleContainer}
-            entering={FadeInDown.delay(200).duration(800)}
-          >
+          <View style={styles.titleContainer}>
             <Text style={[styles.title, { color: colors.primary }]}>
               SUDOKU
             </Text>
-          </Animated.View>
+          </View>
 
           {/* New Game Button */}
-          <Animated.View
-            style={styles.buttonContainer}
-            entering={FadeInDown.delay(600).duration(800)}
-          >
+          <View style={styles.buttonContainer}>
             <Button
               title="Neues Spiel"
               onPress={handleStartGame}
@@ -141,8 +137,8 @@ const StartScreen: React.FC = () => {
               withHaptic={true}
               hapticType="medium"
             />
-          </Animated.View>
-        </Animated.View>
+          </View>
+        </View>
       </SafeAreaView>
 
       {/* Difficulty Selection Modal */}
@@ -152,10 +148,8 @@ const StartScreen: React.FC = () => {
           activeOpacity={1}
           onPress={() => setShowDifficultyModal(false)}
         >
-          <Animated.View
+          <View
             style={[styles.modalContent, { backgroundColor: colors.card }]}
-            entering={FadeIn.duration(300)}
-            // This prevents touches on the modal content from closing the modal
             onTouchEnd={(e) => e.stopPropagation()}
           >
             <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
@@ -218,7 +212,6 @@ const StartScreen: React.FC = () => {
               style={[
                 styles.modalCTAButton,
                 { backgroundColor: colors.primary },
-                // Add more bottom margin since we removed the cancel button
                 { marginBottom: 8 },
               ]}
               onPress={handleStartWithDifficulty}
@@ -227,7 +220,7 @@ const StartScreen: React.FC = () => {
                 Los geht's!
               </Text>
             </TouchableOpacity>
-          </Animated.View>
+          </View>
         </TouchableOpacity>
       )}
 

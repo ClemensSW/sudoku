@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  Image,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -16,12 +18,77 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import Button from "@/components/Button/Button";
-import Background from "@/components/Background/Background";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import styles from "./StartScreen.styles";
 import { triggerHaptic } from "@/utils/haptics";
 
 const { width, height } = Dimensions.get("window");
+
+// Create a static, non-animated Button wrapper
+const StaticButton: React.FC<any> = (props) => {
+  const {
+    title,
+    onPress,
+    variant = "primary",
+    style,
+    icon,
+    iconPosition = "left",
+  } = props;
+  const theme = useTheme();
+  const colors = theme.colors;
+
+  // Get button styles without animations
+  const getButtonStyle = () => {
+    const baseStyle = {
+      height: 52,
+      minWidth: 120,
+      paddingHorizontal: 24,
+      borderRadius: 12,
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "row" as const,
+    };
+
+    switch (variant) {
+      case "primary":
+        return {
+          ...baseStyle,
+          backgroundColor: colors.primary,
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.2,
+          shadowRadius: 5,
+          elevation: 5,
+        };
+      default:
+        return baseStyle;
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      style={[getButtonStyle(), style]}
+      onPress={onPress}
+      activeOpacity={0.9}
+    >
+      {icon && iconPosition === "left" && (
+        <View style={{ marginRight: 8 }}>{icon}</View>
+      )}
+      <Text
+        style={{
+          fontSize: 16,
+          fontWeight: "600",
+          color: colors.buttonText,
+        }}
+      >
+        {title}
+      </Text>
+      {icon && iconPosition === "right" && (
+        <View style={{ marginLeft: 8 }}>{icon}</View>
+      )}
+    </TouchableOpacity>
+  );
+};
 
 const StartScreen: React.FC = () => {
   const router = useRouter();
@@ -76,8 +143,14 @@ const StartScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
-      {/* Hintergrund */}
-      <Background variant="blue" />
+      {/* Custom background image that starts above the bottom nav */}
+      <View style={customStyles.backgroundContainer}>
+        <Image
+          source={require("@/assets/images/background/mountains_blue.png")}
+          style={customStyles.backgroundImage}
+          resizeMode="cover"
+        />
+      </View>
 
       {/* Settings-Button in der oberen rechten Ecke */}
       <View
@@ -125,17 +198,15 @@ const StartScreen: React.FC = () => {
             </Text>
           </View>
 
-          {/* New Game Button */}
+          {/* New Game Button - using static button instead of animated */}
           <View style={styles.buttonContainer}>
-            <Button
+            <StaticButton
               title="Neues Spiel"
               onPress={handleStartGame}
               variant="primary"
               style={styles.startButton}
               icon={<Feather name="play" size={20} color={colors.buttonText} />}
               iconPosition="right"
-              withHaptic={true}
-              hapticType="medium"
             />
           </View>
         </View>
@@ -234,5 +305,21 @@ const StartScreen: React.FC = () => {
     </View>
   );
 };
+
+// Custom styles for better background positioning
+const customStyles = StyleSheet.create({
+  backgroundContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 56, // Leave space for bottom navigation
+    overflow: "hidden",
+  },
+  backgroundImage: {
+    width: "100%",
+    height: "100%",
+  },
+});
 
 export default StartScreen;

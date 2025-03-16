@@ -46,8 +46,12 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
 
-  // Create heart indicators for lives
+  // Create heart indicators for lives - matching standard game appearance
   const renderHearts = () => {
+    // Use the correct color from the theme to match the standard game
+    const activeHeartColor = colors.error;
+    const inactiveHeartColor = "rgba(255,255,255,0.2)";
+
     return (
       <View style={styles.heartsRow}>
         {Array.from({ length: maxLives }).map((_, index) => (
@@ -55,7 +59,8 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             key={`heart-${index}`}
             name="heart"
             size={16}
-            color={index < lives ? colors.error : "rgba(255,255,255,0.2)"}
+            color={index < lives ? activeHeartColor : inactiveHeartColor}
+            style={styles.heartIcon}
           />
         ))}
       </View>
@@ -67,18 +72,9 @@ const DuoControls: React.FC<DuoControlsProps> = ({
       style={[styles.container, position === "top" && styles.topContainer]}
       entering={FadeIn.duration(500)}
     >
-      {/* Player indicators with hearts */}
-      <View
-        style={[
-          styles.playerIndicator,
-          position === "top" && styles.rotatedView,
-        ]}
-      >
-        <Text style={[styles.playerText, { color: colors.textSecondary }]}>
-          {position === "top" ? "2 ɹǝlǝıdS" : "Spieler 1"}
-        </Text>
-
-        <View style={styles.heartsContainer}>{renderHearts()}</View>
+      {/* Hearts indicators (without player labels) */}
+      <View style={styles.heartsContainer}>
+        {renderHearts()}
       </View>
 
       {/* Action buttons row - smaller size */}
@@ -88,7 +84,11 @@ const DuoControls: React.FC<DuoControlsProps> = ({
         {/* Hint button */}
         <View style={styles.actionButtonWrapper}>
           <TouchableOpacity
-            style={[styles.actionButton, disabled && styles.disabledButton]}
+            style={[
+              styles.actionButton, 
+              disabled && styles.disabledButton,
+              hintsRemaining <= 0 && styles.disabledButton
+            ]}
             onPress={() => onHint(player)}
             disabled={disabled || hintsRemaining <= 0}
           >
@@ -164,7 +164,12 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             onPress={() => onNumberPress(player, num)}
             disabled={disabled}
           >
-            <Text style={[styles.numberText, disabled && styles.disabledText]}>
+            <Text style={[
+              styles.numberText, 
+              disabled && styles.disabledText,
+              // Add underline for 6 and 9 to make them more distinguishable when rotated
+              (num === 6 || num === 9) && styles.underlinedNumber
+            ]}>
               {num}
             </Text>
           </TouchableOpacity>
@@ -187,23 +192,16 @@ const styles = StyleSheet.create({
   rotatedView: {
     transform: [{ rotate: "180deg" }],
   },
-  playerIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 4,
-  },
-  playerText: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginRight: 8,
-  },
   heartsContainer: {
     alignItems: "center",
+    marginVertical: 4,
   },
   heartsRow: {
     flexDirection: "row",
     justifyContent: "center",
+  },
+  heartIcon: {
+    marginHorizontal: 2,
   },
   actionsRow: {
     flexDirection: "row",
@@ -247,6 +245,9 @@ const styles = StyleSheet.create({
     fontSize: NUMBER_BUTTON_SIZE * 0.5,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  underlinedNumber: {
+    textDecorationLine: 'underline',
   },
   disabledButton: {
     opacity: 0.5,

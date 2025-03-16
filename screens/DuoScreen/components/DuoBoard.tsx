@@ -41,6 +41,32 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
            (player2Cell !== null && player2Cell.row === row && player2Cell.col === col);
   };
 
+  // Render notes for a cell
+  const renderNotes = (row: number, col: number, owner: 1 | 2 | 0) => {
+    const notes = board[row][col].notes;
+    if (!notes || notes.length === 0) return null;
+
+    const needsRotation = owner === 2; // Rotate for player 2 (top)
+
+    return (
+      <View style={styles.notesGrid}>
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          <Text
+            key={`note-${row}-${col}-${num}`}
+            style={[
+              styles.noteText,
+              needsRotation && styles.rotatedText,
+              !notes.includes(num) && { opacity: 0 },
+              (num === 6 || num === 9) && styles.underlinedNumber
+            ]}
+          >
+            {num}
+          </Text>
+        ))}
+      </View>
+    );
+  };
+
   // Render a single cell
   const renderCell = (row: number, col: number) => {
     const value = board[row][col].value;
@@ -71,7 +97,9 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
       styles.cellText,
       isInitial && styles.initialCellText,
       // Rotate text 180 degrees in Player 2's area
-      owner === 2 && styles.rotatedText
+      owner === 2 && styles.rotatedText,
+      // Add underline for 6 and 9 to make them more distinguishable when rotated
+      (value === 6 || value === 9) && styles.underlinedNumber
     ];
 
     // Handle cell press
@@ -89,10 +117,12 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
         disabled={isInitial || isLoading}
         activeOpacity={isInitial ? 1 : 0.7}
       >
-        {value !== 0 && (
+        {value !== 0 ? (
           <Text style={textStyles}>
             {value}
           </Text>
+        ) : (
+          renderNotes(row, col, owner)
         )}
       </TouchableOpacity>
     );
@@ -197,6 +227,9 @@ const styles = StyleSheet.create({
   rotatedText: {
     transform: [{ rotate: "180deg" }],
   },
+  underlinedNumber: {
+    textDecorationLine: 'underline',
+  },
   // Grid lines
   gridLine: {
     position: "absolute",
@@ -212,6 +245,23 @@ const styles = StyleSheet.create({
     width: 1.5,
     height: BOARD_SIZE,
     top: 0,
+  },
+  // Styles for notes
+  notesGrid: {
+    width: "100%",
+    height: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noteText: {
+    width: "33%",
+    height: "33%",
+    fontSize: Math.max(CELL_SIZE / 6, 9),
+    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.7)",
+    lineHeight: CELL_SIZE / 3,
   }
 });
 

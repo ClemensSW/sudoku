@@ -1,0 +1,5 @@
+Schon ein erster guter Ansatz. Aktuell lässt es sich nicht scrollen. Das Simulierte Board ist nicht richtig sichtbar. Ein **Yin und Yang Icon in der mittleren Zelle (Zeile 5, Spalte 5) **würde sehr gut in das Konzept passen. Vorher war bewusst die Erklärung erst sichtbar, wenn man auf den "Mehr erfahren" Button klickt und automatisch runter scrollt und der Button "Jetzt spielen" so dass man direkt drauf klicken kann ohne scrollen zu müssen. Also quasi zwei Screens in einem durch geschicktes scrollen, was die Übersichtlichkeit und Nutzerfreundlichkeit erhöht
+
+
+
+Das war eben mein Promt. Dann hattest du diese Datei erstellt aber noch nicht die DuoScreen.styles.ts

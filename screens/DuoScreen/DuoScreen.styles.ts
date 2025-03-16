@@ -43,18 +43,6 @@ export default StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
   },
-  titlePill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16,
-  },
-  comingSoonText: {
-    fontSize: 14,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
   title: {
     fontSize: 32,
     fontWeight: "800",
@@ -68,7 +56,7 @@ export default StyleSheet.create({
     opacity: 0.8,
     maxWidth: 300,
   },
-  
+
   // Game visualization container
   gameVisualizer: {
     width: width * 0.9,
@@ -162,7 +150,7 @@ export default StyleSheet.create({
     bottom: 0,
     opacity: 0.15,
   },
-  
+
   // Feature section
   featureList: {
     width: "100%",
@@ -195,7 +183,7 @@ export default StyleSheet.create({
     lineHeight: 20,
     opacity: 0.8,
   },
-  
+
   // CTA Section
   ctaContainer: {
     width: "100%",
@@ -222,5 +210,87 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     marginLeft: 8,
+  },
+
+  // Modal für Schwierigkeitsauswahl
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  modalContent: {
+    width: "90%",
+    maxWidth: 400,
+    borderRadius: radius.xl,
+    padding: spacing.xl,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  modalSubtitle: {
+    fontSize: 16,
+    marginBottom: 24,
+    textAlign: "center",
+    opacity: 0.8,
+  },
+  difficultyButtonsContainer: {
+    width: "100%",
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    marginBottom: 24,
+  },
+  difficultyButton: {
+    flexDirection: "row",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  difficultyButtonContent: {
+    flex: 1,
+  },
+  difficultyButtonText: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  difficultyDescription: {
+    fontSize: 14,
+    marginTop: 4,
+  },
+  modalCTAButton: {
+    width: "100%",
+    height: 56,
+    borderRadius: radius.xl,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalCTAText: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  modalCancelButton: {
+    padding: spacing.md,
+    marginTop: 8,
+    alignSelf: "center",
+  },
+  modalCancelText: {
+    fontSize: 16,
+    fontWeight: "500",
   },
 });

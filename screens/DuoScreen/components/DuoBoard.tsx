@@ -55,7 +55,7 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
       // Add border styles for 3x3 boxes
       (col + 1) % 3 === 0 && col !== 8 && styles.rightBorder,
       (row + 1) % 3 === 0 && row !== 8 && styles.bottomBorder,
-      // Add player area styling
+      // Add player area styling with different color intensities
       owner === 1 && styles.player1Area,
       owner === 2 && styles.player2Area,
       owner === 0 && styles.neutralArea,
@@ -100,13 +100,10 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
 
   return (
     <Animated.View style={styles.boardContainer} entering={FadeIn.duration(500)}>
-      <View style={[styles.board, { backgroundColor: colors.primary + '15' }]}>
+      <View style={[styles.board, { backgroundColor: theme.isDark ? "#1E2233" : colors.primary + '15' }]}>
         {/* Board content */}
         <View style={styles.gridContainer}>
-          {/* Horizontal divider between player areas */}
-          <View style={[styles.horizontalDivider, { backgroundColor: colors.border }]} />
-          
-          {/* Grid lines for 3x3 blocks */}
+          {/* Grid lines for 3x3 blocks - no divider between player areas */}
           <View style={[styles.gridLine, styles.horizontalLine, { top: CELL_SIZE * 3 }]} />
           <View style={[styles.gridLine, styles.horizontalLine, { top: CELL_SIZE * 6 }]} />
           <View style={[styles.gridLine, styles.verticalLine, { left: CELL_SIZE * 3 }]} />
@@ -132,7 +129,7 @@ const styles = StyleSheet.create({
     height: BOARD_SIZE,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 4,
+    marginVertical: 12,
   },
   board: {
     width: BOARD_SIZE,
@@ -169,16 +166,16 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   initialCell: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
   },
   initialCellText: {
     fontWeight: "700",
   },
   player1Selected: {
-    backgroundColor: "rgba(255, 255, 0, 0.25)", // Yellowish highlight for Player 1
+    backgroundColor: "rgba(76, 175, 80, 0.3)", // Green for Player 1
   },
   player2Selected: {
-    backgroundColor: "rgba(0, 255, 0, 0.25)", // Greenish highlight for Player 2
+    backgroundColor: "rgba(255, 193, 7, 0.3)", // Yellow for Player 2
   },
   rightBorder: {
     borderRightWidth: 1.5,
@@ -189,13 +186,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(255, 255, 255, 0.35)",
   },
   player1Area: {
-    backgroundColor: "rgba(255, 255, 0, 0.08)", // Yellow tint for Player 1
+    backgroundColor: "rgba(76, 175, 80, 0.12)", // Green for Player 1 - more subtle
   },
   player2Area: {
-    backgroundColor: "rgba(0, 255, 0, 0.08)", // Green tint for Player 2
+    backgroundColor: "rgba(255, 193, 7, 0.12)", // Yellow for Player 2 - more subtle
   },
   neutralArea: {
-    backgroundColor: "rgba(0, 120, 255, 0.15)", // Blue tint for neutral cell
+    backgroundColor: "rgba(66, 133, 244, 0.15)", // Blue for neutral cell
   },
   rotatedText: {
     transform: [{ rotate: "180deg" }],
@@ -215,16 +212,6 @@ const styles = StyleSheet.create({
     width: 1.5,
     height: BOARD_SIZE,
     top: 0,
-  },
-  // Horizontal divider between player areas
-  horizontalDivider: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: 2,
-    top: CELL_SIZE * 4.5,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    zIndex: 10,
   }
 });
 

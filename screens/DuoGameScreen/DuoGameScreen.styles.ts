@@ -22,37 +22,42 @@ export default StyleSheet.create({
   gameContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between", // Distribute space between top and bottom controls
     paddingHorizontal: 4, // Reduced horizontal padding
-    paddingBottom: spacing.md,
+    paddingVertical: spacing.md,
   },
-  turnIndicator: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    marginVertical: 8,
-    borderRadius: 20,
+  // Upper section for Player 2
+  upperSection: {
+    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    paddingVertical: spacing.sm,
   },
-  turnText: {
-    fontSize: 18,
+  // Lower section for Player 1
+  lowerSection: {
+    width: "100%",
+    alignItems: "center",
+    paddingVertical: spacing.sm,
+  },
+  // Status indicators
+  statusIndicator: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: spacing.lg,
+    marginVertical: spacing.xs,
+  },
+  playerStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  statusLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginRight: spacing.xs,
+  },
+  statusValue: {
+    fontSize: 14,
     fontWeight: "700",
-  },
-  player1Color: {
-    color: "#FFD700", // Gold for player 1
-  },
-  player2Color: {
-    color: "#32CD32", // Lime green for player 2
-  },
-  // Background decorative elements
-  topDecoration: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 220,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    zIndex: -1,
   },
   // Player info section
   playerInfoContainer: {
@@ -92,9 +97,51 @@ export default StyleSheet.create({
     color: "#4CAF50", // Green for completed
     marginTop: 4,
   },
-  gameTimer: {
-    fontSize: 16,
+  // For player hearts display
+  heartsContainer: {
+    flexDirection: "row",
+    marginTop: spacing.xs,
+  },
+  heartIcon: {
+    marginHorizontal: 2,
+  },
+  // Hint counter
+  hintCounter: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: spacing.md,
+  },
+  hintIcon: {
+    marginRight: spacing.xxs,
+  },
+  hintCount: {
+    fontSize: 14,
     fontWeight: "600",
-    marginVertical: 8,
-  }
+  },
+  // Player turn indicator for the bottom player (not rotated)
+  player1TurnIndicator: {
+    width: "100%",
+    alignItems: "center",
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  // Player turn indicator for the top player (will be rotated)
+  player2TurnIndicator: {
+    width: "100%",
+    alignItems: "center",
+    paddingVertical: spacing.xs,
+    marginTop: spacing.sm,
+    transform: [{ rotate: "180deg" }],
+  },
+  turnText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  // For board container to give it proper spacing
+  boardContainer: {
+    flex: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.sm,
+  },
 });

@@ -1,14 +1,19 @@
 // screens/DuoScreen/components/DuoControls.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
-const NUMBER_BUTTON_SIZE = Math.min((width - 32) / 9, 50);
-const ACTION_BUTTON_SIZE = Math.min((width - 32) / 3, 60);
+const NUMBER_BUTTON_SIZE = Math.min((width - 32) / 9, 40); // Slightly smaller buttons
 
 interface DuoControlsProps {
   position: "top" | "bottom";
@@ -20,6 +25,7 @@ interface DuoControlsProps {
   lives: number;
   maxLives?: number;
   disabled?: boolean;
+  hintsRemaining: number; // Added hints remaining
 }
 
 const DuoControls: React.FC<DuoControlsProps> = ({
@@ -31,14 +37,15 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   noteMode,
   lives,
   maxLives = 3,
-  disabled = false
+  disabled = false,
+  hintsRemaining = 3,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  
+
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
-  
+
   // Create heart indicators for lives
   const renderHearts = () => {
     return (
@@ -48,136 +55,121 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             key={`heart-${index}`}
             name="heart"
             size={16}
-            color={index < lives ? colors.primary : "rgba(255,255,255,0.2)"}
+            color={index < lives ? colors.error : "rgba(255,255,255,0.2)"}
           />
         ))}
       </View>
     );
   };
-  
+
   return (
-    <Animated.View 
-      style={[
-        styles.container,
-        position === "top" && styles.topContainer
-      ]}
+    <Animated.View
+      style={[styles.container, position === "top" && styles.topContainer]}
       entering={FadeIn.duration(500)}
     >
-      {/* Action buttons row */}
-      <View style={[
-        styles.actionsRow,
-        position === "top" && styles.rotatedView
-      ]}>
+      {/* Player indicators with hearts */}
+      <View
+        style={[
+          styles.playerIndicator,
+          position === "top" && styles.rotatedView,
+        ]}
+      >
+        <Text style={[styles.playerText, { color: colors.textSecondary }]}>
+          {position === "top" ? "2 ɹǝlǝıdS" : "Spieler 1"}
+        </Text>
+
+        <View style={styles.heartsContainer}>{renderHearts()}</View>
+      </View>
+
+      {/* Action buttons row - smaller size */}
+      <View
+        style={[styles.actionsRow, position === "top" && styles.rotatedView]}
+      >
         {/* Hint button */}
         <View style={styles.actionButtonWrapper}>
           <TouchableOpacity
-            style={[
-              styles.actionButton,
-              disabled && styles.disabledButton
-            ]}
+            style={[styles.actionButton, disabled && styles.disabledButton]}
             onPress={() => onHint(player)}
-            disabled={disabled}
+            disabled={disabled || hintsRemaining <= 0}
           >
-            <Feather 
-              name="help-circle" 
-              size={22} 
-              color={disabled ? colors.textSecondary : colors.textPrimary} 
+            <Feather
+              name="help-circle"
+              size={20}
+              color={
+                disabled || hintsRemaining <= 0
+                  ? colors.textSecondary
+                  : colors.textPrimary
+              }
             />
+            {hintsRemaining > 0 && (
+              <View style={styles.hintCountBadge}>
+                <Text style={styles.hintCountText}>{hintsRemaining}</Text>
+              </View>
+            )}
           </TouchableOpacity>
-          <Text style={[
-            styles.actionLabel,
-            { color: colors.textSecondary }
-          ]}>
-            {position === "top" ? "sıɐʍuıH" : "Hinweis"}
+          <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
+            {position === "top" ? "sıǝʍuıH" : "Hinweis"}
           </Text>
         </View>
-        
+
         {/* Clear/Erase button */}
         <View style={styles.actionButtonWrapper}>
           <TouchableOpacity
-            style={[
-              styles.actionButton,
-              disabled && styles.disabledButton
-            ]}
+            style={[styles.actionButton, disabled && styles.disabledButton]}
             onPress={() => onClear(player)}
             disabled={disabled}
           >
-            <Feather 
-              name="delete" 
-              size={22} 
-              color={disabled ? colors.textSecondary : colors.textPrimary} 
+            <Feather
+              name="delete"
+              size={20}
+              color={disabled ? colors.textSecondary : colors.textPrimary}
             />
           </TouchableOpacity>
-          <Text style={[
-            styles.actionLabel,
-            { color: colors.textSecondary }
-          ]}>
+          <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
             {position === "top" ? "uǝɥɔsö˥" : "Löschen"}
           </Text>
         </View>
-        
+
         {/* Note button */}
         <View style={styles.actionButtonWrapper}>
           <TouchableOpacity
             style={[
               styles.actionButton,
-              noteMode && { backgroundColor: colors.primary + '40' },
-              disabled && styles.disabledButton
+              noteMode && { backgroundColor: colors.primary + "40" },
+              disabled && styles.disabledButton,
             ]}
             onPress={() => onNoteToggle(player)}
             disabled={disabled}
           >
-            <Feather 
-              name="edit-3" 
-              size={22} 
-              color={disabled ? colors.textSecondary : colors.textPrimary} 
+            <Feather
+              name="edit-3"
+              size={20}
+              color={disabled ? colors.textSecondary : colors.textPrimary}
             />
-            {player === 1 && 
-              <View style={styles.livesIndicator}>
-                {renderHearts()}
-              </View>
-            }
           </TouchableOpacity>
-          <Text style={[
-            styles.actionLabel,
-            { color: colors.textSecondary }
-          ]}>
+          <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
             {position === "top" ? "zıʇoN" : "Notiz"}
           </Text>
         </View>
       </View>
-      
-      {/* Number buttons row */}
-      <View style={[
-        styles.numbersRow,
-        position === "top" && styles.rotatedView
-      ]}>
+
+      {/* Number buttons row - horizontal layout */}
+      <View
+        style={[styles.numbersRow, position === "top" && styles.rotatedView]}
+      >
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <TouchableOpacity
             key={`num-${player}-${num}`}
-            style={[
-              styles.numberButton,
-              disabled && styles.disabledButton
-            ]}
+            style={[styles.numberButton, disabled && styles.disabledButton]}
             onPress={() => onNumberPress(player, num)}
             disabled={disabled}
           >
-            <Text style={[
-              styles.numberText,
-              disabled && styles.disabledText
-            ]}>
+            <Text style={[styles.numberText, disabled && styles.disabledText]}>
               {num}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-      
-      {/* If top controls, we need the hearts to be rotated correctly */}
-      {player === 2 && 
-        <View style={[styles.heartsContainer, styles.rotatedView]}>
-          {renderHearts()}
-        </View>
-      }
     </Animated.View>
   );
 };
@@ -195,19 +187,37 @@ const styles = StyleSheet.create({
   rotatedView: {
     transform: [{ rotate: "180deg" }],
   },
+  playerIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 4,
+  },
+  playerText: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginRight: 8,
+  },
+  heartsContainer: {
+    alignItems: "center",
+  },
+  heartsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   actionsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     width: "100%",
     marginVertical: 4,
   },
   actionButtonWrapper: {
     alignItems: "center",
-    width: ACTION_BUTTON_SIZE,
+    width: 50, // Smaller size
   },
   actionButton: {
-    width: ACTION_BUTTON_SIZE - 4,
-    height: ACTION_BUTTON_SIZE - 4,
+    width: 40, // Smaller size
+    height: 40, // Smaller size
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
@@ -219,9 +229,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   numbersRow: {
-    flexDirection: "row",
+    flexDirection: "row", // Horizontal layout
     justifyContent: "center",
-    flexWrap: "wrap",
+    width: "100%",
     marginVertical: 4,
   },
   numberButton: {
@@ -245,18 +255,24 @@ const styles = StyleSheet.create({
   disabledText: {
     color: "rgba(255,255,255,0.5)",
   },
-  livesIndicator: {
+  hintCountBadge: {
     position: "absolute",
-    bottom: -10,
-    alignItems: "center",
-  },
-  heartsContainer: {
-    marginTop: 4,
-  },
-  heartsRow: {
-    flexDirection: "row",
+    top: -5,
+    right: -5,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#4361EE",
     justifyContent: "center",
-  }
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "white",
+  },
+  hintCountText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
 });
 
 export default DuoControls;

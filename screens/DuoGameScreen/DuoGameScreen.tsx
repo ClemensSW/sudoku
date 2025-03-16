@@ -55,6 +55,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const routeDifficulty = params.difficulty as Difficulty | undefined;
   const difficulty = routeDifficulty || initialDifficulty;
 
+  // Constants
+  const MAX_LIVES = 3;
+  const MAX_HINTS = 3;
+
   // Game state
   const [board, setBoard] = useState<SudokuBoardType>([]);
   const [solution, setSolution] = useState<number[][]>([]);
@@ -66,13 +70,15 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const [player2Cell, setPlayer2Cell] = useState<{row: number, col: number} | null>(null);
   const [player1Complete, setPlayer1Complete] = useState(false);
   const [player2Complete, setPlayer2Complete] = useState(false);
-  const [player1Lives, setPlayer1Lives] = useState(3);
-  const [player2Lives, setPlayer2Lives] = useState(3);
+  const [player1Lives, setPlayer1Lives] = useState(MAX_LIVES);
+  const [player2Lives, setPlayer2Lives] = useState(MAX_LIVES);
   const [player1NoteMode, setPlayer1NoteMode] = useState(false);
   const [player2NoteMode, setPlayer2NoteMode] = useState(false);
   
-  const MAX_LIVES = 3;
-
+  // Add hint counters for both players
+  const [player1Hints, setPlayer1Hints] = useState(MAX_HINTS);
+  const [player2Hints, setPlayer2Hints] = useState(MAX_HINTS);
+  
   // Calculate player areas - Player 2 gets top half, Player 1 gets bottom half
   const calculatePlayerAreas = useCallback((): [PlayerArea, PlayerArea] => {
     const player1Cells: { row: number; col: number }[] = [];
@@ -171,6 +177,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         setPlayer1NoteMode(false);
         setPlayer2NoteMode(false);
         
+        // Reset hint counters
+        setPlayer1Hints(MAX_HINTS);
+        setPlayer2Hints(MAX_HINTS);
+        
         setIsLoading(false);
         
         // Success feedback
@@ -220,7 +230,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     
     // Validate the cell belongs to this player
     const owner = getCellOwner(row, col);
-    if (owner !== player) {
+    if (owner !== player && owner !== 0) { // Allow players to fill the middle cell
       return;
     }
     
@@ -295,9 +305,9 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     
     const { row, col } = selectedCell;
     
-    // Validate the cell belongs to this player
+    // Validate the cell belongs to this player or is the neutral cell
     const owner = getCellOwner(row, col);
-    if (owner !== player) {
+    if (owner !== player && owner !== 0) {
       return;
     }
     
@@ -322,8 +332,20 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     triggerHaptic("light");
   };
   
-  // Handle hint request
+  // Handle hint request - with hint limits
   const handleHint = (player: 1 | 2) => {
+    // Check if player has hints remaining
+    const hintsRemaining = player === 1 ? player1Hints : player2Hints;
+    
+    if (hintsRemaining <= 0) {
+      triggerHaptic("error");
+      Alert.alert(
+        "Keine Hinweise mehr",
+        `Spieler ${player} hat keine Hinweise mehr übrig.`
+      );
+      return;
+    }
+    
     // Get the selected cell for this player
     const selectedCell = player === 1 ? player1Cell : player2Cell;
     
@@ -334,10 +356,17 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     
     const { row, col } = selectedCell;
     
-    // Validate the cell belongs to this player
+    // Validate the cell belongs to this player or is the neutral cell
     const owner = getCellOwner(row, col);
-    if (owner !== player) {
+    if (owner !== player && owner !== 0) {
       return;
+    }
+    
+    // Decrement hint counter
+    if (player === 1) {
+      setPlayer1Hints(player1Hints - 1);
+    } else {
+      setPlayer2Hints(player2Hints - 1);
     }
     
     // Provide hint by filling with correct value
@@ -382,6 +411,13 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         p2Complete = false;
         break;
       }
+    }
+    
+    // Check middle cell - both players need to agree on its value
+    const middleCell = board[4][4];
+    if (!middleCell.isInitial && (middleCell.value === 0 || !middleCell.isValid)) {
+      p1Complete = false;
+      p2Complete = false;
     }
     
     // Update completion status
@@ -472,7 +508,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <Header
           title="Sudoku Duo"
-          onBackPress={handleBackPress}
+          onBackPress={() => handleBackPress()}
         />
         
         <View style={styles.gameContainer}>
@@ -487,6 +523,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             lives={player2Lives}
             maxLives={MAX_LIVES}
             disabled={player2Complete}
+            hintsRemaining={player2Hints}
           />
           
           {/* Sudoku Board */}
@@ -509,6 +546,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             lives={player1Lives}
             maxLives={MAX_LIVES}
             disabled={player1Complete}
+            hintsRemaining={player1Hints}
           />
         </View>
       </SafeAreaView>

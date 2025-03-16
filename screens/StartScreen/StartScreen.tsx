@@ -65,10 +65,9 @@ const StartScreen: React.FC = () => {
     triggerHaptic("light");
   };
 
-  const handleShowHighScores = () => {
+  // Handler für Settings
+  const handleShowSettings = () => {
     triggerHaptic("light");
-
-    // Using setTimeout to ensure the UI has time to update first
     setTimeout(() => {
       try {
         router.push("/settings");
@@ -88,7 +87,7 @@ const StartScreen: React.FC = () => {
         style={styles.backgroundImage}
       />
 
-      {/* Standalone Button with absolute positioning */}
+      {/* Settings-Button in der oberen rechten Ecke (ersetzt Award-Button) */}
       <View
         style={{
           position: "absolute",
@@ -98,7 +97,7 @@ const StartScreen: React.FC = () => {
         }}
       >
         <TouchableOpacity
-          onPress={handleShowHighScores}
+          onPress={handleShowSettings}
           style={{
             width: 44,
             height: 44,
@@ -111,7 +110,7 @@ const StartScreen: React.FC = () => {
           }}
           activeOpacity={0.7}
         >
-          <Feather name="award" size={24} color={colors.primary} />
+          <Feather name="settings" size={24} color={colors.primary} />
         </TouchableOpacity>
       </View>
 

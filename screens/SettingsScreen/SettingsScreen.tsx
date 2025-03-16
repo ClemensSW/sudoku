@@ -23,11 +23,10 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import Header from "@/components/Header/Header";
-import StatisticsDisplay from "@/components/StatisticsDisplay/StatisticsDisplay";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import SupportShop from "@/components/SupportShop/SupportShop";
-import { loadSettings, saveSettings, loadStats } from "@/utils/storage";
-import { GameSettings, GameStats } from "@/utils/storage";
+import { loadSettings, saveSettings } from "@/utils/storage";
+import { GameSettings } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 
 import styles from "./SettingsScreen.styles";
@@ -57,7 +56,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const { showAlert } = useAlert();
 
   const [settings, setSettings] = useState<GameSettings | null>(null);
-  const [stats, setStats] = useState<GameStats | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showSupportShop, setShowSupportShop] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,10 +67,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
-      const loadedStats = await loadStats();
-
       setSettings(loadedSettings);
-      setStats(loadedStats);
       setIsLoading(false);
     };
 
@@ -260,17 +255,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               />
             </TouchableOpacity>
           </View>
-        </Animated.View>
-
-        {/* Statistics Section */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(200).duration(500)}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Statistiken
-          </Text>
-          {stats && <StatisticsDisplay stats={stats} />}
         </Animated.View>
 
         {/* Game Settings */}

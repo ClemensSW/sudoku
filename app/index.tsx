@@ -1,8 +1,8 @@
 // app/index.tsx
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
-import StartScreen from "@/screens/StartScreen/StartScreen";
 import LoadingScreen from "@/screens/LoadingScreen";
+import StartScreen from "@/screens/StartScreen/StartScreen";
 
 export default function Index() {
   // Initial loading state beim ersten Render anzeigen
@@ -21,5 +21,6 @@ export default function Index() {
     return <LoadingScreen />;
   }
 
+  // Verwende den modifizierten StartScreen
   return <StartScreen />;
 }

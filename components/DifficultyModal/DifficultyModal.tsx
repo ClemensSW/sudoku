@@ -32,8 +32,8 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   onClose,
   onConfirm,
   title = "Schwierigkeit",
-  subtitle = "Wähle die passende Herausforderung",
-  confirmText = "Spiel starten",
+  subtitle = "Wie fordernd soll dein Sudoku sein?",
+  confirmText = "Los geht's",
   isTransition = false, // Default to false
   noBackdrop = false, // Default to false
 }) => {

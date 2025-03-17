@@ -25,7 +25,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
     {
       icon: "users",
       title: "Gemeinsam spielen",
-      description: "Ein Gerät, zwei Spieler - wer löst sein Gebiet zuerst?",
+      description: "Ein Sudoku, zwei Spieler - wer löst sein Gebiet zuerst?",
       color: colors.primary,
     },
     {

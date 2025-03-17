@@ -181,10 +181,6 @@ const DuoScreen: React.FC = () => {
                 onPress={handleStartGame}
                 activeOpacity={0.8}
               >
-                <Image
-                  source={require("@/assets/images/icons/yin-yang.png")}
-                  style={styles.playIcon}
-                />
                 <Text style={styles.startButtonText}>Jetzt spielen</Text>
               </TouchableOpacity>
             </Animated.View>

@@ -42,11 +42,14 @@ const DuoScreen: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("medium");
 
-  // Scroll to features section
+  // Scroll to features section - just enough to hide the button
   const scrollToFeatures = () => {
     triggerHaptic("light");
     if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: height * 0.9, animated: true });
+      // Calculate scroll position to fully hide the ScrollIndicator
+      // This will show the beginning of the features section
+      const mainScreenHeight = height - insets.top - 200 + 60; // Added extra pixels to fully hide the button
+      scrollViewRef.current.scrollTo({ y: mainScreenHeight, animated: true });
     }
   };
 

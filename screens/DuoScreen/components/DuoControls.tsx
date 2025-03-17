@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     margin: 2,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#4361EE",
+    backgroundColor: "#718584",
   },
   numberText: {
     fontSize: NUMBER_BUTTON_SIZE * 0.5,

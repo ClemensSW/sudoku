@@ -35,13 +35,13 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
     return (
       <View style={styles.numberGroup}>
         <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>5</Text>
+          <Text style={[styles.numberText]}>5</Text>
         </View>
         <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>3</Text>
+          <Text style={[styles.numberText]}>3</Text>
         </View>
         <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText, { transform: [{ rotate: "180deg" }] }]}>7</Text>
+          <Text style={[styles.numberText]}>7</Text>
         </View>
       </View>
     );

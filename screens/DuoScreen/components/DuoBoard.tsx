@@ -1,6 +1,6 @@
 // screens/DuoScreen/components/DuoBoard.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Dimensions } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { SudokuBoard as SudokuBoardType } from "@/utils/sudoku";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -9,6 +9,28 @@ import Animated, { FadeIn } from "react-native-reanimated";
 const { width } = Dimensions.get("window");
 const BOARD_SIZE = Math.min(width * 0.95, 350);
 const CELL_SIZE = BOARD_SIZE / 9;
+
+// Farbpalette - harmonischer und professioneller gestaltet
+const COLORS = {
+  // Spielerbereiche - subtiler und eleganter
+  player1Base: "#B5C2BD",    // Abgewandelter Salbeiton
+  player2Base: "#E6DFD1",    // Wärmerer Cremeton
+  
+  // Zellen und Boxen
+  boardBg: "#1E2233",        // Hintergrund des Boards
+  cellBorderLight: "rgba(0, 0, 0, 0.1)",   // Normale Zellgrenzen - dunkler für besseren Kontrast
+  boxBorder: "rgba(0, 0, 0, 0.3)",         // 3x3 Box-Grenzen - deutlich dunkler
+  
+  // Zellentypen
+  prefilledCell: "#718584",  // Vorausgefüllte Zellen (wie vorgegeben)
+  centerCell: "#4A4A6A",     // Mittlere Zelle - neutraler Ton
+  
+  // Text und Highlights
+  textDark: "#333333",       // Textfarbe für normale Zellen
+  textLight: "#FFFFFF",      // Textfarbe für dunkle Zellen
+  player1Highlight: "rgba(76, 175, 80, 0.5)",  // Hervorhebung für Spieler 1
+  player2Highlight: "rgba(255, 193, 7, 0.5)"   // Hervorhebung für Spieler 2
+};
 
 interface DuoBoardProps {
   board: SudokuBoardType;
@@ -36,10 +58,15 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
   };
 
   // Check if a cell is selected by a player
-  const isSelected = (row: number, col: number): boolean => {
-    return (player1Cell !== null && player1Cell.row === row && player1Cell.col === col) ||
-           (player2Cell !== null && player2Cell.row === row && player2Cell.col === col);
+  const isSelected = (row: number, col: number, player: 1 | 2): boolean => {
+    if (player === 1) {
+      return player1Cell !== null && player1Cell.row === row && player1Cell.col === col;
+    } else {
+      return player2Cell !== null && player2Cell.row === row && player2Cell.col === col;
+    }
   };
+
+
 
   // Render notes for a cell
   const renderNotes = (row: number, col: number, owner: 1 | 2 | 0) => {
@@ -72,31 +99,47 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
     const value = board[row][col].value;
     const isInitial = board[row][col].isInitial;
     const owner = getCellOwner(row, col);
-    const isSelectedByPlayer1 = player1Cell?.row === row && player1Cell?.col === col;
-    const isSelectedByPlayer2 = player2Cell?.row === row && player2Cell?.col === col;
+    const isSelectedByPlayer1 = isSelected(row, col, 1);
+    const isSelectedByPlayer2 = isSelected(row, col, 2);
     
-    // Cell styling based on owner and state
+    // Get cell background color based on various factors
+const getCellBackground = () => {
+    // Vorausgefüllte Zellen haben Priorität
+    if (isInitial) return COLORS.prefilledCell;
+    
+    // Die mittlere Zelle
+    if (row === 4 && col === 4) return COLORS.centerCell;
+    
+    // Einheitliche Farben für Spielerbereiche
+    if (owner === 1) {
+      return COLORS.player1Base;
+    }
+    
+    if (owner === 2) {
+      return COLORS.player2Base;
+    }
+    
+    return "transparent";
+  };
+    
+    // Cell styling based on all factors
     const cellStyles = [
       styles.cell,
-      // Add border styles for 3x3 boxes
-      (col + 1) % 3 === 0 && col !== 8 && styles.rightBorder,
-      (row + 1) % 3 === 0 && row !== 8 && styles.bottomBorder,
-      // Add player area styling with different color intensities
-      owner === 1 && styles.player1Area,
-      owner === 2 && styles.player2Area,
-      owner === 0 && styles.neutralArea,
+      { backgroundColor: getCellBackground() },
       // Selection styling
       isSelectedByPlayer1 && styles.player1Selected,
       isSelectedByPlayer2 && styles.player2Selected,
-      // Initial cell styling
-      isInitial && styles.initialCell
     ];
 
-    // Text styling with rotation for Player 2 area
+    // Is this cell at a box border?
+    const rightBorderStyle = (col + 1) % 3 === 0 && col !== 8 ? styles.boxRightBorder : styles.cellRightBorder;
+    const bottomBorderStyle = (row + 1) % 3 === 0 && row !== 8 ? styles.boxBottomBorder : styles.cellBottomBorder;
+    
+    // Text color and styling
+    const textColor = isInitial ? COLORS.textLight : COLORS.textDark;
     const textStyles = [
       styles.cellText,
-      isInitial && styles.initialCellText,
-      // Rotate text 180 degrees in Player 2's area
+      { color: textColor },
       owner === 2 && styles.rotatedText,
       // Add underline for 6 and 9 to make them more distinguishable when rotated
       (value === 6 || value === 9) && styles.underlinedNumber
@@ -109,10 +152,42 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
       }
     };
 
+    // Special rendering for the center cell - add Yin-Yang icon
+    if (row === 4 && col === 4) {
+      return (
+        <TouchableOpacity
+          key={`cell-${row}-${col}`}
+          style={[
+            cellStyles, 
+            styles.centerCell,
+            rightBorderStyle,
+            bottomBorderStyle
+          ]}
+          onPress={handlePress}
+          disabled={isInitial || isLoading}
+          activeOpacity={isInitial ? 1 : 0.7}
+        >
+          {value !== 0 ? (
+            <Text style={textStyles}>{value}</Text>
+          ) : (
+            <Image
+              source={require("@/assets/images/icons/yin-yang.png")}
+              style={styles.yinYangIcon}
+              resizeMode="contain"
+            />
+          )}
+        </TouchableOpacity>
+      );
+    }
+
     return (
       <TouchableOpacity
         key={`cell-${row}-${col}`}
-        style={cellStyles}
+        style={[
+          cellStyles,
+          rightBorderStyle,
+          bottomBorderStyle
+        ]}
         onPress={handlePress}
         disabled={isInitial || isLoading}
         activeOpacity={isInitial ? 1 : 0.7}
@@ -130,15 +205,9 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
 
   return (
     <Animated.View style={styles.boardContainer} entering={FadeIn.duration(500)}>
-      <View style={[styles.board, { backgroundColor: theme.isDark ? "#1E2233" : colors.primary + '15' }]}>
+      <View style={[styles.board, { backgroundColor: COLORS.boardBg }]}>
         {/* Board content */}
         <View style={styles.gridContainer}>
-          {/* Grid lines for 3x3 blocks - no divider between player areas */}
-          <View style={[styles.gridLine, styles.horizontalLine, { top: CELL_SIZE * 3 }]} />
-          <View style={[styles.gridLine, styles.horizontalLine, { top: CELL_SIZE * 6 }]} />
-          <View style={[styles.gridLine, styles.verticalLine, { left: CELL_SIZE * 3 }]} />
-          <View style={[styles.gridLine, styles.verticalLine, { left: CELL_SIZE * 6 }]} />
-          
           {/* Render all cells */}
           {board.map((row, rowIndex) => (
             <View key={`row-${rowIndex}`} style={styles.row}>
@@ -155,24 +224,24 @@ const DuoBoard: React.FC<DuoBoardProps> = ({
 
 const styles = StyleSheet.create({
   boardContainer: {
-    width: BOARD_SIZE,
-    height: BOARD_SIZE,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
+    position: "relative",
   },
   board: {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
-    borderRadius: 8,
+    borderRadius: 16,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderColor: "rgba(255, 255, 255, 0.4)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 6,
+    position: "relative",
   },
   gridContainer: {
     flex: 1,
@@ -187,64 +256,49 @@ const styles = StyleSheet.create({
     height: CELL_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.15)",
+    position: "relative",
+  },
+  centerCell: {
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.5)",
   },
   cellText: {
     fontSize: Math.max(CELL_SIZE / 2, 18),
     fontWeight: "600",
-    color: "#FFFFFF",
   },
-  initialCell: {
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
+  // Borders - klare Unterscheidung zwischen Zellen und 3x3-Boxen
+  cellRightBorder: {
+    borderRightWidth: 1,
+    borderRightColor: COLORS.cellBorderLight,
   },
-  initialCellText: {
-    fontWeight: "700",
+  cellBottomBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.cellBorderLight,
   },
+  boxRightBorder: {
+    borderRightWidth: 2.5,
+    borderRightColor: COLORS.boxBorder,
+  },
+  boxBottomBorder: {
+    borderBottomWidth: 2.5,
+    borderBottomColor: COLORS.boxBorder,
+  },
+  // Selection styling
   player1Selected: {
-    backgroundColor: "rgba(76, 175, 80, 0.3)", // Green for Player 1
+    backgroundColor: COLORS.player1Highlight,
+    borderWidth: 1.5,
+    borderColor: "rgba(76, 175, 80, 0.8)",
   },
   player2Selected: {
-    backgroundColor: "rgba(255, 193, 7, 0.3)", // Yellow for Player 2
-  },
-  rightBorder: {
-    borderRightWidth: 1.5,
-    borderRightColor: "rgba(255, 255, 255, 0.35)",
-  },
-  bottomBorder: {
-    borderBottomWidth: 1.5,
-    borderBottomColor: "rgba(255, 255, 255, 0.35)",
-  },
-  player1Area: {
-    backgroundColor: "rgba(76, 175, 80, 0.12)", // Green for Player 1 - more subtle
-  },
-  player2Area: {
-    backgroundColor: "rgba(255, 193, 7, 0.12)", // Yellow for Player 2 - more subtle
-  },
-  neutralArea: {
-    backgroundColor: "rgba(66, 133, 244, 0.15)", // Blue for neutral cell
+    backgroundColor: COLORS.player2Highlight,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 193, 7, 0.8)",
   },
   rotatedText: {
     transform: [{ rotate: "180deg" }],
   },
   underlinedNumber: {
     textDecorationLine: 'underline',
-  },
-  // Grid lines
-  gridLine: {
-    position: "absolute",
-    backgroundColor: "rgba(255, 255, 255, 0.25)",
-    zIndex: 5,
-  },
-  horizontalLine: {
-    width: BOARD_SIZE,
-    height: 1.5,
-    left: 0,
-  },
-  verticalLine: {
-    width: 1.5,
-    height: BOARD_SIZE,
-    top: 0,
   },
   // Styles for notes
   notesGrid: {
@@ -260,8 +314,14 @@ const styles = StyleSheet.create({
     height: "33%",
     fontSize: Math.max(CELL_SIZE / 6, 9),
     textAlign: "center",
-    color: "rgba(255, 255, 255, 0.7)",
+    color: "rgba(45, 55, 72, 0.7)",
     lineHeight: CELL_SIZE / 3,
+  },
+  // Yin-Yang icon for center cell
+  yinYangIcon: {
+    width: CELL_SIZE * 0.7,
+    height: CELL_SIZE * 0.7,
+    opacity: 0.9,
   }
 });
 

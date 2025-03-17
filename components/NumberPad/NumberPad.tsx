@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { triggerHaptic } from "@/utils/haptics"; // Neue Haptic-Utility importieren
+import { triggerHaptic } from "@/utils/haptics";
 import styles from "./NumberPad.styles";
 
 interface NumberPadProps {
@@ -36,10 +36,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-
-  // Feste Farbwerte für Button-Design - unabhängig vom Theme-System
-  const BUTTON_BLUE = "#4361EE";
-  const BUTTON_TEXT_WHITE = "#FFFFFF";
 
   // Individuelle Animation-Werte für jeden Button
   const noteScale = useSharedValue(1);
@@ -238,7 +234,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
               <AnimatedPressable
                 style={[
                   {
-                    // Direkte Inline-Styles mit hart kodierten Werten
                     width: "100%",
                     height: 60,
                     borderRadius: 12,
@@ -246,7 +241,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     alignItems: "center",
                     backgroundColor: isDisabled
                       ? colors.buttonDisabled
-                      : BUTTON_BLUE,
+                      : colors.primary,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.25,
@@ -266,10 +261,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               >
                 <Text
                   style={{
-                    // Direkte Inline-Styles für den Text
                     fontSize: 24,
                     fontWeight: "600",
-                    color: BUTTON_TEXT_WHITE,
+                    color: colors.buttonText,
                   }}
                 >
                   {num}

@@ -38,13 +38,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
       icon: "target",
       title: "Strategie & Teamwork",
       description: "Wettbewerb oder Zusammenarbeit - ihr entscheidet!",
-      color: colors.success,
-    },
-    {
-      icon: "refresh-cw",
-      title: "Perfekt für Spieleabende",
-      description: "Völlig neues Sudoku-Erlebnis mit deinen Freunden",
-      color: colors.secondary,
+      color: colors.error,
     },
   ];
 

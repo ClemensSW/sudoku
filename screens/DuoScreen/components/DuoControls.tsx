@@ -39,6 +39,9 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
+  // Neue Teal-Farbe für Buttons
+  const BUTTON_COLOR = "#4A7D78"; // Teal color
+
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
 
@@ -71,7 +74,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
               }
             />
             {hintsRemaining > 0 && (
-              <View style={styles.hintCountBadge}>
+              <View style={[styles.hintCountBadge, { backgroundColor: colors.primary }]}>
                 <Text style={styles.hintCountText}>{hintsRemaining}</Text>
               </View>
             )}
@@ -127,7 +130,11 @@ const DuoControls: React.FC<DuoControlsProps> = ({
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <TouchableOpacity
             key={`num-${player}-${num}`}
-            style={[styles.numberButton, disabled && styles.disabledButton]}
+            style={[
+              styles.numberButton, 
+              { backgroundColor: BUTTON_COLOR }, // Neue Teal-Farbe
+              disabled && styles.disabledButton
+            ]}
             onPress={() => onNumberPress(player, num)}
             disabled={disabled}
           >
@@ -192,7 +199,7 @@ const styles = StyleSheet.create({
     margin: 2,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#718584",
+    // Farbe wird jetzt dynamisch gesetzt
   },
   numberText: {
     fontSize: NUMBER_BUTTON_SIZE * 0.5,
@@ -216,7 +223,6 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: "#4361EE",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,

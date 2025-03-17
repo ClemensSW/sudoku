@@ -4,9 +4,9 @@
 // Light theme colors
 const lightColors = {
   // Primary colors
-  primary: "#4C63E6", // Vibrant blue that matches the design in the image
-  primaryLight: "#7989FF",
-  primaryDark: "#304BD6",
+  primary: "#4A7D78", // Neuer Teal-Ton als Primärfarbe
+  primaryLight: "#6CACA6", // Hellere Variante für gleiche Werte
+  primaryDark: "#3A6963", // Dunklere Variante für Interaktionen
   secondary: "#F64A7A", // Vibrant accent for highlights
 
   // UI elements
@@ -17,13 +17,13 @@ const lightColors = {
 
   // Cell colors
   cellBackground: "#FFFFFF", 
-  cellBackgroundInitial: "#F0F4FF",
-  cellBackgroundSelected: "#BBDEFB", 
-  cellBackgroundRelated: "#E3F2FD", 
+  cellBackgroundInitial: "#F0F4F2", // Leicht angepasst für Teal-Ton
+  cellBackgroundSelected: "#4A7D78", // Neue Primärfarbe
+  cellBackgroundRelated: "#E3F2ED", // Teal-tinted bg für verwandte Zellen
   cellBackgroundError: "#FFEBEE", 
   cellBackgroundSuccess: "#E8F5E9", 
   cellBackgroundHint: "#FFF9C4", 
-  cellBackgroundSameValue: "#E1F5FE", 
+  cellBackgroundSameValue: "#6CACA6", // Helleres Teal für gleiche Werte
 
   // Grid
   gridLine: "#D0D7DF", 
@@ -36,12 +36,12 @@ const lightColors = {
   textOnPrimary: "#FFFFFF",
   textCellNormal: "#2C3E50", 
   textCellInitial: "#1A1F36", 
-  textCellSelected: "#2C3E50", 
+  textCellSelected: "#FFFFFF", 
   textCellError: "#E53E3E", 
   textCellNotes: "#5C6BC0", 
 
   // UI elements
-  button: "#4C63E6",
+  button: "#4A7D78", // Neue Primärfarbe
   buttonText: "#FFFFFF",
   buttonDisabled: "#CBD5E0",
   buttonTextDisabled: "#A0AEC0",
@@ -63,16 +63,16 @@ const lightColors = {
   // Number pad
   numberPadButton: "#F0F3F9",
   numberPadButtonText: "#1A1F36",
-  numberPadButtonSelected: "#4C63E6",
+  numberPadButtonSelected: "#4A7D78", // Neue Primärfarbe
   numberPadButtonTextSelected: "#FFFFFF",
 };
 
 // Dark theme optimized for eye comfort
 const darkColors = {
   // Primary colors
-  primary: "#4C63E6", // Keep the same primary for brand consistency
-  primaryLight: "#7989FF",
-  primaryDark: "#304BD6",
+  primary: "#4A7D78", // Neue Primärfarbe
+  primaryLight: "#6CACA6", // Hellere Variante
+  primaryDark: "#3A6963", // Dunklere Variante
   secondary: "#F64A7A",
 
   // UI elements
@@ -84,12 +84,12 @@ const darkColors = {
   // Cell colors
   cellBackground: "#2D3748", 
   cellBackgroundInitial: "#2C3B52", 
-  cellBackgroundSelected: "#3949AB", 
+  cellBackgroundSelected: "#4A7D78", // Neue Primärfarbe
   cellBackgroundRelated: "#1A237E70", 
   cellBackgroundError: "#B7191970", 
   cellBackgroundSuccess: "#1B5E2070", 
   cellBackgroundHint: "#F9A82570", 
-  cellBackgroundSameValue: "#0D47A170", 
+  cellBackgroundSameValue: "#6CACA670", // Helleres Teal mit Transparenz
 
   // Grid
   gridLine: "#4A5568", 
@@ -107,7 +107,7 @@ const darkColors = {
   textCellNotes: "#B794F4", 
 
   // UI elements
-  button: "#4C63E6",
+  button: "#4A7D78", // Neue Primärfarbe
   buttonText: "#FFFFFF",
   buttonDisabled: "#4A5568",
   buttonTextDisabled: "#A0AEC0",
@@ -129,7 +129,7 @@ const darkColors = {
   // Number pad
   numberPadButton: "#2D3748",
   numberPadButtonText: "#F7FAFC",
-  numberPadButtonSelected: "#4C63E6",
+  numberPadButtonSelected: "#4A7D78", // Neue Primärfarbe
   numberPadButtonTextSelected: "#FFFFFF",
 };
 

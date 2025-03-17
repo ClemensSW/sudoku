@@ -24,7 +24,8 @@ interface GameplayPageProps {
   isLastPage?: boolean;
 }
 
-const BUTTON_BLUE = "#4361EE"; // Match the game's blue color
+// Neue Teal-Farbe statt der alten blauen Farbe
+const BUTTON_COLOR = "#4A7D78"; // Neue Teal-Farbe
 
 const GameplayPage: React.FC<GameplayPageProps> = ({
   onNext,
@@ -157,7 +158,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
             const animatedStyle = useAnimatedStyle(() => {
               return {
                 transform: [{ scale: numberScales[index].value }],
-                backgroundColor: BUTTON_BLUE,
+                backgroundColor: BUTTON_COLOR, // Neue Teal-Farbe
               };
             });
 
@@ -179,7 +180,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                       borderRadius: 12,
                       justifyContent: "center",
                       alignItems: "center",
-                      backgroundColor: BUTTON_BLUE,
+                      backgroundColor: BUTTON_COLOR, // Neue Teal-Farbe
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.25,
@@ -241,7 +242,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
             <Feather
               name="arrow-up"
               size={28}
-              color={BUTTON_BLUE}
+              color={BUTTON_COLOR} // Neue Teal-Farbe
               style={styles.arrow}
             />
           </Animated.View>

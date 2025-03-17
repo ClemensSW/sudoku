@@ -44,16 +44,15 @@ export default StyleSheet.create({
 
   // Hintergrundstile für verschiedene Zustände
   selectedBackground: {
-    backgroundColor: "#4361EE",
+    backgroundColor: "#4A7D78", // Neue primäre Teal-Farbe
   },
 
   relatedBackground: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
 
-  sameValueBackground: {
-    backgroundColor: "transparent",
-  },
+  // Entfernung des Hintergrunds für sameValueBackground, da wir nur die Textfarbe ändern wollen
+  // sameValueBackground: { ... }, - ENTFERNT
 
   errorBackground: {
     backgroundColor: "rgba(255, 70, 70, 0.3)",
@@ -82,8 +81,9 @@ export default StyleSheet.create({
     color: "#FF9A9A",
   },
 
+  // Die Textfarbe für gleiche Werte bleibt, aber der Hintergrund wird entfernt
   sameValueText: {
-    color: "rgba(130, 210, 255, 0.85)",
+    color: "#6CACA6", // Helleres Teal für gleiche Werte
     fontWeight: "700",
   },
 

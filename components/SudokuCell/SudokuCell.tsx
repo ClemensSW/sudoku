@@ -68,8 +68,6 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       return baseStyles.successBackground;
     } else if (isSelected) {
       return baseStyles.selectedBackground;
-    } else if (sameValueHighlight) {
-      return baseStyles.sameValueBackground;
     } else if (isRelated) {
       return baseStyles.relatedBackground;
     }
@@ -87,11 +85,13 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     if (showErrors && !cell.isValid) {
       style.color = "#FF9A9A"; // Fehler-Farbe
     } else if (sameValueHighlight) {
-      style.color = "#738BFF"; // Gleiche Werte
+      // NUR hier ändern wir die Textfarbe für gleiche Werte
+      style.color = "#6CACA6"; // Teal-Farbe für gleiche Werte
+      style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
     }
 
     // Schriftgewicht basierend auf Zustand
-    if (cell.isInitial || sameValueHighlight) {
+    if (cell.isInitial) {
       style.fontWeight = "700";
     }
 

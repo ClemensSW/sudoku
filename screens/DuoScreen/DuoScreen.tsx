@@ -7,12 +7,18 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeInUp, SlideInUp } from "react-native-reanimated";
+import Animated, { 
+  FadeInUp, 
+  SlideInUp, 
+  FadeIn, 
+  FadeOut 
+} from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { Difficulty } from "@/utils/sudoku";
@@ -23,6 +29,8 @@ import DuoBoardVisualizer from "./components/DuoBoardVisualizer/DuoBoardVisualiz
 import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
 import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
 import DifficultyModal from "../../components/DifficultyModal/DifficultyModal";
+import GameModeModal, { GameMode } from "../../components/GameModeModal";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
 
 import styles from "./DuoScreen.styles";
 
@@ -33,14 +41,19 @@ const DuoScreen: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const { showAlert } = useAlert();
 
   // Reference to scroll view for programmatic scrolling
   const scrollViewRef = useRef<ScrollView>(null);
 
   // State
+  const [showGameModeModal, setShowGameModeModal] = useState(false);
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("medium");
+  const [selectedMode, setSelectedMode] = useState<GameMode>("local");
+  // Track if any modal is open (for shared backdrop)
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
   // Scroll to features section - just enough to hide the button
   const scrollToFeatures = () => {
@@ -59,15 +72,45 @@ const DuoScreen: React.FC = () => {
     triggerHaptic("light");
   };
 
-  // Handle game start
+  // Handle initial game start button click
   const handleStartGame = () => {
     triggerHaptic("medium");
-    setShowDifficultyModal(true);
+    setIsAnyModalOpen(true);
+    setShowGameModeModal(true);
+  };
+
+  // Handle game mode selection
+  const handleModeSelection = (mode: GameMode) => {
+    setSelectedMode(mode);
+    triggerHaptic("medium");
+    
+    // If local mode, show difficulty selection with a slight delay
+    if (mode === "local") {
+      // First close game mode modal but keep backdrop
+      setShowGameModeModal(false);
+      
+      // Then show difficulty modal with a slight delay for better animation
+      setTimeout(() => {
+        setShowDifficultyModal(true);
+      }, 100);
+    } 
+    // For online mode (which is in development)
+    else {
+      setShowGameModeModal(false);
+      setIsAnyModalOpen(false);
+      showAlert({
+        title: "In Entwicklung",
+        message: "Der Online-Modus wird derzeit entwickelt und steht in Kürze zur Verfügung. Bleib gespannt!",
+        type: "info",
+        buttons: [{ text: "OK", style: "primary" }]
+      });
+    }
   };
 
   // Begin game with selected difficulty
   const handleStartWithDifficulty = () => {
     setShowDifficultyModal(false);
+    setIsAnyModalOpen(false);
     // Navigate to the duo game screen with selected difficulty
     router.replace({
       pathname: "/duo-game",
@@ -91,6 +134,18 @@ const DuoScreen: React.FC = () => {
         style={styles.backgroundImage}
         resizeMode="cover"
       />
+
+      {/* Shared modal backdrop */}
+      {isAnyModalOpen && (
+        <Animated.View 
+          style={[StyleSheet.absoluteFill, { 
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            zIndex: 100 
+          }]}
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(300)}
+        />
+      )}
 
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         {/* Header */}
@@ -150,8 +205,24 @@ const DuoScreen: React.FC = () => {
         visible={showDifficultyModal}
         selectedDifficulty={selectedDifficulty}
         onSelectDifficulty={handleDifficultyChange}
-        onClose={() => setShowDifficultyModal(false)}
+        onClose={() => {
+          setShowDifficultyModal(false);
+          setIsAnyModalOpen(false);
+        }}
         onConfirm={handleStartWithDifficulty}
+        noBackdrop={true} // Always use the shared backdrop
+        isTransition={true} // Always use transition animation for second modal
+      />
+
+      {/* Game Mode Selection Modal */}
+      <GameModeModal
+        visible={showGameModeModal}
+        onClose={() => {
+          setShowGameModeModal(false);
+          setIsAnyModalOpen(false);
+        }}
+        onSelectMode={handleModeSelection}
+        noBackdrop={true} // Always use the shared backdrop
       />
     </View>
   );

@@ -1,4 +1,4 @@
-// components/DifficultyModal/DifficultyModal.styles.ts
+// components/GameModeModal/GameModeModal.styles.ts
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -35,35 +35,62 @@ export default StyleSheet.create({
     marginBottom: 24,
     opacity: 0.7,
   },
-  difficultyContainer: {
+  modeContainer: {
     width: "100%",
-    marginBottom: 24,
+    marginBottom: 10,
   },
-  difficultyButton: {
+  modeButton: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 16,
     borderWidth: 1.5,
   },
-  difficultyText: {
-    fontSize: 16,
-    fontWeight: "600",
+  disabledModeButton: {
+    opacity: 0.8,
+    backgroundColor: "rgba(0,0,0,0.03)",
   },
-  modalButton: {
-    width: "100%",
-    paddingVertical: 16,
-    borderRadius: 30,
-    alignItems: "center",
+  modeIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(67, 97, 238, 0.1)",
+    marginRight: 16,
   },
-  modalButtonText: {
+  disabledIconContainer: {
+    backgroundColor: "rgba(0,0,0,0.05)",
+  },
+  modeTextContainer: {
+    flex: 1,
+  },
+  onlineTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
+  modeTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginRight: 8,
+  },
+  modeDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  comingSoonBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 6,
+  },
+  comingSoonText: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "700",
   },
 });

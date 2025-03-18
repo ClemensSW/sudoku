@@ -1,3 +1,4 @@
+// screens/SettingsScreen/SettingsScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -7,7 +8,10 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
-  BackHandler, // BackHandler importieren
+  BackHandler,
+  Share,
+  Linking,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -17,7 +21,6 @@ import Animated, {
   FadeInDown,
   SlideInUp,
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -59,6 +62,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showSupportShop, setShowSupportShop] = useState(false);
+  const [showAboutInfo, setShowAboutInfo] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
@@ -146,6 +150,28 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         }
       })
     );
+  };
+
+  const handleShareApp = async () => {
+    triggerHaptic("light");
+    try {
+      const result = await Share.share({
+        message: 'Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku',
+        // Hier würde normalerweise der echte App-Store-Link stehen
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+  const handleAboutPress = () => {
+    triggerHaptic("light");
+    showAlert({
+      title: "Über Sudoku",
+      message: "Version 1.0.0\n\nEntwickelt mit ♥ und Freude am Denksport.\n\nDanke, dass du Sudoku spielst!",
+      type: "info",
+      buttons: [{ text: "OK", style: "primary" }]
+    });
   };
 
   if (isLoading) {
@@ -380,7 +406,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       { color: colors.textSecondary },
                     ]}
                   >
-                    Offensichtlich falsche Zahlen hervorheben
+                    Falsche Zahlen hervorheben
                   </Text>
                 </View>
                 <Switch
@@ -481,13 +507,13 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
 
-        {/* Support Section */}
+        {/* Community & App Section (formerly Support) */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(400).duration(500)}
         >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Unterstützung
+            Community & App
           </Text>
           <View
             style={[
@@ -495,6 +521,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
+            {/* Original Support button - Keep exact text as specified */}
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => setShowSupportShop(true)}
@@ -528,18 +555,78 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 color={colors.textSecondary}
               />
             </TouchableOpacity>
+
+            {/* Share button */}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { borderTopWidth: 1, borderTopColor: colors.border }
+              ]}
+              onPress={handleShareApp}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.success}20` },
+                ]}
+              >
+                <Feather name="share-2" size={20} color={colors.success} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Mit Freunden teilen
+                </Text>
+                <Text
+                  style={[
+                    styles.actionDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Fordere sie zum Sudoku-Duell heraus
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+
+            {/* About button */}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { borderTopWidth: 1, borderTopColor: colors.border }
+              ]}
+              onPress={handleAboutPress}
+            >
+              <View
+                style={[
+                  styles.actionIconContainer,
+                  { backgroundColor: `${colors.info}20` },
+                ]}
+              >
+                <Feather name="info" size={20} color={colors.info} />
+              </View>
+              <View style={styles.actionTextContainer}>
+                <Text
+                  style={[styles.actionTitle, { color: colors.textPrimary }]}
+                >
+                  Über Sudoku Duo
+                </Text>
+              </View>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
           </View>
         </Animated.View>
 
-        {/* Version Info */}
-        <Animated.View
-          style={styles.versionContainer}
-          entering={FadeIn.delay(500).duration(500)}
-        >
-          <Text style={[styles.versionText, { color: colors.textSecondary }]}>
-            Sudoku v1.0.0
-          </Text>
-        </Animated.View>
+
       </ScrollView>
 
       {/* How to Play Modal */}

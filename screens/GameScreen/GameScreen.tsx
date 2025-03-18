@@ -350,19 +350,34 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       const previousValue = board[row][col].value;
       const updatedBoard = setCellValue(board, row, col, number);
 
-      // Überprüfe, ob der Zug einen Fehler verursacht hat
-      const isErrorMove =
+      // Überprüfe, ob der Zug einen Fehler verursacht hat (nach Sudoku-Regeln)
+      const isRuleViolation = 
         updatedBoard[row][col].value === number &&
         !updatedBoard[row][col].isValid;
 
+      // NEUE PRÜFUNG: Überprüfe, ob der eingegebene Wert mit der Lösung übereinstimmt
+      const isSolutionViolation = 
+        number !== solution[row][col];
+
+      // Kombinierte Fehlerprüfung: entweder Regelverstoß oder falsche Lösung
+      const isErrorMove = isRuleViolation || isSolutionViolation;
+
       // If number was successfully set, remove it as a note in related cells
       if (updatedBoard[row][col].value === number && previousValue !== number) {
-        const boardWithUpdatedNotes = removeNoteFromRelatedCells(
+        // Notizen in verwandten Zellen aktualisieren
+        let boardWithUpdatedNotes = removeNoteFromRelatedCells(
           updatedBoard,
           row,
           col,
           number
         );
+
+        // NEUE LOGIK: Wenn die Zahl nicht der Lösung entspricht, markiere sie als ungültig
+        if (isSolutionViolation) {
+          boardWithUpdatedNotes = [...boardWithUpdatedNotes];
+          boardWithUpdatedNotes[row][col].isValid = false;
+        }
+
         setBoard(boardWithUpdatedNotes);
 
         // Wenn die Zahl falsch ist und Fehleranzeige aktiviert ist

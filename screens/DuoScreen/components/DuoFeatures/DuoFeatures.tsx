@@ -30,7 +30,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
     },
     {
       icon: "rotate-ccw",
-      title: "Intelligentes Layout",
+      title: "Herausforderndes Layout",
       description: "Zahlen für Spieler 2 werden automatisch gedreht",
       color: colors.warning,
     },

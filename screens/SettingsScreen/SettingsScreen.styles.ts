@@ -101,19 +101,6 @@ export default StyleSheet.create({
     opacity: 0.8,
   },
 
-  // Version Info
-  versionContainer: {
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  versionText: {
-    fontSize: 14,
-    opacity: 0.6,
-  },
-
   // Specific action buttons styling
   dangerButton: {
     color: "red",

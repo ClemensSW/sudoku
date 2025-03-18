@@ -262,37 +262,51 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
       return;
     }
 
-    // Check if this is a valid move
-    const isValid = isValidPlacement(
+    // Check if this is a valid move according to Sudoku rules
+    const isValidByRules = isValidPlacement(
       boardToNumberGrid(board),
       row,
       col,
       number
     );
 
+    // NEUE PRÜFUNG: Prüfen, ob der Wert mit der Lösung übereinstimmt
+    const isCorrectSolution = solution[row][col] === number;
+
     // Update the board
     const updatedBoard = [...board];
     updatedBoard[row][col] = {
       ...board[row][col],
       value: number,
-      isValid,
+      // Markiere als ungültig, wenn entweder gegen Regeln verstoßen wird
+      // oder die Zahl nicht mit der Lösung übereinstimmt
+      isValid: isValidByRules && isCorrectSolution,
     };
 
     setBoard(updatedBoard);
 
     // Handle result of the move
-    if (!isValid) {
+    if (!isValidByRules) {
       // Invalid move - provide feedback
       triggerHaptic("error");
-      
+
       // Show feedback but don't reduce lives
       Alert.alert(
         "Ungültiger Zug",
         `Diese Zahl kann hier nicht platziert werden.`,
         [{ text: "OK" }]
       );
+    } else if (!isCorrectSolution) {
+      // NEUE LOGIK: Die Zahl ist nach Sudoku-Regeln gültig, aber nicht korrekt
+      triggerHaptic("error");
+
+      Alert.alert(
+        "Falsche Zahl",
+        `Diese Zahl ist leider nicht die Lösung für diese Zelle.`,
+        [{ text: "OK" }]
+      );
     } else {
-      // Valid move - good feedback
+      // Valid move and correct solution - good feedback
       triggerHaptic("medium");
 
       // Clear the selection for this player

@@ -9,7 +9,6 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,7 +19,6 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
-// We don't need GameModeModal for StartScreen
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./StartScreen.styles";
@@ -57,8 +55,6 @@ const StartScreen: React.FC = () => {
     triggerHaptic("light");
   };
 
-  // We don't need handleModeSelection anymore since we're directly showing DifficultyModal
-
   // Start the game with selected difficulty
   const handleStartWithDifficulty = () => {
     setShowDifficultyModal(false);
@@ -70,23 +66,11 @@ const StartScreen: React.FC = () => {
     });
   };
 
-  // Handler for Settings
-  const handleShowSettings = () => {
-    triggerHaptic("light");
-    setTimeout(() => {
-      try {
-        router.push("/settings");
-      } catch (error) {
-        console.error("Navigation error:", error);
-      }
-    }, 50);
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
-      {/* Custom background image that starts above the bottom nav */}
+      {/* Background decoration */}
       <View style={customStyles.backgroundContainer}>
         <Image
           source={require("@/assets/images/background/mountains_blue.png")}
@@ -95,37 +79,11 @@ const StartScreen: React.FC = () => {
         />
       </View>
 
-      {/* We don't need a shared backdrop since we only have one modal */}
-
-      {/* Settings-Button in der oberen rechten Ecke */}
-      <View
-        style={{
-          position: "absolute",
-          top: insets.top + 16,
-          right: 16,
-          zIndex: 10,
-        }}
-      >
-        <TouchableOpacity
-          onPress={handleShowSettings}
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 22,
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            borderWidth: 1,
-            borderColor: colors.primary,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          activeOpacity={0.7}
-        >
-          <Feather name="settings" size={24} color={colors.primary} />
-        </TouchableOpacity>
-      </View>
-
-      {/* SafeArea und Content */}
-      <SafeAreaView style={[styles.safeArea]} edges={["top"]}>
+      {/* Content with manual padding for safe area */}
+      <View style={[
+        styles.safeArea, 
+        { paddingTop: insets.top }
+      ]}>
         <View
           style={[
             styles.content,
@@ -154,7 +112,7 @@ const StartScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
 
       {/* Difficulty Modal - direct access with standard animation */}
       <DifficultyModal

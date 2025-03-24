@@ -9,13 +9,10 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { 
-  FadeInUp, 
-  SlideInUp, 
   FadeIn, 
   FadeOut 
 } from "react-native-reanimated";
@@ -24,7 +21,6 @@ import { triggerHaptic } from "@/utils/haptics";
 import { Difficulty } from "@/utils/sudoku";
 
 // Import components
-import DuoHeader from "./components/DuoHeader/DuoHeader";
 import DuoBoardVisualizer from "./components/DuoBoardVisualizer/DuoBoardVisualizer";
 import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
 import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
@@ -35,6 +31,50 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import styles from "./DuoScreen.styles";
 
 const { height } = Dimensions.get("window");
+
+// Modified DuoHeader without settings button and left-aligned
+const SimpleDuoHeader = ({ paddingTop = 0 }) => {
+  const theme = useTheme();
+  const colors = theme.colors;
+
+  return (
+    <View style={[headerStyles.header, { paddingTop }]}>
+      <View style={headerStyles.titleContainer}>
+        <Text style={[headerStyles.subTitle, { color: colors.textSecondary }]}>
+          ZWEI SPIELER MODUS
+        </Text>
+        <Text style={[headerStyles.title, { color: colors.textPrimary }]}>
+          Sudoku Duo
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+// Simple header styles - updated for left alignment
+const headerStyles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start", // Changed from center to flex-start for left alignment
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  titleContainer: {
+    alignItems: "flex-start", // Changed from center to flex-start for left alignment
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "800",
+  },
+  subTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+});
 
 const DuoScreen: React.FC = () => {
   const router = useRouter();
@@ -118,12 +158,6 @@ const DuoScreen: React.FC = () => {
     });
   };
 
-  // Navigate to settings
-  const handleSettingsPress = () => {
-    triggerHaptic("light");
-    router.push("/settings");
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
@@ -147,12 +181,10 @@ const DuoScreen: React.FC = () => {
         />
       )}
 
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
-        {/* Header */}
-        <DuoHeader
-          onSettingsPress={handleSettingsPress}
-          paddingTop={insets.top}
-        />
+      {/* Main content without SafeAreaView */}
+      <View style={{ flex: 1 }}>
+        {/* Header - Using simplified header without settings button */}
+        <SimpleDuoHeader paddingTop={insets.top} />
 
         <ScrollView
           ref={scrollViewRef}
@@ -166,13 +198,11 @@ const DuoScreen: React.FC = () => {
               { minHeight: height - insets.top - 200 },
             ]}
           >
+            {/* Board visualizer - Modified component with no animations */}
             <DuoBoardVisualizer />
 
-            {/* Start Game Button */}
-            <Animated.View
-              style={styles.buttonContainer}
-              entering={SlideInUp.delay(600).duration(500)}
-            >
+            {/* Start Game Button - No animation */}
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[
                   styles.startButton,
@@ -183,7 +213,7 @@ const DuoScreen: React.FC = () => {
               >
                 <Text style={styles.startButtonText}>Jetzt spielen</Text>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
 
             {/* Scroll indicator to features section */}
             <ScrollIndicator onPress={scrollToFeatures} />
@@ -194,7 +224,7 @@ const DuoScreen: React.FC = () => {
             <DuoFeatures onStartGame={handleStartGame} />
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
 
       {/* Difficulty selection modal */}
       <DifficultyModal

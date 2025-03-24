@@ -2,7 +2,6 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
 import styles from "./DuoBoardVisualizer.styles";
 
 interface DuoBoardVisualizerProps {}
@@ -48,10 +47,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
   };
 
   return (
-    <Animated.View 
-      style={styles.boardContainer}
-      entering={FadeIn.duration(800)}
-    >
+    <View style={styles.boardContainer}>
       {/* Player 2 Label (oben) */}
       <View style={styles.playerIndicator}>
         <View style={[styles.playerTag, { backgroundColor: PLAYER2_COLOR }]}>
@@ -61,10 +57,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
       </View>
 
       {/* Abstraktes Konzept-Brett */}
-      <Animated.View 
-        style={styles.conceptBoardContainer}
-        entering={SlideInUp.delay(300).duration(500)}
-      >
+      <View style={styles.conceptBoardContainer}>
         <View style={styles.conceptBoard}>
           {/* Spieler 2 Bereich (oben, cremeweiß) */}
           <View style={[styles.playerArea, styles.player2Area]}>
@@ -99,7 +92,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
         <View style={[styles.arrowContainer, styles.bottomArrow]}>
           <Feather name="arrow-down" size={18} color={TEXT_COLOR} />
         </View>
-      </Animated.View>
+      </View>
 
       {/* Player 1 Label (unten) */}
       <View style={styles.playerIndicator}>
@@ -108,7 +101,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
           <Text style={[styles.playerText, { color: TEXT_COLOR }]}>SPIELER 1</Text>
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 

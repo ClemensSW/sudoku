@@ -1,4 +1,5 @@
-import { AlertButton, AlertType } from './CustomAlert';
+// components/CustomAlert/AlertHelpers.ts
+import { AlertButton, AlertType, ButtonType } from './CustomAlert';
 
 /**
  * Helper functions to quickly create different types of alerts
@@ -19,7 +20,7 @@ export const successAlert = (
   buttons: [
     {
       text: buttonText,
-      style: "success",
+      style: "success" as ButtonType,
       onPress
     }
   ]
@@ -40,7 +41,7 @@ export const errorAlert = (
   buttons: [
     {
       text: buttonText,
-      style: "danger",
+      style: "danger" as ButtonType,
       onPress
     }
   ]
@@ -61,7 +62,7 @@ export const warningAlert = (
   buttons: [
     {
       text: buttonText,
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -82,7 +83,7 @@ export const infoAlert = (
   buttons: [
     {
       text: buttonText,
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -105,12 +106,12 @@ export const confirmationAlert = (
   buttons: [
     {
       text: cancelText,
-      style: "cancel",
+      style: "cancel" as ButtonType,
       onPress: onCancel
     },
     {
       text: confirmText,
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress: onConfirm
     }
   ] as AlertButton[]
@@ -137,7 +138,7 @@ export const gameCompletionAlert = (
     buttons: [
       {
         text: "Neues Spiel",
-        style: "primary",
+        style: "primary" as ButtonType,
         onPress: onNewGame
       }
     ]
@@ -164,7 +165,7 @@ export const gameOverAlert = (
     buttons: [
       {
         text: "Neues Spiel",
-        style: "primary",
+        style: "primary" as ButtonType,
         onPress: onNewGame
       }
     ]
@@ -181,7 +182,7 @@ export const hintCellAlert = (onPress?: () => void) => ({
   buttons: [
     {
       text: "OK",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -197,7 +198,7 @@ export const noErrorsAlert = (onPress?: () => void) => ({
   buttons: [
     {
       text: "OK",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -213,7 +214,7 @@ export const initialCellAlert = (onPress?: () => void) => ({
   buttons: [
     {
       text: "OK",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -229,7 +230,7 @@ export const noHintsAlert = (onPress?: () => void) => ({
   buttons: [
     {
       text: "OK",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -245,7 +246,7 @@ export const autoNotesAlert = (onPress?: () => void) => ({
   buttons: [
     {
       text: "OK",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress
     }
   ]
@@ -261,12 +262,12 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
   buttons: [
     {
       text: "Abbrechen",
-      style: "cancel",
+      style: "cancel" as ButtonType,
       onPress: onCancel
     },
     {
       text: "Zum Menü",
-      style: "primary",
+      style: "primary" as ButtonType,
       onPress: onConfirm
     }
   ] as AlertButton[]

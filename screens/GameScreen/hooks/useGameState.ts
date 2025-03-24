@@ -35,6 +35,7 @@ export interface GameState {
   difficulty: Difficulty;
   isGameRunning: boolean;
   isGameComplete: boolean;
+  isGameLost: boolean; // New property to track game lost state
   gameTime: number;
   noteModeActive: boolean;
   usedNumbers: number[];
@@ -48,14 +49,14 @@ export interface GameState {
 interface GameStateActions {
   startNewGame: () => void;
   handleCellPress: (row: number, col: number) => void;
-  handleNumberPress: (number: number) => void;
+  handleNumberPress: (number: number, showMistakes?: boolean) => void;
   handleErasePress: () => void;
   toggleNoteMode: () => void;
   handleHintPress: () => HintResult | null;
   handleAutoNotesPress: () => boolean;
   handleTimeUpdate: (time: number) => void;
   handleGameComplete: () => Promise<void>;
-  handleError: () => void;
+  handleError: (showMistakes: boolean) => void;
   updateUsedNumbers: () => void;
 }
 
@@ -69,6 +70,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   );
   const [isGameRunning, setIsGameRunning] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
+  const [isGameLost, setIsGameLost] = useState(false);
   const [gameTime, setGameTime] = useState(0);
   const [noteModeActive, setNoteModeActive] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState<number[]>([]);
@@ -119,6 +121,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       setSolution(newSolution);
       setSelectedCell(null);
       setIsGameComplete(false);
+      setIsGameLost(false);
       setGameTime(0);
       setIsGameRunning(true);
       setNoteModeActive(false);
@@ -139,7 +142,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   };
 
   // Enter a number in a cell
-  const handleNumberPress = (number: number) => {
+  const handleNumberPress = (number: number, showMistakes: boolean = true) => {
     if (!selectedCell || isGameComplete) return;
 
     const { row, col } = selectedCell;
@@ -191,7 +194,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
         setBoard(boardWithUpdatedNotes);
 
         if (isErrorMove) {
-          handleError();
+          handleError(showMistakes);
         } else {
           triggerHaptic("medium");
         }
@@ -280,7 +283,10 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   };
 
   // Handle error
-  const handleError = () => {
+  const handleError = (showMistakes: boolean) => {
+    // If showMistakes is false, don't count errors
+    if (!showMistakes) return;
+    
     const newErrorsRemaining = errorsRemaining - 1;
     setErrorsRemaining(newErrorsRemaining);
     triggerHaptic("error");
@@ -295,6 +301,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     if (isGameComplete) return;
 
     setIsGameComplete(true);
+    setIsGameLost(true); // Set the game as lost
     setIsGameRunning(false);
 
     // Update stats
@@ -357,6 +364,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       difficulty,
       isGameRunning,
       isGameComplete,
+      isGameLost,
       gameTime,
       noteModeActive,
       usedNumbers,

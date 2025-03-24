@@ -66,6 +66,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   // Local state
   const [showSettings, setShowSettings] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
 
   // Animation values
   const headerOpacity = useSharedValue(1);
@@ -112,12 +113,25 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
   // Check for game completion and show modal
   useEffect(() => {
-    if (gameState.isGameComplete && !showCompletionModal) {
-      setTimeout(() => {
-        setShowCompletionModal(true);
-      }, 800);
+    if (gameState.isGameComplete && !showCompletionModal && !showGameOverModal) {
+      if (gameState.isGameLost) {
+        // Show game over modal for loss
+        setTimeout(() => {
+          showAlert(
+            gameOverAlert(
+              gameState.autoNotesUsed,
+              gameActions.startNewGame
+            )
+          );
+        }, 800);
+      } else {
+        // Show completion modal for win
+        setTimeout(() => {
+          setShowCompletionModal(true);
+        }, 800);
+      }
     }
-  }, [gameState.isGameComplete]);
+  }, [gameState.isGameComplete, gameState.isGameLost]);
 
   // Animated styles
   const headerAnimatedStyle = useAnimatedStyle(() => {
@@ -131,6 +145,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       opacity: controlsOpacity.value,
     };
   });
+
+  // Handle number press
+  const handleNumberPress = (number: number) => {
+    // Pass the showMistakes setting to the handleNumberPress function
+    gameActions.handleNumberPress(number, gameSettings.showMistakes);
+  };
 
   // Handle hint press with alerts
   const handleHintPress = () => {
@@ -247,7 +267,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         entering={FadeIn.duration(800)}
       />
 
-      <View style={{ flex: 1, paddingTop: insets.top }}>
+      <View style={{ flex: 1 }}>
         <Animated.View style={headerAnimatedStyle}>
           <Header
             title="Sudoku"
@@ -256,6 +276,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
               icon: "settings",
               onPress: handleSettingsPress,
             }}
+            skipTopPadding={false}
           />
         </Animated.View>
 
@@ -290,7 +311,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
             {/* Game Controls */}
             <Animated.View style={[styles.controlsContainer, controlsAnimatedStyle]}>
               <GameControls
-                onNumberPress={gameActions.handleNumberPress}
+                onNumberPress={handleNumberPress}
                 onErasePress={gameActions.handleErasePress}
                 onNoteToggle={gameActions.toggleNoteMode}
                 onHintPress={handleHintPress}

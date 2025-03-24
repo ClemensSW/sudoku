@@ -16,6 +16,7 @@ interface HeaderProps {
   };
   subtitle?: string;
   transparent?: boolean;
+  skipTopPadding?: boolean; // New prop
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -24,6 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   rightAction,
   subtitle,
   transparent = false,
+  skipTopPadding = false, // Default to false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -31,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
 
   // Enhanced container style to ensure visibility
   const containerStyle = {
-    paddingTop: Math.max(insets.top, Platform.OS === "ios" ? 12 : 8),
+    paddingTop: skipTopPadding ? 0 : Math.max(insets.top, Platform.OS === "ios" ? 12 : 8),
     backgroundColor: transparent
       ? "rgba(0,0,0,0.05)" // Semi-transparent background when transparent is true
       : colors.background,

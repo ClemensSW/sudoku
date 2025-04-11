@@ -1,108 +1,39 @@
 // screens/DuoScreen/components/DuoBoardVisualizer/DuoBoardVisualizer.tsx
 import React from "react";
-import { View, Text, Image } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import styles from "./DuoBoardVisualizer.styles";
+import { View, Image, StyleSheet, Dimensions } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
+
+const { width } = Dimensions.get("window");
+const LOGO_SIZE = Math.min(width * 0.75, 300); // Maximale Breite 70% oder 300px
 
 interface DuoBoardVisualizerProps {}
 
 const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
-  // Unsere Hauptfarben
-  const PLAYER1_COLOR = "#CAD9D4"; // Salbei
-  const PLAYER2_COLOR = "#F4F0E4"; // Creme
-  const TEXT_COLOR = "#2D3748";    // Dunkelgrau
-
-  // Beispielzahlen für Spieler 1 (unten)
-  const renderPlayer1Numbers = () => {
-    return (
-      <View style={styles.numberGroup}>
-        <View style={styles.numberCell}>
-          <Text style={styles.numberText}>2</Text>
-        </View>
-        <View style={styles.numberCell}>
-          <Text style={styles.numberText}>9</Text>
-        </View>
-        <View style={styles.numberCell}>
-          <Text style={styles.numberText}>4</Text>
-        </View>
-      </View>
-    );
-  };
-
-  // Beispielzahlen für Spieler 2 (oben, gedreht)
-  const renderPlayer2Numbers = () => {
-    return (
-      <View style={styles.numberGroup}>
-        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText]}>5</Text>
-        </View>
-        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText]}>3</Text>
-        </View>
-        <View style={[styles.numberCell, styles.rotatedNumberCell]}>
-          <Text style={[styles.numberText]}>7</Text>
-        </View>
-      </View>
-    );
-  };
-
   return (
-    <View style={styles.boardContainer}>
-      {/* Player 2 Label (oben) */}
-      <View style={styles.playerIndicator}>
-        <View style={[styles.playerTag, { backgroundColor: PLAYER2_COLOR }]}>
-          <Feather name="user" size={16} color={TEXT_COLOR} style={styles.playerIcon} />
-          <Text style={[styles.playerText, { color: TEXT_COLOR }]}>SPIELER 2</Text>
-        </View>
-      </View>
-
-      {/* Abstraktes Konzept-Brett */}
-      <View style={styles.conceptBoardContainer}>
-        <View style={styles.conceptBoard}>
-          {/* Spieler 2 Bereich (oben, cremeweiß) */}
-          <View style={[styles.playerArea, styles.player2Area]}>
-            {renderPlayer2Numbers()}
-          </View>
-
-          {/* Spieler 1 Bereich (unten, salbei) */}
-          <View style={[styles.playerArea, styles.player1Area]}>
-            {renderPlayer1Numbers()}
-          </View>
-        </View>
-
-        {/* Mittellinie zwischen den Spielerbereichen */}
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-        </View>
-
-        {/* Yin-Yang Symbol in der Mitte */}
-        <View style={styles.yinYangContainer}>
-          <Image
-            source={require("@/assets/images/icons/yin-yang.png")}
-            style={styles.yinYangImage}
-            resizeMode="contain"
-          />
-        </View>
-
-        {/* Richtungspfeile für beide Spieler */}
-        <View style={[styles.arrowContainer, styles.topArrow]}>
-          <Feather name="arrow-down" size={18} color={TEXT_COLOR} style={{ transform: [{ rotate: "180deg" }] }} />
-        </View>
-        
-        <View style={[styles.arrowContainer, styles.bottomArrow]}>
-          <Feather name="arrow-down" size={18} color={TEXT_COLOR} />
-        </View>
-      </View>
-
-      {/* Player 1 Label (unten) */}
-      <View style={styles.playerIndicator}>
-        <View style={[styles.playerTag, { backgroundColor: PLAYER1_COLOR }]}>
-          <Feather name="user" size={16} color={TEXT_COLOR} style={styles.playerIcon} />
-          <Text style={[styles.playerText, { color: TEXT_COLOR }]}>SPIELER 1</Text>
-        </View>
-      </View>
-    </View>
+    <Animated.View 
+      style={styles.container}
+      entering={FadeIn.duration(800)}
+    >
+      <Image
+        source={require("@/assets/images/app-logo.png")} // Stellen Sie sicher, dass der Pfad korrekt ist
+        style={styles.logoImage}
+        resizeMode="contain"
+      />
+    </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 50,
+  },
+  logoImage: {
+    width: LOGO_SIZE,
+    height: LOGO_SIZE,
+  }
+});
 
 export default DuoBoardVisualizer;

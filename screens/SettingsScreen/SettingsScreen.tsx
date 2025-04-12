@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
+  Text as RNText, // Rename to avoid potential conflicts
   ScrollView,
-  SafeAreaView,
   StyleSheet,
   BackHandler,
   Share,
-  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -18,6 +17,7 @@ import Animated, {
   SlideInUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context"; // Make sure this is properly imported
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
@@ -82,22 +82,22 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     loadData();
   }, []);
 
-  // Füge den BackHandler hinzu, um den Android-Zurück-Button abzufangen
+  // Add the BackHandler to capture the Android back button
   useEffect(() => {
-    // Nur für Android und wenn wir vom Spiel kommen
+    // Only for Android and when we come from the game
     if (fromGame && onBackToGame) {
-      // BackHandler-Listener hinzufügen
+      // Add BackHandler listener
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         () => {
-          // Zurück zum Spiel, statt der Standard-Navigation zu folgen
+          // Back to the game, instead of following the standard navigation
           onBackToGame();
-          // true zurückgeben, um zu signalisieren, dass wir den Zurück-Button behandelt haben
+          // Return true to indicate that we have handled the back button
           return true;
         }
       );
 
-      // Listener entfernen beim Aufräumen
+      // Remove listener during cleanup
       return () => backHandler.remove();
     }
   }, [fromGame, onBackToGame]);
@@ -112,17 +112,17 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     setSettings(updatedSettings);
     await saveSettings(updatedSettings);
 
-    // Haptic feedback mit neuer Utility - aber nur wenn Vibration nicht gerade deaktiviert wird
+    // Haptic feedback with new utility - but only if vibration is not being deactivated
     if (!(key === "vibration" && value === false)) {
       triggerHaptic("light");
     }
 
-    // Wenn die Vibrations-Einstellung geändert wird, aktualisiere auch den Cache
+    // If the vibration setting is changed, also update the cache
     if (key === "vibration") {
       setVibrationEnabledCache(value as boolean);
     }
 
-    // Benachrichtige GameScreen über die Änderung
+    // Notify GameScreen about the change
     if (onSettingsChanged) {
       onSettingsChanged(key, value);
     }
@@ -160,7 +160,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     try {
       await Share.share({
         message: 'Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku',
-        // Hier würde normalerweise der echte App-Store-Link stehen
+        // Here would normally be the real App Store link
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -188,9 +188,10 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         entering={SlideInUp.duration(300)}
       >
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <SafeAreaView edges={["top"]} style={{ width: "100%" }}>
-          <Header title="Einstellungen" onBackPress={handleBack} />
-        </SafeAreaView>
+        <Header 
+          title="Einstellungen" 
+          onBackPress={handleBack} 
+        />
         <View style={styles.loadingContainer}>
           <Feather name="loader" size={24} color={colors.primary} />
         </View>
@@ -209,9 +210,10 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      <SafeAreaView edges={["top"]} style={{ width: "100%" }}>
-        <Header title="Einstellungen" onBackPress={handleBack} />
-      </SafeAreaView>
+      <Header 
+        title="Einstellungen" 
+        onBackPress={handleBack} 
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -225,9 +227,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           style={styles.section}
           entering={FadeInDown.delay(100).duration(500)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             {showGameFeatures ? "Hilfe und Tools" : "Hilfe"}
-          </Text>
+          </RNText>
 
           <HelpSection 
             showGameFeatures={showGameFeatures}
@@ -241,9 +243,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           style={styles.section}
           entering={FadeInDown.delay(300).duration(500)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Spieleinstellungen
-          </Text>
+          </RNText>
 
           {settings && (
             <GameSettings 
@@ -258,9 +260,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           style={styles.section}
           entering={FadeInDown.delay(400).duration(500)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Aktionen
-          </Text>
+          </RNText>
 
           <ActionsSection 
             showGameFeatures={showGameFeatures}
@@ -273,9 +275,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           style={styles.section}
           entering={FadeInDown.delay(400).duration(500)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Community & App
-          </Text>
+          </RNText>
           
           <CommunitySection 
             onSupportPress={() => setShowSupportShop(true)}

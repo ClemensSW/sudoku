@@ -34,7 +34,7 @@ import {
   GameSettings,
   HelpSection,
   ActionsSection,
-  CommunitySection
+  CommunitySection,
 } from "./components";
 
 import styles from "./SettingsScreen.styles";
@@ -159,11 +159,12 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     triggerHaptic("light");
     try {
       await Share.share({
-        message: 'Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku',
+        message:
+          "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku",
         // Here would normally be the real App Store link
       });
     } catch (error) {
-      console.error('Error sharing:', error);
+      console.error("Error sharing:", error);
     }
   };
 
@@ -171,9 +172,10 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     triggerHaptic("light");
     showAlert({
       title: "Über Sudoku",
-      message: "Version 1.0.0\n\nEntwickelt mit ♥ und Freude am Denksport.\n\nDanke, dass du Sudoku spielst!",
+      message:
+        "Version 1.0.0\n\nEntwickelt mit ♥ und Freude am Denksport.\n\nDanke, dass du Sudoku spielst!",
       type: "info",
-      buttons: [{ text: "OK", style: "primary" }]
+      buttons: [{ text: "OK", style: "primary" }],
     });
   };
 
@@ -188,10 +190,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         entering={SlideInUp.duration(300)}
       >
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header 
-          title="Einstellungen" 
-          onBackPress={handleBack} 
-        />
+        <Header title="Einstellungen" onBackPress={handleBack} />
         <View style={styles.loadingContainer}>
           <Feather name="loader" size={24} color={colors.primary} />
         </View>
@@ -210,10 +209,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      <Header 
-        title="Einstellungen" 
-        onBackPress={handleBack} 
-      />
+      <Header title="Einstellungen" onBackPress={handleBack} />
 
       <ScrollView
         style={styles.scrollView}
@@ -231,7 +227,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             {showGameFeatures ? "Hilfe und Tools" : "Hilfe"}
           </RNText>
 
-          <HelpSection 
+          <HelpSection
             showGameFeatures={showGameFeatures}
             onAutoNotes={showGameFeatures ? handleAutoNotes : undefined}
             onHowToPlay={() => setShowHowToPlay(true)}
@@ -248,7 +244,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </RNText>
 
           {settings && (
-            <GameSettings 
+            <GameSettings
               settings={settings}
               onSettingChange={handleSettingChange}
             />
@@ -256,19 +252,23 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </Animated.View>
 
         {/* Actions Section - Only show when in a game context */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(400).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Aktionen
-          </RNText>
+        {showGameFeatures && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(400).duration(500)}
+          >
+            <RNText
+              style={[styles.sectionTitle, { color: colors.textPrimary }]}
+            >
+              Aktionen
+            </RNText>
 
-          <ActionsSection 
-            showGameFeatures={showGameFeatures}
-            onQuitGame={onQuitGame}
-          />
-        </Animated.View>
+            <ActionsSection
+              showGameFeatures={showGameFeatures}
+              onQuitGame={onQuitGame}
+            />
+          </Animated.View>
+        )}
 
         {/* Community & App Section (formerly Support) */}
         <Animated.View
@@ -278,8 +278,8 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Community & App
           </RNText>
-          
-          <CommunitySection 
+
+          <CommunitySection
             onSupportPress={() => setShowSupportShop(true)}
             onSharePress={handleShareApp}
             onAboutPress={handleAboutPress}

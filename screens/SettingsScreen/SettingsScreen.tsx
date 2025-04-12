@@ -2,15 +2,11 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   ScrollView,
-  Switch,
-  TouchableOpacity,
   SafeAreaView,
   StyleSheet,
   BackHandler,
   Share,
-  Linking,
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -30,8 +26,16 @@ import Header from "@/components/Header/Header";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import SupportShop from "@/components/SupportShop/SupportShop";
 import { loadSettings, saveSettings } from "@/utils/storage";
-import { GameSettings } from "@/utils/storage";
+import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
+
+// Import components
+import {
+  GameSettings,
+  HelpSection,
+  ActionsSection,
+  CommunitySection
+} from "./components";
 
 import styles from "./SettingsScreen.styles";
 
@@ -40,7 +44,7 @@ interface SettingsScreenProps {
   onQuitGame?: () => void;
   onAutoNotes?: () => void;
   onSettingsChanged?: (
-    key: keyof GameSettings,
+    key: keyof GameSettingsType,
     value: boolean | string
   ) => void;
   fromGame?: boolean;
@@ -59,10 +63,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const router = useRouter();
   const { showAlert } = useAlert();
 
-  const [settings, setSettings] = useState<GameSettings | null>(null);
+  const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showSupportShop, setShowSupportShop] = useState(false);
-  const [showAboutInfo, setShowAboutInfo] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
@@ -100,7 +103,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   }, [fromGame, onBackToGame]);
 
   const handleSettingChange = async (
-    key: keyof GameSettings,
+    key: keyof GameSettingsType,
     value: boolean | string
   ) => {
     if (!settings) return;
@@ -155,7 +158,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const handleShareApp = async () => {
     triggerHaptic("light");
     try {
-      const result = await Share.share({
+      await Share.share({
         message: 'Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku',
         // Hier würde normalerweise der echte App-Store-Link stehen
       });
@@ -226,82 +229,11 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             {showGameFeatures ? "Hilfe und Tools" : "Hilfe"}
           </Text>
 
-          <View
-            style={[
-              styles.settingsGroup,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
-          >
-            {/* Auto Notes - Only show when in a game context */}
-            {showGameFeatures && (
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={handleAutoNotes}
-              >
-                <View
-                  style={[
-                    styles.actionIconContainer,
-                    { backgroundColor: `${colors.primary}15` },
-                  ]}
-                >
-                  <Feather name="edit-3" size={20} color={colors.primary} />
-                </View>
-                <View style={styles.actionTextContainer}>
-                  <Text
-                    style={[styles.actionTitle, { color: colors.textPrimary }]}
-                  >
-                    Automatische Notizen
-                  </Text>
-                  <Text
-                    style={[
-                      styles.actionDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Mögliche Zahlen als Notizen eintragen
-                  </Text>
-                </View>
-                <Feather
-                  name="chevron-right"
-                  size={20}
-                  color={colors.textSecondary}
-                />
-              </TouchableOpacity>
-            )}
-
-            {/* How to Play */}
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                showGameFeatures && {
-                  borderTopWidth: 1,
-                  borderTopColor: colors.border,
-                },
-              ]}
-              onPress={() => setShowHowToPlay(true)}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.info}15` },
-                ]}
-              >
-                <Feather name="help-circle" size={20} color={colors.info} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Wie man spielt
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </View>
+          <HelpSection 
+            showGameFeatures={showGameFeatures}
+            onAutoNotes={showGameFeatures ? handleAutoNotes : undefined}
+            onHowToPlay={() => setShowHowToPlay(true)}
+          />
         </Animated.View>
 
         {/* Game Settings */}
@@ -314,198 +246,27 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </Text>
 
           {settings && (
-            <View
-              style={[styles.settingsGroup, { borderColor: colors.border }]}
-            >
-              {/* Highlight related cells */}
-              <View
-                style={[
-                  styles.settingRow,
-                  { borderBottomColor: colors.border },
-                ]}
-              >
-                <View style={styles.settingTextContainer}>
-                  <Text
-                    style={[styles.settingTitle, { color: colors.textPrimary }]}
-                  >
-                    Zellen hervorheben
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Zeile, Spalte und Box hervorheben
-                  </Text>
-                </View>
-                <Switch
-                  value={settings.highlightRelatedCells}
-                  onValueChange={(value) =>
-                    handleSettingChange("highlightRelatedCells", value)
-                  }
-                  trackColor={{
-                    false: colors.buttonDisabled,
-                    true: colors.primary,
-                  }}
-                  thumbColor="#FFFFFF"
-                />
-              </View>
-
-              {/* Highlight same values */}
-              <View
-                style={[
-                  styles.settingRow,
-                  { borderBottomColor: colors.border },
-                ]}
-              >
-                <View style={styles.settingTextContainer}>
-                  <Text
-                    style={[styles.settingTitle, { color: colors.textPrimary }]}
-                  >
-                    Gleiche Zahlen hervorheben
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Alle Zellen mit gleichen Werten markieren
-                  </Text>
-                </View>
-                <Switch
-                  value={settings.highlightSameValues}
-                  onValueChange={(value) =>
-                    handleSettingChange("highlightSameValues", value)
-                  }
-                  trackColor={{
-                    false: colors.buttonDisabled,
-                    true: colors.primary,
-                  }}
-                  thumbColor="#FFFFFF"
-                />
-              </View>
-
-              {/* Show Errors */}
-              <View
-                style={[
-                  styles.settingRow,
-                  { borderBottomColor: colors.border },
-                ]}
-              >
-                <View style={styles.settingTextContainer}>
-                  <Text
-                    style={[styles.settingTitle, { color: colors.textPrimary }]}
-                  >
-                    Fehler anzeigen
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Falsche Zahlen hervorheben
-                  </Text>
-                </View>
-                <Switch
-                  value={settings.showMistakes}
-                  onValueChange={(value) =>
-                    handleSettingChange("showMistakes", value)
-                  }
-                  trackColor={{
-                    false: colors.buttonDisabled,
-                    true: colors.primary,
-                  }}
-                  thumbColor="#FFFFFF"
-                />
-              </View>
-
-              {/* Vibration */}
-              <View style={styles.settingRow}>
-                <View style={styles.settingTextContainer}>
-                  <Text
-                    style={[styles.settingTitle, { color: colors.textPrimary }]}
-                  >
-                    Vibration
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Haptisches Feedback beim Tippen
-                  </Text>
-                </View>
-                <Switch
-                  value={settings.vibration}
-                  onValueChange={(value) =>
-                    handleSettingChange("vibration", value)
-                  }
-                  trackColor={{
-                    false: colors.buttonDisabled,
-                    true: colors.primary,
-                  }}
-                  thumbColor="#FFFFFF"
-                />
-              </View>
-            </View>
+            <GameSettings 
+              settings={settings}
+              onSettingChange={handleSettingChange}
+            />
           )}
         </Animated.View>
 
         {/* Actions Section - Only show when in a game context */}
-        {showGameFeatures && (
-          <Animated.View
-            style={styles.section}
-            entering={FadeInDown.delay(400).duration(500)}
-          >
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-              Aktionen
-            </Text>
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(400).duration(500)}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Aktionen
+          </Text>
 
-            <View
-              style={[
-                styles.settingsGroup,
-                { backgroundColor: colors.surface, borderColor: colors.border },
-              ]}
-            >
-              {/* Quit Game */}
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={handleQuitGame}
-              >
-                <View
-                  style={[
-                    styles.actionIconContainer,
-                    { backgroundColor: `${colors.error}20` },
-                  ]}
-                >
-                  <Feather name="x-circle" size={20} color={colors.error} />
-                </View>
-                <View style={styles.actionTextContainer}>
-                  <Text style={[styles.actionTitle, { color: colors.error }]}>
-                    Spiel beenden
-                  </Text>
-                  <Text
-                    style={[
-                      styles.actionDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Zurück zum Hauptmenü
-                  </Text>
-                </View>
-                <Feather
-                  name="chevron-right"
-                  size={20}
-                  color={colors.textSecondary}
-                />
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        )}
+          <ActionsSection 
+            showGameFeatures={showGameFeatures}
+            onQuitGame={onQuitGame}
+          />
+        </Animated.View>
 
         {/* Community & App Section (formerly Support) */}
         <Animated.View
@@ -515,118 +276,13 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Community & App
           </Text>
-          <View
-            style={[
-              styles.settingsGroup,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
-          >
-            {/* Original Support button - Keep exact text as specified */}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => setShowSupportShop(true)}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: "#FFDD00" },
-                ]}
-              >
-                <Text style={{ fontSize: 24 }}>☕</Text>
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Kostenlos spielen
-                </Text>
-                <Text
-                  style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  Entwicklung freiwillig unterstützen
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-
-            {/* Share button */}
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                { borderTopWidth: 1, borderTopColor: colors.border }
-              ]}
-              onPress={handleShareApp}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.success}20` },
-                ]}
-              >
-                <Feather name="share-2" size={20} color={colors.success} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Mit Freunden teilen
-                </Text>
-                <Text
-                  style={[
-                    styles.actionDescription,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  Fordere sie zum Sudoku-Duell heraus
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-
-            {/* About button */}
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                { borderTopWidth: 1, borderTopColor: colors.border }
-              ]}
-              onPress={handleAboutPress}
-            >
-              <View
-                style={[
-                  styles.actionIconContainer,
-                  { backgroundColor: `${colors.info}20` },
-                ]}
-              >
-                <Feather name="info" size={20} color={colors.info} />
-              </View>
-              <View style={styles.actionTextContainer}>
-                <Text
-                  style={[styles.actionTitle, { color: colors.textPrimary }]}
-                >
-                  Über Sudoku Duo
-                </Text>
-              </View>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </View>
+          
+          <CommunitySection 
+            onSupportPress={() => setShowSupportShop(true)}
+            onSharePress={handleShareApp}
+            onAboutPress={handleAboutPress}
+          />
         </Animated.View>
-
-
       </ScrollView>
 
       {/* How to Play Modal */}

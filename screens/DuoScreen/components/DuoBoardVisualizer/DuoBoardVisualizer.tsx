@@ -3,18 +3,16 @@ import React from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-const { width } = Dimensions.get("window");
-const LOGO_SIZE = Math.min(width * 0.8, 300); // Maximale Breite 70% oder 300px
+// Use exact same width as button (320px) for consistency
+const VISUALIZER_SIZE = 320;
 
 interface DuoBoardVisualizerProps {}
 
 const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
   return (
-    <View 
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <Image
-        source={require("@/assets/images/app-logo.png")} // Stellen Sie sicher, dass der Pfad korrekt ist
+        source={require("@/assets/images/app-logo.png")}
         style={styles.logoImage}
         resizeMode="contain"
       />
@@ -24,14 +22,14 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: VISUALIZER_SIZE, // Fixed width to match button
+    height: VISUALIZER_SIZE, // Keep it square
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   logoImage: {
-    width: LOGO_SIZE,
-    height: LOGO_SIZE,
+    width: "100%",
+    height: "100%",
   }
 });
 

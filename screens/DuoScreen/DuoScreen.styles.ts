@@ -58,7 +58,6 @@ export default StyleSheet.create({
   },
   featuresScreen: {
     minHeight: height * 0.9,
-    paddingTop: 40,
     paddingHorizontal: 20,
   },
 });

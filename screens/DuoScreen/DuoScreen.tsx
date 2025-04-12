@@ -30,7 +30,7 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 
 import styles from "./DuoScreen.styles";
 
-const { height } = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 
 // Modified DuoHeader without settings button and left-aligned
 const SimpleDuoHeader = ({ paddingTop = 0 }) => {
@@ -95,14 +95,16 @@ const DuoScreen: React.FC = () => {
   // Track if any modal is open (for shared backdrop)
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
-  // Scroll to features section - just enough to hide the button
+  // Calculate the full screen height for the main section
+  // Add 100px extra to ensure the features section is well below the viewport
+  const mainScreenHeight = height - insets.top - insets.bottom;
+
+  // Scroll to features section
   const scrollToFeatures = () => {
     triggerHaptic("light");
     if (scrollViewRef.current) {
-      // Calculate scroll position to fully hide the ScrollIndicator
-      // This will show the beginning of the features section
-      const mainScreenHeight = height - insets.top - 200 + 60; // Added extra pixels to fully hide the button
-      scrollViewRef.current.scrollTo({ y: mainScreenHeight, animated: true });
+      // Scroll to just below the first screen
+      scrollViewRef.current.scrollTo({ y: height - 100, animated: true });
     }
   };
 
@@ -191,18 +193,22 @@ const DuoScreen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Main section with interactive board */}
+          {/* Main section with interactive board - Make this taller than screen height */}
           <View
             style={[
               styles.mainScreen,
-              { minHeight: height - insets.top - 200 },
+              { 
+                height: mainScreenHeight,
+                justifyContent: "flex-start", // Change from space-between to flex-start
+                paddingTop: 30, // Add some padding at the top
+              },
             ]}
           >
-            {/* Board visualizer - Modified component with no animations */}
+            {/* Board visualizer - at top */}
             <DuoBoardVisualizer />
 
-            {/* Start Game Button - No animation */}
-            <View style={styles.buttonContainer}>
+            {/* Start Game Button - in middle */}
+            <View style={[styles.buttonContainer, { marginTop: 40 }]}>
               <TouchableOpacity
                 style={[
                   styles.startButton,
@@ -215,11 +221,18 @@ const DuoScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Scroll indicator to features section */}
-            <ScrollIndicator onPress={scrollToFeatures} />
+            {/* Scroll indicator - positioned at bottom of visible area */}
+            <View style={{ 
+              position: 'absolute', 
+              bottom: mainScreenHeight - height + insets.top + 100, // Position at bottom of visible area
+              left: 0, 
+              right: 0,
+            }}>
+              <ScrollIndicator onPress={scrollToFeatures} />
+            </View>
           </View>
 
-          {/* Features section */}
+          {/* Features section - this will now be well below the viewport */}
           <View style={styles.featuresScreen}>
             <DuoFeatures onStartGame={handleStartGame} />
           </View>

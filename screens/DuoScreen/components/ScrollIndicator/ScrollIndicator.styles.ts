@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   scrollIndicator: {
     marginTop: 30,
+    marginBottom: 10,
     alignItems: "center",
     padding: 12,
   },

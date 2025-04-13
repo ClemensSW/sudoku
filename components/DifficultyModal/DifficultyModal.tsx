@@ -59,7 +59,11 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
       {/* Dark semi-transparent backdrop - only if not using shared backdrop */}
       {!noBackdrop && (
         <Animated.View 
-          style={[StyleSheet.absoluteFill, styles.backdrop]}
+          style={[
+            StyleSheet.absoluteFill, 
+            styles.backdrop,
+            { backgroundColor: colors.backdropColor } // Verwende die Farbe aus dem Theme
+          ]}
           entering={isTransition ? FadeIn.duration(150) : FadeIn.duration(300)}
         />
       )}

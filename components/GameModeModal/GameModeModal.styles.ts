@@ -10,7 +10,8 @@ export default StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    // Entferne diese feste Farbe:
+    // backgroundColor: "rgba(0, 0, 0, 0.85)",
   },
   modalContent: {
     width: "85%",

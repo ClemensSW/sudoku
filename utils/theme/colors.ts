@@ -13,7 +13,7 @@ const lightColors = {
   // UI elements - mehr Tiefe und Abgrenzung
   background: "#F8FAFC", // Leicht getöntes Weiß für Hintergrund
   surface: "#FFFFFF", // Reines Weiß für Karten und UI-Elemente
-  card: "#FFFFFF", 
+  card: "#FFFFFF",
   boardBackground: "#F0F4F5", // Leicht kühlerer Ton für Spielbrett
 
   // Cell colors - verbesserte Unterscheidbarkeit
@@ -35,11 +35,11 @@ const lightColors = {
   textSecondary: "#4E6987", // Mittlerer Blaugrau-Ton
   textLight: "#6B89A8", // Heller Blaugrau-Ton
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#2C3E50", 
+  textCellNormal: "#2C3E50",
   textCellInitial: "#10253E", // Dunkler für besseren Kontrast
   textCellSelected: "#FFFFFF",
   textCellError: "#E53E3E",
-  textCellNotes: "#5C6BC0", 
+  textCellNotes: "#5C6BC0",
 
   // UI elements
   button: "#4A7D78", // Primärfarbe
@@ -51,7 +51,7 @@ const lightColors = {
 
   // Status colors
   success: "#2FAF73", // Kräftigeres Grün
-  error: "#E53E3E", 
+  error: "#E53E3E",
   warning: "#F6AD37", // Wärmeres Orange
   info: "#3182CE",
 
@@ -60,6 +60,7 @@ const lightColors = {
   divider: "#EDF2F7",
   shadow: "rgba(0, 0, 0, 0.07)",
   overlay: "rgba(0, 0, 0, 0.4)",
+  backdropColor: "rgba(255, 255, 255, 0.85)", // Leichtere Version für Light-Modus
 
   // Number pad
   numberPadButton: "#F0F7F7", // Leicht getönter Hintergrund
@@ -83,29 +84,29 @@ const darkColors = {
   boardBackground: "#1A202C",
 
   // Cell colors
-  cellBackground: "#2D3748", 
-  cellBackgroundInitial: "#2C3B52", 
+  cellBackground: "#2D3748",
+  cellBackgroundInitial: "#2C3B52",
   cellBackgroundSelected: "#4A7D78", // Neue Primärfarbe
-  cellBackgroundRelated: "#1A237E70", 
-  cellBackgroundError: "#B7191970", 
-  cellBackgroundSuccess: "#1B5E2070", 
-  cellBackgroundHint: "#F9A82570", 
+  cellBackgroundRelated: "#1A237E70",
+  cellBackgroundError: "#B7191970",
+  cellBackgroundSuccess: "#1B5E2070",
+  cellBackgroundHint: "#F9A82570",
   cellBackgroundSameValue: "#6CACA670", // Helleres Teal mit Transparenz
 
   // Grid
-  gridLine: "#4A5568", 
-  gridBold: "#A0AEC0", 
+  gridLine: "#4A5568",
+  gridBold: "#A0AEC0",
 
   // Text
   textPrimary: "#F7FAFC",
   textSecondary: "#E2E8F0",
   textLight: "#CBD5E0",
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#F7FAFC", 
-  textCellInitial: "#90CAF9", 
-  textCellSelected: "#FFFFFF", 
-  textCellError: "#FEB2B2", 
-  textCellNotes: "#B794F4", 
+  textCellNormal: "#F7FAFC",
+  textCellInitial: "#90CAF9",
+  textCellSelected: "#FFFFFF",
+  textCellError: "#FEB2B2",
+  textCellNotes: "#B794F4",
 
   // UI elements
   button: "#4A7D78", // Neue Primärfarbe
@@ -126,6 +127,7 @@ const darkColors = {
   divider: "#2D3748",
   shadow: "rgba(0, 0, 0, 0.3)",
   overlay: "rgba(0, 0, 0, 0.7)",
+  backdropColor: "rgba(0, 0, 0, 0.85)", // Dunklere Version für Dark-Modus
 
   // Number pad
   numberPadButton: "#2D3748",

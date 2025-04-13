@@ -10,7 +10,7 @@ export default StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    // Die Farbe wird jetzt dynamisch aus dem Theme übernommen
   },
   modalContent: {
     width: "85%",

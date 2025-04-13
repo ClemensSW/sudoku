@@ -1,3 +1,4 @@
+// utils/theme/types.ts
 import { ColorValue } from "react-native";
 
 // Farbpalette
@@ -58,6 +59,7 @@ export interface ThemeColors {
   divider: string;
   shadow: string;
   overlay: string;
+  backdropColor: string; // Hinzugefügt für Modal-Hintergründe
 
   // Number pad
   numberPadButton: string;

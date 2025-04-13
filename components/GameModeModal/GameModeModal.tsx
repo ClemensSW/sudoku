@@ -31,7 +31,11 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
       {/* Dark semi-transparent backdrop - only if not using shared backdrop */}
       {!noBackdrop && (
         <Animated.View 
-          style={[StyleSheet.absoluteFill, styles.backdrop]}
+          style={[
+            StyleSheet.absoluteFill, 
+            styles.backdrop,
+            { backgroundColor: colors.backdropColor } // Verwende die Theme-Farbe statt fester Farbe
+          ]}
           entering={FadeIn.duration(300)}
         />
       )}

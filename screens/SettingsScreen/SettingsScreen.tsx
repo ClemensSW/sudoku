@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text as RNText, // Rename to avoid potential conflicts
+  Text as RNText,
   ScrollView,
   StyleSheet,
   BackHandler,
@@ -17,7 +17,7 @@ import Animated, {
   SlideInUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SafeAreaView } from "react-native-safe-area-context"; // Make sure this is properly imported
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
@@ -35,6 +35,7 @@ import {
   HelpSection,
   ActionsSection,
   CommunitySection,
+  AppearanceSettings, // Import neue Komponente
 } from "./components";
 
 import styles from "./SettingsScreen.styles";
@@ -69,7 +70,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
-  // We show them when opened from a game (both properties must exist)
   const showGameFeatures = fromGame && !!onAutoNotes && !!onQuitGame;
 
   useEffect(() => {
@@ -161,7 +161,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
       await Share.share({
         message:
           "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku",
-        // Here would normally be the real App Store link
       });
     } catch (error) {
       console.error("Error sharing:", error);
@@ -218,7 +217,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        {/* Help & Tools Section - MOVED TO TOP */}
+        {/* Help & Tools Section */}
         <Animated.View
           style={styles.section}
           entering={FadeInDown.delay(100).duration(500)}
@@ -232,6 +231,23 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             onAutoNotes={showGameFeatures ? handleAutoNotes : undefined}
             onHowToPlay={() => setShowHowToPlay(true)}
           />
+        </Animated.View>
+
+        {/* Appearance Settings - Neue Sektion */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(200).duration(500)}
+        >
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Design
+          </RNText>
+
+          {settings && (
+            <AppearanceSettings
+              settings={settings}
+              onSettingChange={handleSettingChange}
+            />
+          )}
         </Animated.View>
 
         {/* Game Settings */}

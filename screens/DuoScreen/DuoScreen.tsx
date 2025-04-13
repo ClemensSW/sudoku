@@ -175,7 +175,7 @@ const DuoScreen: React.FC = () => {
       {isAnyModalOpen && (
         <Animated.View 
           style={[StyleSheet.absoluteFill, { 
-            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backgroundColor: colors.backdropColor,
             zIndex: 100 
           }]}
           entering={FadeIn.duration(300)}

@@ -2,68 +2,69 @@
 // Modern color palette optimized for readability and aesthetics
 
 // Light theme colors
+// Light theme colors - modernized version
 const lightColors = {
   // Primary colors
-  primary: "#4A7D78", // Neuer Teal-Ton als Primärfarbe
-  primaryLight: "#6CACA6", // Hellere Variante für gleiche Werte
-  primaryDark: "#3A6963", // Dunklere Variante für Interaktionen
-  secondary: "#F64A7A", // Vibrant accent for highlights
+  primary: "#4A7D78", // Deine Teal-Primärfarbe beibehalten
+  primaryLight: "#6CACA6", // Hellere Variante
+  primaryDark: "#3A6963", // Dunklere Variante
+  secondary: "#F05365", // Moderneres Pink/Rot für Akzente
 
-  // UI elements
-  background: "#FFFFFF",
-  surface: "#F8F9FA",
-  card: "#FFFFFF",
-  boardBackground: "#F9F9FB", // Light neutral background for board
+  // UI elements - mehr Tiefe und Abgrenzung
+  background: "#F8FAFC", // Leicht getöntes Weiß für Hintergrund
+  surface: "#FFFFFF", // Reines Weiß für Karten und UI-Elemente
+  card: "#FFFFFF", 
+  boardBackground: "#F0F4F5", // Leicht kühlerer Ton für Spielbrett
 
-  // Cell colors
-  cellBackground: "#FFFFFF", 
-  cellBackgroundInitial: "#F0F4F2", // Leicht angepasst für Teal-Ton
-  cellBackgroundSelected: "#4A7D78", // Neue Primärfarbe
-  cellBackgroundRelated: "#E3F2ED", // Teal-tinted bg für verwandte Zellen
-  cellBackgroundError: "#FFEBEE", 
-  cellBackgroundSuccess: "#E8F5E9", 
-  cellBackgroundHint: "#FFF9C4", 
-  cellBackgroundSameValue: "#6CACA6", // Helleres Teal für gleiche Werte
+  // Cell colors - verbesserte Unterscheidbarkeit
+  cellBackground: "#FFFFFF",
+  cellBackgroundInitial: "#EBF4F2", // Klar erkennbar aber dezent
+  cellBackgroundSelected: "#4A7D78", // Primärfarbe
+  cellBackgroundRelated: "#E3F0EC", // Leicht sichtbar aber nicht ablenkend
+  cellBackgroundError: "#FFECEE", // Subtiler Rot-Ton
+  cellBackgroundSuccess: "#E3F7EA", // Frischer Grün-Ton
+  cellBackgroundHint: "#FFF8E1", // Wärmeres Gelb für Hinweise
+  cellBackgroundSameValue: "#6CACA6", // Beibehaltung
 
   // Grid
-  gridLine: "#D0D7DF", 
-  gridBold: "#90A4AE", 
+  gridLine: "#DDE5ED", // Deutlicherer Kontrast für bessere Lesbarkeit
+  gridBold: "#B0C4D4", // Stärkere Abgrenzung für Blockgrenzen
 
   // Text
-  textPrimary: "#1A1F36",
-  textSecondary: "#4A5568",
-  textLight: "#718096",
+  textPrimary: "#1A2C42", // Dunkleres Blau für bessere Lesbarkeit
+  textSecondary: "#4E6987", // Mittlerer Blaugrau-Ton
+  textLight: "#6B89A8", // Heller Blaugrau-Ton
   textOnPrimary: "#FFFFFF",
   textCellNormal: "#2C3E50", 
-  textCellInitial: "#1A1F36", 
-  textCellSelected: "#FFFFFF", 
-  textCellError: "#E53E3E", 
+  textCellInitial: "#10253E", // Dunkler für besseren Kontrast
+  textCellSelected: "#FFFFFF",
+  textCellError: "#E53E3E",
   textCellNotes: "#5C6BC0", 
 
   // UI elements
-  button: "#4A7D78", // Neue Primärfarbe
+  button: "#4A7D78", // Primärfarbe
   buttonText: "#FFFFFF",
-  buttonDisabled: "#CBD5E0",
+  buttonDisabled: "#DDE3EA", // Grauer als zuvor
   buttonTextDisabled: "#A0AEC0",
-  buttonSuccess: "#38A169",
+  buttonSuccess: "#2FAF73", // Kräftigeres Grün
   buttonDanger: "#E53E3E",
 
   // Status colors
-  success: "#38A169",
-  error: "#E53E3E",
-  warning: "#DD6B20",
+  success: "#2FAF73", // Kräftigeres Grün
+  error: "#E53E3E", 
+  warning: "#F6AD37", // Wärmeres Orange
   info: "#3182CE",
 
   // Misc
   border: "#E2E8F0",
   divider: "#EDF2F7",
-  shadow: "rgba(0, 0, 0, 0.1)",
-  overlay: "rgba(0, 0, 0, 0.5)",
+  shadow: "rgba(0, 0, 0, 0.07)",
+  overlay: "rgba(0, 0, 0, 0.4)",
 
   // Number pad
-  numberPadButton: "#F0F3F9",
-  numberPadButtonText: "#1A1F36",
-  numberPadButtonSelected: "#4A7D78", // Neue Primärfarbe
+  numberPadButton: "#F0F7F7", // Leicht getönter Hintergrund
+  numberPadButtonText: "#1A2C42",
+  numberPadButtonSelected: "#4A7D78", // Primärfarbe
   numberPadButtonTextSelected: "#FFFFFF",
 };
 

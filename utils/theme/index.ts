@@ -1,5 +1,4 @@
 // utils/theme/index.ts
-import { useColorScheme } from "react-native";
 import colors from "./colors";
 import typography from "./typography";
 import shadows from "./shadows";

@@ -21,7 +21,13 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
   return (
     <View
-      style={[styles.settingsGroup, { borderColor: colors.border }]}
+      style={[
+        styles.settingsGroup, 
+        { 
+          backgroundColor: colors.surface,
+          borderColor: colors.border 
+        }
+      ]}
     >
       {/* Highlight related cells */}
       <View

@@ -35,7 +35,7 @@ export type GameSettings = {
   showMistakes: boolean;
   highlightSameValues: boolean; // Neue Einstellung hinzufügen
   autoNotes: boolean;
-  darkMode: "system" | "light" | "dark";
+  darkMode: "light" | "dark";
   vibration: boolean;
   soundEffects: boolean;
 };
@@ -58,7 +58,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   showMistakes: true,
   highlightSameValues: true, // Standardmäßig aktiviert
   autoNotes: false,
-  darkMode: "system",
+  darkMode: "dark",
   vibration: true,
   soundEffects: true,
 };

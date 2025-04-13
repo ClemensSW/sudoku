@@ -1,6 +1,6 @@
 // screens/SettingsScreen/components/AppearanceSettings/AppearanceSettings.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing } from "@/utils/theme";
+import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
   settingsGroup: {
@@ -10,53 +10,33 @@ export default StyleSheet.create({
     overflow: "hidden",
     marginBottom: spacing.md,
   },
-  settingRow: {
+  // Modern theme toggle
+  themeToggleContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-  settingTextContainer: {
-    flex: 1,
-    paddingRight: spacing.md,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: spacing.xxs,
-  },
-  settingDescription: {
-    fontSize: 14,
-    opacity: 0.8,
-  },
-  // Spezielle Stile für die Segmentiert-Kontrolle
-  segmentContainer: {
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    borderRadius: 8,
     padding: 4,
-    height: 40,
-    width: 160,
-    justifyContent: "space-between",
-    alignItems: "center",
+    height: 56,
+    width: "100%",
     overflow: "hidden",
   },
-  segment: {
+  themeOption: {
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    height: "100%",
-    borderRadius: 6,
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 10,
+    marginHorizontal: 2,
   },
-  segmentText: {
-    fontSize: 13,
+  activeThemeOption: {
+    backgroundColor: "transparent", // will be set dynamically
+  },
+  themeIcon: {
+    marginRight: spacing.xs,
+  },
+  themeText: {
+    fontSize: 15,
     fontWeight: "500",
-  },
-  activeSegment: {
-    backgroundColor: "transparent", // wird im Code dynamisch gesetzt
-  },
-  segmentIcon: {
-    marginRight: 4,
+    marginLeft: 4,
   },
 });

@@ -5,7 +5,9 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { spacing } from "@/utils/theme";
 import styles from "./AppearanceSettings.styles";
+import { triggerHaptic } from "@/utils/haptics";
 
 interface AppearanceSettingsProps {
   settings: GameSettingsType | null;
@@ -21,73 +23,68 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
 
   if (!settings) return null;
 
-  // Aktuelle Designeinstellung
+  // Current theme setting
   const currentTheme = settings.darkMode;
 
-  // Theme-Optionen
+  // Theme options - only Light and Dark now
   const themeOptions = [
     { id: "light", label: "Hell", icon: "sun" },
-    { id: "dark", label: "Dunkel", icon: "moon" },
-    { id: "system", label: "System", icon: "smartphone" },
+    { id: "dark", label: "Dunkel", icon: "moon" }
   ];
 
-  // Theme ändern
-  const handleThemeChange = (value: "system" | "light" | "dark") => {
+  // Change theme
+  const handleThemeChange = (value: "light" | "dark") => {
+    triggerHaptic("light");
     onSettingChange("darkMode", value);
   };
 
   return (
-    <View
-      style={[styles.settingsGroup, { borderColor: colors.border }]}
+    <Animated.View
+      entering={FadeIn.duration(300)}
+      style={[
+        styles.themeToggleContainer,
+        { 
+          backgroundColor: theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.03)",
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: 12,
+          marginBottom: spacing.md
+        }
+      ]}
     >
-      <View style={styles.settingRow}>
-        <View style={styles.settingTextContainer}>
-          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
-            Design
-          </Text>
-          <Text
-            style={[styles.settingDescription, { color: colors.textSecondary }]}
-          >
-            Lege fest, wie deine App aussehen soll
-          </Text>
-        </View>
-
-        {/* Segmentierter Button für Themeauswahl */}
-        <Animated.View
-          entering={FadeIn.duration(300)}
+      {themeOptions.map((option) => (
+        <TouchableOpacity
+          key={option.id}
           style={[
-            styles.segmentContainer,
-            { backgroundColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)" }
+            styles.themeOption,
+            currentTheme === option.id && styles.activeThemeOption,
+            currentTheme === option.id && { backgroundColor: colors.primary }
           ]}
+          onPress={() => handleThemeChange(option.id as "light" | "dark")}
+          activeOpacity={0.7}
         >
-          {themeOptions.map((option) => (
-            <TouchableOpacity
-              key={option.id}
-              style={[
-                styles.segment,
-                currentTheme === option.id && styles.activeSegment,
-                currentTheme === option.id && { backgroundColor: colors.primary }
-              ]}
-              onPress={() => handleThemeChange(option.id as "system" | "light" | "dark")}
-            >
-              <Text
-                style={[
-                  styles.segmentText,
-                  { 
-                    color: currentTheme === option.id 
-                      ? "#FFFFFF" 
-                      : colors.textPrimary,
-                    fontWeight: currentTheme === option.id ? "600" : "400",
-                  }
-                ]}
-              >
-                {option.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </Animated.View>
-      </View>
-    </View>
+          <Feather 
+            name={option.icon as any} 
+            size={22} 
+            color={currentTheme === option.id ? "#FFFFFF" : colors.textPrimary} 
+            style={styles.themeIcon}
+          />
+          <Text
+            style={[
+              styles.themeText,
+              { 
+                color: currentTheme === option.id 
+                  ? "#FFFFFF" 
+                  : colors.textPrimary,
+                fontWeight: currentTheme === option.id ? "600" : "400",
+              }
+            ]}
+          >
+            {option.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </Animated.View>
   );
 };
 

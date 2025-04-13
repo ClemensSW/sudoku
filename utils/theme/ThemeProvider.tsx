@@ -12,94 +12,82 @@ import typography from "./typography";
 import shadows from "./shadows";
 import { spacing, radius, timing } from "./index";
 import { Theme } from "./types";
-import { loadSettings } from "@/utils/storage";
+import { loadSettings, saveSettings } from "@/utils/storage";
 
-// Create a context with a default theme
+// Create a context with a default theme - now with dark as default
 const ThemeContext = createContext<Theme>({
-  colors: colors.light,
+  colors: colors.dark, // Changed to dark as default
   typography,
   spacing,
   radius,
   shadows,
   timing,
-  isDark: false,
+  isDark: true, // Changed to true as default
 });
 
 // Provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  // Set initial colorScheme to 'dark' as default
   const systemColorScheme = useColorScheme();
-  const [colorScheme, setColorScheme] = useState(systemColorScheme);
-  const [userThemePreference, setUserThemePreference] = useState<'system' | 'light' | 'dark'>('system');
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark'); // Default to dark
+  const [userThemePreference, setUserThemePreference] = useState<'light' | 'dark'>('dark'); // Default to dark
+  const [initialSettingsLoaded, setInitialSettingsLoaded] = useState(false);
 
-  // Lade die Themeeinstellung beim ersten Rendern
+  // Load saved theme preference on first render
   useEffect(() => {
     const loadThemePreference = async () => {
       try {
         const settings = await loadSettings();
         if (settings) {
-          const { darkMode } = settings;
-          setUserThemePreference(darkMode);
-          
-          // Setze das Farbschema basierend auf der Benutzereinstellung
-          if (darkMode === 'light') {
-            setColorScheme('light');
-          } else if (darkMode === 'dark') {
-            setColorScheme('dark');
+          // If the darkMode setting exists and is either 'light' or 'dark'
+          if (settings.darkMode === 'light' || settings.darkMode === 'dark') {
+            setUserThemePreference(settings.darkMode);
+            setColorScheme(settings.darkMode);
           } else {
-            // Bei 'system' oder anderen Werten: System-Einstellung verwenden
-            setColorScheme(systemColorScheme);
+            // If it's 'system' or something else, convert it to 'dark' (default)
+            // Also update the settings to reflect this change
+            const updatedSettings = { 
+              ...settings, 
+              darkMode: 'dark' as 'light' | 'dark' 
+            };
+            await saveSettings(updatedSettings);
+            setUserThemePreference('dark');
+            setColorScheme('dark');
           }
+        } else {
+          // No settings found, default to dark
+          setUserThemePreference('dark');
+          setColorScheme('dark');
         }
+        setInitialSettingsLoaded(true);
       } catch (error) {
         console.error('Error loading theme preference:', error);
-        setColorScheme(systemColorScheme);
+        setColorScheme('dark'); // Default to dark
+        setInitialSettingsLoaded(true);
       }
     };
 
     loadThemePreference();
   }, []);
 
-  // Update color scheme when system preference changes
+  // Monitor settings changes to update the theme
   useEffect(() => {
-    // Überwache systemColorScheme-Änderungen und wende sie an, 
-    // aber nur wenn userThemePreference auf 'system' gesetzt ist
-    if (userThemePreference === 'system') {
-      setColorScheme(systemColorScheme);
-    }
+    if (!initialSettingsLoaded) return;
 
-    const subscription = AppState.addEventListener(
-      "change",
-      (nextAppState: AppStateStatus) => {
-        if (nextAppState === "active") {
-          // Hier aktualisieren wir das Thema nur wenn der Benutzer die Systemeinstellung verwendet
-          if (userThemePreference === 'system') {
-            setColorScheme(systemColorScheme);
-          }
-        }
-      }
-    );
-
-    return () => {
-      subscription.remove();
-    };
-  }, [systemColorScheme, userThemePreference]);
-
-  // Überwache Änderungen an den Einstellungen, um das Theme zu aktualisieren
-  useEffect(() => {
     const checkThemeChanges = async () => {
       try {
         const settings = await loadSettings();
         if (settings && settings.darkMode !== userThemePreference) {
-          setUserThemePreference(settings.darkMode);
-          
-          // Aktualisiere das Theme basierend auf der neuen Einstellung
-          if (settings.darkMode === 'light') {
-            setColorScheme('light');
-          } else if (settings.darkMode === 'dark') {
-            setColorScheme('dark');
+          if (settings.darkMode === 'light' || settings.darkMode === 'dark') {
+            setUserThemePreference(settings.darkMode);
+            setColorScheme(settings.darkMode);
           } else {
-            // Bei 'system': System-Einstellung verwenden
-            setColorScheme(systemColorScheme);
+            // If it's 'system' or something else, update it to the current preference
+            const updatedSettings = { 
+              ...settings, 
+              darkMode: userThemePreference as 'light' | 'dark' 
+            };
+            await saveSettings(updatedSettings);
           }
         }
       } catch (error) {
@@ -107,11 +95,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    // Prüfe regelmäßig auf Änderungen (z.B. alle 2 Sekunden)
+    // Check for changes regularly
     const interval = setInterval(checkThemeChanges, 2000);
     
     return () => clearInterval(interval);
-  }, [userThemePreference, systemColorScheme]);
+  }, [userThemePreference, initialSettingsLoaded]);
 
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
   const isDark = colorScheme === "dark";

@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles, { CELL_SIZE } from "./SudokuBoard.styles";
 
 interface SudokuBoardProps {
@@ -31,6 +32,9 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   highlightSameValues = true,
   showErrors = true,
 }) => {
+  const theme = useTheme();
+  const { colors } = theme;
+  
   const [isReady, setIsReady] = useState(false);
 
   // Animation values
@@ -103,22 +107,36 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     );
   };
 
+  // Dynamische Inline-Styles für Theme-Unterstützung
+  const boardStyle = {
+    backgroundColor: colors.boardBackgroundColor,
+  };
+
+  const gridContainerStyle = {
+    borderColor: colors.boardBorderColor,
+  };
+
+  const gridLineStyle = {
+    backgroundColor: colors.boardGridLineColor,
+  };
+
   return (
     <View style={styles.boardContainer}>
       <Animated.View
         style={[styles.boardAnimationContainer, boardAnimatedStyle]}
       >
         <View style={styles.boardWrapper}>
-          {/* Hauptbrett mit dunkelgrauem Hintergrund für Dark Mode */}
-          <View style={styles.board}>
+          {/* Hauptbrett mit Theme-Farben */}
+          <View style={[styles.board, boardStyle]}>
             {/* Grid-Inhalt */}
-            <View style={styles.gridContainer}>
+            <View style={[styles.gridContainer, gridContainerStyle]}>
               {/* 3x3 Blockgrenzen als absolute Elemente */}
               {/* Horizontale Linien */}
               <View
                 style={[
                   styles.gridLine,
                   styles.horizontalGridLine,
+                  gridLineStyle,
                   { top: CELL_SIZE * 3 },
                 ]}
               />
@@ -126,6 +144,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                 style={[
                   styles.gridLine,
                   styles.horizontalGridLine,
+                  gridLineStyle,
                   { top: CELL_SIZE * 6 },
                 ]}
               />
@@ -135,6 +154,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                 style={[
                   styles.gridLine,
                   styles.verticalGridLine,
+                  gridLineStyle,
                   { left: CELL_SIZE * 3 },
                 ]}
               />
@@ -142,6 +162,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                 style={[
                   styles.gridLine,
                   styles.verticalGridLine,
+                  gridLineStyle,
                   { left: CELL_SIZE * 6 },
                 ]}
               />

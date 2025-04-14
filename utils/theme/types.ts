@@ -15,6 +15,12 @@ export interface ThemeColors {
   card: string;
   boardBackground: string;
 
+  // Board (neue Eigenschaften für SudokuBoard)
+  boardBackgroundColor: string;
+  boardBorderColor: string;
+  boardGridLineColor: string;
+  boardCellBorderColor: string;
+
   // Cell colors
   cellBackground: string;
   cellBackgroundInitial: string;
@@ -24,6 +30,19 @@ export interface ThemeColors {
   cellBackgroundSuccess: string;
   cellBackgroundHint: string;
   cellBackgroundSameValue: string; // Added for same value highlighting
+
+  // Neue Zellenfarben für SudokuCell
+  cellSelectedBackground: string;
+  cellRelatedBackground: string;
+  cellErrorBackground: string;
+  cellHintBackground: string;
+  cellSuccessBackground: string;
+  cellTextColor: string;
+  cellInitialTextColor: string;
+  cellSelectedTextColor: string;
+  cellErrorTextColor: string;
+  cellSameValueTextColor: string;
+  cellNotesTextColor: string;
 
   // Grid
   gridLine: string;

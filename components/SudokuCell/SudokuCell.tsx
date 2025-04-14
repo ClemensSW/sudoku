@@ -8,6 +8,7 @@ import Animated, {
   withSequence,
   FadeIn,
 } from "react-native-reanimated";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
@@ -31,6 +32,10 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   onPress,
   showErrors = true,
 }) => {
+  // Theme für Farben nutzen
+  const theme = useTheme();
+  const { colors } = theme;
+
   // Animation values
   const scale = useSharedValue(1);
 
@@ -58,41 +63,52 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     };
   });
 
-  // Berechne Hintergrund basierend auf Zustand
+  // Berechne Hintergrund basierend auf Zustand - mit Theme-Farben
   const getBackgroundStyle = () => {
     if (showErrors && cell.highlight === "error") {
-      return baseStyles.errorBackground;
+      return { backgroundColor: colors.cellErrorBackground };
     } else if (cell.highlight === "hint") {
-      return baseStyles.hintBackground;
+      return { backgroundColor: colors.cellHintBackground };
     } else if (cell.highlight === "success") {
-      return baseStyles.successBackground;
+      return { backgroundColor: colors.cellSuccessBackground };
     } else if (isSelected) {
-      return baseStyles.selectedBackground;
+      return { backgroundColor: colors.cellSelectedBackground };
     } else if (isRelated) {
-      return baseStyles.relatedBackground;
+      return { backgroundColor: colors.cellRelatedBackground };
     }
     return null;
   };
 
-  // Text-Styles für verschiedene Zustände
+  // Text-Styles für verschiedene Zustände - mit Theme-Farben
   const getCellTextStyle = () => {
     // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
     let style: TextStyle = {
       ...baseStyles.cellText,
+      color: colors.cellTextColor, // Default Textfarbe
     };
 
-    // Farbe basierend auf Zustand
-    if (showErrors && !cell.isValid) {
-      style.color = "#FF9A9A"; // Fehler-Farbe
-    } else if (sameValueHighlight) {
-      // NUR hier ändern wir die Textfarbe für gleiche Werte
-      style.color = "#6CACA6"; // Teal-Farbe für gleiche Werte
-      style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
-    }
-
-    // Schriftgewicht basierend auf Zustand
+    // WICHTIG: Initialer Zellenwert - höchste Priorität, aber mit Vorbehalt für gleiche Werte
     if (cell.isInitial) {
       style.fontWeight = "700";
+      
+      if (sameValueHighlight) {
+        style.color = colors.cellSameValueTextColor;
+      } else {
+        style.color = colors.cellInitialTextColor;
+      }
+    } 
+    // Gleiche Zahlen als zweithöchste Priorität
+    else if (sameValueHighlight) {
+      style.color = colors.cellSameValueTextColor;
+      style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
+    }
+    // Danach fehlerhafte Zellen
+    else if (showErrors && !cell.isValid) {
+      style.color = colors.cellErrorTextColor;
+    } 
+    // Zuletzt ausgewählte Zellen
+    else if (isSelected) {
+      style.color = colors.cellSelectedTextColor;
     }
 
     return style;
@@ -102,6 +118,9 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   const renderNotes = () => {
     if (cell.value !== 0 || cell.notes.length === 0) return null;
 
+    // NEUE LOGIK: Dynamische Notizfarbe basierend auf dem Auswahlstatus
+    const notesTextColor = isSelected ? "#FFFFFF" : colors.cellNotesTextColor;
+
     return (
       <View style={baseStyles.notesContainer}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
@@ -109,6 +128,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
             key={`note-${num}`}
             style={[
               baseStyles.noteText,
+              { color: notesTextColor }, // Dynamische Farbe je nach Auswahlstatus
               cell.notes.includes(num)
                 ? baseStyles.activeNote
                 : baseStyles.inactiveNote,
@@ -119,6 +139,11 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
         ))}
       </View>
     );
+  };
+
+  // Dynamischer Style für Zellenrahmen
+  const cellBorderStyle = {
+    borderColor: colors.boardCellBorderColor,
   };
 
   return (
@@ -132,7 +157,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       )}
 
       {/* Grenzen-Layer - immer konsistent */}
-      <View style={baseStyles.cellBorder} />
+      <View style={[baseStyles.cellBorder, cellBorderStyle]} />
 
       {/* Inhalts-Layer mit Text oder Notizen */}
       <Animated.View style={[baseStyles.cellContent, animatedStyles]}>

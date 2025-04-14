@@ -2,7 +2,6 @@
 // Modern color palette optimized for readability and aesthetics
 
 // Light theme colors
-// Light theme colors - modernized version
 const lightColors = {
   // Primary colors
   primary: "#4A7D78", // Deine Teal-Primärfarbe beibehalten
@@ -20,11 +19,30 @@ const lightColors = {
   cellBackground: "#FFFFFF",
   cellBackgroundInitial: "#EBF4F2", // Klar erkennbar aber dezent
   cellBackgroundSelected: "#4A7D78", // Primärfarbe
-  cellBackgroundRelated: "#E3F0EC", // Leicht sichtbar aber nicht ablenkend
+  cellBackgroundRelated: "#F0F7F7", // Leicht sichtbar aber nicht ablenkend
   cellBackgroundError: "#FFECEE", // Subtiler Rot-Ton
   cellBackgroundSuccess: "#E3F7EA", // Frischer Grün-Ton
   cellBackgroundHint: "#FFF8E1", // Wärmeres Gelb für Hinweise
   cellBackgroundSameValue: "#6CACA6", // Beibehaltung
+
+  // Board (neu hinzugefügt für Sudoku-Komponenten)
+  boardBackgroundColor: "#FFFFFF", // Helles Board für Light-Modus
+  boardGridLineColor: "rgba(0, 0, 0, 0.2)", // Dunkle Gridlinien
+  boardBorderColor: "rgba(0, 0, 0, 0.25)", // Dunklerer Außenrand
+  boardCellBorderColor: "rgba(0, 0, 0, 0.15)", // Subtile Zellränder
+
+  // Für Sudoku Cell (neu hinzugefügt)
+  cellSelectedBackground: "#4A7D78", // Primärfarbe für ausgewählte Zellen
+  cellRelatedBackground: "#F0F7F7", // Leicht sichtbar
+  cellErrorBackground: "rgba(229, 62, 62, 0.2)", // Rot mit Transparenz
+  cellHintBackground: "rgba(0, 0, 0, 0.1)",
+  cellSuccessBackground: "rgba(47, 175, 115, 0.2)", // Grün mit Transparenz
+  cellTextColor: "#1A2C42", // Dunkler Text für Light-Modus
+  cellInitialTextColor: "#10253E", // Dunklerer Text für Initial-Zellen
+  cellSelectedTextColor: "#FFFFFF", // Weißer Text auf ausgewähltem Hintergrund
+  cellErrorTextColor: "#E53E3E", // Rote Fehler-Textfarbe
+  cellSameValueTextColor: "#6CACA6", // Gleiche Farbe wie vorher
+  cellNotesTextColor: "rgba(26, 44, 66, 0.7)", // Dunklerer Text mit Transparenz
 
   // Grid
   gridLine: "#DDE5ED", // Deutlicherer Kontrast für bessere Lesbarkeit
@@ -69,7 +87,7 @@ const lightColors = {
   numberPadButtonTextSelected: "#FFFFFF",
 };
 
-// Dark theme optimized for eye comfort
+// Dark theme optimized for eye comfort - mit den aktuellen Sudoku-Farben
 const darkColors = {
   // Primary colors
   primary: "#4A7D78", // Neue Primärfarbe
@@ -82,6 +100,25 @@ const darkColors = {
   surface: "#1E293B",
   card: "#2D3748",
   boardBackground: "#1A202C",
+
+  // Board (neu hinzugefügt für Sudoku-Komponenten)
+  boardBackgroundColor: "#1E2233", // Die beliebte dunkelgraue Hintergrundfarbe
+  boardGridLineColor: "rgba(255, 255, 255, 0.2)", // Subtile weiße Gridlinien
+  boardBorderColor: "rgba(255, 255, 255, 0.25)", // Subtiler weißer Außenrand
+  boardCellBorderColor: "rgba(255, 255, 255, 0.15)", // Noch subtilere weiße Zellränder
+
+  // Für Sudoku Cell (neu hinzugefügt)
+  cellSelectedBackground: "#4A7D78", // Die beliebte teal-Farbe
+  cellRelatedBackground: "rgba(255, 255, 255, 0.08)", // Sehr subtiler weißer Hintergrund
+  cellErrorBackground: "rgba(255, 70, 70, 0.3)", // Rot mit Transparenz
+  cellHintBackground: "rgba(255, 255, 255, 0.15)", // Weißer Hintergrund mit etwas mehr Deckkraft
+  cellSuccessBackground: "rgba(120, 220, 120, 0.2)", // Grün mit Transparenz
+  cellTextColor: "#FFFFFF", // Weiß
+  cellInitialTextColor: "#FFFFFF", // Fetteres Weiß für Anfangszahlen
+  cellSelectedTextColor: "#FFFFFF", // Weißer Text auf ausgewähltem Hintergrund
+  cellErrorTextColor: "#FF9A9A", // Rote Fehler-Textfarbe
+  cellSameValueTextColor: "#6CACA6", // Helles Teal für gleiche Werte
+  cellNotesTextColor: "rgba(255, 255, 255, 0.7)", // Weißer Text mit Transparenz
 
   // Cell colors
   cellBackground: "#2D3748",

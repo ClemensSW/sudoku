@@ -58,6 +58,7 @@ interface GameStateActions {
   handleGameComplete: () => Promise<void>;
   handleError: (showMistakes: boolean) => void;
   updateUsedNumbers: () => void;
+  handleQuitGame: () => Promise<void>; // New function for handling game quits
 }
 
 export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameStateActions] => {
@@ -331,6 +332,24 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     triggerHaptic("success");
   };
 
+  // New function: Handle game quit - counts as a loss for statistics
+  const handleQuitGame = async () => {
+    if (isGameComplete) return;
+    
+    setIsGameComplete(true);
+    setIsGameLost(true); // Set the game as lost
+    setIsGameRunning(false);
+    
+    // Update stats as a loss
+    await updateStatsAfterGame(false, difficulty, gameTime, autoNotesUsed);
+    
+    // Reload stats
+    const updatedStats = await loadStats();
+    setGameStats(updatedStats);
+    
+    triggerHaptic("error");
+  };
+
   // Update used numbers for NumPad
   const updateUsedNumbers = () => {
     const counts: { [key: number]: number } = {};
@@ -386,6 +405,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       handleGameComplete,
       handleError,
       updateUsedNumbers,
+      handleQuitGame, // New function for handling game quits
     },
   ];
 };

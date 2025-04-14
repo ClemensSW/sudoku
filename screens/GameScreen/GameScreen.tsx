@@ -183,12 +183,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
-  // Handle back navigation
+  // Handle back navigation with quit tracking
   const handleBackPress = () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
       showAlert(
         quitGameAlert(
-          () => router.navigate("../"),
+          async () => {
+            // Mark as quit/loss in statistics before navigating
+            await gameActions.handleQuitGame();
+            router.navigate("../");
+          },
           undefined
         )
       );
@@ -207,8 +211,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     setShowSettings(false);
   };
 
-  // Handle quit from settings
-  const handleQuitFromSettings = () => {
+  // Handle quit from settings with quit tracking
+  const handleQuitFromSettings = async () => {
+    // Mark as quit/loss in statistics before navigating
+    await gameActions.handleQuitGame();
     setShowSettings(false);
     router.navigate("../");
   };

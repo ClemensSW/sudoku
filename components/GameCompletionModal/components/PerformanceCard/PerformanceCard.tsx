@@ -47,7 +47,7 @@ const calculatePerformance = (
   bestTime: number,
   isNewRecord: boolean
 ): number => {
-  // FIXED: If it's a new record, always return 100% regardless of other factors
+  // If it's a new record, always return 100% regardless of other factors
   if (isNewRecord) {
     return 100; // Always 100% for a new record
   }
@@ -94,6 +94,12 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
   const improvement = isNewRecord
     ? calculateImprovement(timeElapsed, previousBestTime)
     : 0;
+
+  // Log for debugging
+  console.log("PerformanceCard - isNewRecord:", isNewRecord);
+  console.log("PerformanceCard - Performance:", performance);
+  console.log("PerformanceCard - Previous Best Time:", previousBestTime);
+  console.log("PerformanceCard - Current Time:", timeElapsed);
   
   // Ermittle die richtige Farbe basierend auf der Leistung
   const getPerformanceColor = (): string => {
@@ -121,7 +127,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
         withTiming(1, { duration: 300, easing: Easing.inOut(Easing.ease) })
       );
     }
-  }, []);
+  }, [isNewRecord]);
   
   // Animated Styles
   const pulseAnimatedStyle = useAnimatedStyle(() => {
@@ -129,6 +135,12 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
       transform: [{ scale: pulseScale.value }],
     };
   });
+
+  // Force the badge to be shown when performance is 100%
+  // Now includes the case when times are equal (which is still a "match" of the record)
+  const showRecordBadge = isNewRecord || 
+                          (performance === 100) || 
+                          (timeElapsed <= previousBestTime && previousBestTime !== Infinity);
 
   return (
     <Animated.View
@@ -138,18 +150,35 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header mit Titel und Rekord-Badge - EXAKT wie bei StreakDisplay */}
+      {/* Header mit Titel und Rekord-Badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Spielleistung
         </Text>
         
-        {isNewRecord && (
+        {/* Always show the badge when it's a new record */}
+        {showRecordBadge && (
           <View
-            style={[styles.recordBadge, { backgroundColor: colors.success }]}
+            style={[
+              styles.recordBadge, 
+              { 
+                backgroundColor: colors.success,
+                // Make sure the badge is visible with good contrast
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 3,
+                elevation: 3,
+              }
+            ]}
           >
             <Feather name="award" size={12} color="white" />
-            <Text style={styles.recordText}>Rekord</Text>
+            <Text style={[
+              styles.recordText, 
+              { color: "#FFFFFF", fontWeight: "700" }
+            ]}>
+              Rekord
+            </Text>
           </View>
         )}
       </View>
@@ -182,8 +211,6 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               {performance}%
             </Animated.Text>
           </View>
-          
-          {/* "Leistung"-Label entfernt, wie gewünscht */}
         </View>
         
         {/* Time Statistics */}

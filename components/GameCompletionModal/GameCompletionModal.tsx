@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
+import { useRouter } from "expo-router";
 
 // Components
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
@@ -28,7 +29,7 @@ import styles from "./GameCompletionModal.styles";
 interface GameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
-  onNewGame: () => void;
+  onNewGame: () => void; // We'll keep this for compatibility but won't use it
   onContinue: () => void;
   timeElapsed: number;
   difficulty: Difficulty;
@@ -83,6 +84,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const router = useRouter(); // Use the router for navigation
   
   // Animation values
   const modalScale = useSharedValue(0.95);
@@ -155,13 +157,18 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
     };
   });
   
-  // Fix new game button issue - properly close the modal
+  // UPDATED: Properly restart the game by navigating to game screen with current difficulty
   const handleNewGame = () => {
-    // First close the modal, then start a new game
+    // First close the modal
     onClose();
-    // Wait for animation to complete before starting new game
+    
+    // Wait for animation to complete before navigating
     setTimeout(() => {
-      onNewGame();
+      // Navigate to game screen with difficulty parameter to completely restart the game
+      router.replace({
+        pathname: "/game",
+        params: { difficulty }
+      });
     }, 200);
   };
   
@@ -268,8 +275,18 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
           </Animated.View>
         </ScrollView>
         
-        {/* Fixed Button Container */}
-        <View style={styles.buttonContainer}>
+        {/* Fixed Button Container with theme-aware styling */}
+        <View style={[styles.buttonContainer, 
+          { 
+            backgroundColor: theme.isDark ? 
+              colors.background : // Use background color in dark mode
+              colors.card, // Use card color in light mode
+            borderTopWidth: 1,
+            borderTopColor: theme.isDark ? 
+              'rgba(255,255,255,0.1)' : // Subtle border in dark mode
+              'rgba(0,0,0,0.05)' // Subtle border in light mode
+          }
+        ]}>
           <Button
             title="Nächstes Spiel"
             onPress={handleNewGame}

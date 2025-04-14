@@ -1,3 +1,4 @@
+// components/GameCompletionModal/components/PerformanceCard/PerformanceCard.tsx
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import Animated, {
@@ -249,6 +250,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               }
               max={100}
               showPercentage={false}
+              textStyle={{ color: 'transparent' }} // Make the CircularProgress's built-in text transparent
             />
             
             {/* Center value */}

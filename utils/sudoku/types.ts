@@ -28,26 +28,26 @@ export const DIFFICULTY_SETTINGS: Record<
   }
 > = {
   easy: {
-    minCells: 35,
-    maxCells: 45,
+    minCells: 45,
+    maxCells: 48,
     symmetric: true,
     uniqueSolution: true,
   },
   medium: {
-    minCells: 30,
-    maxCells: 35,
+    minCells: 35,
+    maxCells: 39,
     symmetric: true,
     uniqueSolution: true,
   },
   hard: {
-    minCells: 25,
-    maxCells: 30,
+    minCells: 27,
+    maxCells: 31,
     symmetric: true,
     uniqueSolution: true,
   },
   expert: {
     minCells: 20,
-    maxCells: 25,
+    maxCells: 24,
     symmetric: false,
     uniqueSolution: true,
   },

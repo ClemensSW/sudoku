@@ -51,8 +51,6 @@ const calculateExperience = (stats: GameStats): number => {
   let totalXP = stats.gamesPlayed;
 
   // Bonus XP for wins based on difficulty
-  // We don't have separate counters for each difficulty win, so we use a simplified approach
-  // Assuming most wins give a modest bonus
   totalXP += stats.gamesWon * 2;
 
   return totalXP;
@@ -135,26 +133,48 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   // Animation values
   const progressWidth = useSharedValue(previousProgressPercentage);
   const levelBadgeScale = useSharedValue(1);
+  const badgeGlow = useSharedValue(0.3);
+  const progressGlow = useSharedValue(0);
   const [showLevelUp, setShowLevelUp] = useState(false);
   
   // Start animations when component mounts
   useEffect(() => {
     // Delay for the start of XP bar animation
     setTimeout(() => {
-      // Progress bar animation
+      // Progress bar animation with custom easing
       progressWidth.value = withTiming(progressPercentage, {
         duration: 1500,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        easing: Easing.bezierFn(0.16, 1, 0.3, 1), // Custom easing for smoother animation
       });
       
-      // Level badge pulsing
+      // Level badge pulsing with more elegant animation
       levelBadgeScale.value = withSequence(
         withDelay(
-          1000,
-          withTiming(1.1, { duration: 300, easing: Easing.out(Easing.ease) })
+          800,
+          withTiming(1.15, { duration: 400, easing: Easing.out(Easing.ease) })
         ),
         withTiming(1, { duration: 300, easing: Easing.inOut(Easing.ease) })
       );
+      
+      // Badge glow animation
+      badgeGlow.value = withDelay(
+        1000,
+        withSequence(
+          withTiming(0.8, { duration: 800, easing: Easing.inOut(Easing.sin) }),
+          withTiming(0.3, { duration: 800, easing: Easing.inOut(Easing.sin) })
+        )
+      );
+      
+      // Progress bar glow for XP gain
+      if (xpGain > 0) {
+        progressGlow.value = withDelay(
+          1200,
+          withTiming(0.8, { 
+            duration: 600,
+            easing: Easing.out(Easing.ease)
+          })
+        );
+      }
       
       // If leveled up, show level-up animation
       if (leveledUp) {
@@ -168,20 +188,52 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         }, 2000);
       }
     }, 500);
+    
+    // Set up continuous animations
+    if (leveledUp) {
+      // Continuous subtle badge animation if leveled up
+      const pulseAnimation = () => {
+        levelBadgeScale.value = withSequence(
+          withTiming(1.1, { duration: 1200, easing: Easing.inOut(Easing.sin) }),
+          withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.sin) })
+        );
+        
+        // Repeat after random delay
+        setTimeout(pulseAnimation, 3000 + Math.random() * 1000);
+      };
+      
+      setTimeout(pulseAnimation, 2500);
+    }
+    
+    // Badge glow animation
+    const badgeGlowAnimation = () => {
+      badgeGlow.value = withSequence(
+        withTiming(0.7, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0.3, { duration: 1800, easing: Easing.inOut(Easing.sin) })
+      );
+      
+      setTimeout(badgeGlowAnimation, 3600);
+    };
+    
+    setTimeout(badgeGlowAnimation, 2000);
   }, []);
   
   // Animated Styles
-  const progressAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      width: `${progressWidth.value}%`,
-    };
-  });
+  const levelBadgeAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: levelBadgeScale.value }],
+  }));
   
-  const levelBadgeAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: levelBadgeScale.value }],
-    };
-  });
+  const progressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+  }));
+  
+  const badgeGlowStyle = useAnimatedStyle(() => ({
+    opacity: badgeGlow.value,
+  }));
+  
+  const progressGlowStyle = useAnimatedStyle(() => ({
+    opacity: progressGlow.value,
+  }));
   
   // Handler for container width measurement
   const onLayoutProgressContainer = (event: any) => {
@@ -196,15 +248,20 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     if (containerWidth === 0) return 0;
     
     const widthPercent = progressPercentage - previousProgressPercentage;
-    // Fixed: Using number value for width
     return containerWidth * widthPercent / 100;
   };
   
   const getGainIndicatorLeft = () => {
     if (containerWidth === 0) return 0;
-    
-    // Fixed: Using number value for left position
     return containerWidth * previousProgressPercentage / 100;
+  };
+  
+  // Get appropriate level description text
+  const getLevelDescription = () => {
+    if (leveledUp) return "Level aufgestiegen!";
+    if (progressPercentage >= 90) return "Fast am nächsten Level!";
+    if (progressPercentage >= 70) return "Guter Fortschritt!";
+    return "Sammle XP durch Spielen von Sudoku";
   };
 
   return (
@@ -215,7 +272,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header with title and XP gain */}
+      {/* Header with title and XP gain badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Level-Fortschritt
@@ -231,17 +288,30 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         )}
       </View>
       
-      {/* Level display with badge and name */}
+      {/* Level display with animated badge and name */}
       <View style={styles.levelInfoContainer}>
-        <Animated.View
-          style={[
-            styles.levelBadge,
-            { backgroundColor: colors.primary },
-            levelBadgeAnimatedStyle,
-          ]}
-        >
-          <Text style={styles.levelNumber}>{currentLevel}</Text>
-        </Animated.View>
+        <View style={styles.levelBadgeWrapper}>
+          {/* Glow background for badge on level up */}
+          {leveledUp && (
+            <Animated.View
+              style={[
+                styles.badgeGlow,
+                { backgroundColor: `${colors.primary}30` },
+                badgeGlowStyle
+              ]}
+            />
+          )}
+          
+          <Animated.View
+            style={[
+              styles.levelBadge,
+              { backgroundColor: colors.primary },
+              levelBadgeAnimatedStyle,
+            ]}
+          >
+            <Text style={styles.levelNumber}>{currentLevel}</Text>
+          </Animated.View>
+        </View>
         
         <View style={styles.levelNameContainer}>
           <Text style={[styles.levelName, { color: colors.textPrimary }]}>
@@ -250,16 +320,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           <Text
             style={[styles.levelDescription, { color: colors.textSecondary }]}
           >
-            {leveledUp
-              ? "Level aufgestiegen!"
-              : progressPercentage >= 90
-              ? "Fast am nächsten Level!"
-              : "Sammle XP durch Spielen von Sudoku"}
+            {getLevelDescription()}
           </Text>
         </View>
       </View>
       
-      {/* XP progress bar */}
+      {/* XP progress bar with modern styling */}
       <View 
         style={styles.progressContainer}
         ref={progressContainerRef}
@@ -283,7 +349,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             ]}
           />
           
-          {/* XP gain indicator - Fixed width/left to use numerical values */}
+          {/* XP gain indicator */}
           {xpGain > 0 && containerWidth > 0 && (
             <View
               style={[
@@ -298,8 +364,20 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               ]}
             />
           )}
+          
+          {/* Glow effect on progress bar */}
+          {xpGain > 0 && (
+            <Animated.View
+              style={[
+                styles.progressGlow,
+                { backgroundColor: `${colors.primary}30` },
+                progressGlowStyle
+              ]}
+            />
+          )}
         </View>
         
+        {/* XP values and percentage display */}
         <View style={styles.progressLabelContainer}>
           <Text
             style={[styles.progressLabel, { color: colors.textSecondary }]}
@@ -313,7 +391,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         </View>
       </View>
       
-      {/* Level-Up Animation */}
+      {/* Improved Level-Up Animation */}
       {showLevelUp && (
         <Animated.View
           style={styles.levelUpContainer}

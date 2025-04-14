@@ -5,28 +5,37 @@ export default StyleSheet.create({
   container: {
     width: "100%",
     borderRadius: radius.xl,
-    padding: spacing.md,
+    padding: spacing.lg,
     paddingBottom: spacing.lg,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
+    overflow: "hidden",
   },
   
-  // Header mit Titel und Rekord-Badge
+  // Header section
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
   
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
   },
   
+  // Motivational message - new!
+  motivationalMessage: {
+    fontSize: 14,
+    marginBottom: spacing.md,
+    textAlign: "center", 
+  },
+  
+  // Content layout
   contentContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -50,11 +59,14 @@ export default StyleSheet.create({
     justifyContent: "center",
   },
   
-  performanceLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
-    marginTop: spacing.xs,
+  // Glow effect - new!
+  progressGlow: {
+    position: "absolute",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    top: -5,
+    left: -5,
   },
   
   performanceValue: {
@@ -73,12 +85,20 @@ export default StyleSheet.create({
     marginBottom: spacing.md,
   },
   
-  timeStatLabel: {
-    fontSize: 12,
-    fontWeight: "600",
+  // Time stat header with icon - new!
+  timeStatHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+  },
+  
+  timeIcon: {
+    marginRight: 6,
+  },
+  
+  timeStatLabel: {
+    fontSize: 14,
+    fontWeight: "600",
   },
   
   timeStatValueContainer: {
@@ -87,9 +107,9 @@ export default StyleSheet.create({
   },
   
   timeStatValue: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
-    fontVariant: ["tabular-nums"], // Monospace für gleichmäßige Zahlen
+    fontVariant: ["tabular-nums"], // Monospace for even numbers
   },
   
   newRecordContainer: {
@@ -98,22 +118,23 @@ export default StyleSheet.create({
     marginLeft: spacing.xs,
   },
   
-  improvementText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  
-  improvementIcon: {
-    marginRight: 2,
-  },
-  
-  infinityContainer: {
+  // Improvement badge - reworked!
+  improvementBadge: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   
-  infinitySymbol: {
-    fontSize: 22,
+  improvementBadgeText: {
+    fontSize: 12,
+    color: "white",
     fontWeight: "700",
   },
   
@@ -131,7 +152,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   
-  // Rekord-Badge
+  // Record badge
   recordBadge: {
     flexDirection: "row",
     alignItems: "center",

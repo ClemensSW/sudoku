@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   withSequence,
   withDelay,
+  withRepeat,
   FadeIn,
   SlideInRight,
   Easing,
@@ -30,7 +31,9 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
   
   // Animation values
   const progressWidth = useSharedValue(0);
+  const containerScale = useSharedValue(1);
   const flameScales = Array.from({ length: Math.min(currentStreak, 5) }, () => useSharedValue(1));
+  const flameOpacity = useSharedValue(0.5);
   
   // Calculate percentage for progress bar
   const progressPercentage = Math.min(
@@ -38,50 +41,82 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
     longestStreak > 0 ? (currentStreak / longestStreak) * 100 : 0
   );
   
+  // Get motivational message based on streak
+  const getMotivationalText = () => {
+    if (isRecord) return "Neuer Rekord erreicht!";
+    if (currentStreak >= 10) return "Beeindruckende Serie!";
+    if (currentStreak >= 5) return "Starke Leistung!";
+    if (currentStreak >= 3) return "Gute Serie!";
+    return "Weiter so!";
+  };
+  
   // Start animations when component mounts
   useEffect(() => {
-    // Progress bar animation
+    // Initial animation for container
+    containerScale.value = withSequence(
+      withTiming(1.03, { duration: 300 }),
+      withTiming(1, { duration: 200 })
+    );
+    
+    // Progress bar animation with easing
     progressWidth.value = withTiming(progressPercentage, {
-      duration: 1000,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      duration: 1200,
+      easing: Easing.bezierFn(0.16, 1, 0.3, 1), // Custom easing for smoother animation
     });
     
-    // Individual flame animations
+    // Pulsating glow effect for flames
+    flameOpacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.5, { duration: 1000, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1, // Infinite repeat
+      true // Reverse animation
+    );
+    
+    // Individual flame animations with staggered timing
     flameScales.forEach((scale, index) => {
+      // Pop-in animation
       scale.value = withDelay(
         300 + index * 150,
         withSequence(
-          withTiming(1.3, { 
+          withTiming(1.4, { 
             duration: 300, 
-            easing: Easing.out(Easing.cubic) // Fixed: using proper Easing function
+            easing: Easing.out(Easing.back(1.5)) // Bounce effect with back parameter
           }),
           withTiming(1, { duration: 200 })
         )
       );
       
-      // Additional pulsation for visual appeal
+      // Add subtle continuous animation after initial pop-in
       setTimeout(() => {
         const pulseAnimation = () => {
           scale.value = withSequence(
-            withTiming(1.1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-            withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) })
+            withTiming(1.1, { duration: 800, easing: Easing.inOut(Easing.sin) }),
+            withTiming(1, { duration: 800, easing: Easing.inOut(Easing.sin) })
           );
           
           // Set random interval to make all flames pulse independently
-          setTimeout(pulseAnimation, 3000 + Math.random() * 2000);
+          setTimeout(pulseAnimation, 2000 + Math.random() * 2000);
         };
         
         pulseAnimation();
-      }, 1500 + index * 500);
+      }, 1500 + index * 300);
     });
   }, []);
   
   // Animated Styles
-  const progressAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      width: `${progressWidth.value}%`,
-    };
-  });
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: containerScale.value }]
+  }));
+  
+  const progressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+  }));
+  
+  const flameContainerStyle = useAnimatedStyle(() => ({
+    opacity: flameOpacity.value
+  }));
   
   // Render flame icons based on current streak
   const renderFlames = () => {
@@ -91,12 +126,19 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
     
     return (
       <View style={styles.flamesContainer}>
+        {/* Glow background for flames */}
+        <Animated.View 
+          style={[
+            styles.flameGlowContainer,
+            { backgroundColor: `${colors.warning}15` },
+            flameContainerStyle
+          ]}
+        />
+        
         {Array.from({ length: flamesToShow }).map((_, index) => {
-          const animatedStyle = useAnimatedStyle(() => {
-            return {
-              transform: [{ scale: flameScales[index].value }],
-            };
-          });
+          const animatedStyle = useAnimatedStyle(() => ({
+            transform: [{ scale: flameScales[index].value }],
+          }));
           
           return (
             <Animated.View
@@ -116,15 +158,17 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
         
         {/* Show "+X more" for streaks >5 */}
         {hasMoreFlames && (
-          <Animated.Text
+          <Animated.View
             style={[
-              styles.streakCountText,
-              { color: colors.textPrimary },
+              styles.streakCountBadge,
+              { backgroundColor: colors.warning }
             ]}
             entering={SlideInRight.delay(800).duration(400)}
           >
-            +{currentStreak - 5} weitere
-          </Animated.Text>
+            <Text style={styles.streakCountText}>
+              +{currentStreak - 5}
+            </Text>
+          </Animated.View>
         )}
       </View>
     );
@@ -135,10 +179,11 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
       style={[
         styles.container,
         { backgroundColor: theme.isDark ? colors.surface : "#FFFFFF" },
+        containerAnimatedStyle
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header with title and record badge, if applicable */}
+      {/* Header with title and record badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Siegesserie
@@ -154,8 +199,23 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
         )}
       </View>
       
+      {/* Motivation text */}
+      <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
+        {getMotivationalText()}
+      </Text>
+      
       {/* Flame icons for visual representation of streak */}
       {renderFlames()}
+      
+      {/* Current streak counter */}
+      <View style={styles.currentStreakContainer}>
+        <Text style={[styles.currentStreakValue, { color: colors.textPrimary }]}>
+          {currentStreak}
+        </Text>
+        <Text style={[styles.currentStreakLabel, { color: colors.textSecondary }]}>
+          {currentStreak === 1 ? "Sieg in Folge" : "Siege in Folge"}
+        </Text>
+      </View>
       
       {/* Progress bar to record */}
       <View style={styles.progressContainer}>
@@ -183,12 +243,12 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
             style={[styles.progressLabel, { color: colors.textSecondary }]}
           >
             {progressPercentage < 100
-              ? `${Math.round(progressPercentage)}% zum Rekord`
+              ? "Nächstes Ziel"
               : "Rekord erreicht!"}
           </Text>
           
           <Text style={[styles.streakValue, { color: colors.textPrimary }]}>
-            {currentStreak} / {longestStreak}
+            {longestStreak}
           </Text>
         </View>
       </View>

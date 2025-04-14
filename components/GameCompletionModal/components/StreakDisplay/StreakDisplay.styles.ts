@@ -5,24 +5,25 @@ export default StyleSheet.create({
   container: {
     width: "100%",
     borderRadius: radius.xl,
-    padding: spacing.md,
-    paddingBottom: spacing.lg,
+    padding: spacing.lg,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
+    overflow: "hidden", // Important for the glow effect containment
   },
   
+  // Header with title and record badge
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
   },
   
@@ -32,43 +33,95 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderRadius: radius.md,
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   
   recordText: {
+    color: "#FFF",
     fontSize: 12,
     fontWeight: "700",
-    color: "#FFFFFF",
     marginLeft: 4,
   },
   
-  // Streak Flames
-  flamesContainer: {
-    flexDirection: "row",
-    justifyContent: "center", 
-    alignItems: "center",
-    paddingVertical: spacing.xs,
+  // Motivation text - New!
+  motivationText: {
+    fontSize: 14,
+    fontWeight: "500",
     marginBottom: spacing.sm,
   },
   
+  // Current streak counter - New!
+  currentStreakContainer: {
+    alignItems: "center",
+    marginVertical: spacing.sm,
+  },
+  
+  currentStreakValue: {
+    fontSize: 32,
+    fontWeight: "800",
+    fontVariant: ["tabular-nums"],
+  },
+  
+  currentStreakLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    marginTop: spacing.xxs,
+  },
+  
+  // Streak Flames visualization
+  flamesContainer: {
+    position: "relative",
+    flexDirection: "row",
+    justifyContent: "center", 
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    marginVertical: spacing.xs,
+  },
+  
+  // Glow background for flames - New!
+  flameGlowContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    borderRadius: radius.lg,
+    opacity: 0.5,
+  },
+  
   flameIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 150, 0, 0.1)",
+  },
+  
+  // Badge for additional streaks - New!
+  streakCountBadge: {
+    height: 24,
+    paddingHorizontal: spacing.sm,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: spacing.sm,
   },
   
   streakCountText: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: "700",
-    marginLeft: spacing.sm,
+    color: "#FFFFFF",
   },
   
   // Progress bar
   progressContainer: {
     width: "100%",
-    marginTop: spacing.xs,
+    marginTop: spacing.md,
   },
   
   progressBackground: {
@@ -98,5 +151,6 @@ export default StyleSheet.create({
   streakValue: {
     fontSize: 12,
     fontWeight: "600",
+    fontVariant: ["tabular-nums"],
   },
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -22,10 +22,10 @@ interface LevelProgressProps {
   justCompleted: boolean;
 }
 
-// Level-Schwellenwerte - steigender Bedarf für jedes Level
+// Level thresholds - increasing requirements for each level
 const levelThresholds = [0, 5, 15, 30, 50, 75, 105, 140, 180, 225, 275, 330];
 
-// Level-Namen
+// Level names
 const getLevelName = (level: number) => {
   const levelNames = [
     "Anfänger",
@@ -45,21 +45,20 @@ const getLevelName = (level: number) => {
   return level < levelNames.length ? levelNames[level] : "Sudoku-Gott";
 };
 
-// Berechne das Level basierend auf den XP
+// Calculate level based on XP
 const calculateExperience = (stats: GameStats): number => {
-  // Basis-XP: Jedes abgeschlossene Spiel gibt 1 XP
+  // Base XP: Each completed game gives 1 XP
   let totalXP = stats.gamesPlayed;
 
-  // Bonus-XP für Siege basierend auf Schwierigkeit
-  // Da wir keine separaten Zähler für jeden Schwierigkeitsgrad haben,
-  // verwenden wir einen vereinfachten Ansatz
-  // Angenommen, die meisten Siege geben einen bescheidenen Bonus
+  // Bonus XP for wins based on difficulty
+  // We don't have separate counters for each difficulty win, so we use a simplified approach
+  // Assuming most wins give a modest bonus
   totalXP += stats.gamesWon * 2;
 
   return totalXP;
 };
 
-// Finde das aktuelle Level basierend auf XP
+// Find current level based on XP
 const getCurrentLevel = (xp: number): number => {
   let level = 0;
   for (let i = 0; i < levelThresholds.length; i++) {
@@ -72,15 +71,15 @@ const getCurrentLevel = (xp: number): number => {
   return level;
 };
 
-// XP für das nächste Level
+// XP for next level
 const getNextLevelXP = (currentLevel: number): number => {
   if (currentLevel >= levelThresholds.length - 1) {
-    return levelThresholds[currentLevel] + 100; // Wenn max Level, einfach mehr XP hinzufügen
+    return levelThresholds[currentLevel] + 100; // If max level, just add more XP
   }
   return levelThresholds[currentLevel + 1];
 };
 
-// XP-Gewinn für abgeschlossenes Spiel basierend auf Schwierigkeit
+// XP gain for completed game based on difficulty
 const getXPGain = (difficulty: Difficulty): number => {
   const xpValues: Record<Difficulty, number> = {
     easy: 2,
@@ -98,32 +97,34 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const progressContainerRef = useRef<View>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
   
-  // XP berechnen
+  // Calculate XP
   const totalXP = calculateExperience(stats);
   const xpGain = justCompleted ? getXPGain(difficulty) : 0;
   const previousXP = totalXP - xpGain;
   
-  // Level berechnen
+  // Calculate level
   const currentLevel = getCurrentLevel(totalXP);
   const previousLevel = getCurrentLevel(previousXP);
   const leveledUp = currentLevel > previousLevel;
   
-  // XP fürs nächste Level
+  // XP for next level
   const nextLevelXP = getNextLevelXP(currentLevel);
   
-  // XP-Fortschritt für dieses Level
+  // XP progress for this level
   const currentLevelXP = levelThresholds[currentLevel];
   const xpForThisLevel = totalXP - currentLevelXP;
   const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
   
-  // Prozentsatz für Fortschrittsbalken
+  // Percentage for progress bar
   const progressPercentage = Math.min(
     100,
     Math.round((xpForThisLevel / xpNeededForNextLevel) * 100)
   );
   
-  // Prozentsatz für vorherigen XP-Stand
+  // Percentage for previous XP state
   const previousProgressPercentage = Math.min(
     100,
     Math.round(
@@ -136,17 +137,17 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   const levelBadgeScale = useSharedValue(1);
   const [showLevelUp, setShowLevelUp] = useState(false);
   
-  // Starte Animationen, wenn die Komponente gemountet wird
+  // Start animations when component mounts
   useEffect(() => {
-    // Verzögerung für den Start der XP-Balken-Animation
+    // Delay for the start of XP bar animation
     setTimeout(() => {
-      // Fortschrittsbalken Animation
+      // Progress bar animation
       progressWidth.value = withTiming(progressPercentage, {
         duration: 1500,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
       
-      // Level-Badge pulsieren lassen
+      // Level badge pulsing
       levelBadgeScale.value = withSequence(
         withDelay(
           1000,
@@ -155,12 +156,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         withTiming(1, { duration: 300, easing: Easing.inOut(Easing.ease) })
       );
       
-      // Wenn Level aufgestiegen, Level-Up Animation zeigen
+      // If leveled up, show level-up animation
       if (leveledUp) {
         setTimeout(() => {
           setShowLevelUp(true);
           
-          // Nach einigen Sekunden wieder ausblenden
+          // Hide after a few seconds
           setTimeout(() => {
             setShowLevelUp(false);
           }, 3000);
@@ -182,14 +183,28 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     };
   });
   
-  // Berechne die Position des XP-Gewinns im Fortschrittsbalken
-  const getGainIndicatorWidth = (): string => {
-    if (progressPercentage <= previousProgressPercentage) return "0%";
-    return `${progressPercentage - previousProgressPercentage}%`;
+  // Handler for container width measurement
+  const onLayoutProgressContainer = (event: any) => {
+    if (containerWidth === 0) {
+      setContainerWidth(event.nativeEvent.layout.width);
+    }
   };
   
-  const getGainIndicatorLeft = (): string => {
-    return `${previousProgressPercentage}%`;
+  // Calculate gain indicator dimensions
+  const getGainIndicatorWidth = () => {
+    if (progressPercentage <= previousProgressPercentage) return 0;
+    if (containerWidth === 0) return 0;
+    
+    const widthPercent = progressPercentage - previousProgressPercentage;
+    // Fixed: Using number value for width
+    return containerWidth * widthPercent / 100;
+  };
+  
+  const getGainIndicatorLeft = () => {
+    if (containerWidth === 0) return 0;
+    
+    // Fixed: Using number value for left position
+    return containerWidth * previousProgressPercentage / 100;
   };
 
   return (
@@ -200,7 +215,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header mit Titel und XP-Gewinn */}
+      {/* Header with title and XP gain */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Level-Fortschritt
@@ -216,7 +231,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         )}
       </View>
       
-      {/* Level-Anzeige mit Badge und Namen */}
+      {/* Level display with badge and name */}
       <View style={styles.levelInfoContainer}>
         <Animated.View
           style={[
@@ -244,8 +259,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         </View>
       </View>
       
-      {/* XP-Fortschrittsbalken */}
-      <View style={styles.progressContainer}>
+      {/* XP progress bar */}
+      <View 
+        style={styles.progressContainer}
+        ref={progressContainerRef}
+        onLayout={onLayoutProgressContainer}
+      >
         <View
           style={[
             styles.progressBackground,
@@ -264,8 +283,8 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             ]}
           />
           
-          {/* XP-Gewinn-Indikator */}
-          {xpGain > 0 && (
+          {/* XP gain indicator - Fixed width/left to use numerical values */}
+          {xpGain > 0 && containerWidth > 0 && (
             <View
               style={[
                 styles.progressGainIndicator,

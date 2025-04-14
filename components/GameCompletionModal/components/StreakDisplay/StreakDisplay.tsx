@@ -32,31 +32,34 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
   const progressWidth = useSharedValue(0);
   const flameScales = Array.from({ length: Math.min(currentStreak, 5) }, () => useSharedValue(1));
   
-  // Berechne Prozentsatz für den Fortschrittsbalken
+  // Calculate percentage for progress bar
   const progressPercentage = Math.min(
     100,
     longestStreak > 0 ? (currentStreak / longestStreak) * 100 : 0
   );
   
-  // Starte Animationen, wenn die Komponente gemountet wird
+  // Start animations when component mounts
   useEffect(() => {
-    // Progressbar Animation
+    // Progress bar animation
     progressWidth.value = withTiming(progressPercentage, {
       duration: 1000,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
     
-    // Individuelle Flammen-Animationen
+    // Individual flame animations
     flameScales.forEach((scale, index) => {
       scale.value = withDelay(
         300 + index * 150,
         withSequence(
-          withTiming(1.3, { duration: 300, easing: Easing.outBack }),
+          withTiming(1.3, { 
+            duration: 300, 
+            easing: Easing.out(Easing.cubic) // Fixed: using proper Easing function
+          }),
           withTiming(1, { duration: 200 })
         )
       );
       
-      // Zusätzliche Pulsation für visuelle Attraktivität
+      // Additional pulsation for visual appeal
       setTimeout(() => {
         const pulseAnimation = () => {
           scale.value = withSequence(
@@ -64,7 +67,7 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
             withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) })
           );
           
-          // Stelle ein zufälliges Intervall ein, um alle Flammen unabhängig pulsieren zu lassen
+          // Set random interval to make all flames pulse independently
           setTimeout(pulseAnimation, 3000 + Math.random() * 2000);
         };
         
@@ -80,9 +83,9 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
     };
   });
   
-  // Rendere Flammen-Icons basierend auf dem aktuellen Streak
+  // Render flame icons based on current streak
   const renderFlames = () => {
-    // Maximal 5 Flammen anzeigen, danach Text
+    // Max 5 flames shown, then text
     const flamesToShow = Math.min(currentStreak, 5);
     const hasMoreFlames = currentStreak > 5;
     
@@ -111,7 +114,7 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
           );
         })}
         
-        {/* Zeige "+X weitere" wenn mehr als 5 Siege */}
+        {/* Show "+X more" for streaks >5 */}
         {hasMoreFlames && (
           <Animated.Text
             style={[
@@ -135,7 +138,7 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header mit Titel und Rekord-Badge, falls zutreffend */}
+      {/* Header with title and record badge, if applicable */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Siegesserie
@@ -151,10 +154,10 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
         )}
       </View>
       
-      {/* Flammen-Icons für die visuelle Darstellung der Serie */}
+      {/* Flame icons for visual representation of streak */}
       {renderFlames()}
       
-      {/* Fortschrittsbalken zum Rekord */}
+      {/* Progress bar to record */}
       <View style={styles.progressContainer}>
         <View
           style={[

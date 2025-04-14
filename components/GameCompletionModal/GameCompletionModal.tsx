@@ -14,7 +14,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 
-// Komponenten
+// Components
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
 import StreakDisplay from "./components/StreakDisplay/StreakDisplay";
 import LevelProgress from "./components/LevelProgress/LevelProgress";
@@ -48,15 +48,15 @@ const getDifficultyName = (diff: Difficulty): string => {
 
 const getDifficultyColor = (diff: Difficulty): string => {
   const difficultyColors: Record<Difficulty, string> = {
-    easy: "#4CAF50",   // Grün
+    easy: "#4CAF50",   // Green
     medium: "#FF9800", // Orange
-    hard: "#F44336",   // Rot
-    expert: "#9C27B0", // Lila
+    hard: "#F44336",   // Red
+    expert: "#9C27B0", // Purple
   };
   return difficultyColors[diff];
 };
 
-// Funktion um zu prüfen, ob es ein neuer Rekord ist
+// Function to check if it's a new record
 const isNewRecord = (
   timeElapsed: number, 
   stats: GameStats | null, 
@@ -89,14 +89,14 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const modalOpacity = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
   
-  // Status Variablen
-  const newRecord = isNewRecord(timeElapsed, stats, difficulty, autoNotesUsed);
+  // Status variables
+  const newRecord = isNewRecord(timeElapsed, stats || null, difficulty, autoNotesUsed);
   
   // Gradient Colors
   const gradientStart = getDifficultyColor(difficulty);
   const gradientEnd = theme.isDark ? "#333333" : "#FFFFFF";
   
-  // Handling des Zurück-Buttons von Android
+  // Handle Android back button
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -173,7 +173,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
       <Animated.View
         style={[styles.modalContainer, { backgroundColor: colors.card }, modalAnimatedStyle]}
       >
-        {/* Konfetti-Effekt für Siegesfeier */}
+        {/* Confetti effect for celebration */}
         <ConfettiEffect isActive={visible} />
         
         {/* Gradient header */}
@@ -198,61 +198,62 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
           </View>
         </View>
         
-        {/* Scrollable Content */}
-        <Animated.ScrollView
+        {/* Fixed: Use regular ScrollView with animated content */}
+        <ScrollView
           style={{ width: "100%" }}
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
-          animatedProps={contentAnimatedStyle}
         >
-          {/* Performance Card */}
-          <PerformanceCard 
-            timeElapsed={timeElapsed}
-            previousBestTime={stats ? stats[`bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats] as number : Infinity}
-            isNewRecord={newRecord}
-            autoNotesUsed={autoNotesUsed}
-          />
-          
-          <View style={styles.sectionSpacer} />
-          
-          {/* Streak Display - only show if relevant */}
-          {stats && stats.currentStreak > 0 && !autoNotesUsed && (
-            <>
-              <StreakDisplay 
-                currentStreak={stats.currentStreak}
-                longestStreak={stats.longestStreak}
-                isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
-              />
-              <View style={styles.sectionSpacer} />
-            </>
-          )}
-          
-          {/* Level Progress - calculate based on stats */}
-          {stats && !autoNotesUsed && (
-            <>
-              <LevelProgress 
-                stats={stats}
-                difficulty={difficulty}
-                justCompleted={true}
-              />
-              <View style={styles.sectionSpacer} />
-            </>
-          )}
-          
-          {/* Feedback Message */}
-          <FeedbackMessage 
-            difficulty={difficulty}
-            timeElapsed={timeElapsed}
-            isNewRecord={newRecord}
-            autoNotesUsed={autoNotesUsed}
-            streak={stats?.currentStreak || 0}
-          />
-          
-          {/* Auto-notes warning if needed */}
-          {autoNotesUsed && (
-            <View style={[styles.separator, { backgroundColor: colors.warning }]} />
-          )}
-        </Animated.ScrollView>
+          <Animated.View style={contentAnimatedStyle}>
+            {/* Performance Card */}
+            <PerformanceCard 
+              timeElapsed={timeElapsed}
+              previousBestTime={stats ? stats[`bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats] as number : Infinity}
+              isNewRecord={newRecord}
+              autoNotesUsed={autoNotesUsed}
+            />
+            
+            <View style={styles.sectionSpacer} />
+            
+            {/* Streak Display - only show if relevant */}
+            {stats && stats.currentStreak > 0 && !autoNotesUsed && (
+              <>
+                <StreakDisplay 
+                  currentStreak={stats.currentStreak}
+                  longestStreak={stats.longestStreak}
+                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+                />
+                <View style={styles.sectionSpacer} />
+              </>
+            )}
+            
+            {/* Level Progress - calculate based on stats */}
+            {stats && !autoNotesUsed && (
+              <>
+                <LevelProgress 
+                  stats={stats}
+                  difficulty={difficulty}
+                  justCompleted={true}
+                />
+                <View style={styles.sectionSpacer} />
+              </>
+            )}
+            
+            {/* Feedback Message */}
+            <FeedbackMessage 
+              difficulty={difficulty}
+              timeElapsed={timeElapsed}
+              isNewRecord={newRecord}
+              autoNotesUsed={autoNotesUsed}
+              streak={stats?.currentStreak || 0}
+            />
+            
+            {/* Auto-notes warning if needed */}
+            {autoNotesUsed && (
+              <View style={[styles.separator, { backgroundColor: colors.warning }]} />
+            )}
+          </Animated.View>
+        </ScrollView>
         
         {/* Fixed Button Container */}
         <View style={styles.buttonContainer}>

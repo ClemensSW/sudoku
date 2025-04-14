@@ -7,7 +7,7 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    pointerEvents: "none", // Damit der Effekt keine Touch-Events blockiert
+    pointerEvents: "none", // So the effect doesn't block touch events
     zIndex: 10,
     overflow: "hidden",
   },
@@ -19,7 +19,7 @@ export default StyleSheet.create({
     zIndex: 10,
   },
   
-  // Verschiedene Konfetti-Formen
+  // Various confetti shapes
   confettiSquare: {
     width: 8,
     height: 8,

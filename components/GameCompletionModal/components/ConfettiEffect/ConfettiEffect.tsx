@@ -9,7 +9,6 @@ import Animated, {
   withRepeat,
   Easing,
   cancelAnimation,
-  runOnJS,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./ConfettiEffect.styles";
@@ -20,23 +19,23 @@ interface ConfettiProps {
   density?: number; // 1-10, Anzahl der Konfettistücke
 }
 
-// Bildschirmbreite und -höhe für die Berechnung der Konfetti-Position
+// Screen dimensions for positioning confetti
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-// Konfetti-Farben
+// Confetti colors
 const CONFETTI_COLORS = [
   "#FFC700", // Gold
   "#FF4081", // Pink
-  "#00E676", // Grün
-  "#2979FF", // Blau
-  "#AA00FF", // Lila
+  "#00E676", // Green
+  "#2979FF", // Blue
+  "#AA00FF", // Purple
   "#FF3D00", // Orange
 ];
 
-// Konfetti-Formen
+// Confetti shapes
 const CONFETTI_SHAPES = ["square", "rectangle", "circle", "triangle"] as const;
 
-// Typ für ein einzelnes Konfettistück
+// Type for a single confetti piece
 interface ConfettiPiece {
   id: number;
   x: number;
@@ -56,10 +55,10 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   
-  // Berechne die Anzahl der Konfettistücke basierend auf der Dichte
+  // Calculate number of confetti pieces based on density
   const pieceCount = Math.min(Math.max(density, 1), 5) * 20;
   
-  // Erzeuge Konfettistücke mit zufälligen Eigenschaften
+  // Generate confetti pieces with random properties
   const generateConfetti = () => {
     const pieces: ConfettiPiece[] = [];
     
@@ -67,25 +66,25 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
       pieces.push({
         id: i,
         x: Math.random() * screenWidth,
-        delay: Math.random() * 2000, // Zufällige Verzögerung bis zu 2 Sekunden
+        delay: Math.random() * 2000, // Random delay up to 2 seconds
         color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
         shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
         rotation: Math.random() * 360,
-        scale: 0.5 + Math.random() * 1.5, // Zufällige Größe zwischen 0.5 und 2
+        scale: 0.5 + Math.random() * 1.5, // Random size between 0.5 and 2
       });
     }
     
     return pieces;
   };
   
-  // Starte die Konfetti-Animation, wenn isActive ändert
+  // Start the confetti animation when isActive changes
   useEffect(() => {
     if (isActive) {
-      // Erzeuge Konfettistücke und starte Animation
+      // Generate confetti pieces and start animation
       setConfetti(generateConfetti());
       setIsVisible(true);
       
-      // Beende die Animation nach der angegebenen Dauer
+      // End the animation after the specified duration
       const timer = setTimeout(() => {
         setIsVisible(false);
       }, duration);
@@ -96,7 +95,7 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
     }
   }, [isActive, duration]);
   
-  // Wenn keine Konfettistücke vorhanden sind oder nicht sichtbar, zeige nichts an
+  // If no confetti pieces exist or not visible, show nothing
   if (!isVisible || confetti.length === 0) {
     return null;
   }
@@ -110,7 +109,7 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
   );
 };
 
-// Einzelnes Konfettistück mit Animation
+// Single confetti piece with animation
 interface ConfettiPieceProps {
   piece: ConfettiPiece;
 }
@@ -122,20 +121,20 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
   const rotate = useSharedValue(0);
   const opacity = useSharedValue(0);
   
-  // Starte die Animation, wenn die Komponente gemountet wird
+  // Start the animation when component mounts
   useEffect(() => {
-    // Anfangsverzögerung
+    // Initial delay
     const startAnimation = () => {
       // Fade in
       opacity.value = withTiming(1, { duration: 300 });
       
-      // Fall-Animation mit leichter seitlicher Bewegung
+      // Fall animation with slight sideways movement
       translateY.value = withTiming(screenHeight + 100, { 
         duration: 3000 + Math.random() * 3000,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
       
-      // Zufällige seitliche Bewegung (Schwanken)
+      // Random sideways movement (swaying)
       translateX.value = withRepeat(
         withSequence(
           withTiming(15 * (Math.random() < 0.5 ? -1 : 1), { 
@@ -147,7 +146,7 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
             easing: Easing.bezier(0.25, 0.1, 0.25, 1),
           })
         ),
-        -1, // Unendlich wiederholen
+        -1, // Infinite repetition
         false
       );
       
@@ -157,15 +156,15 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
           duration: 1000 + Math.random() * 2000,
           easing: Easing.linear,
         }),
-        -1, // Unendlich wiederholen
+        -1, // Infinite repetition
         false
       );
     };
     
-    // Verzögere den Start je nach Konfettistück
+    // Delay start based on the confetti piece
     const timeout = setTimeout(startAnimation, piece.delay);
     
-    // Cleanup beim Unmount
+    // Cleanup on unmount
     return () => {
       clearTimeout(timeout);
       cancelAnimation(translateY);
@@ -175,7 +174,7 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
     };
   }, []);
   
-  // Animated style für Bewegung und Rotation
+  // Animated style for movement and rotation
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -191,7 +190,7 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
     };
   });
   
-  // Wähle den richtigen Style basierend auf der Form
+  // Choose the right style based on shape
   const getShapeStyle = () => {
     switch (piece.shape) {
       case "square":

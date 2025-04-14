@@ -73,25 +73,6 @@ const calculatePerformance = (
   return Math.round(performance);
 };
 
-// Get motivational message based on performance
-const getPerformanceMessage = (
-  performance: number,
-  isNewRecord: boolean,
-  improvement: number
-): string => {
-  if (isNewRecord) {
-    if (improvement > 20) return "Beeindruckende Verbesserung!";
-    if (improvement > 10) return "Starke Verbesserung!";
-    return "Neuer Rekord!";
-  }
-  
-  if (performance >= 95) return "Fast perfekt!";
-  if (performance >= 85) return "Sehr gut!";
-  if (performance >= 75) return "Gut gemacht!";
-  if (performance >= 65) return "Weiter so!";
-  return "Übe weiter!";
-};
-
 const PerformanceCard: React.FC<PerformanceCardProps> = ({
   timeElapsed,
   previousBestTime,
@@ -117,13 +98,6 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
   const improvement = isNewRecord
     ? calculateImprovement(timeElapsed, previousBestTime)
     : 0;
-    
-  // Get motivational message
-  const performanceMessage = getPerformanceMessage(
-    performance, 
-    isNewRecord, 
-    improvement
-  );
   
   // Ermittle die richtige Farbe basierend auf der Leistung
   const getPerformanceColor = (): string => {
@@ -247,17 +221,6 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
           </Animated.View>
         )}
       </View>
-      
-      {/* Motivational message - new! */}
-      <Text style={[
-        styles.motivationalMessage, 
-        { 
-          color: isNewRecord ? colors.success : colors.textPrimary,
-          fontWeight: isNewRecord ? "700" : "600"
-        }
-      ]}>
-        {performanceMessage}
-      </Text>
       
       <View style={styles.contentContainer}>
         {/* Performance Circle */}

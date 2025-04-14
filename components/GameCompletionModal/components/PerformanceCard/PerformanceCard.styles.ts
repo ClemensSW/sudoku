@@ -20,19 +20,12 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.xs,
+    marginBottom: spacing.md, // Increased margin to compensate for removed message
   },
   
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
-  },
-  
-  // Motivational message - new!
-  motivationalMessage: {
-    fontSize: 14,
-    marginBottom: spacing.md,
-    textAlign: "center", 
   },
   
   // Content layout
@@ -59,7 +52,7 @@ export default StyleSheet.create({
     justifyContent: "center",
   },
   
-  // Glow effect - new!
+  // Glow effect
   progressGlow: {
     position: "absolute",
     width: 110,
@@ -85,7 +78,7 @@ export default StyleSheet.create({
     marginBottom: spacing.md,
   },
   
-  // Time stat header with icon - new!
+  // Time stat header with icon
   timeStatHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -118,7 +111,7 @@ export default StyleSheet.create({
     marginLeft: spacing.xs,
   },
   
-  // Improvement badge - reworked!
+  // Improvement badge
   improvementBadge: {
     flexDirection: "row",
     alignItems: "center",

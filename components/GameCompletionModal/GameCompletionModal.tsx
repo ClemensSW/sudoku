@@ -56,7 +56,7 @@ const getDifficultyColor = (diff: Difficulty): string => {
   return difficultyColors[diff];
 };
 
-// Function to check if it's a new record - FIXED VERSION
+// Function to check if it's a new record
 const isNewRecord = (
   timeElapsed: number, 
   stats: GameStats | null, 
@@ -68,12 +68,7 @@ const isNewRecord = (
   const bestTimeKey = `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats;
   const previousBestTime = stats[bestTimeKey] as number;
   
-  // Consider it a new record if:
-  // 1. It's the first time completion (previousBestTime is 0 or Infinity)
-  // 2. OR if the current time is better than the previous best time
-  return previousBestTime <= 0 || 
-         previousBestTime === Infinity || 
-         timeElapsed < previousBestTime;
+  return timeElapsed < previousBestTime && previousBestTime !== 0 && previousBestTime !== Infinity;
 };
 
 const GameCompletionModal: React.FC<GameCompletionModalProps> = ({

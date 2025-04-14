@@ -94,7 +94,7 @@ export default StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: Math.max(spacing.lg, spacing.md + 30), // Extra padding for bottom safety
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0,0,0,1)",
     borderBottomLeftRadius: 0, // Removed radius for fullscreen
     borderBottomRightRadius: 0, // Removed radius for fullscreen
     backdropFilter: "blur(10px)",

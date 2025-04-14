@@ -111,6 +111,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     return () => backHandler.remove();
   }, [gameState.isGameRunning, gameState.isGameComplete]);
 
+  // Function to handle complete game restart - for both game over and game completion
+  const handleCompleteGameRestart = () => {
+    // Wait for animation/alert to close
+    setTimeout(() => {
+      // Navigate to game screen with difficulty parameter to completely restart the game
+      router.replace({
+        pathname: "/game",
+        params: { difficulty: gameState.difficulty }
+      });
+    }, 200);
+  };
+
   // Check for game completion and show modal
   useEffect(() => {
     if (gameState.isGameComplete && !showCompletionModal && !showGameOverModal) {
@@ -120,7 +132,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
           showAlert(
             gameOverAlert(
               gameState.autoNotesUsed,
-              gameActions.startNewGame
+              handleCompleteGameRestart // Use the new complete restart function here
             )
           );
         }, 800);
@@ -336,7 +348,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       <GameCompletionModal
         visible={showCompletionModal}
         onClose={handleCompletionModalClose}
-        onNewGame={gameActions.startNewGame}
+        onNewGame={handleCompleteGameRestart} // Use the same restart function here
         onContinue={handleNavigateToHome}
         timeElapsed={gameState.gameTime}
         difficulty={gameState.difficulty}

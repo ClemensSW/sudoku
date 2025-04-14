@@ -114,8 +114,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   // Check for game completion and show modal
   useEffect(() => {
     if (gameState.isGameComplete && !showCompletionModal && !showGameOverModal) {
-      if (gameState.isGameLost) {
-        // Show game over modal for loss
+      if (gameState.isGameLost && !gameState.isUserQuit) {
+        // Only show game over modal if game was lost due to errors (not a manual quit)
         setTimeout(() => {
           showAlert(
             gameOverAlert(
@@ -124,14 +124,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
             )
           );
         }, 800);
-      } else {
+      } else if (!gameState.isGameLost) {
         // Show completion modal for win
         setTimeout(() => {
           setShowCompletionModal(true);
         }, 800);
       }
+      // If it was a user quit, don't show any additional dialogs
     }
-  }, [gameState.isGameComplete, gameState.isGameLost]);
+  }, [gameState.isGameComplete, gameState.isGameLost, gameState.isUserQuit]);
 
   // Animated styles
   const headerAnimatedStyle = useAnimatedStyle(() => {

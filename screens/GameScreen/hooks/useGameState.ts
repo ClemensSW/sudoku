@@ -35,7 +35,8 @@ export interface GameState {
   difficulty: Difficulty;
   isGameRunning: boolean;
   isGameComplete: boolean;
-  isGameLost: boolean; // New property to track game lost state
+  isGameLost: boolean;
+  isUserQuit: boolean; // New property to track user-initiated quits
   gameTime: number;
   noteModeActive: boolean;
   usedNumbers: number[];
@@ -58,7 +59,7 @@ interface GameStateActions {
   handleGameComplete: () => Promise<void>;
   handleError: (showMistakes: boolean) => void;
   updateUsedNumbers: () => void;
-  handleQuitGame: () => Promise<void>; // New function for handling game quits
+  handleQuitGame: () => Promise<void>;
 }
 
 export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameStateActions] => {
@@ -72,6 +73,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   const [isGameRunning, setIsGameRunning] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [isGameLost, setIsGameLost] = useState(false);
+  const [isUserQuit, setIsUserQuit] = useState(false); // New state to track user quits
   const [gameTime, setGameTime] = useState(0);
   const [noteModeActive, setNoteModeActive] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState<number[]>([]);
@@ -123,6 +125,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       setSelectedCell(null);
       setIsGameComplete(false);
       setIsGameLost(false);
+      setIsUserQuit(false); // Reset user quit flag
       setGameTime(0);
       setIsGameRunning(true);
       setNoteModeActive(false);
@@ -302,7 +305,8 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     if (isGameComplete) return;
 
     setIsGameComplete(true);
-    setIsGameLost(true); // Set the game as lost
+    setIsGameLost(true);
+    setIsUserQuit(false); // Not a user quit, but a game over due to errors
     setIsGameRunning(false);
 
     // Update stats
@@ -320,6 +324,8 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     if (isGameComplete) return;
     
     setIsGameComplete(true);
+    setIsGameLost(false);
+    setIsUserQuit(false);
     setIsGameRunning(false);
 
     // Update stats
@@ -332,12 +338,13 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     triggerHaptic("success");
   };
 
-  // New function: Handle game quit - counts as a loss for statistics
+  // Handle game quit - counts as a loss for statistics but with user quit flag
   const handleQuitGame = async () => {
     if (isGameComplete) return;
     
+    setIsUserQuit(true); // Mark that this was a user-initiated quit
     setIsGameComplete(true);
-    setIsGameLost(true); // Set the game as lost
+    setIsGameLost(true);
     setIsGameRunning(false);
     
     // Update stats as a loss
@@ -384,6 +391,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       isGameRunning,
       isGameComplete,
       isGameLost,
+      isUserQuit, // Add to returned state
       gameTime,
       noteModeActive,
       usedNumbers,
@@ -405,7 +413,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       handleGameComplete,
       handleError,
       updateUsedNumbers,
-      handleQuitGame, // New function for handling game quits
+      handleQuitGame,
     },
   ];
 };

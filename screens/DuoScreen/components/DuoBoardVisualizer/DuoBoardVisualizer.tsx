@@ -4,7 +4,7 @@ import { View, Image, StyleSheet, Dimensions } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 // Use exact same width as button (320px) for consistency
-const VISUALIZER_SIZE = 320;
+const VISUALIZER_SIZE = 200;
 
 interface DuoBoardVisualizerProps {}
 

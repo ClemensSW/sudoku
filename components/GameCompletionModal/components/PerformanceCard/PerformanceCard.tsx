@@ -138,6 +138,22 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
+      {/* Header mit Titel und Rekord-Badge - EXAKT wie bei StreakDisplay */}
+      <View style={styles.headerContainer}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+          Spielleistung
+        </Text>
+        
+        {isNewRecord && (
+          <View
+            style={[styles.recordBadge, { backgroundColor: colors.success }]}
+          >
+            <Feather name="award" size={12} color="white" />
+            <Text style={styles.recordText}>Rekord</Text>
+          </View>
+        )}
+      </View>
+      
       <View style={styles.contentContainer}>
         {/* Performance Circle */}
         <View style={styles.performanceContainer}>
@@ -167,11 +183,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
             </Animated.Text>
           </View>
           
-          <Text
-            style={[styles.performanceLabel, { color: colors.textSecondary }]}
-          >
-            Leistung
-          </Text>
+          {/* "Leistung"-Label entfernt, wie gewünscht */}
         </View>
         
         {/* Time Statistics */}

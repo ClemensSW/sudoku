@@ -14,6 +14,19 @@ export default StyleSheet.create({
     shadowRadius: 10,
   },
   
+  // Header mit Titel und Rekord-Badge
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  
   contentContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -116,5 +129,26 @@ export default StyleSheet.create({
     fontSize: 12,
     marginLeft: spacing.xs,
     flex: 1,
+  },
+  
+  // Rekord-Badge
+  recordBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
+    borderRadius: radius.md,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  
+  recordText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    marginLeft: 4,
   },
 });

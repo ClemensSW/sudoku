@@ -17,10 +17,9 @@ export default StyleSheet.create({
   },
   
   modalContainer: {
-    width: "92%",
-    maxWidth: 420,
-    maxHeight: "85%", 
-    borderRadius: radius.xl,
+    width: "100%", // Changed to full width
+    height: "100%", // Changed to full height
+    borderRadius: 0, // Removed border radius for fullscreen
     overflow: "hidden",
     alignItems: "center",
     shadowColor: "#000",
@@ -36,8 +35,8 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     height: 160,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
+    borderTopLeftRadius: 0, // Removed radius for fullscreen
+    borderTopRightRadius: 0, // Removed radius for fullscreen
   },
 
   titleContainer: {
@@ -83,7 +82,7 @@ export default StyleSheet.create({
   scrollContainer: {
     width: "100%",
     padding: spacing.lg,
-    paddingBottom: 120, // Extra space for fixed buttons
+    paddingBottom: 260, // Significantly increased padding to create more scrollable space at the bottom
   },
 
   // Bottom fixed button container
@@ -94,10 +93,10 @@ export default StyleSheet.create({
     right: 0,
     padding: spacing.lg,
     paddingTop: spacing.md,
-    paddingBottom: Math.max(spacing.lg, spacing.md + 20), // Extra padding for bottom safety
+    paddingBottom: Math.max(spacing.lg, spacing.md + 30), // Extra padding for bottom safety
     backgroundColor: "rgba(0,0,0,0.7)",
-    borderBottomLeftRadius: radius.xl,
-    borderBottomRightRadius: radius.xl,
+    borderBottomLeftRadius: 0, // Removed radius for fullscreen
+    borderBottomRightRadius: 0, // Removed radius for fullscreen
     backdropFilter: "blur(10px)",
   },
 
@@ -105,7 +104,6 @@ export default StyleSheet.create({
     width: "100%",
     marginBottom: spacing.md,
     height: 56,
-    borderRadius: 28,
   },
 
   secondaryButton: {

@@ -47,15 +47,25 @@ const calculatePerformance = (
   bestTime: number,
   isNewRecord: boolean
 ): number => {
-  if (isNewRecord || bestTime === Infinity || bestTime === 0) {
-    return 100; // Wenn neuer Rekord, dann 100%
+  // FIXED: If it's a new record, always return 100% regardless of other factors
+  if (isNewRecord) {
+    return 100; // Always 100% for a new record
+  }
+  
+  // Handle cases where there's no valid previous best time
+  if (bestTime === Infinity || bestTime === 0) {
+    return 100; // First time completing this difficulty
   }
 
   // Wenn die aktuelle Zeit in der Nähe der Bestzeit ist (90%-110% der Bestzeit)
   const ratio = bestTime / currentTime;
-  if (ratio >= 0.9 && ratio <= 1.1) {
-    // Zwischen 90% und 100%
-    return Math.min(Math.round(ratio * 100), 99);
+  if (ratio >= 1) {
+    // If current time is better than or equal to best time
+    // This should not happen if isNewRecord is correctly set, but this handles edge cases
+    return 100;
+  } else if (ratio >= 0.9) {
+    // Between 90% and 99%
+    return Math.round(ratio * 100);
   }
 
   // Bei schlechterer Leistung, je nach Verhältnis
@@ -207,7 +217,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               </Text>
               
               {/* Improvement indicator */}
-              {isNewRecord && (
+              {isNewRecord && improvement > 0 && (
                 <Animated.View
                   style={[
                     styles.newRecordContainer,

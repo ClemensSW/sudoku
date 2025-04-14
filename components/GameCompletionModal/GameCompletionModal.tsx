@@ -48,7 +48,7 @@ const getDifficultyName = (diff: Difficulty): string => {
 
 const getDifficultyColor = (diff: Difficulty): string => {
   const difficultyColors: Record<Difficulty, string> = {
-    easy: "#4CAF50",   // Green
+    easy: "#4A7D78",   // Primary
     medium: "#FF9800", // Orange
     hard: "#F44336",   // Red
     expert: "#9C27B0", // Purple
@@ -171,7 +171,17 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   return (
     <View style={styles.overlay}>
       <Animated.View
-        style={[styles.modalContainer, { backgroundColor: colors.card }, modalAnimatedStyle]}
+        style={[
+          styles.modalContainer, 
+          { 
+            backgroundColor: colors.card,
+            width: "100%",
+            height: "100%",
+            maxWidth: "100%",
+            borderRadius: 0
+          }, 
+          modalAnimatedStyle
+        ]}
       >
         {/* Confetti effect for celebration */}
         <ConfettiEffect isActive={visible} />
@@ -198,36 +208,17 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
           </View>
         </View>
         
-        {/* Fixed: Use regular ScrollView with animated content */}
+        {/* ScrollView with REORDERED components */}
         <ScrollView
-          style={{ width: "100%" }}
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
+          style={{ width: "100%", flex: 1 }}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: 240 } // Increased padding to ensure more scrollable space below content
+          ]}
+          showsVerticalScrollIndicator={true}
         >
           <Animated.View style={contentAnimatedStyle}>
-            {/* Performance Card */}
-            <PerformanceCard 
-              timeElapsed={timeElapsed}
-              previousBestTime={stats ? stats[`bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats] as number : Infinity}
-              isNewRecord={newRecord}
-              autoNotesUsed={autoNotesUsed}
-            />
-            
-            <View style={styles.sectionSpacer} />
-            
-            {/* Streak Display - only show if relevant */}
-            {stats && stats.currentStreak > 0 && !autoNotesUsed && (
-              <>
-                <StreakDisplay 
-                  currentStreak={stats.currentStreak}
-                  longestStreak={stats.longestStreak}
-                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
-                />
-                <View style={styles.sectionSpacer} />
-              </>
-            )}
-            
-            {/* Level Progress - calculate based on stats */}
+            {/* 1. Level Progress - calculate based on stats */}
             {stats && !autoNotesUsed && (
               <>
                 <LevelProgress 
@@ -239,7 +230,29 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
               </>
             )}
             
-            {/* Feedback Message */}
+            {/* 2. Streak Display - only show if relevant */}
+            {stats && stats.currentStreak > 0 && !autoNotesUsed && (
+              <>
+                <StreakDisplay 
+                  currentStreak={stats.currentStreak}
+                  longestStreak={stats.longestStreak}
+                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+                />
+                <View style={styles.sectionSpacer} />
+              </>
+            )}
+            
+            {/* 3. Performance Card */}
+            <PerformanceCard 
+              timeElapsed={timeElapsed}
+              previousBestTime={stats ? stats[`bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats] as number : Infinity}
+              isNewRecord={newRecord}
+              autoNotesUsed={autoNotesUsed}
+            />
+            
+            <View style={styles.sectionSpacer} />
+            
+            {/* 4. Feedback Message */}
             <FeedbackMessage 
               difficulty={difficulty}
               timeElapsed={timeElapsed}

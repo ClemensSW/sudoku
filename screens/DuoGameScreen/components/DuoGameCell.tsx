@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
   withSequence,
 } from "react-native-reanimated";
+import { CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
 
 // Player color themes based on the provided color palette
 const PLAYER_THEMES = {
@@ -203,10 +204,10 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 
 const styles = StyleSheet.create({
   cellContainer: {
-    flex: 1,
+    width: CELL_SIZE,
+    height: CELL_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    aspectRatio: 1,
     position: "relative",
     borderWidth: 0.5,
     borderColor: "rgba(0, 0, 0, 0.1)",
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cellText: {
-    fontSize: 20,
+    fontSize: Math.max(CELL_SIZE * 0.5, 18),
     fontWeight: "600",
   },
   initialText: {
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   noteText: {
-    fontSize: 9,
+    fontSize: Math.max(CELL_SIZE * 0.2, 9),
     width: "33%",
     height: "33%",
     textAlign: "center",

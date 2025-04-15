@@ -1,6 +1,6 @@
 // screens/DuoGameScreen/components/DuoGameBoard.tsx
 import React from "react";
-import { View, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -10,12 +10,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
 import DuoGameCell from "./DuoGameCell";
+import { BOARD_SIZE as SHARED_BOARD_SIZE, CELL_SIZE as SHARED_CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
 
-// Calculate optimal board size based on screen width
-const { width } = Dimensions.get("window");
-const BOARD_SIZE = Math.min(width * 0.95, 350);
+// Use the same constants as the regular SudokuBoard for consistency
+const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
-const CELL_SIZE = GRID_SIZE / 9;
+const CELL_SIZE = SHARED_CELL_SIZE;
 
 interface DuoGameBoardProps {
   board: SudokuBoard;

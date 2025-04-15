@@ -170,22 +170,20 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 }}
                 disabled={isDisabled}
               >
-                <View style={position === "top" ? styles.rotatedContent : undefined}>
-                  <Text
-                    style={[
-                      styles.numberText,
-                      {
-                        color: isDisabled
-                          ? theme.numberButton.disabledTextColor
-                          : theme.numberButton.textColor,
-                      },
-                      // Add underline for 6 and 9 to distinguish them when rotated
-                      position === "top" && (num === 6 || num === 9) && styles.underlinedNumber,
-                    ]}
-                  >
-                    {num}
-                  </Text>
-                </View>
+                <Text
+                  style={[
+                    styles.numberText,
+                    {
+                      color: isDisabled
+                        ? theme.numberButton.disabledTextColor
+                        : theme.numberButton.textColor,
+                    },
+                    // Add underline for 6 and 9 to distinguish them when rotated
+                    (num === 6 || num === 9) && styles.underlinedNumber,
+                  ]}
+                >
+                  {num}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           );
@@ -230,19 +228,17 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               }}
               disabled={disabled}
             >
-              <View style={position === "top" ? styles.rotatedContent : undefined}>
-                <Feather
-                  name="edit-3"
-                  size={20}
-                  color={
-                    disabled
-                      ? theme.actionButton.disabledIconColor
-                      : noteMode
-                      ? theme.actionButton.textColor
-                      : theme.actionButton.iconColor
-                  }
-                />
-              </View>
+              <Feather
+                name="edit-3"
+                size={20}
+                color={
+                  disabled
+                    ? theme.actionButton.disabledIconColor
+                    : noteMode
+                    ? theme.actionButton.textColor
+                    : theme.actionButton.iconColor
+                }
+              />
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -262,17 +258,15 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             }}
             disabled={disabled}
           >
-            <View style={position === "top" ? styles.rotatedContent : undefined}>
-              <Feather
-                name="delete"
-                size={20}
-                color={
-                  disabled
-                    ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.iconColor
-                }
-              />
-            </View>
+            <Feather
+              name="delete"
+              size={20}
+              color={
+                disabled
+                  ? theme.actionButton.disabledIconColor
+                  : theme.actionButton.iconColor
+              }
+            />
           </TouchableOpacity>
         </Animated.View>
 
@@ -291,17 +285,15 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             }}
             disabled={hintDisabled || disabled}
           >
-            <View style={position === "top" ? styles.rotatedContent : undefined}>
-              <Feather
-                name="help-circle"
-                size={20}
-                color={
-                  hintDisabled || disabled
-                    ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.iconColor
-                }
-              />
-            </View>
+            <Feather
+              name="help-circle"
+              size={20}
+              color={
+                hintDisabled || disabled
+                  ? theme.actionButton.disabledIconColor
+                  : theme.actionButton.iconColor
+              }
+            />
             
             {!hintDisabled && (
               <View style={[
@@ -311,11 +303,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                     player === 1 ? "#4A7D78" : "#5B5D6E" 
                 }
               ]}>
-                <View style={position === "top" ? styles.rotatedContent : undefined}>
-                  <Text style={styles.hintCountText}>
-                    {hintsRemaining}
-                  </Text>
-                </View>
+                <Text style={styles.hintCountText}>
+                  {hintsRemaining}
+                </Text>
               </View>
             )}
           </TouchableOpacity>
@@ -441,10 +431,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 10,
     fontWeight: "bold",
-  },
-  // Rotation styles for player 2's content
-  rotatedContent: {
-    transform: [{ rotate: "180deg" }],
   },
   // Helper for 6 and 9 when rotated
   underlinedNumber: {

@@ -3,7 +3,7 @@ import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
-    width: "100%",
+    width: "105%",
     paddingHorizontal: 8,
     marginVertical: spacing.md,
     alignSelf: "center",

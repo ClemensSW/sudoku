@@ -29,6 +29,7 @@ import {
   quitGameAlert,
   gameOverAlert,
 } from "@/components/CustomAlert/AlertHelpers";
+import { useNavigationControl } from "@/app/_layout"; // Import navigation control hook
 
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
@@ -56,6 +57,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { showAlert } = useAlert();
+  const { setHideBottomNav } = useNavigationControl(); // Access navigation control
 
   // Get game state and actions from custom hook
   const [gameState, gameActions] = useGameState(initialDifficulty);
@@ -71,6 +73,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   // Animation values
   const headerOpacity = useSharedValue(1);
   const controlsOpacity = useSharedValue(0);
+
+  // Hide navigation when component mounts
+  useEffect(() => {
+    // Explicitly hide navigation bar
+    setHideBottomNav(true);
+    
+    // Clean up when component unmounts
+    return () => {
+      setHideBottomNav(false);
+    };
+  }, []);
 
   // Initialize animations when the component mounts
   useEffect(() => {

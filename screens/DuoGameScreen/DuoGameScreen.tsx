@@ -9,6 +9,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
+import { useNavigationControl } from "@/app/_layout"; // Import navigation control hook
 
 // Duo Game Components
 import Header from "@/components/Header/Header";
@@ -30,6 +31,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const { showAlert } = useAlert();
+  const { setHideBottomNav } = useNavigationControl(); // Access navigation control
 
   // Use the duo game state hook
   const [gameState, gameActions] = useDuoGameState(initialDifficulty, () => {
@@ -39,6 +41,19 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   // Start a new game on mount
   useEffect(() => {
     gameActions.startNewGame();
+  }, []);
+
+  // Hide navigation when component mounts
+  useEffect(() => {
+    // Explicitly hide navigation bar
+    setHideBottomNav(true);
+    console.log("DuoGameScreen: Hiding navigation bar");
+    
+    // Clean up when component unmounts
+    return () => {
+      setHideBottomNav(false);
+      console.log("DuoGameScreen: Showing navigation bar on unmount");
+    };
   }, []);
 
   // Handle back button press

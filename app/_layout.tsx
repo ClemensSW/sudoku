@@ -28,7 +28,7 @@ function AppContainer() {
   const pathname = usePathname();
   const theme = useTheme();
   const { colors } = theme;
-  
+
   // State für die Navigation-Kontrolle
   const [hideBottomNav, setHideBottomNav] = useState(false);
 
@@ -40,17 +40,37 @@ function AppContainer() {
     }
   }, []);
 
-  // Verstecke Navigation auf bestimmten Seiten automatisch
-  useEffect(() => {
-    const hiddenNavPaths = ["/game", "/(game)", "/settings"];
-    const shouldHideNav = hiddenNavPaths.some(path => pathname?.startsWith(path));
-    setHideBottomNav(shouldHideNav);
-  }, [pathname]);
+// Verstecke Navigation auf bestimmten Seiten automatisch
+useEffect(() => {
+  // Debug-Info hinzufügen
+  console.log("Current pathname:", pathname);
+  
+  // Game-spezifische Erkennung
+  const isGameScreen = 
+    pathname === "/game" || 
+    pathname === "/(game)" || 
+    pathname?.startsWith("/game") || 
+    pathname?.startsWith("/(game)") ||
+    pathname?.includes("game");
+    
+  // Andere Screens, die Navigation verstecken sollten
+  const isOtherHiddenScreen = 
+    pathname === "/settings" || 
+    pathname?.startsWith("/settings") ||
+    pathname === "/duo-game" || 
+    pathname?.startsWith("/duo-game");
+  
+  // Navigation verstecken, wenn wir auf einem dieser Screens sind
+  const shouldHideNav = isGameScreen || isOtherHiddenScreen;
+  console.log("Should hide nav:", shouldHideNav, "isGameScreen:", isGameScreen);
+  
+  setHideBottomNav(shouldHideNav);
+}, [pathname]);
 
   // Feste Hintergrundfarbe basierend auf dem Theme
   const containerStyle = {
-    backgroundColor: theme.isDark ? '#0F172A' : '#F8FAFC', // Fest kodierte Farben anstatt theme.colors.background
-    flex: 1
+    backgroundColor: theme.isDark ? "#0F172A" : "#F8FAFC", // Fest kodierte Farben anstatt theme.colors.background
+    flex: 1,
   };
 
   return (
@@ -59,7 +79,7 @@ function AppContainer() {
       <View style={containerStyle}>
         {/* StatusBar konsistent ausblenden */}
         <StatusBar hidden={true} />
-        
+
         {/* Stack Navigator mit identischer Hintergrundfarbe */}
         <Stack
           screenOptions={{
@@ -100,5 +120,5 @@ export default function AppLayout() {
 const styles = StyleSheet.create({
   gestureRoot: {
     flex: 1,
-  }
+  },
 });

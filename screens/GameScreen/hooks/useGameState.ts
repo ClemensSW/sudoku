@@ -96,15 +96,12 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     loadGameStats();
   }, []);
 
-  // Check if game is complete
+  // Check if game is complete and update used numbers
   useEffect(() => {
     if (board.length > 0 && isBoardComplete(board)) {
       handleGameComplete();
     }
-  }, [board]);
-
-  // Update used numbers
-  useEffect(() => {
+    
     if (board.length > 0) {
       updateUsedNumbers();
     }

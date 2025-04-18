@@ -78,7 +78,7 @@ const lightColors = {
   divider: "#EDF2F7",
   shadow: "rgba(0, 0, 0, 0.07)",
   overlay: "rgba(0, 0, 0, 0.4)",
-  backdropColor: "rgba(255, 255, 255, 0.85)", // Leichtere Version für Light-Modus
+  backdropColor: "rgba(255, 255, 255, 0.65)", // Leichtere Version für Light-Modus
 
   // Number pad
   numberPadButton: "#F0F7F7", // Leicht getönter Hintergrund
@@ -164,7 +164,7 @@ const darkColors = {
   divider: "#2D3748",
   shadow: "rgba(0, 0, 0, 0.3)",
   overlay: "rgba(0, 0, 0, 0.7)",
-  backdropColor: "rgba(0, 0, 0, 0.85)", // Dunklere Version für Dark-Modus
+  backdropColor: "rgba(0, 0, 0, 0.65)", // Dunklere Version für Dark-Modus
 
   // Number pad
   numberPadButton: "#2D3748",

@@ -3,7 +3,7 @@ import React from "react";
 import { View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import NumberPad from "@/components/NumberPad/NumberPad";
-import styles from "./GameControls.styles";
+import "./GameControls.css";
 
 interface GameControlsProps {
   onNumberPress: (number: number) => void;
@@ -27,7 +27,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   isGameComplete = false,
 }) => {
   return (
-    <View style={styles.controlsContainer}>
+    <View>
       <Animated.View entering={FadeInUp.delay(300).duration(500)}>
         <NumberPad
           onNumberPress={onNumberPress}

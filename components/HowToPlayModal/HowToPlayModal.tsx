@@ -1,8 +1,9 @@
 // components/HowToPlayModal/HowToPlayModal.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigationControl } from "@/app/_layout"; // Direkte Import aus _layout
 import TutorialContainer from "../Tutorial/TutorialContainer";
 
 interface HowToPlayModalProps {
@@ -18,6 +19,21 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
+  // Direkter Zugriff auf den neuen NavigationContext
+  const { setHideBottomNav } = useNavigationControl();
+
+  // Navigation-Kontrolle basierend auf Modal-Sichtbarkeit
+  useEffect(() => {
+    if (visible) {
+      // Navigationleiste ausblenden
+      setHideBottomNav(true);
+    }
+    
+    // Aufräumen beim Unmount oder wenn nicht mehr sichtbar
+    return () => {
+      setHideBottomNav(false);
+    };
+  }, [visible, setHideBottomNav]);
 
   if (!visible) return null;
 

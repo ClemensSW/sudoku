@@ -1,9 +1,10 @@
 // components/Tutorial/TutorialContainer.tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigation } from "@/utils/NavigationContext";
 import TutorialPage from "./TutorialPage";
 import TutorialProgress from "./components/TutorialProgress";
 
@@ -26,6 +27,18 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const { setShowNavigation } = useNavigation();
+
+  // Stelle sicher, dass Navigation ausgeblendet ist, wenn TutorialContainer angezeigt wird
+  useEffect(() => {
+    // Navigationleiste ausblenden
+    setShowNavigation(false);
+    
+    // Aufräumen beim Unmount
+    return () => {
+      setShowNavigation(true);
+    };
+  }, []);
 
   // Tutorial pages - TipsPage removed
   const pages = [
@@ -39,6 +52,8 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
     if (currentPage < pages.length - 1) {
       setCurrentPage(currentPage + 1);
     } else {
+      // Navigation wieder anzeigen bevor Tutorial beendet wird
+      setShowNavigation(true);
       onComplete();
     }
   }, [currentPage, pages.length, onComplete]);
@@ -47,6 +62,8 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     } else if (onBack) {
+      // Navigation wieder anzeigen bevor Tutorial beendet wird
+      setShowNavigation(true);
       onBack();
     }
   }, [currentPage, onBack]);
@@ -96,15 +113,3 @@ const styles = StyleSheet.create({
 });
 
 export default TutorialContainer;
-
-// components/Tutorial/index.ts
-// Update the exports to remove TipsPage
-export { default as TutorialContainer } from "./TutorialContainer";
-export { default as TutorialPage } from "./TutorialPage";
-export { default as TutorialProgress } from "./components/TutorialProgress";
-export { default as AnimatedBoard } from "./components/AnimatedBoard";
-
-// Export pages
-export { default as BasicRulesPage } from "./pages/BasicRulesPage";
-export { default as GameplayPage } from "./pages/GameplayPage";
-export { default as NotesPage } from "./pages/NotesPage";

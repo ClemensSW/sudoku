@@ -29,6 +29,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigation } from "@/utils/NavigationContext"; // Import des NavigationContext
 import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
@@ -41,6 +42,7 @@ const StartScreen: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
+  const { setShowNavigation } = useNavigation(); // Zugriff auf den NavigationContext
 
   // State for modals and game options
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
@@ -233,6 +235,13 @@ const StartScreen: React.FC = () => {
   const handleHowToPlayPress = () => {
     triggerHaptic("light");
     setShowHowToPlay(true);
+    setShowNavigation(false); // Navigationsleiste ausblenden, wenn der Modal geöffnet wird
+  };
+
+  // Handle modal close and show navigation again
+  const handleCloseHowToPlay = () => {
+    setShowHowToPlay(false);
+    setShowNavigation(true); // Navigationsleiste wieder einblenden, wenn der Modal geschlossen wird
   };
 
   return (
@@ -417,7 +426,7 @@ const StartScreen: React.FC = () => {
       {showHowToPlay && (
         <HowToPlayModal
           visible={showHowToPlay}
-          onClose={() => setShowHowToPlay(false)}
+          onClose={handleCloseHowToPlay}
         />
       )}
     </View>

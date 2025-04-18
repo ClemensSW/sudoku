@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     borderWidth: 0.5,
-    borderColor: "rgba(0, 0, 0, 0.1)",
+    borderColor: "rgba(0, 0, 0, 0.2)",
   },
   cellContent: {
     width: "100%",

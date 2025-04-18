@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.2)",
     overflow: "hidden",
     position: "relative",
+    borderRadius: 8,
   },
   row: {
     flexDirection: "row",
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   // Grid lines
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     zIndex: 2,
   },
   horizontalGridLine: {

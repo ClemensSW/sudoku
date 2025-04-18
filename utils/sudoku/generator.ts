@@ -181,8 +181,19 @@ function hasUniqueSolution(board: number[][]): boolean {
 }
 
 /**
+ * Mischt ein Array nach dem Fisher-Yates Algorithmus
+ * @param array Das zu mischende Array
+ */
+function shuffleArray<T>(array: T[]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+/**
  * Entfernt Zellen aus einem gelösten Sudoku, um ein Puzzle zu erstellen
- * Optimierte Version für bessere Performance
+ * Optimierte Version für bessere Performance und fairere Verteilung bei Duo-Modus
  * @param solution Die vollständige Lösung
  * @param difficulty Der Schwierigkeitsgrad des Puzzles
  * @returns Ein Sudoku-Board mit dem angegebenen Schwierigkeitsgrad
@@ -202,80 +213,96 @@ export function generatePuzzle(
   // Erstelle eine Kopie der Lösung
   const puzzle = JSON.parse(JSON.stringify(solution));
 
-  // Liste aller Indizes für Zellen
-  const positions: { row: number; col: number }[] = [];
+  // Spielerbereiche definieren
+  const player1Cells: { row: number; col: number }[] = [];
+  const player2Cells: { row: number; col: number }[] = [];
+  
+  // Zellen nach Spielerbereichen aufteilen
   for (let row = 0; row < BOARD_SIZE; row++) {
     for (let col = 0; col < BOARD_SIZE; col++) {
-      positions.push({ row, col });
+      // Die mittlere Zelle (4,4) überspringen, da sie immer gefüllt bleiben soll
+      if (row === 4 && col === 4) continue;
+      
+      // Spieler 2 bekommt die obere Hälfte (Zeilen 0-3 und die Hälfte von Zeile 4)
+      if (row < 4 || (row === 4 && col < 4)) {
+        player2Cells.push({ row, col });
+      }
+      // Spieler 1 bekommt die untere Hälfte (Zeilen 5-8 und die Hälfte von Zeile 4)
+      else if (row > 4 || (row === 4 && col > 4)) {
+        player1Cells.push({ row, col });
+      }
     }
   }
 
   // Mische die Positionen für mehr Variation
-  shuffleArray(positions);
+  shuffleArray(player1Cells);
+  shuffleArray(player2Cells);
 
-  // Anzahl der zu entfernenden Zellen
-  const cellsToRemove = BOARD_SIZE * BOARD_SIZE - cluesCount;
-  let removed = 0;
+  // Berechne, wie viele Zellen pro Spielerbereich entfernt werden sollen
+  // -1 für die mittlere Zelle, die immer gefüllt bleibt
+  const totalCellsToRemove = BOARD_SIZE * BOARD_SIZE - cluesCount - 1;
+  const cellsToRemovePerPlayer = Math.floor(totalCellsToRemove / 2);
   
-  // Cache für Symmetrie-Paare
-  const symmetricPairs = new Map<string, {row: number, col: number}>();
-  
-  // Berechnete symmetrische Positionen im Voraus
-  if (settings.symmetric) {
-    for (const { row, col } of positions) {
-      const symRow = BOARD_SIZE - 1 - row;
-      const symCol = BOARD_SIZE - 1 - col;
-      const key = `${row}-${col}`;
-      const symKey = `${symRow}-${symCol}`;
-      
-      if (!symmetricPairs.has(symKey)) {
-        symmetricPairs.set(key, { row: symRow, col: symCol });
-      }
-    }
-  }
-
-  // Optimierte Funktion zum schnellen Entfernen von Zellen
-  for (const { row, col } of positions) {
-    if (removed >= cellsToRemove) break;
+  // Zellen für Spieler 1 entfernen
+  let removedPlayer1 = 0;
+  for (const { row, col } of player1Cells) {
+    if (removedPlayer1 >= cellsToRemovePerPlayer) break;
     
-    // Überspringe, wenn die Zelle bereits entfernt wurde
-    if (puzzle[row][col] === 0) continue;
+    // Original-Wert sichern
+    const backup = puzzle[row][col];
     
-    // Ermittle zu entfernende Zellen (einschließlich symmetrischer Zelle, falls erforderlich)
-    const cellsToTest = [{ row, col }];
+    // Zelle entfernen
+    puzzle[row][col] = 0;
     
-    if (settings.symmetric) {
-      const key = `${row}-${col}`;
-      const symPosition = symmetricPairs.get(key);
-      
-      // Nur hinzufügen, wenn die symmetrische Zelle existiert und nicht die gleiche ist
-      if (symPosition && (symPosition.row !== row || symPosition.col !== col)) {
-        if (puzzle[symPosition.row][symPosition.col] !== 0) {
-          cellsToTest.push(symPosition);
-        }
-      }
-    }
-    
-    // Original-Werte sichern
-    const backups = cellsToTest.map(pos => puzzle[pos.row][pos.col]);
-    
-    // Zellen entfernen
-    cellsToTest.forEach(pos => {
-      puzzle[pos.row][pos.col] = 0;
-    });
-    
-    // Bei Expert-Level können wir nicht immer auf Eindeutigkeit prüfen (zu zeitintensiv)
+    // Prüfen, ob die Lösung immer noch eindeutig ist
     const shouldCheckUniqueness = settings.uniqueSolution && 
       (difficulty !== 'expert' || Math.random() < 0.5);
     
     if (shouldCheckUniqueness && !hasUniqueSolution(puzzle)) {
       // Wiederherstellen, wenn keine eindeutige Lösung
-      cellsToTest.forEach((pos, idx) => {
-        puzzle[pos.row][pos.col] = backups[idx];
-      });
+      puzzle[row][col] = backup;
     } else {
-      // Zähle tatsächlich entfernte Zellen
-      removed += cellsToTest.length;
+      // Zelle wurde erfolgreich entfernt
+      removedPlayer1++;
+    }
+  }
+  
+  // Zellen für Spieler 2 entfernen
+  let removedPlayer2 = 0;
+  for (const { row, col } of player2Cells) {
+    if (removedPlayer2 >= cellsToRemovePerPlayer) break;
+    
+    // Original-Wert sichern
+    const backup = puzzle[row][col];
+    
+    // Zelle entfernen
+    puzzle[row][col] = 0;
+    
+    // Prüfen, ob die Lösung immer noch eindeutig ist
+    const shouldCheckUniqueness = settings.uniqueSolution && 
+      (difficulty !== 'expert' || Math.random() < 0.5);
+    
+    if (shouldCheckUniqueness && !hasUniqueSolution(puzzle)) {
+      // Wiederherstellen, wenn keine eindeutige Lösung
+      puzzle[row][col] = backup;
+    } else {
+      // Zelle wurde erfolgreich entfernt
+      removedPlayer2++;
+    }
+  }
+  
+  // Wenn nicht genügend Zellen entfernt werden konnten, versuche es mit einer alternativen Strategie
+  if (removedPlayer1 < cellsToRemovePerPlayer * 0.8 || removedPlayer2 < cellsToRemovePerPlayer * 0.8) {
+    // Versuche weitere Zellen zu entfernen, aber priorisiere Ausgewogenheit
+    const remainingCellsP1 = cellsToRemovePerPlayer - removedPlayer1;
+    const remainingCellsP2 = cellsToRemovePerPlayer - removedPlayer2;
+    
+    if (remainingCellsP1 > 0) {
+      console.log(`Konnte bei Spieler 1 nur ${removedPlayer1}/${cellsToRemovePerPlayer} Zellen entfernen`);
+    }
+    
+    if (remainingCellsP2 > 0) {
+      console.log(`Konnte bei Spieler 2 nur ${removedPlayer2}/${cellsToRemovePerPlayer} Zellen entfernen`);
     }
   }
 
@@ -295,18 +322,11 @@ export function generatePuzzle(
     board.push(boardRow);
   }
 
-  return board;
-}
+  // Sicherstellen, dass die mittlere Zelle immer gefüllt ist
+  board[4][4].value = solution[4][4];
+  board[4][4].isInitial = true;
 
-/**
- * Mischt ein Array nach dem Fisher-Yates Algorithmus
- * @param array Das zu mischende Array
- */
-function shuffleArray<T>(array: T[]): void {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
+  return board;
 }
 
 /**

@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
 import DuoGameCell from "./DuoGameCell";
 import { BOARD_SIZE as SHARED_BOARD_SIZE, CELL_SIZE as SHARED_CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
@@ -124,23 +125,67 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     );
   };
 
+  // Calculate area heights based on percentages of the board
+  const topAreaHeight = BOARD_SIZE * 0.45; // Player 2 (top) area - 45%
+  const gradientHeight = BOARD_SIZE * 0.12; // Gradient area - 10%
+  const bottomAreaHeight = BOARD_SIZE * 0.45; // Player 1 (bottom) area - 45%
+
   return (
     <View style={styles.boardContainer}>
       <Animated.View style={[styles.boardWrapper, animatedStyle]}>
         <View style={styles.board}>
-          {/* Player Areas Background */}
+          {/* Player Areas Background with Gradient Transition */}
           <View style={styles.playerAreasContainer}>
             {/* Player 2 (Top) Area Background */}
-            <View style={[styles.playerAreaBackground, styles.player2Background]} />
+            <View 
+              style={[
+                styles.playerAreaBackground, 
+                { 
+                  top: 0,
+                  height: topAreaHeight,
+                  backgroundColor: PLAYER_COLORS[2] 
+                }
+              ]} 
+            />
+            
+            {/* Gradient Transition in the middle */}
+            <LinearGradient
+              colors={[PLAYER_COLORS[2], PLAYER_COLORS[1]]}
+              style={[
+                styles.gradientTransition,
+                {
+                  top: topAreaHeight,
+                  height: gradientHeight
+                }
+              ]}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+            />
             
             {/* Player 1 (Bottom) Area Background */}
-            <View style={[styles.playerAreaBackground, styles.player1Background]} />
+            <View 
+              style={[
+                styles.playerAreaBackground, 
+                { 
+                  bottom: 0,
+                  height: bottomAreaHeight,
+                  backgroundColor: PLAYER_COLORS[1] 
+                }
+              ]} 
+            />
             
-            {/* Middle Cell Background (optional) */}
-            <View style={styles.middleCellBackground} />
-            
-            {/* Line separating the player areas */}
-            <View style={styles.playerAreaSeparator} />
+            {/* Middle Cell Background */}
+            <View 
+              style={[
+                styles.middleCellBackground,
+                {
+                  left: CELL_SIZE * 4,
+                  top: topAreaHeight + (gradientHeight/2) - (CELL_SIZE/2), // Center in the gradient area
+                  width: CELL_SIZE,
+                  height: CELL_SIZE
+                }
+              ]} 
+            />
           </View>
 
           <View style={styles.gridContainer}>
@@ -238,41 +283,22 @@ const styles = StyleSheet.create({
   playerAreaBackground: {
     position: "absolute",
     width: "100%",
-    height: "50%", // Jeweils die Hälfte des Boards
+    left: 0,
+    right: 0,
   },
   
-  // Spieler 2 (oben) Bereich
-  player2Background: {
-    top: 0,
-    backgroundColor: PLAYER_COLORS[2], // Spieler 2 Grundfarbe (hellbeige)
-  },
-  
-  // Spieler 1 (unten) Bereich
-  player1Background: {
-    bottom: 0,
-    backgroundColor: PLAYER_COLORS[1], // Spieler 1 Grundfarbe (teal)
+  // Gradient für die Mittelreihe (Zeile 4)
+  gradientTransition: {
+    position: "absolute",
+    width: "100%",
+    zIndex: 1,
   },
   
   // Separater Hintergrund für die mittlere Zelle
   middleCellBackground: {
     position: "absolute",
-    left: CELL_SIZE * 4,
-    top: CELL_SIZE * 4,
-    width: CELL_SIZE,
-    height: CELL_SIZE,
     backgroundColor: PLAYER_COLORS[0], // Neutrale Farbe für die mittlere Zelle
-    zIndex: 1, // Über den Spielerhintergründen
-  },
-  
-  // Trennlinie zwischen den Spielerbereichen
-  playerAreaSeparator: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: "50%",
-    height: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    zIndex: 1, // Über den Spielerhintergründen
+    zIndex: 2, // Über den Spielerhintergründen und dem Gradient
   },
   
   gridContainer: {

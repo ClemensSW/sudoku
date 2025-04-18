@@ -14,7 +14,8 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { 
   FadeIn, 
-  FadeOut 
+  FadeOut,
+  SlideInUp
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
@@ -96,15 +97,16 @@ const DuoScreen: React.FC = () => {
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
   // Calculate the full screen height for the main section
-  // Add 100px extra to ensure the features section is well below the viewport
-  const mainScreenHeight = height - insets.top - insets.bottom;
+  // Adjust calculation to account for bottom navigation (56px) and safe area
+  const navHeight = 56; // Bottom navigation height
+  const mainScreenHeight = height - insets.top - insets.bottom - navHeight;
 
   // Scroll to features section
   const scrollToFeatures = () => {
     triggerHaptic("light");
     if (scrollViewRef.current) {
-      // Scroll to just below the first screen
-      scrollViewRef.current.scrollTo({ y: height - 100, animated: true });
+      // Scroll to just below the first screen, accounting for navigation height
+      scrollViewRef.current.scrollTo({ y: height - navHeight - 100, animated: true });
     }
   };
 
@@ -193,41 +195,45 @@ const DuoScreen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Main section with interactive board - Make this taller than screen height */}
+          {/* Main section with interactive board - Fixed layout with padding for top elements */}
           <View
             style={[
               styles.mainScreen,
               { 
                 height: mainScreenHeight,
-                justifyContent: "flex-start", // Change from space-between to flex-start
-                paddingTop: 30, // Add some padding at the top
+                // Use space-between to position content and keep scroll indicator visible
+                justifyContent: "space-between",
               },
             ]}
           >
-            {/* Board visualizer - at top */}
-            <DuoBoardVisualizer />
+            {/* Fixed top spacer without text content */}
+            <View style={{ height: 20 }} />
+            
+            {/* Central content container for visualizer and button */}
+            <Animated.View 
+              style={styles.centralContentContainer}
+              entering={FadeIn.duration(800)}
+            >
+              {/* Board visualizer */}
+              <DuoBoardVisualizer />
 
-            {/* Start Game Button - in middle */}
-            <View style={[styles.buttonContainer, { marginTop: 40 }]}>
-              <TouchableOpacity
-                style={[
-                  styles.startButton,
-                  { backgroundColor: colors.primary },
-                ]}
-                onPress={handleStartGame}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.startButtonText}>Jetzt spielen</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Scroll indicator - positioned at bottom of visible area */}
-            <View style={{ 
-              position: 'absolute', 
-              bottom: mainScreenHeight - height + insets.top + 100, // Position at bottom of visible area
-              left: 0, 
-              right: 0,
-            }}>
+              {/* Start Game Button - below visualizer with proper spacing */}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.startButton,
+                    { backgroundColor: colors.primary },
+                  ]}
+                  onPress={handleStartGame}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.startButtonText}>Jetzt spielen</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+            
+            {/* Scroll indicator - now closer to navigation */}
+            <View style={styles.scrollIndicatorContainer}>
               <ScrollIndicator onPress={scrollToFeatures} />
             </View>
           </View>

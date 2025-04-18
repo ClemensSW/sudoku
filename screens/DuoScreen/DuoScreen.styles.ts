@@ -11,24 +11,30 @@ export default StyleSheet.create({
     position: "absolute",
     width: width,
     height: height,
-    opacity: 0.1,
-  },
-  safeArea: {
-    flex: 1,
+    opacity: 0.2,
   },
   scrollContent: {
     paddingBottom: 100, // Space for bottom navigation
   },
   mainScreen: {
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Changed to space-between for better spacing
     paddingHorizontal: 20,
+    position: "relative",
+  },
+  // Container to group visualizer and button together
+  centralContentContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     paddingBottom: 20,
+    // Add padding top to move content down from header
+    paddingTop: 60,
   },
   buttonContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 40, // Space between visualizer and button
   },
   startButton: {
     flexDirection: "row",
@@ -50,11 +56,11 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-  playIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
-    tintColor: "#FFFFFF",
+  // Adjusted positioning for scroll indicator to be closer to navigation bar
+  scrollIndicatorContainer: {
+    marginBottom: 40, // Reduced to bring the indicator closer to nav bar
+    width: "100%",
+    alignItems: "center",
   },
   featuresScreen: {
     minHeight: height * 0.9,

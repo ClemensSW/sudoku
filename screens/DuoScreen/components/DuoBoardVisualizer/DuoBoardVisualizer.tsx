@@ -1,35 +1,120 @@
 // screens/DuoScreen/components/DuoBoardVisualizer/DuoBoardVisualizer.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { 
+  FadeIn, 
+  useAnimatedStyle, 
+  useSharedValue, 
+  withRepeat, 
+  withTiming,
+  Easing
+} from "react-native-reanimated";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
-// Use exact same width as button (320px) for consistency
-const VISUALIZER_SIZE = 200;
+// Slightly increased size for better visibility
+const VISUALIZER_SIZE = 240;
 
 interface DuoBoardVisualizerProps {}
 
 const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = () => {
+  const theme = useTheme();
+  const colors = theme.colors;
+  
+  // Animation values for subtle breathing effect
+  const scale = useSharedValue(1);
+  const glowOpacity = useSharedValue(0.3);
+  
+  // Start animations when component mounts
+  useEffect(() => {
+    // Slow, gentle breathing animation (scale) - more subtle than before
+    scale.value = withRepeat(
+      withTiming(1.03, { 
+        duration: 4000, // Slower breath cycle (4 seconds)
+        easing: Easing.bezier(0.4, 0.0, 0.6, 1), // Custom easing for natural breathing
+      }),
+      -1, // Infinite repetition
+      true // Reverse each sequence (in and out)
+    );
+    
+    // Subtle glow effect animation - synchronized with breathing
+    glowOpacity.value = withRepeat(
+      withTiming(0.5, { 
+        duration: 4000, // Same timing as the scale
+        easing: Easing.bezier(0.4, 0.0, 0.6, 1), // Same easing
+      }),
+      -1, // Infinite repetition
+      true // Reverse each sequence
+    );
+  }, []);
+  
+  // Animated styles
+  const breathingStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+  
+  const glowStyle = useAnimatedStyle(() => {
+    return {
+      opacity: glowOpacity.value,
+    };
+  });
+
   return (
     <View style={styles.container}>
-      <Image
-        source={require("@/assets/images/app-logo.png")}
-        style={styles.logoImage}
-        resizeMode="contain"
+      {/* Glow effect behind the logo */}
+      <Animated.View 
+        style={[
+          styles.glow, 
+          { 
+            backgroundColor: theme.isDark 
+              ? `${colors.primary}30` 
+              : 'rgba(80, 120, 180, 0.2)' 
+          },
+          glowStyle
+        ]} 
       />
+      
+      {/* Animated logo with breathing effect */}
+      <Animated.View 
+        style={[styles.logoContainer, breathingStyle]}
+        entering={FadeIn.duration(800)}
+      >
+        <Image
+          source={require("@/assets/images/app-logo.png")}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+      </Animated.View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: VISUALIZER_SIZE, // Fixed width to match button
-    height: VISUALIZER_SIZE, // Keep it square
+    width: VISUALIZER_SIZE,
+    height: VISUALIZER_SIZE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  glow: {
+    position: 'absolute',
+    width: VISUALIZER_SIZE * 1.2,
+    height: VISUALIZER_SIZE * 1.2,
+    borderRadius: VISUALIZER_SIZE * 0.6,
+    top: -VISUALIZER_SIZE * 0.1,
+    left: -VISUALIZER_SIZE * 0.1,
+  },
+  logoContainer: {
+    width: VISUALIZER_SIZE,
+    height: VISUALIZER_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoImage: {
-    width: "100%",
-    height: "100%",
+    width: "90%",
+    height: "90%",
   }
 });
 

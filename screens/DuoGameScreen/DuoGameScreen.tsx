@@ -1,18 +1,18 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
 import React, { useEffect } from "react";
-import { View, BackHandler, StyleSheet } from "react-native";
+import { View, BackHandler, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
-import { useNavigationControl } from "@/app/_layout"; // Import navigation control hook
+import { useNavigationControl } from "@/app/_layout";
 
 // Duo Game Components
-import Header from "@/components/Header/Header";
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
 
@@ -31,7 +31,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const { showAlert } = useAlert();
-  const { setHideBottomNav } = useNavigationControl(); // Access navigation control
+  const { setHideBottomNav } = useNavigationControl();
 
   // Use the duo game state hook
   const [gameState, gameActions] = useDuoGameState(initialDifficulty, () => {
@@ -45,14 +45,11 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
 
   // Hide navigation when component mounts
   useEffect(() => {
-    // Explicitly hide navigation bar
     setHideBottomNav(true);
-    console.log("DuoGameScreen: Hiding navigation bar");
     
     // Clean up when component unmounts
     return () => {
       setHideBottomNav(false);
-      console.log("DuoGameScreen: Showing navigation bar on unmount");
     };
   }, []);
 
@@ -94,14 +91,19 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-        {/* Header - with skipTopPadding to avoid double padding */}
-        <Header
-          title="Sudoku Duo"
-          onBackPress={handleBackPress}
-          skipTopPadding={true}
-        />
+        {/* Minimal floating back button instead of header */}
+        <TouchableOpacity 
+          style={[
+            styles.backButton, 
+            { backgroundColor: theme.isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.15)" }
+          ]}
+          onPress={handleBackPress}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }} // Increased hit area
+        >
+          <Feather name="chevron-left" size={24} color={theme.isDark ? "#FFFFFF" : "#000000"} />
+        </TouchableOpacity>
 
-        {/* Main content */}
+        {/* Main content - now with full height */}
         <Animated.View
           style={styles.content}
           entering={FadeIn.delay(200).duration(500)}
@@ -155,8 +157,25 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 8,
+    paddingTop: 16, // Added top padding to create safe space below back button
     justifyContent: "space-between", // Distribute components evenly
   },
+  backButton: {
+    position: "absolute",
+    top: 8, // Increased from 12 to create more separation
+    left: 16,
+    width: 36, // Increased from 36 for a larger tap target
+    height: 36, // Increased from 36 for a larger tap target
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 5, // Increased shadow for better visibility
+  }
 });
 
 export default DuoGameScreen;

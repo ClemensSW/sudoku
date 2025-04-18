@@ -17,6 +17,13 @@ const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
 const CELL_SIZE = SHARED_CELL_SIZE;
 
+// Player color themes - extrahiert aus den CellStyles für Konsistenz
+const PLAYER_COLORS = {
+  1: "#4A7D78", // Teal - Player 1 (bottom)
+  2: "#F3EFE3", // Light beige - Player 2 (top)
+  0: "#E0E8E7", // Medium light neutral - Middle cell
+};
+
 interface DuoGameBoardProps {
   board: SudokuBoard;
   player1Cell: CellPosition | null;
@@ -121,8 +128,23 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     <View style={styles.boardContainer}>
       <Animated.View style={[styles.boardWrapper, animatedStyle]}>
         <View style={styles.board}>
+          {/* Player Areas Background */}
+          <View style={styles.playerAreasContainer}>
+            {/* Player 2 (Top) Area Background */}
+            <View style={[styles.playerAreaBackground, styles.player2Background]} />
+            
+            {/* Player 1 (Bottom) Area Background */}
+            <View style={[styles.playerAreaBackground, styles.player1Background]} />
+            
+            {/* Middle Cell Background (optional) */}
+            <View style={styles.middleCellBackground} />
+            
+            {/* Line separating the player areas */}
+            <View style={styles.playerAreaSeparator} />
+          </View>
+
           <View style={styles.gridContainer}>
-            {/* Render the grid lines */}
+            {/* Horizontal grid lines */}
             <View
               style={[
                 styles.gridLine,
@@ -137,6 +159,8 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                 { top: CELL_SIZE * 6 },
               ]}
             />
+            
+            {/* Vertical grid lines */}
             <View
               style={[
                 styles.gridLine,
@@ -194,19 +218,73 @@ const styles = StyleSheet.create({
   board: {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
-    backgroundColor: "#F3EFE3", // Default to player 2 color (top)
+    backgroundColor: "transparent", // Hintergrund transparent, damit Spielerbereiche sichtbar sind
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
+  
+  // Container für die Spielerbereiche
+  playerAreasContainer: {
+    position: "absolute",
+    width: BOARD_SIZE,
+    height: BOARD_SIZE,
+    overflow: "hidden",
+    borderRadius: 8,
+    zIndex: 0, // Unter dem Grid
+  },
+  
+  // Gemeinsame Eigenschaften für beide Spielerbereiche
+  playerAreaBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "50%", // Jeweils die Hälfte des Boards
+  },
+  
+  // Spieler 2 (oben) Bereich
+  player2Background: {
+    top: 0,
+    backgroundColor: PLAYER_COLORS[2], // Spieler 2 Grundfarbe (hellbeige)
+  },
+  
+  // Spieler 1 (unten) Bereich
+  player1Background: {
+    bottom: 0,
+    backgroundColor: PLAYER_COLORS[1], // Spieler 1 Grundfarbe (teal)
+  },
+  
+  // Separater Hintergrund für die mittlere Zelle
+  middleCellBackground: {
+    position: "absolute",
+    left: CELL_SIZE * 4,
+    top: CELL_SIZE * 4,
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    backgroundColor: PLAYER_COLORS[0], // Neutrale Farbe für die mittlere Zelle
+    zIndex: 1, // Über den Spielerhintergründen
+  },
+  
+  // Trennlinie zwischen den Spielerbereichen
+  playerAreaSeparator: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "50%",
+    height: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    zIndex: 1, // Über den Spielerhintergründen
+  },
+  
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
     borderWidth: 2,
-    borderColor: "rgba(0, 0, 0, 0.2)",
+    borderColor: "rgba(0, 0, 0, 0.3)",
     overflow: "hidden",
     position: "relative",
     borderRadius: 8,
+    backgroundColor: "transparent", // Wichtig: damit die Spielerbereiche durchscheinen
+    zIndex: 1, // Über den Spielerbereichen
   },
   row: {
     flexDirection: "row",
@@ -215,7 +293,7 @@ const styles = StyleSheet.create({
   // Grid lines
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)", // Dunklere Linien für bessere Sichtbarkeit
     zIndex: 2,
   },
   horizontalGridLine: {
@@ -239,6 +317,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
+    borderRadius: 8,
   },
 });
 

@@ -160,7 +160,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     try {
       await Share.share({
         message:
-          "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=com.clemenssw.sudoku",
+          "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=de.playfusiongate.sudokuduo",
       });
     } catch (error) {
       console.error("Error sharing:", error);
@@ -170,9 +170,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const handleAboutPress = () => {
     triggerHaptic("light");
     showAlert({
-      title: "Über Sudoku",
+      title: "Sudoku Duo",
       message:
-        "Version 1.0.0\n\nEntwickelt mit ♥ und Freude am Denksport.\n\nDanke, dass du Sudoku spielst!",
+        "Version 1.0.0\n\nEntwickelt mit ♥ und Spaß am Denksport.\n\nDanke, dass du Sudoku Duo spielst!",
       type: "info",
       buttons: [{ text: "OK", style: "primary" }],
     });

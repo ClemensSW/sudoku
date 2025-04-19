@@ -8,7 +8,9 @@
     "scheme": "sudokuduo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "ios": {
       "supportsTablet": true,
       "statusBarHidden": true,
@@ -26,17 +28,25 @@
         "backgroundColor": "#00000000"
       },
       "package": "de.playfusiongate.sudokuduo",
+      "versionCode": 1,
+      "permissions": [],
       "intentFilters": [
         {
           "action": "MAIN",
-          "category": ["LAUNCHER", "DEFAULT"]
+          "category": [
+            "LAUNCHER",
+            "DEFAULT"
+          ]
         },
         {
           "action": "VIEW",
           "data": {
             "scheme": "mailto"
           },
-          "category": ["DEFAULT", "BROWSABLE"]
+          "category": [
+            "DEFAULT",
+            "BROWSABLE"
+          ]
         }
       ]
     },
@@ -58,7 +68,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "d45da334-4571-4a1b-8acf-4966c076496b"
+        "projectId": "1b6add40-870a-4135-9786-bc0120501791"
       }
     }
   }

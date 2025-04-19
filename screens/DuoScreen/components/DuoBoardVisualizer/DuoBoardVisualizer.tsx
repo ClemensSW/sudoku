@@ -69,18 +69,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Glow effect behind the logo */}
-      <Animated.View 
-        style={[
-          styles.glow, 
-          { 
-            backgroundColor: theme.isDark 
-              ? `${colors.primary}30` 
-              : 'rgba(80, 120, 180, 0.2)' 
-          },
-          glowStyle
-        ]} 
-      />
+      
       
       {/* Animated logo with breathing effect - no entrance animation */}
       <Animated.View 
@@ -103,14 +92,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-  },
-  glow: {
-    position: 'absolute',
-    width: VISUALIZER_SIZE * 1.2,
-    height: VISUALIZER_SIZE * 1.2,
-    borderRadius: VISUALIZER_SIZE * 0.6,
-    top: -VISUALIZER_SIZE * 0.1,
-    left: -VISUALIZER_SIZE * 0.1,
   },
   logoContainer: {
     width: VISUALIZER_SIZE,

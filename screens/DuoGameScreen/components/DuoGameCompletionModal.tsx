@@ -19,29 +19,81 @@ import { triggerHaptic } from "@/utils/haptics";
 import ConfettiEffect from "@/components/GameCompletionModal/components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
 
-// Spieler-Farbthemen für konsistente Darstellung
 const PLAYER_COLORS = {
+  // Player 1 (bottom) - Green Theme
   1: {
-    name: "Grün",  // Spieler 1 ist jetzt "Grün"
+    name: "Grün",
+    // Core colors - enhanced for better contrast in light mode
     primary: "#4A7D78", // Teal - Player 1 (bottom)
-    light: "#6CACA6", // Helleres Teal für Akzente
+    light: "#6CACA6", // Lighter teal for accents
+    dark: "#3A6963", // Darker teal for contrast
+    
+    // Gradients
     gradientStart: "#4A7D78",
-    gradientEnd: "rgba(74, 125, 120, 0)" // Transparentes Ende
+    gradientEnd: "rgba(74, 125, 120, 0)", // Transparent end
+    
+    // Light mode specific adjustments
+    lightMode: {
+      background: "rgba(74, 125, 120, 0.08)", // Subtle teal background
+      border: "#4A7D78", // Solid border color
+      text: "#3A6963", // Darker text for contrast
+      trophy: {
+        glow: "rgba(74, 125, 120, 0.25)", // Subtle glow
+        background: "rgba(74, 125, 120, 0.15)", // Background of trophy
+        icon: "#4A7D78", // Trophy icon color
+      }
+    }
   },
+  
+  // Player 2 (top) - Yellow Theme
   2: {
-    name: "Gelb", // Spieler 2 ist jetzt "Gelb"
-    primary: "#E6E0C5", // Dark blue-gray - Player 2 (top)
-    light: "#8A8C9E", // Helleres Gelb-Grau für Akzente
-    gradientStart: "#E6E0C5",
-    gradientEnd: "rgba(91, 93, 110, 0)" // Transparentes Ende
+    name: "Gelb",
+    // Core colors - significantly enhanced for better contrast in light mode
+    primary: "#8A7B46", // Deeper, more earthy yellow with better contrast
+    light: "#D5C178", // Bright yellow-gold for accents
+    dark: "#6A5D34", // Very dark yellow for maximum contrast
+    
+    // Gradients
+    gradientStart: "#8A7B46", 
+    gradientEnd: "rgba(138, 123, 70, 0)", // Transparent end
+    
+    // Light mode specific adjustments
+    lightMode: {
+      background: "rgba(138, 123, 70, 0.08)", // Subtle yellow background
+      border: "#8A7B46", // Solid border color
+      text: "#6A5D34", // Darker text for contrast
+      trophy: {
+        glow: "rgba(138, 123, 70, 0.25)", // Subtle glow
+        background: "rgba(138, 123, 70, 0.15)", // Background of trophy
+        icon: "#8A7B46", // Trophy icon color
+      }
+    }
   },
+  
+  // Neutral - Balanced Theme for ties
   neutral: {
     name: "Beide Spieler",
-    primary: "#627D8B", // Neutrale Farbe für Unentschieden
-    light: "#94AEBB", // Hellere neutrale Farbe
-    gradientStart: "#4A7D78", // Gradient von Grün zu Gelb für Unentschieden
-    gradientMiddle: "#5B5D6E",
-    gradientEnd: "rgba(0, 0, 0, 0)"
+    // Core colors
+    primary: "#5E6F78", // Modern slate blue-gray
+    light: "#94AEBB", // Lighter accent
+    dark: "#3E4B52", // Darker shade for contrast
+    
+    // Gradients
+    gradientStart: "#4A7D78", // Start with green 
+    gradientMiddle: "#8A7B46", // Transition to yellow
+    gradientEnd: "rgba(0, 0, 0, 0)", // Fade to transparent
+    
+    // Light mode specific adjustments
+    lightMode: {
+      background: "rgba(94, 111, 120, 0.08)", // Subtle background
+      border: "#5E6F78", // Solid border color
+      text: "#3E4B52", // Darker text for contrast
+      trophy: {
+        glow: "rgba(94, 111, 120, 0.25)", // Subtle glow
+        background: "rgba(94, 111, 120, 0.15)", // Background of trophy
+        icon: "#5E6F78", // Trophy icon color
+      }
+    }
   }
 };
 
@@ -80,6 +132,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const isDarkMode = theme.isDark;
   
   // Animation values
   const modalScale = useSharedValue(0.95);
@@ -159,6 +212,54 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
       PLAYER_COLORS[winner].gradientStart,
       PLAYER_COLORS[winner].gradientEnd
     ] as const; // Use const assertion to create a readonly tuple
+  };
+  
+  // Helper function to get player card border color based on winner and theme
+  const getPlayerCardBorderColor = (player: 1 | 2) => {
+    // If this player is the winner, use their theme color
+    if (winner === player) {
+      return isDarkMode 
+        ? PLAYER_COLORS[player].primary // In dark mode, use the standard primary
+        : PLAYER_COLORS[player].lightMode.border; // In light mode, use the enhanced border color
+    }
+    
+    // Otherwise use a neutral border
+    return isDarkMode 
+      ? colors.border // Default dark mode border
+      : 'rgba(0,0,0,0.15)'; // Slightly darker border for light mode
+  };
+  
+  // Helper function to get player card background based on theme
+  const getPlayerCardBackground = (player: 1 | 2) => {
+    // In dark mode, just use the surface color
+    if (isDarkMode) {
+      return colors.surface;
+    }
+    
+    // In light mode, use a subtle colored background if this player is the winner
+    if (winner === player || winner === 0) {
+      return colors.surface;
+    }
+    
+    // Otherwise use the default surface color
+    return colors.surface;
+  };
+  
+  // Helper function to get trophy colors based on player and theme
+  const getTrophyColors = (player: 1 | 2) => {
+    if (isDarkMode) {
+      return {
+        glow: PLAYER_COLORS[player].primary,
+        background: `rgba(${player === 1 ? '74, 125, 120' : '138, 123, 70'}, 0.15)`,
+        icon: PLAYER_COLORS[player].primary
+      };
+    }
+    
+    return {
+      glow: PLAYER_COLORS[player].lightMode.trophy.glow,
+      background: PLAYER_COLORS[player].lightMode.trophy.background,
+      icon: PLAYER_COLORS[player].lightMode.trophy.icon
+    };
   };
   
   // Start animations when modal becomes visible
@@ -275,16 +376,32 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           <View style={[
             styles.playerCard,
             { 
-              borderColor: winner === 1 ? PLAYER_COLORS[1].primary : colors.border,
-              backgroundColor: colors.surface 
+              borderColor: getPlayerCardBorderColor(1),
+              backgroundColor: getPlayerCardBackground(1),
+              // Enhanced shadow for light mode
+              ...(!isDarkMode && winner === 1 ? {
+                shadowColor: PLAYER_COLORS[1].primary,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 4
+              } : {})
             }
           ]}>
             <View style={styles.playerCardHeader}>
               <View style={styles.playerTitleArea}>
-                <Text style={[styles.playerCardTitle, { color: PLAYER_COLORS[1].primary }]}>
+                <Text 
+                  style={[
+                    styles.playerCardTitle, 
+                    { 
+                      color: isDarkMode 
+                        ? PLAYER_COLORS[1].primary 
+                        : PLAYER_COLORS[1].lightMode.text
+                    }
+                  ]}
+                >
                   {PLAYER_COLORS[1].name}
                 </Text>
-                
               </View>
               
               {winner === 1 && (
@@ -298,7 +415,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   <Animated.View 
                     style={[
                       styles.trophyGlow,
-                      { backgroundColor: PLAYER_COLORS[1].primary }
+                      { backgroundColor: getTrophyColors(1).glow }
                     ]}
                   />
                   
@@ -306,28 +423,41 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   <View 
                     style={[
                       styles.trophyInner,
-                      { 
-                        backgroundColor: theme.isDark ? 'rgba(74, 125, 120, 0.15)' : 'rgba(74, 125, 120, 0.1)'
-                      }
+                      { backgroundColor: getTrophyColors(1).background }
                     ]}
                   >
                     <Feather 
                       name="award" 
                       size={22} 
-                      color={PLAYER_COLORS[1].primary} 
+                      color={getTrophyColors(1).icon} 
                     />
                   </View>
                 </Animated.View>
               )}
             </View>
             
-            <Text style={[styles.playerMessage, { color: colors.textPrimary }]}>
+            <Text 
+              style={[
+                styles.playerMessage, 
+                { 
+                  color: isDarkMode 
+                    ? colors.textPrimary 
+                    : winner === 1 
+                      ? PLAYER_COLORS[1].lightMode.text 
+                      : colors.textPrimary
+                }
+              ]}
+            >
               {getPlayerMessage(1)}
             </Text>
             
             <View style={[
               styles.statsContainer, 
-              { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }
+              { 
+                backgroundColor: isDarkMode 
+                  ? 'rgba(255,255,255,0.05)' 
+                  : 'rgba(0,0,0,0.03)'
+              }
             ]}>
               <View style={styles.statItem}>
                 <Feather name="heart" size={16} color={colors.error} />
@@ -357,17 +487,32 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           <View style={[
             styles.playerCard,
             { 
-              borderColor: winner === 2 ? PLAYER_COLORS[2].primary : colors.border,
-              backgroundColor: colors.surface 
+              borderColor: getPlayerCardBorderColor(2),
+              backgroundColor: getPlayerCardBackground(2),
+              // Enhanced shadow for light mode
+              ...(!isDarkMode && winner === 2 ? {
+                shadowColor: PLAYER_COLORS[2].primary,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 4
+              } : {})
             }
           ]}>
             <View style={styles.playerCardHeader}>
               <View style={styles.playerTitleArea}>
-                <Text style={[styles.playerCardTitle, { color: PLAYER_COLORS[2].primary }]}>
+                <Text 
+                  style={[
+                    styles.playerCardTitle, 
+                    { 
+                      color: isDarkMode 
+                        ? PLAYER_COLORS[2].primary 
+                        : PLAYER_COLORS[2].lightMode.text
+                    }
+                  ]}
+                >
                   {PLAYER_COLORS[2].name}
                 </Text>
-                
-                
               </View>
               
               {winner === 2 && (
@@ -381,7 +526,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   <Animated.View 
                     style={[
                       styles.trophyGlow,
-                      { backgroundColor: PLAYER_COLORS[2].primary }
+                      { backgroundColor: getTrophyColors(2).glow }
                     ]}
                   />
                   
@@ -389,28 +534,41 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   <View 
                     style={[
                       styles.trophyInner,
-                      { 
-                        backgroundColor: theme.isDark ? 'rgba(91, 93, 110, 0.15)' : 'rgba(91, 93, 110, 0.1)'
-                      }
+                      { backgroundColor: getTrophyColors(2).background }
                     ]}
                   >
                     <Feather 
                       name="award" 
                       size={22} 
-                      color={PLAYER_COLORS[2].primary} 
+                      color={getTrophyColors(2).icon} 
                     />
                   </View>
                 </Animated.View>
               )}
             </View>
             
-            <Text style={[styles.playerMessage, { color: colors.textPrimary }]}>
+            <Text 
+              style={[
+                styles.playerMessage, 
+                { 
+                  color: isDarkMode 
+                    ? colors.textPrimary 
+                    : winner === 2 
+                      ? PLAYER_COLORS[2].lightMode.text 
+                      : colors.textPrimary
+                }
+              ]}
+            >
               {getPlayerMessage(2)}
             </Text>
             
             <View style={[
               styles.statsContainer, 
-              { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }
+              { 
+                backgroundColor: isDarkMode 
+                  ? 'rgba(255,255,255,0.05)' 
+                  : 'rgba(0,0,0,0.03)'
+              }
             ]}>
               <View style={styles.statItem}>
                 <Feather name="heart" size={16} color={colors.error} />
@@ -642,7 +800,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 20,
     paddingBottom: 40,
-    zIndex: 1,
+    zIndex: 2,
   },
   button: {
     width: "100%",

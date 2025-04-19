@@ -16,7 +16,7 @@ import { useNavigationControl } from "@/app/_layout";
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
 import DuoGameCompletionModal from "./components/DuoGameCompletionModal";
-import DuoGameStatusBar from "./components/DuoGameStatusBar";
+import Timer from "@/components/Timer/Timer"; // Import Timer directly
 
 // Game Logic
 import { useDuoGameState } from "./hooks/useDuoGameState";
@@ -159,13 +159,20 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           />
         </TouchableOpacity>
 
+        {/* Hidden Timer component to track game time */}
+        <View style={styles.hiddenTimer}>
+          <Timer
+            isRunning={gameState.isGameRunning}
+            initialTime={gameState.gameTime}
+            onTimeUpdate={gameActions.handleTimeUpdate}
+          />
+        </View>
+
         {/* Main content - now with full height */}
         <Animated.View
           style={styles.content}
           entering={FadeIn.delay(200).duration(500)}
         >
-         
-
           {/* Player 2 Controls (Top) */}
           <DuoGameControls
             position="top"
@@ -254,6 +261,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
+  },
+  // Style for the hidden timer
+  hiddenTimer: {
+    position: "absolute",
+    top: -1000, // Position it off-screen
+    opacity: 0, // Make it invisible
+    height: 1, // Minimal height
+    width: 1, // Minimal width
   }
 });
 

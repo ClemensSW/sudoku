@@ -5,12 +5,12 @@
 const lightColors = {
   // Primary colors
   primary: "#4A7D78", // Deine Teal-Primärfarbe beibehalten
-  primaryLight: "#6CACA6", // Hellere Variante
+  primaryLight: "#F9FBFA", // Hellere Variante
   primaryDark: "#3A6963", // Dunklere Variante
   secondary: "#F05365", // Moderneres Pink/Rot für Akzente
 
   // UI elements - mehr Tiefe und Abgrenzung
-  background: "#F8FAFC", // Leicht getöntes Weiß für Hintergrund
+  background: "#E5E7E9", // Leicht getöntes Weiß für Hintergrund
   surface: "#FFFFFF", // Reines Weiß für Karten und UI-Elemente
   card: "#FFFFFF",
   boardBackground: "#F0F4F5", // Leicht kühlerer Ton für Spielbrett

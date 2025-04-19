@@ -132,6 +132,12 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     return theme.textColor;
   };
 
+  // Determine if the current number should be underlined (6 or 9)
+  // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern
+  const shouldUnderlineNumber = (num: number) => {
+    return num === 6 || num === 9;
+  };
+
   // Render notes for empty cells
   const renderNotes = () => {
     if (cell.value !== 0 || cell.notes.length === 0) return null;
@@ -149,8 +155,8 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
                 : styles.inactiveNote,
               // For player 2 (top), rotate text if needed
               player === 2 && rotateForPlayer2 && styles.rotatedText,
-              // For 6 and 9, add underline to distinguish when rotated
-              (num === 6 || num === 9) && styles.underlinedNumber
+              // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern in Notizen
+              shouldUnderlineNumber(num) && styles.underlinedNumber
             ]}
           >
             {cell.notes.includes(num) ? num : ""}
@@ -206,9 +212,8 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
               { color: getTextColor() },
               cell.isInitial && styles.initialText,
               shouldRotateContent && styles.rotatedText,
-              // For 6 and 9, add underline to distinguish when rotated
-              shouldRotateContent && (cell.value === 6 || cell.value === 9) && 
-                styles.underlinedNumber
+              // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern
+              shouldUnderlineNumber(cell.value) && styles.underlinedNumber
             ]}
           >
             {cell.value}

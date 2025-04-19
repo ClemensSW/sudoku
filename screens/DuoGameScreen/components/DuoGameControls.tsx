@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
 import DuoErrorIndicator from "./DuoErrorIndicator";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -29,7 +30,8 @@ const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
     controls: {
-      backgroundColor: "rgba(74, 125, 120, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
+      darkBackgroundColor: "rgba(74, 125, 120, 0.2)", // Original für Dark Mode
+      lightBackgroundColor: "rgba(74, 125, 120, 0.15)", // Angepasste Farbe für Light Mode
       numberButton: {
         background: "#4A7D78", // Teal
         textColor: "#F1F4FB", // Light blue/white
@@ -50,7 +52,8 @@ const PLAYER_THEMES = {
   // Player 2 (top) - UPDATED COLORS
   2: {
     controls: {
-      backgroundColor: "rgba(243, 239, 227, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
+      darkBackgroundColor: "rgba(243, 239, 227, 0.2)", // Original für Dark Mode
+      lightBackgroundColor: "rgba(138, 123, 70, 0.15)", // Neue Farbe für Light Mode
       numberButton: {
         background: "#5B5D6E", // Dark blue-gray
         textColor: "#F3EFE3", // Light beige
@@ -105,6 +108,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
   const theme = PLAYER_THEMES[player].controls;
+  const { isDark } = useTheme(); // Get dark mode state
   
   // Animation values for buttons
   const noteScale = useSharedValue(1);
@@ -142,6 +146,12 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   const hintAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: hintScale.value }],
   }));
+  
+  // Get background color based on theme mode
+  const getBackgroundColor = () => {
+    // Für beide Spieler jetzt das gleiche Muster
+    return isDark ? theme.darkBackgroundColor : theme.lightBackgroundColor;
+  };
 
   // Render number buttons
   const renderNumberButtons = () => {
@@ -206,17 +216,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 
     return (
       <View style={styles.actionButtonsRow}>
-        {/* Error Indicator - now centered vertically */}
-        <View style={styles.errorIndicatorContainer}>
-          <DuoErrorIndicator 
-            player={player} 
-            errorsCount={errorsCount} 
-            maxErrors={maxErrors}
-            compact={true}
-          />
-        </View>
-
-        {/* Note button - VEREINFACHTE STRUKTUR */}
+        {/* Note button - LINKS */}
         <Animated.View style={[styles.actionButtonWrapper, noteAnimatedStyle]}>
           <TouchableOpacity
             style={[
@@ -262,7 +262,17 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Hint button */}
+        {/* Error Indicator - ZENTRIERT */}
+        <View style={styles.errorIndicatorContainer}>
+          <DuoErrorIndicator 
+            player={player} 
+            errorsCount={errorsCount} 
+            maxErrors={maxErrors}
+            compact={true}
+          />
+        </View>
+
+        {/* Hint button - RECHTS */}
         <Animated.View style={[styles.actionButtonWrapper, hintAnimatedStyle]}>
           <TouchableOpacity
             style={[
@@ -307,7 +317,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: theme.backgroundColor },
+        { backgroundColor: getBackgroundColor() },
         position === "top" && styles.topContainer,
       ]}
       entering={FadeIn.duration(500)}
@@ -329,28 +339,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 12,
     margin: 4,
+    alignSelf: "center", // Zentriert den Container selbst
   },
   topContainer: {
     transform: [{ rotate: "180deg" }],
   },
-  // Action buttons row jetzt mit drei Elementen
+  // Action buttons row jetzt mit drei Elementen gleichmäßig verteilt
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-between", // Gleichmäßig verteilen
+    justifyContent: "center", // Zentrale Ausrichtung statt space-between
     alignItems: "center", // Vertikal zentrieren
     width: "100%",
     marginVertical: 4,
-    paddingHorizontal: 4,
+    paddingHorizontal: 0, // Kein horizontales Padding
     height: ACTION_BUTTON_HEIGHT, // Feste Höhe für bessere Ausrichtung
   },
   // Container for error indicator with centered alignment
   errorIndicatorContainer: {
-    minWidth: 60,
+    width: 76, // Etwas schmaler für bessere Gesamtverteilung
     height: ACTION_BUTTON_HEIGHT,
     alignItems: "center", // Horizontal zentrieren
     justifyContent: "center", // Vertikal zentrieren
+    paddingHorizontal: 0, // Kein zusätzliches Padding
   },
   actionButtonWrapper: {
+    width: ACTION_BUTTON_WIDTH, // Feste Breite statt flex
     alignItems: "center",
     justifyContent: "center",
     height: ACTION_BUTTON_HEIGHT,

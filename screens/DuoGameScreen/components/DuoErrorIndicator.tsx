@@ -79,10 +79,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
       style={[
         styles.container,
         compact && styles.compactContainer,
-        { backgroundColor: compact ? "transparent" : theme.background },
-        // Wichtig: Counter-Rotation für Spieler 2, da der übergeordnete Container
-        // bereits um 180° gedreht ist
-        player === 2 && styles.counterRotatedContainer
+        { backgroundColor: compact ? "transparent" : theme.background }
       ]}
       entering={FadeIn.duration(300)}
     >
@@ -142,10 +139,6 @@ const styles = StyleSheet.create({
     // Schatten für den Kompakt-Modus entfernen
     shadowOpacity: 0,
     elevation: 0,
-  },
-  // Gegen-Rotation für Spieler 2
-  counterRotatedContainer: {
-    transform: [{ rotate: "180deg" }], // Vollständige Rotation, um die 180°-Drehung des übergeordneten Containers zu kompensieren
   },
   heartsRow: {
     flexDirection: "row",

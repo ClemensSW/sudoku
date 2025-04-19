@@ -181,7 +181,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
         style={[
           styles.modalContainer, 
           { 
-            backgroundColor: colors.card,
+            backgroundColor: colors.background,
             width: "100%",
             height: "100%",
             maxWidth: "100%",

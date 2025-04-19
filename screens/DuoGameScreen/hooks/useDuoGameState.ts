@@ -15,7 +15,6 @@ import { triggerHaptic } from "@/utils/haptics";
 
 // Constants
 const MAX_HINTS = 3;
-const MAX_LIVES = 3;
 
 // Types
 export interface CellPosition {
@@ -39,13 +38,10 @@ export interface DuoGameState {
   player2NoteMode: boolean;
   player1Hints: number;
   player2Hints: number;
-  player1Lives: number;  // Neu: Leben für Spieler 1
-  player2Lives: number;  // Neu: Leben für Spieler 2
   isGameRunning: boolean;
   isGameComplete: boolean;
   isLoading: boolean;
   gameTime: number;
-  winner: 0 | 1 | 2;  // Neu: 0 = kein Gewinner, 1 = Spieler 1, 2 = Spieler 2
 }
 
 export interface DuoGameActions {
@@ -76,13 +72,10 @@ export const useDuoGameState = (
   const [player2NoteMode, setPlayer2NoteMode] = useState(false);
   const [player1Hints, setPlayer1Hints] = useState(MAX_HINTS);
   const [player2Hints, setPlayer2Hints] = useState(MAX_HINTS);
-  const [player1Lives, setPlayer1Lives] = useState(MAX_LIVES);  // Neu: Leben für Spieler 1
-  const [player2Lives, setPlayer2Lives] = useState(MAX_LIVES);  // Neu: Leben für Spieler 2
   const [isGameRunning, setIsGameRunning] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [gameTime, setGameTime] = useState(0);
-  const [winner, setWinner] = useState<0 | 1 | 2>(0);  // Neu: Gewinner
   const [playerAreas, setPlayerAreas] = useState<[PlayerArea, PlayerArea]>([
     { player: 1, cells: [] },
     { player: 2, cells: [] },
@@ -145,13 +138,12 @@ export const useDuoGameState = (
     [playerAreas]
   );
 
-  // Check for game completion or player with no lives when board changes
+  // Check for game completion when board changes
   useEffect(() => {
     if (board.length > 0) {
       checkPlayerCompletion();
-      checkPlayerLives();
     }
-  }, [board, player1Lives, player2Lives]);
+  }, [board]);
 
   // Start a new game
   const startNewGame = useCallback(() => {
@@ -184,15 +176,12 @@ export const useDuoGameState = (
         setPlayer1NoteMode(false);
         setPlayer2NoteMode(false);
 
-        // Reset counters
+        // Reset hint counters
         setPlayer1Hints(MAX_HINTS);
         setPlayer2Hints(MAX_HINTS);
-        setPlayer1Lives(MAX_LIVES);
-        setPlayer2Lives(MAX_LIVES);
         
-        // Reset game time and winner
+        // Reset game time
         setGameTime(0);
-        setWinner(0);
         
         // Reset game completion status
         setIsGameComplete(false);
@@ -218,16 +207,11 @@ export const useDuoGameState = (
         return;
       }
 
-      // Don't allow if player has completed their area or lost all lives
+      // Don't allow if player has completed their area
       if (
-        (player === 1 && (player1Complete || player1Lives <= 0)) ||
-        (player === 2 && (player2Complete || player2Lives <= 0))
+        (player === 1 && player1Complete) ||
+        (player === 2 && player2Complete)
       ) {
-        return;
-      }
-
-      // Don't allow if game is over
-      if (isGameComplete) {
         return;
       }
 
@@ -240,7 +224,7 @@ export const useDuoGameState = (
         setPlayer2Cell({ row, col });
       }
     },
-    [board, player1Complete, player2Complete, player1Lives, player2Lives, isGameComplete]
+    [board, player1Complete, player2Complete]
   );
 
   // Handle number input
@@ -249,12 +233,11 @@ export const useDuoGameState = (
       // Get the selected cell for this player
       const selectedCell = player === 1 ? player1Cell : player2Cell;
 
-      // If no cell is selected or player has completed their area or lost all lives, ignore
+      // If no cell is selected or player has completed their area, ignore
       if (
         !selectedCell ||
-        (player === 1 && (player1Complete || player1Lives <= 0)) ||
-        (player === 2 && (player2Complete || player2Lives <= 0)) ||
-        isGameComplete
+        (player === 1 && player1Complete) ||
+        (player === 2 && player2Complete)
       ) {
         return;
       }
@@ -306,13 +289,6 @@ export const useDuoGameState = (
         // Invalid or incorrect move - provide haptic feedback
         triggerHaptic("error");
         
-        // Verringere die Leben des Spielers
-        if (player === 1) {
-          setPlayer1Lives(prev => Math.max(0, prev - 1));
-        } else {
-          setPlayer2Lives(prev => Math.max(0, prev - 1));
-        }
-        
         // Automatically clear the wrong entry after a short delay
         setTimeout(() => {
           const clearedBoard = [...board];
@@ -335,9 +311,7 @@ export const useDuoGameState = (
         }
       }
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
-     player1NoteMode, player2NoteMode, player1Lives, player2Lives, 
-     solution, getCellOwner, isGameComplete]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, player1NoteMode, player2NoteMode, solution, getCellOwner]
   );
 
   // Handle clear button
@@ -346,12 +320,11 @@ export const useDuoGameState = (
       // Get the selected cell for this player
       const selectedCell = player === 1 ? player1Cell : player2Cell;
 
-      // If no cell is selected or player has completed their area or lost all lives, ignore
+      // If no cell is selected or player has completed their area, ignore
       if (
         !selectedCell ||
-        (player === 1 && (player1Complete || player1Lives <= 0)) ||
-        (player === 2 && (player2Complete || player2Lives <= 0)) ||
-        isGameComplete
+        (player === 1 && player1Complete) ||
+        (player === 2 && player2Complete)
       ) {
         return;
       }
@@ -369,17 +342,15 @@ export const useDuoGameState = (
       setBoard(updatedBoard);
       triggerHaptic("light");
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
-     player1Lives, player2Lives, getCellOwner, isGameComplete]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, getCellOwner]
   );
 
   // Handle note toggle
   const handleNoteToggle = useCallback(
     (player: 1 | 2) => {
       if (
-        (player === 1 && (player1Complete || player1Lives <= 0)) ||
-        (player === 2 && (player2Complete || player2Lives <= 0)) ||
-        isGameComplete
+        (player === 1 && player1Complete) ||
+        (player === 2 && player2Complete)
       ) {
         return;
       }
@@ -392,8 +363,7 @@ export const useDuoGameState = (
 
       triggerHaptic("light");
     },
-    [player1Complete, player2Complete, player1Lives, player2Lives, 
-     player1NoteMode, player2NoteMode, isGameComplete]
+    [player1Complete, player2Complete, player1NoteMode, player2NoteMode]
   );
 
   // Handle hint request
@@ -408,13 +378,6 @@ export const useDuoGameState = (
           "Keine Hinweise mehr",
           `Spieler ${player} hat keine Hinweise mehr übrig.`
         );
-        return;
-      }
-
-      // If the player has lost all lives, they can't use hints
-      if ((player === 1 && player1Lives <= 0) || 
-          (player === 2 && player2Lives <= 0) ||
-          isGameComplete) {
         return;
       }
 
@@ -466,9 +429,7 @@ export const useDuoGameState = (
 
       triggerHaptic("success");
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
-     player1Hints, player2Hints, player1Lives, player2Lives, 
-     solution, getCellOwner, isGameComplete]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, player1Hints, player2Hints, solution, getCellOwner]
   );
 
   // Handle time update
@@ -476,24 +437,9 @@ export const useDuoGameState = (
     setGameTime(time);
   }, []);
 
-  // Check players' lives
-  const checkPlayerLives = useCallback(() => {
-    if (isGameComplete) return;
-    
-    // If a player has lost all lives, the other wins
-    if (player1Lives <= 0 && player2Lives > 0) {
-      handlePlayerWin(2);
-    } else if (player2Lives <= 0 && player1Lives > 0) {
-      handlePlayerWin(1);
-    } else if (player1Lives <= 0 && player2Lives <= 0) {
-      // If both players lose all lives, it's a draw (no winner)
-      handleGameOver();
-    }
-  }, [player1Lives, player2Lives, isGameComplete]);
-
   // Check if a player has completed their area
   const checkPlayerCompletion = useCallback(() => {
-    if (board.length === 0 || playerAreas[0].cells.length === 0 || isGameComplete) return;
+    if (board.length === 0 || playerAreas[0].cells.length === 0) return;
 
     const [player1Area, player2Area] = playerAreas;
 
@@ -544,14 +490,7 @@ export const useDuoGameState = (
     if (p1Complete && p2Complete && isGameRunning) {
       handleGameComplete();
     }
-    // If one player completed their area and the other lost all lives
-    else if (p1Complete && player2Lives <= 0) {
-      handlePlayerWin(1);
-    }
-    else if (p2Complete && player1Lives <= 0) {
-      handlePlayerWin(2);
-    }
-  }, [board, playerAreas, player1Complete, player2Complete, player1Lives, player2Lives, isGameRunning, isGameComplete]);
+  }, [board, playerAreas, player1Complete, player2Complete, isGameRunning]);
 
   // Handle player completion
   const handlePlayerCompleted = useCallback((player: 1 | 2) => {
@@ -568,52 +507,12 @@ export const useDuoGameState = (
   const handleGameComplete = useCallback(() => {
     setIsGameRunning(false);
     setIsGameComplete(true);
-    // Bei Gleichstand (beide haben fertig oder beide haben verloren) kein Gewinner
-    setWinner(0);
     triggerHaptic("success");
 
     setTimeout(() => {
       Alert.alert(
         "Spiel beendet!",
-        "Beide Bereiche wurden erfolgreich gelöst. Ein Unentschieden!",
-        [
-          { text: "Neues Spiel", onPress: startNewGame },
-          { text: "Zum Menü", onPress: onQuit },
-        ]
-      );
-    }, 500);
-  }, [startNewGame, onQuit]);
-
-  // Handle player win
-  const handlePlayerWin = useCallback((player: 1 | 2) => {
-    setIsGameRunning(false);
-    setIsGameComplete(true);
-    setWinner(player);
-    triggerHaptic("success");
-
-    setTimeout(() => {
-      Alert.alert(
-        "Spiel beendet!",
-        `Spieler ${player} hat gewonnen!`,
-        [
-          { text: "Neues Spiel", onPress: startNewGame },
-          { text: "Zum Menü", onPress: onQuit },
-        ]
-      );
-    }, 500);
-  }, [startNewGame, onQuit]);
-
-  // Handle game over (both players lost all lives)
-  const handleGameOver = useCallback(() => {
-    setIsGameRunning(false);
-    setIsGameComplete(true);
-    setWinner(0); // Kein Gewinner
-    triggerHaptic("error");
-
-    setTimeout(() => {
-      Alert.alert(
-        "Spiel beendet!",
-        "Beide Spieler haben alle Leben verloren. Spielende!",
+        "Beide Bereiche wurden erfolgreich gelöst. Gut gemacht!",
         [
           { text: "Neues Spiel", onPress: startNewGame },
           { text: "Zum Menü", onPress: onQuit },
@@ -642,13 +541,10 @@ export const useDuoGameState = (
       player2NoteMode,
       player1Hints,
       player2Hints,
-      player1Lives,
-      player2Lives,
       isGameRunning,
       isGameComplete,
       isLoading,
       gameTime,
-      winner,
     },
     {
       startNewGame,

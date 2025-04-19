@@ -2,20 +2,20 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import StatisticsDisplay from "@/screens/LeistungScreen/components/StatisticsDisplay/StatisticsDisplay";
 import { loadStats, GameStats } from "@/utils/storage";
-import { Feather } from "@expo/vector-icons";
 import Header from "@/components/Header/Header";
+import LoadingState from "./components/LoadingState";
+import EmptyState from "./components/EmptyState";
+import LevelProgress from "@/components/GameCompletionModal/components/LevelProgress/LevelProgress";
+import StreakDisplay from "@/components/GameCompletionModal/components/StreakDisplay/StreakDisplay";
+import BestTimesChart from "./components/BestTimesChart/BestTimesChart";
 
 const LeistungScreen: React.FC = () => {
   const router = useRouter();
@@ -62,31 +62,30 @@ const LeistungScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         >
           {isLoading ? (
-            <View style={styles.loadingContainer}>
-              <Feather name="loader" size={32} color={colors.primary} />
-              <Text
-                style={[styles.loadingText, { color: colors.textSecondary }]}
-              >
-                Statistiken werden geladen...
-              </Text>
-            </View>
+            <LoadingState />
           ) : stats ? (
-            <StatisticsDisplay stats={stats} />
-          ) : (
-            <View style={styles.emptyStateContainer}>
-              <Feather
-                name="activity"
-                size={64}
-                color={colors.textSecondary}
-                style={{ opacity: 0.5 }}
+            <>
+              {/* Level Progress */}
+              <LevelProgress 
+                stats={stats}
+                difficulty="medium" // Standardwert, da hier kein aktuelles Spiel vorhanden ist
+                justCompleted={false} // Kein gerade abgeschlossenes Spiel
               />
-              <Text
-                style={[styles.emptyStateText, { color: colors.textSecondary }]}
-              >
-                Keine Statistiken verfügbar. Spiele ein paar Runden Sudoku, um
-                deine Leistung zu verfolgen!
-              </Text>
-            </View>
+              <View style={styles.sectionSpacer} />
+              
+              {/* Streak Display - immer anzeigen */}
+              <StreakDisplay 
+                currentStreak={stats.currentStreak}
+                longestStreak={stats.longestStreak}
+                isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+              />
+              <View style={styles.sectionSpacer} />
+              
+              {/* Best Times Chart */}
+              <BestTimesChart stats={stats} />
+            </>
+          ) : (
+            <EmptyState />
           )}
         </ScrollView>
       </View>
@@ -105,28 +104,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 24,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 64,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-  },
-  emptyStateContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 64,
-    paddingHorizontal: 32,
-  },
-  emptyStateText: {
-    marginTop: 24,
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 24,
+  sectionSpacer: {
+    height: 16,
   },
 });
 

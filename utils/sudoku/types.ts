@@ -28,8 +28,8 @@ export const DIFFICULTY_SETTINGS: Record<
   }
 > = {
   easy: {
-    minCells: 45,
-    maxCells: 48,
+    minCells: 75,
+    maxCells: 78,
     symmetric: true,
     uniqueSolution: true,
   },
@@ -46,8 +46,8 @@ export const DIFFICULTY_SETTINGS: Record<
     uniqueSolution: true,
   },
   expert: {
-    minCells: 20,
-    maxCells: 24,
+    minCells: 70,
+    maxCells: 74,
     symmetric: false,
     uniqueSolution: true,
   },

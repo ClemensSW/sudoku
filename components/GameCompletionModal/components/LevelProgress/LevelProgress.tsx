@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
-import { View, Text } from "react-native";
+// components/LevelProgress/LevelProgress.tsx
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,403 +12,326 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
-import { useTheme } from "@/utils/theme/ThemeProvider";
-import { Difficulty } from "@/utils/sudoku";
+import { useLevelInfo, hasLeveledUp } from "./utils/useLevelInfo";
+import { calculateExperience } from "./utils/levelData";
+import LevelBadge from "./components/LevelBadge";
+import PathInfo from "./components/PathInfo";
+import { LevelProgressOptions } from "./utils/types";
 import { GameStats } from "@/utils/storage";
+import { Difficulty } from "@/utils/sudoku";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./LevelProgress.styles";
 
 interface LevelProgressProps {
-  stats: GameStats;
-  difficulty: Difficulty;
-  justCompleted: boolean;
+  // Entweder XP oder Stats muss angegeben werden
+  xp?: number;
+  previousXp?: number;
+  
+  // ODER Alternative: Stats-basierte Ansicht
+  stats?: GameStats;
+  difficulty?: Difficulty | string;
+  justCompleted?: boolean;
+  
+  // Optional: XP-Gewinn anzeigen
+  xpGain?: number;
+  
+  // Optional styling und Verhalten
+  style?: any;
+  compact?: boolean;
+  onLevelUp?: (oldLevel: number, newLevel: number) => void;
+  onPathChange?: (oldPathId: string, newPathId: string) => void;
+  onPress?: () => void;
+  
+  // Konfigurationsoptionen
+  options?: LevelProgressOptions;
 }
 
-// Level thresholds - increasing requirements for each level
-const levelThresholds = [0, 5, 15, 30, 50, 75, 105, 140, 180, 225, 275, 330];
-
-// Level names
-const getLevelName = (level: number) => {
-  const levelNames = [
-    "Anfänger",
-    "Lehrling",
-    "Herausforderer",
-    "Puzzler",
-    "Taktiker",
-    "Stratege",
-    "Meister",
-    "Großmeister",
-    "Experte",
-    "Virtuose",
-    "Genie",
-    "Sudoku-Legende",
-  ];
-
-  return level < levelNames.length ? levelNames[level] : "Sudoku-Gott";
-};
-
-// Calculate level based on XP
-const calculateExperience = (stats: GameStats): number => {
-  // Base XP: Each completed game gives 1 XP
-  let totalXP = stats.gamesPlayed;
-
-  // Bonus XP for wins based on difficulty
-  totalXP += stats.gamesWon * 2;
-
-  return totalXP;
-};
-
-// Find current level based on XP
-const getCurrentLevel = (xp: number): number => {
-  let level = 0;
-  for (let i = 0; i < levelThresholds.length; i++) {
-    if (xp >= levelThresholds[i]) {
-      level = i;
-    } else {
-      break;
-    }
-  }
-  return level;
-};
-
-// XP for next level
-const getNextLevelXP = (currentLevel: number): number => {
-  if (currentLevel >= levelThresholds.length - 1) {
-    return levelThresholds[currentLevel] + 100; // If max level, just add more XP
-  }
-  return levelThresholds[currentLevel + 1];
-};
-
-// XP gain for completed game based on difficulty
-const getXPGain = (difficulty: Difficulty): number => {
-  const xpValues: Record<Difficulty, number> = {
-    easy: 2,
-    medium: 3,
-    hard: 5,
-    expert: 8,
-  };
-  return xpValues[difficulty];
-};
-
 const LevelProgress: React.FC<LevelProgressProps> = ({
+  xp,
+  previousXp,
   stats,
   difficulty,
-  justCompleted,
+  justCompleted = false,
+  xpGain,
+  style,
+  compact = false,
+  onLevelUp,
+  onPathChange,
+  onPress,
+  options = {},
 }) => {
+  // Theme für Farben verwenden
   const theme = useTheme();
   const colors = theme.colors;
-  const progressContainerRef = useRef<View>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
   
-  // Calculate XP
-  const totalXP = calculateExperience(stats);
-  const xpGain = justCompleted ? getXPGain(difficulty) : 0;
-  const previousXP = totalXP - xpGain;
+  // Standard-Optionen mit benutzerdefinierten Optionen zusammenführen
+  const defaultOptions: LevelProgressOptions = {
+    enableLevelUpAnimation: true,
+    usePathColors: true,
+    showPathDescription: !compact,
+    showMilestones: true,
+  };
   
-  // Calculate level
-  const currentLevel = getCurrentLevel(totalXP);
-  const previousLevel = getCurrentLevel(previousXP);
-  const leveledUp = currentLevel > previousLevel;
+  const finalOptions = { ...defaultOptions, ...options };
   
-  // XP for next level
-  const nextLevelXP = getNextLevelXP(currentLevel);
+  // Berechne XP aus Stats, wenn XP nicht direkt übergeben wurde
+  const calculatedXp = stats ? calculateExperience(stats) : 0;
   
-  // XP progress for this level
-  const currentLevelXP = levelThresholds[currentLevel];
-  const xpForThisLevel = totalXP - currentLevelXP;
-  const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
+  // Verwende entweder direkt übergebene XP oder berechnete XP aus Stats
+  const currentXp = xp !== undefined ? xp : calculatedXp;
+  const prevXp = previousXp !== undefined ? previousXp : (justCompleted && xpGain ? currentXp - xpGain : currentXp);
   
-  // Percentage for progress bar
-  const progressPercentage = Math.min(
-    100,
-    Math.round((xpForThisLevel / xpNeededForNextLevel) * 100)
-  );
+  // Berechne Level-Informationen mit dem Hook
+  const levelInfo = useLevelInfo(currentXp);
+  const previousLevelInfo = prevXp !== currentXp ? useLevelInfo(prevXp) : levelInfo;
   
-  // Percentage for previous XP state
-  const previousProgressPercentage = Math.min(
-    100,
-    Math.round(
-      ((previousXP - currentLevelXP) / xpNeededForNextLevel) * 100
-    )
-  );
+  // State für Level-Up-Animation
+  const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
+  const levelUpTriggered = useRef(false);
   
   // Animation values
-  const progressWidth = useSharedValue(previousProgressPercentage);
-  const levelBadgeScale = useSharedValue(1);
-  const badgeGlow = useSharedValue(0.3);
-  const progressGlow = useSharedValue(0);
-  const [showLevelUp, setShowLevelUp] = useState(false);
+  const containerScale = useSharedValue(1);
+  const progressWidth = useSharedValue(levelInfo.progressPercentage);
+  const cardOpacity = useSharedValue(1);
+  const xpGainOpacity = useSharedValue(0);
   
-  // Start animations when component mounts
+  // Überprüfe auf tatsächliches Level-Up - wichtige Korrektur
   useEffect(() => {
-    // Delay for the start of XP bar animation
-    setTimeout(() => {
-      // Progress bar animation with custom easing
-      progressWidth.value = withTiming(progressPercentage, {
-        duration: 1500,
-        easing: Easing.bezierFn(0.16, 1, 0.3, 1), // Custom easing for smoother animation
-      });
+    // Nur bei tatsächlichem Level-Up, nicht bei jedem Spiel
+    const didLevelUp = (previousXp !== undefined || xpGain !== undefined) && 
+                        levelInfo.currentLevel > previousLevelInfo.currentLevel;
+    
+    if (didLevelUp && finalOptions.enableLevelUpAnimation && !levelUpTriggered.current) {
+      // Level-Up-Animation starten
+      levelUpTriggered.current = true;
       
-      // Level badge pulsing with more elegant animation
-      levelBadgeScale.value = withSequence(
-        withDelay(
-          800,
-          withTiming(1.15, { duration: 400, easing: Easing.out(Easing.ease) })
-        ),
+      // Zeige Level-Up-Overlay
+      setShowLevelUpOverlay(true);
+      
+      // Hebe den Container kurz hervor
+      containerScale.value = withSequence(
+        withTiming(1.05, { duration: 300, easing: Easing.out(Easing.ease) }),
         withTiming(1, { duration: 300, easing: Easing.inOut(Easing.ease) })
       );
       
-      // Badge glow animation
-      badgeGlow.value = withDelay(
-        1000,
-        withSequence(
-          withTiming(0.8, { duration: 800, easing: Easing.inOut(Easing.sin) }),
-          withTiming(0.3, { duration: 800, easing: Easing.inOut(Easing.sin) })
-        )
-      );
-      
-      // Progress bar glow for XP gain
-      if (xpGain > 0) {
-        progressGlow.value = withDelay(
-          1200,
-          withTiming(0.8, { 
-            duration: 600,
-            easing: Easing.out(Easing.ease)
-          })
-        );
+      // Event-Handler aufrufen, falls vorhanden
+      if (onLevelUp) {
+        onLevelUp(previousLevelInfo.currentLevel, levelInfo.currentLevel);
       }
       
-      // If leveled up, show level-up animation
-      if (leveledUp) {
-        setTimeout(() => {
-          setShowLevelUp(true);
-          
-          // Hide after a few seconds
-          setTimeout(() => {
-            setShowLevelUp(false);
-          }, 3000);
-        }, 2000);
-      }
-    }, 500);
-    
-    // Set up continuous animations
-    if (leveledUp) {
-      // Continuous subtle badge animation if leveled up
-      const pulseAnimation = () => {
-        levelBadgeScale.value = withSequence(
-          withTiming(1.1, { duration: 1200, easing: Easing.inOut(Easing.sin) }),
-          withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.sin) })
-        );
-        
-        // Repeat after random delay
-        setTimeout(pulseAnimation, 3000 + Math.random() * 1000);
-      };
-      
-      setTimeout(pulseAnimation, 2500);
+      // Level-Up-Overlay nach einer Weile ausblenden
+      setTimeout(() => {
+        setShowLevelUpOverlay(false);
+        levelUpTriggered.current = false;
+      }, 3000);
     }
     
-    // Badge glow animation
-    const badgeGlowAnimation = () => {
-      badgeGlow.value = withSequence(
-        withTiming(0.7, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
-        withTiming(0.3, { duration: 1800, easing: Easing.inOut(Easing.sin) })
-      );
-      
-      setTimeout(badgeGlowAnimation, 3600);
-    };
+    // Überprüfe auf Pfadwechsel
+    if (previousLevelInfo && 
+        previousLevelInfo.currentPath.id !== levelInfo.currentPath.id && 
+        onPathChange) {
+      onPathChange(previousLevelInfo.currentPath.id, levelInfo.currentPath.id);
+    }
     
-    setTimeout(badgeGlowAnimation, 2000);
-  }, []);
+    // Aktualisiere den Fortschrittsbalken
+    progressWidth.value = withTiming(levelInfo.progressPercentage, { 
+      duration: 800, 
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
+    });
+    
+    // XP-Gewinn-Animation, wenn vorhanden
+    if (xpGain && xpGain > 0) {
+      xpGainOpacity.value = withSequence(
+        withDelay(500, withTiming(1, { duration: 400 })),
+        withDelay(2000, withTiming(0, { duration: 1000 }))
+      );
+    }
+  }, [currentXp, prevXp, levelInfo, previousLevelInfo, xpGain]);
   
-  // Animated Styles
-  const levelBadgeAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: levelBadgeScale.value }],
+  // Animated styles
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: containerScale.value }],
+    opacity: cardOpacity.value,
   }));
   
   const progressAnimatedStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value}%`,
   }));
   
-  const badgeGlowStyle = useAnimatedStyle(() => ({
-    opacity: badgeGlow.value,
+  const xpGainAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: xpGainOpacity.value,
   }));
   
-  const progressGlowStyle = useAnimatedStyle(() => ({
-    opacity: progressGlow.value,
-  }));
+  // Entscheide die anzuzeigende Farbe basierend auf den Optionen
+  const progressColor = finalOptions.usePathColors 
+    ? levelInfo.currentPath.color 
+    : colors.primary;
   
-  // Handler for container width measurement
-  const onLayoutProgressContainer = (event: any) => {
-    if (containerWidth === 0) {
-      setContainerWidth(event.nativeEvent.layout.width);
-    }
+  // Formatiere XP-Gewinn-Text
+  const formatXpGainText = () => {
+    if (!xpGain || xpGain <= 0) return "";
+    return `+${xpGain} XP`;
   };
-  
-  // Calculate gain indicator dimensions
-  const getGainIndicatorWidth = () => {
-    if (progressPercentage <= previousProgressPercentage) return 0;
-    if (containerWidth === 0) return 0;
     
-    const widthPercent = progressPercentage - previousProgressPercentage;
-    return containerWidth * widthPercent / 100;
-  };
-  
-  const getGainIndicatorLeft = () => {
-    if (containerWidth === 0) return 0;
-    return containerWidth * previousProgressPercentage / 100;
-  };
-  
-  // Get appropriate level description text
-  const getLevelDescription = () => {
-    if (leveledUp) return "Level aufgestiegen!";
-    if (progressPercentage >= 90) return "Fast am nächsten Level!";
-    if (progressPercentage >= 70) return "Guter Fortschritt!";
-    return "Sammle XP durch Spielen von Sudoku";
-  };
-
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        { backgroundColor: colors.surface},
+    <Pressable 
+      onPress={onPress}
+      style={({ pressed }) => [
+        { opacity: pressed ? 0.9 : 1 }
       ]}
-      entering={FadeIn.duration(500)}
     >
-      {/* Header with title and XP gain badge */}
-      <View style={styles.headerContainer}>
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Level-Fortschritt
-        </Text>
-        
-        {xpGain > 0 && (
-          <View
-            style={[styles.xpGainBadge, { backgroundColor: colors.primary }]}
+      <Animated.View 
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.surface,
+            borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+          },
+          compact ? styles.compactContainer : null,
+          containerAnimatedStyle,
+          style
+        ]}
+      >
+        {/* XP-Gewinn-Anzeige (neu) */}
+        {xpGain && xpGain > 0 && (
+          <Animated.View 
+            style={[
+              styles.xpGainBadge,
+              { backgroundColor: colors.success },
+              xpGainAnimatedStyle
+            ]}
           >
             <Feather name="plus" size={12} color="white" />
-            <Text style={styles.xpGainText}>{xpGain} XP</Text>
-          </View>
-        )}
-      </View>
-      
-      {/* Level display with animated badge and name */}
-      <View style={styles.levelInfoContainer}>
-        <View style={styles.levelBadgeWrapper}>
-          {/* Glow background for badge on level up */}
-          {leveledUp && (
-            <Animated.View
-              style={[
-                styles.badgeGlow,
-                { backgroundColor: `${colors.primary}30` },
-                badgeGlowStyle
-              ]}
-            />
-          )}
-          
-          <Animated.View
-            style={[
-              styles.levelBadge,
-              { backgroundColor: colors.primary },
-              levelBadgeAnimatedStyle,
-            ]}
-          >
-            <Text style={styles.levelNumber}>{currentLevel}</Text>
+            <Text style={styles.xpGainText}>{formatXpGainText()}</Text>
           </Animated.View>
-        </View>
+        )}
         
-        <View style={styles.levelNameContainer}>
-          <Text style={[styles.levelName, { color: colors.textPrimary }]}>
-            {getLevelName(currentLevel)}
-          </Text>
-          <Text
-            style={[styles.levelDescription, { color: colors.textSecondary }]}
-          >
-            {getLevelDescription()}
-          </Text>
-        </View>
-      </View>
-      
-      {/* XP progress bar with modern styling */}
-      <View 
-        style={styles.progressContainer}
-        ref={progressContainerRef}
-        onLayout={onLayoutProgressContainer}
-      >
-        <View
-          style={[
-            styles.progressBackground,
-            {
-              backgroundColor: theme.isDark
-                ? "rgba(255,255,255,0.1)"
-                : "rgba(0,0,0,0.05)",
-            },
-          ]}
-        >
-          <Animated.View
-            style={[
-              styles.progressFill,
-              { backgroundColor: colors.primary },
-              progressAnimatedStyle,
-            ]}
+        {/* Level-Info-Zeile mit Badge */}
+        <View style={styles.header}>
+          <LevelBadge 
+            levelInfo={levelInfo}
+            size={compact ? 40 : 56}
+            showAnimation={showLevelUpOverlay}
           />
           
-          {/* XP gain indicator */}
-          {xpGain > 0 && containerWidth > 0 && (
-            <View
-              style={[
-                styles.progressGainIndicator,
-                {
-                  backgroundColor: theme.isDark
-                    ? "rgba(255,255,255,0.3)"
-                    : "rgba(255,255,255,0.7)",
-                  width: getGainIndicatorWidth(),
-                  left: getGainIndicatorLeft(),
-                },
-              ]}
-            />
-          )}
-          
-          {/* Glow effect on progress bar */}
-          {xpGain > 0 && (
-            <Animated.View
-              style={[
-                styles.progressGlow,
-                { backgroundColor: `${colors.primary}30` },
-                progressGlowStyle
-              ]}
-            />
-          )}
+          <View style={styles.levelInfoContainer}>
+            {/* Level-Name und Nachricht */}
+            <Text style={[styles.levelName, { color: colors.textPrimary }]}>
+              {levelInfo.levelData.name}
+            </Text>
+            
+            {!compact && (
+              <Text style={[styles.levelMessage, { color: colors.textSecondary }]} numberOfLines={2}>
+                {levelInfo.levelData.message}
+              </Text>
+            )}
+          </View>
         </View>
         
-        {/* XP values and percentage display */}
-        <View style={styles.progressLabelContainer}>
-          <Text
-            style={[styles.progressLabel, { color: colors.textSecondary }]}
-          >
-            {progressPercentage}% zum Level {currentLevel + 1}
-          </Text>
-          
-          <Text style={[styles.xpValues, { color: colors.textPrimary }]}>
-            {xpForThisLevel} / {xpNeededForNextLevel} XP
-          </Text>
-        </View>
-      </View>
-      
-      {/* Improved Level-Up Animation */}
-      {showLevelUp && (
-        <Animated.View
-          style={styles.levelUpContainer}
-          entering={FadeIn.duration(400)}
-          exiting={FadeOut.duration(400)}
-        >
-          <View style={styles.levelUpContent}>
-            <Text style={styles.levelUpText}>Level Up!</Text>
-            <Feather name="award" size={64} color={colors.warning} />
-            <Text style={styles.newLevelText}>
-              {getLevelName(currentLevel)} erreicht!
-            </Text>
+        {/* Pfad-Info - ohne Fortschrittsleiste */}
+        {!compact && (
+          <View style={[
+            styles.pathInfoContainer, 
+            { borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+          ]}>
+            <PathInfo 
+              levelInfo={levelInfo} 
+              showDescription={finalOptions.showPathDescription}
+            />
           </View>
-        </Animated.View>
-      )}
-    </Animated.View>
+        )}
+        
+        {/* Fortschrittsbereich mit verbessertem Layout */}
+        <View style={styles.progressSection}>
+          {/* XP-Info mit besserem Layout */}
+          <View style={styles.xpInfoRow}>
+            <Text style={[styles.xpText, { color: colors.textPrimary }]}>
+              <Text style={[styles.xpLabel, { color: colors.textSecondary }]}>Level {levelInfo.currentLevel + 1}: </Text>
+              
+            </Text>
+            
+            {levelInfo.nextLevelData && (
+              <Text style={[styles.xpToGo, { color: colors.textSecondary }]}>
+                Noch {levelInfo.xpForNextLevel} EP
+              </Text>
+            )}
+          </View>
+          
+          {/* Fortschrittsbalken */}
+          <View style={styles.progressBarContainer}>
+            <View 
+              style={[
+                styles.progressBackground,
+                { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)' }
+              ]}
+            >
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  { backgroundColor: progressColor },
+                  progressAnimatedStyle
+                ]}
+              />
+            </View>
+          </View>
+        </View>
+        
+        {/* Optional: Meilenstein oder Pfad-Abschluss-Nachricht */}
+        {(finalOptions.showMilestones && (levelInfo.milestoneMessage || levelInfo.pathCompletionMessage)) && (
+          <Animated.View 
+            style={[
+              styles.milestoneContainer,
+              { 
+                backgroundColor: `${progressColor}15`,
+                borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+              }
+            ]}
+            entering={FadeIn.duration(500).delay(300)}
+          >
+            <Text style={[styles.milestoneText, { color: colors.textSecondary }]}>
+              {levelInfo.milestoneMessage || levelInfo.pathCompletionMessage}
+            </Text>
+          </Animated.View>
+        )}
+        
+        {/* Level-Up-Overlay */}
+        {showLevelUpOverlay && (
+          <Animated.View 
+            style={[
+              styles.levelUpOverlay,
+              { backgroundColor: 'rgba(0,0,0,0.75)' }
+            ]}
+            entering={FadeIn.duration(300)}
+            exiting={FadeOut.duration(300)}
+          >
+            <View style={[
+              styles.levelUpContent,
+              { 
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderColor: 'rgba(255,255,255,0.2)' 
+              }
+            ]}>
+              <Text style={styles.levelUpText}>Level Up!</Text>
+              
+              <LevelBadge 
+                levelInfo={levelInfo}
+                size={80}
+                showAnimation={true}
+                animationDelay={300}
+              />
+              
+              <Text style={styles.newLevelName}>
+                {levelInfo.displayName}
+              </Text>
+              
+              <Text style={styles.newLevelMessage}>
+                {levelInfo.levelData.message}
+              </Text>
+            </View>
+          </Animated.View>
+        )}
+      </Animated.View>
+    </Pressable>
   );
 };
 

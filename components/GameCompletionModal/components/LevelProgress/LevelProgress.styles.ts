@@ -1,155 +1,183 @@
-// components/LevelProgress/LevelProgress.styles.ts
+// components/GameCompletionModal/components/LevelProgress/LevelProgress.styles.ts
 import { StyleSheet } from "react-native";
+import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  // Haupt-Container
+  // Main container with improved styling
   container: {
     width: "100%",
-    borderRadius: 16,
-    padding: 16,
-    paddingBottom: 16,
-    elevation: 2,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    paddingBottom: spacing.lg,
+    elevation: 3, // Increased elevation for better visibility
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 }, // Stronger shadow
+    shadowOpacity: 0.2, // More noticeable
+    shadowRadius: 12,
     overflow: "hidden",
     borderWidth: 1,
   },
   
-  // Kompakter Container mit weniger Padding
+  // Compact container with appropriate padding
   compactContainer: {
-    padding: 12,
-    paddingBottom: 12,
+    padding: spacing.md,
+    paddingVertical: spacing.md,
   },
   
-  // XP-Gewinn-Badge (NEU)
+  // Redesigned XP gain badge - more prominent and eye-catching
   xpGainBadge: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 12,
+    top: spacing.md,
+    right: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 10,
-    elevation: 3,
+    elevation: 5, // Stand out from the background
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    minWidth: 90, // Ensure consistent size
   },
   
+  // Improved XP gain text styling
   xpGainText: {
     color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "700",
-    marginLeft: 4,
+    fontSize: 16, // Larger for better visibility
+    fontWeight: "800",
+    marginLeft: spacing.xs,
+    letterSpacing: 0.5, // Subtle letter spacing for emphasis
   },
   
-  // Header-Bereich mit Badge und Level-Info
+  // Header with level badge and info
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   
-  // Level-Informationen Container
+  // Level information container
   levelInfoContainer: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: spacing.md,
   },
   
-  // Level-Name
+  // Level name with improved typography
   levelName: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 4,
+    fontSize: 20, // Larger
+    fontWeight: "800", // Bolder
+    marginBottom: spacing.xxs,
+    letterSpacing: 0.3, // Subtle enhancement
+    lineHeight: 24, // Verbesserte Zeilenhöhe
   },
   
-  // Level-Nachricht (Beschreibung)
+  // Level description styling
   levelMessage: {
-    fontSize: 14,
+    fontSize: 15, // Slightly larger for readability
     lineHeight: 20,
+    opacity: 0.9, // Slightly increased opacity
   },
   
-  // Container für PathInfo für besseres Spacing
+  // Path info container with better spacing
   pathInfoContainer: {
-    marginBottom: 12,
-    paddingBottom: 8,
-    borderBottomWidth: 1, // Trennstrich für visuelle Trennung
+    marginBottom: spacing.md,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1, // Visual separator
   },
   
-  // Fortschrittsbereich
+  // Pfad-Überschrift mit Pfeil
+  pathHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 8,
+  },
+  
+  // Pfad-Inhalt (wenn ausgeklappt)
+  pathContent: {
+    marginTop: 8,
+    padding: 12, 
+    borderRadius: 8,
+    borderLeftWidth: 3,
+  },
+  
+  // Progress section styling
   progressSection: {
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   
-  // XP-Informationszeile
+  // XP info row with better layout
   xpInfoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   
-  // XP-Text
+  // XP text styling
   xpText: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18, // Larger
+    fontWeight: "700", // Bolder
+    letterSpacing: 0.5, // Subtle enhancement
   },
   
-  // Verbesserte XP-Beschriftung
+  // XP label styling
   xpLabel: {
     fontWeight: "500",
-    fontSize: 14,
+    fontSize: 15,
   },
   
-  // Text für benötigte XP bis zum nächsten Level
+  // Text for remaining XP to next level
   xpToGo: {
-    fontSize: 13,
-    opacity: 0.8,
+    fontSize: 14,
+    opacity: 0.85, // Slightly more visible
+    fontWeight: "500", // Medium weight for better visibility
   },
   
-  // Container für den Fortschrittsbalken
+  // Progress bar container
   progressBarContainer: {
-    height: 8,
+    height: 10, // Taller for better visibility
     width: "100%",
-    borderRadius: 4,
+    borderRadius: radius.md,
     overflow: "hidden",
   },
   
-  // Hintergrund des Fortschrittbalkens
+  // Progress bar background
   progressBackground: {
     width: "100%",
     height: "100%",
-    borderRadius: 4,
+    borderRadius: radius.md,
     overflow: "hidden",
   },
   
-  // Gefüllter Teil des Fortschrittsbalkens
+  // Progress bar fill
   progressFill: {
     height: "100%",
-    borderRadius: 4,
+    borderRadius: radius.md,
   },
   
-  // Container für Meilenstein-Nachrichten
+  // Milestone container - simplified
   milestoneContainer: {
-    marginTop: 16,
-    padding: 12,
-    borderRadius: 8,
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
   },
   
-  // Text für Meilenstein-Nachrichten
+  // Milestone text
   milestoneText: {
     fontSize: 14,
     lineHeight: 20,
     textAlign: "center",
   },
   
-  // Overlay für Level-Up-Animation
+  // Level up overlay - enhanced for impact
   levelUpOverlay: {
     position: "absolute",
     top: 0,
@@ -158,45 +186,110 @@ export default StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 16,
-    zIndex: 10,
+    borderRadius: radius.xl,
+    zIndex: 20, // Ensure it's on top
   },
   
-  // Container für Level-Up-Inhalt
+  // Level up content with enhanced design
   levelUpContent: {
     alignItems: "center",
-    padding: 24,
-    borderRadius: 16,
-    borderWidth: 1,
-    maxWidth: "80%",
+    padding: spacing.xl,
+    borderRadius: radius.xl,
+    borderWidth: 2,
+    maxWidth: "85%", // Limit width for better proportion
+    backgroundColor: "rgba(0,0,0,0.7)", // Darker background for contrast
   },
   
-  // "Level Up!"-Text
+  // "LEVEL UP!" text with dramatic styling
   levelUpText: {
     fontSize: 28,
-    fontWeight: "800",
+    fontWeight: "900", // Extra bold
     color: "#FFFFFF",
-    marginBottom: 16,
+    marginBottom: spacing.md,
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 3,
+    letterSpacing: 1.5, // Dramatic letter spacing for impact
+    textTransform: "uppercase", // All caps for emphasis
   },
   
-  // Name des neuen Levels
+  // New level name styling
   newLevelName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
     color: "#FFFFFF",
-    marginTop: 16,
+    marginTop: spacing.md,
     textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   
-  // Nachricht des neuen Levels
+  // New level message styling
   newLevelMessage: {
     fontSize: 16,
     color: "rgba(255,255,255,0.9)",
-    marginTop: 8,
+    marginTop: spacing.sm,
     textAlign: "center",
     lineHeight: 22,
+  },
+  
+  // Celebration effect container
+  celebrationContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 15,
+    pointerEvents: "none",
+  },
+  
+  // New styles for text readability
+  textContainer: {
+    marginVertical: 4,
+  },
+  
+  // Text with background for better contrast
+  textWithBackground: {
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  
+  // Container for toggle button and heading
+  headerWithToggle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  
+  // Toggle button
+  toggleButton: {
+    padding: 4,
+    borderRadius: 12,
+  },
+  
+  // High contrast text styles
+  highContrastLight: {
+    color: '#000000',
+    backgroundColor: 'rgba(255,255,255,0.85)',
+  },
+  
+  highContrastDark: {
+    color: '#FFFFFF',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  
+  // Level up text with higher contrast
+  levelUpTextHighContrast: {
+    textShadowColor: "rgba(0,0,0,0.7)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
 });

@@ -1,4 +1,4 @@
-// components/LevelProgress/utils/types.ts
+// components/GameCompletionModal/components/LevelProgress/utils/types.ts
 
 /**
  * Informationen zu einem einzelnen Pfad im Progressionssystem
@@ -99,4 +99,10 @@ export interface PathInfo {
     
     /** Meilenstein-Nachrichten anzeigen */
     showMilestones?: boolean;
+    
+    /** Kontrolle der Textanzeige: immer, umschaltbar oder kompakt */
+    textVisibility?: 'always' | 'toggle' | 'compact';
+    
+    /** Erhöhter Textkontrast für bessere Lesbarkeit */
+    highContrastText?: boolean;
   }

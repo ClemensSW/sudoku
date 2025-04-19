@@ -1,4 +1,4 @@
-// components/LevelProgress/components/LevelBadge.tsx
+// components/GameCompletionModal/components/LevelProgress/components/LevelBadge.tsx
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Animated, {
@@ -7,9 +7,11 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
+  withRepeat,
   Easing,
 } from 'react-native-reanimated';
 import { LevelInfo } from '../utils/types';
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface LevelBadgeProps {
   levelInfo: LevelInfo;
@@ -21,41 +23,45 @@ interface LevelBadgeProps {
 
 const LevelBadge: React.FC<LevelBadgeProps> = ({
   levelInfo,
-  size = 50,
+  size = 54, // Slightly larger default size for better visibility
   showAnimation = false,
   animationDelay = 0,
   style,
 }) => {
+  // Use theme for consistent visual design
+  const theme = useTheme();
+  
   // Animation values
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
   const glow = useSharedValue(0);
+  const shimmer = useSharedValue(0);
   
-  // Pfadfarbe aus den Level-Infos
+  // Get path color from level info
   const pathColor = levelInfo.currentPath.color;
   const isPathTransition = levelInfo.levelData.pathIndex === 0;
   
-  // Level-Nummer (1-basiert für die Anzeige)
+  // Level number (1-based for display)
   const levelNumber = levelInfo.currentLevel + 1;
   
-  // Starten der Animationen
+  // Start animations
   useEffect(() => {
     if (showAnimation) {
-      // Verzögerte Sequenz für besseren visuellen Effekt
+      // Delayed sequence for better visual effect
       scale.value = withDelay(
         animationDelay,
         withSequence(
-          // Kurz schrumpfen
+          // Slightly shrink
           withTiming(0.8, { 
             duration: 100, 
             easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
           }),
-          // Größer werden als normal
-          withTiming(1.3, { 
-            duration: 400, 
+          // Grow larger than normal with bouncy effect
+          withTiming(1.4, { 
+            duration: 600, 
             easing: Easing.bezier(0.25, 1.5, 0.5, 1) 
           }),
-          // Zurück zur normalen Größe
+          // Return to normal size
           withTiming(1, { 
             duration: 300, 
             easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
@@ -63,7 +69,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         )
       );
       
-      // Kleine Drehung für zusätzlichen Effekt
+      // Small rotation for additional effect
       rotation.value = withDelay(
         animationDelay + 100,
         withSequence(
@@ -73,7 +79,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         )
       );
       
-      // Gloweffekt
+      // Glow effect
       glow.value = withDelay(
         animationDelay + 300,
         withSequence(
@@ -81,22 +87,40 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
           withTiming(0.3, { duration: 1000 })
         )
       );
+      
+      // Shimmer effect for excitement
+      shimmer.value = withDelay(
+        animationDelay + 200,
+        withRepeat(
+          withTiming(1, { duration: 1500, easing: Easing.linear }),
+          3, // Repeat 3 times
+          false // Don't reverse
+        )
+      );
     } else if (isPathTransition) {
-      // Sanfte Pulsation für den Anfang eines neuen Pfades
-      scale.value = withSequence(
-        withTiming(1.1, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
+      // Gentle pulsation for new path beginning
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.1, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1, // Infinite repeat
+        true // Reverse animation
       );
       
-      // Kontinuierlicher Gloweffekt
-      glow.value = withSequence(
-        withTiming(0.6, { duration: 1500 }),
-        withTiming(0.2, { duration: 1500 })
+      // Continuous glow effect
+      glow.value = withRepeat(
+        withSequence(
+          withTiming(0.6, { duration: 1500 }),
+          withTiming(0.2, { duration: 1500 })
+        ),
+        -1, // Infinite repeat
+        true // Reverse animation
       );
     }
   }, [showAnimation, isPathTransition]);
   
-  // Animierte Styles
+  // Animated styles
   const badgeAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: scale.value },
@@ -108,10 +132,21 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
     opacity: glow.value,
   }));
   
-  // Berechnung der Textgröße basierend auf der Badge-Größe
+  const shimmerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: shimmer.value * 0.7,
+      transform: [
+        { 
+          translateX: shimmer.value * size * 2 - size 
+        }
+      ]
+    };
+  });
+  
+  // Calculate text size based on badge size
   const fontSize = Math.max(size * 0.45, 16);
   
-  // Styles für das Badge
+  // Styles for the badge
   const badgeStyles = {
     width: size,
     height: size,
@@ -119,28 +154,58 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
     backgroundColor: pathColor,
   };
   
-  // Styles für den Glow-Effekt
+  // Styles for the glow effect
   const glowStyles = {
-    width: size * 1.2,
-    height: size * 1.2,
-    borderRadius: size * 0.6,
+    width: size * 1.3,  // Larger for more dramatic effect
+    height: size * 1.3,
+    borderRadius: size * 0.65,
     backgroundColor: pathColor,
     position: 'absolute' as 'absolute',
-    top: -size * 0.1,
-    left: -size * 0.1,
+    top: -size * 0.15,
+    left: -size * 0.15,
+  };
+  
+  // Shimmer effect styles
+  const shimmerStyles = {
+    position: 'absolute' as 'absolute',
+    top: 0,
+    bottom: 0,
+    width: size / 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    left: 0,
+    transform: [{ skewX: '-30deg' }],
   };
 
   return (
     <View style={[styles.container, style]}>
-      {/* Glow-Effekt (hinter dem Badge) */}
+      {/* Glow effect (behind the badge) */}
       <Animated.View style={[glowStyles, glowAnimatedStyle]} />
       
-      {/* Hauptbadge */}
+      {/* Main badge */}
       <Animated.View style={[styles.badge, badgeStyles, badgeAnimatedStyle]}>
+        {/* Shimmer effect for visual excitement */}
+        {showAnimation && (
+          <Animated.View style={[shimmerStyles, shimmerAnimatedStyle]} />
+        )}
+        
+        {/* Level number */}
         <Text style={[styles.levelNumber, { fontSize }]}>
           {levelNumber}
         </Text>
       </Animated.View>
+      
+      {/* Border decoration for added definition */}
+      <View style={[
+        styles.badgeBorder,
+        { 
+          width: size + 4,
+          height: size + 4,
+          borderRadius: (size + 4) / 2,
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          top: -2,
+          left: -2,
+        }
+      ]} />
     </View>
   );
 };
@@ -149,16 +214,22 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative', // Für den Glow-Effekt
+    position: 'relative', // For glow effect positioning
   },
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowRadius: 5,
+    elevation: 6,
+    overflow: 'hidden',  // Contain shimmer effect
+  },
+  badgeBorder: {
+    position: 'absolute',
+    borderWidth: 2,
+    zIndex: -1,  // Position behind the main badge
   },
   levelNumber: {
     color: '#FFFFFF',
@@ -166,7 +237,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
+    textShadowRadius: 2,
   },
 });
 

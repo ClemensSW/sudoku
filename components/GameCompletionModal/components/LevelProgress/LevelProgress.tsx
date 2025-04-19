@@ -15,7 +15,6 @@ import { Feather } from "@expo/vector-icons";
 import { useLevelInfo } from "./utils/useLevelInfo";
 import { calculateExperience } from "./utils/levelData";
 import LevelBadge from "./components/LevelBadge";
-import ConfettiEffect from "./components/ConfettiEffect";
 import { LevelProgressOptions } from "./utils/types";
 import { GameStats } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
@@ -94,15 +93,15 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   
   // State for level-up animation and effects
   const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
   const levelUpTriggered = useRef(false);
   
   // Animation values
   const containerScale = useSharedValue(1);
   const progressWidth = useSharedValue(0);
+  const previousProgressWidth = useSharedValue(0); // For previous XP position
   const xpGainScale = useSharedValue(1);
-  const xpGainOpacity = useSharedValue(0);
   const badgePulse = useSharedValue(1);
+  const gainIndicatorOpacity = useSharedValue(0); // For XP gain section in progress bar
   
   // Toggle function for text visibility
   const toggleTextVisibility = () => {
@@ -112,11 +111,28 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   
   // Check for actual level-up - important correction
   useEffect(() => {
-    // Initialize progress bar with the current percentage
-    progressWidth.value = withTiming(levelInfo.progressPercentage, { 
-      duration: 1000, 
-      easing: Easing.bezierFn(0.25, 0.1, 0.25, 1) 
-    });
+    // Calculate the previous progress percentage
+    const prevLevelStartXp = previousLevelInfo.levelData.xp;
+    const nextLevelXp = previousLevelInfo.nextLevelData?.xp || (prevLevelStartXp + 100);
+    const prevLevelRange = nextLevelXp - prevLevelStartXp;
+    const prevPercentage = Math.min(100, ((prevXp - prevLevelStartXp) / prevLevelRange) * 100);
+    
+    // Set initial values for animation
+    previousProgressWidth.value = prevPercentage;
+    progressWidth.value = prevPercentage; // Start from previous position
+    
+    // Show progress transition with a slight delay
+    setTimeout(() => {
+      progressWidth.value = withTiming(levelInfo.progressPercentage, { 
+        duration: 1200, 
+        easing: Easing.bezierFn(0.34, 1.56, 0.64, 1) // More bouncy easing
+      });
+      
+      // Only show gain indicator if there was an actual gain
+      if (xpGain && xpGain > 0) {
+        gainIndicatorOpacity.value = withTiming(1, { duration: 300 });
+      }
+    }, 800);
     
     // Only trigger level-up on actual level changes, not on every game
     const didLevelUp = (previousXp !== undefined || xpGain !== undefined) && 
@@ -129,10 +145,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       // Give haptic feedback for level-up
       triggerHaptic("success");
       
-      // Start with the confetti effect
-      setShowConfetti(true);
-      
-      // Then show level-up overlay with a slight delay
+      // Show level-up overlay with a slight delay
       setTimeout(() => {
         setShowLevelUpOverlay(true);
         
@@ -157,11 +170,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       // Hide level-up overlay after a delay
       setTimeout(() => {
         setShowLevelUpOverlay(false);
-        // Stop confetti a bit later for a more satisfying effect
         setTimeout(() => {
-          setShowConfetti(false);
           levelUpTriggered.current = false;
-        }, 1000);
+        }, 500);
       }, 4000);
     }
     
@@ -174,11 +185,6 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     
     // XP Gain animation, if provided
     if (xpGain && xpGain > 0) {
-      xpGainOpacity.value = withSequence(
-        withDelay(500, withTiming(1, { duration: 400 })),
-        withDelay(2000, withTiming(0.8, { duration: 800 }))
-      );
-      
       xpGainScale.value = withSequence(
         withDelay(500, withTiming(1.2, { duration: 300 })),
         withTiming(1, { duration: 200 })
@@ -195,13 +201,20 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     width: `${progressWidth.value}%`,
   }));
   
+  const previousProgressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${previousProgressWidth.value}%`,
+  }));
+  
   const xpGainAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: xpGainOpacity.value,
     transform: [{ scale: xpGainScale.value }],
   }));
   
   const badgeAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: badgePulse.value }],
+  }));
+  
+  const gainIndicatorAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: gainIndicatorOpacity.value,
   }));
   
   // Decide the color to display based on options
@@ -229,35 +242,6 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         ]}
         entering={FadeIn.duration(500)}
       >
-        {/* XP Gain indicator - Redesigned to be more prominent */}
-        {xpGain && xpGain > 0 && (
-          <Animated.View 
-            style={[
-              styles.xpGainBadge,
-              { 
-                backgroundColor: colors.success,
-                borderColor: theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
-                borderWidth: 1,
-                padding: 8,
-                borderRadius: 12,
-              },
-              xpGainAnimatedStyle
-            ]}
-          >
-            <Feather name="award" size={16} color="#FFFFFF" />
-            <Text style={[
-              styles.xpGainText,
-              { 
-                fontSize: 16,
-                fontWeight: "700",
-                marginLeft: 8 
-              }
-            ]}>
-              +{xpGain} XP
-            </Text>
-          </Animated.View>
-        )}
-        
         {/* Level header with badge */}
         <View style={[
           styles.header,
@@ -403,16 +387,35 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             styles.xpInfoRow,
             { marginBottom: 8 }
           ]}>
-            <Text style={[
-              styles.xpText, 
-              { 
-                color: finalOptions.highContrastText 
-                  ? theme.isDark ? '#FFFFFF' : '#000000' 
-                  : colors.textPrimary
-              }
-            ]}>
-              Level {levelInfo.currentLevel + 1}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={[
+                styles.xpText, 
+                { 
+                  color: finalOptions.highContrastText 
+                    ? theme.isDark ? '#FFFFFF' : '#000000' 
+                    : colors.textPrimary
+                }
+              ]}>
+                Level {levelInfo.currentLevel + 1}
+              </Text>
+              
+              {/* Show +XP gain next to level number */}
+              {xpGain && xpGain > 0 && justCompleted && (
+                <Animated.Text
+                  style={[
+                    {
+                      marginLeft: 8,
+                      color: colors.success,
+                      fontWeight: '700',
+                      fontSize: 16,
+                    },
+                    xpGainAnimatedStyle
+                  ]}
+                >
+                  +{xpGain} EP
+                </Animated.Text>
+              )}
+            </View>
             
             {levelInfo.nextLevelData && (
               <Text style={[
@@ -428,7 +431,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             )}
           </View>
           
-          {/* Progress bar - Enhanced visuals */}
+          {/* Progress bar - Enhanced visuals with before/after indication */}
           <View style={[
             styles.progressBarContainer,
             { height: 8, borderRadius: 4 }
@@ -438,10 +441,49 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 styles.progressBackground,
                 { 
                   backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                  borderRadius: 4
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  position: 'relative'
                 }
               ]}
             >
+              {/* Previous progress (shown dimmed) */}
+              {justCompleted && xpGain && xpGain > 0 && (
+                <Animated.View
+                  style={[
+                    {
+                      position: 'absolute',
+                      height: '100%',
+                      backgroundColor: theme.isDark 
+                        ? `${progressColor}80` // Semi-transparent
+                        : `${progressColor}60`,
+                      borderRadius: 4,
+                      left: 0,
+                    },
+                    previousProgressAnimatedStyle
+                  ]}
+                />
+              )}
+              
+              {/* Gain indicator (bright highlight for new XP) */}
+              {justCompleted && xpGain && xpGain > 0 && (
+                <Animated.View
+                  style={[
+                    {
+                      position: 'absolute',
+                      height: '100%',
+                      backgroundColor: colors.success,
+                      borderRadius: 4,
+                      left: `${previousProgressWidth.value}%`,
+                      width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
+                      zIndex: 2,
+                    },
+                    gainIndicatorAnimatedStyle
+                  ]}
+                />
+              )}
+              
+              {/* Current progress */}
               <Animated.View
                 style={[
                   styles.progressFill,
@@ -455,21 +497,6 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             </View>
           </View>
         </View>
-        
-        {/* Confetti Effect for celebration */}
-        <ConfettiEffect 
-          active={showConfetti} 
-          count={40}
-          duration={4000}
-          colors={[
-            progressColor,
-            "#FFD700", // Gold
-            "#FF4081", // Pink
-            "#00E676", // Green
-            "#2979FF", // Blue
-            "#FFFFFF"  // White
-          ]}
-        />
         
         {/* Level Up Overlay - Completely redesigned for impact */}
         {showLevelUpOverlay && (

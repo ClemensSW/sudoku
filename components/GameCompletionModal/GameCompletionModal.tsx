@@ -1,3 +1,4 @@
+// components/GameCompletionModal/GameCompletionModal.tsx - Mit XP-Berechnung und ohne redundante Badge
 import React, { useEffect } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
 import Animated, {
@@ -29,13 +30,72 @@ import styles from "./GameCompletionModal.styles";
 interface GameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
-  onNewGame: () => void; // We'll keep this for compatibility but won't use it
+  onNewGame: () => void; 
   onContinue: () => void;
   timeElapsed: number;
   difficulty: Difficulty;
   autoNotesUsed: boolean;
   stats?: GameStats | null;
 }
+
+// Calculate XP gain based on difficulty and time
+const calculateXpGain = (
+  difficulty: Difficulty,
+  timeElapsed: number,
+  autoNotesUsed: boolean
+): number => {
+  // If auto notes were used, no XP gain
+  if (autoNotesUsed) return 0;
+  
+  // Base XP for completing a puzzle
+  let baseXp = 5;
+  
+  // Difficulty multipliers
+  const difficultyMultipliers = {
+    easy: 1,
+    medium: 1.5,
+    hard: 2,
+    expert: 3
+  };
+  
+  // Apply difficulty multiplier
+  const difficultyMultiplier = difficultyMultipliers[difficulty] || 1;
+  baseXp = baseXp * difficultyMultiplier;
+  
+  // Time bonus for faster completion (maximum of 3 additional XP)
+  let timeBonus = 0;
+  const minutes = timeElapsed / 60;
+  
+  // Different time thresholds based on difficulty
+  if (difficulty === 'easy' && minutes < 3) {
+    timeBonus = 3;
+  } else if (difficulty === 'easy' && minutes < 5) {
+    timeBonus = 2;
+  } else if (difficulty === 'easy' && minutes < 8) {
+    timeBonus = 1;
+  } else if (difficulty === 'medium' && minutes < 5) {
+    timeBonus = 3;
+  } else if (difficulty === 'medium' && minutes < 8) {
+    timeBonus = 2;
+  } else if (difficulty === 'medium' && minutes < 12) {
+    timeBonus = 1;
+  } else if (difficulty === 'hard' && minutes < 8) {
+    timeBonus = 3;
+  } else if (difficulty === 'hard' && minutes < 12) {
+    timeBonus = 2;
+  } else if (difficulty === 'hard' && minutes < 18) {
+    timeBonus = 1;
+  } else if (difficulty === 'expert' && minutes < 12) {
+    timeBonus = 3;
+  } else if (difficulty === 'expert' && minutes < 18) {
+    timeBonus = 2;
+  } else if (difficulty === 'expert' && minutes < 25) {
+    timeBonus = 1;
+  }
+  
+  // Total XP gain (rounded to integer)
+  return Math.round(baseXp + timeBonus);
+};
 
 const getDifficultyName = (diff: Difficulty): string => {
   const difficultyNames: Record<Difficulty, string> = {
@@ -84,7 +144,10 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  const router = useRouter(); // Use the router for navigation
+  const router = useRouter();
+  
+  // Calculate XP gain for this game
+  const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
   
   // Animation values
   const modalScale = useSharedValue(0.95);
@@ -232,6 +295,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
                   stats={stats}
                   difficulty={difficulty}
                   justCompleted={true}
+                  xpGain={xpGain} // Pass xpGain to LevelProgress
                 />
                 <View style={styles.sectionSpacer} />
               </>

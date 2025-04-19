@@ -15,6 +15,7 @@ import { triggerHaptic } from "@/utils/haptics";
 
 // Constants
 const MAX_HINTS = 3;
+const MAX_ERRORS = 3;
 
 // Types
 export interface CellPosition {
@@ -38,6 +39,9 @@ export interface DuoGameState {
   player2NoteMode: boolean;
   player1Hints: number;
   player2Hints: number;
+  player1Errors: number;
+  player2Errors: number;
+  maxErrors: number;
   isGameRunning: boolean;
   isGameComplete: boolean;
   isLoading: boolean;
@@ -72,6 +76,9 @@ export const useDuoGameState = (
   const [player2NoteMode, setPlayer2NoteMode] = useState(false);
   const [player1Hints, setPlayer1Hints] = useState(MAX_HINTS);
   const [player2Hints, setPlayer2Hints] = useState(MAX_HINTS);
+  const [player1Errors, setPlayer1Errors] = useState(0);
+  const [player2Errors, setPlayer2Errors] = useState(0);
+  const [maxErrors] = useState(MAX_ERRORS);
   const [isGameRunning, setIsGameRunning] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +152,31 @@ export const useDuoGameState = (
     }
   }, [board]);
 
+  // Handle player lost due to too many errors
+  const handlePlayerLost = useCallback((player: 1 | 2) => {
+    // End the game
+    setIsGameRunning(false);
+    setIsGameComplete(true);
+    
+    // Give error feedback
+    triggerHaptic("error");
+    
+    // Declare the other player as winner
+    const winner = player === 1 ? 2 : 1;
+    
+    // Show alert with options
+    setTimeout(() => {
+      Alert.alert(
+        "Spiel beendet!",
+        `Spieler ${player} hat zu viele Fehler gemacht. Spieler ${winner} gewinnt!`,
+        [
+          { text: "Neues Spiel", onPress: startNewGame },
+          { text: "Zum Menü", onPress: onQuit },
+        ]
+      );
+    }, 300);
+  }, [onQuit]);
+
   // Start a new game
   const startNewGame = useCallback(() => {
     setIsLoading(true);
@@ -179,6 +211,10 @@ export const useDuoGameState = (
         // Reset hint counters
         setPlayer1Hints(MAX_HINTS);
         setPlayer2Hints(MAX_HINTS);
+        
+        // Reset error counters
+        setPlayer1Errors(0);
+        setPlayer2Errors(0);
         
         // Reset game time
         setGameTime(0);
@@ -215,6 +251,12 @@ export const useDuoGameState = (
         return;
       }
 
+      // Don't allow if player has lost due to errors
+      if ((player === 1 && player1Errors >= maxErrors) || 
+          (player === 2 && player2Errors >= maxErrors)) {
+        return;
+      }
+
       triggerHaptic("light");
 
       // Update the selected cell for the appropriate player
@@ -224,7 +266,7 @@ export const useDuoGameState = (
         setPlayer2Cell({ row, col });
       }
     },
-    [board, player1Complete, player2Complete]
+    [board, player1Complete, player2Complete, player1Errors, player2Errors, maxErrors]
   );
 
   // Handle number input
@@ -239,6 +281,12 @@ export const useDuoGameState = (
         (player === 1 && player1Complete) ||
         (player === 2 && player2Complete)
       ) {
+        return;
+      }
+
+      // Don't allow if player has lost due to errors
+      if ((player === 1 && player1Errors >= maxErrors) || 
+          (player === 2 && player2Errors >= maxErrors)) {
         return;
       }
 
@@ -289,6 +337,25 @@ export const useDuoGameState = (
         // Invalid or incorrect move - provide haptic feedback
         triggerHaptic("error");
         
+        // Increment error counter for this player
+        if (player === 1) {
+          const newErrorCount = player1Errors + 1;
+          setPlayer1Errors(newErrorCount);
+          
+          if (newErrorCount >= maxErrors) {
+            // Player 1 has lost due to too many errors
+            handlePlayerLost(1);
+          }
+        } else {
+          const newErrorCount = player2Errors + 1;
+          setPlayer2Errors(newErrorCount);
+          
+          if (newErrorCount >= maxErrors) {
+            // Player 2 has lost due to too many errors
+            handlePlayerLost(2);
+          }
+        }
+        
         // Automatically clear the wrong entry after a short delay
         setTimeout(() => {
           const clearedBoard = [...board];
@@ -311,7 +378,9 @@ export const useDuoGameState = (
         }
       }
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, player1NoteMode, player2NoteMode, solution, getCellOwner]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
+     player1NoteMode, player2NoteMode, solution, getCellOwner, 
+     player1Errors, player2Errors, maxErrors, handlePlayerLost]
   );
 
   // Handle clear button
@@ -329,6 +398,12 @@ export const useDuoGameState = (
         return;
       }
 
+      // Don't allow if player has lost due to errors
+      if ((player === 1 && player1Errors >= maxErrors) || 
+          (player === 2 && player2Errors >= maxErrors)) {
+        return;
+      }
+
       const { row, col } = selectedCell;
 
       // Validate the cell belongs to this player or is the neutral cell
@@ -342,7 +417,8 @@ export const useDuoGameState = (
       setBoard(updatedBoard);
       triggerHaptic("light");
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, getCellOwner]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
+     player1Errors, player2Errors, maxErrors, getCellOwner]
   );
 
   // Handle note toggle
@@ -355,6 +431,12 @@ export const useDuoGameState = (
         return;
       }
 
+      // Don't allow if player has lost due to errors
+      if ((player === 1 && player1Errors >= maxErrors) || 
+          (player === 2 && player2Errors >= maxErrors)) {
+        return;
+      }
+
       if (player === 1) {
         setPlayer1NoteMode(!player1NoteMode);
       } else {
@@ -363,7 +445,8 @@ export const useDuoGameState = (
 
       triggerHaptic("light");
     },
-    [player1Complete, player2Complete, player1NoteMode, player2NoteMode]
+    [player1Complete, player2Complete, player1NoteMode, player2NoteMode, 
+     player1Errors, player2Errors, maxErrors]
   );
 
   // Handle hint request
@@ -378,6 +461,12 @@ export const useDuoGameState = (
           "Keine Hinweise mehr",
           `Spieler ${player} hat keine Hinweise mehr übrig.`
         );
+        return;
+      }
+
+      // Don't allow if player has lost due to errors
+      if ((player === 1 && player1Errors >= maxErrors) || 
+          (player === 2 && player2Errors >= maxErrors)) {
         return;
       }
 
@@ -429,7 +518,9 @@ export const useDuoGameState = (
 
       triggerHaptic("success");
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, player1Hints, player2Hints, solution, getCellOwner]
+    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
+     player1Hints, player2Hints, solution, getCellOwner,
+     player1Errors, player2Errors, maxErrors]
   );
 
   // Handle time update
@@ -541,6 +632,9 @@ export const useDuoGameState = (
       player2NoteMode,
       player1Hints,
       player2Hints,
+      player1Errors,
+      player2Errors,
+      maxErrors,
       isGameRunning,
       isGameComplete,
       isLoading,

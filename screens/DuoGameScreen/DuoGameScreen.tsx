@@ -1,4 +1,4 @@
-// screens/DuoGameScreen/DuoGameScreen.tsx - aktualisierte Version
+// screens/DuoGameScreen/DuoGameScreen.tsx
 import React, { useEffect } from "react";
 import { View, BackHandler, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -115,8 +115,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             onNoteToggle={gameActions.handleNoteToggle}
             onHint={gameActions.handleHint}
             noteMode={gameState.player2NoteMode}
-            disabled={gameState.player2Complete}
+            disabled={gameState.player2Complete || gameState.player2Errors >= gameState.maxErrors}
             hintsRemaining={gameState.player2Hints}
+            errorsCount={gameState.player2Errors}
+            maxErrors={gameState.maxErrors}
           />
 
           {/* Game Board */}
@@ -136,8 +138,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             onNoteToggle={gameActions.handleNoteToggle}
             onHint={gameActions.handleHint}
             noteMode={gameState.player1NoteMode}
-            disabled={gameState.player1Complete}
+            disabled={gameState.player1Complete || gameState.player1Errors >= gameState.maxErrors}
             hintsRemaining={gameState.player1Hints}
+            errorsCount={gameState.player1Errors}
+            maxErrors={gameState.maxErrors}
           />
         </Animated.View>
       </SafeAreaView>

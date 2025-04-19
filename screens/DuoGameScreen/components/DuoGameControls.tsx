@@ -15,12 +15,13 @@ import Animated, {
   withSpring 
 } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
+import DuoErrorIndicator from "./DuoErrorIndicator";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
 const NUMBER_BUTTON_SIZE = Math.min((width - 32) / 9, 38);
-// Neue breitere Button-Größen
-const ACTION_BUTTON_WIDTH = 120; // Breiterer Button
+// Breite Button-Größen angepasst, um Platz für Fehleranzeige zu machen
+const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 110); // Etwas schmaler
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
 // Player themes to match the board colors
@@ -79,6 +80,8 @@ interface DuoGameControlsProps {
   noteMode: boolean;
   disabled?: boolean;
   hintsRemaining: number;
+  errorsCount: number;
+  maxErrors: number;
 }
 
 const DuoGameControls: React.FC<DuoGameControlsProps> = ({
@@ -89,6 +92,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   noteMode,
   disabled = false,
   hintsRemaining = 3,
+  errorsCount = 0,
+  maxErrors = 3,
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
@@ -187,16 +192,23 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
     );
   };
 
-  // Render action buttons (note, hint) - jetzt mit breiteren Buttons
-  const renderActionButtons = () => {
+  // Render action buttons and error indicator in the same row
+  const renderActionButtonsRow = () => {
     const hintDisabled = hintsRemaining <= 0 || disabled;
 
     return (
       <View style={styles.actionButtonsRow}>
-        {/* Note button - jetzt breiter mit Text daneben */}
+        {/* Error Indicator */}
+        <DuoErrorIndicator 
+          player={player} 
+          errorsCount={errorsCount} 
+          maxErrors={maxErrors}
+          compact={true}
+        />
+
+        {/* Note button */}
         <Animated.View style={[styles.actionButtonWrapper, noteAnimatedStyle]}>
           <View style={[
-            // Add a glowing effect container for the active note mode
             noteMode && styles.activeNoteIndicator,
             { backgroundColor: noteMode ? theme.actionButton.activeBackground : 'transparent' }
           ]}>
@@ -207,10 +219,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   backgroundColor: noteMode
                     ? theme.actionButton.activeBackground
                     : theme.actionButton.background,
-                  // Add border when note mode is active to make it more obvious
                   borderWidth: noteMode ? 2 : 0,
                   borderColor: theme.actionButton.borderColor,
-                  // Add shadow when active
                   shadowOpacity: noteMode ? 0.3 : 0.1,
                   elevation: noteMode ? 4 : 2,
                 },
@@ -225,7 +235,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             >
               <Feather
                 name="edit-3"
-                size={20}
+                size={18}
                 color={
                   disabled
                     ? theme.actionButton.disabledIconColor
@@ -248,7 +258,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           </View>
         </Animated.View>
 
-        {/* Hint button - jetzt breiter mit Text daneben */}
+        {/* Hint button */}
         <Animated.View style={[styles.actionButtonWrapper, hintAnimatedStyle]}>
           <TouchableOpacity
             style={[
@@ -265,7 +275,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           >
             <Feather
               name="help-circle"
-              size={20}
+              size={18}
               color={
                 hintDisabled || disabled
                   ? theme.actionButton.disabledIconColor
@@ -282,21 +292,6 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             ]}>
               Hinweis {hintsRemaining > 0 ? `(${hintsRemaining})` : ""}
             </Text>
-            
-            {!hintDisabled && (
-              <View style={[
-                styles.hintCountBadge,
-                { 
-                  backgroundColor: 
-                    player === 1 ? "#4A7D78" : "#5B5D6E",
-                  display: "none" // Ausblenden, da wir die Anzahl jetzt im Text anzeigen 
-                }
-              ]}>
-                <Text style={styles.hintCountText}>
-                  {hintsRemaining}
-                </Text>
-              </View>
-            )}
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -312,8 +307,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Action buttons row (notes, hints) */}
-      {renderActionButtons()}
+      {/* Action buttons row with error indicator */}
+      {renderActionButtonsRow()}
 
       {/* Number buttons row */}
       {renderNumberButtons()}
@@ -333,24 +328,25 @@ const styles = StyleSheet.create({
   topContainer: {
     transform: [{ rotate: "180deg" }],
   },
-  // Action buttons styles - angepasst für breitere Buttons
+  // Action buttons row jetzt mit drei Elementen
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-evenly", // Gleichmäßige Verteilung
+    justifyContent: "space-between", // Gleichmäßig verteilen
+    alignItems: "center",
     width: "100%",
     marginVertical: 4,
+    paddingHorizontal: 4,
   },
   actionButtonWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    width: ACTION_BUTTON_WIDTH + 10, // Etwas Platz für Glowing-Effekte
     height: ACTION_BUTTON_HEIGHT + 10,
   },
   actionButton: {
     width: ACTION_BUTTON_WIDTH,
     height: ACTION_BUTTON_HEIGHT,
     borderRadius: 12,
-    flexDirection: "row", // Horizontale Anordnung von Icon und Text
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -362,9 +358,9 @@ const styles = StyleSheet.create({
   },
   // Text für die Action Buttons
   actionButtonText: {
-    fontSize: 14,
+    fontSize: 13, // Kleiner für bessere Platzausnutzung
     fontWeight: "600",
-    marginLeft: 8, // Abstand zum Icon
+    marginLeft: 5, // Weniger Abstand zum Icon
   },
   // Active note indicator styles
   activeNoteIndicator: {
@@ -409,24 +405,6 @@ const styles = StyleSheet.create({
   numberText: {
     fontSize: NUMBER_BUTTON_SIZE * 0.5,
     fontWeight: "600",
-  },
-  // Hint counter badge
-  hintCountBadge: {
-    position: "absolute",
-    top: -5,
-    right: -5,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "white",
-  },
-  hintCountText: {
-    color: "white",
-    fontSize: 10,
-    fontWeight: "bold",
   },
   // Helper for 6 and 9 when rotated
   underlinedNumber: {

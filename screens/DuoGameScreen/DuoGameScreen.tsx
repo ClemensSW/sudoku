@@ -86,21 +86,40 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     }
   };
 
+  // Einheitliches Schatten-System
+  const buttonShadow = {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: theme.isDark ? 0.3 : 0.15,
+    shadowRadius: 3,
+    elevation: 4,
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-        {/* Minimal floating back button instead of header */}
+        {/* Verbesserter Zurück-Button */}
         <TouchableOpacity 
           style={[
             styles.backButton, 
-            { backgroundColor: theme.isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.15)" }
+            { 
+              // Statt halbtransparentem Hintergrund im Light Mode:
+              backgroundColor: theme.isDark 
+                ? "rgba(255,255,255,0.25)" 
+                : colors.surface, // Surface-Farbe aus dem Theme
+            },
+            buttonShadow, // Einheitlicher Schatten
           ]}
           onPress={handleBackPress}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }} // Increased hit area
         >
-          <Feather name="chevron-left" size={24} color={theme.isDark ? "#FFFFFF" : "#000000"} />
+          <Feather 
+            name="chevron-left" 
+            size={24} 
+            color={theme.isDark ? "#FFFFFF" : colors.primary} // Primärfarbe statt Schwarz
+          />
         </TouchableOpacity>
 
         {/* Main content - now with full height */}
@@ -172,11 +191,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 5, // Increased shadow for better visibility
   }
 });
 

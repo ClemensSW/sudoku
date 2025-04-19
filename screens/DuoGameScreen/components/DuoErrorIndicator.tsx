@@ -10,11 +10,11 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 
-// Player themes based on the provided color palette
+// Player themes based on the provided color palette - VERBESSERTE KONTRASTE
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
-    background: "rgba(74, 125, 120, 0.1)", // Light teal background
+    background: "rgba(74, 125, 120, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
     heart: {
       active: "#4A7D78", // Teal
       inactive: "rgba(255, 100, 100, 0.85)", // Red with opacity
@@ -22,7 +22,7 @@ const PLAYER_THEMES = {
   },
   // Player 2 (top)
   2: {
-    background: "rgba(243, 239, 227, 0.1)", // Light beige background
+    background: "rgba(243, 239, 227, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
     heart: {
       active: "#5B5D6E", // Dark blue-gray
       inactive: "rgba(255, 100, 100, 0.85)", // Red with opacity
@@ -125,6 +125,12 @@ const styles = StyleSheet.create({
     alignSelf: "center", // Better centering
     margin: 4,
     justifyContent: "center", // Vertically center hearts
+    // Schatten für bessere Sichtbarkeit
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   compactContainer: {
     paddingHorizontal: 4,
@@ -133,10 +139,13 @@ const styles = StyleSheet.create({
     minWidth: 60, // Ensure enough space for hearts
     alignItems: "center", // Center horizontally
     justifyContent: "center", // Center vertically
+    // Schatten für den Kompakt-Modus entfernen
+    shadowOpacity: 0,
+    elevation: 0,
   },
   // Gegen-Rotation für Spieler 2
   counterRotatedContainer: {
-    transform: [{ rotate: "0deg" }], // Drehe um 180° zurück
+    transform: [{ rotate: "180deg" }], // Vollständige Rotation, um die 180°-Drehung des übergeordneten Containers zu kompensieren
   },
   heartsRow: {
     flexDirection: "row",

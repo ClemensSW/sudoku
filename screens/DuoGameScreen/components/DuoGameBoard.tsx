@@ -18,7 +18,7 @@ const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
 const CELL_SIZE = SHARED_CELL_SIZE;
 
-// Player color themes - extrahiert aus den CellStyles für Konsistenz
+// Player color themes - verbesserte Sichtbarkeit 
 const PLAYER_COLORS = {
   1: "#4A7D78", // Teal - Player 1 (bottom)
   2: "#F3EFE3", // Light beige - Player 2 (top)
@@ -174,7 +174,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
               ]} 
             />
             
-            {/* Middle Cell Background */}
+            {/* Middle Cell Background - mit verbessertem Schatten */}
             <View 
               style={[
                 styles.middleCellBackground,
@@ -189,7 +189,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
           </View>
 
           <View style={styles.gridContainer}>
-            {/* Horizontal grid lines */}
+            {/* Horizontal grid lines - verbesserte Sichtbarkeit */}
             <View
               style={[
                 styles.gridLine,
@@ -205,7 +205,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
               ]}
             />
             
-            {/* Vertical grid lines */}
+            {/* Vertical grid lines - verbesserte Sichtbarkeit */}
             <View
               style={[
                 styles.gridLine,
@@ -254,11 +254,12 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
+    // Verbesserter Schatten für beide Modi
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 8,
   },
   board: {
     width: BOARD_SIZE,
@@ -294,18 +295,24 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   
-  // Separater Hintergrund für die mittlere Zelle
+  // Separater Hintergrund für die mittlere Zelle - verbessert mit Schatten
   middleCellBackground: {
     position: "absolute",
     backgroundColor: PLAYER_COLORS[0], // Neutrale Farbe für die mittlere Zelle
     zIndex: 2, // Über den Spielerhintergründen und dem Gradient
+    // Schatten für bessere Sichtbarkeit
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
-    borderWidth: 2,
-    borderColor: "rgba(0, 0, 0, 0.3)",
+    borderWidth: 2, // Dickerer Rahmen für bessere Sichtbarkeit
+    borderColor: "rgba(0, 0, 0, 0.4)", // Dunklerer Rahmen für besseren Kontrast
     overflow: "hidden",
     position: "relative",
     borderRadius: 8,
@@ -316,19 +323,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: CELL_SIZE,
   },
-  // Grid lines
+  // Grid lines - verbesserte Sichtbarkeit
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.3)", // Dunklere Linien für bessere Sichtbarkeit
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Dunklere Linien für bessere Sichtbarkeit
     zIndex: 2,
   },
   horizontalGridLine: {
     width: GRID_SIZE,
-    height: 2,
+    height: 2, // Dickere Linie
     left: 0,
   },
   verticalGridLine: {
-    width: 2,
+    width: 2, // Dickere Linie
     height: GRID_SIZE,
     top: 0,
   },

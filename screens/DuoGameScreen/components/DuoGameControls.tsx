@@ -24,12 +24,12 @@ const NUMBER_BUTTON_SIZE = Math.min((width - 32) / 9, 38);
 const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 110); // Etwas schmaler
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
-// Player themes to match the board colors
+// Player themes to match the board colors - VERBESSERTE KONTRASTE FÜR LIGHT MODE
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
     controls: {
-      backgroundColor: "rgba(74, 125, 120, 0.1)", // Light teal background
+      backgroundColor: "rgba(74, 125, 120, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
       numberButton: {
         background: "#4A7D78", // Teal
         textColor: "#F1F4FB", // Light blue/white
@@ -37,7 +37,7 @@ const PLAYER_THEMES = {
         disabledTextColor: "rgba(241, 244, 251, 0.5)", // Faded white
       },
       actionButton: {
-        background: "rgba(64, 107, 109, 0.8)", // Darker teal with transparency
+        background: "rgba(64, 107, 109, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
         activeBackground: "#4A7D78", // Full teal when active
         iconColor: "#F1F4FB", // Light blue/white
         textColor: "#F1F4FB", // Light blue/white
@@ -50,7 +50,7 @@ const PLAYER_THEMES = {
   // Player 2 (top) - UPDATED COLORS
   2: {
     controls: {
-      backgroundColor: "rgba(243, 239, 227, 0.1)", // Light beige background
+      backgroundColor: "rgba(243, 239, 227, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
       numberButton: {
         background: "#5B5D6E", // Dark blue-gray
         textColor: "#F3EFE3", // Light beige
@@ -58,10 +58,8 @@ const PLAYER_THEMES = {
         disabledTextColor: "rgba(243, 239, 227, 0.5)", // Faded beige
       },
       actionButton: {
-        // Changed to be darker like player 1's buttons for better contrast
-        background: "#5B5D6E", // Dark blue-gray (same as numberButton.background)
+        background: "rgba(91, 93, 110, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
         activeBackground: "#4D4F5C", // Even darker blue-gray for active state
-        // Changed to light color for better visibility
         iconColor: "#F3EFE3", // Light beige (same as numberButton.textColor)
         textColor: "#F3EFE3", // Light beige
         disabledBackground: "rgba(91, 93, 110, 0.4)", // Faded dark blue-gray
@@ -70,6 +68,15 @@ const PLAYER_THEMES = {
       },
     },
   },
+};
+
+// Einheitliches Schatten-System für alle interaktiven Elemente
+const buttonShadow = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 3,
+  elevation: 3,
 };
 
 interface DuoGameControlsProps {
@@ -160,6 +167,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                       ? theme.numberButton.disabledBackground
                       : theme.numberButton.background,
                   },
+                  buttonShadow, // Einheitlicher Schatten
                 ]}
                 onPress={() => {
                   if (!isDisabled) {
@@ -208,56 +216,50 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           />
         </View>
 
-        {/* Note button */}
+        {/* Note button - VEREINFACHTE STRUKTUR */}
         <Animated.View style={[styles.actionButtonWrapper, noteAnimatedStyle]}>
-          <View style={[
-            noteMode && styles.activeNoteIndicator,
-            { backgroundColor: noteMode ? theme.actionButton.activeBackground : 'transparent' }
-          ]}>
-            <TouchableOpacity
-              style={[
-                styles.actionButton,
-                {
-                  backgroundColor: noteMode
-                    ? theme.actionButton.activeBackground
-                    : theme.actionButton.background,
-                  borderWidth: noteMode ? 2 : 0,
-                  borderColor: theme.actionButton.borderColor,
-                  shadowOpacity: noteMode ? 0.3 : 0.1,
-                  elevation: noteMode ? 4 : 2,
-                },
-                disabled && styles.disabledButton,
-              ]}
-              onPress={() => {
-                if (!disabled) {
-                  handleButtonPress(noteScale, () => onNoteToggle(player));
-                }
-              }}
-              disabled={disabled}
-            >
-              <Feather
-                name="edit-3"
-                size={18}
-                color={
-                  disabled
-                    ? theme.actionButton.disabledIconColor
-                    : noteMode
-                    ? theme.actionButton.textColor
-                    : theme.actionButton.iconColor
-                }
-              />
-              <Text style={[
-                styles.actionButtonText,
-                { 
-                  color: disabled 
-                    ? theme.actionButton.disabledIconColor 
-                    : theme.actionButton.textColor 
-                }
-              ]}>
-                Notizen
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[
+              styles.actionButton,
+              {
+                backgroundColor: noteMode
+                  ? theme.actionButton.activeBackground
+                  : theme.actionButton.background,
+                borderWidth: noteMode ? 2 : 0,
+                borderColor: theme.actionButton.borderColor,
+              },
+              buttonShadow, // Einheitlicher Schatten
+              disabled && styles.disabledButton,
+            ]}
+            onPress={() => {
+              if (!disabled) {
+                handleButtonPress(noteScale, () => onNoteToggle(player));
+              }
+            }}
+            disabled={disabled}
+          >
+            <Feather
+              name="edit-3"
+              size={18}
+              color={
+                disabled
+                  ? theme.actionButton.disabledIconColor
+                  : noteMode
+                  ? theme.actionButton.textColor
+                  : theme.actionButton.iconColor
+              }
+            />
+            <Text style={[
+              styles.actionButtonText,
+              { 
+                color: disabled 
+                  ? theme.actionButton.disabledIconColor 
+                  : theme.actionButton.textColor 
+              }
+            ]}>
+              Notizen
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
 
         {/* Hint button */}
@@ -266,6 +268,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             style={[
               styles.actionButton,
               { backgroundColor: theme.actionButton.background },
+              buttonShadow, // Einheitlicher Schatten
               (hintDisabled || disabled) && styles.disabledButton,
             ]}
             onPress={() => {
@@ -360,27 +363,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   // Text für die Action Buttons
   actionButtonText: {
     fontSize: 13, // Kleiner für bessere Platzausnutzung
     fontWeight: "600",
     marginLeft: 5, // Weniger Abstand zum Icon
-  },
-  // Active note indicator styles
-  activeNoteIndicator: {
-    borderRadius: 16,
-    padding: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
   },
   disabledButton: {
     opacity: 0.5,
@@ -406,11 +394,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
-    elevation: 2,
   },
   numberText: {
     fontSize: NUMBER_BUTTON_SIZE * 0.5,

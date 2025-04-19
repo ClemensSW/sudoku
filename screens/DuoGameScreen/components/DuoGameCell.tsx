@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
 
-// Player color themes based on the provided color palette
+// Player color themes based on the provided color palette - VERBESSERTE KONTRASTE
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
@@ -22,10 +22,10 @@ const PLAYER_THEMES = {
       textColor: "#F1F4FB"   // Same text color
     },
     notes: {
-      textColor: "rgba(241, 244, 251, 0.8)", // Light text with transparency
+      textColor: "rgba(241, 244, 251, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
     },
     error: {
-      background: "rgba(255, 100, 100, 0.3)", // Red with transparency
+      background: "rgba(255, 100, 100, 0.4)", // Erhöhter Kontrast (0.3 -> 0.4)
       textColor: "#FFD5D5"  // Light red
     }
   },
@@ -39,10 +39,10 @@ const PLAYER_THEMES = {
       textColor: "#5B5D6E"   // Same text color
     },
     notes: {
-      textColor: "rgba(91, 93, 110, 0.8)", // Dark text with transparency
+      textColor: "rgba(91, 93, 110, 0.95)", // Erhöhter Kontrast (0.8 -> 0.95)
     },
     error: {
-      background: "rgba(255, 100, 100, 0.2)", // Red with transparency
+      background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
       textColor: "#BB5555"  // Darker red
     }
   },
@@ -52,14 +52,14 @@ const PLAYER_THEMES = {
     textColor: "#2D3045",      // Very dark blue-gray
     selectedBackground: "#C5D1CF", // Slightly darker neutral
     initial: {
-      background: "#D5DDDC", // Slightly darker neutral for initial cells
+      background: "#D0D8D7", // Dunklerer Farbton (D5DDDC -> D0D8D7)
       textColor: "#2D3045"   // Same text color
     },
     notes: {
-      textColor: "rgba(45, 48, 69, 0.8)", // Dark text with transparency
+      textColor: "rgba(45, 48, 69, 0.95)", // Erhöhter Kontrast (0.8 -> 0.95)
     },
     error: {
-      background: "rgba(255, 100, 100, 0.2)", // Red with transparency
+      background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
       textColor: "#BB5555"  // Darker red
     }
   }
@@ -163,11 +163,30 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   // Determine if the content needs to be rotated (for player 2)
   const shouldRotateContent = player === 2 && rotateForPlayer2;
 
+  // Schatten für mittlere Zelle
+  const middleCellStyles = player === 0 ? {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+    zIndex: 5, // Höherer Z-Index für mittlere Zelle
+  } : {};
+
   return (
     <TouchableOpacity
       style={[
         styles.cellContainer,
-        { backgroundColor: getCellBackgroundColor() }
+        { backgroundColor: getCellBackgroundColor() },
+        // Schatten für die mittlere Zelle
+        player === 0 && middleCellStyles,
+        // Verbesserter Rahmen für alle Zellen
+        {
+          borderWidth: 0.5,
+          borderColor: player === 0 
+            ? "rgba(0, 0, 0, 0.3)" // Dunklerer Rahmen für mittlere Zelle
+            : "rgba(0, 0, 0, 0.2)"  // Dunklerer Rahmen als ursprünglich
+        }
       ]}
       onPress={() => onPress(row, col)}
       disabled={cell.isInitial}
@@ -209,8 +228,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    borderWidth: 0.5,
-    borderColor: "rgba(0, 0, 0, 0.2)",
   },
   cellContent: {
     width: "100%",

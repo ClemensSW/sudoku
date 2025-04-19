@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 // Berechnen der optimalen Board-Größe basierend auf Bildschirmbreite
 const { width } = Dimensions.get("window");
-export const BOARD_SIZE = Math.min(width * 0.9, 400);
+export const BOARD_SIZE = Math.min(width * 0.95, 400);
 export const GRID_SIZE = BOARD_SIZE * 0.95;
 export const CELL_SIZE = GRID_SIZE / 9;
 

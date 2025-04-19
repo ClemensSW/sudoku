@@ -126,8 +126,8 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   };
 
   // Calculate area heights based on percentages of the board
-  const topAreaHeight = BOARD_SIZE * 0.45; // Player 2 (top) area - 45%
-  const gradientHeight = BOARD_SIZE * 0.12; // Gradient area - 10%
+  const topAreaHeight = BOARD_SIZE * 0.47; // Player 2 (top) area - 45%
+  const gradientHeight = BOARD_SIZE * 0.15; // Gradient area - 10%
   const bottomAreaHeight = BOARD_SIZE * 0.45; // Player 1 (bottom) area - 45%
 
   return (

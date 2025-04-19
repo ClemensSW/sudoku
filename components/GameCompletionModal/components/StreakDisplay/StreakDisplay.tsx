@@ -47,6 +47,7 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
     if (currentStreak >= 10) return "Beeindruckende Serie!";
     if (currentStreak >= 5) return "Starke Leistung!";
     if (currentStreak >= 3) return "Gute Serie!";
+    if (currentStreak === 0) return "Bereit für dein nächsten Rekord!";
     return "Weiter so!";
   };
   

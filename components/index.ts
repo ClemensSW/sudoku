@@ -1,5 +1,4 @@
 export { default as Button } from "./Button/Button";
-export { default as DifficultySelector } from "./DifficultySelector/DifficultySelector";
 export { default as ErrorIndicator } from "./ErrorIndicator/ErrorIndicator";
 export { default as GameStatusBar } from "./GameStatusBar/GameStatusBar";
 export { default as GameCompletionModal } from "./GameCompletionModal";

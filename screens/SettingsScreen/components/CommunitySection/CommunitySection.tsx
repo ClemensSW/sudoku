@@ -1,9 +1,10 @@
 // screens/SettingsScreen/components/CommunitySection/CommunitySection.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, Linking } from "react-native";
+import { View, Text, TouchableOpacity, Linking, Clipboard } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import styles from "./CommunitySection.styles";
 
 interface CommunitySectionProps {
@@ -19,19 +20,61 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { showAlert } = useAlert();
 
-  // Handler for the bug report button
+  // Verbesserte Fehlerbericht-Funktion mit besserer Fehlerbehandlung
   const handleReportBug = async () => {
     triggerHaptic("light");
     
-    const url = 'mailto:info@sudokuduo.app?subject=Fehlerbericht%20Sudoku%20Duo&body=Beschreibe%20hier%20den%20Fehler:';
+    // E-Mail-Daten
+    const email = "info@sudokuduo.app";
+    const subject = "Fehlerbericht%20Sudoku%20Duo";
+    const body = "Beschreibe%20hier%20den%20Fehler:";
+    
+    // Erstelle den mailto-Link - bereits kodiert für bessere Kompatibilität
+    const url = `mailto:${email}?subject=${subject}&body=${body}`;
+    
     try {
+      // Prüfe, ob ein E-Mail-Client verfügbar ist
       const canOpen = await Linking.canOpenURL(url);
+      
       if (canOpen) {
+        // Öffne den E-Mail-Client
         await Linking.openURL(url);
+      } else {
+        // Falls kein E-Mail-Client geöffnet werden kann, zeige eine Meldung an
+        showAlert({
+          title: "E-Mail-Client nicht verfügbar",
+          message: `Bitte sende dein Feedback manuell an: ${email}`,
+          type: "info",
+          buttons: [{ text: "OK", style: "primary" }]
+        });
       }
     } catch (error) {
       console.error("Error opening email client:", error);
+      
+      // Benutzerfreundliche Fehlermeldung
+      showAlert({
+        title: "E-Mail konnte nicht geöffnet werden",
+        message: `Bitte sende dein Feedback manuell an: ${email}`,
+        type: "warning",
+        buttons: [
+          { 
+            text: "E-Mail kopieren", 
+            style: "primary",
+            onPress: () => {
+              Clipboard.setString(email);
+              showAlert({
+                title: "E-Mail kopiert",
+                message: "Die E-Mail-Adresse wurde in die Zwischenablage kopiert.",
+                type: "success",
+                buttons: [{ text: "OK", style: "primary" }]
+              });
+            }
+          },
+          { text: "Abbrechen", style: "cancel" }
+        ]
+      });
     }
   };
 
@@ -42,42 +85,6 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      {/* Support button - COMMENTED OUT AS REQUESTED 
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={onSupportPress}
-      >
-        <View
-          style={[
-            styles.actionIconContainer,
-            { backgroundColor: "#FFDD00" },
-          ]}
-        >
-          <Text style={{ fontSize: 24 }}>☕</Text>
-        </View>
-        <View style={styles.actionTextContainer}>
-          <Text
-            style={[styles.actionTitle, { color: colors.textPrimary }]}
-          >
-            Kostenlos spielen
-          </Text>
-          <Text
-            style={[
-              styles.actionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Entwicklung freiwillig unterstützen
-          </Text>
-        </View>
-        <Feather
-          name="chevron-right"
-          size={20}
-          color={colors.textSecondary}
-        />
-      </TouchableOpacity>
-      */}
-
       {/* Bug Report Button */}
       <TouchableOpacity
         style={styles.actionButton}

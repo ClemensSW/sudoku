@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Sudoku Duo",
-    "slug": "sudoku",
+    "slug": "sudoku-duo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "sudokuduo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "plugins": ["expo-router"],
@@ -25,7 +25,20 @@
         "translucent": true,
         "backgroundColor": "#00000000"
       },
-      "package": "com.clemenssw.sudoku"
+      "package": "de.playfusiongate.sudokuduo",
+      "intentFilters": [
+        {
+          "action": "MAIN",
+          "category": ["LAUNCHER", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "mailto"
+          },
+          "category": ["DEFAULT", "BROWSABLE"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

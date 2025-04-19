@@ -72,12 +72,17 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   // Heart size based on compact mode
   const heartSize = compact ? 16 : 20;
 
+  // WICHTIG: Player 2 braucht eine GEGENDREHUNG, da der Container bereits gedreht ist
+  // Wir drehen den Indikator für Player 2 um 180° zurück, damit die Herzen richtig ausgerichtet sind
   return (
     <Animated.View 
       style={[
         styles.container,
         compact && styles.compactContainer,
         { backgroundColor: compact ? "transparent" : theme.background },
+        // Wichtig: Counter-Rotation für Spieler 2, da der übergeordnete Container
+        // bereits um 180° gedreht ist
+        player === 2 && styles.counterRotatedContainer
       ]}
       entering={FadeIn.duration(300)}
     >
@@ -102,10 +107,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
                 name="heart"
                 size={heartSize}
                 color={isLost ? theme.heart.inactive : theme.heart.active}
-                style={[
-                  { opacity: isLost ? 1 : 0.85 },
-                  player === 2 && styles.rotatedHeart, // Rotate hearts for player 2
-                ]}
+                style={{ opacity: isLost ? 1 : 0.85 }}
               />
             </Animated.View>
           );
@@ -120,18 +122,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    alignSelf: "flex-start",
+    alignSelf: "center", // Better centering
     margin: 4,
+    justifyContent: "center", // Vertically center hearts
   },
   compactContainer: {
     paddingHorizontal: 4,
     paddingVertical: 2,
     margin: 0,
     minWidth: 60, // Ensure enough space for hearts
+    alignItems: "center", // Center horizontally
+    justifyContent: "center", // Center vertically
   },
-  rotatedHeart: {
-    transform: [{ rotate: "180deg" }],
-  },
+
   heartsRow: {
     flexDirection: "row",
     alignItems: "center",

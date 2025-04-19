@@ -198,13 +198,15 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 
     return (
       <View style={styles.actionButtonsRow}>
-        {/* Error Indicator */}
-        <DuoErrorIndicator 
-          player={player} 
-          errorsCount={errorsCount} 
-          maxErrors={maxErrors}
-          compact={true}
-        />
+        {/* Error Indicator - now centered vertically */}
+        <View style={styles.errorIndicatorContainer}>
+          <DuoErrorIndicator 
+            player={player} 
+            errorsCount={errorsCount} 
+            maxErrors={maxErrors}
+            compact={true}
+          />
+        </View>
 
         {/* Note button */}
         <Animated.View style={[styles.actionButtonWrapper, noteAnimatedStyle]}>
@@ -332,15 +334,23 @@ const styles = StyleSheet.create({
   actionButtonsRow: {
     flexDirection: "row",
     justifyContent: "space-between", // Gleichmäßig verteilen
-    alignItems: "center",
+    alignItems: "center", // Vertikal zentrieren
     width: "100%",
     marginVertical: 4,
     paddingHorizontal: 4,
+    height: ACTION_BUTTON_HEIGHT, // Feste Höhe für bessere Ausrichtung
+  },
+  // Container for error indicator with centered alignment
+  errorIndicatorContainer: {
+    minWidth: 60,
+    height: ACTION_BUTTON_HEIGHT,
+    alignItems: "center", // Horizontal zentrieren
+    justifyContent: "center", // Vertikal zentrieren
   },
   actionButtonWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    height: ACTION_BUTTON_HEIGHT + 10,
+    height: ACTION_BUTTON_HEIGHT,
   },
   actionButton: {
     width: ACTION_BUTTON_WIDTH,

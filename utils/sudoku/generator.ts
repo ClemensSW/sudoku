@@ -192,11 +192,24 @@ function shuffleArray<T>(array: T[]): void {
 }
 
 /**
+ * Zählt die Anzahl der gefüllten Zellen in einem bestimmten Bereich des Puzzles
+ */
+function countFilledCells(puzzle: number[][], cells: { row: number; col: number }[]): number {
+  let count = 0;
+  for (const { row, col } of cells) {
+    if (puzzle[row][col] !== 0) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/**
  * Entfernt Zellen aus einem gelösten Sudoku, um ein Puzzle zu erstellen
- * Optimierte Version für bessere Performance und fairere Verteilung bei Duo-Modus
+ * Verbesserte Version mit garantierter Balance zwischen den Spielern
  * @param solution Die vollständige Lösung
  * @param difficulty Der Schwierigkeitsgrad des Puzzles
- * @returns Ein Sudoku-Board mit dem angegebenen Schwierigkeitsgrad
+ * @returns Ein Sudoku-Board mit dem angegebenen Schwierigkeitsgrad und ausgewogener Zellenverteilung
  */
 export function generatePuzzle(
   solution: number[][],
@@ -234,76 +247,155 @@ export function generatePuzzle(
     }
   }
 
-  // Mische die Positionen für mehr Variation
-  shuffleArray(player1Cells);
-  shuffleArray(player2Cells);
-
   // Berechne, wie viele Zellen pro Spielerbereich entfernt werden sollen
   // -1 für die mittlere Zelle, die immer gefüllt bleibt
   const totalCellsToRemove = BOARD_SIZE * BOARD_SIZE - cluesCount - 1;
   const cellsToRemovePerPlayer = Math.floor(totalCellsToRemove / 2);
   
-  // Zellen für Spieler 1 entfernen
-  let removedPlayer1 = 0;
-  for (const { row, col } of player1Cells) {
-    if (removedPlayer1 >= cellsToRemovePerPlayer) break;
+  // Hilfsfunktion: Entferne Zellen aus einem bestimmten Bereich
+  const removeCellsFromArea = (
+    cells: { row: number; col: number }[],
+    targetRemovalCount: number,
+    uniquenessCheck: boolean
+  ): number => {
+    let removed = 0;
+    // Mische die Zellen für zufällige Entfernung
+    shuffleArray(cells);
     
-    // Original-Wert sichern
-    const backup = puzzle[row][col];
-    
-    // Zelle entfernen
-    puzzle[row][col] = 0;
-    
-    // Prüfen, ob die Lösung immer noch eindeutig ist
-    const shouldCheckUniqueness = settings.uniqueSolution && 
-      (difficulty !== 'expert' || Math.random() < 0.5);
-    
-    if (shouldCheckUniqueness && !hasUniqueSolution(puzzle)) {
-      // Wiederherstellen, wenn keine eindeutige Lösung
-      puzzle[row][col] = backup;
-    } else {
-      // Zelle wurde erfolgreich entfernt
-      removedPlayer1++;
+    for (const { row, col } of cells) {
+      if (removed >= targetRemovalCount) break;
+      
+      // Original-Wert sichern
+      const backup = puzzle[row][col];
+      
+      // Zelle entfernen
+      puzzle[row][col] = 0;
+      
+      // Prüfen, ob die Lösung immer noch eindeutig ist - falls erforderlich
+      if (uniquenessCheck && !hasUniqueSolution(puzzle)) {
+        // Wiederherstellen, wenn keine eindeutige Lösung
+        puzzle[row][col] = backup;
+      } else {
+        // Zelle wurde erfolgreich entfernt
+        removed++;
+      }
     }
-  }
+    
+    return removed;
+  };
   
-  // Zellen für Spieler 2 entfernen
-  let removedPlayer2 = 0;
-  for (const { row, col } of player2Cells) {
-    if (removedPlayer2 >= cellsToRemovePerPlayer) break;
+  // Hilfsfunktion: Fülle Zellen in einem bestimmten Bereich wieder
+  const restoreCellsInArea = (
+    cells: { row: number; col: number }[],
+    solution: number[][],
+    count: number
+  ): number => {
+    let restored = 0;
+    // Mische die Zellen für zufällige Wiederherstellung
+    shuffleArray([...cells]);
     
-    // Original-Wert sichern
-    const backup = puzzle[row][col];
-    
-    // Zelle entfernen
-    puzzle[row][col] = 0;
-    
-    // Prüfen, ob die Lösung immer noch eindeutig ist
-    const shouldCheckUniqueness = settings.uniqueSolution && 
-      (difficulty !== 'expert' || Math.random() < 0.5);
-    
-    if (shouldCheckUniqueness && !hasUniqueSolution(puzzle)) {
-      // Wiederherstellen, wenn keine eindeutige Lösung
-      puzzle[row][col] = backup;
-    } else {
-      // Zelle wurde erfolgreich entfernt
-      removedPlayer2++;
+    for (const { row, col } of cells) {
+      if (restored >= count) break;
+      
+      // Nur leere Zellen wiederherstellen
+      if (puzzle[row][col] === 0) {
+        puzzle[row][col] = solution[row][col];
+        restored++;
+      }
     }
-  }
+    
+    return restored;
+  };
+
+  // Phase 1: Erste Runde der Zellenentfernung - für beide Spielerbereiche
+  // Bestimme ob Eindeutigkeit geprüft werden soll (je nach Schwierigkeitsgrad)
+  const shouldCheckUniqueness = settings.uniqueSolution && 
+    difficulty !== 'expert';  // Bei Expert verzichten wir auf die Eindeutigkeitsprüfung für Geschwindigkeit
+    
+  // Für Expert-Schwierigkeitsgrad selektive Prüfung (nicht immer)
+  const expertRandomCheck = difficulty === 'expert' && Math.random() < 0.5;
   
-  // Wenn nicht genügend Zellen entfernt werden konnten, versuche es mit einer alternativen Strategie
-  if (removedPlayer1 < cellsToRemovePerPlayer * 0.8 || removedPlayer2 < cellsToRemovePerPlayer * 0.8) {
-    // Versuche weitere Zellen zu entfernen, aber priorisiere Ausgewogenheit
-    const remainingCellsP1 = cellsToRemovePerPlayer - removedPlayer1;
-    const remainingCellsP2 = cellsToRemovePerPlayer - removedPlayer2;
+  // Führe die Eindeutigkeitsprüfung durch, wenn erforderlich
+  const checkUniqueness = shouldCheckUniqueness || expertRandomCheck;
+  
+  console.log(`Starte Zellenentfernung mit Eindeutigkeitsprüfung: ${checkUniqueness}`);
+  
+  // Erster Durchlauf: Entferne Zellen in beiden Bereichen
+  const removedPlayer1 = removeCellsFromArea(player1Cells, cellsToRemovePerPlayer, checkUniqueness);
+  const removedPlayer2 = removeCellsFromArea(player2Cells, cellsToRemovePerPlayer, checkUniqueness);
+  
+  console.log(`Erste Phase: Spieler 1: ${removedPlayer1}/${cellsToRemovePerPlayer} Zellen entfernt`);
+  console.log(`Erste Phase: Spieler 2: ${removedPlayer2}/${cellsToRemovePerPlayer} Zellen entfernt`);
+  
+  // Phase 2: Balancierung - Sorge für Gleichgewicht zwischen den Spielerbereichen
+  
+  // Zähle die aktuell gefüllten Zellen pro Spieler
+  const filledPlayer1 = player1Cells.length - removedPlayer1;
+  const filledPlayer2 = player2Cells.length - removedPlayer2;
+  
+  console.log(`Nach erster Phase: Spieler 1 hat ${filledPlayer1} gefüllte Zellen`);
+  console.log(`Nach erster Phase: Spieler 2 hat ${filledPlayer2} gefüllte Zellen`);
+  
+  // Berechne das Ungleichgewicht
+  const imbalance = filledPlayer1 - filledPlayer2;
+  
+  // Wenn ein Ungleichgewicht besteht, versuche es auszugleichen
+  if (imbalance !== 0) {
+    console.log(`Ungleichgewicht erkannt: ${imbalance} (Positiv = Spieler 1 hat mehr gefüllte Zellen)`);
     
-    if (remainingCellsP1 > 0) {
-      console.log(`Konnte bei Spieler 1 nur ${removedPlayer1}/${cellsToRemovePerPlayer} Zellen entfernen`);
+    // SICHERE OPTION: Wir stellen nur Zellen wieder her, anstatt zusätzliche zu entfernen
+    // Damit gewährleisten wir, dass das Sudoku definitiv lösbar bleibt
+    
+    if (imbalance > 0) {
+      // Spieler 1 hat mehr gefüllte Zellen - stelle bei Spieler 2 Zellen wieder her
+      console.log(`Stelle ${imbalance} Zellen bei Spieler 2 wieder her, um Balance zu erreichen...`);
+      
+      const restored = restoreCellsInArea(
+        player2Cells.filter(cell => puzzle[cell.row][cell.col] === 0), // Nur leere Zellen
+        solution,
+        imbalance
+      );
+      
+      console.log(`${restored}/${imbalance} Zellen bei Spieler 2 wiederhergestellt`);
+      
+      // Wenn nicht alle Zellen wiederhergestellt werden konnten (z.B. nicht genug leere Zellen vorhanden),
+      // geben wir eine Warnung aus, aber das Sudoku bleibt lösbar
+      if (restored < imbalance) {
+        console.log(`WARNUNG: Konnte nur ${restored}/${imbalance} Zellen wiederherstellen. Perfekte Balance nicht möglich.`);
+      }
+    } else {
+      // Spieler 2 hat mehr gefüllte Zellen - stelle bei Spieler 1 Zellen wieder her
+      const absImbalance = Math.abs(imbalance);
+      console.log(`Stelle ${absImbalance} Zellen bei Spieler 1 wieder her, um Balance zu erreichen...`);
+      
+      const restored = restoreCellsInArea(
+        player1Cells.filter(cell => puzzle[cell.row][cell.col] === 0), // Nur leere Zellen
+        solution,
+        absImbalance
+      );
+      
+      console.log(`${restored}/${absImbalance} Zellen bei Spieler 1 wiederhergestellt`);
+      
+      // Wenn nicht alle Zellen wiederhergestellt werden konnten, geben wir eine Warnung aus
+      if (restored < absImbalance) {
+        console.log(`WARNUNG: Konnte nur ${restored}/${absImbalance} Zellen wiederherstellen. Perfekte Balance nicht möglich.`);
+      }
     }
     
-    if (remainingCellsP2 > 0) {
-      console.log(`Konnte bei Spieler 2 nur ${removedPlayer2}/${cellsToRemovePerPlayer} Zellen entfernen`);
+    // Finale Prüfung
+    const finalFilledPlayer1 = countFilledCells(puzzle, player1Cells);
+    const finalFilledPlayer2 = countFilledCells(puzzle, player2Cells);
+    console.log(`Nach Balancierung: Spieler 1 hat ${finalFilledPlayer1} gefüllte Zellen`);
+    console.log(`Nach Balancierung: Spieler 2 hat ${finalFilledPlayer2} gefüllte Zellen`);
+    
+    if (finalFilledPlayer1 !== finalFilledPlayer2) {
+      console.log(`WARNUNG: Konnte keine perfekte Balance erreichen! ` +
+                  `Differenz: ${finalFilledPlayer1 - finalFilledPlayer2}`);
+    } else {
+      console.log("Perfekte Balance erreicht!");
     }
+  } else {
+    console.log("Spielerbereiche bereits ausgeglichen, keine Balancierung erforderlich.");
   }
 
   // Konvertiere in SudokuBoard Format

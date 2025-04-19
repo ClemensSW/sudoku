@@ -2,7 +2,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./DuoFeatures.styles";
 
@@ -15,9 +15,13 @@ interface Feature {
 
 interface DuoFeaturesProps {
   onStartGame: () => void;
+  noAnimation?: boolean;
 }
 
-const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
+const DuoFeatures: React.FC<DuoFeaturesProps> = ({ 
+  onStartGame,
+  noAnimation = false
+}) => {
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -49,10 +53,9 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
       </Text>
 
       {features.map((feature, index) => (
-        <Animated.View
+        <View
           key={`feature-${index}`}
           style={[styles.featureCard, { backgroundColor: colors.surface }]}
-          entering={FadeInUp.delay(300 + index * 100).duration(500)}
         >
           <View
             style={[
@@ -72,12 +75,11 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
               {feature.description}
             </Text>
           </View>
-        </Animated.View>
+        </View>
       ))}
 
-      <Animated.View
+      <View
         style={styles.buttonContainer}
-        entering={FadeInUp.delay(700).duration(500)}
       >
         <TouchableOpacity
           style={[styles.startButton, { backgroundColor: colors.primary }]}
@@ -86,7 +88,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({ onStartGame }) => {
         >
           <Text style={styles.startButtonText}>Spiel starten</Text>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
     </View>
   );
 };

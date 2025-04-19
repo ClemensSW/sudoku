@@ -15,7 +15,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { 
   FadeIn, 
   FadeOut,
-  SlideInUp
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
@@ -173,7 +176,7 @@ const DuoScreen: React.FC = () => {
         resizeMode="cover"
       />
 
-      {/* Shared modal backdrop */}
+      {/* Shared modal backdrop - keep animation for interactivity */}
       {isAnyModalOpen && (
         <Animated.View 
           style={[StyleSheet.absoluteFill, { 
@@ -209,13 +212,10 @@ const DuoScreen: React.FC = () => {
             {/* Fixed top spacer without text content */}
             <View style={{ height: 20 }} />
             
-            {/* Central content container for visualizer and button */}
-            <Animated.View 
-              style={styles.centralContentContainer}
-              entering={FadeIn.duration(800)}
-            >
-              {/* Board visualizer */}
-              <DuoBoardVisualizer />
+            {/* Central content container for visualizer and button - removed entrance animation */}
+            <View style={styles.centralContentContainer}>
+              {/* Board visualizer with instant loading */}
+              <DuoBoardVisualizer noAnimation={true} />
 
               {/* Start Game Button - below visualizer with proper spacing */}
               <View style={styles.buttonContainer}>
@@ -230,17 +230,17 @@ const DuoScreen: React.FC = () => {
                   <Text style={styles.startButtonText}>Jetzt spielen</Text>
                 </TouchableOpacity>
               </View>
-            </Animated.View>
+            </View>
             
-            {/* Scroll indicator - now closer to navigation */}
+            {/* Scroll indicator - no entrance animation */}
             <View style={styles.scrollIndicatorContainer}>
-              <ScrollIndicator onPress={scrollToFeatures} />
+              <ScrollIndicator onPress={scrollToFeatures} noAnimation={true} />
             </View>
           </View>
 
           {/* Features section - this will now be well below the viewport */}
           <View style={styles.featuresScreen}>
-            <DuoFeatures onStartGame={handleStartGame} />
+            <DuoFeatures onStartGame={handleStartGame} noAnimation={true} />
           </View>
         </ScrollView>
       </View>

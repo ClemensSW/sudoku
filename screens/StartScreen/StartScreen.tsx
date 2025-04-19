@@ -20,9 +20,6 @@ import Animated, {
   withRepeat,
   withSequence,
   withDelay,
-  FadeIn,
-  FadeInDown,
-  SlideInUp,
   Easing,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -49,10 +46,10 @@ const StartScreen: React.FC = () => {
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
-  // Animation values
-  const titleGlow = useSharedValue(0);
+  // Animation values - keep these for interactive animations
+  const titleGlow = useSharedValue(0.3);
   const buttonScale = useSharedValue(1);
-  const buttonGlow = useSharedValue(0);
+  const buttonGlow = useSharedValue(0.3);
   const floatingY = useSharedValue(0);
   
   // Particle animations
@@ -67,9 +64,9 @@ const StartScreen: React.FC = () => {
       ? bottomNavHeight + insets.bottom + 10
       : bottomNavHeight + 10;
 
-  // Start animations on component mount
+  // Start subtle animations on component mount - keep these for visual appeal
   useEffect(() => {
-    // Entferne die aufdringliche Bewegung und ersetze sie durch eine subtile Pulsation
+    // Gentle floating animation (no delay)
     floatingY.value = withRepeat(
       withSequence(
         withTiming(-1.5, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
@@ -79,7 +76,7 @@ const StartScreen: React.FC = () => {
       true
     );
 
-    // Title glow effect
+    // Title glow effect - start immediately
     titleGlow.value = withRepeat(
       withSequence(
         withTiming(0.8, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
@@ -89,7 +86,7 @@ const StartScreen: React.FC = () => {
       true
     );
 
-    // Button glow effect
+    // Button glow effect - start immediately
     buttonGlow.value = withRepeat(
       withSequence(
         withTiming(0.7, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
@@ -99,7 +96,7 @@ const StartScreen: React.FC = () => {
       true
     );
 
-    // Particle animations
+    // Particle animations - keep but start immediately
     const animateParticles = () => {
       // Random movement for particles
       particle1.value = {
@@ -120,15 +117,15 @@ const StartScreen: React.FC = () => {
         opacity: 0.5 + Math.random() * 0.3,
       };
       
-      // Continue animation
+      // Continue animation with a shorter initial timeout
       setTimeout(animateParticles, 3000 + Math.random() * 2000);
     };
     
-    // Start particle animations
+    // Start particle animations immediately
     animateParticles();
   }, []);
 
-  // Animated styles
+  // Animated styles - keep these for interactive elements
   const floatingAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: floatingY.value }],
@@ -147,7 +144,7 @@ const StartScreen: React.FC = () => {
     };
   });
 
-  // Button press animation
+  // Button press animation - keep this for interactivity
   const handleButtonPressIn = () => {
     buttonScale.value = withTiming(0.96, { duration: 100 });
   };
@@ -261,14 +258,14 @@ const StartScreen: React.FC = () => {
         <LinearGradient
           colors={theme.isDark ? 
             [
-              'rgba(10, 20, 35, 0.8)', // Noch dunkler für besseren Kontrast
-              'rgba(25, 45, 70, 0.7)',
-              'rgba(10, 20, 35, 0.8)'
+              'rgba(10, 20, 35, 0.0)', // Noch dunkler für besseren Kontrast
+              'rgba(25, 45, 70, 0.0)',
+              'rgba(10, 20, 35, 0.0)'
             ] : 
             [
-              'rgba(240, 245, 255, 0.4)', 
-              'rgba(220, 230, 245, 0.3)',
-              'rgba(240, 245, 255, 0.5)'
+              'rgba(240, 245, 255, 0.0)', 
+              'rgba(220, 230, 245, 0.0)',
+              'rgba(240, 245, 255, 0.0)'
             ]
           }
           style={styles.gradientOverlay}
@@ -297,10 +294,9 @@ const StartScreen: React.FC = () => {
             { marginBottom: contentBottomMargin }
           ]}
         >
-          {/* Title Section with modern styling */}
+          {/* Title Section with modern styling - removed entrance animations */}
           <Animated.View 
             style={[styles.titleSection, floatingAnimation]}
-            entering={FadeIn.duration(1000)}
           >
             {/* Glow behind title */}
             <Animated.View 
@@ -323,28 +319,14 @@ const StartScreen: React.FC = () => {
               SUDOKU
             </Text>
             
-            {/* Motivational Subtitle */}
-            <Animated.Text 
-              style={[styles.subtitle,
-                { 
-                  color: theme.isDark ? 
-                    'rgba(255, 255, 255, 0.95)' : 
-                      'rgba(40, 50, 70, 0.9)'
-                }
-              ]
-              }
-              entering={FadeIn.delay(500).duration(800)}
-            >
-              Trainiere dein Gehirn, fordere deinen Verstand
-            </Animated.Text>
+            
           </Animated.View>
 
           {/* Buttons Container */}
           <View style={styles.buttonsContainer}>
-            {/* New Game Button with glowing effect */}
+            {/* New Game Button with glowing effect - removed entry animation */}
             <Animated.View 
               style={[buttonAnimatedStyle, styles.buttonContainer]}
-              entering={SlideInUp.delay(600).duration(800)}
             >
               {/* Button glow effect */}
               <Animated.View 
@@ -372,9 +354,8 @@ const StartScreen: React.FC = () => {
               </TouchableOpacity>
             </Animated.View>
             
-            {/* How To Play Button with modern styling */}
-            <Animated.View
-              entering={FadeInDown.delay(800).duration(800)}
+            {/* How To Play Button with modern styling - removed entry animation */}
+            <View
               style={styles.howToPlayContainer}
             >
               <TouchableOpacity
@@ -382,11 +363,11 @@ const StartScreen: React.FC = () => {
                   styles.howToPlayButton,
                   { 
                     backgroundColor: theme.isDark ? 
-                      'rgba(255, 255, 255, 0.15)' : 
-                      'rgba(60, 80, 120, 0.15)',
+                      'rgba(60, 80, 120, 0.2)' : 
+                      'rgba(255, 255, 255, 0.4)',
                     borderColor: theme.isDark ? 
-                      'rgba(255, 255, 255, 0.2)' : 
-                      'rgba(60, 80, 120, 0.25)'
+                      'rgba(60, 80, 120, 0.25)' : 
+                      'rgba(255, 255, 255, 0.6)'
                   }
                 ]}
                 onPress={handleHowToPlayPress}
@@ -404,7 +385,7 @@ const StartScreen: React.FC = () => {
                   Wie spielt man?
                 </Text>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
           </View>
         </View>
       </View>
@@ -433,7 +414,7 @@ const StartScreen: React.FC = () => {
   );
 };
 
-  // Modern, vibrant styles
+// Modern, vibrant styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -443,12 +424,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 56, 
+    bottom: 0, 
     overflow: "hidden",
   },
   backgroundImage: {
-    width: "100%",
-    height: "100%",
+    position: "absolute",
+    width: width,
+    height: height,
+    // opacity is intentionally not set to match DuoScreen
   },
   gradientOverlay: {
     position: "absolute",
@@ -533,7 +516,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // Style für den Untertitel aus dem StyleSheet entfernen, da wir alle Styles jetzt inline definieren
   subtitle: {
     fontSize: 16,
     textAlign: "center",

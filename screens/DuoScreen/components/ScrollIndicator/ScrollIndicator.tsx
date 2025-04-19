@@ -8,7 +8,7 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  FadeIn,
+  Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./ScrollIndicator.styles";
@@ -16,11 +16,13 @@ import styles from "./ScrollIndicator.styles";
 interface ScrollIndicatorProps {
   onPress: () => void;
   label?: string;
+  noAnimation?: boolean;
 }
 
 const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
   onPress,
   label = "Mehr erfahren",
+  noAnimation = false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -28,16 +30,19 @@ const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
 
   // Start animations when component mounts
   useEffect(() => {
-    // Scroll hint animation
-    scrollHintOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.5, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
-      ),
-      -1,
-      true
-    );
-  }, []);
+    // Only run animation if noAnimation is false
+    if (!noAnimation) {
+      // Scroll hint animation
+      scrollHintOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.5, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+    }
+  }, [noAnimation]);
 
   const scrollHintStyle = useAnimatedStyle(() => {
     return {
@@ -48,7 +53,6 @@ const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
   return (
     <Animated.View
       style={[styles.scrollIndicator, scrollHintStyle]}
-      entering={FadeIn.delay(1200).duration(600)}
     >
       <TouchableOpacity onPress={onPress} style={styles.scrollButton}>
         <Text style={[styles.scrollText, { color: colors.textSecondary }]}>

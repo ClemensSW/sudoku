@@ -285,9 +285,6 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   {PLAYER_COLORS[1].name}
                 </Text>
                 
-                <Text style={[styles.playerCardSubtitle, { color: colors.textSecondary }]}>
-                  {player1Complete ? "Bereich abgeschlossen" : "Bereich unvollständig"}
-                </Text>
               </View>
               
               {winner === 1 && (
@@ -370,9 +367,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   {PLAYER_COLORS[2].name}
                 </Text>
                 
-                <Text style={[styles.playerCardSubtitle, { color: colors.textSecondary }]}>
-                  {player2Complete ? "Bereich abgeschlossen" : "Bereich unvollständig"}
-                </Text>
+                
               </View>
               
               {winner === 2 && (
@@ -584,10 +579,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 2,
-  },
-  playerCardSubtitle: {
-    fontSize: 14,
-    fontWeight: "400",
   },
   // Trophy-related styles
   trophyContainer: {

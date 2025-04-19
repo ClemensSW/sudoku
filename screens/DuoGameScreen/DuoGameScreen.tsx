@@ -1,5 +1,5 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, BackHandler, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -15,10 +15,15 @@ import { useNavigationControl } from "@/app/_layout";
 // Duo Game Components
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
+import DuoGameCompletionModal from "./components/DuoGameCompletionModal";
+import DuoGameStatusBar from "./components/DuoGameStatusBar";
 
 // Game Logic
 import { useDuoGameState } from "./hooks/useDuoGameState";
 import { Difficulty } from "@/utils/sudoku";
+
+// Constants
+const MAX_HINTS = 3;
 
 interface DuoGameScreenProps {
   initialDifficulty?: Difficulty;
@@ -33,10 +38,35 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const { showAlert } = useAlert();
   const { setHideBottomNav } = useNavigationControl();
 
-  // Use the duo game state hook
-  const [gameState, gameActions] = useDuoGameState(initialDifficulty, () => {
-    router.replace("/duo");
+  // States für das Completion Modal
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [winnerInfo, setWinnerInfo] = useState<{
+    winner: 0 | 1 | 2;
+    reason: "completion" | "errors";
+  }>({
+    winner: 0,
+    reason: "completion",
   });
+
+  // Callback für Spielende
+  const handleGameComplete = (
+    winner: 0 | 1 | 2,
+    reason: "completion" | "errors"
+  ) => {
+    setWinnerInfo({ winner, reason });
+    setTimeout(() => {
+      setShowCompletionModal(true);
+    }, 800);
+  };
+
+  // Use the duo game state hook with completion callback
+  const [gameState, gameActions] = useDuoGameState(
+    initialDifficulty,
+    () => {
+      router.replace("/duo");
+    },
+    handleGameComplete
+  );
 
   // Start a new game on mount
   useEffect(() => {
@@ -86,6 +116,13 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     }
   };
 
+  // Handle for changing difficulty
+  const handleChangeDifficulty = () => {
+    // Hier könntest du einen DifficultySelector einblenden
+    // Vorerst einfach zurück zum Duo-Menü navigieren
+    router.replace("/duo");
+  };
+
   // Einheitliches Schatten-System
   const buttonShadow = {
     shadowColor: "#000",
@@ -127,6 +164,8 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           style={styles.content}
           entering={FadeIn.delay(200).duration(500)}
         >
+         
+
           {/* Player 2 Controls (Top) */}
           <DuoGameControls
             position="top"
@@ -163,6 +202,30 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
             maxErrors={gameState.maxErrors}
           />
         </Animated.View>
+
+        {/* Game Completion Modal */}
+        <DuoGameCompletionModal
+          visible={showCompletionModal}
+          onClose={() => {
+            setShowCompletionModal(false);
+            router.replace("/duo");
+          }}
+          onNewGame={() => {
+            setShowCompletionModal(false);
+            gameActions.startNewGame();
+          }}
+          winner={winnerInfo.winner}
+          winReason={winnerInfo.reason}
+          gameTime={gameState.gameTime}
+          player1Complete={gameState.player1Complete}
+          player2Complete={gameState.player2Complete}
+          player1Errors={gameState.player1Errors}
+          player2Errors={gameState.player2Errors}
+          player1Hints={MAX_HINTS - gameState.player1Hints}
+          player2Hints={MAX_HINTS - gameState.player2Hints}
+          maxHints={MAX_HINTS}
+          maxErrors={gameState.maxErrors}
+        />
       </SafeAreaView>
     </View>
   );

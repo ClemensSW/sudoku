@@ -1,6 +1,5 @@
 // screens/DuoGameScreen/hooks/useDuoGameState.ts
 import { useState, useEffect, useCallback } from "react";
-import { Alert } from "react-native";
 import {
   SudokuBoard as SudokuBoardType,
   Difficulty,
@@ -61,9 +60,16 @@ export interface DuoGameActions {
   handleBackPress: () => boolean;
 }
 
+// Type for the game completion callback
+type GameCompletionCallback = (
+  winner: 0 | 1 | 2, 
+  reason: "completion" | "errors"
+) => void;
+
 export const useDuoGameState = (
   initialDifficulty: Difficulty = "medium",
-  onQuit?: () => void
+  onQuit?: () => void,
+  onGameComplete?: GameCompletionCallback
 ): [DuoGameState, DuoGameActions] => {
   // Game state
   const [board, setBoard] = useState<SudokuBoardType>([]);
@@ -164,18 +170,11 @@ export const useDuoGameState = (
     // Declare the other player as winner
     const winner = player === 1 ? 2 : 1;
     
-    // Show alert with options
-    setTimeout(() => {
-      Alert.alert(
-        "Spiel beendet!",
-        `Spieler ${player} hat zu viele Fehler gemacht. Spieler ${winner} gewinnt!`,
-        [
-          { text: "Neues Spiel", onPress: startNewGame },
-          { text: "Zum Menü", onPress: onQuit },
-        ]
-      );
-    }, 300);
-  }, [onQuit]);
+    // Call the game completion callback if provided
+    if (onGameComplete) {
+      onGameComplete(winner, "errors");
+    }
+  }, [onGameComplete]);
 
   // Start a new game
   const startNewGame = useCallback(() => {
@@ -229,7 +228,6 @@ export const useDuoGameState = (
       } catch (error) {
         console.error("Error starting game:", error);
         setIsLoading(false);
-        Alert.alert("Error", "Failed to generate game");
       }
     }, 500);
   }, [initialDifficulty]);
@@ -457,10 +455,6 @@ export const useDuoGameState = (
 
       if (hintsRemaining <= 0) {
         triggerHaptic("error");
-        Alert.alert(
-          "Keine Hinweise mehr",
-          `Spieler ${player} hat keine Hinweise mehr übrig.`
-        );
         return;
       }
 
@@ -587,12 +581,22 @@ export const useDuoGameState = (
   const handlePlayerCompleted = useCallback((player: 1 | 2) => {
     triggerHaptic("success");
 
-    Alert.alert(
-      `Bereich ${player} fertig!`,
-      `Bereich von Spieler ${player} wurde gelöst.`,
-      [{ text: "OK" }]
-    );
-  }, []);
+    // If the other player's area is not complete, this player wins
+    if (player === 1 && !player2Complete) {
+      if (onGameComplete) {
+        onGameComplete(1, "completion");
+      }
+      setIsGameRunning(false);
+      setIsGameComplete(true);
+    } else if (player === 2 && !player1Complete) {
+      if (onGameComplete) {
+        onGameComplete(2, "completion");
+      }
+      setIsGameRunning(false);
+      setIsGameComplete(true);
+    }
+    // Otherwise, wait for handleGameComplete to be called when both are complete
+  }, [player1Complete, player2Complete, onGameComplete]);
 
   // Handle game completion
   const handleGameComplete = useCallback(() => {
@@ -600,17 +604,11 @@ export const useDuoGameState = (
     setIsGameComplete(true);
     triggerHaptic("success");
 
-    setTimeout(() => {
-      Alert.alert(
-        "Spiel beendet!",
-        "Beide Bereiche wurden erfolgreich gelöst. Gut gemacht!",
-        [
-          { text: "Neues Spiel", onPress: startNewGame },
-          { text: "Zum Menü", onPress: onQuit },
-        ]
-      );
-    }, 500);
-  }, [startNewGame, onQuit]);
+    // Both players completed their areas - it's a tie
+    if (onGameComplete) {
+      onGameComplete(0, "completion");
+    }
+  }, [onGameComplete]);
 
   // Handle back button press
   const handleBackPress = useCallback(() => {

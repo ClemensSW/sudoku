@@ -103,6 +103,52 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   const badgePulse = useSharedValue(1);
   const gainIndicatorOpacity = useSharedValue(0); // For XP gain section in progress bar
   
+  // Animation values for path indicators - Create all on component level
+  const pathIndicator0Scale = useSharedValue(1);
+  const pathIndicator1Scale = useSharedValue(1);
+  const pathIndicator2Scale = useSharedValue(1);
+  const pathIndicator3Scale = useSharedValue(1);
+  const pathIndicator4Scale = useSharedValue(1);
+  
+  // Combine into an array for easier access
+  const pathIndicatorScales = [
+    pathIndicator0Scale,
+    pathIndicator1Scale,
+    pathIndicator2Scale,
+    pathIndicator3Scale,
+    pathIndicator4Scale
+  ];
+  
+  // Pre-calculate all animated styles at component level
+  const pathIndicator0Style = useAnimatedStyle(() => ({
+    transform: [{ scale: pathIndicator0Scale.value }],
+  }));
+  
+  const pathIndicator1Style = useAnimatedStyle(() => ({
+    transform: [{ scale: pathIndicator1Scale.value }],
+  }));
+  
+  const pathIndicator2Style = useAnimatedStyle(() => ({
+    transform: [{ scale: pathIndicator2Scale.value }],
+  }));
+  
+  const pathIndicator3Style = useAnimatedStyle(() => ({
+    transform: [{ scale: pathIndicator3Scale.value }],
+  }));
+  
+  const pathIndicator4Style = useAnimatedStyle(() => ({
+    transform: [{ scale: pathIndicator4Scale.value }],
+  }));
+  
+  // Combine into an array for easier access
+  const pathIndicatorStyles = [
+    pathIndicator0Style,
+    pathIndicator1Style,
+    pathIndicator2Style,
+    pathIndicator3Style,
+    pathIndicator4Style
+  ];
+  
   // Toggle function for text visibility
   const toggleTextVisibility = () => {
     setTextExpanded(!textExpanded);
@@ -133,6 +179,17 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         gainIndicatorOpacity.value = withTiming(1, { duration: 300 });
       }
     }, 800);
+    
+    // Animate path indicators
+    setTimeout(() => {
+      // Animate current path indicator
+      if (levelInfo.levelData.pathIndex >= 0 && levelInfo.levelData.pathIndex < pathIndicatorScales.length) {
+        pathIndicatorScales[levelInfo.levelData.pathIndex].value = withSequence(
+          withTiming(1.2, { duration: 300 }),
+          withTiming(1, { duration: 200 })
+        );
+      }
+    }, 400);
     
     // Only trigger level-up on actual level changes, not on every game
     const didLevelUp = (previousXp !== undefined || xpGain !== undefined) && 
@@ -326,7 +383,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 marginRight: 8
               }} />
               
-              {/* Pfadname */}
+              {/* Nur Pfadname (ohne Fortschritt) */}
               <Text style={{
                 fontSize: 16,
                 fontWeight: '600',
@@ -346,14 +403,14 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             />
           </Pressable>
           
-          {/* Pfadbeschreibung - nur wenn ausgeklappt */}
+          {/* Ausgeklappter Bereich mit Pfad-Fortschritt und Beschreibung */}
           {textExpanded && (
             <Animated.View 
               style={[
                 styles.pathContent,
                 { 
                   marginTop: 8,
-                  padding: 10,
+                  padding: 12,
                   backgroundColor: finalOptions.highContrastText 
                     ? theme.isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.7)' 
                     : theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
@@ -364,6 +421,60 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               ]}
               entering={FadeIn.duration(300)}
             >
+              {/* Pfad-Fortschrittsanzeige mit Text und Balken */}
+              <View style={{
+                marginBottom: 12,
+                paddingBottom: 10,
+                borderBottomWidth: 1,
+                borderBottomColor: theme.isDark 
+                  ? 'rgba(255,255,255,0.1)' 
+                  : 'rgba(0,0,0,0.05)'
+              }}>
+                {/* Textuelle Anzeige "Pfad X von 5" */}
+                <Text style={{
+                  fontSize: 14,
+                  fontWeight: '600',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: finalOptions.highContrastText 
+                    ? theme.isDark ? '#FFFFFF' : '#000000' 
+                    : colors.textPrimary
+                }}>
+                  Pfad {levelInfo.levelData.pathIndex + 1} von 5
+                </Text>
+                
+                {/* Visuelle Balken-Anzeige */}
+                <View style={{ 
+                  flexDirection: 'row', 
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 8
+                }}>
+                  {[0, 1, 2, 3, 4].map((index) => (
+                    <Animated.View 
+                      key={`path-indicator-${index}`}
+                      style={[
+                        {
+                          width: index === levelInfo.levelData.pathIndex ? 36 : 24,
+                          height: index === levelInfo.levelData.pathIndex ? 10 : 6,
+                          borderRadius: 4,
+                          backgroundColor: index === levelInfo.levelData.pathIndex 
+                            ? levelInfo.currentPath.color
+                            : index < levelInfo.levelData.pathIndex
+                              ? `${levelInfo.currentPath.color}80` // Completed paths (dimmed)
+                              : theme.isDark 
+                                ? 'rgba(255,255,255,0.2)' 
+                                : 'rgba(0,0,0,0.1)', // Future paths
+                          marginHorizontal: 4,
+                        },
+                        pathIndicatorStyles[index] // Verwende die vordefinierten Styles
+                      ]}
+                    />
+                  ))}
+                </View>
+              </View>
+              
+              {/* Pfad-Beschreibung */}
               <Text style={[
                 styles.textContainer,
                 { 

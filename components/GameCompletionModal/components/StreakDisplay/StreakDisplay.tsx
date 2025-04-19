@@ -245,7 +245,7 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
           >
             {progressPercentage < 100
               ? "Nächstes Ziel"
-              : "Rekord erreicht!"}
+              : "Beste Serie!"}
           </Text>
           
           <Text style={[styles.streakValue, { color: colors.textPrimary }]}>

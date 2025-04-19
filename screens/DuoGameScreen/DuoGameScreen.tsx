@@ -1,4 +1,4 @@
-// screens/DuoGameScreen/DuoGameScreen.tsx
+// screens/DuoGameScreen/DuoGameScreen.tsx - aktualisierte Version
 import React, { useEffect } from "react";
 import { View, BackHandler, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -112,7 +112,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           <DuoGameControls
             position="top"
             onNumberPress={gameActions.handleNumberPress}
-            onClear={gameActions.handleClear}
             onNoteToggle={gameActions.handleNoteToggle}
             onHint={gameActions.handleHint}
             noteMode={gameState.player2NoteMode}
@@ -134,7 +133,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           <DuoGameControls
             position="bottom"
             onNumberPress={gameActions.handleNumberPress}
-            onClear={gameActions.handleClear}
             onNoteToggle={gameActions.handleNoteToggle}
             onHint={gameActions.handleHint}
             noteMode={gameState.player1NoteMode}

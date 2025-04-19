@@ -58,7 +58,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
         </Text>
 
         <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-          Wie möchtest du spielen?
+          Wie möchtet ihr gemeinsam spielen?
         </Text>
 
         <View style={styles.modeContainer}>
@@ -82,7 +82,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
                 Lokal spielen
               </Text>
               <Text style={[styles.modeDescription, { color: colors.textSecondary }]}>
-                Teilt euch ein Gerät und spielt gemeinsam
+                Teilt euch ein Gerät
               </Text>
             </View>
             <Feather 
@@ -117,11 +117,11 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
                   style={[styles.comingSoonBadge, { backgroundColor: colors.warning }]}
                   entering={FadeIn.delay(400).duration(300)}
                 >
-                  <Text style={styles.comingSoonText}>In Entwicklung</Text>
+                  <Text style={styles.comingSoonText}>In Planung</Text>
                 </Animated.View>
               </View>
               <Text style={[styles.modeDescription, { color: colors.textSecondary }]}>
-                Spiele gegen andere Spieler online
+                Flexibel auf zwei Geräten
               </Text>
             </View>
           </TouchableOpacity>

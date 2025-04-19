@@ -134,7 +134,10 @@ const styles = StyleSheet.create({
     alignItems: "center", // Center horizontally
     justifyContent: "center", // Center vertically
   },
-
+  // Gegen-Rotation für Spieler 2
+  counterRotatedContainer: {
+    transform: [{ rotate: "0deg" }], // Drehe um 180° zurück
+  },
   heartsRow: {
     flexDirection: "row",
     alignItems: "center",

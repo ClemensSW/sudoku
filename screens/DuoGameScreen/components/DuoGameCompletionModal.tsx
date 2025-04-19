@@ -144,21 +144,21 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   };
 
   // Get gradient colors based on winner
-  const getGradientColors = () => {
+  const getGradientColors = (): readonly [string, string, ...string[]] => {
     if (winner === 0) {
       // Unentschieden: Abstufung beider Farben
       return [
         PLAYER_COLORS[1].gradientStart,
         PLAYER_COLORS[2].gradientStart,
         PLAYER_COLORS.neutral.gradientEnd
-      ];
+      ] as const; // Use const assertion to create a readonly tuple
     }
     
     // Einzelner Gewinner: Nur dessen Farbe
     return [
       PLAYER_COLORS[winner].gradientStart,
       PLAYER_COLORS[winner].gradientEnd
-    ];
+    ] as const; // Use const assertion to create a readonly tuple
   };
   
   // Start animations when modal becomes visible
@@ -293,16 +293,33 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
               {winner === 1 && (
                 <Animated.View 
                   style={[
-                    styles.trophyContainer, 
-                    { backgroundColor: theme.isDark ? 'rgba(255,215,0,0.2)' : 'rgba(255,215,0,0.15)' },
+                    styles.trophyContainer,
                     trophy1AnimatedStyle
                   ]}
                 >
-                  <Feather 
-                    name="award" 
-                    size={24} 
-                    color={theme.isDark ? "#FFD700" : "#D4AF37"} 
+                  {/* Outer glow effect */}
+                  <Animated.View 
+                    style={[
+                      styles.trophyGlow,
+                      { backgroundColor: PLAYER_COLORS[1].primary }
+                    ]}
                   />
+                  
+                  {/* Trophy background */}
+                  <View 
+                    style={[
+                      styles.trophyInner,
+                      { 
+                        backgroundColor: theme.isDark ? 'rgba(74, 125, 120, 0.15)' : 'rgba(74, 125, 120, 0.1)'
+                      }
+                    ]}
+                  >
+                    <Feather 
+                      name="award" 
+                      size={22} 
+                      color={PLAYER_COLORS[1].primary} 
+                    />
+                  </View>
                 </Animated.View>
               )}
             </View>
@@ -361,16 +378,33 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
               {winner === 2 && (
                 <Animated.View 
                   style={[
-                    styles.trophyContainer, 
-                    { backgroundColor: theme.isDark ? 'rgba(255,215,0,0.2)' : 'rgba(255,215,0,0.15)' },
+                    styles.trophyContainer,
                     trophy2AnimatedStyle
                   ]}
                 >
-                  <Feather 
-                    name="award" 
-                    size={24} 
-                    color={theme.isDark ? "#FFD700" : "#D4AF37"} 
+                  {/* Outer glow effect */}
+                  <Animated.View 
+                    style={[
+                      styles.trophyGlow,
+                      { backgroundColor: PLAYER_COLORS[2].primary }
+                    ]}
                   />
+                  
+                  {/* Trophy background */}
+                  <View 
+                    style={[
+                      styles.trophyInner,
+                      { 
+                        backgroundColor: theme.isDark ? 'rgba(91, 93, 110, 0.15)' : 'rgba(91, 93, 110, 0.1)'
+                      }
+                    ]}
+                  >
+                    <Feather 
+                      name="award" 
+                      size={22} 
+                      color={PLAYER_COLORS[2].primary} 
+                    />
+                  </View>
                 </Animated.View>
               )}
             </View>
@@ -555,12 +589,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "400",
   },
+  // Trophy-related styles
   trophyContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
+  },
+  trophyInner: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  trophyGlow: {
+    position: 'absolute',
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    opacity: 0.3,
   },
   playerMessage: {
     fontSize: 15,

@@ -247,6 +247,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     shadowOpacity: 0.25,
                     shadowRadius: 3.84,
                     elevation: 5,
+                    opacity: isDisabled ? 0.3 : 1, // Reduzierte Sichtbarkeit für verwendete Zahlen
                   },
                   getAnimatedStyle(i),
                 ]}
@@ -263,7 +264,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
                   style={{
                     fontSize: 24,
                     fontWeight: "600",
-                    color: colors.buttonText,
+                    color: isDisabled 
+                      ? colors.buttonTextDisabled 
+                      : colors.buttonText,
                   }}
                 >
                   {num}

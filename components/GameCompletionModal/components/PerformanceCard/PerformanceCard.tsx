@@ -197,7 +197,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: theme.isDark ? colors.surface : "#FFFFFF" },
+        { backgroundColor: colors.surface},
         containerAnimatedStyle
       ]}
       entering={FadeIn.duration(500)}

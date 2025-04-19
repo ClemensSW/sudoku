@@ -268,7 +268,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: theme.isDark ? colors.surface : "#FFFFFF" },
+        { backgroundColor: colors.surface},
       ]}
       entering={FadeIn.duration(500)}
     >

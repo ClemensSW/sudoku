@@ -5,15 +5,15 @@
 const lightColors = {
   // Primary colors
   primary: "#4A7D78", // Deine Teal-Primärfarbe beibehalten
-  primaryLight: "#F9FBFA", // Hellere Variante
+  primaryLight: "#F5F7FA", // Hellere Variante
   primaryDark: "#3A6963", // Dunklere Variante
   secondary: "#F05365", // Moderneres Pink/Rot für Akzente
 
   // UI elements - mehr Tiefe und Abgrenzung
-  background: "#E5E7E9", // Leicht getöntes Weiß für Hintergrund
-  surface: "#FFFFFF", // Reines Weiß für Karten und UI-Elemente
+  background: "#E5E9EC", // Leicht getöntes Weiß für Hintergrund
+  surface: "#F0F3F6", // Reines Weiß für Karten und UI-Elemente
   card: "#FFFFFF",
-  boardBackground: "#F0F4F5", // Leicht kühlerer Ton für Spielbrett
+  boardBackground: "#DCE0E4", // Leicht kühlerer Ton für Spielbrett
 
   // Cell colors - verbesserte Unterscheidbarkeit
   cellBackground: "#FFFFFF",
@@ -164,7 +164,7 @@ const darkColors = {
   divider: "#2D3748",
   shadow: "rgba(0, 0, 0, 0.3)",
   overlay: "rgba(0, 0, 0, 0.7)",
-  backdropColor: "rgba(0, 0, 0, 0.65)", // Dunklere Version für Dark-Modus
+  backdropColor: "rgba(0, 0, 0, 0.25)", // Dunklere Version für Dark-Modus
 
   // Number pad
   numberPadButton: "#2D3748",

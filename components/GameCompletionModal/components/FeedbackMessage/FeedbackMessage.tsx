@@ -472,7 +472,7 @@ const FeedbackMessage: React.FC<FeedbackMessageProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: theme.isDark ? colors.surface : "#FFFFFF" },
+        { backgroundColor: colors.surface},
       ]}
       entering={FadeIn.duration(600).delay(500)}
     >

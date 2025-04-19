@@ -77,10 +77,8 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   
   const finalOptions = { ...defaultOptions, ...options };
   
-  // State for text expansion
-  const [textExpanded, setTextExpanded] = useState(
-    finalOptions.textVisibility !== 'compact'
-  );
+  // State for text expansion - always start collapsed
+  const [textExpanded, setTextExpanded] = useState(false);
   
   // Calculate XP from stats if XP not directly provided
   const calculatedXp = stats ? calculateExperience(stats) : 0;
@@ -413,7 +411,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                   : colors.textPrimary
               }
             ]}>
-              {currentXp} XP
+              Level {levelInfo.currentLevel + 1}
             </Text>
             
             {levelInfo.nextLevelData && (
@@ -425,7 +423,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                     : colors.textSecondary
                 }
               ]}>
-                Noch {levelInfo.xpForNextLevel} EP bis Level {levelInfo.currentLevel + 2}
+                Noch {levelInfo.xpForNextLevel} EP
               </Text>
             )}
           </View>

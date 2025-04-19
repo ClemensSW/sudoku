@@ -29,17 +29,17 @@ const PLAYER_COLORS = {
     gradientEnd: "rgba(74, 125, 120, 0)" // Transparentes Ende
   },
   2: {
-    name: "Blau", // Spieler 2 ist jetzt "Blau"
-    primary: "#5B5D6E", // Dark blue-gray - Player 2 (top)
-    light: "#8A8C9E", // Helleres Blau-Grau für Akzente
-    gradientStart: "#5B5D6E",
+    name: "Gelb", // Spieler 2 ist jetzt "Gelb"
+    primary: "#E6E0C5", // Dark blue-gray - Player 2 (top)
+    light: "#8A8C9E", // Helleres Gelb-Grau für Akzente
+    gradientStart: "#E6E0C5",
     gradientEnd: "rgba(91, 93, 110, 0)" // Transparentes Ende
   },
   neutral: {
     name: "Beide Spieler",
     primary: "#627D8B", // Neutrale Farbe für Unentschieden
     light: "#94AEBB", // Hellere neutrale Farbe
-    gradientStart: "#4A7D78", // Gradient von Grün zu Blau für Unentschieden
+    gradientStart: "#4A7D78", // Gradient von Grün zu Gelb für Unentschieden
     gradientMiddle: "#5B5D6E",
     gradientEnd: "rgba(0, 0, 0, 0)"
   }
@@ -339,7 +339,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             </View>
           </View>
           
-          {/* Blau (Player 2) Card */}
+          {/* Gelb (Player 2) Card */}
           <View style={[
             styles.playerCard,
             { 

@@ -155,15 +155,14 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     // Freischaltung als erfolgt markieren
     await markAsUnlocked();
     
-    // Event erstellen
-    const unlockEvent = {
-      type: isComplete ? "complete" : "segment",
-      landscapeId: currentImageId,
-      segmentId: isComplete ? undefined : segmentIndex
-    };
-    
-    // Event speichern
-    await saveUnlockEvent(unlockEvent);
+    const unlockEvent: UnlockEvent = {
+        type: isComplete ? "complete" : "segment",
+        landscapeId: currentImageId,
+        segmentId: isComplete ? undefined : segmentIndex
+      };
+      
+      // Event speichern
+      await saveUnlockEvent(unlockEvent);
     
     return unlockEvent;
   } catch (error) {

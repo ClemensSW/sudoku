@@ -73,6 +73,7 @@ export default StyleSheet.create({
     bottom: 0,
     flexDirection: "row",
     flexWrap: "wrap",
+    padding: 2,
   },
   
   segment: {
@@ -88,16 +89,14 @@ export default StyleSheet.create({
   },
   
   lockedSegment: {
-    borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    backgroundColor: "rgba(18,18,18, 0.95)",
+    borderWidth: 2,
+    // Note: backgroundColor and borderColor are now set dynamically based on theme
   },
   
-  // Highlight für das neueste Segment
+  // Highlight für das neueste Segment 
   newlyUnlockedSegment: {
     borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    backgroundColor: "rgba(74, 125, 120, 0.3)", // Primärfarbe mit Transparenz
+    // Note: backgroundColor and borderColor are now set dynamically based on theme
   },
   
   // Fortschrittsanzeige
@@ -114,7 +113,6 @@ export default StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 6,
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
     borderRadius: 3,
     marginTop: spacing.sm,
     overflow: "hidden",
@@ -137,7 +135,6 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: radius.md,

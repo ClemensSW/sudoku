@@ -69,7 +69,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     // Animate progress bar
     progressWidth.value = withTiming(progressPercentage, { duration: 1000 });
     
-    // FIXED: Only animate unlocked segments to be visible
+    // Only animate unlocked segments to be visible
     landscape.segments.forEach((segment, index) => {
       if (segment.isUnlocked) {
         // Only animate unlocked segments to full opacity
@@ -110,6 +110,34 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     width: `${progressWidth.value}%`
   }));
   
+  // Get theme-appropriate styling for locked segments
+  const getLockedSegmentStyle = () => {
+    if (theme.isDark) {
+      return {
+        backgroundColor: "rgba(18, 18, 18, 0.95)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+      };
+    } else {
+      return {
+        backgroundColor: "rgba(240, 247, 247, 0.95)",
+        borderColor: "rgba(0, 0, 0, 0.2)",
+      };
+    }
+  };
+  
+  // Get theme-appropriate styling for newly unlocked segments
+  const getNewlyUnlockedStyle = () => {
+    return {
+      backgroundColor: `${colors.primary}30`, // Primary color with transparency
+      borderColor: theme.isDark ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.2)",
+    };
+  };
+  
+  // Get theme-appropriate lock icon color
+  const getLockIconColor = () => {
+    return theme.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.6)";
+  };
+  
   // Render a single segment
   const renderSegment = (segment: LandscapeSegment, index: number) => {
     const isUnlocked = segment.isUnlocked;
@@ -120,13 +148,25 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
       opacity: isUnlocked ? segmentOpacities[index].value : 1, // Locked segments always visible (but filled with color)
     }));
     
+    // Get appropriate styling based on segment state and theme
+    const lockedStyle = getLockedSegmentStyle();
+    const newlyUnlockedStyle = getNewlyUnlockedStyle();
+    
     return (
       <Animated.View
         key={`segment-${index}`}
         style={[
           styles.segment,
-          isUnlocked ? styles.unlockedSegment : styles.lockedSegment,
-          isNewlyUnlocked && styles.newlyUnlockedSegment,
+          isUnlocked ? styles.unlockedSegment : {
+            ...styles.lockedSegment,
+            backgroundColor: lockedStyle.backgroundColor,
+            borderColor: lockedStyle.borderColor,
+          },
+          isNewlyUnlocked && {
+            ...styles.newlyUnlockedSegment,
+            backgroundColor: newlyUnlockedStyle.backgroundColor,
+            borderColor: newlyUnlockedStyle.borderColor,
+          },
           segmentAnimatedStyle
         ]}
       >
@@ -134,7 +174,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
           <Feather 
             name="lock" 
             size={16} 
-            color="rgba(255,255,255,0.8)" 
+            color={getLockIconColor()} 
           />
         )}
       </Animated.View>
@@ -202,7 +242,14 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         {/* Overlay for complete images */}
         {isComplete && (
           <Animated.View
-            style={styles.celebrationOverlay}
+            style={[
+              styles.celebrationOverlay,
+              {
+                backgroundColor: theme.isDark 
+                  ? "rgba(0, 0, 0, 0.3)" 
+                  : "rgba(0, 0, 0, 0.2)"
+              }
+            ]}
             entering={FadeIn.duration(500).delay(800)}
           >
             <Text style={styles.completionText}>Bild komplett!</Text>

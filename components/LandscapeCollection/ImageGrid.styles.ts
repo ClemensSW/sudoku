@@ -7,13 +7,14 @@ const { width } = Dimensions.get("window");
 // 2 Karten pro Zeile mit Abstand dazwischen
 const CARD_MARGIN = spacing.sm;
 const CARDS_PER_ROW = 2;
-const CARD_WIDTH = (width - spacing.lg * 2 - CARD_MARGIN * (CARDS_PER_ROW - 1)) / CARDS_PER_ROW;
+const CARD_WIDTH = (width - spacing.xl * 2 - CARD_MARGIN * (CARDS_PER_ROW - 1)) / CARDS_PER_ROW;
 const CARD_HEIGHT = CARD_WIDTH * 1.25; // Seitenverhältnis 4:5 für die Karten
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.xl, // Increased padding for better visual spacing
+    paddingTop: spacing.md, // Added top padding to create space from the tabs
   },
   
   gridContainer: {
@@ -30,12 +31,12 @@ export default StyleSheet.create({
     marginBottom: spacing.lg,
     borderRadius: radius.lg,
     overflow: "hidden",
-    // Schatten für Elevation-Effekt
+    // Enhanced shadow for more depth
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5, // Increased elevation for better visibility
   },
   
   // Nur bei Bildern in Arbeit

@@ -1,5 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { spacing, radius } from "@/utils/theme";
+
+const { width } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container: {
@@ -10,21 +12,43 @@ export default StyleSheet.create({
     flex: 1,
   },
   
+  // New wrapper for tabs to add elevation effect
+  tabsContainerWrapper: {
+    width: "100%",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 4,
+    zIndex: 10,
+    borderBottomWidth: 0,
+  },
+  
   tabsContainer: {
-    padding: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    paddingHorizontal: spacing.lg,
     flexDirection: "row",
-    justifyContent: "space-around",
-    borderBottomWidth: 1, // Trennlinie unter den Tabs
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "relative", // For absolute positioning of the indicator
+    borderBottomWidth: 1, // Thinner border
   },
   
   tabButton: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: radius.md,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  
+  tabIcon: {
+    marginRight: spacing.xs,
   },
   
   activeTabButton: {
-    // Die aktive Farbe wird dynamisch gesetzt
+    // Style updated to be more subtle
   },
   
   tabText: {
@@ -36,14 +60,19 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   
-  // Indikator für den aktiven Tab
-  activeIndicator: {
+  // New animated indicator
+  tabIndicator: {
     height: 3,
-    borderRadius: 1.5,
     position: "absolute",
-    bottom: -spacing.xs,
-    left: "15%",
-    right: "15%",
+    bottom: -1, // Position it right at the bottom border
+    left: 0,
+    borderRadius: 1.5,
+  },
+  
+  // Adjusted gallery content area
+  galleryContent: {
+    flex: 1,
+    paddingTop: spacing.md, // Add some spacing between tabs and content
   },
   
   scrollContent: {

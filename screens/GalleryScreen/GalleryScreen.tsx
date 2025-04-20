@@ -1,14 +1,15 @@
+// screens/GalleryScreen/GalleryScreen.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter, Router } from "expo-router";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withTiming, Easing } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Landscape, LandscapeFilter } from "@/utils/landscapes/types";
 import { useLandscapes } from "@/hooks/useLandscapes";
 import { ImageGrid, ImageDetailModal } from "@/components/LandscapeCollection";
 import Header from "@/components/Header/Header";
-import { useNavigation } from "@/utils/NavigationContext"; // Import the correct navigation context
+import { useNavigation } from "@/utils/NavigationContext";
 import { StatusBar } from "expo-status-bar";
 import styles from "./GalleryScreen.styles";
 import { ThemeColors } from "@/utils/theme/types";
@@ -67,6 +68,10 @@ const GalleryScreen: React.FC = () => {
   // Use the correct navigation context hook
   const { hideNavigation } = useNavigation();
   
+  // Animated values for tab indicator
+  const indicatorPosition = useSharedValue(0);
+  const indicatorWidth = useSharedValue(0);
+  
   // Hide bottom navigation more aggressively
   useEffect(() => {
     // Hide navigation as soon as component mounts
@@ -87,6 +92,7 @@ const GalleryScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<LandscapeFilter>("all");
   const [selectedLandscape, setSelectedLandscape] = useState<Landscape | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [tabLayouts, setTabLayouts] = useState<{[key: string]: {x: number, width: number}}>({});
   
   // Use the useLandscapes Hook
   const { 
@@ -102,12 +108,32 @@ const GalleryScreen: React.FC = () => {
     changeFilter(activeTab);
   }, [activeTab, changeFilter]);
   
+  // Update indicator position when active tab changes
+  useEffect(() => {
+    if (tabLayouts[activeTab]) {
+      indicatorPosition.value = withTiming(tabLayouts[activeTab].x, {
+        duration: 250,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1)
+      });
+      indicatorWidth.value = withTiming(tabLayouts[activeTab].width, {
+        duration: 250,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1)
+      });
+    }
+  }, [activeTab, tabLayouts]);
+  
+  // Animated style for the tab indicator
+  const indicatorStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: indicatorPosition.value }],
+    width: indicatorWidth.value
+  }));
+  
   // Tab data
-  const tabs: Array<{id: LandscapeFilter, label: string}> = [
-    { id: "all", label: "Alle" },
-    { id: "inProgress", label: "In Arbeit" },
-    { id: "completed", label: "Komplett" },
-    { id: "favorites", label: "Favoriten" }
+  const tabs: Array<{id: LandscapeFilter, label: string, icon: string}> = [
+    { id: "all", label: "Alle", icon: "grid" },
+    { id: "inProgress", label: "In Arbeit", icon: "clock" },
+    { id: "completed", label: "Komplett", icon: "check-circle" },
+    { id: "favorites", label: "Favoriten", icon: "heart" }
   ];
   
   // Handler for image tap
@@ -150,51 +176,79 @@ const GalleryScreen: React.FC = () => {
     setActiveTab(tabId);
   };
   
+  // Save the layout of a tab
+  const handleTabLayout = (tabId: string, event: any) => {
+    const { x, width } = event.nativeEvent.layout;
+    setTabLayouts(prev => ({
+      ...prev,
+      [tabId]: { x, width }
+    }));
+    
+    // If this is the initial active tab, set the indicator position immediately
+    if (tabId === activeTab && !tabLayouts[tabId]) {
+      indicatorPosition.value = x;
+      indicatorWidth.value = width;
+    }
+  };
+  
   // Render tab buttons
   const renderTabs = () => {
     return (
-      <View 
-        style={[
+      <View style={[
+        styles.tabsContainerWrapper,
+        { 
+          backgroundColor: theme.isDark ? 'rgba(30, 41, 59, 0.95)' : colors.card,
+          shadowColor: theme.isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)',
+        }
+      ]}>
+        <View style={[
           styles.tabsContainer, 
-          { borderBottomColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }
-        ]}
-      >
-        {tabs.map(tab => {
-          const isActive = activeTab === tab.id;
-          
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              style={[
-                styles.tabButton,
-                isActive && [
-                  styles.activeTabButton,
-                  { backgroundColor: `${colors.primary}15` }
-                ],
-              ]}
-              onPress={() => handleTabPress(tab.id)}
-            >
-              <Text
+          { borderBottomColor: theme.isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }
+        ]}>
+          {tabs.map(tab => {
+            const isActive = activeTab === tab.id;
+            
+            return (
+              <TouchableOpacity
+                key={tab.id}
                 style={[
-                  styles.tabText,
-                  { color: isActive ? colors.primary : colors.textSecondary },
-                  isActive && styles.activeTabText
+                  styles.tabButton,
+                  isActive && [
+                    styles.activeTabButton,
+                    { backgroundColor: `${colors.primary}10` }
+                  ],
                 ]}
+                onPress={() => handleTabPress(tab.id)}
+                onLayout={(e) => handleTabLayout(tab.id, e)}
               >
-                {tab.label}
-              </Text>
-              
-              {isActive && (
-                <View
-                  style={[
-                    styles.activeIndicator,
-                    { backgroundColor: colors.primary }
-                  ]}
+                <Feather
+                  name={tab.icon as any}
+                  size={16}
+                  color={isActive ? colors.primary : colors.textSecondary}
+                  style={styles.tabIcon}
                 />
-              )}
-            </TouchableOpacity>
-          );
-        })}
+                <Text
+                  style={[
+                    styles.tabText,
+                    { color: isActive ? colors.primary : colors.textSecondary },
+                    isActive && styles.activeTabText
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+          
+          {/* Animated indicator */}
+          <Animated.View
+            style={[
+              styles.tabIndicator,
+              { backgroundColor: colors.primary },
+              indicatorStyle
+            ]}
+          />
+        </View>
       </View>
     );
   };
@@ -214,8 +268,7 @@ const GalleryScreen: React.FC = () => {
       
       {/* Header */}
       <Header
-        title="Landschafts-Galerie"
-        subtitle="Deine Sammlung"
+        title="Deine Sammlung"
         onBackPress={handleBack}
       />
       
@@ -227,8 +280,8 @@ const GalleryScreen: React.FC = () => {
         {/* Tabs */}
         {renderTabs()}
         
-        {/* Main content area */}
-        <View style={{ flex: 1 }}>
+        {/* Main content area with adjusted padding for better spacing */}
+        <View style={styles.galleryContent}>
           {landscapes.length > 0 ? (
             <ImageGrid
               landscapes={landscapes}

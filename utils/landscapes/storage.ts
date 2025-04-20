@@ -1,9 +1,11 @@
+// utils/landscapes/storage.ts mit Sperre für doppelte Freischaltungen
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Landscape, LandscapeCollection, UnlockEvent } from "./types";
 import { getDefaultCollectionState } from "./data";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
+const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Neuer Key für die letzte Freischaltung
 
 /**
  * Lädt die Landschaftssammlung aus dem AsyncStorage
@@ -37,12 +39,48 @@ export const saveLandscapeCollection = async (collection: LandscapeCollection): 
   }
 };
 
+// Neue Funktion: Prüft, ob eine Freischaltung innerhalb eines Zeitfensters bereits stattgefunden hat
+const hasRecentlyUnlocked = async (): Promise<boolean> => {
+  try {
+    const lastUnlockTimestamp = await AsyncStorage.getItem(LAST_UNLOCK_KEY);
+    if (!lastUnlockTimestamp) return false;
+    
+    // Prüfen, ob die letzte Freischaltung weniger als 10 Sekunden her ist
+    const lastTime = parseInt(lastUnlockTimestamp);
+    const now = Date.now();
+    const timeDifference = now - lastTime;
+    
+    console.log(`Zeit seit letzter Freischaltung: ${timeDifference}ms`);
+    return timeDifference < 10000; // 10 Sekunden Sperre
+  } catch (error) {
+    console.error("Fehler beim Prüfen der letzten Freischaltung:", error);
+    return false;
+  }
+};
+
+// Neue Funktion: Markiere eine Freischaltung als durchgeführt
+const markAsUnlocked = async (): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(LAST_UNLOCK_KEY, Date.now().toString());
+  } catch (error) {
+    console.error("Fehler beim Markieren der Freischaltung:", error);
+  }
+};
+
 /**
  * Schaltet das nächste verfügbare Segment im aktuellen Bild frei
  * Gibt ein Event zurück, das den Typ der Freischaltung und betroffene IDs enthält
+ * Mit Sperre gegen doppelte Freischaltungen innerhalb eines kurzen Zeitfensters
  */
 export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
   try {
+    // Prüfen, ob kürzlich bereits eine Freischaltung erfolgt ist
+    const recentlyUnlocked = await hasRecentlyUnlocked();
+    if (recentlyUnlocked) {
+      console.log("Freischaltung übersprungen, da bereits kürzlich ein Segment freigeschaltet wurde");
+      return null;
+    }
+    
     const collection = await loadLandscapeCollection();
     const { currentImageId, landscapes } = collection;
     
@@ -80,6 +118,9 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     
     // Änderungen speichern
     await saveLandscapeCollection(collection);
+    
+    // Freischaltung als erfolgt markieren
+    await markAsUnlocked();
     
     // Event zurückgeben
     return {

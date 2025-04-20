@@ -16,6 +16,9 @@ import EmptyState from "./components/EmptyState";
 import LevelProgress from "@/components/GameCompletionModal/components/LevelProgress/LevelProgress";
 import StreakDisplay from "@/components/GameCompletionModal/components/StreakDisplay/StreakDisplay";
 import BestTimesChart from "./components/BestTimesChart/BestTimesChart";
+// Import PuzzleProgress component and useLandscapes hook
+import { PuzzleProgress } from "@/components/LandscapeCollection";
+import { useLandscapes } from "@/hooks/useLandscapes";
 
 const LeistungScreen: React.FC = () => {
   const router = useRouter();
@@ -24,6 +27,9 @@ const LeistungScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Add the useLandscapes hook to get the current landscape
+  const { currentLandscape } = useLandscapes();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -39,6 +45,11 @@ const LeistungScreen: React.FC = () => {
 
     fetchStats();
   }, []);
+  
+  // Handler for "View Gallery" button
+  const handleViewGallery = () => {
+    router.push("/gallery");
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -68,12 +79,23 @@ const LeistungScreen: React.FC = () => {
               {/* Level Progress */}
               <LevelProgress 
                 stats={stats}
-                difficulty="medium" // Standardwert, da hier kein aktuelles Spiel vorhanden ist
-                justCompleted={false} // Kein gerade abgeschlossenes Spiel
+                difficulty="medium" // Standard value as there's no current game
+                justCompleted={false} // No recently completed game
               />
               <View style={styles.sectionSpacer} />
               
-              {/* Streak Display - immer anzeigen */}
+              {/* Add PuzzleProgress component */}
+              {currentLandscape && (
+                <>
+                  <PuzzleProgress 
+                    landscape={currentLandscape}
+                    onViewGallery={handleViewGallery}
+                  />
+                  <View style={styles.sectionSpacer} />
+                </>
+              )}
+              
+              {/* Streak Display - always show */}
               <StreakDisplay 
                 currentStreak={stats.currentStreak}
                 longestStreak={stats.longestStreak}

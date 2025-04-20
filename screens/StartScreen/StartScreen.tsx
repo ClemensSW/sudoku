@@ -1,5 +1,5 @@
 // screens/StartScreen/StartScreen.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Dimensions,
   Platform,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -17,6 +18,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  FadeIn,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -26,6 +28,8 @@ import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import { triggerHaptic } from "@/utils/haptics";
+import { getFilteredLandscapes } from "@/utils/landscapes/storage";
+import { Landscape } from "@/utils/landscapes/types";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,6 +39,10 @@ const StartScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const { setShowNavigation } = useNavigation();
+
+  // State for background image
+  const [backgroundImage, setBackgroundImage] = useState<Landscape | null>(null);
+  const [isLoadingBg, setIsLoadingBg] = useState(true);
 
   // State for modals and game options
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
@@ -49,6 +57,34 @@ const StartScreen: React.FC = () => {
   // Animation values for subtle UI enhancements
   const buttonScale = useSharedValue(1);
 
+  // Load a random favorite or completed landscape when component mounts
+  useEffect(() => {
+    const loadRandomBackground = async () => {
+      setIsLoadingBg(true);
+      try {
+        // First try to get favorites
+        let landscapes = await getFilteredLandscapes("favorites");
+        
+        // If no favorites, try completed landscapes
+        if (landscapes.length === 0) {
+          landscapes = await getFilteredLandscapes("completed");
+        }
+        
+        // If we have landscapes, pick a random one
+        if (landscapes.length > 0) {
+          const randomIndex = Math.floor(Math.random() * landscapes.length);
+          setBackgroundImage(landscapes[randomIndex]);
+        }
+      } catch (error) {
+        console.error("Error loading background:", error);
+      } finally {
+        setIsLoadingBg(false);
+      }
+    };
+    
+    loadRandomBackground();
+  }, []);
+
   // Button press animation
   const handleButtonPressIn = () => {
     buttonScale.value = withTiming(0.97, { duration: 120 });
@@ -61,6 +97,17 @@ const StartScreen: React.FC = () => {
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: buttonScale.value }],
   }));
+
+  // Get the background image source
+  const getBackgroundSource = () => {
+    // If we have a backgroundImage from favorites/completed, use it
+    if (backgroundImage) {
+      return backgroundImage.fullSource;
+    }
+    
+    // Fallback to default image
+    return require("@/assets/images/background/kenrokuen-garden-9511300_1920.jpg");
+  };
 
   // Game action handlers
   const handleStartGame = () => {
@@ -96,16 +143,25 @@ const StartScreen: React.FC = () => {
     <View style={styles.container}>
       <StatusBar style="light" hidden={true} />
 
-      {/* Background Image - full screen, no title, no overlay */}
+      {/* Background Image - using randomly selected favorites or completed landscapes */}
       <View style={[styles.backgroundContainer, { height: backgroundHeight }]}>
-        <ImageBackground
-          source={require("@/assets/images/background/kenrokuen-garden-9511300_1920.jpg")}
-          style={styles.backgroundImage}
-          resizeMode="cover"
-        >
-          {/* Empty main content area */}
-          <View style={[styles.safeArea, { paddingTop: insets.top }]}></View>
-        </ImageBackground>
+        <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(800)}>
+          <ImageBackground
+            source={getBackgroundSource()}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+          >
+            {/* Show loading indicator when background is loading */}
+            {isLoadingBg && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+              </View>
+            )}
+            
+            {/* Empty main content area */}
+            <View style={[styles.safeArea, { paddingTop: insets.top }]}></View>
+          </ImageBackground>
+        </Animated.View>
         
         {/* Gradient overlay at the bottom of the background for smooth transition */}
         <LinearGradient
@@ -120,7 +176,7 @@ const StartScreen: React.FC = () => {
         />
       </View>
       
-      {/* Bottom Button Container - Fixed at bottom, no entrance animation */}
+      {/* Bottom Button Container - Fixed at bottom */}
       <View 
         style={[
           styles.bottomContainer,
@@ -205,6 +261,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   safeArea: {
     flex: 1,

@@ -232,7 +232,344 @@ export const levels: LevelThreshold[] = [
     message: "Rätsel und Lösender sind nicht länger getrennt.",
     path: "transcendence",
     pathIndex: 4
-  }
+  },
+  {
+    xp: 1925,
+    name: "Astraler Wanderer",
+    message: "Deine Seele durchstreift nun ferne Sphären.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 2118,
+    name: "Sternenweber",
+    message: "Du spannst Netze aus Licht und Zahlen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 2329,
+    name: "Ätherischer Architekt",
+    message: "Du formst Räume jenseits der Logik.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 2562,
+    name: "Nexus-Schmied",
+    message: "Du schweißest Pfade zwischen Raum und Zeit.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 2818,
+    name: "Unendlichkeitspilger",
+    message: "Kein Ende vermag dich aufzuhalten.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 3100,
+    name: "Äonensäer",
+    message: "Du säst Momente in die Ewigkeit.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 3410,
+    name: "Zenitbewahrer",
+    message: "Du hältst Augenblicke der Klarheit fest.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 3751,
+    name: "Aurora-Hüter",
+    message: "Du entfachst Polarlichter im Zahlenmeer.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 4126,
+    name: "Phänomen-Entdecker",
+    message: "Jedes Rätsel birgt ein neues Wunder.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 4538,
+    name: "Empyreum-Bote",
+    message: "Du trägst Botschaften aus dem höchsten Licht.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 4992,
+    name: "Paradigma-Schöpfer",
+    message: "Du setzt neue Maßstäbe im Kosmos der Logik.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 5491,
+    name: "Elysium-Träumer",
+    message: "Du verwandelst Rätsel in harmonische Visionen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 6039,
+    name: "Singularitätsreisender",
+    message: "Du überschreitest jede Schwelle des Verstehens.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 6643,
+    name: "Ewigkeitsdenker",
+    message: "Dein Geist dehnt sich über Zeit und Raum.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 7307,
+    name: "Illuminationsbringer",
+    message: "Du erleuchtest Pfade, die zuvor verborgen waren.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 8038,
+    name: "Neubeginn-Gestalter",
+    message: "Aus jedem Abschluss wächst ein neuer Anfang.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 8842,
+    name: "Metatron-Späher",
+    message: "Du erkundest die heiligen Architekturen des Spiels.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 9726,
+    name: "Orakelweber",
+    message: "Du webst Prophezeiungen aus Zahlenmustern.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 10698,
+    name: "Kosmokat-Ascendant",
+    message: "Du erhebst dich über alle Dimensionen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 11768,
+    name: "Hyperion-Wächter",
+    message: "Du beschützt die Flamme der Erkenntnis.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 12945,
+    name: "Celestischer Magier",
+    message: "Du wandelst Zahlen in Sternenstaub.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 14239,
+    name: "Transzendenz-Flüsterer",
+    message: "Du vernimmst die Stimme des Universums.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 15663,
+    name: "Ätherwanderer II",
+    message: "Dein Weg führt dich tiefer ins Unbekannte.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 17229,
+    name: "Sphärenmeister",
+    message: "Du regierst über Klang und Stille im Rätsel.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 18952,
+    name: "Kosmokrator",
+    message: "Du herrschst im Reich der unendlichen Möglichkeiten.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 20847,
+    name: "Dimensionaler Pionier",
+    message: "Du bahnst neue Wege durch Raum und Zahl.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 22932,
+    name: "Sternenchronist",
+    message: "Du zeichnest Geschichten im Zahlenhimmel.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 25225,
+    name: "Galaktischer Schreiber",
+    message: "Du schreibst dein Vermächtnis in die Weiten.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 27748,
+    name: "Auroraleuchter",
+    message: "Du entzündest Polarlichter der Weisheit.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 30522,
+    name: "Ewiger Funke",
+    message: "Ein Funke deiner Klarheit erhellt alles.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 33574,
+    name: "Kosmisches Echo",
+    message: "Dein Verständnis hallt durch Äonen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 36932,
+    name: "Quantensinger",
+    message: "Du singst Lieder aus Zahlen und Licht.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 40625,
+    name: "Transzendentalgeiger",
+    message: "Du spielst Melodien jenseits der Ratio.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 44687,
+    name: "Mythischer Lotse",
+    message: "Du findest Pfade in sagenhaften Sphären.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 49155,
+    name: "Empyrealer Träumer",
+    message: "Du träumst die Strukturen des Unendlichen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 54070,
+    name: "Zeitreisender",
+    message: "Deine Schritte setzen Wellen in der Zeit.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 59477,
+    name: "Kosmischer Tanzer",
+    message: "Du bewegst dich im Reigen der Rätsel.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 65425,
+    name: "Lichtweber",
+    message: "Du spannst Netze aus Strahlen und Zahlen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 71967,
+    name: "Ätherischer Melder",
+    message: "Du überbringst Botschaften aus höheren Welten.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 79163,
+    name: "Unendlicher Pilger II",
+    message: "Dein Pfad endet niemals.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 87079,
+    name: "Seelenarchäologe",
+    message: "Du gräbst nach den Ursprüngen der Logik.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 95787,
+    name: "Kosmoskorrespondent",
+    message: "Du berichtest aus fernen Galaxien.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 105366,
+    name: "Dimensionenweber",
+    message: "Du knüpfst Brücken zwischen allen Welten.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 115902,
+    name: "Transzendenz-Orchester",
+    message: "Du leitest Symphonien im Universum der Zahlen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 127492,
+    name: "Universalpoet",
+    message: "Du verfasst Verse aus Formeln und Sternen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 140241,
+    name: "Äonenchronist",
+    message: "Du verewigst Zeit in jedem gelösten Rätsel.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 154346,
+    name: "Ewigkeitserzähler",
+    message: "Du erzählst Geschichten, die kein Ende kennen.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+  {
+    xp: 169780,
+    name: "Kosmischer Zen-Meister",
+    message: "In dir ist alles still und doch erfüllt.",
+    path: "transcendence",
+    pathIndex: 4
+  },
+
 ];
 
 // Meilenstein-Nachrichten bei Erreichen bedeutender Level

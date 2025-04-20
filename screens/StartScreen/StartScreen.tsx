@@ -50,7 +50,7 @@ const StartScreen: React.FC = () => {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   // Calculate button area height and overlap for a smoother transition
-  const BUTTON_AREA_HEIGHT = 160; // Taller button area for better proportion
+  const BUTTON_AREA_HEIGHT = 240; // Taller button area for better proportion
   const GRADIENT_OVERLAP = 80; // Larger gradient overlap for smoother transition
   const backgroundHeight = height - BUTTON_AREA_HEIGHT + GRADIENT_OVERLAP;
 
@@ -168,19 +168,22 @@ const StartScreen: React.FC = () => {
           colors={[
             'transparent',
             theme.isDark ? 'rgba(38, 42, 53, 0.3)' : 'rgba(242, 244, 248, 0.3)',
-            theme.isDark ? 'rgba(38, 42, 53, 0.8)' : 'rgba(242, 244, 248, 0.8)',
-            theme.isDark ? 'rgba(38, 42, 53, 0.95)' : 'rgba(242, 244, 248, 0.95)',
+            theme.isDark ? 'rgba(38, 42, 53, 0.8)' : 'rgba(242, 244, 248, 1)',
+            theme.isDark ? 'rgba(38, 42, 53, 0.95)' : 'rgba(242, 244, 248, 1)',
           ]}
           style={styles.gradientOverlay}
           locations={[0, 0.65, 0.85, 1.0]}
         />
       </View>
       
-      {/* Bottom Button Container - Fixed at bottom */}
+      {/* Bottom Button Container - Erhöhen des z-Index und Abstand zur Unterseite */}
       <View 
         style={[
           styles.bottomContainer,
-          { paddingBottom: Math.max(insets.bottom, 16) }
+          { 
+            paddingBottom: Math.max(insets.bottom + 60, 76), // Mehr Abstand nach unten
+            zIndex: 15, // Höherer z-Index als die Navbar
+          }
         ]}
       >
         {/* Gradient background for bottom container */}
@@ -301,7 +304,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 15,
     elevation: 24,
-    // Ensure smooth rendering
+    // Ensure smooth rendering - Wir erhöhen den z-Index
     zIndex: 10,
   },
   // Semi-transparent overlay

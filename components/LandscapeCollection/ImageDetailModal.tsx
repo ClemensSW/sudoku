@@ -13,7 +13,7 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { Landscape, LandscapeSegment } from "@/utils/landscapes/types";
+import { Landscape } from "@/utils/landscapes/types";
 import styles from "./ImageDetailModal.styles";
 
 interface ImageDetailModalProps {
@@ -32,11 +32,11 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   
-  // Animation-Werte
+  // Animation values
   const heartScale = useSharedValue(1);
   const contentOpacity = useSharedValue(0);
   
-  // Kategorien-Mapping
+  // Category mapping
   const getCategoryName = (category: string): string => {
     const categories: Record<string, string> = {
       mountains: "Berge",
@@ -49,7 +49,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     return categories[category] || category;
   };
   
-  // Formatiere Datum
+  // Format date
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "";
     
@@ -61,21 +61,21 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     });
   };
   
-  // Handle für Favoriten-Toggle
+  // Handle for favorites toggle
   const handleToggleFavorite = () => {
     if (!landscape || !landscape.isComplete || !onToggleFavorite) return;
     
-    // Herz-Animation
+    // Heart animation
     heartScale.value = withSequence(
       withTiming(1.3, { duration: 200 }),
       withTiming(1, { duration: 200 })
     );
     
-    // Callback aufrufen
+    // Call callback
     onToggleFavorite(landscape);
   };
   
-  // Back-Handler
+  // Back handler
   useEffect(() => {
     if (!visible) return;
     
@@ -90,7 +90,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     return () => backHandler.remove();
   }, [visible, onClose]);
   
-  // Effekt bei Sichtbarkeitsänderung
+  // Effect when visibility changes
   useEffect(() => {
     if (visible) {
       contentOpacity.value = withTiming(1, { duration: 400 });
@@ -99,7 +99,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     }
   }, [visible]);
   
-  // Animierte Styles
+  // Animated styles
   const heartAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: heartScale.value }]
   }));
@@ -108,32 +108,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     opacity: contentOpacity.value
   }));
   
-  // Rendere das Grid für unvollständige Bilder
-  const renderSegmentGrid = (segments: LandscapeSegment[]) => {
-    return (
-      <View style={styles.gridOverlay}>
-        {segments.map((segment, index) => (
-          <View
-            key={`segment-${index}`}
-            style={[
-              styles.segment,
-              segment.isUnlocked ? styles.unlockedSegment : styles.lockedSegment
-            ]}
-          >
-            {!segment.isUnlocked && (
-              <Feather 
-                name="lock" 
-                size={16} 
-                color="rgba(255,255,255,0.5)" 
-              />
-            )}
-          </View>
-        ))}
-      </View>
-    );
-  };
-  
-  // Kein Inhalt anzeigen, wenn nicht sichtbar oder kein Landschaftsbild
+  // Don't show content if not visible or no landscape
   if (!visible || !landscape) return null;
   
   return (
@@ -142,7 +117,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(200)}
     >
-      {/* Hintergrund */}
+      {/* Background */}
       <Animated.View 
         style={[
           styles.backdrop,
@@ -157,7 +132,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         entering={SlideInUp.springify().damping(15)}
         exiting={SlideOutDown.duration(200)}
       >
-        {/* Header mit Gradient für bessere Lesbarkeit */}
+        {/* Header with gradient for better readability */}
         <LinearGradient
           colors={["rgba(0,0,0,0.7)", "transparent"]}
           style={styles.headerGradient}
@@ -166,7 +141,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         <Animated.View 
           style={[styles.header, contentAnimatedStyle]}
         >
-          {/* Schließen-Button */}
+          {/* Close button */}
           <TouchableOpacity
             style={styles.closeButton}
             onPress={onClose}
@@ -174,7 +149,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
             <Feather name="x" size={24} color="#FFFFFF" />
           </TouchableOpacity>
           
-          {/* Favoriten-Button (nur für komplette Bilder) */}
+          {/* Favorites button (only for complete images) */}
           {landscape.isComplete && (
             <Animated.View style={heartAnimatedStyle}>
               <TouchableOpacity
@@ -191,22 +166,22 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           )}
         </Animated.View>
         
-        {/* Hauptbildbereich */}
+        {/* Main image area */}
         <View style={styles.imageContainer}>
           <Image 
             source={landscape.fullSource} 
             style={styles.image}
           />
           
-          {/* Overlay für unvollständige Bilder */}
+          {/* Simple overlay for incomplete images - SIMPLIFIED! */}
           {!landscape.isComplete && (
             <View style={styles.progressOverlay}>
-              {renderSegmentGrid(landscape.segments)}
+              {/* Removed the grid rendering here! */}
             </View>
           )}
         </View>
         
-        {/* Info-Panel unten mit Gradient für bessere Lesbarkeit */}
+        {/* Info panel at bottom with gradient for better readability */}
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.8)"]}
           style={styles.infoGradient}
@@ -219,9 +194,9 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
             <Text style={styles.title}>{landscape.name}</Text>
             <Text style={styles.description}>{landscape.description}</Text>
             
-            {/* Metadaten */}
+            {/* Metadata */}
             <View style={styles.metaContainer}>
-              {/* Kategorie */}
+              {/* Category */}
               <View style={styles.metaItem}>
                 <Feather name="image" size={14} color="#FFFFFF" />
                 <Text style={styles.metaText}>
@@ -229,7 +204,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 </Text>
               </View>
               
-              {/* Fortschritt oder Status */}
+              {/* Progress or status */}
               <View style={styles.metaItem}>
                 {landscape.isComplete ? (
                   <>
@@ -246,7 +221,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 )}
               </View>
               
-              {/* Nur bei Favoriten anzeigen */}
+              {/* Only show for favorites */}
               {landscape.isFavorite && (
                 <View style={styles.metaItem}>
                   <Feather name="heart" size={14} color="#FFFFFF" />
@@ -255,7 +230,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
               )}
             </View>
             
-            {/* Freischaltungsdatum für komplette Bilder */}
+            {/* Unlock date for complete images */}
             {landscape.isComplete && landscape.completedAt && (
               <Text style={styles.completionDate}>
                 Freigeschaltet am {formatDate(landscape.completedAt)}

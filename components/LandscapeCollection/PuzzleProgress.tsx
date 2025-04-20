@@ -31,14 +31,14 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   
-  // Animation-Werte
+  // Animation values
   const containerScale = useSharedValue(1);
   const segmentOpacities = useRef(
     Array(9).fill(0).map(() => useSharedValue(0))
   ).current;
   const progressWidth = useSharedValue(0);
   
-  // Wenn kein Landschaftsbild verfügbar ist, zeige einen Platzhalter
+  // If no landscape image is available, show a placeholder
   if (!landscape) {
     return (
       <Animated.View 
@@ -55,38 +55,41 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     );
   }
   
-  // Fortschritt in Prozent berechnen
+  // Calculate progress percentage
   const progressPercentage = (landscape.progress / 9) * 100;
   
-  // Start-Animations-Effekt
+  // Start animation effect
   useEffect(() => {
-    // Container leicht skalieren
+    // Container light scaling
     containerScale.value = withSequence(
       withTiming(1.02, { duration: 300 }),
       withTiming(1, { duration: 200 })
     );
     
-    // Fortschrittsbalken animieren
+    // Animate progress bar
     progressWidth.value = withTiming(progressPercentage, { duration: 1000 });
     
-    // Segmente mit Verzögerung einblenden
+    // FIX: Animate ALL segments with appropriate delay, including locked ones
     landscape.segments.forEach((segment, index) => {
-      if (segment.isUnlocked) {
-        // Verzögerte Einblendung für bereits freigeschaltete Segmente
-        segmentOpacities[index].value = withDelay(
-          index * 100, 
-          withTiming(1, { duration: 500 })
-        );
-      }
+      // Calculate delay based on whether segment is unlocked or locked
+      const delay = segment.isUnlocked 
+        ? index * 100  // Gradual fade-in for unlocked
+        : 500 + (index * 50); // Delayed fade-in for locked segments (after unlocked ones)
+      
+      // All segments get animated to visible, but locked ones appear later
+      segmentOpacities[index].value = withDelay(
+        delay, 
+        withTiming(1, { duration: 500 })
+      );
     });
     
-    // Bei neu freigeschaltetem Segment besondere Animation
+    // Special animation for newly unlocked segment
     if (newlyUnlockedSegmentId !== undefined) {
       const segmentIndex = newlyUnlockedSegmentId;
-      // Verzögerung, damit zuerst alle anderen Segmente erscheinen
+      // Delay so all other segments appear first
       const delayAmount = landscape.segments.filter(s => s.isUnlocked).length * 100 + 200;
       
-      // Besondere Highlight-Animation für das neue Segment
+      // Special highlight animation for the new segment
       segmentOpacities[segmentIndex].value = withSequence(
         withTiming(0, { duration: 0 }),
         withDelay(
@@ -97,7 +100,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     }
   }, [landscape, newlyUnlockedSegmentId]);
   
-  // Animierte Styles
+  // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: containerScale.value }]
   }));
@@ -106,12 +109,12 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     width: `${progressWidth.value}%`
   }));
   
-  // Rendert ein einzelnes Segment
+  // Render a single segment
   const renderSegment = (segment: LandscapeSegment, index: number) => {
     const isUnlocked = segment.isUnlocked;
     const isNewlyUnlocked = index === newlyUnlockedSegmentId;
     
-    // Animierter Style für das Segment
+    // Animated style for the segment
     const segmentAnimatedStyle = useAnimatedStyle(() => ({
       opacity: segmentOpacities[index].value
     }));
@@ -146,7 +149,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Header mit Titel und Badge */}
+      {/* Header with title and badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           Landschafts-Sammlung
@@ -183,19 +186,19 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         )}
       </View>
       
-      {/* Puzzle-Vorschau mit Segmenten */}
+      {/* Puzzle preview with segments */}
       <View style={styles.puzzleContainer}>
         <Image
           source={landscape.previewSource}
           style={styles.puzzleImage}
         />
         
-        {/* Grid-Overlay mit Segmenten */}
+        {/* Grid overlay with segments */}
         <View style={styles.gridOverlay}>
           {landscape.segments.map(renderSegment)}
         </View>
         
-        {/* Overlay für komplette Bilder */}
+        {/* Overlay for complete images */}
         {isComplete && (
           <Animated.View
             style={styles.celebrationOverlay}
@@ -206,13 +209,13 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         )}
       </View>
       
-      {/* Fortschrittsanzeige */}
+      {/* Progress indicator */}
       <View style={styles.progressTextContainer}>
         <Text style={[styles.progressText, { color: colors.textSecondary }]}>
           {landscape.progress}/9 Segmente freigeschaltet
         </Text>
         
-        {/* Fortschrittsbalken */}
+        {/* Progress bar */}
         <View
           style={[
             styles.progressBar,
@@ -232,7 +235,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         </View>
       </View>
       
-      {/* Button zur Galerie */}
+      {/* Gallery button */}
       <View style={styles.buttonContainer}>
         <Button
           title="Zur Galerie"

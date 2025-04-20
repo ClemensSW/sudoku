@@ -40,32 +40,39 @@ function AppContainer() {
     }
   }, []);
 
-// Verstecke Navigation auf bestimmten Seiten automatisch
-useEffect(() => {
-  // Debug-Info hinzufügen
-  console.log("Current pathname:", pathname);
-  
-  // Game-spezifische Erkennung
-  const isGameScreen = 
-    pathname === "/game" || 
-    pathname === "/(game)" || 
-    pathname?.startsWith("/game") || 
-    pathname?.startsWith("/(game)") ||
-    pathname?.includes("game");
+  // Verstecke Navigation auf bestimmten Seiten automatisch
+  useEffect(() => {
+    // Debug-Info hinzufügen
+    console.log("Current pathname:", pathname);
     
-  // Andere Screens, die Navigation verstecken sollten
-  const isOtherHiddenScreen = 
-    pathname === "/settings" || 
-    pathname?.startsWith("/settings") ||
-    pathname === "/duo-game" || 
-    pathname?.startsWith("/duo-game");
-  
-  // Navigation verstecken, wenn wir auf einem dieser Screens sind
-  const shouldHideNav = isGameScreen || isOtherHiddenScreen;
-  console.log("Should hide nav:", shouldHideNav, "isGameScreen:", isGameScreen);
-  
-  setHideBottomNav(shouldHideNav);
-}, [pathname]);
+    // Game-spezifische Erkennung
+    const isGameScreen = 
+      pathname === "/game" || 
+      pathname === "/(game)" || 
+      pathname?.startsWith("/game") || 
+      pathname?.startsWith("/(game)") ||
+      pathname?.includes("game");
+      
+    // Gallery-spezifische Erkennung (NEU)
+    const isGalleryScreen = 
+      pathname === "/gallery" || 
+      pathname?.startsWith("/gallery");
+      
+    // Andere Screens, die Navigation verstecken sollten
+    const isOtherHiddenScreen = 
+      pathname === "/settings" || 
+      pathname?.startsWith("/settings") ||
+      pathname === "/duo-game" || 
+      pathname?.startsWith("/duo-game");
+    
+    // Navigation verstecken, wenn wir auf einem dieser Screens sind
+    const shouldHideNav = isGameScreen || isGalleryScreen || isOtherHiddenScreen;
+    console.log("Should hide nav:", shouldHideNav, 
+                "isGameScreen:", isGameScreen, 
+                "isGalleryScreen:", isGalleryScreen);
+    
+    setHideBottomNav(shouldHideNav);
+  }, [pathname]);
 
   // Feste Hintergrundfarbe basierend auf dem Theme
   const containerStyle = {
@@ -94,6 +101,8 @@ useEffect(() => {
           <Stack.Screen name="(game)" />
           <Stack.Screen name="duo" />
           <Stack.Screen name="leistung" />
+          <Stack.Screen name="gallery" />
+          <Stack.Screen name="duo-game" />
         </Stack>
 
         {/* Bottom Navigation */}

@@ -3,20 +3,17 @@ import GalleryScreen from "@/screens/GalleryScreen/GalleryScreen";
 import { useNavigation } from "@/utils/NavigationContext";
 
 export default function GalleryRoute() {
-  // Verwende den NavigationContext mit der korrekten Methode
-  const { hideNavigation, showNavigationOn } = useNavigation();
+  // Use the NavigationContext with the correct method
+  const { hideNavigation } = useNavigation();
   
-  // Blende die Navigationsleiste aus, wenn die Galerie geöffnet wird
+  // Hide the navigation bar when the gallery is opened
   useEffect(() => {
-    // Verberge die Navigation beim Öffnen der Galerie
+    // Hide navigation immediately
     hideNavigation();
     
-    // Beim Verlassen der Seite die Navigationsleiste wieder anzeigen
-    return () => {
-      // Zeige die Navigation nur auf Hauptpfaden an
-      showNavigationOn(["/", "/index", "/duo", "/leistung"]);
-    };
-  }, [hideNavigation, showNavigationOn]);
+    // No need for cleanup as we're not resetting navigation on unmount
+    // The receiving screen will control its own navigation state
+  }, [hideNavigation]);
 
   return <GalleryScreen />;
 }

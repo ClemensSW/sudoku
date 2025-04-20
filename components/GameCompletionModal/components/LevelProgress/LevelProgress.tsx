@@ -91,6 +91,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   const levelInfo = useLevelInfo(currentXp);
   const previousLevelInfo = prevXp !== currentXp ? useLevelInfo(prevXp) : levelInfo;
   
+  // Check if level has changed - this is critical for correct progress display
+  const hasLevelChanged = levelInfo.currentLevel > previousLevelInfo.currentLevel;
+  
   // State for level-up animation and effects
   const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
   const levelUpTriggered = useRef(false);
@@ -157,26 +160,47 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   
   // Check for actual level-up - important correction
   useEffect(() => {
-    // Calculate the previous progress percentage
+    // Calculate the previous progress percentage based on previous level
     const prevLevelStartXp = previousLevelInfo.levelData.xp;
     const nextLevelXp = previousLevelInfo.nextLevelData?.xp || (prevLevelStartXp + 100);
     const prevLevelRange = nextLevelXp - prevLevelStartXp;
-    const prevPercentage = Math.min(100, ((prevXp - prevLevelStartXp) / prevLevelRange) * 100);
     
-    // Set initial values for animation
-    previousProgressWidth.value = prevPercentage;
-    progressWidth.value = prevPercentage; // Start from previous position
+    // If level has changed, set previous progress to 0
+    // otherwise, calculate the previous percentage correctly
+    const prevPercentage = hasLevelChanged
+      ? 0 // Start from 0 when level has changed
+      : Math.min(100, ((prevXp - prevLevelStartXp) / prevLevelRange) * 100);
+    
+    // Set initial values for animation - with small delay to ensure rendering is complete
+    setTimeout(() => {
+      previousProgressWidth.value = prevPercentage;
+      progressWidth.value = hasLevelChanged ? 0 : prevPercentage; // Start from 0 if level changed
+    }, 50);
     
     // Show progress transition with a slight delay
     setTimeout(() => {
-      progressWidth.value = withTiming(levelInfo.progressPercentage, { 
-        duration: 1200, 
-        easing: Easing.bezierFn(0.34, 1.56, 0.64, 1) // More bouncy easing
-      });
-      
-      // Only show gain indicator if there was an actual gain
-      if (xpGain && xpGain > 0) {
-        gainIndicatorOpacity.value = withTiming(1, { duration: 300 });
+      // If a level change occurred, start from 0 and animate to current percentage
+      // This creates a cleaner animation for level-ups
+      if (hasLevelChanged) {
+        // For level changes, use a longer duration and more pronounced animation
+        progressWidth.value = withTiming(levelInfo.progressPercentage, { 
+          duration: 1500, 
+          easing: Easing.bezierFn(0.22, 1, 0.36, 1) // More emphasizing easing
+        });
+      } else {
+        // For normal XP gains, use standard animation
+        progressWidth.value = withTiming(levelInfo.progressPercentage, { 
+          duration: 1200, 
+          easing: Easing.bezierFn(0.34, 1.56, 0.64, 1) // Bouncy easing
+        });
+        
+        // Only show gain indicator if there was an actual gain and NO level change
+        if (xpGain && xpGain > 0) {
+          // Delay the gain indicator slightly to ensure proper layering
+          setTimeout(() => {
+            gainIndicatorOpacity.value = withTiming(1, { duration: 400 });
+          }, 200);
+        }
       }
     }, 800);
     
@@ -247,7 +271,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         withTiming(1, { duration: 200 })
       );
     }
-  }, [currentXp, prevXp, levelInfo, previousLevelInfo, xpGain]);
+  }, [currentXp, prevXp, levelInfo, previousLevelInfo, xpGain, hasLevelChanged]);
   
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
@@ -558,26 +582,45 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 }
               ]}
             >
-              {/* Previous progress (shown dimmed) */}
-              {justCompleted && xpGain && xpGain > 0 && (
+              {/* Render order is important for proper layering */}
+              
+              {/* 1. Current progress (base layer) */}
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  { 
+                    backgroundColor: progressColor,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    height: '100%',
+                    left: 0,
+                    zIndex: 1, // Lowest z-index
+                  },
+                  progressAnimatedStyle
+                ]}
+              />
+              
+              {/* 2. Previous progress (shown dimmed) - ONLY IF NO LEVEL CHANGE */}
+              {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
                 <Animated.View
                   style={[
                     {
                       position: 'absolute',
                       height: '100%',
                       backgroundColor: theme.isDark 
-                        ? `${progressColor}80` // Semi-transparent
-                        : `${progressColor}60`,
+                        ? `${progressColor}40` // More transparent to be more subtle
+                        : `${progressColor}30`,
                       borderRadius: 4,
                       left: 0,
+                      zIndex: 2, // Middle z-index
                     },
                     previousProgressAnimatedStyle
                   ]}
                 />
               )}
               
-              {/* Gain indicator (bright highlight for new XP) */}
-              {justCompleted && xpGain && xpGain > 0 && (
+              {/* 3. Gain indicator (bright highlight for new XP) - ONLY IF NO LEVEL CHANGE */}
+              {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
                 <Animated.View
                   style={[
                     {
@@ -587,24 +630,13 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                       borderRadius: 4,
                       left: `${previousProgressWidth.value}%`,
                       width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
-                      zIndex: 2,
+                      zIndex: 3, // Highest z-index to ensure it's on top
+                      opacity: 0.8, // Slightly transparent to see underlying elements
                     },
                     gainIndicatorAnimatedStyle
                   ]}
                 />
               )}
-              
-              {/* Current progress */}
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  { 
-                    backgroundColor: progressColor,
-                    borderRadius: 4
-                  },
-                  progressAnimatedStyle
-                ]}
-              />
             </View>
           </View>
         </View>

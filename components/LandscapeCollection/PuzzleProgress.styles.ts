@@ -78,8 +78,6 @@ export default StyleSheet.create({
   segment: {
     width: "33.33%",
     height: "33.33%",
-    borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.3)",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
@@ -90,11 +88,15 @@ export default StyleSheet.create({
   },
   
   lockedSegment: {
-    backgroundColor: "rgba(18,18,18, 0.9)",
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(18,18,18, 0.95)",
   },
   
   // Highlight für das neueste Segment
   newlyUnlockedSegment: {
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.3)",
     backgroundColor: "rgba(74, 125, 120, 0.3)", // Primärfarbe mit Transparenz
   },
   

@@ -69,25 +69,26 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     // Animate progress bar
     progressWidth.value = withTiming(progressPercentage, { duration: 1000 });
     
-    // FIX: Animate ALL segments with appropriate delay, including locked ones
+    // FIXED: Only animate unlocked segments to be visible
     landscape.segments.forEach((segment, index) => {
-      // Calculate delay based on whether segment is unlocked or locked
-      const delay = segment.isUnlocked 
-        ? index * 100  // Gradual fade-in for unlocked
-        : 500 + (index * 50); // Delayed fade-in for locked segments (after unlocked ones)
-      
-      // All segments get animated to visible, but locked ones appear later
-      segmentOpacities[index].value = withDelay(
-        delay, 
-        withTiming(1, { duration: 500 })
-      );
+      if (segment.isUnlocked) {
+        // Only animate unlocked segments to full opacity
+        const delay = index * 100; // Gradual fade-in for unlocked segments
+        segmentOpacities[index].value = withDelay(
+          delay, 
+          withTiming(1, { duration: 500 })
+        );
+      } else {
+        // Keep locked segments at 0 opacity (hidden)
+        segmentOpacities[index].value = withTiming(0);
+      }
     });
     
     // Special animation for newly unlocked segment
     if (newlyUnlockedSegmentId !== undefined) {
       const segmentIndex = newlyUnlockedSegmentId;
       // Delay so all other segments appear first
-      const delayAmount = landscape.segments.filter(s => s.isUnlocked).length * 100 + 200;
+      const delayAmount = 800; // Fixed delay for better visibility
       
       // Special highlight animation for the new segment
       segmentOpacities[segmentIndex].value = withSequence(
@@ -116,7 +117,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     
     // Animated style for the segment
     const segmentAnimatedStyle = useAnimatedStyle(() => ({
-      opacity: segmentOpacities[index].value
+      opacity: isUnlocked ? segmentOpacities[index].value : 1, // Locked segments always visible (but filled with color)
     }));
     
     return (

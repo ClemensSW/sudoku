@@ -1,3 +1,4 @@
+// utils/storage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Difficulty } from '@/utils/sudoku';
 // XP-Berechnung importieren
@@ -20,7 +21,7 @@ export type GameState = {
   completed: boolean;
 };
 
-// Spielstatistiken Typ - mit totalXP ergänzt
+// Spielstatistiken Typ - mit totalXP und reachedMilestones ergänzt
 export type GameStats = {
   gamesPlayed: number;
   gamesWon: number;
@@ -30,7 +31,8 @@ export type GameStats = {
   bestTimeExpert: number;
   currentStreak: number;
   longestStreak: number;
-  totalXP: number; // NEU: Direkte XP-Speicherung
+  totalXP: number;
+  reachedMilestones: number[]; // NEU: Speichert erreichte Meilenstein-Level
 };
 
 // Einstellungen Typ
@@ -44,7 +46,7 @@ export type GameSettings = {
   soundEffects: boolean;
 };
 
-// Standard-Statistiken - mit totalXP ergänzt
+// Standard-Statistiken
 const DEFAULT_STATS: GameStats = {
   gamesPlayed: 0,
   gamesWon: 0,
@@ -54,7 +56,8 @@ const DEFAULT_STATS: GameStats = {
   bestTimeExpert: Infinity,
   currentStreak: 0,
   longestStreak: 0,
-  totalXP: 0 // NEU: Startwert für totalXP
+  totalXP: 0,
+  reachedMilestones: [] // NEU: Leeres Array für noch nicht erreichte Meilensteine
 };
 
 // Standard-Einstellungen
@@ -112,9 +115,12 @@ export const loadStats = async (): Promise<GameStats> => {
     const savedStats = await AsyncStorage.getItem(KEYS.STATISTICS);
     if (savedStats) {
       const parsedStats = JSON.parse(savedStats);
-      // Kompatibilität mit älteren Versionen, die noch kein totalXP haben
+      // Kompatibilität mit älteren Versionen
       if (parsedStats.totalXP === undefined) {
         parsedStats.totalXP = 0;
+      }
+      if (parsedStats.reachedMilestones === undefined) {
+        parsedStats.reachedMilestones = [];
       }
       return parsedStats;
     }
@@ -161,7 +167,9 @@ export const updateStatsAfterGame = async (
         ? Math.max(currentStats.longestStreak, currentStats.currentStreak + 1)
         : currentStats.longestStreak,
       // NEU: XP direkt addieren
-      totalXP: currentStats.totalXP + xpGain
+      totalXP: currentStats.totalXP + xpGain,
+      // Behalte die erreichten Meilensteine (werden in LevelProgress aktualisiert)
+      reachedMilestones: currentStats.reachedMilestones || []
     };
 
     // Aktualisiere Bestzeit nur wenn das Spiel gewonnen wurde
@@ -202,6 +210,22 @@ export const updateStatsAfterGame = async (
     await saveStats(updatedStats);
   } catch (error) {
     console.error("Error updating statistics:", error);
+  }
+};
+
+// Meilenstein als erreicht markieren
+export const markMilestoneReached = async (milestoneLevel: number): Promise<void> => {
+  try {
+    const stats = await loadStats();
+    
+    // Prüfen, ob dieser Meilenstein bereits erreicht wurde
+    if (!stats.reachedMilestones.includes(milestoneLevel)) {
+      stats.reachedMilestones.push(milestoneLevel);
+      await saveStats(stats);
+      console.log(`Milestone at level ${milestoneLevel} marked as reached`);
+    }
+  } catch (error) {
+    console.error("Error updating milestone:", error);
   }
 };
 

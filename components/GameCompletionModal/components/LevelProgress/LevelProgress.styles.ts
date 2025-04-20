@@ -1,4 +1,5 @@
 // components/GameCompletionModal/components/LevelProgress/LevelProgress.styles.ts
+
 import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
@@ -162,19 +163,53 @@ export default StyleSheet.create({
     borderRadius: radius.md,
   },
   
-  // Milestone container - simplified
+  // NEU: Meilenstein container
   milestoneContainer: {
     marginTop: spacing.md,
     padding: spacing.md,
     borderRadius: radius.md,
     borderWidth: 1,
+    elevation: 0,
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   
-  // Milestone text
+  // NEU: Schließen-Button für Meilenstein
+  milestoneCloseButton: {
+    position: "absolute",
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  
+  // NEU: Meilenstein Icon Container
+  milestoneIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.sm,
+  },
+  
+  // NEU: Meilenstein Titel
+  milestoneTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  
+  // NEU: Meilenstein Text
   milestoneText: {
     fontSize: 14,
     lineHeight: 20,
-    textAlign: "center",
   },
   
   // Level up overlay - enhanced for impact
@@ -213,26 +248,9 @@ export default StyleSheet.create({
     textTransform: "uppercase", // All caps for emphasis
   },
   
-  // New level name styling
-  newLevelName: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginTop: spacing.md,
-    textAlign: "center",
-    textShadowColor: "rgba(0,0,0,0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
+ 
   
-  // New level message styling
-  newLevelMessage: {
-    fontSize: 16,
-    color: "rgba(255,255,255,0.9)",
-    marginTop: spacing.sm,
-    textAlign: "center",
-    lineHeight: 22,
-  },
+  
   
   // Celebration effect container
   celebrationContainer: {

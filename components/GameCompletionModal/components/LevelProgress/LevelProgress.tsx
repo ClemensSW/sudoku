@@ -9,14 +9,16 @@ import Animated, {
   withDelay,
   FadeIn,
   FadeOut,
+  SlideInUp,
+  SlideOutDown,
   Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { calculateXpGain } from "./utils/levelData"; // Behalte den Import für calculateXpGain
+import { calculateXpGain, milestones } from "./utils/levelData"; // Importiere milestones
 import LevelBadge from "./components/LevelBadge";
 import { LevelProgressOptions } from "./utils/types";
-import { GameStats } from "@/utils/storage";
+import { GameStats, markMilestoneReached } from "@/utils/storage"; // Importiere markMilestoneReached
 import { Difficulty } from "@/utils/sudoku";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./LevelProgress.styles";
@@ -69,7 +71,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     enableLevelUpAnimation: true,
     usePathColors: true,
     showPathDescription: !compact,
-    showMilestones: false, 
+    showMilestones: true, // GEÄNDERT: Standardmäßig aktiviert
     textVisibility: 'toggle',
     highContrastText: false,
   };
@@ -78,6 +80,10 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   
   // State for text expansion - always start collapsed
   const [textExpanded, setTextExpanded] = useState(false);
+  // NEU: State für die Anzeige von Meilenstein-Nachrichten
+  const [showMilestone, setShowMilestone] = useState(false);
+  const [milestoneMessage, setMilestoneMessage] = useState("");
+  const [milestoneLevel, setMilestoneLevel] = useState(0);
   
   // GEÄNDERT: Direkte Verwendung von stats.totalXP statt calculateExperience
   const calculatedXp = stats ? stats.totalXP : 0;
@@ -105,6 +111,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   const xpGainScale = useSharedValue(1);
   const badgePulse = useSharedValue(1);
   const gainIndicatorOpacity = useSharedValue(0); // For XP gain section in progress bar
+  const milestoneScale = useSharedValue(0.95); // NEU: Animation für Meilenstein
   
   // Animation values for path indicators - Create all on component level
   const pathIndicator0Scale = useSharedValue(1);
@@ -121,6 +128,42 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     pathIndicator3Scale,
     pathIndicator4Scale
   ];
+  
+  // NEU: Funktion zum Überprüfen und Anzeigen von Meilensteinen
+  const checkAndShowMilestone = async () => {
+    if (!stats || !finalOptions.showMilestones) return;
+    
+    // Prüfe, ob ein neuer Meilenstein erreicht wurde
+    const reachedMilestones = stats.reachedMilestones || [];
+    
+    // Iteriere durch alle definierten Meilensteine
+    for (const level of Object.keys(milestones).map(Number)) {
+      // Wenn das Level oder höher erreicht ist, aber noch nicht als erreicht markiert
+      if (levelInfo.currentLevel >= level && !reachedMilestones.includes(level)) {
+        // Speichere den Meilenstein
+        setMilestoneMessage(milestones[level]);
+        setMilestoneLevel(level);
+        
+        // Markiere als erreicht in der Datenbank
+        await markMilestoneReached(level);
+        
+        // Zeige den Meilenstein an
+        setShowMilestone(true);
+        
+        // Haptisches Feedback
+        triggerHaptic("success");
+        
+        // Animation starten
+        milestoneScale.value = withSequence(
+          withTiming(1.05, { duration: 300 }),
+          withTiming(1, { duration: 200 })
+        );
+        
+        // Nur einen Meilenstein auf einmal anzeigen
+        break;
+      }
+    }
+  };
   
   // Pre-calculate all animated styles at component level
   const pathIndicator0Style = useAnimatedStyle(() => ({
@@ -152,10 +195,29 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     pathIndicator4Style
   ];
   
+  // NEU: Animated Style für Meilenstein-Container
+  const milestoneAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: milestoneScale.value }],
+  }));
+  
   // Toggle function for text visibility
   const toggleTextVisibility = () => {
     setTextExpanded(!textExpanded);
     triggerHaptic("light");
+  };
+  
+  // NEU: Schließen der Meilenstein-Anzeige
+  const closeMilestone = () => {
+    // Ausblenden mit Animation
+    milestoneScale.value = withTiming(0.9, { 
+      duration: 200,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
+    
+    // State nach Abschluss der Animation zurücksetzen
+    setTimeout(() => {
+      setShowMilestone(false);
+    }, 200);
   };
   
   // Check for actual level-up - important correction
@@ -253,8 +315,14 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         setShowLevelUpOverlay(false);
         setTimeout(() => {
           levelUpTriggered.current = false;
+          
+          // NEU: Nach dem Level-Up, prüfe auf neue Meilensteine
+          checkAndShowMilestone();
         }, 500);
       }, 4000);
+    } else if (!levelUpTriggered.current) {
+      // NEU: Wenn kein Level-Up, prüfe trotzdem auf Meilensteine bei neuer Erstellung
+      checkAndShowMilestone();
     }
     
     // Check for path change
@@ -365,7 +433,6 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             ]}>
               {levelInfo.levelData.message}
             </Text>
-            
           </View>
         </View>
         
@@ -641,6 +708,79 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           </View>
         </View>
         
+        {/* NEU: Meilenstein-Anzeige */}
+        {showMilestone && (
+          <Animated.View
+            style={[
+              styles.milestoneContainer,
+              {
+                backgroundColor: theme.isDark 
+                  ? `${progressColor}20` 
+                  : `${progressColor}10`,
+                borderColor: progressColor,
+                marginTop: 16,
+                padding: 16,
+                borderRadius: 12,
+                borderWidth: 1,
+                position: "relative",
+              },
+              milestoneAnimatedStyle
+            ]}
+            entering={SlideInUp.duration(300).springify()}
+          >
+            {/* Header */}
+            <View style={{ 
+              flexDirection: "row", 
+              alignItems: "center", 
+              justifyContent: "space-between",
+              marginBottom: 8
+            }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Feather 
+                  name="award" 
+                  size={18} 
+                  color={progressColor} 
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={{ 
+                  fontSize: 16, 
+                  fontWeight: "700", 
+                  color: colors.textPrimary 
+                }}>
+                  Meilenstein erreicht!
+                </Text>
+              </View>
+              
+              {/* Close button */}
+              <Pressable
+                onPress={closeMilestone}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: pressed 
+                    ? theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+                    : 'transparent',
+                  padding: 4,
+                  borderRadius: 12,
+                })}
+              >
+                <Feather name="x" size={18} color={colors.textSecondary} />
+              </Pressable>
+            </View>
+            
+            {/* Meilenstein-Nachricht */}
+            <Text style={{ 
+              fontSize: 15, 
+              lineHeight: 22, 
+              color: colors.textSecondary,
+              marginBottom: 4,
+            }}>
+              {milestoneMessage}
+            </Text>
+            
+            
+          </Animated.View>
+        )}
+        
         {/* Level Up Overlay - Completely redesigned for impact */}
         {showLevelUpOverlay && (
           <Animated.View 
@@ -675,24 +815,6 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 animationDelay={300}
               />
               
-              <Text style={[
-                styles.newLevelName,
-                finalOptions.highContrastText && styles.levelUpTextHighContrast
-              ]}>
-                {levelInfo.levelData.name}
-              </Text>
-              
-              <Text style={[
-                styles.newLevelMessage,
-                finalOptions.highContrastText && {
-                  backgroundColor: 'rgba(0,0,0,0.4)',
-                  padding: 8,
-                  borderRadius: 4,
-                  marginTop: 16
-                }
-              ]}>
-                {levelInfo.levelData.message}
-              </Text>
             </View>
           </Animated.View>
         )}

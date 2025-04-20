@@ -78,10 +78,11 @@ export default StyleSheet.create({
   segment: {
     width: "33.33%",
     height: "33.33%",
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.3)",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 8,
   },
   
   unlockedSegment: {
@@ -89,7 +90,7 @@ export default StyleSheet.create({
   },
   
   lockedSegment: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(18,18,18, 0.9)",
   },
   
   // Highlight für das neueste Segment

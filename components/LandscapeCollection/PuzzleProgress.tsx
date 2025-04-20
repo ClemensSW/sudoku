@@ -49,7 +49,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         entering={FadeIn.duration(500)}
       >
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Lade Landschaft...
+          Lade Bild...
         </Text>
       </Animated.View>
     );
@@ -133,7 +133,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
           <Feather 
             name="lock" 
             size={16} 
-            color="rgba(255,255,255,0.5)" 
+            color="rgba(255,255,255,0.8)" 
           />
         )}
       </Animated.View>
@@ -152,7 +152,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
       {/* Header with title and badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Landschafts-Sammlung
+          Bild-Sammlung
         </Text>
         
         {newlyUnlockedSegmentId !== undefined && (

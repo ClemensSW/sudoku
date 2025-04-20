@@ -13,7 +13,7 @@ export default StyleSheet.create({
     // Die Farbe wird jetzt dynamisch aus dem Theme übernommen
   },
   modalContent: {
-    width: "95%",
+    width: "85%",
     maxWidth: 400,
     borderRadius: 24,
     padding: 24,

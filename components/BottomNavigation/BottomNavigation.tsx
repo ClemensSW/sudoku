@@ -17,9 +17,9 @@ const BottomNavigation: React.FC = () => {
 
   const tabs = [
     {
-      name: "Home",
+      name: "Sudoku",
       path: "/",
-      icon: "home",
+      icon: "grid",
     },
     {
       name: "Duo",

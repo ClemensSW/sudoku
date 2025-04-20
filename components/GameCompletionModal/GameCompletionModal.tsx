@@ -1,4 +1,4 @@
-// components/GameCompletionModal/GameCompletionModal.tsx - Mit XP-Berechnung und ohne redundante Badge
+// components/GameCompletionModal/GameCompletionModal.tsx
 import React, { useEffect } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
 import Animated, {
@@ -15,6 +15,9 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
+
+// Import der zentralen XP-Berechnungsfunktion
+import { calculateXpGain } from './components/LevelProgress/utils/levelData';
 
 // Components
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
@@ -38,63 +41,19 @@ interface GameCompletionModalProps {
   stats?: GameStats | null;
 }
 
-// Calculate XP gain based on difficulty and time
-const calculateXpGain = (
+// Function to check if it's a new record
+const isNewRecord = (
+  timeElapsed: number, 
+  stats: GameStats | null, 
   difficulty: Difficulty,
-  timeElapsed: number,
   autoNotesUsed: boolean
-): number => {
-  // If auto notes were used, no XP gain
-  if (autoNotesUsed) return 0;
+): boolean => {
+  if (autoNotesUsed || !stats) return false;
   
-  // Base XP for completing a puzzle
-  let baseXp = 5;
+  const bestTimeKey = `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats;
+  const previousBestTime = stats[bestTimeKey] as number;
   
-  // Difficulty multipliers
-  const difficultyMultipliers = {
-    easy: 1,
-    medium: 1.5,
-    hard: 2,
-    expert: 3
-  };
-  
-  // Apply difficulty multiplier
-  const difficultyMultiplier = difficultyMultipliers[difficulty] || 1;
-  baseXp = baseXp * difficultyMultiplier;
-  
-  // Time bonus for faster completion (maximum of 3 additional XP)
-  let timeBonus = 0;
-  const minutes = timeElapsed / 60;
-  
-  // Different time thresholds based on difficulty
-  if (difficulty === 'easy' && minutes < 3) {
-    timeBonus = 3;
-  } else if (difficulty === 'easy' && minutes < 5) {
-    timeBonus = 2;
-  } else if (difficulty === 'easy' && minutes < 8) {
-    timeBonus = 1;
-  } else if (difficulty === 'medium' && minutes < 5) {
-    timeBonus = 3;
-  } else if (difficulty === 'medium' && minutes < 8) {
-    timeBonus = 2;
-  } else if (difficulty === 'medium' && minutes < 12) {
-    timeBonus = 1;
-  } else if (difficulty === 'hard' && minutes < 8) {
-    timeBonus = 3;
-  } else if (difficulty === 'hard' && minutes < 12) {
-    timeBonus = 2;
-  } else if (difficulty === 'hard' && minutes < 18) {
-    timeBonus = 1;
-  } else if (difficulty === 'expert' && minutes < 12) {
-    timeBonus = 3;
-  } else if (difficulty === 'expert' && minutes < 18) {
-    timeBonus = 2;
-  } else if (difficulty === 'expert' && minutes < 25) {
-    timeBonus = 1;
-  }
-  
-  // Total XP gain (rounded to integer)
-  return Math.round(baseXp + timeBonus);
+  return timeElapsed < previousBestTime && previousBestTime !== 0 && previousBestTime !== Infinity;
 };
 
 const getDifficultyName = (diff: Difficulty): string => {
@@ -117,21 +76,6 @@ const getDifficultyColor = (diff: Difficulty): string => {
   return difficultyColors[diff];
 };
 
-// Function to check if it's a new record
-const isNewRecord = (
-  timeElapsed: number, 
-  stats: GameStats | null, 
-  difficulty: Difficulty,
-  autoNotesUsed: boolean
-): boolean => {
-  if (autoNotesUsed || !stats) return false;
-  
-  const bestTimeKey = `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats;
-  const previousBestTime = stats[bestTimeKey] as number;
-  
-  return timeElapsed < previousBestTime && previousBestTime !== 0 && previousBestTime !== Infinity;
-};
-
 const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   visible,
   onClose,
@@ -146,7 +90,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const colors = theme.colors;
   const router = useRouter();
   
-  // Calculate XP gain for this game
+  // Calculate XP gain for this game using the centralized function
   const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
   
   // Animation values

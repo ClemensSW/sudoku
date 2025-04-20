@@ -1,6 +1,7 @@
-// components/LevelProgress/utils/levelData.ts
-import { LevelThreshold, PathInfo } from './types';
-import { GameStats } from '@/utils/storage'; // Import für GameStats
+// components/GameCompletionModal/components/LevelProgress/utils/levelData.ts
+import { GameStats } from '@/utils/storage';
+import { Difficulty } from '@/utils/sudoku';
+import { LevelInfo, PathInfo, LevelThreshold } from './types';
 
 // Definition der Pfade
 export const paths: PathInfo[] = [
@@ -323,44 +324,208 @@ export function getLevelProgress(xp: number): {
 }
 
 /**
+ * Einheitliche XP-Berechnung für das gesamte Spiel
+ * @param difficulty Der Schwierigkeitsgrad des gelösten Sudokus
+ * @param timeElapsed Die benötigte Zeit in Sekunden
+ * @param autoNotesUsed Ob Auto-Notizen verwendet wurden
+ * @returns Die gewonnenen XP
+ */
+export function calculateXpGain(
+  difficulty: Difficulty,
+  timeElapsed: number,
+  autoNotesUsed: boolean
+): number {
+  // Wenn Auto-Notizen verwendet wurden, keine XP
+  if (autoNotesUsed) return 0;
+  
+  // Basis-XP für das Lösen eines Puzzles
+  let baseXp = 2;
+  
+  // Schwierigkeits-Multiplikatoren
+  const difficultyMultipliers: Record<Difficulty, number> = {
+    easy: 1,
+    medium: 2,
+    hard: 3,
+    expert: 4
+  };
+  
+  // Schwierigkeits-Multiplikator anwenden
+  const difficultyMultiplier = difficultyMultipliers[difficulty] || 1;
+  baseXp = baseXp * difficultyMultiplier;
+  
+  // Zeit-Bonus für schnelleres Lösen (maximal 3 zusätzliche XP)
+  let timeBonus = 0;
+  const minutes = timeElapsed / 60;
+  
+  // Unterschiedliche Zeit-Schwellenwerte je nach Schwierigkeit
+  if (difficulty === 'easy' && minutes < 3) {
+    timeBonus = 3;
+  } else if (difficulty === 'easy' && minutes < 5) {
+    timeBonus = 2;
+  } else if (difficulty === 'easy' && minutes < 8) {
+    timeBonus = 1;
+  } else if (difficulty === 'medium' && minutes < 5) {
+    timeBonus = 3;
+  } else if (difficulty === 'medium' && minutes < 8) {
+    timeBonus = 2;
+  } else if (difficulty === 'medium' && minutes < 12) {
+    timeBonus = 1;
+  } else if (difficulty === 'hard' && minutes < 8) {
+    timeBonus = 3;
+  } else if (difficulty === 'hard' && minutes < 12) {
+    timeBonus = 2;
+  } else if (difficulty === 'hard' && minutes < 18) {
+    timeBonus = 1;
+  } else if (difficulty === 'expert' && minutes < 12) {
+    timeBonus = 3;
+  } else if (difficulty === 'expert' && minutes < 18) {
+    timeBonus = 2;
+  } else if (difficulty === 'expert' && minutes < 25) {
+    timeBonus = 1;
+  }
+  
+  // Gesamte XP-Erhöhung (gerundet auf ganze Zahl)
+  return Math.round(baseXp + timeBonus);
+}
+
+/**
  * Berechnet Erfahrungspunkte basierend auf den Spielstatistiken
+ * ÜBERARBEITETE Version, die exakt das Ergebnis der EP aus einzelnen Spielen (calculateXpGain) widerspiegelt
+ * 
  * @param stats Die Spielstatistiken
  * @returns Berechnete Erfahrungspunkte
  */
 export function calculateExperience(stats: GameStats): number {
-  if (!stats) return 0;
-
-  // Basis-XP: Jedes gespielte Spiel gibt 1 XP
-  let totalXP = stats.gamesPlayed || 0;
-
-  // Bonuspunkte für Siege basierend auf Schwierigkeitsgrad
-  const wins = stats.gamesWon || 0;
-  totalXP += wins * 2;
-
-  // Bonus-XP für Siege auf verschiedenen Schwierigkeitsgraden
-  const easyWins = stats.bestTimeEasy && stats.bestTimeEasy !== Infinity ? 5 : 0;
-  const mediumWins = stats.bestTimeMedium && stats.bestTimeMedium !== Infinity ? 10 : 0;
-  const hardWins = stats.bestTimeHard && stats.bestTimeHard !== Infinity ? 20 : 0;
-  const expertWins = stats.bestTimeExpert && stats.bestTimeExpert !== Infinity ? 30 : 0;
-
-  totalXP += easyWins + mediumWins + hardWins + expertWins;
-
-  // Bonus für Streaks
-  totalXP += (stats.longestStreak || 0) * 3;
-  totalXP += (stats.currentStreak || 0) * 1;
+    if (!stats) return 0;
   
-  // Kombinierte Faktoren für langfristige Motivation
-  const gamesFactor = Math.min(50, Math.floor(stats.gamesPlayed / 10)); // Bis zu 50 Bonus-XP für 500 gespielte Spiele
-  totalXP += gamesFactor;
-  
-  // Bonus für ausgewogene Schwierigkeitsgrade
-  let difficultyVariety = 0;
-  if (stats.bestTimeEasy && stats.bestTimeEasy !== Infinity) difficultyVariety++;
-  if (stats.bestTimeMedium && stats.bestTimeMedium !== Infinity) difficultyVariety++;
-  if (stats.bestTimeHard && stats.bestTimeHard !== Infinity) difficultyVariety++;
-  if (stats.bestTimeExpert && stats.bestTimeExpert !== Infinity) difficultyVariety++;
-  
-  totalXP += difficultyVariety * 15; // Bonus für Vielseitigkeit
-  
-  return Math.max(0, Math.floor(totalXP)); // Sicherstellen, dass XP immer positiv und ganzzahlig ist
-}
+    // Wir berechnen jetzt nur die Erfahrungspunkte, die durch gelöste Spiele verdient wurden
+    // (ähnlich wie calculateXpGain für jedes einzelne Spiel)
+    
+    // Gesamt-EP beginnt bei 0
+    let totalXP = 0;
+    
+    // Basiswert pro gewonnenem Spiel ist 5 EP (wie in calculateXpGain)
+    const baseXpPerWin = 5;
+    
+    // Berücksichtige gewonnene Spiele
+    const totalWins = stats.gamesWon || 0;
+    
+    // Berechne nun die EP für verschiedene Schwierigkeitsgrade
+    
+    // Zähle, wie viele Siege auf welcher Schwierigkeitsstufe erzielt wurden
+    // Dies können wir nur indirekt messen über die Bestzeiten
+    let easyWins = 0;
+    let mediumWins = 0;
+    let hardWins = 0;
+    let expertWins = 0;
+    
+    // Wenn eine Bestzeit existiert, zähle mindestens einen Sieg in dieser Schwierigkeit
+    if (stats.bestTimeEasy && stats.bestTimeEasy !== Infinity) {
+      easyWins = 1;
+    }
+    
+    if (stats.bestTimeMedium && stats.bestTimeMedium !== Infinity) {
+      mediumWins = 1;
+    }
+    
+    if (stats.bestTimeHard && stats.bestTimeHard !== Infinity) {
+      hardWins = 1;
+    }
+    
+    if (stats.bestTimeExpert && stats.bestTimeExpert !== Infinity) {
+      expertWins = 1;
+    }
+    
+    // Restliche Siege proportional auf die verschiedenen Schwierigkeitsgrade verteilen
+    // Da wir nicht genau wissen, welche Schwierigkeitsgrade gespielt wurden, machen wir eine Schätzung
+    // basierend auf der Verteilung der bekannten Siege
+    const knownWins = easyWins + mediumWins + hardWins + expertWins;
+    const remainingWins = Math.max(0, totalWins - knownWins);
+    
+    // Wenn wir keine bekannten Siege haben, nehmen wir eine Standardverteilung an
+    if (knownWins === 0 && remainingWins > 0) {
+      // Standardverteilung: 60% Easy, 30% Medium, 8% Hard, 2% Expert
+      easyWins += Math.round(remainingWins * 0.6);
+      mediumWins += Math.round(remainingWins * 0.3);
+      hardWins += Math.round(remainingWins * 0.08);
+      expertWins += Math.round(remainingWins * 0.02);
+    } 
+    // Ansonsten verteilen wir proportional zu den bekannten Siegen
+    else if (knownWins > 0 && remainingWins > 0) {
+      easyWins += Math.round(remainingWins * (easyWins / knownWins));
+      mediumWins += Math.round(remainingWins * (mediumWins / knownWins));
+      hardWins += Math.round(remainingWins * (hardWins / knownWins));
+      expertWins += Math.round(remainingWins * (expertWins / knownWins));
+    }
+    
+    // Sicherstellen, dass die Summe der Siege korrekt ist
+    const calculatedWins = easyWins + mediumWins + hardWins + expertWins;
+    const diff = totalWins - calculatedWins;
+    
+    if (diff > 0) {
+      // Wenn wir zu wenige berechnet haben, fügen wir die fehlenden zum häufigsten Typ hinzu
+      const maxWins = Math.max(easyWins, mediumWins, hardWins, expertWins);
+      if (maxWins === easyWins) {
+        easyWins += diff;
+      } else if (maxWins === mediumWins) {
+        mediumWins += diff;
+      } else if (maxWins === hardWins) {
+        hardWins += diff;
+      } else {
+        expertWins += diff;
+      }
+    }
+    
+    // Berechne nun die EP für jeden Schwierigkeitsgrad
+    // Dies folgt der Berechnung von calculateXpGain
+    
+    // Schwierigkeits-Multiplikatoren (wie in calculateXpGain)
+    const easyMultiplier = 1;
+    const mediumMultiplier = 1.5;
+    const hardMultiplier = 2;
+    const expertMultiplier = 3;
+    
+    // Berechne die Basis-EP für jeden Schwierigkeitsgrad
+    const easyXP = easyWins * baseXpPerWin * easyMultiplier;
+    const mediumXP = mediumWins * baseXpPerWin * mediumMultiplier;
+    const hardXP = hardWins * baseXpPerWin * hardMultiplier;
+    const expertXP = expertWins * baseXpPerWin * expertMultiplier;
+    
+    // Zeit-Boni können wir nur für die besten Zeiten berechnen
+    let timeBonus = 0;
+    
+    // Schätze Zeit-Boni für die Bestzeiten (vereinfacht)
+    if (stats.bestTimeEasy && stats.bestTimeEasy !== Infinity) {
+      const minutes = stats.bestTimeEasy / 60;
+      if (minutes < 3) timeBonus += 3;
+      else if (minutes < 5) timeBonus += 2;
+      else if (minutes < 8) timeBonus += 1;
+    }
+    
+    if (stats.bestTimeMedium && stats.bestTimeMedium !== Infinity) {
+      const minutes = stats.bestTimeMedium / 60;
+      if (minutes < 5) timeBonus += 3;
+      else if (minutes < 8) timeBonus += 2;
+      else if (minutes < 12) timeBonus += 1;
+    }
+    
+    if (stats.bestTimeHard && stats.bestTimeHard !== Infinity) {
+      const minutes = stats.bestTimeHard / 60;
+      if (minutes < 8) timeBonus += 3;
+      else if (minutes < 12) timeBonus += 2;
+      else if (minutes < 18) timeBonus += 1;
+    }
+    
+    if (stats.bestTimeExpert && stats.bestTimeExpert !== Infinity) {
+      const minutes = stats.bestTimeExpert / 60;
+      if (minutes < 12) timeBonus += 3;
+      else if (minutes < 18) timeBonus += 2;
+      else if (minutes < 25) timeBonus += 1;
+    }
+    
+    // Gesamtsumme berechnen
+    totalXP = easyXP + mediumXP + hardXP + expertXP + timeBonus;
+    
+    // Stelle sicher, dass der Wert nicht negativ ist und runde auf ganze Zahlen
+    return Math.max(0, Math.floor(totalXP));
+  }

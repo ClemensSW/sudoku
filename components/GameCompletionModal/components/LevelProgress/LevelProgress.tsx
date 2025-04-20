@@ -1,4 +1,6 @@
 // components/GameCompletionModal/components/LevelProgress/LevelProgress.tsx
+// Relevante Importe und Änderungen am Anfang der Datei
+
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, {
@@ -13,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { calculateExperience } from "./utils/levelData";
+import { calculateExperience, calculateXpGain } from "./utils/levelData"; // calculateXpGain hinzugefügt
 import LevelBadge from "./components/LevelBadge";
 import { LevelProgressOptions } from "./utils/types";
 import { GameStats } from "@/utils/storage";

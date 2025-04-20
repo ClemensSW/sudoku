@@ -97,7 +97,8 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
     currentLandscape, 
     unlockNext, 
     unlockEvent, 
-    clearUnlockEvent 
+    clearUnlockEvent,
+    getLastUnlockEvent // NEU: Hinzugefügt
   } = useLandscapes();
   
   // State for landscape unlock tracking
@@ -105,12 +106,13 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const [landscapeCompleted, setLandscapeCompleted] = useState(false);
   
   // Bei erfolgreicher Spielbeendigung (wenn Spiel gewonnen ist und keine Auto-Notizen verwendet wurden)
-  // und wenn das Modal sichtbar wird, schalte das nächste Segment frei
+  // und wenn das Modal sichtbar wird, hole das letzte Unlock-Event
   useEffect(() => {
     if (visible && !autoNotesUsed) {
       // Verzögerung, um Animation der anderen Elemente abzuwarten
       const timer = setTimeout(async () => {
-        const event = await unlockNext();
+        // GEÄNDERT: Statt erneut freizuschalten, rufe das letzte gespeicherte Event ab
+        const event = await getLastUnlockEvent();
         if (event) {
           if (event.type === "segment") {
             setNewlyUnlockedSegmentId(event.segmentId);
@@ -122,7 +124,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [visible, autoNotesUsed, unlockNext]);
+  }, [visible, autoNotesUsed, getLastUnlockEvent]);
   
   // Zurücksetzen des Unlock-Event-Status, wenn das Modal geschlossen wird
   useEffect(() => {

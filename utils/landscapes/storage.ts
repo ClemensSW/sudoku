@@ -5,7 +5,8 @@ import { getDefaultCollectionState } from "./data";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
-const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Neuer Key für die letzte Freischaltung
+const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Für Sperre
+const LAST_UNLOCK_EVENT_KEY = "@sudoku/last_unlock_event"; // NEU: Für Event-Speicherung
 
 /**
  * Lädt die Landschaftssammlung aus dem AsyncStorage
@@ -39,7 +40,7 @@ export const saveLandscapeCollection = async (collection: LandscapeCollection): 
   }
 };
 
-// Neue Funktion: Prüft, ob eine Freischaltung innerhalb eines Zeitfensters bereits stattgefunden hat
+// Prüft, ob eine Freischaltung innerhalb eines Zeitfensters bereits stattgefunden hat
 const hasRecentlyUnlocked = async (): Promise<boolean> => {
   try {
     const lastUnlockTimestamp = await AsyncStorage.getItem(LAST_UNLOCK_KEY);
@@ -58,7 +59,7 @@ const hasRecentlyUnlocked = async (): Promise<boolean> => {
   }
 };
 
-// Neue Funktion: Markiere eine Freischaltung als durchgeführt
+// Markiere eine Freischaltung als durchgeführt
 const markAsUnlocked = async (): Promise<void> => {
   try {
     await AsyncStorage.setItem(LAST_UNLOCK_KEY, Date.now().toString());
@@ -68,9 +69,41 @@ const markAsUnlocked = async (): Promise<void> => {
 };
 
 /**
+ * NEU: Speichert das letzte Freischaltungsereignis
+ */
+export const saveUnlockEvent = async (event: UnlockEvent | null): Promise<void> => {
+  try {
+    if (event) {
+      await AsyncStorage.setItem(LAST_UNLOCK_EVENT_KEY, JSON.stringify(event));
+      console.log("Unlock-Event gespeichert:", event);
+    } else {
+      // Wenn null, lösche das Event
+      await AsyncStorage.removeItem(LAST_UNLOCK_EVENT_KEY);
+    }
+  } catch (error) {
+    console.error("Fehler beim Speichern des Unlock-Events:", error);
+  }
+};
+
+/**
+ * NEU: Ruft das letzte Freischaltungsereignis ab und löscht es danach
+ */
+export const getAndClearLastUnlockEvent = async (): Promise<UnlockEvent | null> => {
+  try {
+    const eventData = await AsyncStorage.getItem(LAST_UNLOCK_EVENT_KEY);
+    // Lösche das gespeicherte Event, damit es nur einmal abgerufen werden kann
+    await AsyncStorage.removeItem(LAST_UNLOCK_EVENT_KEY);
+    
+    return eventData ? JSON.parse(eventData) as UnlockEvent : null;
+  } catch (error) {
+    console.error("Fehler beim Abrufen des Unlock-Events:", error);
+    return null;
+  }
+};
+
+/**
  * Schaltet das nächste verfügbare Segment im aktuellen Bild frei
  * Gibt ein Event zurück, das den Typ der Freischaltung und betroffene IDs enthält
- * Mit Sperre gegen doppelte Freischaltungen innerhalb eines kurzen Zeitfensters
  */
 export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
   try {
@@ -122,12 +155,17 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     // Freischaltung als erfolgt markieren
     await markAsUnlocked();
     
-    // Event zurückgeben
-    return {
+    // Event erstellen
+    const unlockEvent = {
       type: isComplete ? "complete" : "segment",
       landscapeId: currentImageId,
       segmentId: isComplete ? undefined : segmentIndex
     };
+    
+    // Event speichern
+    await saveUnlockEvent(unlockEvent);
+    
+    return unlockEvent;
   } catch (error) {
     console.error("Fehler beim Freischalten eines Segments:", error);
     return null;

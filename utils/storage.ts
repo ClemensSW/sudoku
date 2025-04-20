@@ -4,7 +4,7 @@ import { Difficulty } from '@/utils/sudoku';
 // XP-Berechnung importieren
 import { calculateXpGain } from '@/components/GameCompletionModal/components/LevelProgress/utils/levelData';
 // Landschafts-Integration
-import { unlockNextSegment } from '@/utils/landscapes/storage';
+import { unlockNextSegment, saveUnlockEvent } from '@/utils/landscapes/storage';
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -211,7 +211,6 @@ export const updateStatsAfterGame = async (
       try {
         // Hier wird das nächste Segment freigeschaltet
         // Dies passiert asynchron im Hintergrund, aber wir warten nicht auf das Ergebnis
-        // da es in GameCompletionModal über den useLandscapes Hook verarbeitet wird
         const unlockResult = await unlockNextSegment();
         if (unlockResult) {
           console.log("Unlocked new landscape segment:", unlockResult.type);

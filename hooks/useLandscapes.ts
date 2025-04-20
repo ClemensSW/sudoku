@@ -5,7 +5,8 @@ import {
   unlockNextSegment,
   toggleFavorite as toggleFavoriteStorage,
   getFilteredLandscapes,
-  getCurrentLandscape
+  getCurrentLandscape,
+  getAndClearLastUnlockEvent
 } from "@/utils/landscapes/storage";
 
 /**
@@ -71,6 +72,24 @@ export const useLandscapes = (initialFilter = "all") => {
     }
   }, [filter, loadCollection, loadCurrentLandscape, loadFilteredLandscapes]);
 
+  // NEU: Holt das letzte Unlock-Event und löscht es
+  const getLastUnlockEvent = useCallback(async () => {
+    try {
+      const event = await getAndClearLastUnlockEvent();
+      if (event) {
+        setUnlockEvent(event);
+        // Aktualisiere die Daten
+        loadCollection();
+        loadCurrentLandscape();
+        loadFilteredLandscapes(filter);
+      }
+      return event;
+    } catch (error) {
+      console.error("Fehler beim Abrufen des letzten Unlock-Events:", error);
+      return null;
+    }
+  }, [filter, loadCollection, loadCurrentLandscape, loadFilteredLandscapes]);
+
   // Favoriten-Status umschalten
   const toggleFavorite = useCallback(async (landscapeId: string) => {
     try {
@@ -114,6 +133,7 @@ export const useLandscapes = (initialFilter = "all") => {
     toggleFavorite,
     changeFilter,
     clearUnlockEvent,
+    getLastUnlockEvent, // NEU: Funktion hinzugefügt
     reload: loadCollection
   };
 };

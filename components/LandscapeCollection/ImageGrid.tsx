@@ -93,6 +93,11 @@ const LandscapeCard = React.memo(({
   
   // Get badge color based on state
   const getBadgeColor = () => {
+    // Verwende error-Farbe (rot) für Favoriten
+    if (item.isFavorite) {
+      return colors.error;
+    }
+    // Sonst die bisherige Logik
     if (item.isComplete) {
       return colors.success;
     }
@@ -101,6 +106,11 @@ const LandscapeCard = React.memo(({
   
   // Get badge icon based on state
   const getBadgeIcon = () => {
+    // Zeige Herz-Icon wenn es ein Favorit ist
+    if (item.isFavorite) {
+      return "heart";
+    }
+    // Sonst die bisherige Logik
     if (item.isComplete) {
       return "check-circle";
     }
@@ -109,8 +119,8 @@ const LandscapeCard = React.memo(({
   
   // Get badge text based on state
   const getBadgeText = () => {
-    if (item.isComplete) {
-      return ""; // No text for complete items
+    if (item.isComplete || item.isFavorite) {
+      return ""; // No text for complete items or favorites
     }
     return `${item.progress}/9`;
   }
@@ -152,8 +162,9 @@ const LandscapeCard = React.memo(({
             <Feather 
               name={getBadgeIcon() as any} 
               size={12} 
-              color="#FFFFFF" 
-              style={styles.badgeIcon} 
+              color="#FFFFFF"
+              style={getBadgeText() ? styles.badgeIcon : styles.badgeIconNoText}
+              
             />
             <Text style={styles.badgeText}>{getBadgeText()}</Text>
           </Animated.View>

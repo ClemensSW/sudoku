@@ -129,6 +129,10 @@ export default StyleSheet.create({
   badgeIcon: {
     marginRight: 4,
   },
+
+  badgeIconNoText: {
+    marginRight: -2,
+  },
   
   badgeText: {
     color: "#FFFFFF",

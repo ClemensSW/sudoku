@@ -3,6 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Difficulty } from '@/utils/sudoku';
 // XP-Berechnung importieren
 import { calculateXpGain } from '@/components/GameCompletionModal/components/LevelProgress/utils/levelData';
+// Landschafts-Integration
+import { unlockNextSegment } from '@/utils/landscapes/storage';
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -131,7 +133,7 @@ export const loadStats = async (): Promise<GameStats> => {
   }
 };
 
-// AKTUALISIERT: Fügt gewonnene XP direkt hinzu
+// AKTUALISIERT: Fügt gewonnene XP direkt hinzu und verarbeitet Landschaftsfortschritt
 export const updateStatsAfterGame = async (
   won: boolean,
   difficulty: Difficulty,
@@ -203,6 +205,19 @@ export const updateStatsAfterGame = async (
           timeElapsed < currentStats.bestTimeExpert)
       ) {
         updatedStats.bestTimeExpert = timeElapsed;
+      }
+      
+      // NEU: Landschafts-Feature - schalte das nächste Segment frei wenn gewonnen
+      try {
+        // Hier wird das nächste Segment freigeschaltet
+        // Dies passiert asynchron im Hintergrund, aber wir warten nicht auf das Ergebnis
+        // da es in GameCompletionModal über den useLandscapes Hook verarbeitet wird
+        const unlockResult = await unlockNextSegment();
+        if (unlockResult) {
+          console.log("Unlocked new landscape segment:", unlockResult.type);
+        }
+      } catch (err) {
+        console.error("Error unlocking landscape segment:", err);
       }
     }
 

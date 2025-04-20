@@ -1,5 +1,5 @@
 // components/GameCompletionModal/GameCompletionModal.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
 import Animated, {
   FadeIn,
@@ -15,6 +15,8 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
+import { useLandscapes } from "@/hooks/useLandscapes";
+import { PuzzleProgress } from "@/components/LandscapeCollection";
 
 // Import der zentralen XP-Berechnungsfunktion
 import { calculateXpGain } from './components/LevelProgress/utils/levelData';
@@ -90,6 +92,47 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const colors = theme.colors;
   const router = useRouter();
   
+  // Landscape Collection Integration
+  const { 
+    currentLandscape, 
+    unlockNext, 
+    unlockEvent, 
+    clearUnlockEvent 
+  } = useLandscapes();
+  
+  // State for landscape unlock tracking
+  const [newlyUnlockedSegmentId, setNewlyUnlockedSegmentId] = useState<number | undefined>(undefined);
+  const [landscapeCompleted, setLandscapeCompleted] = useState(false);
+  
+  // Bei erfolgreicher Spielbeendigung (wenn Spiel gewonnen ist und keine Auto-Notizen verwendet wurden)
+  // und wenn das Modal sichtbar wird, schalte das nächste Segment frei
+  useEffect(() => {
+    if (visible && !autoNotesUsed) {
+      // Verzögerung, um Animation der anderen Elemente abzuwarten
+      const timer = setTimeout(async () => {
+        const event = await unlockNext();
+        if (event) {
+          if (event.type === "segment") {
+            setNewlyUnlockedSegmentId(event.segmentId);
+          } else if (event.type === "complete") {
+            setLandscapeCompleted(true);
+          }
+        }
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [visible, autoNotesUsed, unlockNext]);
+  
+  // Zurücksetzen des Unlock-Event-Status, wenn das Modal geschlossen wird
+  useEffect(() => {
+    if (!visible) {
+      setNewlyUnlockedSegmentId(undefined);
+      setLandscapeCompleted(false);
+      clearUnlockEvent();
+    }
+  }, [visible, clearUnlockEvent]);
+  
   // Calculate XP gain for this game using the centralized function
   const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
   
@@ -163,6 +206,16 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
       opacity: contentOpacity.value,
     };
   });
+  
+  // Handler für Galerieansicht
+  const handleViewGallery = () => {
+    onClose(); // Modal schließen
+    
+    // Kurze Verzögerung für bessere Animation
+    setTimeout(() => {
+      router.push("/gallery");
+    }, 300);
+  };
   
   // UPDATED: Properly restart the game by navigating to game screen with current difficulty
   const handleNewGame = () => {
@@ -240,6 +293,19 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
                   difficulty={difficulty}
                   justCompleted={true}
                   xpGain={xpGain} // Pass xpGain to LevelProgress
+                />
+                <View style={styles.sectionSpacer} />
+              </>
+            )}
+            
+            {/* NEUE KOMPONENTE: PuzzleProgress für Landschaftsbilder */}
+            {!autoNotesUsed && currentLandscape && (
+              <>
+                <PuzzleProgress
+                  landscape={currentLandscape}
+                  newlyUnlockedSegmentId={newlyUnlockedSegmentId}
+                  isComplete={landscapeCompleted}
+                  onViewGallery={handleViewGallery}
                 />
                 <View style={styles.sectionSpacer} />
               </>

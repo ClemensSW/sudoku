@@ -99,7 +99,7 @@ const StartScreen: React.FC = () => {
       {/* Background Image - full screen, no title, no overlay */}
       <View style={[styles.backgroundContainer, { height: backgroundHeight }]}>
         <ImageBackground
-          source={require("@/assets/images/background/mountains_blue.png")}
+          source={require("@/assets/images/background/kenrokuen-garden-9511300_1920.jpg")}
           style={styles.backgroundImage}
           resizeMode="cover"
         >

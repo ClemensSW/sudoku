@@ -142,16 +142,21 @@ const GalleryScreen: React.FC = () => {
     setDetailModalVisible(true);
   };
   
-  // Handler for favorite toggle
+  // Handler for favorite toggle - optimized to prevent full reloads
   const handleToggleFavorite = async (landscape: Landscape) => {
-    await toggleFavorite(landscape.id);
+    // Toggle only in the storage without triggering a full reload
+    const newStatus = await toggleFavorite(landscape.id);
     
-    // If we're in the detail modal, update the selected landscape
+    // Update the local state of the landscape to reflect the change
+    // This prevents a full reload of the landscapes array
+    landscape.isFavorite = newStatus;
+    
+    // If we're in the detail modal, update the selected landscape too
     if (selectedLandscape && selectedLandscape.id === landscape.id) {
       // Set the favorite status in the currently displayed landscape
       setSelectedLandscape({
         ...selectedLandscape,
-        isFavorite: !selectedLandscape.isFavorite
+        isFavorite: newStatus
       });
     }
   };

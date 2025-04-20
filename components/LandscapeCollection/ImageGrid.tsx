@@ -13,10 +13,14 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
+  withSequence,
+  Easing
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/utils/landscapes/types";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
 
 // Extract to a separate component to properly use hooks
@@ -31,13 +35,19 @@ const LandscapeCard = React.memo(({
   onImagePress?: (landscape: Landscape) => void;
   onToggleFavorite?: (landscape: Landscape) => void;
 }) => {
+  // Use key to ensure we don't re-render unnecessarily
+  const cardKey = `${item.id}-${item.progress}-${item.isComplete}`;
   const theme = useTheme();
   const { colors } = theme;
   
-  // Animation-values (now correctly at the top level)
+  // Animation-values
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(1);
-
+  const badgeScale = useSharedValue(1);
+  
+  // Reference for tracking current favorite state to prevent unnecessary animations
+  const isFavoriteRef = React.useRef(item.isFavorite);
+  
   // Animated styles
   const cardAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -51,6 +61,13 @@ const LandscapeCard = React.memo(({
       transform: [{ scale: heartScale.value }],
     };
   });
+  
+  // Badge animation
+  const badgeAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: badgeScale.value }],
+    };
+  });
 
   // Touch handlers
   const handlePressIn = () => {
@@ -59,17 +76,6 @@ const LandscapeCard = React.memo(({
 
   const handlePressOut = () => {
     scale.value = withSpring(1, { damping: 15 });
-  };
-
-  // Favorites toggle with animation
-  const handleToggleFavorite = () => {
-    heartScale.value = withSpring(1.2, { damping: 5 });
-    setTimeout(() => {
-      heartScale.value = withSpring(1, { damping: 12 });
-      if (onToggleFavorite) {
-        onToggleFavorite(item);
-      }
-    }, 200);
   };
 
   // Get category name based on category type
@@ -84,10 +90,34 @@ const LandscapeCard = React.memo(({
     };
     return categories[category] || category;
   };
+  
+  // Get badge color based on state
+  const getBadgeColor = () => {
+    if (item.isComplete) {
+      return colors.success;
+    }
+    return colors.primary;
+  };
+  
+  // Get badge icon based on state
+  const getBadgeIcon = () => {
+    if (item.isComplete) {
+      return "check-circle";
+    }
+    return item.progress === 0 ? "lock" : "clock";
+  }
+  
+  // Get badge text based on state
+  const getBadgeText = () => {
+    if (item.isComplete) {
+      return ""; // No text for complete items
+    }
+    return `${item.progress}/9`;
+  }
 
   return (
     <Animated.View
-      style={[styles.cardContainer, { backgroundColor: colors.surface }]}
+      style={[styles.cardContainer, { backgroundColor: colors.card }]}
       entering={SlideInRight.delay(index * 100).springify().damping(15)}
     >
       <Animated.View style={cardAnimatedStyle}>
@@ -100,60 +130,35 @@ const LandscapeCard = React.memo(({
         >
           <Image source={item.previewSource} style={styles.image} />
 
-          {/* Overlay for images in progress */}
+          {/* Gradient overlay for better visibility of text elements */}
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.7)']}
+            style={styles.imageGradient}
+          />
+
+          {/* Simple darken overlay for incomplete images */}
           {!item.isComplete && (
-            <View style={styles.progressOverlay}>
-              {/* Here we could also show a grid with already unlocked segments */}
-            </View>
+            <View style={styles.overlayContainer} />
           )}
 
-          {/* Favorites button (only for complete images) */}
-          {item.isComplete && (
-            <Animated.View
-              style={heartAnimatedStyle}
-            >
-              <TouchableOpacity
-                style={styles.favoriteButton}
-                onPress={handleToggleFavorite}
-              >
-                <Feather
-                  name={item.isFavorite ? "heart" : "heart"}
-                  size={22}
-                  color={item.isFavorite ? colors.error : "rgba(255,255,255,0.8)"}
-                />
-              </TouchableOpacity>
-            </Animated.View>
-          )}
+          {/* Modernized status badge */}
+          <Animated.View
+            style={[
+              styles.statusBadge,
+              badgeAnimatedStyle,
+              { backgroundColor: getBadgeColor() }
+            ]}
+          >
+            <Feather 
+              name={getBadgeIcon() as any} 
+              size={12} 
+              color="#FFFFFF" 
+              style={styles.badgeIcon} 
+            />
+            <Text style={styles.badgeText}>{getBadgeText()}</Text>
+          </Animated.View>
 
-          {/* Progress badge */}
-          <View style={styles.badgeContainer}>
-            {!item.isComplete ? (
-              <View style={styles.progressBadge}>
-                <Feather name="unlock" size={12} color="#FFFFFF" />
-                <Text style={styles.progressText}>
-                  {item.progress}/9
-                </Text>
-              </View>
-            ) : item.isFavorite ? (
-              <View style={[
-                styles.progressBadge,
-                { backgroundColor: "rgba(255, 50, 50, 0.8)" }
-              ]}>
-                <Feather name="heart" size={12} color="#FFFFFF" />
-                <Text style={styles.progressText}>Favorit</Text>
-              </View>
-            ) : (
-              <View style={[
-                styles.progressBadge,
-                { backgroundColor: "rgba(0, 200, 100, 0.8)" }
-              ]}>
-                <Feather name="check" size={12} color="#FFFFFF" />
-                <Text style={styles.progressText}>Komplett</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Info area */}
+          {/* Enhanced info area with better readability */}
           <View style={styles.infoContainer}>
             <Text style={styles.title} numberOfLines={1}>
               {item.name}
@@ -238,4 +243,4 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   );
 };
 
-export default ImageGrid;
+export default React.memo(ImageGrid);

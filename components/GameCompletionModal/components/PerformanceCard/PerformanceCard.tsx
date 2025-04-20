@@ -106,7 +106,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
     if (performance >= 95) return colors.success;
     if (performance >= 80) return colors.primary;
     if (performance >= 70) return colors.warning;
-    return colors.error;
+    return colors.warning;
   };
   
   // Animationen starten, wenn die Komponente gemountet wird

@@ -349,7 +349,6 @@ const StartScreen: React.FC = () => {
                 onPressIn={handleButtonPressIn}
                 onPressOut={handleButtonPressOut}
               >
-                <Feather name="play" size={24} color="white" style={styles.buttonIcon} />
                 <Text style={styles.startButtonText}>Neues Spiel</Text>
               </TouchableOpacity>
             </Animated.View>
@@ -373,7 +372,7 @@ const StartScreen: React.FC = () => {
                 onPress={handleHowToPlayPress}
                 activeOpacity={0.7}
               >
-                <Feather name="help-circle" size={18} color="white" style={styles.helpIcon} />
+                
                 <Text style={[
                   styles.howToPlayText,
                   { 
@@ -559,9 +558,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonIcon: {
-    marginRight: 12,
-  },
   startButtonText: {
     color: "#FFFFFF",
     fontSize: 18,
@@ -581,9 +577,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  helpIcon: {
-    marginRight: 8,
   },
   howToPlayText: {
     fontSize: 16,

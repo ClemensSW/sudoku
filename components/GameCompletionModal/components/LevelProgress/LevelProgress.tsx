@@ -1,6 +1,4 @@
 // components/GameCompletionModal/components/LevelProgress/LevelProgress.tsx
-// Relevante Importe und Änderungen am Anfang der Datei
-
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, {
@@ -15,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { calculateExperience, calculateXpGain } from "./utils/levelData"; // calculateXpGain hinzugefügt
+import { calculateXpGain } from "./utils/levelData"; // Behalte den Import für calculateXpGain
 import LevelBadge from "./components/LevelBadge";
 import { LevelProgressOptions } from "./utils/types";
 import { GameStats } from "@/utils/storage";
@@ -81,8 +79,8 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   // State for text expansion - always start collapsed
   const [textExpanded, setTextExpanded] = useState(false);
   
-  // Calculate XP from stats if XP not directly provided
-  const calculatedXp = stats ? calculateExperience(stats) : 0;
+  // GEÄNDERT: Direkte Verwendung von stats.totalXP statt calculateExperience
+  const calculatedXp = stats ? stats.totalXP : 0;
   
   // Use either directly provided XP or calculated XP from stats
   const currentXp = xp !== undefined ? xp : calculatedXp;

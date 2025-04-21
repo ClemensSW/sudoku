@@ -10,10 +10,6 @@ const CARDS_PER_ROW = 2;
 const CARD_WIDTH = (width - spacing.xl * 2 - CARD_MARGIN * (CARDS_PER_ROW - 1)) / CARDS_PER_ROW;
 const CARD_HEIGHT = CARD_WIDTH * 1.25; // Seitenverhältnis 4:5 für die Karten
 
-// Mini grid constants for progress visualization
-const MINI_GRID_SIZE = CARD_WIDTH * 0.45;
-const MINI_CELL_SIZE = MINI_GRID_SIZE / 3;
-
 export default StyleSheet.create({
   container: {
     flex: 1,
@@ -55,6 +51,37 @@ export default StyleSheet.create({
     resizeMode: "cover",
   },
   
+  // New styles for placeholder image handling
+  placeholderImage: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  
+  blurredImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  
+  placeholderIconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  
+  placeholderText: {
+    marginTop: spacing.sm,
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  
   // New gradient overlay for better readability
   imageGradient: {
     position: "absolute",
@@ -64,51 +91,7 @@ export default StyleSheet.create({
     height: "50%", // Cover about half the image height
   },
   
-  // Enhanced overlay for incomplete images
-  overlayContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  
-  // Removed mini grid styles as they're no longer needed
-  
-  // Modern favorite button
-  favoriteButton: {
-    position: "absolute",
-    top: spacing.sm,
-    left: spacing.sm,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    overflow: "hidden", // For the fill effect
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  
-  favoriteButtonEnabled: {
-    opacity: 1,
-  },
-  
-  favoriteButtonDisabled: {
-    opacity: 0.5,
-  },
-  
-  favoriteIcon: {
-    // Removed z-index since we don't need the overlay effect anymore
-  },
-  
-  // Removed fill effect styles as we're not using them anymore
-  
-  // Modern status badge
+  // Status badge
   statusBadge: {
     position: "absolute",
     top: spacing.sm,

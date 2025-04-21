@@ -138,7 +138,39 @@ const LandscapeCard = React.memo(({
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
         >
-          <Image source={item.previewSource} style={styles.image} />
+          {/* Das tatsächliche Bild - wird nur angezeigt, wenn es vollständig freigeschaltet ist */}
+          {item.isComplete ? (
+            <Image source={item.previewSource} style={styles.image} />
+          ) : (
+            /* Für nicht freigeschaltete Bilder wird ein stilvoller Platzhalter angezeigt */
+            <View style={[styles.placeholderImage, { backgroundColor: theme.isDark ? '#2D3748' : '#E2E8F0' }]}>
+              {/* Zeige verschwommenes Vorschaubild mit sehr niedriger Opazität als Teaser */}
+              <Image 
+                source={item.previewSource} 
+                style={[styles.blurredImage, { opacity: Math.min(0.2 + (item.progress * 0.07), 0.6) }]} 
+                blurRadius={20}
+              />
+              
+              {/* Zentrales Icon - für alle Kategorien gleich */}
+              <View style={styles.placeholderIconContainer}>
+                <Feather 
+                  name="image" 
+                  size={32} 
+                  color={theme.isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)'} 
+                />
+                
+                {/* Progressiver Text je nach Fortschritt */}
+                {item.progress > 0 && (
+                  <Text style={[styles.placeholderText, { 
+                    color: theme.isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+                    opacity: Math.min(0.6 + (item.progress * 0.07), 1),
+                  }]}>
+                    {Math.floor(item.progress/9 * 100)}% enthüllt
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
 
           {/* Gradient overlay for better visibility of text elements */}
           <LinearGradient
@@ -146,12 +178,7 @@ const LandscapeCard = React.memo(({
             style={styles.imageGradient}
           />
 
-          {/* Simple darken overlay for incomplete images */}
-          {!item.isComplete && (
-            <View style={styles.overlayContainer} />
-          )}
-
-          {/* Modernized status badge */}
+          {/* Statusabzeichen mit Animation */}
           <Animated.View
             style={[
               styles.statusBadge,
@@ -164,12 +191,11 @@ const LandscapeCard = React.memo(({
               size={12} 
               color="#FFFFFF"
               style={getBadgeText() ? styles.badgeIcon : styles.badgeIconNoText}
-              
             />
             <Text style={styles.badgeText}>{getBadgeText()}</Text>
           </Animated.View>
 
-          {/* Enhanced info area with better readability */}
+          {/* Infobereich für Titel und Kategorie */}
           <View style={styles.infoContainer}>
             <Text style={styles.title} numberOfLines={1}>
               {item.name}

@@ -77,6 +77,69 @@ export default StyleSheet.create({
     resizeMode: "contain",
   },
   
+  // Neue Stile für den Platzhalter
+  placeholderContainer: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  
+  blurredImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  
+  placeholderContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+    borderRadius: radius.xl,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    width: "80%",
+    maxWidth: 320,
+  },
+  
+  progressText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+    marginTop: spacing.md,
+  },
+  
+  progressBarContainer: {
+    width: "100%",
+    marginTop: spacing.md,
+  },
+  
+  progressBarBackground: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 4,
+  },
+  
+  progressHint: {
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: spacing.md,
+  },
+  
   // Fortschritts-Anzeige für unvollständige Bilder
   progressOverlay: {
     position: "absolute",
@@ -179,7 +242,8 @@ export default StyleSheet.create({
     marginLeft: 4,
   },
   
-  progressText: {
+  // Umbenannt von progressText zu metaProgressText, um doppelte Namen zu vermeiden
+  metaProgressText: {
     color: "#FFFFFF",
     fontSize: 14,
     marginLeft: 4,

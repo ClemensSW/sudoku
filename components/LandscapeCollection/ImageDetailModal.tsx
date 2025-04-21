@@ -166,17 +166,54 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           )}
         </Animated.View>
         
-        {/* Main image area */}
+        {/* Main image area - mit angepasster Logik für unvollständig freigeschaltete Bilder */}
         <View style={styles.imageContainer}>
-          <Image 
-            source={landscape.fullSource} 
-            style={styles.image}
-          />
-          
-          {/* Simple overlay for incomplete images - SIMPLIFIED! */}
-          {!landscape.isComplete && (
-            <View style={styles.progressOverlay}>
-              {/* Removed the grid rendering here! */}
+          {landscape.isComplete ? (
+            /* Vollständig freigeschaltetes Bild normal anzeigen */
+            <Image 
+              source={landscape.fullSource} 
+              style={styles.image}
+            />
+          ) : (
+            /* Für unvollständig freigeschaltete Bilder einen stilisierten Platzhalter anzeigen */
+            <View style={styles.placeholderContainer}>
+              {/* Verschwommenes Hintergrundbild mit progressiver Opazität */}
+              <Image 
+                source={landscape.fullSource} 
+                style={[
+                  styles.blurredImage, 
+                  { opacity: Math.min(0.2 + (landscape.progress * 0.07), 0.6) }
+                ]} 
+                blurRadius={20}
+              />
+              
+              {/* Fortschrittsanzeige in der Mitte */}
+              <View style={styles.placeholderContent}>
+                <Feather 
+                  name="image" 
+                  size={48} 
+                  color="rgba(255, 255, 255, 0.6)" 
+                />
+                
+                <Text style={styles.progressText}>
+                  {Math.floor(landscape.progress/9 * 100)}% enthüllt
+                </Text>
+                
+                <View style={styles.progressBarContainer}>
+                  <View style={styles.progressBarBackground}>
+                    <View 
+                      style={[
+                        styles.progressBarFill, 
+                        { width: `${(landscape.progress/9) * 100}%` }
+                      ]}
+                    />
+                  </View>
+                </View>
+                
+                <Text style={styles.progressHint}>
+                  Löse weitere Sudokus, um das Bild freizuschalten
+                </Text>
+              </View>
             </View>
           )}
         </View>
@@ -214,7 +251,8 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 ) : (
                   <>
                     <Feather name="unlock" size={14} color="#FFFFFF" />
-                    <Text style={styles.progressText}>
+                    {/* Hier progressText zu metaProgressText geändert */}
+                    <Text style={styles.metaProgressText}>
                       {landscape.progress}/9
                     </Text>
                   </>

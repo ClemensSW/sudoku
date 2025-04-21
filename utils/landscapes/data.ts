@@ -6,7 +6,7 @@ import { Landscape, LandscapeSegment } from "./types";
 const createEmptySegments = (): LandscapeSegment[] => {
   return Array.from({ length: 9 }, (_, index) => ({
     id: index,
-    isUnlocked: false
+    isUnlocked: false,
   }));
 };
 
@@ -16,16 +16,30 @@ const createEmptySegments = (): LandscapeSegment[] => {
  */
 export const initialLandscapes: Landscape[] = [
   {
-    id: "mountains-1",
-    name: "Alpenpanorama",
-    description: "Majestätische Berggipfel im Morgenlicht",
-    previewSource: require("@/assets/landscapes/kenrokuen-garden-9511300_1920.jpg"),
-    fullSource: require("@/assets/landscapes/kenrokuen-garden-9511300_1920.jpg"),
+    id: "gardens-japanese",
+    name: "Herbstlicher Teegarten",
+    description:
+      "Traditionelles japanisches Teehaus unter leuchtend roten Ahornbäumen in der Abenddämmerung",
+    previewSource: require("@/assets/imageCollection/gardens/gardens-japanese_640.jpg"),
+    fullSource: require("@/assets/imageCollection/gardens/gardens-japanese_1920.jpg"),
     segments: createEmptySegments(),
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "mountains"
+    category: "gardens",
+  },
+  {
+    id: "mountains-fuji",
+    name: "Fujisan",
+    description:
+      "Der majestätische Mount Fuji mit schneebedecktem Gipfel über einem stillen See",
+    previewSource: require("@/assets/imageCollection/mountains/mountains-fuji_640.jpg"),
+    fullSource: require("@/assets/imageCollection/mountains/mountains-fuji_1920.jpg"),
+    segments: createEmptySegments(),
+    progress: 0,
+    isComplete: false,
+    isFavorite: false,
+    category: "mountains",
   },
   {
     id: "lakes-1",
@@ -37,7 +51,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "lakes"
+    category: "lakes",
   },
   {
     id: "forests-1",
@@ -49,7 +63,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "forests"
+    category: "forests",
   },
   {
     id: "beaches-1",
@@ -61,7 +75,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "beaches"
+    category: "beaches",
   },
   {
     id: "sunsets-1",
@@ -73,7 +87,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "sunsets"
+    category: "sunsets",
   },
   {
     id: "winter-1",
@@ -85,7 +99,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "winter"
+    category: "winter",
   },
   {
     id: "mountains-2",
@@ -97,7 +111,7 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "mountains"
+    category: "mountains",
   },
   {
     id: "lakes-2",
@@ -109,8 +123,8 @@ export const initialLandscapes: Landscape[] = [
     progress: 0,
     isComplete: false,
     isFavorite: false,
-    category: "lakes"
-  }
+    category: "lakes",
+  },
 ];
 
 /**
@@ -121,20 +135,20 @@ export const initialLandscapes: Landscape[] = [
  */
 export const getDefaultCollectionState = () => {
   const landscapes: Record<string, Landscape> = {};
-  
+
   // Konvertiere Array in ein Record-Objekt und markiere das erste Bild als freigeschaltet
   initialLandscapes.forEach((landscape, index) => {
     if (index === 0) {
       // Das erste Bild vollständig freischalten
       const now = new Date().toISOString();
-      
+
       // Alle Segmente als freigeschaltet markieren
       const unlockedSegments = Array.from({ length: 9 }, (_, segmentIndex) => ({
         id: segmentIndex,
         isUnlocked: true,
-        unlockedAt: now
+        unlockedAt: now,
       }));
-      
+
       // Kopiere das Landschaftsobjekt und aktualisiere die Eigenschaften
       landscapes[landscape.id] = {
         ...landscape,
@@ -142,43 +156,49 @@ export const getDefaultCollectionState = () => {
         progress: 9,
         isComplete: true,
         isFavorite: true, // Als Favorit markieren
-        completedAt: now
+        completedAt: now,
       };
     } else if (index === 1) {
       // Das ZWEITE Bild fast vollständig freischalten - nur ein Segment bleibt übrig
       const now = new Date().toISOString();
-      
+
       // Alle Segmente außer einem als freigeschaltet markieren
       // Wir lassen nur das letzte Segment (Index 8) unfreigeschaltet
-      const almostUnlockedSegments = Array.from({ length: 9 }, (_, segmentIndex) => ({
-        id: segmentIndex,
-        isUnlocked: segmentIndex < 8, // Die ersten 8 Segmente freischalten
-        unlockedAt: segmentIndex < 8 ? now : undefined
-      }));
-      
+      const almostUnlockedSegments = Array.from(
+        { length: 9 },
+        (_, segmentIndex) => ({
+          id: segmentIndex,
+          isUnlocked: segmentIndex < 8, // Die ersten 8 Segmente freischalten
+          unlockedAt: segmentIndex < 8 ? now : undefined,
+        })
+      );
+
       // Kopiere das Landschaftsobjekt und aktualisiere die Eigenschaften
       landscapes[landscape.id] = {
         ...landscape,
         segments: almostUnlockedSegments,
         progress: 8, // 8 von 9 Segmenten sind bereits freigeschaltet
         isComplete: false,
-        isFavorite: false
+        isFavorite: false,
       };
     } else {
       // Alle anderen Bilder bleiben unverändert
       landscapes[landscape.id] = landscape;
     }
   });
-  
+
   // Als aktuelles Bild das ZWEITE Bild setzen (Index 1)
   // So beginnt der Nutzer mit der Freischaltung des zweiten Bildes
-  const currentImageId = initialLandscapes.length > 1 ? initialLandscapes[1].id : initialLandscapes[0].id;
-  
+  const currentImageId =
+    initialLandscapes.length > 1
+      ? initialLandscapes[1].id
+      : initialLandscapes[0].id;
+
   return {
     landscapes,
     favorites: [initialLandscapes[0].id], // Das erste Bild als Favorit hinzufügen
     currentImageId, // Das zweite Bild als aktuelles Bild setzen
     lastUsedFavoriteIndex: 0,
-    lastChangedDate: new Date().toISOString()
+    lastChangedDate: new Date().toISOString(),
   };
 };

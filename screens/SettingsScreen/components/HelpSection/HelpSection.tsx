@@ -86,7 +86,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           <Text
             style={[styles.actionTitle, { color: colors.textPrimary }]}
           >
-            Wie man spielt
+            Wie spielt man?
           </Text>
         </View>
         <Feather

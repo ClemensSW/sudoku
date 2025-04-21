@@ -1,5 +1,6 @@
+// components/GameCompletionModal/components/StreakDisplay/StreakDisplay.tsx
 import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ViewStyle } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -19,12 +20,14 @@ interface StreakDisplayProps {
   currentStreak: number;
   longestStreak: number;
   isRecord: boolean;
+  style?: ViewStyle; // Hier fügen wir die style-Prop hinzu
 }
 
 const StreakDisplay: React.FC<StreakDisplayProps> = ({
   currentStreak,
   longestStreak,
   isRecord,
+  style // Neue style-Prop
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -180,7 +183,8 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
       style={[
         styles.container,
         { backgroundColor: colors.surface},
-        containerAnimatedStyle
+        containerAnimatedStyle,
+        style // Hier wenden wir den zusätzlichen Style an
       ]}
       entering={FadeIn.duration(500)}
     >

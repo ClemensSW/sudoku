@@ -51,6 +51,13 @@ const LeistungScreen: React.FC = () => {
     router.push("/gallery");
   };
 
+  // Consistent card spacing helper function
+  const renderCard = (Component: React.ReactNode, isLast: boolean = false) => (
+    <View style={isLast ? null : styles.cardContainer}>
+      {Component}
+    </View>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
@@ -77,34 +84,37 @@ const LeistungScreen: React.FC = () => {
           ) : stats ? (
             <>
               {/* Level Progress */}
-              <LevelProgress 
-                stats={stats}
-                difficulty="medium" // Standard value as there's no current game
-                justCompleted={false} // No recently completed game
-              />
-              <View style={styles.sectionSpacer} />
+              {renderCard(
+                <LevelProgress 
+                  stats={stats}
+                  difficulty="medium" // Standard value as there's no current game
+                  justCompleted={false} // No recently completed game
+                />
+              )}
               
-              {/* Add PuzzleProgress component */}
-              {currentLandscape && (
-                <>
-                  <PuzzleProgress 
-                    landscape={currentLandscape}
-                    onViewGallery={handleViewGallery}
-                  />
-                  <View style={styles.sectionSpacer} />
-                </>
+              {/* Add PuzzleProgress component - only if landscape exists */}
+              {currentLandscape && renderCard(
+                <PuzzleProgress 
+                  landscape={currentLandscape}
+                  onViewGallery={handleViewGallery}
+                />
               )}
               
               {/* Streak Display - always show */}
-              <StreakDisplay 
-                currentStreak={stats.currentStreak}
-                longestStreak={stats.longestStreak}
-                isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
-              />
-              <View style={styles.sectionSpacer} />
+              {renderCard(
+                <StreakDisplay 
+                  currentStreak={stats.currentStreak}
+                  longestStreak={stats.longestStreak}
+                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+                  style={{ marginBottom: 16 }}
+                />
+              )}
               
-              {/* Best Times Chart */}
-              <BestTimesChart stats={stats} />
+              {/* Best Times Chart - last item, no bottom margin needed */}
+              {renderCard(
+                <BestTimesChart stats={stats} />,
+                true
+              )}
             </>
           ) : (
             <EmptyState />
@@ -126,8 +136,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 24,
   },
-  sectionSpacer: {
-    height: 16,
+  // New consistent card container with proper spacing
+  cardContainer: {
+    marginBottom: 12, // Consistent spacing between all cards
   },
 });
 

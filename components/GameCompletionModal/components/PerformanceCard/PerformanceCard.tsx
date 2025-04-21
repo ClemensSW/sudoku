@@ -59,19 +59,22 @@ const calculatePerformance = (
     return 100; // First time completing this difficulty
   }
 
-  // If current time is close to best time (90%-110% of best time)
-  const ratio = bestTime / currentTime;
+  // Calculate raw ratio - capped at 1.0 for better times
+  const ratio = Math.min(bestTime / currentTime, 1);
+  
+  // For times better than or equal to best time
   if (ratio >= 1) {
-    // If current time is better than or equal to best time
     return 100;
-  } else if (ratio >= 0.9) {
-    // Between 90% and 99%
+  }
+  
+  // For times within 90% of best time
+  if (ratio >= 0.9) {
     return Math.round(ratio * 100);
   }
-
-  // For worse performance, based on ratio
-  const performance = Math.max(60, Math.min(85, ratio * 90));
-  return Math.round(performance);
+  
+  // For worse times, use the actual percentage but with a lower bound
+  // This gives a more realistic representation while preventing extremely low values
+  return Math.round(Math.max(20, ratio * 100));
 };
 
 const PerformanceCard: React.FC<PerformanceCardProps> = ({

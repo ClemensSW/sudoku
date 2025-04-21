@@ -163,17 +163,7 @@ const StartScreen: React.FC = () => {
           </ImageBackground>
         </Animated.View>
         
-        {/* Gradient overlay at the bottom of the background for smooth transition */}
-        <LinearGradient
-          colors={[
-            'transparent',
-            theme.isDark ? 'rgba(38, 42, 53, 0.3)' : 'rgba(242, 244, 248, 0.3)',
-            theme.isDark ? 'rgba(38, 42, 53, 0.8)' : 'rgba(242, 244, 248, 1)',
-            theme.isDark ? 'rgba(38, 42, 53, 0.95)' : 'rgba(242, 244, 248, 1)',
-          ]}
-          style={styles.gradientOverlay}
-          locations={[0, 0.65, 0.85, 1.0]}
-        />
+        
       </View>
       
       {/* Bottom Button Container - Erhöhen des z-Index und Abstand zur Unterseite */}
@@ -190,11 +180,11 @@ const StartScreen: React.FC = () => {
         <LinearGradient
           colors={
             theme.isDark 
-              ? ['rgba(45, 55, 72, 0.8)', 'rgba(45, 55, 72, 1)', '#1E293B'] 
+              ? ['rgba(45, 55, 72, 0.8)', 'rgba(45, 55, 72, 01)', '#1E293B'] 
               : ['rgba(242, 244, 248, 0.8)', 'rgba(242, 244, 248, 1)', '#F2F4F8']
           }
           style={styles.bottomOverlay}
-          locations={[0, 0.42, 1.0]}
+          locations={[0, 0.2, 1.0]}
         />
         
         {/* Buttons Container */}

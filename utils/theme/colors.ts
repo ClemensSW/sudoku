@@ -49,9 +49,9 @@ const lightColors = {
   gridBold: "#B0C4D4", // Stärkere Abgrenzung für Blockgrenzen
 
   // Text
-  textPrimary: "#1A2C42", // Dunkleres Blau für bessere Lesbarkeit
-  textSecondary: "#4E6987", // Mittlerer Blaugrau-Ton
-  textLight: "#6B89A8", // Heller Blaugrau-Ton
+  textPrimary: "#1E2B2A", 
+  textSecondary: "#5C6A70", 
+  textLight: "#889599",
   textOnPrimary: "#FFFFFF",
   textCellNormal: "#2C3E50",
   textCellInitial: "#10253E", // Dunkler für besseren Kontrast

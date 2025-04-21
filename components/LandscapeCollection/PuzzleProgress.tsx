@@ -114,7 +114,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
   const getLockedSegmentStyle = () => {
     if (theme.isDark) {
       return {
-        backgroundColor: "rgba(18, 18, 18, 0.95)",
+        backgroundColor: "rgba(45, 55, 72, 0.95)",
         borderColor: "rgba(255, 255, 255, 0.3)",
       };
     } else {

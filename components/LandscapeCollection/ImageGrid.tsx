@@ -117,12 +117,15 @@ const LandscapeCard = React.memo(({
     return item.progress === 0 ? "lock" : "clock";
   }
   
+  // Prüfen, ob es sich um das spezielle zweite Bild handelt
+  const isSpecialPreunlockedImage = item.id === "lakes-1" && item.progress === 8;
+  
   // Get badge text based on state
   const getBadgeText = () => {
     if (item.isComplete || item.isFavorite) {
       return ""; // No text for complete items or favorites
     }
-    return `${item.progress}/9`;
+    return isSpecialPreunlockedImage ? "1 übrig" : `${item.progress}/9`;
   }
 
   return (
@@ -165,7 +168,11 @@ const LandscapeCard = React.memo(({
                     color: theme.isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
                     opacity: Math.min(0.6 + (item.progress * 0.07), 1),
                   }]}>
-                    {Math.floor(item.progress/9 * 100)}% enthüllt
+                    {isSpecialPreunlockedImage ? (
+                      "Fast fertig!"
+                    ) : (
+                      `${Math.floor(item.progress/9 * 100)}% enthüllt`
+                    )}
                   </Text>
                 )}
               </View>

@@ -111,6 +111,9 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   // Don't show content if not visible or no landscape
   if (!visible || !landscape) return null;
   
+  // Prüfen, ob es sich um das spezielle zweite Bild handelt
+  const isSpecialPreunlockedImage = landscape.id === "lakes-1" && landscape.progress === 8;
+  
   return (
     <Animated.View 
       style={styles.overlay}
@@ -196,7 +199,11 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 />
                 
                 <Text style={styles.progressText}>
-                  {Math.floor(landscape.progress/9 * 100)}% enthüllt
+                  {isSpecialPreunlockedImage ? (
+                    "Fast fertig! Nur noch 1 Segment"
+                  ) : (
+                    `${Math.floor(landscape.progress/9 * 100)}% enthüllt`
+                  )}
                 </Text>
                 
                 <View style={styles.progressBarContainer}>
@@ -211,7 +218,11 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 </View>
                 
                 <Text style={styles.progressHint}>
-                  Löse weitere Sudokus, um das Bild freizuschalten
+                  {isSpecialPreunlockedImage ? (
+                    "Löse ein Sudoku, um das letzte Segment freizuschalten"
+                  ) : (
+                    "Löse weitere Sudokus, um das Bild freizuschalten"
+                  )}
                 </Text>
               </View>
             </View>
@@ -247,6 +258,14 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                   <>
                     <Feather name="check-circle" size={14} color="#FFFFFF" />
                     <Text style={styles.metaText}>Komplett</Text>
+                  </>
+                ) : isSpecialPreunlockedImage ? (
+                  <>
+                    <Feather name="unlock" size={14} color="#FFFFFF" />
+                    {/* Angepasster Text für das spezielle Bild */}
+                    <Text style={styles.metaProgressText}>
+                      Noch 1
+                    </Text>
                   </>
                 ) : (
                   <>

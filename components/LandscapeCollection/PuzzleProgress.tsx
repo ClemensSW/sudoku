@@ -181,6 +181,9 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     );
   };
   
+  // Prüfen, ob es sich um das spezielle zweite Bild handelt (lakes-1)
+  const isSpecialPreunlockedImage = landscape.id === "lakes-1" && landscape.progress === 8;
+  
   return (
     <Animated.View
       style={[
@@ -260,7 +263,13 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
       {/* Progress indicator */}
       <View style={styles.progressTextContainer}>
         <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-          {landscape.progress}/9 Segmente freigeschaltet
+          {landscape.isComplete ? (
+            "Vollständig freigeschaltet"
+          ) : isSpecialPreunlockedImage ? (
+            "Löse ein Sudoku, um das Bild freizuschalten"
+          ) : (
+            `${landscape.progress}/9 Segmente freigeschaltet`
+          )}
         </Text>
         
         {/* Progress bar */}

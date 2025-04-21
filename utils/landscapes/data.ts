@@ -43,8 +43,8 @@ export const initialLandscapes: Landscape[] = [
     id: "forests-1",
     name: "Nebelwald",
     description: "Mystischer Wald im Morgennebel",
-    previewSource: require("@/assets/landscapes/kenrokuen-garden-9511300_1920.jpg"),
-    fullSource: require("@/assets/landscapes/kenrokuen-garden-9511300_1920.jpg"),
+    previewSource: require("@/assets/landscapes/landscape-4484408_1920.jpg"),
+    fullSource: require("@/assets/landscapes/landscape-4484408_1920.jpg"),
     segments: createEmptySegments(),
     progress: 0,
     isComplete: false,
@@ -117,6 +117,7 @@ export const initialLandscapes: Landscape[] = [
  * Standard-Initialzustand der Landschaftssammlung
  * Das erste Bild wird automatisch vollständig freigeschaltet und als Favorit markiert
  * Das zweite Bild wird zum aktuellen Bild für die weitere Freischaltung
+ * und hat bereits 8 von 9 Segmenten freigeschaltet
  */
 export const getDefaultCollectionState = () => {
   const landscapes: Record<string, Landscape> = {};
@@ -142,6 +143,26 @@ export const getDefaultCollectionState = () => {
         isComplete: true,
         isFavorite: true, // Als Favorit markieren
         completedAt: now
+      };
+    } else if (index === 1) {
+      // Das ZWEITE Bild fast vollständig freischalten - nur ein Segment bleibt übrig
+      const now = new Date().toISOString();
+      
+      // Alle Segmente außer einem als freigeschaltet markieren
+      // Wir lassen nur das letzte Segment (Index 8) unfreigeschaltet
+      const almostUnlockedSegments = Array.from({ length: 9 }, (_, segmentIndex) => ({
+        id: segmentIndex,
+        isUnlocked: segmentIndex < 8, // Die ersten 8 Segmente freischalten
+        unlockedAt: segmentIndex < 8 ? now : undefined
+      }));
+      
+      // Kopiere das Landschaftsobjekt und aktualisiere die Eigenschaften
+      landscapes[landscape.id] = {
+        ...landscape,
+        segments: almostUnlockedSegments,
+        progress: 8, // 8 von 9 Segmenten sind bereits freigeschaltet
+        isComplete: false,
+        isFavorite: false
       };
     } else {
       // Alle anderen Bilder bleiben unverändert

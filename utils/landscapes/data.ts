@@ -17,9 +17,9 @@ const createEmptySegments = (): LandscapeSegment[] => {
 export const initialLandscapes: Landscape[] = [
   {
     id: "gardens-japanese",
-    name: "Herbstlicher Teegarten",
+    name: "Teegarten",
     description:
-      "Traditionelles japanisches Teehaus unter leuchtend roten Ahornbäumen in der Abenddämmerung",
+      "Traditionelles japanisches Teehaus unter leuchtend roten Ahornbäumen",
     previewSource: require("@/assets/imageCollection/gardens/gardens-japanese_640.jpg"),
     fullSource: require("@/assets/imageCollection/gardens/gardens-japanese_1920.jpg"),
     segments: createEmptySegments(),

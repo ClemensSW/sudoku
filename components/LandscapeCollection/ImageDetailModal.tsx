@@ -1,5 +1,13 @@
-import React, { useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, BackHandler } from "react-native";
+import React, { useEffect, useState } from "react";
+import { 
+  View, 
+  Text, 
+  Image, 
+  TouchableOpacity, 
+  BackHandler,
+  StatusBar,
+  Platform
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,12 +17,16 @@ import Animated, {
   FadeOut,
   SlideInUp,
   SlideOutDown,
+  Easing,
+  SharedValue
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Landscape } from "@/utils/landscapes/types";
-import styles from "./ImageDetailModal.styles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BlurView } from 'expo-blur'; // You may need to install this package
+import styles, { tagColors } from "./ImageDetailModal.styles";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -23,6 +35,41 @@ interface ImageDetailModalProps {
   onToggleFavorite?: (landscape: Landscape) => void;
 }
 
+// Tag component for reusability
+interface TagProps {
+  icon: string;
+  text: string;
+  type: keyof typeof tagColors;
+}
+
+const Tag: React.FC<TagProps> = ({ icon, text, type }) => {
+  const colors = tagColors[type];
+  
+  return (
+    <View 
+      style={[
+        styles.tag,
+        { backgroundColor: colors.background }
+      ]}
+    >
+      <Feather 
+        name={icon as any} 
+        size={14} 
+        color={colors.icon} 
+        style={styles.tagIcon} 
+      />
+      <Text 
+        style={[
+          styles.tagText,
+          { color: colors.text }
+        ]}
+      >
+        {text}
+      </Text>
+    </View>
+  );
+};
+
 const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   visible,
   landscape,
@@ -30,11 +77,31 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   onToggleFavorite
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors: themeColors } = theme;
+  const insets = useSafeAreaInsets();
+  
+  // States
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [statusBarHidden, setStatusBarHidden] = useState(false);
   
   // Animation values
   const heartScale = useSharedValue(1);
-  const contentOpacity = useSharedValue(0);
+  const headerOpacity = useSharedValue(1);
+  const footerOpacity = useSharedValue(1);
+  const imageScale = useSharedValue(1);
+  
+  // Hide status bar for immersive view
+  useEffect(() => {
+    if (visible) {
+      setStatusBarHidden(true);
+    } else {
+      setStatusBarHidden(false);
+    }
+    
+    return () => {
+      setStatusBarHidden(false);
+    };
+  }, [visible]);
   
   // Category mapping
   const getCategoryName = (category: string): string => {
@@ -76,6 +143,40 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     onToggleFavorite(landscape);
   };
   
+  // Toggle controls visibility on image tap
+  const toggleControls = () => {
+    const newVisibility = !controlsVisible;
+    setControlsVisible(newVisibility);
+    
+    // Animate header and footer
+    headerOpacity.value = withTiming(newVisibility ? 1 : 0, {
+      duration: 300,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1)
+    });
+    
+    footerOpacity.value = withTiming(newVisibility ? 1 : 0, {
+      duration: 300,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1)
+    });
+  };
+  
+  // Add zoom animation when opening image
+  useEffect(() => {
+    if (visible) {
+      // Start slightly zoomed out and zoom in
+      imageScale.value = 0.92;
+      imageScale.value = withTiming(1, {
+        duration: 400,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1)
+      });
+      
+      // Ensure controls are visible initially
+      setControlsVisible(true);
+      headerOpacity.value = 1;
+      footerOpacity.value = 1;
+    }
+  }, [visible]);
+  
   // Back handler
   useEffect(() => {
     if (!visible) return;
@@ -91,212 +192,301 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     return () => backHandler.remove();
   }, [visible, onClose]);
   
-  // Effect when visibility changes
-  useEffect(() => {
-    if (visible) {
-      contentOpacity.value = withTiming(1, { duration: 400 });
-    } else {
-      contentOpacity.value = withTiming(0, { duration: 300 });
-    }
-  }, [visible]);
-  
   // Animated styles
   const heartAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: heartScale.value }]
   }));
   
-  const contentAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value
+  const headerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: headerOpacity.value,
+    transform: [
+      { translateY: withTiming(headerOpacity.value === 0 ? -50 : 0, { duration: 300 }) }
+    ]
+  }));
+  
+  const footerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: footerOpacity.value,
+    transform: [
+      { translateY: withTiming(footerOpacity.value === 0 ? 50 : 0, { duration: 300 }) }
+    ]
+  }));
+  
+  const imageAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: imageScale.value }]
   }));
   
   // Don't show content if not visible or no landscape
   if (!visible || !landscape) return null;
   
-  // Prüfen, ob es sich um das spezielle zweite Bild handelt
+  // Check if it's the special pre-unlocked image
   const isSpecialPreunlockedImage = landscape.id === "lakes-1" && landscape.progress === 8;
   
+  // Render complete image view
+  const renderCompleteImage = () => (
+    <Animated.View style={[styles.imageContainer, imageAnimatedStyle]}>
+      <Image 
+        source={landscape.fullSource} 
+        style={styles.image}
+      />
+    </Animated.View>
+  );
+  
+  // Render placeholder for incomplete image
+  const renderIncompletePlaceholder = () => (
+    <View style={styles.placeholderContainer}>
+      {/* Blurred background preview */}
+      <Image 
+        source={landscape.fullSource} 
+        style={[
+          styles.blurredBackground, 
+          { opacity: Math.min(0.2 + (landscape.progress * 0.08), 0.7) }
+        ]}
+        blurRadius={25}
+      />
+      
+      {/* Grid overlay showing segments */}
+      <View style={styles.gridContainer}>
+        {landscape.segments.map((segment, index) => (
+          <View 
+            key={`segment-${index}`}
+            style={[
+              styles.gridSegment,
+              !segment.isUnlocked && styles.lockedSegment
+            ]}
+          >
+            {!segment.isUnlocked && (
+              <Feather 
+                name="lock" 
+                size={20} 
+                color="rgba(255,255,255,0.5)" 
+              />
+            )}
+          </View>
+        ))}
+      </View>
+      
+      {/* Progress text below grid */}
+      <Text style={styles.progressText}>
+        {isSpecialPreunlockedImage 
+          ? "Fast fertig! Nur noch 1 Segment" 
+          : `${Math.floor(landscape.progress/9 * 100)}% enthüllt`
+        }
+      </Text>
+      
+      {/* Progress bar */}
+      <View style={styles.progressBarContainer}>
+        <View 
+          style={[
+            styles.progressBar,
+            { 
+              width: `${(landscape.progress/9) * 100}%`,
+              backgroundColor: themeColors.primary 
+            }
+          ]} 
+        />
+      </View>
+      
+      {/* Hint text */}
+      <Text style={styles.hintText}>
+        {isSpecialPreunlockedImage
+          ? "Löse ein Sudoku, um das letzte Segment freizuschalten"
+          : "Löse weitere Sudokus, um das Bild vollständig freizuschalten"
+        }
+      </Text>
+    </View>
+  );
+  
+  // Render header with controls
+  const renderHeader = () => (
+    <Animated.View 
+      style={[
+        styles.headerContainer,
+        { paddingTop: insets.top },
+        headerAnimatedStyle
+      ]}
+    >
+      {/* Backdrop effect - platform specific */}
+      {Platform.OS === 'ios' ? (
+        <BlurView 
+          intensity={60}
+          tint="dark"
+          style={styles.headerBlur}
+          pointerEvents="none"
+        />
+      ) : (
+        <LinearGradient
+          colors={[
+            'rgba(0,0,0,0.8)', 
+            'rgba(0,0,0,0.4)', 
+            'transparent'
+          ]}
+          style={styles.headerGradient}
+          pointerEvents="none"
+        />
+      )}
+      
+      {/* Header content */}
+      <View style={styles.headerContent}>
+        {/* Back button */}
+        <TouchableOpacity
+          style={styles.controlButton}
+          onPress={onClose}
+          activeOpacity={0.8}
+        >
+          <Feather name="arrow-left" size={22} color="#FFFFFF" />
+        </TouchableOpacity>
+        
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {landscape.name}
+          </Text>
+        </View>
+        
+        {/* Favorites button (only for complete images) */}
+        {landscape.isComplete ? (
+          <Animated.View style={heartAnimatedStyle}>
+            <TouchableOpacity
+              style={styles.controlButton}
+              onPress={handleToggleFavorite}
+              activeOpacity={0.8}
+            >
+              <Feather
+                name={landscape.isFavorite ? "heart" : "heart"}
+                size={22}
+                color={landscape.isFavorite ? "#FF3868" : "#FFFFFF"}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        ) : (
+          // Placeholder to maintain layout
+          <View style={{ width: 40 }} />
+        )}
+      </View>
+    </Animated.View>
+  );
+  
+  // Render footer with metadata
+  const renderFooter = () => (
+    <Animated.View 
+      style={[
+        styles.footerContainer,
+        { paddingBottom: insets.bottom > 0 ? insets.bottom : 20 },
+        footerAnimatedStyle
+      ]}
+    >
+      {/* Backdrop effect - platform specific */}
+      {Platform.OS === 'ios' ? (
+        <BlurView 
+          intensity={60}
+          tint="dark"
+          style={styles.footerBlur}
+          pointerEvents="none"
+        />
+      ) : (
+        <LinearGradient
+          colors={[
+            'transparent', 
+            'rgba(0,0,0,0.6)', 
+            'rgba(0,0,0,0.9)'
+          ]}
+          style={styles.footerGradient}
+          pointerEvents="none"
+        />
+      )}
+      
+      {/* Footer content */}
+      <View style={styles.footerContent}>
+        {/* Title and description */}
+        <Text style={styles.title}>
+          {landscape.name}
+        </Text>
+        
+        <Text style={styles.description}>
+          {landscape.description}
+        </Text>
+        
+        {/* Tags */}
+        <View style={styles.tagsContainer}>
+          {/* Category tag */}
+          <Tag 
+            icon="image" 
+            text={getCategoryName(landscape.category)}
+            type="category"
+          />
+          
+          {/* Status tag */}
+          {landscape.isComplete ? (
+            <Tag 
+              icon="check-circle" 
+              text="Komplett"
+              type="complete"
+            />
+          ) : isSpecialPreunlockedImage ? (
+            <Tag 
+              icon="clock" 
+              text="Fast fertig"
+              type="almostComplete"
+            />
+          ) : (
+            <Tag 
+              icon="clock" 
+              text={`${landscape.progress}/9`}
+              type="inProgress"
+            />
+          )}
+          
+          {/* Favorite tag */}
+          {landscape.isFavorite && (
+            <Tag 
+              icon="heart" 
+              text="Favorit"
+              type="favorite"
+            />
+          )}
+          
+          {/* Date tag */}
+          {landscape.isComplete && landscape.completedAt && (
+            <Tag 
+              icon="calendar" 
+              text={formatDate(landscape.completedAt)}
+              type="date"
+            />
+          )}
+        </View>
+      </View>
+    </Animated.View>
+  );
+
   return (
     <Animated.View 
       style={styles.overlay}
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(200)}
     >
-      {/* Background */}
-      <Animated.View 
-        style={[
-          styles.backdrop,
-          { backgroundColor: colors.backdropColor }
-        ]}
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(200)}
-      />
+      {/* Update status bar */}
+      <StatusBar hidden={statusBarHidden} />
       
-      <Animated.View
-        style={styles.modalContainer}
-        entering={SlideInUp.springify().damping(15)}
-        exiting={SlideOutDown.duration(200)}
-      >
-        {/* Header with gradient for better readability */}
-        <LinearGradient
-          colors={["rgba(0,0,0,0.7)", "transparent"]}
-          style={styles.headerGradient}
-        />
-        
-        <Animated.View 
-          style={[styles.header, contentAnimatedStyle]}
+      {/* Main container */}
+      <View style={styles.container}>
+        {/* Image area - Touchable to toggle controls */}
+        <TouchableOpacity 
+          activeOpacity={1}
+          style={{ flex: 1 }}
+          onPress={toggleControls}
         >
-          {/* Close button */}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-          >
-            <Feather name="x" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          
-          {/* Favorites button (only for complete images) */}
-          {landscape.isComplete && (
-            <Animated.View style={heartAnimatedStyle}>
-              <TouchableOpacity
-                style={styles.favoriteButton}
-                onPress={handleToggleFavorite}
-              >
-                <Feather
-                  name={landscape.isFavorite ? "heart" : "heart"}
-                  size={24}
-                  color={landscape.isFavorite ? colors.error : "#FFFFFF"}
-                />
-              </TouchableOpacity>
-            </Animated.View>
-          )}
-        </Animated.View>
+          {landscape.isComplete 
+            ? renderCompleteImage() 
+            : renderIncompletePlaceholder()
+          }
+        </TouchableOpacity>
         
-        {/* Main image area - mit angepasster Logik für unvollständig freigeschaltete Bilder */}
-        <View style={styles.imageContainer}>
-          {landscape.isComplete ? (
-            /* Vollständig freigeschaltetes Bild normal anzeigen */
-            <Image 
-              source={landscape.fullSource} 
-              style={styles.image}
-            />
-          ) : (
-            /* Für unvollständig freigeschaltete Bilder einen stilisierten Platzhalter anzeigen */
-            <View style={styles.placeholderContainer}>
-              {/* Verschwommenes Hintergrundbild mit progressiver Opazität */}
-              <Image 
-                source={landscape.fullSource} 
-                style={[
-                  styles.blurredImage, 
-                  { opacity: Math.min(0.2 + (landscape.progress * 0.07), 0.6) }
-                ]} 
-                blurRadius={20}
-              />
-              
-              {/* Fortschrittsanzeige in der Mitte */}
-              <View style={styles.placeholderContent}>
-                <Feather 
-                  name="image" 
-                  size={48} 
-                  color="rgba(255, 255, 255, 0.6)" 
-                />
-                
-                <Text style={styles.progressText}>
-                  {isSpecialPreunlockedImage ? (
-                    "Fast fertig! Nur noch 1 Segment"
-                  ) : (
-                    `${Math.floor(landscape.progress/9 * 100)}% enthüllt`
-                  )}
-                </Text>
-                
-                <View style={styles.progressBarContainer}>
-                  <View style={styles.progressBarBackground}>
-                    <View 
-                      style={[
-                        styles.progressBarFill, 
-                        { width: `${(landscape.progress/9) * 100}%` }
-                      ]}
-                    />
-                  </View>
-                </View>
-                
-                <Text style={styles.progressHint}>
-                  {isSpecialPreunlockedImage ? (
-                    "Löse ein Sudoku, um das letzte Segment freizuschalten"
-                  ) : (
-                    "Löse weitere Sudokus, um das Bild freizuschalten"
-                  )}
-                </Text>
-              </View>
-            </View>
-          )}
-        </View>
+        {/* Header with controls */}
+        {renderHeader()}
         
-        {/* Info panel at bottom with gradient for better readability */}
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
-          style={styles.infoGradient}
-        />
-        
-        <Animated.View 
-          style={[styles.infoPanel, contentAnimatedStyle]}
-        >
-          <View style={styles.infoContent}>
-            <Text style={styles.title}>{landscape.name}</Text>
-            <Text style={styles.description}>{landscape.description}</Text>
-            
-            {/* Metadata */}
-            <View style={styles.metaContainer}>
-              {/* Category */}
-              <View style={styles.metaItem}>
-                <Feather name="image" size={14} color="#FFFFFF" />
-                <Text style={styles.metaText}>
-                  {getCategoryName(landscape.category)}
-                </Text>
-              </View>
-              
-              {/* Progress or status */}
-              <View style={styles.metaItem}>
-                {landscape.isComplete ? (
-                  <>
-                    <Feather name="check-circle" size={14} color="#FFFFFF" />
-                    <Text style={styles.metaText}>Komplett</Text>
-                  </>
-                ) : isSpecialPreunlockedImage ? (
-                  <>
-                    <Feather name="unlock" size={14} color="#FFFFFF" />
-                    {/* Angepasster Text für das spezielle Bild */}
-                    <Text style={styles.metaProgressText}>
-                      Noch 1
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Feather name="unlock" size={14} color="#FFFFFF" />
-                    {/* Hier progressText zu metaProgressText geändert */}
-                    <Text style={styles.metaProgressText}>
-                      {landscape.progress}/9
-                    </Text>
-                  </>
-                )}
-              </View>
-              
-              {/* Only show for favorites */}
-              {landscape.isFavorite && (
-                <View style={styles.metaItem}>
-                  <Feather name="heart" size={14} color="#FFFFFF" />
-                  <Text style={styles.metaText}>Favorit</Text>
-                </View>
-              )}
-            </View>
-            
-            {/* Unlock date for complete images */}
-            {landscape.isComplete && landscape.completedAt && (
-              <Text style={styles.completionDate}>
-                Freigeschaltet am {formatDate(landscape.completedAt)}
-              </Text>
-            )}
-          </View>
-        </Animated.View>
-      </Animated.View>
+        {/* Footer with metadata */}
+        {renderFooter()}
+      </View>
     </Animated.View>
   );
 };

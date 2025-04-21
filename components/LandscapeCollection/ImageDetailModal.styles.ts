@@ -1,70 +1,60 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 const { width, height } = Dimensions.get("window");
 
+// Tag colors - vibrant, modern palette
+export const tagColors = {
+  category: {
+    background: "rgba(94, 114, 228, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  },
+  complete: {
+    background: "rgba(45, 206, 137, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  },
+  inProgress: {
+    background: "rgba(251, 99, 64, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  },
+  almostComplete: {
+    background: "rgba(255, 214, 0, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  },
+  favorite: {
+    background: "rgba(245, 54, 92, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  },
+  date: {
+    background: "rgba(136, 152, 170, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
+  }
+};
+
 export default StyleSheet.create({
-  // Modal-Overlays
+  // Main containers
   overlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    // Hintergrundfarbe wird dynamisch über props gesetzt
-  },
-  
-  // Modal-Container
-  modalContainer: {
-    width: "100%", 
-    height: "100%",
-    justifyContent: "space-between",
-  },
-  
-  // Header-Bereich
-  header: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: spacing.md,
-    zIndex: 10,
+    bottom: 0,
+    backgroundColor: "#000000",
+    zIndex: 2000,
   },
   
-  headerGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 100,
-    zIndex: 5,
+  container: {
+    flex: 1,
+    backgroundColor: "#000000",
   },
   
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  
-  favoriteButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  
-  // Hauptbild-Bereich
+  // Image Container and Styles
   imageContainer: {
     flex: 1,
     justifyContent: "center",
@@ -77,130 +67,101 @@ export default StyleSheet.create({
     resizeMode: "contain",
   },
   
-  // Neue Stile für den Platzhalter
-  placeholderContainer: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  
-  blurredImage: {
+  // Header Styles
+  headerContainer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  
-  placeholderContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.xl,
-    borderRadius: radius.xl,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    width: "80%",
-    maxWidth: 320,
-  },
-  
-  progressText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: spacing.md,
-  },
-  
-  progressBarContainer: {
-    width: "100%",
-    marginTop: spacing.md,
-  },
-  
-  progressBarBackground: {
-    width: "100%",
-    height: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  
-  progressBarFill: {
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 4,
-  },
-  
-  progressHint: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: spacing.md,
-  },
-  
-  // Fortschritts-Anzeige für unvollständige Bilder
-  progressOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-  },
-  
-  // Grid-Overlay für Segmente
-  gridOverlay: {
-    position: "absolute",
-    top: "15%",  // Zentriert im Bildschirm
-    left: "10%",
-    right: "10%",
-    height: width * 0.8, // Quadratisches Raster
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  
-  segment: {
-    width: "33.33%",
-    height: "33.33%",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  
-  unlockedSegment: {
-    // Keine zusätzlichen Styles für freigeschaltete Segmente
-  },
-  
-  lockedSegment: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  
-  // Info-Panel am Boden
-  infoPanel: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: spacing.lg,
     zIndex: 10,
   },
   
-  infoGradient: {
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    position: "relative",
+    zIndex: 10,
+  },
+  
+  headerBlur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  
+  headerGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    zIndex: 1,
+  },
+  
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginHorizontal: spacing.md,
+  },
+  
+  // Control Buttons
+  controlButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backdropFilter: Platform.OS === "ios" ? "blur(12px)" : undefined,
+  },
+  
+  // Footer Styles
+  footerContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 150,
-    zIndex: 5,
+    zIndex: 10,
   },
   
-  infoContent: {
-    marginBottom: spacing.xl, // Mehr Platz für sichere Bereiche auf Geräten
+  footerContent: {
+    padding: spacing.lg,
+    position: "relative",
+    zIndex: 10,
   },
   
+  footerBlur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  
+  footerGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    zIndex: 1,
+  },
+  
+  // Landscape Info
   title: {
     fontSize: 22,
     fontWeight: "700",
@@ -208,52 +169,114 @@ export default StyleSheet.create({
     marginBottom: spacing.xs,
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  
-  description: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    marginBottom: spacing.md,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
   
-  // Metadaten (Kategorie, Status, etc.)
-  metaContainer: {
+  description: {
+    fontSize: 15,
+    color: "rgba(255, 255, 255, 0.85)",
+    marginBottom: spacing.md,
+    lineHeight: 22,
+  },
+  
+  // Modern Tags Container
+  tagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: spacing.xs,
+  },
+  
+  tag: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xxs + 2,
+    borderRadius: 20,
+    marginRight: spacing.xs,
+    marginBottom: spacing.xs,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: spacing.md,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: radius.sm,
+  tagIcon: {
+    marginRight: 6,
   },
   
-  metaText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    marginLeft: 4,
-  },
-  
-  // Umbenannt von progressText zu metaProgressText, um doppelte Namen zu vermeiden
-  metaProgressText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    marginLeft: 4,
+  tagText: {
+    fontSize: 13,
     fontWeight: "600",
   },
   
-  // Status-Indikator
-  completionDate: {
+  // Incomplete Image Placeholder
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#121212",
+  },
+  
+  blurredBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+  
+  // Segments Grid
+  gridContainer: {
+    width: width * 0.8,
+    height: width * 0.8,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+  
+  gridSegment: {
+    width: "33.33%",
+    height: "33.33%",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  lockedSegment: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  
+  // Progress Indicators
+  progressText: {
+    marginTop: spacing.lg,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  
+  progressBarContainer: {
+    width: width * 0.6,
+    height: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 4,
+    marginTop: spacing.md,
+    overflow: "hidden",
+  },
+  
+  progressBar: {
+    height: "100%",
+    borderRadius: 4,
+  },
+  
+  hintText: {
+    marginTop: spacing.md,
     fontSize: 14,
     color: "rgba(255, 255, 255, 0.7)",
-    marginTop: spacing.sm,
+    textAlign: "center",
+    maxWidth: "80%",
   },
 });

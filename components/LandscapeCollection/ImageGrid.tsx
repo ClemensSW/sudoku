@@ -87,6 +87,7 @@ const LandscapeCard = React.memo(({
       beaches: "Strände",
       winter: "Winter",
       sunsets: "Sonnenuntergänge",
+      gardens: "Gärten",
     };
     return categories[category] || category;
   };

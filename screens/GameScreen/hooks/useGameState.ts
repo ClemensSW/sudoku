@@ -176,15 +176,20 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       // Combined error check: either rule violation or wrong solution
       const isErrorMove = isRuleViolation || isSolutionViolation;
 
-      // If number was successfully set, remove it as a note in related cells
+      // If number was successfully set
       if (updatedBoard[row][col].value === number && previousValue !== number) {
-        // Update notes in related cells
-        let boardWithUpdatedNotes = removeNoteFromRelatedCells(
-          updatedBoard,
-          row,
-          col,
-          number
-        );
+        let boardWithUpdatedNotes = updatedBoard;
+        
+        // Nur Notizen entfernen, wenn die Zahl richtig ist ODER wenn "Fehler anzeigen" deaktiviert ist
+        if (!isErrorMove || !showMistakes) {
+          // Update notes in related cells
+          boardWithUpdatedNotes = removeNoteFromRelatedCells(
+            updatedBoard,
+            row,
+            col,
+            number
+          );
+        }
 
         // If the number doesn't match the solution, mark it as invalid
         if (isSolutionViolation) {

@@ -9,6 +9,8 @@ import {
   boardToNumberGrid,
   clearCellValue,
   toggleCellNote,
+  getRelatedCells,
+  cloneBoard,
 } from "@/utils/sudoku";
 import { triggerHaptic } from "@/utils/haptics";
 
@@ -157,6 +159,39 @@ export const useDuoGameState = (
       checkPlayerCompletion();
     }
   }, [board]);
+
+  // NEUE FUNKTION: Entfernt Notizen in allen relevanten Zellen
+  const removeNotesFromRelatedCells = useCallback(
+    (
+      board: SudokuBoardType, 
+      row: number, 
+      col: number, 
+      value: number
+    ): SudokuBoardType => {
+      // Board klonen für Immutability
+      const newBoard = cloneBoard(board);
+      
+      // Alle verwandten Zellen ermitteln (Zeile, Spalte, Block)
+      const relatedCells = getRelatedCells(row, col);
+      
+      // Für jede verwandte Zelle
+      for (const cell of relatedCells) {
+        const { row: r, col: c } = cell;
+        
+        // Wenn die Zelle leer ist und Notizen hat
+        if (newBoard[r][c].value === 0 && newBoard[r][c].notes.length > 0) {
+          // Entferne den Wert aus den Notizen
+          const noteIndex = newBoard[r][c].notes.indexOf(value);
+          if (noteIndex >= 0) {
+            newBoard[r][c].notes.splice(noteIndex, 1);
+          }
+        }
+      }
+      
+      return newBoard;
+    },
+    []
+  );
 
   // Handle player lost due to too many errors
   const handlePlayerLost = useCallback((player: 1 | 2) => {
@@ -319,14 +354,24 @@ export const useDuoGameState = (
       // Check if the value matches the solution
       const isCorrectSolution = solution[row][col] === number;
 
-      // Update the board with the entered number
-      const updatedBoard = [...board];
+      // Create a copy of the board with new value
+      let updatedBoard = [...board];
       updatedBoard[row][col] = {
         ...board[row][col],
         value: number,
         // Mark as invalid if either against rules or not matching solution
         isValid: isValidByRules && isCorrectSolution,
       };
+
+      // NEUE LOGIK: Entferne Notizen in ALLEN relevanten Zellen, wenn die Antwort korrekt ist
+      if (isCorrectSolution) {
+        updatedBoard = removeNotesFromRelatedCells(
+          updatedBoard,
+          row,
+          col,
+          number
+        );
+      }
 
       setBoard(updatedBoard);
 
@@ -378,7 +423,7 @@ export const useDuoGameState = (
     },
     [board, player1Cell, player2Cell, player1Complete, player2Complete, 
      player1NoteMode, player2NoteMode, solution, getCellOwner, 
-     player1Errors, player2Errors, maxErrors, handlePlayerLost]
+     player1Errors, player2Errors, maxErrors, handlePlayerLost, removeNotesFromRelatedCells]
   );
 
   // Handle clear button
@@ -494,12 +539,20 @@ export const useDuoGameState = (
       // Provide hint by filling with correct value
       const correctValue = solution[row][col];
 
-      const updatedBoard = [...board];
+      let updatedBoard = [...board];
       updatedBoard[row][col] = {
         ...board[row][col],
         value: correctValue,
         isValid: true,
       };
+
+      // NEUE LOGIK: Entferne Notizen in ALLEN relevanten Zellen, da Hinweise immer korrekt sind
+      updatedBoard = removeNotesFromRelatedCells(
+        updatedBoard,
+        row,
+        col,
+        correctValue
+      );
 
       setBoard(updatedBoard);
 
@@ -514,7 +567,7 @@ export const useDuoGameState = (
     },
     [board, player1Cell, player2Cell, player1Complete, player2Complete, 
      player1Hints, player2Hints, solution, getCellOwner,
-     player1Errors, player2Errors, maxErrors]
+     player1Errors, player2Errors, maxErrors, removeNotesFromRelatedCells]
   );
 
   // Handle time update

@@ -120,8 +120,7 @@ const LandscapeCard = React.memo(
     };
 
     // Prüfen, ob es sich um das spezielle zweite Bild handelt
-    const isSpecialPreunlockedImage =
-      item.id === "lakes-1" && item.progress === 8;
+    const isSpecialPreunlockedImage = item.progress === 8;
 
     // Get badge text based on state
     const getBadgeText = () => {

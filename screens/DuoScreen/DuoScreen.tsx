@@ -166,7 +166,7 @@ const DuoScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.isDark ? "#1A202C" : colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       {/* Background decoration */}
@@ -222,7 +222,7 @@ const DuoScreen: React.FC = () => {
                 <TouchableOpacity
                   style={[
                     styles.startButton,
-                    { backgroundColor: colors.primary },
+                    { backgroundColor: "#4A7D78" },
                   ]}
                   onPress={handleStartGame}
                   activeOpacity={0.8}

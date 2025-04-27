@@ -215,8 +215,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   if (!visible || !landscape) return null;
 
   // Check if it's the special pre-unlocked image
-  const isSpecialPreunlockedImage =
-    landscape.id === "lakes-1" && landscape.progress === 8;
+  const isSpecialPreunlockedImage = landscape.progress === 8;
 
   // Render complete image view
   const renderCompleteImage = () => (

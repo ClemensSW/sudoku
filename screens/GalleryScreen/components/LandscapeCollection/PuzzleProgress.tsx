@@ -180,9 +180,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     );
   };
 
-  // Prüfen, ob es sich um das spezielle zweite Bild handelt (lakes-1)
-  const isSpecialPreunlockedImage =
-    landscape.id === "lakes-1" && landscape.progress === 8;
+  const isSpecialPreunlockedImage = landscape.progress === 8
 
   return (
     <Animated.View

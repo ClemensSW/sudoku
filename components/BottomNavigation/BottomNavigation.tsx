@@ -15,6 +15,16 @@ const BottomNavigation: React.FC = () => {
   const { colors } = theme;
   const insets = useSafeAreaInsets();
 
+  // Function to get the active tab color based on tab name
+  const getActiveTabColor = (tabName: string): string => {
+    // Use teal color specifically for "Duo" tab
+    if (tabName === "Duo") {
+      return "#4A7D78";
+    }
+    // Default primary color for other tabs
+    return colors.primary;
+  };
+
   const tabs = [
     {
       name: "Sudoku",
@@ -60,6 +70,9 @@ const BottomNavigation: React.FC = () => {
           tab.path === "/"
             ? pathname === "/" || pathname === "/index"
             : pathname === tab.path;
+        
+        // Get the appropriate color for this tab when active
+        const activeColor = getActiveTabColor(tab.name);
 
         return (
           <TouchableOpacity
@@ -72,13 +85,13 @@ const BottomNavigation: React.FC = () => {
               <Feather
                 name={tab.icon as any}
                 size={22}
-                color={isActive ? colors.primary : colors.textSecondary}
+                color={isActive ? activeColor : colors.textSecondary}
               />
               <Text
                 style={[
                   styles.tabLabel,
                   {
-                    color: isActive ? colors.primary : colors.textSecondary,
+                    color: isActive ? activeColor : colors.textSecondary,
                     fontWeight: isActive ? "600" : "400",
                   },
                 ]}
@@ -90,7 +103,7 @@ const BottomNavigation: React.FC = () => {
               <View
                 style={[
                   styles.activeIndicator,
-                  { backgroundColor: colors.primary },
+                  { backgroundColor: activeColor },
                 ]}
               />
             )}

@@ -82,7 +82,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
         style={styles.buttonContainer}
       >
         <TouchableOpacity
-          style={[styles.startButton, { backgroundColor: colors.primary }]}
+          style={[styles.startButton, { backgroundColor: "#4A7D78" }]}
           onPress={onStartGame}
           activeOpacity={0.8}
         >

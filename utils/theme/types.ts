@@ -2,7 +2,7 @@
 import { ColorValue } from "react-native";
 
 // Farbpalette
-export interface ThemeColors {
+interface ThemeColors {
   // Primary colors
   primary: string;
   primaryLight: string;
@@ -88,7 +88,7 @@ export interface ThemeColors {
 }
 
 // Spacing
-export interface ThemeSpacing {
+interface ThemeSpacing {
   none: number;
   xxs: number;
   xs: number;
@@ -125,7 +125,7 @@ export interface ThemeSpacing {
 }
 
 // Radius interface for border radius consistency
-export interface ThemeRadius {
+interface ThemeRadius {
   none: number;
   xs: number;
   sm: number;
@@ -137,7 +137,7 @@ export interface ThemeRadius {
 }
 
 // Shadow interface for elevation consistency
-export interface ThemeShadows {
+interface ThemeShadows {
   none: any;
   sm: any;
   md: any;
@@ -146,7 +146,7 @@ export interface ThemeShadows {
 }
 
 // Timing interface for animations
-export interface ThemeTiming {
+interface ThemeTiming {
   quick: number;
   normal: number;
   slow: number;

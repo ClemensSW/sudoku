@@ -8,61 +8,61 @@ import Animated, {
   withTiming,
   withSequence,
 } from "react-native-reanimated";
-import { CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
+import { CELL_SIZE } from "@/screens/GameScreen/components/SudokuBoard/SudokuBoard.styles";
 
 // Player color themes based on the provided color palette - VERBESSERTE KONTRASTE
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
     cellBackground: "#4A7D78", // Teal
-    textColor: "#F1F4FB",      // Light blue/white
+    textColor: "#F1F4FB", // Light blue/white
     selectedBackground: "#406B6D", // Darker teal
     initial: {
       background: "#3D6B67", // Slightly darker teal for initial cells
-      textColor: "#F1F4FB"   // Same text color
+      textColor: "#F1F4FB", // Same text color
     },
     notes: {
       textColor: "rgba(241, 244, 251, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
     },
     error: {
       background: "rgba(255, 100, 100, 0.4)", // Erhöhter Kontrast (0.3 -> 0.4)
-      textColor: "#FFD5D5"  // Light red
-    }
+      textColor: "#FFD5D5", // Light red
+    },
   },
   // Player 2 (top)
   2: {
     cellBackground: "#F3EFE3", // Light beige
-    textColor: "#5B5D6E",      // Dark blue-gray
+    textColor: "#5B5D6E", // Dark blue-gray
     selectedBackground: "#E6E0C5", // Lighter beige
     initial: {
       background: "#E8E4D8", // Slightly darker beige for initial cells
-      textColor: "#5B5D6E"   // Same text color
+      textColor: "#5B5D6E", // Same text color
     },
     notes: {
       textColor: "rgba(91, 93, 110, 0.95)", // Erhöhter Kontrast (0.8 -> 0.95)
     },
     error: {
       background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
-      textColor: "#BB5555"  // Darker red
-    }
+      textColor: "#BB5555", // Darker red
+    },
   },
   // Neutral cell (middle)
   0: {
     cellBackground: "#E0E8E7", // Medium light neutral color
-    textColor: "#2D3045",      // Very dark blue-gray
+    textColor: "#2D3045", // Very dark blue-gray
     selectedBackground: "#C5D1CF", // Slightly darker neutral
     initial: {
       background: "#D0D8D7", // Dunklerer Farbton (D5DDDC -> D0D8D7)
-      textColor: "#2D3045"   // Same text color
+      textColor: "#2D3045", // Same text color
     },
     notes: {
       textColor: "rgba(45, 48, 69, 0.95)", // Erhöhter Kontrast (0.8 -> 0.95)
     },
     error: {
       background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
-      textColor: "#BB5555"  // Darker red
-    }
-  }
+      textColor: "#BB5555", // Darker red
+    },
+  },
 };
 
 interface DuoGameCellProps {
@@ -85,7 +85,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   rotateForPlayer2 = true,
 }) => {
   const theme = PLAYER_THEMES[player];
-  
+
   // Animation value for scale
   const scale = useSharedValue(1);
 
@@ -156,7 +156,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
               // For player 2 (top), rotate text if needed
               player === 2 && rotateForPlayer2 && styles.rotatedText,
               // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern in Notizen
-              shouldUnderlineNumber(num) && styles.underlinedNumber
+              shouldUnderlineNumber(num) && styles.underlinedNumber,
             ]}
           >
             {cell.notes.includes(num) ? num : ""}
@@ -170,14 +170,17 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   const shouldRotateContent = player === 2 && rotateForPlayer2;
 
   // Schatten für mittlere Zelle
-  const middleCellStyles = player === 0 ? {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-    zIndex: 5, // Höherer Z-Index für mittlere Zelle
-  } : {};
+  const middleCellStyles =
+    player === 0
+      ? {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.2,
+          shadowRadius: 2,
+          elevation: 3,
+          zIndex: 5, // Höherer Z-Index für mittlere Zelle
+        }
+      : {};
 
   return (
     <TouchableOpacity
@@ -189,31 +192,32 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
         // Verbesserter Rahmen für alle Zellen
         {
           borderWidth: 0.5,
-          borderColor: player === 0 
-            ? "rgba(0, 0, 0, 0.3)" // Dunklerer Rahmen für mittlere Zelle
-            : "rgba(0, 0, 0, 0.2)"  // Dunklerer Rahmen als ursprünglich
-        }
+          borderColor:
+            player === 0
+              ? "rgba(0, 0, 0, 0.3)" // Dunklerer Rahmen für mittlere Zelle
+              : "rgba(0, 0, 0, 0.2)", // Dunklerer Rahmen als ursprünglich
+        },
       ]}
       onPress={() => onPress(row, col)}
       disabled={cell.isInitial}
       activeOpacity={cell.isInitial ? 1 : 0.7}
     >
-      <Animated.View 
+      <Animated.View
         style={[
           styles.cellContent,
           animatedStyle,
-          shouldRotateContent && styles.rotatedContent
+          shouldRotateContent && styles.rotatedContent,
         ]}
       >
         {cell.value !== 0 ? (
-          <Text 
+          <Text
             style={[
               styles.cellText,
               { color: getTextColor() },
               cell.isInitial && styles.initialText,
               shouldRotateContent && styles.rotatedText,
               // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern
-              shouldUnderlineNumber(cell.value) && styles.underlinedNumber
+              shouldUnderlineNumber(cell.value) && styles.underlinedNumber,
             ]}
           >
             {cell.value}
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
   // Helper for 6 and 9 when rotated
   underlinedNumber: {
     textDecorationLine: "underline",
-  }
+  },
 });
 
 export default React.memo(DuoGameCell);

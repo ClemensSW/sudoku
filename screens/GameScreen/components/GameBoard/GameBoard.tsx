@@ -1,7 +1,7 @@
 // screens/GameScreen/components/GameBoard/GameBoard.tsx
 import React from "react";
 import { View } from "react-native";
-import SudokuBoard from "@/components/SudokuBoard/SudokuBoard";
+import SudokuBoard from "@/screens/GameScreen/components/SudokuBoard/SudokuBoard";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
 import styles from "./GameBoard.styles";
 

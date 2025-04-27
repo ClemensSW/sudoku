@@ -2,7 +2,7 @@
 import React from "react";
 import { View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import NumberPad from "@/components/NumberPad/NumberPad";
+import NumberPad from "@/screens/GameScreen/components/NumberPad/NumberPad";
 import "./GameControls.css";
 
 interface GameControlsProps {

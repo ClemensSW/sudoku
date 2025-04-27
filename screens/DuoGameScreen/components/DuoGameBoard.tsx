@@ -11,14 +11,17 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
 import DuoGameCell from "./DuoGameCell";
-import { BOARD_SIZE as SHARED_BOARD_SIZE, CELL_SIZE as SHARED_CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
+import {
+  BOARD_SIZE as SHARED_BOARD_SIZE,
+  CELL_SIZE as SHARED_CELL_SIZE,
+} from "@/screens/GameScreen/components/SudokuBoard/SudokuBoard.styles";
 
 // Use the same constants as the regular SudokuBoard for consistency
 const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
 const CELL_SIZE = SHARED_CELL_SIZE;
 
-// Player color themes - verbesserte Sichtbarkeit 
+// Player color themes - verbesserte Sichtbarkeit
 const PLAYER_COLORS = {
   1: "#4A7D78", // Teal - Player 1 (bottom)
   2: "#F3EFE3", // Light beige - Player 2 (top)
@@ -64,13 +67,10 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   // Update animation based on loading state
   React.useEffect(() => {
     // Scale slightly down when loading
-    scale.value = withTiming(
-      isLoading ? 0.97 : 1,
-      {
-        duration: 300,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      }
-    );
+    scale.value = withTiming(isLoading ? 0.97 : 1, {
+      duration: 300,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
   }, [isLoading]);
 
   // Animated styles
@@ -84,7 +84,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   // Handle cell press and determine which player's area it belongs to
   const handleCellPress = (row: number, col: number) => {
     const playerNum = getCellOwner(row, col);
-    
+
     if (playerNum === 0) {
       // For the middle cell, let both players press it
       // Determine which player based on which one has an active selection
@@ -105,12 +105,12 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   const renderCell = (row: number, col: number) => {
     const cellData = board[row][col];
     const playerNum = getCellOwner(row, col);
-    
-    const isSelectedByPlayer1 = 
+
+    const isSelectedByPlayer1 =
       player1Cell?.row === row && player1Cell?.col === col;
-    const isSelectedByPlayer2 = 
+    const isSelectedByPlayer2 =
       player2Cell?.row === row && player2Cell?.col === col;
-    
+
     return (
       <DuoGameCell
         key={`cell-${row}-${col}`}
@@ -137,17 +137,17 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
           {/* Player Areas Background with Gradient Transition */}
           <View style={styles.playerAreasContainer}>
             {/* Player 2 (Top) Area Background */}
-            <View 
+            <View
               style={[
-                styles.playerAreaBackground, 
-                { 
+                styles.playerAreaBackground,
+                {
                   top: 0,
                   height: topAreaHeight,
-                  backgroundColor: PLAYER_COLORS[2] 
-                }
-              ]} 
+                  backgroundColor: PLAYER_COLORS[2],
+                },
+              ]}
             />
-            
+
             {/* Gradient Transition in the middle */}
             <LinearGradient
               colors={[PLAYER_COLORS[2], PLAYER_COLORS[1]]}
@@ -155,36 +155,36 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                 styles.gradientTransition,
                 {
                   top: topAreaHeight,
-                  height: gradientHeight
-                }
+                  height: gradientHeight,
+                },
               ]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
             />
-            
+
             {/* Player 1 (Bottom) Area Background */}
-            <View 
+            <View
               style={[
-                styles.playerAreaBackground, 
-                { 
+                styles.playerAreaBackground,
+                {
                   bottom: 0,
                   height: bottomAreaHeight,
-                  backgroundColor: PLAYER_COLORS[1] 
-                }
-              ]} 
+                  backgroundColor: PLAYER_COLORS[1],
+                },
+              ]}
             />
-            
+
             {/* Middle Cell Background - mit verbessertem Schatten */}
-            <View 
+            <View
               style={[
                 styles.middleCellBackground,
                 {
                   left: CELL_SIZE * 4,
-                  top: topAreaHeight + (gradientHeight/2) - (CELL_SIZE/2), // Center in the gradient area
+                  top: topAreaHeight + gradientHeight / 2 - CELL_SIZE / 2, // Center in the gradient area
                   width: CELL_SIZE,
-                  height: CELL_SIZE
-                }
-              ]} 
+                  height: CELL_SIZE,
+                },
+              ]}
             />
           </View>
 
@@ -204,7 +204,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                 { top: CELL_SIZE * 6 },
               ]}
             />
-            
+
             {/* Vertical grid lines - verbesserte Sichtbarkeit */}
             <View
               style={[
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
   },
-  
+
   // Container für die Spielerbereiche
   playerAreasContainer: {
     position: "absolute",
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     zIndex: 0, // Unter dem Grid
   },
-  
+
   // Gemeinsame Eigenschaften für beide Spielerbereiche
   playerAreaBackground: {
     position: "absolute",
@@ -287,14 +287,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  
+
   // Gradient für die Mittelreihe (Zeile 4)
   gradientTransition: {
     position: "absolute",
     width: "100%",
     zIndex: 1,
   },
-  
+
   // Separater Hintergrund für die mittlere Zelle - verbessert mit Schatten
   middleCellBackground: {
     position: "absolute",
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  
+
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,

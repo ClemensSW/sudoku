@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { CELL_SIZE } from "@/components/SudokuBoard/SudokuBoard.styles";
+import { CELL_SIZE } from "@/screens/GameScreen/components/SudokuBoard/SudokuBoard.styles";
 
 export default StyleSheet.create({
   // Hauptcontainer für die Zelle

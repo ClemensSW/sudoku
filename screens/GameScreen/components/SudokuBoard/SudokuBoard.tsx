@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
-import SudokuCell from "@/components/SudokuCell/SudokuCell";
+import SudokuCell from "@/screens/GameScreen/components/SudokuCell/SudokuCell";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -34,7 +34,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
-  
+
   const [isReady, setIsReady] = useState(false);
 
   // Animation values

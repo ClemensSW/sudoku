@@ -30,7 +30,7 @@ const lightColors = {
   cellInitialTextColor: "#1967D2",
   cellSelectedTextColor: "#FFFFFF",
   cellErrorTextColor: "#D93025",
-  cellSameValueTextColor: "#1967D2",
+  cellSameValueTextColor: "#AECBFA",
   cellNotesTextColor: "rgba(60, 64, 67, 0.75)",
 
   // Grid
@@ -106,7 +106,7 @@ const darkColors = {
   cellInitialTextColor: "#AECBFA",
   cellSelectedTextColor: "#202124",
   cellErrorTextColor: "#F28B82",
-  cellSameValueTextColor: "#8AB4F8",
+  cellSameValueTextColor: "#4285F4",
   cellNotesTextColor: "rgba(232, 234, 237, 0.7)",
 
   // Grid

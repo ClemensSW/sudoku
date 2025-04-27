@@ -3,9 +3,7 @@ import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
-    width: "105%",
-    paddingHorizontal: 8,
-    marginVertical: spacing.md,
+    width: "108%", // Increased width to match the game board
     alignSelf: "center",
   },
 
@@ -80,6 +78,6 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 2, // Reduzierter Abstand (0.5%)
+    paddingHorizontal: 1, // Reduced padding between buttons
   },
 });

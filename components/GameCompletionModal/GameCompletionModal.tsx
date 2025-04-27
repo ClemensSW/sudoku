@@ -16,7 +16,7 @@ import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
-import { PuzzleProgress } from "@/components/LandscapeCollection";
+import { PuzzleProgress } from "@/screens/GalleryScreen/components/LandscapeCollection";
 
 // Import der zentralen XP-Berechnungsfunktion
 import { calculateXpGain } from "./components/LevelProgress/utils/levelData";

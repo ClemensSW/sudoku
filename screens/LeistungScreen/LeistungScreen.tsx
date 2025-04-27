@@ -13,7 +13,7 @@ import LevelProgress from "@/components/GameCompletionModal/components/LevelProg
 import StreakDisplay from "@/components/GameCompletionModal/components/StreakDisplay/StreakDisplay";
 import BestTimesChart from "./components/BestTimesChart/BestTimesChart";
 // Import PuzzleProgress component and useLandscapes hook
-import { PuzzleProgress } from "@/components/LandscapeCollection";
+import { PuzzleProgress } from "@/screens/GalleryScreen/components/LandscapeCollection";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 
 const LeistungScreen: React.FC = () => {

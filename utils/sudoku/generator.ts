@@ -313,7 +313,7 @@ export function generatePuzzle(
     difficulty !== 'expert';  // Bei Expert verzichten wir auf die Eindeutigkeitsprüfung für Geschwindigkeit
     
   // Für Expert-Schwierigkeitsgrad selektive Prüfung (nicht immer)
-  const expertRandomCheck = difficulty === 'expert' && Math.random() < 0.5;
+  const expertRandomCheck = difficulty === 'expert' && Math.random() < 1;
   
   // Führe die Eindeutigkeitsprüfung durch, wenn erforderlich
   const checkUniqueness = shouldCheckUniqueness || expertRandomCheck;

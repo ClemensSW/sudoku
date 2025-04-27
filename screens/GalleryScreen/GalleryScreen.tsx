@@ -16,7 +16,10 @@ import {
   LandscapeFilter,
 } from "@/screens/GalleryScreen/utils/landscapes/types";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
-import { ImageGrid, ImageDetailModal } from "@/components/LandscapeCollection";
+import {
+  ImageGrid,
+  ImageDetailModal,
+} from "@/screens/GalleryScreen/components/LandscapeCollection";
 import Header from "@/components/Header/Header";
 import { useNavigation } from "@/utils/NavigationContext";
 import { StatusBar } from "expo-status-bar";
@@ -219,11 +222,11 @@ const GalleryScreen: React.FC = () => {
           styles.tabsContainerWrapper,
           {
             backgroundColor: theme.isDark
-              ? "rgba(30, 41, 59, 0.95)"
-              : colors.card,
+              ? "rgba(41, 42, 45, 0.95)" // Leicht transparentes surface (#292A2D)
+              : "rgba(255, 255, 255, 0.95)", // Leicht transparentes Weiß
             shadowColor: theme.isDark
-              ? "rgba(0, 0, 0, 0.5)"
-              : "rgba(0, 0, 0, 0.1)",
+              ? colors.shadow // "rgba(0, 0, 0, 0.3)"
+              : colors.shadow, // "rgba(60, 64, 67, 0.10)"
           },
         ]}
       >
@@ -247,7 +250,11 @@ const GalleryScreen: React.FC = () => {
                   styles.tabButton,
                   isActive && [
                     styles.activeTabButton,
-                    { backgroundColor: `${colors.primary}10` },
+                    {
+                      backgroundColor: theme.isDark
+                        ? "rgba(138, 180, 248, 0.12)" // Leicht transparentes primaryLight
+                        : "rgba(66, 133, 244, 0.08)", // Subtile Primärfarbe
+                    },
                   ],
                 ]}
                 onPress={() => handleTabPress(tab.id)}
@@ -285,10 +292,7 @@ const GalleryScreen: React.FC = () => {
     );
   };
 
-  // Get a suitable background color based on the theme
-  const backgroundColor = theme.isDark
-    ? "#1A202C" // Dark blue-gray for dark theme
-    : "#F5F7FA"; // Light gray for light theme
+  const backgroundColor = colors.background;
 
   return (
     <View

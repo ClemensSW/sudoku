@@ -3,14 +3,13 @@ import { GameStats } from '@/utils/storage';
 import { Difficulty } from '@/utils/sudoku';
 import { LevelInfo, PathInfo, LevelThreshold } from './types';
 
-// Definition der Pfade
 export const paths: PathInfo[] = [
   {
     id: "fundamentals",
     name: "Pfad der Grundlagen",
     description: "Entdecke die Muster, die das Fundament des Sudoku bilden.",
     levelRange: [0, 4],
-    color: "#4A7D78", // Primäre Teal-Farbe
+    color: "#4285F4", // Google-Blau - Basis und Vertrauen
     completionMessage: "Du hast die Grundlagen gemeistert. Die tieferen Muster des Sudoku erwarten deine Entdeckung."
   },
   {
@@ -18,7 +17,7 @@ export const paths: PathInfo[] = [
     name: "Pfad der Erkenntnis",
     description: "Vertiefe dein Verständnis für die Beziehungen zwischen den Zahlen.",
     levelRange: [5, 9],
-    color: "#6CACA6", // Helleres Teal
+    color: "#34A853", // Google-Grün - Wachstum und Erkenntnis
     completionMessage: "Deine Erkenntnisse haben sich vertieft. Nun beginnt die Reise zur wahren Meisterschaft."
   },
   {
@@ -26,7 +25,7 @@ export const paths: PathInfo[] = [
     name: "Pfad der Meisterschaft",
     description: "Verfeinere deine Techniken und entwickle deine eigene Intuition.",
     levelRange: [10, 14],
-    color: "#F6AD37", // Warmes Orange
+    color: "#FBBC05", // Google-Gelb - Optimismus und Meisterschaft
     completionMessage: "Du beherrschst nun die Kunst des Sudoku. Der Weg zur Weisheit liegt vor dir."
   },
   {
@@ -34,7 +33,7 @@ export const paths: PathInfo[] = [
     name: "Pfad der Weisheit",
     description: "Erkenne die tieferen Zusammenhänge und erreiche eine neue Ebene des Verständnisses.",
     levelRange: [15, 19],
-    color: "#9333EA", // Tiefes Lila
+    color: "#EA4335", // Google-Rot - Kraft und Weisheit
     completionMessage: "Deine Weisheit leuchtet. Der Pfad der Transzendenz erwartet dich."
   },
   {
@@ -42,7 +41,7 @@ export const paths: PathInfo[] = [
     name: "Pfad der Transzendenz",
     description: "Erlebe den Fluss des Spiels, wo Intuition und Logik eins werden.",
     levelRange: [20, 50],
-    color: "#2563EB", // Tiefes Blau
+    color: "#673AB7", // Tiefes Violett - Spiritualität und Transzendenz
     completionMessage: "Du hast die höchste Ebene erreicht. Das Rätsel und du seid eins geworden."
   }
 ];

@@ -76,7 +76,7 @@ function AppContainer() {
 
   // Feste Hintergrundfarbe basierend auf dem Theme
   const containerStyle = {
-    backgroundColor: theme.isDark ? "#0F172A" : "#F8FAFC", // Fest kodierte Farben anstatt theme.colors.background
+    backgroundColor: theme.isDark ? "#202124" : "#F8F9FA", // Fest kodierte Farben anstatt theme.colors.background
     flex: 1,
   };
 

@@ -1,10 +1,13 @@
 // utils/storage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Difficulty } from '@/utils/sudoku';
+import { Difficulty } from "@/utils/sudoku";
 // XP-Berechnung importieren
-import { calculateXpGain } from '@/components/GameCompletionModal/components/LevelProgress/utils/levelData';
+import { calculateXpGain } from "@/components/GameCompletionModal/components/LevelProgress/utils/levelData";
 // Landschafts-Integration
-import { unlockNextSegment, saveUnlockEvent } from '@/utils/landscapes/storage';
+import {
+  unlockNextSegment,
+  saveUnlockEvent,
+} from "@/screens/GalleryScreen/utils/landscapes/storage";
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -59,7 +62,7 @@ const DEFAULT_STATS: GameStats = {
   currentStreak: 0,
   longestStreak: 0,
   totalXP: 0,
-  reachedMilestones: [] // NEU: Leeres Array für noch nicht erreichte Meilensteine
+  reachedMilestones: [], // NEU: Leeres Array für noch nicht erreichte Meilensteine
 };
 
 // Standard-Einstellungen
@@ -154,10 +157,14 @@ export const updateStatsAfterGame = async (
     }
 
     const currentStats = await loadStats();
-    
+
     // NEU: XP-Gewinn berechnen
-    const xpGain = won ? calculateXpGain(difficulty, timeElapsed, autoNotesUsed) : 0;
-    console.log(`XP gained: ${xpGain} (won: ${won}, difficulty: ${difficulty})`);
+    const xpGain = won
+      ? calculateXpGain(difficulty, timeElapsed, autoNotesUsed)
+      : 0;
+    console.log(
+      `XP gained: ${xpGain} (won: ${won}, difficulty: ${difficulty})`
+    );
 
     const updatedStats: GameStats = {
       ...currentStats,
@@ -171,7 +178,7 @@ export const updateStatsAfterGame = async (
       // NEU: XP direkt addieren
       totalXP: currentStats.totalXP + xpGain,
       // Behalte die erreichten Meilensteine (werden in LevelProgress aktualisiert)
-      reachedMilestones: currentStats.reachedMilestones || []
+      reachedMilestones: currentStats.reachedMilestones || [],
     };
 
     // Aktualisiere Bestzeit nur wenn das Spiel gewonnen wurde
@@ -206,7 +213,7 @@ export const updateStatsAfterGame = async (
       ) {
         updatedStats.bestTimeExpert = timeElapsed;
       }
-      
+
       // NEU: Landschafts-Feature - schalte das nächste Segment frei wenn gewonnen
       try {
         // Hier wird das nächste Segment freigeschaltet
@@ -228,10 +235,12 @@ export const updateStatsAfterGame = async (
 };
 
 // Meilenstein als erreicht markieren
-export const markMilestoneReached = async (milestoneLevel: number): Promise<void> => {
+export const markMilestoneReached = async (
+  milestoneLevel: number
+): Promise<void> => {
   try {
     const stats = await loadStats();
-    
+
     // Prüfen, ob dieser Meilenstein bereits erreicht wurde
     if (!stats.reachedMilestones.includes(milestoneLevel)) {
       stats.reachedMilestones.push(milestoneLevel);

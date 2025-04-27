@@ -1,10 +1,6 @@
 // screens/LeistungScreen/LeistungScreen.tsx
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -18,7 +14,7 @@ import StreakDisplay from "@/components/GameCompletionModal/components/StreakDis
 import BestTimesChart from "./components/BestTimesChart/BestTimesChart";
 // Import PuzzleProgress component and useLandscapes hook
 import { PuzzleProgress } from "@/components/LandscapeCollection";
-import { useLandscapes } from "@/hooks/useLandscapes";
+import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 
 const LeistungScreen: React.FC = () => {
   const router = useRouter();
@@ -27,7 +23,7 @@ const LeistungScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Add the useLandscapes hook to get the current landscape
   const { currentLandscape } = useLandscapes();
 
@@ -45,7 +41,7 @@ const LeistungScreen: React.FC = () => {
 
     fetchStats();
   }, []);
-  
+
   // Handler for "View Gallery" button
   const handleViewGallery = () => {
     router.push("/gallery");
@@ -53,9 +49,7 @@ const LeistungScreen: React.FC = () => {
 
   // Consistent card spacing helper function
   const renderCard = (Component: React.ReactNode, isLast: boolean = false) => (
-    <View style={isLast ? null : styles.cardContainer}>
-      {Component}
-    </View>
+    <View style={isLast ? null : styles.cardContainer}>{Component}</View>
   );
 
   return (
@@ -63,19 +57,19 @@ const LeistungScreen: React.FC = () => {
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       <View style={{ flex: 1 }}>
-        <Header 
-          title="Meine Leistung" 
+        <Header
+          title="Meine Leistung"
           rightAction={{
             icon: "settings",
-            onPress: () => router.push("/settings")
+            onPress: () => router.push("/settings"),
           }}
         />
 
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={[
-            styles.scrollContent, 
-            { paddingBottom: Math.max(insets.bottom + 100, 120) }
+            styles.scrollContent,
+            { paddingBottom: Math.max(insets.bottom + 100, 120) },
           ]}
           showsVerticalScrollIndicator={false}
         >
@@ -85,36 +79,37 @@ const LeistungScreen: React.FC = () => {
             <>
               {/* Level Progress */}
               {renderCard(
-                <LevelProgress 
+                <LevelProgress
                   stats={stats}
                   difficulty="medium" // Standard value as there's no current game
                   justCompleted={false} // No recently completed game
                 />
               )}
-              
+
               {/* Add PuzzleProgress component - only if landscape exists */}
-              {currentLandscape && renderCard(
-                <PuzzleProgress 
-                  landscape={currentLandscape}
-                  onViewGallery={handleViewGallery}
-                />
-              )}
-              
+              {currentLandscape &&
+                renderCard(
+                  <PuzzleProgress
+                    landscape={currentLandscape}
+                    onViewGallery={handleViewGallery}
+                  />
+                )}
+
               {/* Streak Display - always show */}
               {renderCard(
-                <StreakDisplay 
+                <StreakDisplay
                   currentStreak={stats.currentStreak}
                   longestStreak={stats.longestStreak}
-                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+                  isRecord={
+                    stats.currentStreak === stats.longestStreak &&
+                    stats.longestStreak > 2
+                  }
                   style={{ marginBottom: 16 }}
                 />
               )}
-              
+
               {/* Best Times Chart - last item, no bottom margin needed */}
-              {renderCard(
-                <BestTimesChart stats={stats} />,
-                true
-              )}
+              {renderCard(<BestTimesChart stats={stats} />, true)}
             </>
           ) : (
             <EmptyState />

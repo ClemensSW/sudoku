@@ -28,8 +28,8 @@ import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
 import { triggerHaptic } from "@/utils/haptics";
-import { getFilteredLandscapes } from "@/utils/landscapes/storage";
-import { Landscape } from "@/utils/landscapes/types";
+import { getFilteredLandscapes } from "@/screens/GalleryScreen/utils/landscapes/storage";
+import { Landscape } from "@/screens/GalleryScreen/utils/landscapes/types";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,11 +41,14 @@ const StartScreen: React.FC = () => {
   const { setShowNavigation } = useNavigation();
 
   // State for background image
-  const [backgroundImage, setBackgroundImage] = useState<Landscape | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<Landscape | null>(
+    null
+  );
   const [isLoadingBg, setIsLoadingBg] = useState(true);
 
   // State for modals and game options
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
@@ -64,12 +67,12 @@ const StartScreen: React.FC = () => {
       try {
         // First try to get favorites
         let landscapes = await getFilteredLandscapes("favorites");
-        
+
         // If no favorites, try completed landscapes
         if (landscapes.length === 0) {
           landscapes = await getFilteredLandscapes("completed");
         }
-        
+
         // If we have landscapes, pick a random one
         if (landscapes.length > 0) {
           const randomIndex = Math.floor(Math.random() * landscapes.length);
@@ -81,7 +84,7 @@ const StartScreen: React.FC = () => {
         setIsLoadingBg(false);
       }
     };
-    
+
     loadRandomBackground();
   }, []);
 
@@ -104,7 +107,7 @@ const StartScreen: React.FC = () => {
     if (backgroundImage) {
       return backgroundImage.fullSource;
     }
-    
+
     // Fallback to default image
     return require("@/assets/images/background/kenrokuen-garden-9511300_1920.jpg");
   };
@@ -157,36 +160,42 @@ const StartScreen: React.FC = () => {
                 <ActivityIndicator size="large" color="#FFFFFF" />
               </View>
             )}
-            
+
             {/* Empty main content area */}
             <View style={[styles.safeArea, { paddingTop: insets.top }]}></View>
           </ImageBackground>
         </Animated.View>
-        
-        
       </View>
-      
+
       {/* Bottom Button Container - Erhöhen des z-Index und Abstand zur Unterseite */}
-      <View 
+      <View
         style={[
           styles.bottomContainer,
-          { 
+          {
             paddingBottom: Math.max(insets.bottom + 60, 76), // Mehr Abstand nach unten
             zIndex: 15, // Höherer z-Index als die Navbar
-          }
+          },
         ]}
       >
         {/* Gradient background for bottom container */}
         <LinearGradient
           colors={
-            theme.isDark 
-              ? ['rgba(45, 55, 72, 0.8)', 'rgba(45, 55, 72, 01)', '#1E293B'] 
-              : ['rgba(242, 244, 248, 0.8)', 'rgba(242, 244, 248, 1)', '#F2F4F8']
+            theme.isDark
+              ? [
+                  "rgba(32, 33, 36, 0.8)", // Halbtransparente Background-Farbe
+                  "rgba(41, 42, 45, 1)", // Fast undurchsichtige Surface-Farbe
+                  "#35363A", // Solide Card-Farbe als Abschluss
+                ]
+              : [
+                  "rgba(248, 249, 250, 0.8)", // Halbtransparente Background-Farbe
+                  "rgba(255, 255, 255, 1)", // Fast undurchsichtige Surface-Farbe
+                  "#FFFFFF", // Reines Weiß als Abschluss
+                ]
           }
           style={styles.bottomOverlay}
           locations={[0, 0.2, 1.0]}
         />
-        
+
         {/* Buttons Container */}
         <View style={styles.buttonsContainer}>
           {/* New Game Button */}
@@ -201,17 +210,17 @@ const StartScreen: React.FC = () => {
               <Text style={styles.startButtonText}>Neues Spiel</Text>
             </TouchableOpacity>
           </Animated.View>
-          
+
           {/* How To Play Button */}
           <TouchableOpacity
             style={styles.howToPlayButton}
             onPress={handleHowToPlayPress}
             activeOpacity={0.7}
           >
-            <Text 
+            <Text
               style={[
-                styles.howToPlayText, 
-                { color: theme.isDark ? '#FFFFFF' : '#1A2C42' }
+                styles.howToPlayText,
+                { color: theme.isDark ? "#FFFFFF" : "#1A2C42" },
               ]}
             >
               Wie spielt man?
@@ -243,36 +252,36 @@ const StartScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A', // Dark background color for any potential gaps
+    backgroundColor: "#0F172A", // Dark background color for any potential gaps
   },
   backgroundContainer: {
-    width: '100%',
-    position: 'relative',
+    width: "100%",
+    position: "relative",
     // Height is dynamically set to leave space for buttons while overlapping
   },
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   safeArea: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   // Gradient overlay for smooth transition
   gradientOverlay: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -281,11 +290,11 @@ const styles = StyleSheet.create({
   },
   // Bottom container - Fixed at bottom with a more premium look
   bottomContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderTopLeftRadius: 36, // More generous curve
     borderTopRightRadius: 36, // More generous curve
     // Enhanced shadow for premium feel
@@ -314,26 +323,26 @@ const styles = StyleSheet.create({
   },
   // Wrapper for animated button with improved layout
   buttonWrapper: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginBottom: 20, // More space between buttons
   },
   // Main "New Game" button with premium styling
   startButton: {
-    width: '100%',
+    width: "100%",
     maxWidth: 300, // Slightly wider
     height: 60, // Taller button
     borderRadius: 30, // Perfect semi-circle edges
-    overflow: 'hidden',
+    overflow: "hidden",
     // Enhanced shadow for more depth
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   startButtonText: {
     color: "#FFFFFF",

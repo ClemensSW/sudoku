@@ -11,8 +11,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { Landscape, LandscapeFilter } from "@/utils/landscapes/types";
-import { useLandscapes } from "@/hooks/useLandscapes";
+import {
+  Landscape,
+  LandscapeFilter,
+} from "@/screens/GalleryScreen/utils/landscapes/types";
+import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import { ImageGrid, ImageDetailModal } from "@/components/LandscapeCollection";
 import Header from "@/components/Header/Header";
 import { useNavigation } from "@/utils/NavigationContext";

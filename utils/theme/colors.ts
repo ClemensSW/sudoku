@@ -1,176 +1,155 @@
-// utils/theme/colors.ts
-// Modern color palette optimized for readability and aesthetics
+// utils/theme/colors.ts - Vollständig TypeScript-kompatibel
 
-// Light theme colors
+// Light Theme
 const lightColors = {
-  // Primary colors
-  primary: "#4A7D78", // Deine Teal-Primärfarbe beibehalten
-  primaryLight: "#F5F7FA", // Hellere Variante
-  primaryDark: "#3A6963", // Dunklere Variante
-  secondary: "#F05365", // Moderneres Pink/Rot für Akzente
+  // Primary Colors
+  primary: "#4285F4",       // Google-Blau: universal ansprechend
+  primaryLight: "#D2E3FC",  // Sanftes Hellblau
+  primaryDark: "#1967D2",   // Tieferes Blau für Kontraste
+  secondary: "#EA4335",     // Gedecktes Rot für Akzente
+  
+  // UI Elements
+  background: "#F8F9FA",    // Leicht getöntes Off-White
+  surface: "#FFFFFF",       // Reines Weiß
+  card: "#FFFFFF",          
+  boardBackground: "#F1F3F4", 
 
-  // UI elements - mehr Tiefe und Abgrenzung
-  background: "#E5E9EC", // Leicht getöntes Weiß für Hintergrund
-  surface: "#F0F3F6", // Reines Weiß für Karten und UI-Elemente
-  card: "#FFFFFF",
-  boardBackground: "#DCE0E4", // Leicht kühlerer Ton für Spielbrett
+  // Board (wichtig für Sudoku-Komponenten)
+  boardBackgroundColor: "#F1F3F4",
+  boardGridLineColor: "rgba(60, 64, 67, 0.15)", 
+  boardBorderColor: "rgba(60, 64, 67, 0.25)",
+  boardCellBorderColor: "rgba(60, 64, 67, 0.08)",
 
-  // Cell colors - verbesserte Unterscheidbarkeit
-  cellBackground: "#FFFFFF",
-  cellBackgroundInitial: "#EBF4F2", // Klar erkennbar aber dezent
-  cellBackgroundSelected: "#4A7D78", // Primärfarbe
-  cellBackgroundRelated: "#F0F7F7", // Leicht sichtbar aber nicht ablenkend
-  cellBackgroundError: "#FFECEE", // Subtiler Rot-Ton
-  cellBackgroundSuccess: "#E3F7EA", // Frischer Grün-Ton
-  cellBackgroundHint: "#FFF8E1", // Wärmeres Gelb für Hinweise
-  cellBackgroundSameValue: "#6CACA6", // Beibehaltung
-
-  // Board (neu hinzugefügt für Sudoku-Komponenten)
-  boardBackgroundColor: "#FFFFFF", // Helles Board für Light-Modus
-  boardGridLineColor: "rgba(0, 0, 0, 0.2)", // Dunkle Gridlinien
-  boardBorderColor: "rgba(0, 0, 0, 0.25)", // Dunklerer Außenrand
-  boardCellBorderColor: "rgba(0, 0, 0, 0.15)", // Subtile Zellränder
-
-  // Für Sudoku Cell (neu hinzugefügt)
-  cellSelectedBackground: "#4A7D78", // Primärfarbe für ausgewählte Zellen
-  cellRelatedBackground: "#F0F7F7", // Leicht sichtbar
-  cellErrorBackground: "rgba(229, 62, 62, 0.2)", // Rot mit Transparenz
-  cellHintBackground: "rgba(0, 0, 0, 0.1)",
-  cellSuccessBackground: "rgba(47, 175, 115, 0.2)", // Grün mit Transparenz
-  cellTextColor: "#1A2C42", // Dunkler Text für Light-Modus
-  cellInitialTextColor: "#10253E", // Dunklerer Text für Initial-Zellen
-  cellSelectedTextColor: "#FFFFFF", // Weißer Text auf ausgewähltem Hintergrund
-  cellErrorTextColor: "#E53E3E", // Rote Fehler-Textfarbe
-  cellSameValueTextColor: "#6CACA6", // Gleiche Farbe wie vorher
-  cellNotesTextColor: "rgba(26, 44, 66, 0.7)", // Dunklerer Text mit Transparenz
+  // Neue Cell Colors für SudokuCell
+  cellSelectedBackground: "#4285F4",
+  cellRelatedBackground: "rgba(66, 133, 244, 0.08)",
+  cellErrorBackground: "rgba(217, 48, 37, 0.08)",
+  cellHintBackground: "rgba(251, 188, 5, 0.12)",
+  cellSuccessBackground: "rgba(52, 168, 83, 0.08)",
+  cellTextColor: "#202124",
+  cellInitialTextColor: "#1967D2",
+  cellSelectedTextColor: "#FFFFFF",
+  cellErrorTextColor: "#D93025",
+  cellSameValueTextColor: "#1967D2",
+  cellNotesTextColor: "rgba(60, 64, 67, 0.75)",
 
   // Grid
-  gridLine: "#DDE5ED", // Deutlicherer Kontrast für bessere Lesbarkeit
-  gridBold: "#B0C4D4", // Stärkere Abgrenzung für Blockgrenzen
+  gridLine: "#E8EAED",
+  gridBold: "#DADCE0",
 
   // Text
-  textPrimary: "#1E2B2A", 
-  textSecondary: "#5C6A70", 
-  textLight: "#889599",
+  textPrimary: "#202124",
+  textSecondary: "#5F6368",
+  textLight: "#80868B",
   textOnPrimary: "#FFFFFF",
-  textCellNormal: "#2C3E50",
-  textCellInitial: "#10253E", // Dunkler für besseren Kontrast
+  textCellNormal: "#202124",
+  textCellInitial: "#1967D2",
   textCellSelected: "#FFFFFF",
-  textCellError: "#E53E3E",
-  textCellNotes: "#5C6BC0",
+  textCellError: "#D93025",
+  textCellNotes: "#5F6368",
 
   // UI elements
-  button: "#4A7D78", // Primärfarbe
+  button: "#4285F4",
   buttonText: "#FFFFFF",
-  buttonDisabled: "#DDE3EA", // Grauer als zuvor
-  buttonTextDisabled: "#A0AEC0",
-  buttonSuccess: "#2FAF73", // Kräftigeres Grün
-  buttonDanger: "#E53E3E",
+  buttonDisabled: "#E8EAED",
+  buttonTextDisabled: "#9AA0A6",
+  buttonSuccess: "#34A853",
+  buttonDanger: "#EA4335",
 
   // Status colors
-  success: "#2FAF73", // Kräftigeres Grün
-  error: "#E53E3E",
-  warning: "#F6AD37", // Wärmeres Orange
-  info: "#3182CE",
+  success: "#34A853",
+  error: "#EA4335",
+  warning: "#FBBC05",
+  info: "#4285F4",
 
   // Misc
-  border: "#E2E8F0",
-  divider: "#EDF2F7",
-  shadow: "rgba(0, 0, 0, 0.07)",
-  overlay: "rgba(0, 0, 0, 0.4)",
-  backdropColor: "#F0F3F6", // Leichtere Version für Light-Modus
+  border: "#DADCE0",
+  divider: "#E8EAED",
+  shadow: "rgba(60, 64, 67, 0.10)",
+  overlay: "rgba(60, 64, 67, 0.6)",
+  backdropColor: "rgba(248, 249, 250, 0.95)",
 
   // Number pad
-  numberPadButton: "#F0F7F7", // Leicht getönter Hintergrund
-  numberPadButtonText: "#1A2C42",
-  numberPadButtonSelected: "#4A7D78", // Primärfarbe
-  numberPadButtonTextSelected: "#FFFFFF",
+  numberPadButton: "#F1F3F4",
+  numberPadButtonText: "#202124",
+  numberPadButtonSelected: "#4285F4",
+  numberPadButtonTextSelected: "#FFFFFF"
 };
 
-// Dark theme optimized for eye comfort - mit den aktuellen Sudoku-Farben
+// Dark Theme
 const darkColors = {
-  // Primary colors
-  primary: "#4A7D78", // Neue Primärfarbe
-  primaryLight: "#6CACA6", // Hellere Variante
-  primaryDark: "#3A6963", // Dunklere Variante
-  secondary: "#F64A7A",
+  // Primary Colors
+  primary: "#8AB4F8",
+  primaryLight: "#AECBFA",
+  primaryDark: "#4285F4",
+  secondary: "#F6AEA9",
+  
+  // UI Elements
+  background: "#202124",
+  surface: "#292A2D",
+  card: "#35363A",
+  boardBackground: "#292A2D",
 
-  // UI elements
-  background: "#0F172A",
-  surface: "#1E293B",
-  card: "#2D3748",
-  boardBackground: "#1A202C",
+  // Board (wichtig für Sudoku-Komponenten)
+  boardBackgroundColor: "#292A2D",
+  boardGridLineColor: "rgba(232, 234, 237, 0.12)",
+  boardBorderColor: "rgba(232, 234, 237, 0.20)",
+  boardCellBorderColor: "rgba(232, 234, 237, 0.08)",
 
-  // Board (neu hinzugefügt für Sudoku-Komponenten)
-  boardBackgroundColor: "#1E2233", // Die beliebte dunkelgraue Hintergrundfarbe
-  boardGridLineColor: "rgba(255, 255, 255, 0.2)", // Subtile weiße Gridlinien
-  boardBorderColor: "rgba(255, 255, 255, 0.25)", // Subtiler weißer Außenrand
-  boardCellBorderColor: "rgba(255, 255, 255, 0.15)", // Noch subtilere weiße Zellränder
-
-  // Für Sudoku Cell (neu hinzugefügt)
-  cellSelectedBackground: "#4A7D78", // Die beliebte teal-Farbe
-  cellRelatedBackground: "rgba(255, 255, 255, 0.08)", // Sehr subtiler weißer Hintergrund
-  cellErrorBackground: "rgba(255, 70, 70, 0.3)", // Rot mit Transparenz
-  cellHintBackground: "rgba(255, 255, 255, 0.15)", // Weißer Hintergrund mit etwas mehr Deckkraft
-  cellSuccessBackground: "rgba(120, 220, 120, 0.2)", // Grün mit Transparenz
-  cellTextColor: "#FFFFFF", // Weiß
-  cellInitialTextColor: "#FFFFFF", // Fetteres Weiß für Anfangszahlen
-  cellSelectedTextColor: "#FFFFFF", // Weißer Text auf ausgewähltem Hintergrund
-  cellErrorTextColor: "#FF9A9A", // Rote Fehler-Textfarbe
-  cellSameValueTextColor: "#6CACA6", // Helles Teal für gleiche Werte
-  cellNotesTextColor: "rgba(255, 255, 255, 0.7)", // Weißer Text mit Transparenz
-
-  // Cell colors
-  cellBackground: "#2D3748",
-  cellBackgroundInitial: "#2C3B52",
-  cellBackgroundSelected: "#4A7D78", // Neue Primärfarbe
-  cellBackgroundRelated: "#1A237E70",
-  cellBackgroundError: "#B7191970",
-  cellBackgroundSuccess: "#1B5E2070",
-  cellBackgroundHint: "#F9A82570",
-  cellBackgroundSameValue: "#6CACA670", // Helleres Teal mit Transparenz
+  // Neue Cell Colors für SudokuCell
+  cellSelectedBackground: "#4285F4",
+  cellRelatedBackground: "rgba(138, 180, 248, 0.12)",
+  cellErrorBackground: "rgba(242, 139, 130, 0.18)",
+  cellHintBackground: "#rgba(250, 209, 101, 0.16)",
+  cellSuccessBackground: "rgba(129, 201, 149, 0.15)",
+  cellTextColor: "#E8EAED",
+  cellInitialTextColor: "#AECBFA",
+  cellSelectedTextColor: "#202124",
+  cellErrorTextColor: "#F28B82",
+  cellSameValueTextColor: "#8AB4F8",
+  cellNotesTextColor: "rgba(232, 234, 237, 0.7)",
 
   // Grid
-  gridLine: "#4A5568",
-  gridBold: "#A0AEC0",
+  gridLine: "#3C4043",
+  gridBold: "#5F6368",
 
   // Text
-  textPrimary: "#F7FAFC",
-  textSecondary: "#E2E8F0",
-  textLight: "#CBD5E0",
-  textOnPrimary: "#FFFFFF",
-  textCellNormal: "#F7FAFC",
-  textCellInitial: "#90CAF9",
-  textCellSelected: "#FFFFFF",
-  textCellError: "#FEB2B2",
-  textCellNotes: "#B794F4",
+  textPrimary: "#E8EAED",
+  textSecondary: "#9AA0A6",
+  textLight: "#80868B",
+  textOnPrimary: "#202124",
+  textCellNormal: "#E8EAED",
+  textCellInitial: "#AECBFA",
+  textCellSelected: "#202124",
+  textCellError: "#F28B82",
+  textCellNotes: "#9AA0A6",
 
   // UI elements
-  button: "#4A7D78", // Neue Primärfarbe
-  buttonText: "#FFFFFF",
-  buttonDisabled: "#4A5568",
-  buttonTextDisabled: "#A0AEC0",
-  buttonSuccess: "#48BB78",
-  buttonDanger: "#F56565",
+  button: "#8AB4F8",
+  buttonText: "#202124",
+  buttonDisabled: "#3C4043",
+  buttonTextDisabled: "#9AA0A6",
+  buttonSuccess: "#81C995",
+  buttonDanger: "#F28B82",
 
   // Status colors
-  success: "#48BB78",
-  error: "#F56565",
-  warning: "#ED8936",
-  info: "#4299E1",
+  success: "#81C995",
+  error: "#F28B82",
+  warning: "#FAD165",
+  info: "#8AB4F8",
 
   // Misc
-  border: "#4A5568",
-  divider: "#2D3748",
+  border: "#5F6368",
+  divider: "#3C4043",
   shadow: "rgba(0, 0, 0, 0.3)",
-  overlay: "rgba(0, 0, 0, 0.7)",
-  backdropColor: "rgba(30, 41, 59, 1)", // Dunklere Version für Dark-Modus
+  overlay: "rgba(0, 0, 0, 0.6)",
+  backdropColor: "rgba(32, 33, 36, 0.92)",
 
   // Number pad
-  numberPadButton: "#2D3748",
-  numberPadButtonText: "#F7FAFC",
-  numberPadButtonSelected: "#4A7D78", // Neue Primärfarbe
-  numberPadButtonTextSelected: "#FFFFFF",
+  numberPadButton: "#35363A",
+  numberPadButtonText: "#E8EAED",
+  numberPadButtonSelected: "#8AB4F8",
+  numberPadButtonTextSelected: "#202124"
 };
 
 // Export theme based on system preference or user selection

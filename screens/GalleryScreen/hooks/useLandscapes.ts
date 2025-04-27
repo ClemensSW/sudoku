@@ -1,13 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
-import { Landscape, LandscapeCollection, UnlockEvent } from "@/utils/landscapes/types";
+import {
+  Landscape,
+  LandscapeCollection,
+  UnlockEvent,
+} from "@/screens/GalleryScreen/utils/landscapes/types";
 import {
   loadLandscapeCollection,
   unlockNextSegment,
   toggleFavorite as toggleFavoriteStorage,
   getFilteredLandscapes,
   getCurrentLandscape,
-  getAndClearLastUnlockEvent
-} from "@/utils/landscapes/storage";
+  getAndClearLastUnlockEvent,
+} from "@/screens/GalleryScreen/utils/landscapes/storage";
 
 /**
  * Custom Hook für die Verwaltung der Landschaftssammlung
@@ -15,9 +19,13 @@ import {
 export const useLandscapes = (initialFilter = "all") => {
   // Zustände
   const [isLoading, setIsLoading] = useState(true);
-  const [collection, setCollection] = useState<LandscapeCollection | null>(null);
+  const [collection, setCollection] = useState<LandscapeCollection | null>(
+    null
+  );
   const [landscapes, setLandscapes] = useState<Landscape[]>([]);
-  const [currentLandscape, setCurrentLandscape] = useState<Landscape | null>(null);
+  const [currentLandscape, setCurrentLandscape] = useState<Landscape | null>(
+    null
+  );
   const [filter, setFilter] = useState(initialFilter);
   const [unlockEvent, setUnlockEvent] = useState<UnlockEvent | null>(null);
 
@@ -91,24 +99,30 @@ export const useLandscapes = (initialFilter = "all") => {
   }, [filter, loadCollection, loadCurrentLandscape, loadFilteredLandscapes]);
 
   // Favoriten-Status umschalten
-  const toggleFavorite = useCallback(async (landscapeId: string) => {
-    try {
-      const newStatus = await toggleFavoriteStorage(landscapeId);
-      // Aktualisiere die Daten
-      loadCollection();
-      loadFilteredLandscapes(filter);
-      return newStatus;
-    } catch (error) {
-      console.error("Fehler beim Umschalten des Favoriten-Status:", error);
-      return false;
-    }
-  }, [filter, loadCollection, loadFilteredLandscapes]);
+  const toggleFavorite = useCallback(
+    async (landscapeId: string) => {
+      try {
+        const newStatus = await toggleFavoriteStorage(landscapeId);
+        // Aktualisiere die Daten
+        loadCollection();
+        loadFilteredLandscapes(filter);
+        return newStatus;
+      } catch (error) {
+        console.error("Fehler beim Umschalten des Favoriten-Status:", error);
+        return false;
+      }
+    },
+    [filter, loadCollection, loadFilteredLandscapes]
+  );
 
   // Filter ändern
-  const changeFilter = useCallback((newFilter: string) => {
-    setFilter(newFilter);
-    loadFilteredLandscapes(newFilter);
-  }, [loadFilteredLandscapes]);
+  const changeFilter = useCallback(
+    (newFilter: string) => {
+      setFilter(newFilter);
+      loadFilteredLandscapes(newFilter);
+    },
+    [loadFilteredLandscapes]
+  );
 
   // Zurücksetzen des Unlock-Events
   const clearUnlockEvent = useCallback(() => {
@@ -134,6 +148,6 @@ export const useLandscapes = (initialFilter = "all") => {
     changeFilter,
     clearUnlockEvent,
     getLastUnlockEvent, // NEU: Funktion hinzugefügt
-    reload: loadCollection
+    reload: loadCollection,
   };
 };

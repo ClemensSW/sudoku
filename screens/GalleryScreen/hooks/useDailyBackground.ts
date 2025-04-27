@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import { Landscape } from "@/utils/landscapes/types";
-import { getDailyBackground } from "@/utils/landscapes/storage";
+import { Landscape } from "@/screens/GalleryScreen/utils/landscapes/types";
+import { getDailyBackground } from "@/screens/GalleryScreen/utils/landscapes/storage";
 
 /**
  * Custom Hook zum Verwalten des täglichen Hintergrundbildes auf der Startseite
  * Lädt automatisch ein freischaltetes Bild und rotiert täglich durch die Favoriten
  */
 export const useDailyBackground = () => {
-  const [backgroundImage, setBackgroundImage] = useState<Landscape | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<Landscape | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +17,7 @@ export const useDailyBackground = () => {
   const loadDailyBackground = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const image = await getDailyBackground();
       setBackgroundImage(image);
@@ -30,7 +32,7 @@ export const useDailyBackground = () => {
   // Lade das Hintergrundbild beim ersten Rendern
   useEffect(() => {
     loadDailyBackground();
-    
+
     // Optional: Prüfe regelmäßig auf Mitternachts-Übergang für Bildwechsel
     // Dies ist nur relevant, wenn die App über Mitternacht hinweg geöffnet bleibt
     const checkInterval = setInterval(() => {
@@ -40,7 +42,7 @@ export const useDailyBackground = () => {
         loadDailyBackground();
       }
     }, 60000); // Alle 60 Sekunden überprüfen
-    
+
     return () => clearInterval(checkInterval);
   }, [loadDailyBackground]);
 
@@ -48,6 +50,6 @@ export const useDailyBackground = () => {
     backgroundImage,
     isLoading,
     error,
-    reloadBackground: loadDailyBackground
+    reloadBackground: loadDailyBackground,
   };
 };

@@ -21,16 +21,7 @@ interface ThemeColors {
   boardGridLineColor: string;
   boardCellBorderColor: string;
 
-  // Cell colors
-  cellBackground: string;
-  cellBackgroundInitial: string;
-  cellBackgroundSelected: string;
-  cellBackgroundRelated: string;
-  cellBackgroundError: string;
-  cellBackgroundSuccess: string;
-  cellBackgroundHint: string;
-  cellBackgroundSameValue: string; // Added for same value highlighting
-
+  
   // Neue Zellenfarben für SudokuCell
   cellSelectedBackground: string;
   cellRelatedBackground: string;

@@ -1,7 +1,11 @@
 // screens/LeistungScreen/components/BestTimesChart/BestTimesChart.tsx
 import React from "react";
 import { View, Text } from "react-native";
-import Animated, { FadeIn, FadeInUp, FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeInUp,
+  FadeInDown,
+} from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
@@ -17,7 +21,8 @@ const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-    .toString().padStart(2, "0")}`;
+    .toString()
+    .padStart(2, "0")}`;
 };
 
 const getBestTime = (time: number): string => {
@@ -93,7 +98,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
     {
       key: "expert",
       name: "Experte",
-      color: colors.secondary,
+      color: colors.info,
       time: stats.bestTimeExpert,
       percentage: getBarPercentage(stats.bestTimeExpert),
     },

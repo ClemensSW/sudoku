@@ -26,11 +26,11 @@ const lightColors = {
   cellErrorBackground: "rgba(217, 48, 37, 0.08)",
   cellHintBackground: "rgba(251, 188, 5, 0.12)",
   cellSuccessBackground: "rgba(52, 168, 83, 0.08)",
-  cellTextColor: "#202124",
-  cellInitialTextColor: "#1967D2",
+  cellTextColor: "#1A2C42",
+  cellInitialTextColor: "#10253E",
   cellSelectedTextColor: "#FFFFFF",
   cellErrorTextColor: "#D93025",
-  cellSameValueTextColor: "#AECBFA",
+  cellSameValueTextColor: "#4285F4",
   cellNotesTextColor: "rgba(60, 64, 67, 0.75)",
 
   // Grid
@@ -61,6 +61,7 @@ const lightColors = {
   error: "#EA4335",
   warning: "#FBBC05",
   info: "#4285F4",
+  purple: "#9334A8",     // Violett/Lila
 
   // Misc
   border: "#DADCE0",
@@ -102,11 +103,11 @@ const darkColors = {
   cellErrorBackground: "rgba(242, 139, 130, 0.18)",
   cellHintBackground: "#rgba(250, 209, 101, 0.16)",
   cellSuccessBackground: "rgba(129, 201, 149, 0.15)",
-  cellTextColor: "#E8EAED",
-  cellInitialTextColor: "#AECBFA",
-  cellSelectedTextColor: "#202124",
+  cellTextColor: "#FFFFFF",
+  cellInitialTextColor: "#FFFFFF",
+  cellSelectedTextColor: "#FFFFFF",
   cellErrorTextColor: "#F28B82",
-  cellSameValueTextColor: "#4285F4",
+  cellSameValueTextColor: "#8AB4F8",
   cellNotesTextColor: "rgba(232, 234, 237, 0.7)",
 
   // Grid

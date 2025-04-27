@@ -2,7 +2,7 @@
 import { ColorValue } from "react-native";
 
 // Farbpalette
-interface ThemeColors {
+export interface ThemeColors {
   // Primary colors
   primary: string;
   primaryLight: string;

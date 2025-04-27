@@ -1,3 +1,4 @@
+// screens/GalleryScreen/utils/landscapes/data.ts
 import { Landscape, LandscapeSegment } from "./types";
 
 /**
@@ -155,6 +156,50 @@ export const getDefaultCollectionState = () => {
         ...landscape,
         segments: almostUnlockedSegments,
         progress: 8, // 8 von 9 Segmenten sind bereits freigeschaltet
+        isComplete: false,
+        isFavorite: false,
+      };
+    } else if (index === 2) {
+      // Das DRITTE Bild teilweise freischalten - nur 3 Segmente müssen noch freigeschaltet werden
+      const now = new Date().toISOString();
+
+      // Die ersten 6 Segmente als freigeschaltet markieren
+      const partiallyUnlockedSegments = Array.from(
+        { length: 9 },
+        (_, segmentIndex) => ({
+          id: segmentIndex,
+          isUnlocked: segmentIndex < 6, // Die ersten 6 Segmente freischalten
+          unlockedAt: segmentIndex < 6 ? now : undefined,
+        })
+      );
+
+      // Kopiere das Landschaftsobjekt und aktualisiere die Eigenschaften
+      landscapes[landscape.id] = {
+        ...landscape,
+        segments: partiallyUnlockedSegments,
+        progress: 6, // 6 von 9 Segmenten sind bereits freigeschaltet
+        isComplete: false,
+        isFavorite: false,
+      };
+    } else if (index === 3) {
+      // Das VIERTE Bild teilweise freischalten - nur 6 Segmente müssen noch freigeschaltet werden
+      const now = new Date().toISOString();
+
+      // Die ersten 3 Segmente als freigeschaltet markieren
+      const barelyUnlockedSegments = Array.from(
+        { length: 9 },
+        (_, segmentIndex) => ({
+          id: segmentIndex,
+          isUnlocked: segmentIndex < 3, // Die ersten 3 Segmente freischalten
+          unlockedAt: segmentIndex < 3 ? now : undefined,
+        })
+      );
+
+      // Kopiere das Landschaftsobjekt und aktualisiere die Eigenschaften
+      landscapes[landscape.id] = {
+        ...landscape,
+        segments: barelyUnlockedSegments,
+        progress: 3, // 3 von 9 Segmenten sind bereits freigeschaltet
         isComplete: false,
         isFavorite: false,
       };

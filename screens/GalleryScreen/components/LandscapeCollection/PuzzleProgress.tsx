@@ -180,7 +180,11 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     );
   };
 
-  const isSpecialPreunlockedImage = landscape.progress === 8
+  // Prüfen ob es eines der speziellen teilweise freigeschalteten Bilder ist
+  const isSpecialImage = landscape.progress === 8 || landscape.progress === 6 || landscape.progress === 3;
+  
+  // Berechne die Anzahl der noch fehlenden Segmente
+  const remainingSegments = 9 - landscape.progress;
 
   return (
     <Animated.View
@@ -256,8 +260,8 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
         <Text style={[styles.progressText, { color: colors.textSecondary }]}>
           {landscape.isComplete
             ? "Vollständig freigeschaltet"
-            : isSpecialPreunlockedImage
-            ? "Löse ein Sudoku, um das Bild freizuschalten"
+            : isSpecialImage
+            ? `Löse ${remainingSegments} weitere${remainingSegments === 1 ? 's' : ''} Sudoku${remainingSegments === 1 ? '' : 's'}, um das Bild freizuschalten`
             : `${landscape.progress}/9 Segmente freigeschaltet`}
         </Text>
 

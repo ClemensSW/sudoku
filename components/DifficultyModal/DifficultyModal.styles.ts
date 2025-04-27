@@ -66,4 +66,34 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
+  
+  // Neue Stile für das progressive Freischalten
+  lockedDifficultyButton: {
+    opacity: 0.7,
+    borderStyle: "dashed",
+  },
+  lockedDifficultyText: {
+    fontWeight: "400",
+  },
+  progressContainer: {
+    width: "100%",
+    marginBottom: 20,
+    marginTop: 4,
+  },
+  progressMessage: {
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 10,
+    lineHeight: 20,
+  },
+  progressBarBackground: {
+    width: "100%",
+    height: 6,
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    borderRadius: 3,
+  }
 });

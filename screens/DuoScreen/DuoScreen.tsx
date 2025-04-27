@@ -36,6 +36,9 @@ import styles from "./DuoScreen.styles";
 
 const { height, width } = Dimensions.get("window");
 
+// Die Teal-Farbe für den Duo-Modus
+const DUO_PRIMARY_COLOR = "#4A7D78";
+
 // Modified DuoHeader without settings button and left-aligned
 const SimpleDuoHeader = ({ paddingTop = 0 }) => {
   const theme = useTheme();
@@ -222,7 +225,7 @@ const DuoScreen: React.FC = () => {
                 <TouchableOpacity
                   style={[
                     styles.startButton,
-                    { backgroundColor: "#4A7D78" },
+                    { backgroundColor: DUO_PRIMARY_COLOR },
                   ]}
                   onPress={handleStartGame}
                   activeOpacity={0.8}
@@ -245,7 +248,7 @@ const DuoScreen: React.FC = () => {
         </ScrollView>
       </View>
 
-      {/* Difficulty selection modal */}
+      {/* Difficulty selection modal - mit isDuoMode=true */}
       <DifficultyModal
         visible={showDifficultyModal}
         selectedDifficulty={selectedDifficulty}
@@ -257,6 +260,9 @@ const DuoScreen: React.FC = () => {
         onConfirm={handleStartWithDifficulty}
         noBackdrop={true} // Always use the shared backdrop
         isTransition={true} // Always use transition animation for second modal
+        isDuoMode={true} // Wichtig: Hier setzen wir isDuoMode auf true für den Duo-Modus
+        title="Neues Spiel"
+        subtitle="Wählt gemeinsam den Schwierigkeitsgrad"
       />
 
       {/* Game Mode Selection Modal */}

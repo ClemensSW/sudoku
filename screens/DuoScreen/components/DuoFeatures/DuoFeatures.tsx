@@ -30,7 +30,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
       icon: "users",
       title: "Gemeinsam spielen",
       description: "Ein Sudoku, zwei Spieler - wer löst sein Gebiet zuerst?",
-      color: colors.primary,
+      color: "#4A7D78",
     },
     {
       icon: "rotate-ccw",

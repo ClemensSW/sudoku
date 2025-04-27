@@ -26,7 +26,7 @@ export type GameState = {
   completed: boolean;
 };
 
-// Spielstatistiken Typ - mit totalXP und reachedMilestones ergänzt
+// Spielstatistiken Typ - mit totalXP, reachedMilestones und completedByDifficulty ergänzt
 export type GameStats = {
   gamesPlayed: number;
   gamesWon: number;
@@ -37,7 +37,12 @@ export type GameStats = {
   currentStreak: number;
   longestStreak: number;
   totalXP: number;
-  reachedMilestones: number[]; // NEU: Speichert erreichte Meilenstein-Level
+  reachedMilestones: number[]; 
+  // NEU: Speicherung der gelösten Sudokus pro Schwierigkeitsgrad
+  completedEasy: number;
+  completedMedium: number;
+  completedHard: number;
+  completedExpert: number;
 };
 
 // Einstellungen Typ
@@ -62,7 +67,12 @@ const DEFAULT_STATS: GameStats = {
   currentStreak: 0,
   longestStreak: 0,
   totalXP: 0,
-  reachedMilestones: [], // NEU: Leeres Array für noch nicht erreichte Meilensteine
+  reachedMilestones: [],
+  // NEU: Standardwerte für die gelösten Sudokus
+  completedEasy: 0,
+  completedMedium: 0,
+  completedHard: 0,
+  completedExpert: 0,
 };
 
 // Standard-Einstellungen
@@ -127,6 +137,19 @@ export const loadStats = async (): Promise<GameStats> => {
       if (parsedStats.reachedMilestones === undefined) {
         parsedStats.reachedMilestones = [];
       }
+      // NEU: Kompatibilität mit älteren Versionen für gelöste Sudokus
+      if (parsedStats.completedEasy === undefined) {
+        parsedStats.completedEasy = 0;
+      }
+      if (parsedStats.completedMedium === undefined) {
+        parsedStats.completedMedium = 0;
+      }
+      if (parsedStats.completedHard === undefined) {
+        parsedStats.completedHard = 0;
+      }
+      if (parsedStats.completedExpert === undefined) {
+        parsedStats.completedExpert = 0;
+      }
       return parsedStats;
     }
     return DEFAULT_STATS;
@@ -137,6 +160,7 @@ export const loadStats = async (): Promise<GameStats> => {
 };
 
 // AKTUALISIERT: Fügt gewonnene XP direkt hinzu und verarbeitet Landschaftsfortschritt
+// UND aktualisiert die Anzahl der gelösten Sudokus pro Schwierigkeitsgrad
 export const updateStatsAfterGame = async (
   won: boolean,
   difficulty: Difficulty,
@@ -166,6 +190,29 @@ export const updateStatsAfterGame = async (
       `XP gained: ${xpGain} (won: ${won}, difficulty: ${difficulty})`
     );
 
+    // NEU: Inkrementiere den passenden Zähler für gelöste Sudokus, wenn gewonnen
+    let updatedCompletedEasy = currentStats.completedEasy || 0;
+    let updatedCompletedMedium = currentStats.completedMedium || 0;
+    let updatedCompletedHard = currentStats.completedHard || 0;
+    let updatedCompletedExpert = currentStats.completedExpert || 0;
+
+    if (won) {
+      switch (difficulty) {
+        case "easy":
+          updatedCompletedEasy++;
+          break;
+        case "medium":
+          updatedCompletedMedium++;
+          break;
+        case "hard":
+          updatedCompletedHard++;
+          break;
+        case "expert":
+          updatedCompletedExpert++;
+          break;
+      }
+    }
+
     const updatedStats: GameStats = {
       ...currentStats,
       gamesPlayed: currentStats.gamesPlayed + 1,
@@ -179,6 +226,11 @@ export const updateStatsAfterGame = async (
       totalXP: currentStats.totalXP + xpGain,
       // Behalte die erreichten Meilensteine (werden in LevelProgress aktualisiert)
       reachedMilestones: currentStats.reachedMilestones || [],
+      // NEU: Aktualisierte Werte für gelöste Sudokus pro Schwierigkeitsgrad
+      completedEasy: updatedCompletedEasy,
+      completedMedium: updatedCompletedMedium,
+      completedHard: updatedCompletedHard,
+      completedExpert: updatedCompletedExpert,
     };
 
     // Aktualisiere Bestzeit nur wenn das Spiel gewonnen wurde
@@ -269,5 +321,58 @@ export const loadSettings = async (): Promise<GameSettings> => {
   } catch (error) {
     console.error("Error loading settings:", error);
     return DEFAULT_SETTINGS;
+  }
+};
+
+// NEU: Utility-Funktionen für Difficulty-Modal
+
+// Bestimme die freigeschalteten Schwierigkeitsgrade - ANGEPASST
+export const getUnlockedDifficulties = (stats: GameStats): Difficulty[] => {
+  const unlocked: Difficulty[] = ["easy"]; // Leicht ist immer verfügbar
+  
+  // Medium wird freigeschaltet, wenn 3 Leicht gelöst wurden (vorher: 1)
+  if ((stats.completedEasy || 0) >= 3) {
+    unlocked.push("medium");
+  }
+  
+  // Schwer wird freigeschaltet, wenn 6 Medium gelöst wurden (vorher: 3)
+  if ((stats.completedMedium || 0) >= 6) {
+    unlocked.push("hard");
+  }
+  
+  // Experte wird freigeschaltet, wenn 9 Schwer gelöst wurden
+  if ((stats.completedHard || 0) >= 9) {
+    unlocked.push("expert");
+  }
+  
+  return unlocked;
+};
+
+// Berechne die Fortschrittsnachricht für das Freischalten - ANGEPASST
+export const getProgressMessage = (stats: GameStats): string => {
+  if ((stats.completedHard || 0) >= 9) {
+    return "Alle Schwierigkeitsgrade sind freigeschaltet!";
+  } else if ((stats.completedMedium || 0) >= 6) {
+    const remaining = 9 - (stats.completedHard || 0);
+    return `Löse noch ${remaining} Sudoku auf Schwer, um Experte freizuschalten.`;
+  } else if ((stats.completedEasy || 0) >= 3) {
+    const remaining = 6 - (stats.completedMedium || 0);
+    return `Löse noch ${remaining} Sudoku auf Mittel, um Schwer freizuschalten.`;
+  } else {
+    const remaining = 3 - (stats.completedEasy || 0);
+    return `Löse noch ${remaining} Sudoku auf Leicht, um Mittel freizuschalten.`;
+  }
+};
+
+// Berechne den Fortschrittswert (0-100%) für den Fortschrittsbalken - ANGEPASST
+export const getProgressValue = (stats: GameStats): number => {
+  if ((stats.completedHard || 0) >= 9) {
+    return 100; // Alles freigeschaltet
+  } else if ((stats.completedMedium || 0) >= 6) {
+    return Math.min(100, ((stats.completedHard || 0) / 9) * 100); // Fortschritt zu Experte
+  } else if ((stats.completedEasy || 0) >= 3) {
+    return Math.min(100, ((stats.completedMedium || 0) / 6) * 100); // Fortschritt zu Schwer (geändert von 3 zu 6)
+  } else {
+    return Math.min(100, ((stats.completedEasy || 0) / 3) * 100); // Fortschritt zu Medium (geändert von 1 zu 3)
   }
 };

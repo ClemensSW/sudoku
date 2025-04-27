@@ -193,24 +193,11 @@ const StartScreen: React.FC = () => {
                 ]
           }
           style={styles.bottomOverlay}
-          locations={[0, 0.2, 1.0]}
+          locations={[0, 0.19, 1.0]}
         />
 
         {/* Buttons Container */}
         <View style={styles.buttonsContainer}>
-          {/* New Game Button */}
-          <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle]}>
-            <TouchableOpacity
-              style={[styles.startButton, { backgroundColor: colors.primary }]}
-              onPress={handleStartGame}
-              activeOpacity={0.9}
-              onPressIn={handleButtonPressIn}
-              onPressOut={handleButtonPressOut}
-            >
-              <Text style={styles.startButtonText}>Neues Spiel</Text>
-            </TouchableOpacity>
-          </Animated.View>
-
           {/* How To Play Button */}
           <TouchableOpacity
             style={styles.howToPlayButton}
@@ -226,6 +213,21 @@ const StartScreen: React.FC = () => {
               Wie spielt man?
             </Text>
           </TouchableOpacity>
+
+          {/* New Game Button */}
+          <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle]}>
+            <TouchableOpacity
+              style={[styles.startButton, { backgroundColor: colors.primary }]}
+              onPress={handleStartGame}
+              activeOpacity={0.9}
+              onPressIn={handleButtonPressIn}
+              onPressOut={handleButtonPressOut}
+            >
+              <Text style={styles.startButtonText}>Neues Spiel</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          
         </View>
       </View>
 
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: "100%",
     alignItems: "center",
-    marginBottom: 20, // More space between buttons
+    marginBottom: 0, // More space between buttons
   },
   // Main "New Game" button with premium styling
   startButton: {
@@ -355,6 +357,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12, // More touch area
     paddingHorizontal: 20,
     borderRadius: 20, // Subtle rounding
+    marginBottom: 20,
+    marginTop: -15,
   },
   howToPlayText: {
     fontSize: 16,

@@ -607,7 +607,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                   style={[
                     {
                       marginLeft: 8,
-                      color: colors.success,
+                      color: progressColor,
                       fontWeight: '700',
                       fontSize: 16,
                     },
@@ -693,12 +693,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                     {
                       position: 'absolute',
                       height: '100%',
-                      backgroundColor: colors.success,
+                      backgroundColor: "#ffffff80",
                       borderRadius: 4,
                       left: `${previousProgressWidth.value}%`,
                       width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
                       zIndex: 3, // Highest z-index to ensure it's on top
-                      opacity: 0.8, // Slightly transparent to see underlying elements
+                      opacity: 1, // Slightly transparent to see underlying elements
                     },
                     gainIndicatorAnimatedStyle
                   ]}

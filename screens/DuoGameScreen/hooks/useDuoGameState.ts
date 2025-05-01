@@ -1,5 +1,5 @@
 // screens/DuoGameScreen/hooks/useDuoGameState.ts
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   SudokuBoard as SudokuBoardType,
   Difficulty,
@@ -47,6 +47,11 @@ export interface DuoGameState {
   isGameComplete: boolean;
   isLoading: boolean;
   gameTime: number;
+  // Fortschrittsfelder
+  player1InitialEmptyCells: number;
+  player1SolvedCells: number;
+  player2InitialEmptyCells: number;
+  player2SolvedCells: number;
 }
 
 export interface DuoGameActions {
@@ -67,6 +72,35 @@ type GameCompletionCallback = (
   winner: 0 | 1 | 2, 
   reason: "completion" | "errors"
 ) => void;
+
+// NEUE HILFSFUNKTION: Generiert initiale Spielerbereiche
+function generateInitialPlayerAreas(): [PlayerArea, PlayerArea] {
+  const player1Cells: CellPosition[] = [];
+  const player2Cells: CellPosition[] = [];
+
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      // Player 2 gets top half (rows 0-3 and half of row 4)
+      if (row < 4 || (row === 4 && col < 4)) {
+        player2Cells.push({ row, col });
+      }
+      // Player 1 gets bottom half (rows 5-8 and half of row 4)
+      else if (row > 4 || (row === 4 && col > 4)) {
+        player1Cells.push({ row, col });
+      }
+      // Middle cell (4,4) is shared/neutral and excluded from both areas
+    }
+  }
+  
+  console.log("Initial player areas generated:");
+  console.log(`Player 1 area: ${player1Cells.length} cells`);
+  console.log(`Player 2 area: ${player2Cells.length} cells`);
+
+  return [
+    { player: 1, cells: player1Cells },
+    { player: 2, cells: player2Cells },
+  ];
+}
 
 export const useDuoGameState = (
   initialDifficulty: Difficulty = "medium",
@@ -91,41 +125,24 @@ export const useDuoGameState = (
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [gameTime, setGameTime] = useState(0);
-  const [playerAreas, setPlayerAreas] = useState<[PlayerArea, PlayerArea]>([
-    { player: 1, cells: [] },
-    { player: 2, cells: [] },
-  ]);
-
-  // Calculate player areas - Player 2 gets top half, Player 1 gets bottom half
-  const calculatePlayerAreas = useCallback((): [PlayerArea, PlayerArea] => {
-    const player1Cells: CellPosition[] = [];
-    const player2Cells: CellPosition[] = [];
-
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        // Player 2 gets top half (rows 0-3 and half of row 4)
-        if (row < 4 || (row === 4 && col < 4)) {
-          player2Cells.push({ row, col });
-        }
-        // Player 1 gets bottom half (rows 5-8 and half of row 4)
-        else if (row > 4 || (row === 4 && col > 4)) {
-          player1Cells.push({ row, col });
-        }
-        // Middle cell is shared/neutral
-      }
-    }
-
-    return [
-      { player: 1, cells: player1Cells },
-      { player: 2, cells: player2Cells },
-    ];
-  }, []);
-
-  // Initialize player areas
-  useEffect(() => {
-    const areas = calculatePlayerAreas();
-    setPlayerAreas(areas);
-  }, []);
+  
+  // Neue Fortschrittsfelder
+  const [player1InitialEmptyCells, setPlayer1InitialEmptyCells] = useState(0);
+  const [player1SolvedCells, setPlayer1SolvedCells] = useState(0);
+  const [player2InitialEmptyCells, setPlayer2InitialEmptyCells] = useState(0);
+  const [player2SolvedCells, setPlayer2SolvedCells] = useState(0);
+  
+  // Statisch initialisierte Spielerbereiche
+  const [playerAreas] = useState<[PlayerArea, PlayerArea]>(generateInitialPlayerAreas());
+  
+  // Debug-Info-Objekt - WICHTIG: Nicht als Ref verwenden, sondern als normalen State
+  const [debugInfo, setDebugInfo] = useState({
+    player1InitialEmpty: 0,
+    player2InitialEmpty: 0,
+    player1Solved: 0,
+    player2Solved: 0,
+    areasInitialized: true
+  });
 
   // Check if a cell belongs to a player
   const getCellOwner = useCallback(
@@ -153,12 +170,119 @@ export const useDuoGameState = (
     [playerAreas]
   );
 
+  // ÜBERARBEITETE FUNKTION: Zähle die anfänglichen leeren Zellen für jeden Spieler
+  const countInitialEmptyCells = useCallback(
+    (newBoard: SudokuBoardType) => {
+      if (!newBoard || newBoard.length === 0) {
+        console.error("Board not initialized!");
+        return;
+      }
+      
+      if (playerAreas[0].cells.length === 0 || playerAreas[1].cells.length === 0) {
+        console.error("Player areas not initialized properly!");
+        return;
+      }
+      
+      const [player1Area, player2Area] = playerAreas;
+      
+      // Zähle leere Zellen für Spieler 1
+      let emptyCountP1 = 0;
+      for (const cell of player1Area.cells) {
+        if (!newBoard[cell.row][cell.col].isInitial) {
+          emptyCountP1++;
+        }
+      }
+      
+      // Zähle leere Zellen für Spieler 2
+      let emptyCountP2 = 0;
+      for (const cell of player2Area.cells) {
+        if (!newBoard[cell.row][cell.col].isInitial) {
+          emptyCountP2++;
+        }
+      }
+      
+      // Debug-Logging
+      console.log(`Initial empty cells - Player 1: ${emptyCountP1}, Player 2: ${emptyCountP2}`);
+      
+      // Setze die States
+      setPlayer1InitialEmptyCells(emptyCountP1);
+      setPlayer2InitialEmptyCells(emptyCountP2);
+      
+      // Setze die gelösten Zellen zurück
+      setPlayer1SolvedCells(0);
+      setPlayer2SolvedCells(0);
+      
+      // Aktualisiere Debug-Info
+      setDebugInfo(prev => ({
+        ...prev,
+        player1InitialEmpty: emptyCountP1,
+        player2InitialEmpty: emptyCountP2,
+        player1Solved: 0,
+        player2Solved: 0
+      }));
+    },
+    [playerAreas]
+  );
+
+  // VERBESSERTE FUNKTION: Aktualisiere Fortschritts-Tracking wenn ein Spieler eine Zelle löst
+  const updatePlayerProgress = useCallback(
+    (player: 1 | 2) => {
+      if (player === 1) {
+        setPlayer1SolvedCells(prevSolved => {
+          const newValue = prevSolved + 1;
+          // Debug-Logging
+          console.log(`Player 1 solved cells: ${prevSolved} -> ${newValue} (out of ${player1InitialEmptyCells})`);
+          
+          // Update Debug-Info
+          setDebugInfo(prev => ({
+            ...prev,
+            player1Solved: newValue
+          }));
+          
+          return newValue;
+        });
+      } else {
+        setPlayer2SolvedCells(prevSolved => {
+          const newValue = prevSolved + 1;
+          // Debug-Logging
+          console.log(`Player 2 solved cells: ${prevSolved} -> ${newValue} (out of ${player2InitialEmptyCells})`);
+          
+          // Update Debug-Info
+          setDebugInfo(prev => ({
+            ...prev,
+            player2Solved: newValue
+          }));
+          
+          return newValue;
+        });
+      }
+    },
+    [player1InitialEmptyCells, player2InitialEmptyCells]
+  );
+
+  // Calculate player areas - wird nur als Utility-Funktion verwendet
+  const calculatePlayerAreas = useCallback((): [PlayerArea, PlayerArea] => {
+    return playerAreas;
+  }, [playerAreas]);
+
   // Check for game completion when board changes
   useEffect(() => {
     if (board.length > 0) {
       checkPlayerCompletion();
     }
   }, [board]);
+  
+  // Debug: Zeige aktuelle Fortschrittswerte in der Konsole
+  useEffect(() => {
+    if (isGameRunning) {
+      console.log(`
+        Fortschritt Status:
+        Spieler 1: ${player1SolvedCells}/${player1InitialEmptyCells} (${Math.round((player1SolvedCells / player1InitialEmptyCells) * 100)}%)
+        Spieler 2: ${player2SolvedCells}/${player2InitialEmptyCells} (${Math.round((player2SolvedCells / player2InitialEmptyCells) * 100)}%)
+        Areas Initialized: ${playerAreas[0].cells.length > 0 && playerAreas[1].cells.length > 0}
+      `);
+    }
+  }, [player1SolvedCells, player2SolvedCells, isGameRunning, player1InitialEmptyCells, player2InitialEmptyCells]);
 
   // NEUE FUNKTION: Entfernt Notizen in allen relevanten Zellen
   const removeNotesFromRelatedCells = useCallback(
@@ -217,6 +341,8 @@ export const useDuoGameState = (
 
     setTimeout(() => {
       try {
+        console.log("Starting new game. Player areas initialized:", playerAreas[0].cells.length > 0);
+        
         // Generate a new game
         const { board: newBoard, solution: newSolution } =
           generateGame(initialDifficulty);
@@ -229,11 +355,7 @@ export const useDuoGameState = (
           isValid: true,
           notes: [],
         };
-
-        setBoard(newBoard);
-        setSolution(newSolution);
-        setIsGameRunning(true);
-
+        
         // Reset player states
         setPlayer1Cell(null);
         setPlayer2Cell(null);
@@ -255,7 +377,15 @@ export const useDuoGameState = (
         
         // Reset game completion status
         setIsGameComplete(false);
-
+        
+        // Wichtig: ZUERST Zähle die anfänglichen leeren Zellen und setze die Fortschrittsvariablen zurück
+        countInitialEmptyCells(newBoard);
+        
+        setBoard(newBoard);
+        setSolution(newSolution);
+        
+        // Aktiviere das Spiel
+        setIsGameRunning(true);
         setIsLoading(false);
 
         // Success feedback
@@ -265,7 +395,7 @@ export const useDuoGameState = (
         setIsLoading(false);
       }
     }, 500);
-  }, [initialDifficulty]);
+  }, [initialDifficulty, countInitialEmptyCells, playerAreas]);
 
   // Handle cell selection
   const handleCellPress = useCallback(
@@ -353,6 +483,9 @@ export const useDuoGameState = (
 
       // Check if the value matches the solution
       const isCorrectSolution = solution[row][col] === number;
+      
+      // Prüfe, ob die Zelle bereits diesen Wert hat (um doppeltes Zählen zu verhindern)
+      const isSameValue = board[row][col].value === number;
 
       // Create a copy of the board with new value
       let updatedBoard = [...board];
@@ -412,6 +545,14 @@ export const useDuoGameState = (
       } else {
         // Valid move and correct solution - good feedback
         triggerHaptic("medium");
+        
+        // WICHTIG: Aktualisiere den Fortschritt nur, wenn
+        // 1. Der Zug korrekt ist
+        // 2. Es nicht derselbe Wert ist (verhindert doppeltes Zählen)
+        if (!isSameValue) {
+          // Aktualisiere den Fortschritt des Spielers
+          updatePlayerProgress(player);
+        }
 
         // Clear the selection for this player
         if (player === 1) {
@@ -421,9 +562,23 @@ export const useDuoGameState = (
         }
       }
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
-     player1NoteMode, player2NoteMode, solution, getCellOwner, 
-     player1Errors, player2Errors, maxErrors, handlePlayerLost, removeNotesFromRelatedCells]
+    [
+      board, 
+      player1Cell, 
+      player2Cell, 
+      player1Complete, 
+      player2Complete, 
+      player1NoteMode, 
+      player2NoteMode, 
+      solution, 
+      getCellOwner, 
+      player1Errors, 
+      player2Errors, 
+      maxErrors, 
+      handlePlayerLost, 
+      removeNotesFromRelatedCells,
+      updatePlayerProgress
+    ]
   );
 
   // Handle clear button
@@ -528,6 +683,10 @@ export const useDuoGameState = (
       if (owner !== player && owner !== 0) {
         return;
       }
+      
+      // Prüfe, ob die Zelle bereits den richtigen Wert hat
+      const correctValue = solution[row][col];
+      const isSameValue = board[row][col].value === correctValue;
 
       // Decrement hint counter
       if (player === 1) {
@@ -537,8 +696,6 @@ export const useDuoGameState = (
       }
 
       // Provide hint by filling with correct value
-      const correctValue = solution[row][col];
-
       let updatedBoard = [...board];
       updatedBoard[row][col] = {
         ...board[row][col],
@@ -555,6 +712,11 @@ export const useDuoGameState = (
       );
 
       setBoard(updatedBoard);
+      
+      // WICHTIG: Zähle die gelöste Zelle nur, wenn sie nicht bereits korrekt war
+      if (!isSameValue) {
+        updatePlayerProgress(player);
+      }
 
       // Clear the selection for this player
       if (player === 1) {
@@ -565,9 +727,22 @@ export const useDuoGameState = (
 
       triggerHaptic("success");
     },
-    [board, player1Cell, player2Cell, player1Complete, player2Complete, 
-     player1Hints, player2Hints, solution, getCellOwner,
-     player1Errors, player2Errors, maxErrors, removeNotesFromRelatedCells]
+    [
+      board, 
+      player1Cell, 
+      player2Cell, 
+      player1Complete, 
+      player2Complete, 
+      player1Hints, 
+      player2Hints, 
+      solution, 
+      getCellOwner,
+      player1Errors, 
+      player2Errors, 
+      maxErrors, 
+      removeNotesFromRelatedCells,
+      updatePlayerProgress
+    ]
   );
 
   // Handle time update
@@ -690,6 +865,11 @@ export const useDuoGameState = (
       isGameComplete,
       isLoading,
       gameTime,
+      // Fortschrittsdaten
+      player1InitialEmptyCells,
+      player1SolvedCells,
+      player2InitialEmptyCells,
+      player2SolvedCells,
     },
     {
       startNewGame,

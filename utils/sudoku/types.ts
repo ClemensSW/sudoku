@@ -28,8 +28,8 @@ export const DIFFICULTY_SETTINGS: Record<
   }
 > = {
   easy: {
-    minCells: 78,
-    maxCells: 78,
+    minCells: 75,
+    maxCells: 75,
     symmetric: true,
     uniqueSolution: true,
   },

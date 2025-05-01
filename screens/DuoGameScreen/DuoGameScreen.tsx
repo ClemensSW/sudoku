@@ -116,19 +116,19 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     }
   };
 
-  // NEU: Spezifische Handler für die Aktionen im Completion Modal
+  // Spezifische Handler für die Aktionen im Completion Modal
   const handleCloseCompletionModal = () => {
     setShowCompletionModal(false);
     router.replace("/duo");
   };
 
-  // NEU: Handler für neues Spiel ohne Navigation
+  // Handler für neues Spiel ohne Navigation
   const handleStartNewGame = () => {
     setShowCompletionModal(false);
     gameActions.startNewGame();
   };
 
-  // NEU: Spezifischer Handler für Revanche
+  // Spezifischer Handler für Revanche
   const handleRevanche = () => {
     setShowCompletionModal(false);
     
@@ -227,12 +227,12 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           />
         </Animated.View>
 
-        {/* Game Completion Modal - KOMPLETT NEU: Übergebe eigene Funktionen für jede Aktion */}
+        {/* Game Completion Modal - Mit Fortschrittsdaten */}
         <DuoGameCompletionModal
           visible={showCompletionModal}
           onClose={handleCloseCompletionModal}
           onNewGame={handleStartNewGame}
-          onRevanche={handleRevanche} // NEU: Spezielle Revanche-Funktion
+          onRevanche={handleRevanche}
           winner={winnerInfo.winner}
           winReason={winnerInfo.reason}
           gameTime={gameState.gameTime}
@@ -245,6 +245,11 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           maxHints={MAX_HINTS}
           maxErrors={gameState.maxErrors}
           currentDifficulty={initialDifficulty}
+          // Übergebe die Fortschrittsdaten
+          player1InitialEmptyCells={gameState.player1InitialEmptyCells}
+          player1SolvedCells={gameState.player1SolvedCells}
+          player2InitialEmptyCells={gameState.player2InitialEmptyCells}
+          player2SolvedCells={gameState.player2SolvedCells}
         />
       </SafeAreaView>
     </View>

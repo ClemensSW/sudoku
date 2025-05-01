@@ -42,7 +42,7 @@ interface DuoGameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
   onNewGame: () => void;
-  onRevanche: () => void; // NEU: Eigene Funktion für Revanche
+  onRevanche: () => void;
   winner: 0 | 1 | 2; // 0 = Tie (both complete)
   gameTime: number;
   player1Complete: boolean;
@@ -55,17 +55,18 @@ interface DuoGameCompletionModalProps {
   maxErrors: number;
   winReason: "completion" | "errors";
   currentDifficulty: Difficulty;
-  player1InitialEmptyCells?: number;
-  player1SolvedCells?: number;
-  player2InitialEmptyCells?: number;
-  player2SolvedCells?: number;
+  // Tatsächliche Daten für die Fortschrittsberechnung
+  player1InitialEmptyCells: number;
+  player1SolvedCells: number;
+  player2InitialEmptyCells: number;
+  player2SolvedCells: number;
 }
 
 const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   visible,
   onClose,
   onNewGame,
-  onRevanche, // NEU: Eigene Funktion für Revanche
+  onRevanche,
   winner,
   gameTime,
   player1Complete,
@@ -78,10 +79,10 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   maxErrors,
   winReason,
   currentDifficulty,
-  player1InitialEmptyCells = 40,
-  player1SolvedCells = player1Complete ? 40 : 32,
-  player2InitialEmptyCells = 40,
-  player2SolvedCells = player2Complete ? 40 : 28,
+  player1InitialEmptyCells,
+  player1SolvedCells,
+  player2InitialEmptyCells,
+  player2SolvedCells,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -139,8 +140,12 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
     
     // Otherwise calculate percentage of solved cells
     if (player === 1) {
+      // Vermeidung von Division durch Null
+      if (player1InitialEmptyCells === 0) return 0;
       return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
     } else {
+      // Vermeidung von Division durch Null
+      if (player2InitialEmptyCells === 0) return 0;
       return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
     }
   };
@@ -526,12 +531,12 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           </Animated.View>
         </View>
         
-        {/* Action buttons - Verwende die onRevanche Funktion direkt */}
+        {/* Action buttons */}
         <Animated.View style={[styles.buttonsContainer, buttonsStyle]}>
           {/* Revanche Button */}
           <Button
             title="Revanche!"
-            onPress={onRevanche} // Verwende direkt die von außen bereitgestellte Funktion
+            onPress={onRevanche}
             variant="primary"
             style={{
               width: "100%",
@@ -562,7 +567,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   );
 };
 
-// Styles without array syntax for button styles but with dynamic values for colors
+// Styles 
 const styles = StyleSheet.create({
   overlay: {
     position: "absolute",

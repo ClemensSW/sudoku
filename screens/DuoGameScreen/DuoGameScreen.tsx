@@ -210,7 +210,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           />
         </Animated.View>
 
-        {/* Game Completion Modal */}
+        {/* Game Completion Modal - ANGEPASST: Übergabe des aktuellen Schwierigkeitsgrads */}
         <DuoGameCompletionModal
           visible={showCompletionModal}
           onClose={() => {
@@ -232,6 +232,8 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           player2Hints={MAX_HINTS - gameState.player2Hints}
           maxHints={MAX_HINTS}
           maxErrors={gameState.maxErrors}
+          // NEU: Aktuelle Schwierigkeit übergeben
+          currentDifficulty={initialDifficulty}
         />
       </SafeAreaView>
     </View>

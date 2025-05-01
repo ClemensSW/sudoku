@@ -18,7 +18,8 @@ const PLAYER_THEMES = {
     textColor: "#F1F4FB", // Light blue/white
     selectedBackground: "#406B6D", // Darker teal
     initial: {
-      background: "#3D6B67", // Slightly darker teal for initial cells
+      // Entfernt speziellen Hintergrund für initiale Zellen:
+      // background: "#3D6B67", // Nur fontWeight wird jetzt verwendet
       textColor: "#F1F4FB", // Same text color
     },
     notes: {
@@ -35,7 +36,8 @@ const PLAYER_THEMES = {
     textColor: "#5B5D6E", // Dark blue-gray
     selectedBackground: "#E6E0C5", // Lighter beige
     initial: {
-      background: "#E8E4D8", // Slightly darker beige for initial cells
+      // Entfernt speziellen Hintergrund für initiale Zellen:
+      // background: "#E8E4D8", // Nur fontWeight wird jetzt verwendet
       textColor: "#5B5D6E", // Same text color
     },
     notes: {
@@ -52,7 +54,8 @@ const PLAYER_THEMES = {
     textColor: "#2D3045", // Very dark blue-gray
     selectedBackground: "#C5D1CF", // Slightly darker neutral
     initial: {
-      background: "#D0D8D7", // Dunklerer Farbton (D5DDDC -> D0D8D7)
+      // Entfernt speziellen Hintergrund für initiale Zellen:
+      // background: "#D0D8D7", // Nur fontWeight wird jetzt verwendet
       textColor: "#2D3045", // Same text color
     },
     notes: {
@@ -107,7 +110,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     };
   });
 
-  // Determine cell background color
+  // Determine cell background color - GEÄNDERT: Initiale Zellen haben keinen speziellen Hintergrund mehr
   const getCellBackgroundColor = () => {
     if (!cell.isValid) {
       return theme.error.background;
@@ -115,9 +118,10 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     if (isSelected) {
       return theme.selectedBackground;
     }
-    if (cell.isInitial) {
-      return theme.initial.background;
-    }
+    // Keine spezielle Hintergrundfarbe mehr für initiale Zellen
+    // if (cell.isInitial) {
+    //   return theme.initial.background;
+    // }
     return theme.cellBackground;
   };
 
@@ -214,6 +218,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
             style={[
               styles.cellText,
               { color: getTextColor() },
+              // GEÄNDERT: Initiale Zellen haben jetzt fette Schrift anstatt speziellem Hintergrund
               cell.isInitial && styles.initialText,
               shouldRotateContent && styles.rotatedText,
               // GEÄNDERT: Unterstreichung für 6 und 9 bei BEIDEN Spielern
@@ -246,8 +251,9 @@ const styles = StyleSheet.create({
   },
   cellText: {
     fontSize: Math.max(CELL_SIZE * 0.5, 18),
-    fontWeight: "600",
+    fontWeight: "300", // GEÄNDERT: Dünnere Standardschrift für vom Spieler ausgefüllte Zellen
   },
+  // GEÄNDERT: fontWeight auf "700" (fett) für initiale Zellen, wie im Single-Player-Modus
   initialText: {
     fontWeight: "700",
   },

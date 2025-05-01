@@ -80,39 +80,40 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   };
 
   // Text-Styles für verschiedene Zustände - mit Theme-Farben
-  const getCellTextStyle = () => {
-    // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
-    let style: TextStyle = {
-      ...baseStyles.cellText,
-      color: colors.cellTextColor, // Default Textfarbe
-    };
-
-    // WICHTIG: Initialer Zellenwert - höchste Priorität, aber mit Vorbehalt für gleiche Werte
-    if (cell.isInitial) {
-      style.fontWeight = "700";
-      
-      if (sameValueHighlight) {
-        style.color = colors.cellSameValueTextColor;
-      } else {
-        style.color = colors.cellInitialTextColor;
-      }
-    } 
-    // Gleiche Zahlen als zweithöchste Priorität
-    else if (sameValueHighlight) {
-      style.color = colors.cellSameValueTextColor;
-      style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
-    }
-    // Danach fehlerhafte Zellen
-    else if (showErrors && !cell.isValid) {
-      style.color = colors.cellErrorTextColor;
-    } 
-    // Zuletzt ausgewählte Zellen
-    else if (isSelected) {
-      style.color = colors.cellSelectedTextColor;
-    }
-
-    return style;
+const getCellTextStyle = () => {
+  // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
+  let style: TextStyle = {
+    ...baseStyles.cellText,
+    color: colors.cellTextColor, // Default Textfarbe
+    fontWeight: "300", // Hier setzen wir den Standard auf 300 für vom Spieler ausgefüllte Zellen
   };
+
+  // WICHTIG: Initialer Zellenwert - höchste Priorität, aber mit Vorbehalt für gleiche Werte
+  if (cell.isInitial) {
+    style.fontWeight = "700";
+    
+    if (sameValueHighlight) {
+      style.color = colors.cellSameValueTextColor;
+    } else {
+      style.color = colors.cellInitialTextColor;
+    }
+  } 
+  // Gleiche Zahlen als zweithöchste Priorität
+  else if (sameValueHighlight) {
+    style.color = colors.cellSameValueTextColor;
+    style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
+  }
+  // Danach fehlerhafte Zellen
+  else if (showErrors && !cell.isValid) {
+    style.color = colors.cellErrorTextColor;
+  } 
+  // Zuletzt ausgewählte Zellen
+  else if (isSelected) {
+    style.color = colors.cellSelectedTextColor;
+  }
+
+  return style;
+};
 
   // Render Notizen wenn Zelle leer ist
   const renderNotes = () => {

@@ -132,23 +132,24 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   };
   
   // Calculate cell completion percentage
-  const getCellCompletionPercentage = (player: 1 | 2): number => {
-    // If this player is the winner or if it's a tie, show 100%
-    if (winner === player || winner === 0) {
-      return 100;
-    }
-    
-    // Otherwise calculate percentage of solved cells
-    if (player === 1) {
-      // Vermeidung von Division durch Null
-      if (player1InitialEmptyCells === 0) return 0;
-      return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
-    } else {
-      // Vermeidung von Division durch Null
-      if (player2InitialEmptyCells === 0) return 0;
-      return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
-    }
-  };
+const getCellCompletionPercentage = (player: 1 | 2): number => {
+  // Bei einem Unentschieden (beide haben fertig) oder wenn dieser Spieler
+  // durch vollständiges Lösen seines Bereichs gewonnen hat
+  if (winner === 0 || (winner === player && winReason === "completion")) {
+    return 100;
+  }
+  
+  // Für alle anderen Fälle berechnen wir den tatsächlichen Prozentsatz
+  if (player === 1) {
+    // Vermeidung von Division durch Null
+    if (player1InitialEmptyCells === 0) return 0;
+    return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
+  } else {
+    // Vermeidung von Division durch Null
+    if (player2InitialEmptyCells === 0) return 0;
+    return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
+  }
+};
   
   // Start animations when modal becomes visible
   useEffect(() => {

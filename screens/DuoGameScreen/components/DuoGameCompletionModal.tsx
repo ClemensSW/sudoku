@@ -1,99 +1,38 @@
 // screens/DuoGameScreen/components/DuoGameCompletionModal.tsx
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
-  FadeIn,
-  SlideInUp,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
+  withDelay,
   Easing,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
-
-// Importiere angepasste Konfetti-Animation
 import ConfettiEffect from "@/components/GameCompletionModal/components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
 
+// Duo Mode primary color - used consistently throughout
+const DUO_COLOR = "#4A7D78";
+const YELLOW_COLOR = "#8A7B46";
+
+// Player colors
 const PLAYER_COLORS = {
-  // Player 1 (bottom) - Green Theme
   1: {
     name: "Grün",
-    // Core colors - enhanced for better contrast in light mode
-    primary: "#4A7D78", // Teal - Player 1 (bottom)
-    light: "#6CACA6", // Lighter teal for accents
-    dark: "#3A6963", // Darker teal for contrast
-    
-    // Gradients
-    gradientStart: "#4A7D78",
-    gradientEnd: "rgba(74, 125, 120, 0)", // Transparent end
-    
-    // Light mode specific adjustments
-    lightMode: {
-      background: "rgba(74, 125, 120, 0.08)", // Subtle teal background
-      border: "#4A7D78", // Solid border color
-      text: "#3A6963", // Darker text for contrast
-      trophy: {
-        glow: "rgba(74, 125, 120, 0.25)", // Subtle glow
-        background: "rgba(74, 125, 120, 0.15)", // Background of trophy
-        icon: "#4A7D78", // Trophy icon color
-      }
-    }
+    primary: DUO_COLOR,
+    secondary: "#6CACA6",
+    background: "rgba(74, 125, 120, 0.1)",
   },
-  
-  // Player 2 (top) - Yellow Theme
   2: {
     name: "Gelb",
-    // Core colors - significantly enhanced for better contrast in light mode
-    primary: "#8A7B46", // Deeper, more earthy yellow with better contrast
-    light: "#D5C178", // Bright yellow-gold for accents
-    dark: "#6A5D34", // Very dark yellow for maximum contrast
-    
-    // Gradients
-    gradientStart: "#8A7B46", 
-    gradientEnd: "rgba(138, 123, 70, 0)", // Transparent end
-    
-    // Light mode specific adjustments
-    lightMode: {
-      background: "rgba(138, 123, 70, 0.08)", // Subtle yellow background
-      border: "#8A7B46", // Solid border color
-      text: "#6A5D34", // Darker text for contrast
-      trophy: {
-        glow: "rgba(138, 123, 70, 0.25)", // Subtle glow
-        background: "rgba(138, 123, 70, 0.15)", // Background of trophy
-        icon: "#8A7B46", // Trophy icon color
-      }
-    }
-  },
-  
-  // Neutral - Balanced Theme for ties
-  neutral: {
-    name: "Beide Spieler",
-    // Core colors
-    primary: "#5E6F78", // Modern slate blue-gray
-    light: "#94AEBB", // Lighter accent
-    dark: "#3E4B52", // Darker shade for contrast
-    
-    // Gradients
-    gradientStart: "#4A7D78", // Start with green 
-    gradientMiddle: "#8A7B46", // Transition to yellow
-    gradientEnd: "rgba(0, 0, 0, 0)", // Fade to transparent
-    
-    // Light mode specific adjustments
-    lightMode: {
-      background: "rgba(94, 111, 120, 0.08)", // Subtle background
-      border: "#5E6F78", // Solid border color
-      text: "#3E4B52", // Darker text for contrast
-      trophy: {
-        glow: "rgba(94, 111, 120, 0.25)", // Subtle glow
-        background: "rgba(94, 111, 120, 0.15)", // Background of trophy
-        icon: "#5E6F78", // Trophy icon color
-      }
-    }
+    primary: YELLOW_COLOR,
+    secondary: "#D5C178",
+    background: "rgba(138, 123, 70, 0.1)",
   }
 };
 
@@ -101,7 +40,7 @@ interface DuoGameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
   onNewGame: () => void;
-  winner: 0 | 1 | 2; // 0 = Unentschieden (beide fertig)
+  winner: 0 | 1 | 2; // 0 = Tie (both complete)
   gameTime: number;
   player1Complete: boolean;
   player2Complete: boolean;
@@ -111,7 +50,12 @@ interface DuoGameCompletionModalProps {
   player2Hints: number;
   maxHints: number;
   maxErrors: number;
-  winReason: "completion" | "errors"; // Sieg durch Bereichsvollendung oder Gegner-Fehler
+  winReason: "completion" | "errors";
+  // Mock data for calculation (in real implementation, you would get these values from the game state)
+  player1InitialEmptyCells?: number;
+  player1SolvedCells?: number;
+  player2InitialEmptyCells?: number;
+  player2SolvedCells?: number;
 }
 
 const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
@@ -129,507 +73,464 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   maxHints,
   maxErrors,
   winReason,
+  // For demo purposes only - you should pass real values from your game state
+  player1InitialEmptyCells = 40,
+  player1SolvedCells = player1Complete ? 40 : 32,
+  player2InitialEmptyCells = 40,
+  player2SolvedCells = player2Complete ? 40 : 28,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const isDarkMode = theme.isDark;
   
   // Animation values
-  const modalScale = useSharedValue(0.95);
-  const modalOpacity = useSharedValue(0);
+  const opacity = useSharedValue(0);
+  const scale = useSharedValue(0.95);
+  const player1Scale = useSharedValue(0.9);
+  const player2Scale = useSharedValue(0.9);
+  const vsScale = useSharedValue(0.5);
   const trophy1Scale = useSharedValue(1);
   const trophy2Scale = useSharedValue(1);
+  const buttonOpacity = useSharedValue(0);
   
   // Format time as MM:SS
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-      .toString().padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
   
-  // Get winner name based on color
-  const getWinnerName = (): string => {
-    if (winner === 0) return PLAYER_COLORS.neutral.name;
-    return PLAYER_COLORS[winner].name;
-  };
-  
-  // Get title based on win condition
-  const getTitle = (): string => {
+  // Helper functions to determine display text
+  const getResultText = (): string => {
     if (winner === 0) return "Unentschieden!";
-    return `${getWinnerName()} gewinnt!`;
+    return `${PLAYER_COLORS[winner].name} siegt!`;
   };
   
-  // Get subtitle based on win conditions
-  const getSubtitle = (): string => {
+  const getResultSubtext = (): string => {
     if (winner === 0) {
-      return "Beide Spieler haben ihre Aufgabe gelöst!";
+      return "Beide Spieler haben es geschafft!";
     }
-    
     if (winReason === "completion") {
-      return `${getWinnerName()} hat zuerst den Bereich vollständig gelöst.`;
+      return `Bereich schneller gelöst`;
     }
-    
-    const loserName = winner === 1 ? PLAYER_COLORS[2].name : PLAYER_COLORS[1].name;
-    return `${loserName} hat zu viele Fehler gemacht.`;
+    return `Gegner hat zu viele Fehler gemacht`;
   };
   
-  // Get motivational message for each player
-  const getPlayerMessage = (player: 1 | 2): string => {
-    if (winner === 0) {
-      // Both completed - positive for both
-      return "Großartige Teamleistung! Ein gemeinsamer Erfolg!";
-    }
-    
-    if (player === winner) {
-      // Winner message
-      if (winReason === "completion") {
-        return "Ausgezeichnete Arbeit! Deine Geschwindigkeit und Präzision haben zum Sieg geführt.";
-      }
-      return "Glückwunsch zum Sieg! Deine Genauigkeit hat sich ausgezahlt.";
-    } else {
-      // Loser message - encouraging
-      if (winReason === "completion") {
-        return "Knapp! Du warst auf dem richtigen Weg. Fordere eine Revanche!";
-      }
-      return "Beim nächsten Mal klappt es bestimmt! Vorsicht ist besser als Eile.";
-    }
-  };
-
-  // Get gradient colors based on winner
-  const getGradientColors = (): readonly [string, string, ...string[]] => {
-    if (winner === 0) {
-      // Unentschieden: Abstufung beider Farben
-      return [
-        PLAYER_COLORS[1].gradientStart,
-        PLAYER_COLORS[2].gradientStart,
-        PLAYER_COLORS.neutral.gradientEnd
-      ] as const; // Use const assertion to create a readonly tuple
-    }
-    
-    // Einzelner Gewinner: Nur dessen Farbe
-    return [
-      PLAYER_COLORS[winner].gradientStart,
-      PLAYER_COLORS[winner].gradientEnd
-    ] as const; // Use const assertion to create a readonly tuple
-  };
-  
-  // Helper function to get player card border color based on winner and theme
-  const getPlayerCardBorderColor = (player: 1 | 2) => {
-    // If this player is the winner, use their theme color
-    if (winner === player) {
-      return isDarkMode 
-        ? PLAYER_COLORS[player].primary // In dark mode, use the standard primary
-        : PLAYER_COLORS[player].lightMode.border; // In light mode, use the enhanced border color
-    }
-    
-    // Otherwise use a neutral border
-    return isDarkMode 
-      ? colors.border // Default dark mode border
-      : 'rgba(0,0,0,0.15)'; // Slightly darker border for light mode
-  };
-  
-  // Helper function to get player card background based on theme
-  const getPlayerCardBackground = (player: 1 | 2) => {
-    // In dark mode, just use the surface color
-    if (isDarkMode) {
-      return colors.surface;
-    }
-    
-    // In light mode, use a subtle colored background if this player is the winner
+  // Calculate cell completion percentage
+  const getCellCompletionPercentage = (player: 1 | 2): number => {
+    // If this player is the winner or if it's a tie, show 100%
     if (winner === player || winner === 0) {
-      return colors.surface;
+      return 100;
     }
     
-    // Otherwise use the default surface color
-    return colors.surface;
-  };
-  
-  // Helper function to get trophy colors based on player and theme
-  const getTrophyColors = (player: 1 | 2) => {
-    if (isDarkMode) {
-      return {
-        glow: PLAYER_COLORS[player].primary,
-        background: `rgba(${player === 1 ? '74, 125, 120' : '138, 123, 70'}, 0.15)`,
-        icon: PLAYER_COLORS[player].primary
-      };
+    // Otherwise calculate percentage of solved cells
+    if (player === 1) {
+      return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
+    } else {
+      return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
     }
-    
-    return {
-      glow: PLAYER_COLORS[player].lightMode.trophy.glow,
-      background: PLAYER_COLORS[player].lightMode.trophy.background,
-      icon: PLAYER_COLORS[player].lightMode.trophy.icon
-    };
   };
   
   // Start animations when modal becomes visible
   useEffect(() => {
     if (visible) {
       // Reset animation values
-      modalScale.value = 0.95;
-      modalOpacity.value = 0;
+      opacity.value = 0;
+      scale.value = 0.95;
+      player1Scale.value = 0.9;
+      player2Scale.value = 0.9;
+      vsScale.value = 0.5;
+      buttonOpacity.value = 0;
       
-      // Main modal animation
-      modalScale.value = withTiming(1, {
-        duration: 350,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+      // Sequence the animations
+      opacity.value = withTiming(1, { duration: 400 });
+      scale.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.back(1.5)) });
       
-      modalOpacity.value = withTiming(1, {
-        duration: 400,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+      // Player panels animation with slight delay between them
+      player1Scale.value = withDelay(200, withTiming(1, { 
+        duration: 600, 
+        easing: Easing.out(Easing.back(1.5)) 
+      }));
       
-      // Trophy animations - staggered
+      player2Scale.value = withDelay(300, withTiming(1, { 
+        duration: 600, 
+        easing: Easing.out(Easing.back(1.5)) 
+      }));
+      
+      // VS animation
+      vsScale.value = withDelay(500, withTiming(1, { 
+        duration: 400, 
+        easing: Easing.out(Easing.back(2)) 
+      }));
+      
+      // Trophy animations
       if (winner === 1 || winner === 0) {
-        trophy1Scale.value = withSequence(
-          withTiming(0.8, { duration: 100 }),
-          withTiming(1.2, { duration: 300 }),
+        trophy1Scale.value = withDelay(800, withSequence(
+          withTiming(1.3, { duration: 300 }),
           withTiming(1, { duration: 200 })
-        );
+        ));
       }
       
       if (winner === 2 || winner === 0) {
-        trophy2Scale.value = withSequence(
-          withTiming(0.8, { duration: 200 }),
-          withTiming(1.2, { duration: 300 }),
+        trophy2Scale.value = withDelay(900, withSequence(
+          withTiming(1.3, { duration: 300 }),
           withTiming(1, { duration: 200 })
-        );
+        ));
       }
       
-      // Haptic feedback based on result
-      if (winner === 0) {
-        triggerHaptic("success");
-      } else {
-        triggerHaptic("success");
-      }
+      // Buttons fade in last
+      buttonOpacity.value = withDelay(1000, withTiming(1, { duration: 400 }));
+      
+      // Trigger haptic feedback
+      triggerHaptic("success");
     }
   }, [visible]);
   
   // Animated styles
-  const modalAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: modalScale.value }],
-      opacity: modalOpacity.value,
-    };
-  });
+  const containerStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }]
+  }));
   
-  const trophy1AnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: trophy1Scale.value }],
-    };
-  });
+  const player1Style = useAnimatedStyle(() => ({
+    transform: [{ scale: player1Scale.value }]
+  }));
   
-  const trophy2AnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: trophy2Scale.value }],
-    };
-  });
+  const player2Style = useAnimatedStyle(() => ({
+    transform: [{ scale: player2Scale.value }]
+  }));
   
+  const vsStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: vsScale.value }],
+    opacity: vsScale.value
+  }));
+  
+  const trophy1Style = useAnimatedStyle(() => ({
+    transform: [{ scale: trophy1Scale.value }]
+  }));
+  
+  const trophy2Style = useAnimatedStyle(() => ({
+    transform: [{ scale: trophy2Scale.value }]
+  }));
+  
+  const buttonsStyle = useAnimatedStyle(() => ({
+    opacity: buttonOpacity.value
+  }));
+  
+  // Don't render when not visible
   if (!visible) return null;
-  
+
   return (
     <View style={styles.overlay}>
-      <Animated.View
+      <Animated.View 
         style={[
-          styles.modalContainer, 
-          { backgroundColor: colors.background },
-          modalAnimatedStyle
+          styles.container, 
+          { backgroundColor: isDarkMode ? '#15181D' : '#F8F9FA' },
+          containerStyle
         ]}
       >
-        {/* Confetti effect */}
+        {/* Confetti effect for visual excitement */}
         <ConfettiEffect isActive={visible} density={winner === 0 ? 3 : 2} />
         
-        {/* Gradient Header */}
+        {/* Gradient header */}
         <LinearGradient
-          colors={getGradientColors()}
+          colors={winner === 0 
+            ? [PLAYER_COLORS[1].primary, PLAYER_COLORS[2].primary, "transparent"] 
+            : [PLAYER_COLORS[winner].primary, "transparent"]}
           style={styles.headerGradient}
           start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
+          end={{ x: 0.5, y: 0.6 }}
         />
         
-        {/* Title Section */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>
-            {getTitle()}
-          </Text>
-          
-          <Text style={styles.subtitle}>
-            {getSubtitle()}
-          </Text>
-
-          {/* Game time */}
-          <View style={styles.timeContainer}>
-            <Feather name="clock" size={18} color="#FFFFFF" style={styles.timeIcon} />
-            <Text style={styles.timeText}>
-              {formatTime(gameTime)}
-            </Text>
+        {/* Header with game time */}
+        <View style={styles.header}>
+          <View style={[styles.timeContainer, { backgroundColor: DUO_COLOR }]}>
+            <Feather name="clock" size={18} color="#FFFFFF" />
+            <Text style={styles.timeText}>{formatTime(gameTime)}</Text>
           </View>
         </View>
         
-        {/* Scrollable content */}
-        <Animated.ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+        {/* Main result text - Large and bold */}
+        <Text 
+          style={[
+            styles.resultText, 
+            { color: isDarkMode ? '#FFFFFF' : '#202124' }
+          ]}
         >
-          {/* Grün (Player 1) Card */}
-          <View style={[
-            styles.playerCard,
-            { 
-              borderColor: getPlayerCardBorderColor(1),
-              backgroundColor: getPlayerCardBackground(1),
-              // Enhanced shadow for light mode
-              ...(!isDarkMode && winner === 1 ? {
-                shadowColor: PLAYER_COLORS[1].primary,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 4,
-                elevation: 4
-              } : {})
-            }
-          ]}>
-            <View style={styles.playerCardHeader}>
-              <View style={styles.playerTitleArea}>
-                <Text 
-                  style={[
-                    styles.playerCardTitle, 
-                    { 
-                      color: isDarkMode 
-                        ? PLAYER_COLORS[1].primary 
-                        : PLAYER_COLORS[1].lightMode.text
-                    }
-                  ]}
-                >
-                  {PLAYER_COLORS[1].name}
-                </Text>
-              </View>
-              
-              {winner === 1 && (
-                <Animated.View 
-                  style={[
-                    styles.trophyContainer,
-                    trophy1AnimatedStyle
-                  ]}
-                >
-                  {/* Outer glow effect */}
-                  <Animated.View 
-                    style={[
-                      styles.trophyGlow,
-                      { backgroundColor: getTrophyColors(1).glow }
-                    ]}
-                  />
-                  
-                  {/* Trophy background */}
-                  <View 
-                    style={[
-                      styles.trophyInner,
-                      { backgroundColor: getTrophyColors(1).background }
-                    ]}
-                  >
-                    <Feather 
-                      name="award" 
-                      size={22} 
-                      color={getTrophyColors(1).icon} 
-                    />
-                  </View>
-                </Animated.View>
-              )}
-            </View>
-            
-            <Text 
-              style={[
-                styles.playerMessage, 
-                { 
-                  color: isDarkMode 
-                    ? colors.textPrimary 
-                    : winner === 1 
-                      ? PLAYER_COLORS[1].lightMode.text 
-                      : colors.textPrimary
-                }
-              ]}
-            >
-              {getPlayerMessage(1)}
-            </Text>
-            
-            <View style={[
-              styles.statsContainer, 
-              { 
-                backgroundColor: isDarkMode 
-                  ? 'rgba(255,255,255,0.05)' 
-                  : 'rgba(0,0,0,0.03)'
-              }
-            ]}>
-              <View style={styles.statItem}>
-                <Feather name="heart" size={16} color={colors.error} />
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {maxErrors - player1Errors}/{maxErrors}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  Leben
-                </Text>
-              </View>
-              
-              <View style={[styles.divider, { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
-              
-              <View style={styles.statItem}>
-                <Feather name="help-circle" size={16} color={colors.primary} />
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {player1Hints}/{maxHints}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  Hinweise
-                </Text>
-              </View>
-            </View>
-          </View>
-          
-          {/* Gelb (Player 2) Card */}
-          <View style={[
-            styles.playerCard,
-            { 
-              borderColor: getPlayerCardBorderColor(2),
-              backgroundColor: getPlayerCardBackground(2),
-              // Enhanced shadow for light mode
-              ...(!isDarkMode && winner === 2 ? {
-                shadowColor: PLAYER_COLORS[2].primary,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 4,
-                elevation: 4
-              } : {})
-            }
-          ]}>
-            <View style={styles.playerCardHeader}>
-              <View style={styles.playerTitleArea}>
-                <Text 
-                  style={[
-                    styles.playerCardTitle, 
-                    { 
-                      color: isDarkMode 
-                        ? PLAYER_COLORS[2].primary 
-                        : PLAYER_COLORS[2].lightMode.text
-                    }
-                  ]}
-                >
-                  {PLAYER_COLORS[2].name}
-                </Text>
-              </View>
-              
-              {winner === 2 && (
-                <Animated.View 
-                  style={[
-                    styles.trophyContainer,
-                    trophy2AnimatedStyle
-                  ]}
-                >
-                  {/* Outer glow effect */}
-                  <Animated.View 
-                    style={[
-                      styles.trophyGlow,
-                      { backgroundColor: getTrophyColors(2).glow }
-                    ]}
-                  />
-                  
-                  {/* Trophy background */}
-                  <View 
-                    style={[
-                      styles.trophyInner,
-                      { backgroundColor: getTrophyColors(2).background }
-                    ]}
-                  >
-                    <Feather 
-                      name="award" 
-                      size={22} 
-                      color={getTrophyColors(2).icon} 
-                    />
-                  </View>
-                </Animated.View>
-              )}
-            </View>
-            
-            <Text 
-              style={[
-                styles.playerMessage, 
-                { 
-                  color: isDarkMode 
-                    ? colors.textPrimary 
-                    : winner === 2 
-                      ? PLAYER_COLORS[2].lightMode.text 
-                      : colors.textPrimary
-                }
-              ]}
-            >
-              {getPlayerMessage(2)}
-            </Text>
-            
-            <View style={[
-              styles.statsContainer, 
-              { 
-                backgroundColor: isDarkMode 
-                  ? 'rgba(255,255,255,0.05)' 
-                  : 'rgba(0,0,0,0.03)'
-              }
-            ]}>
-              <View style={styles.statItem}>
-                <Feather name="heart" size={16} color={colors.error} />
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {maxErrors - player2Errors}/{maxErrors}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  Leben
-                </Text>
-              </View>
-              
-              <View style={[styles.divider, { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }]} />
-              
-              <View style={styles.statItem}>
-                <Feather name="help-circle" size={16} color={colors.primary} />
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {player2Hints}/{maxHints}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  Hinweise
-                </Text>
-              </View>
-            </View>
-          </View>
-          
-          {/* Zusätzliches Padding für die Buttons am Ende */}
-          <View style={{ height: 90 }} />
-        </Animated.ScrollView>
+          {getResultText()}
+        </Text>
         
-        {/* Button container - fixed at bottom */}
-        <View style={[
-          styles.buttonContainer,
-          { 
-            backgroundColor: colors.background,
-            borderTopWidth: 1,
-            borderTopColor: theme.isDark ? 
-              'rgba(255,255,255,0.1)' : 
-              'rgba(0,0,0,0.05)'
-          }
-        ]}>
+        <Text 
+          style={[
+            styles.resultSubtext, 
+            { color: isDarkMode ? colors.textSecondary : '#5F6368' }
+          ]}
+        >
+          {getResultSubtext()}
+        </Text>
+        
+        {/* Battle container - placed below the result text */}
+        <View style={styles.battleContainer}>
+          {/* Player 1 Panel - Bottom player (Grün) */}
+          <Animated.View 
+            style={[
+              styles.playerPanel,
+              { 
+                backgroundColor: isDarkMode ? 
+                  'rgba(74, 125, 120, 0.15)' : 
+                  'rgba(74, 125, 120, 0.08)',
+                borderColor: PLAYER_COLORS[1].primary,
+                // Make loser panel more transparent
+                opacity: winner !== 0 && winner !== 1 ? 0.7 : 1
+              },
+              player1Style
+            ]}
+          >
+            {/* Winner badge */}
+            {winner === 1 && (
+              <View style={styles.winnerBadge}>
+                <Text style={styles.winnerText}>SIEGER</Text>
+              </View>
+            )}
+            
+            {/* Player name with trophy for winner */}
+            <View style={styles.playerHeader}>
+              <Text style={[
+                styles.playerName,
+                { color: isDarkMode ? '#FFFFFF' : '#202124' }
+              ]}>
+                {PLAYER_COLORS[1].name}
+              </Text>
+              
+              {/* Trophy for winner or tie - moved outside the layout flow */}
+              {(winner === 1 || winner === 0) && (
+                <Animated.View 
+                  style={[styles.trophyContainer, trophy1Style]}
+                >
+                  <View style={[
+                    styles.trophyCircle,
+                    { backgroundColor: 'rgba(74, 125, 120, 0.2)' }
+                  ]}>
+                    <Feather 
+                      name={winner === 1 ? "award" : "star"} 
+                      size={winner === 1 ? 20 : 16} 
+                      color={PLAYER_COLORS[1].primary} 
+                    />
+                  </View>
+                </Animated.View>
+              )}
+            </View>
+            
+            {/* Cell completion percentage */}
+            <View style={styles.performanceContainer}>
+              <Text style={[
+                styles.performanceText,
+                { color: PLAYER_COLORS[1].primary }
+              ]}>
+                {getCellCompletionPercentage(1)}%
+              </Text>
+              
+              <View style={styles.statsRow}>
+                {/* Errors indicator - now using player color */}
+                <View style={styles.statItem}>
+                  <Feather name="heart" size={14} color={PLAYER_COLORS[1].primary} />
+                  <Text style={[
+                    styles.statValue,
+                    { color: isDarkMode ? '#E8EAED' : '#5F6368' }
+                  ]}>
+                    {maxErrors - player1Errors}/{maxErrors}
+                  </Text>
+                </View>
+                
+                {/* Hints indicator */}
+                <View style={styles.statItem}>
+                  <Feather name="help-circle" size={14} color={PLAYER_COLORS[1].primary} />
+                  <Text style={[
+                    styles.statValue,
+                    { color: isDarkMode ? '#E8EAED' : '#5F6368' }
+                  ]}>
+                    {maxHints - player1Hints}/{maxHints}
+                  </Text>
+                </View>
+              </View>
+              
+              {/* Completion status - now using player color */}
+              <View style={[
+                styles.completionBadge,
+                { 
+                  backgroundColor: player1Complete ? 
+                    `${PLAYER_COLORS[1].primary}15` : 
+                    `${PLAYER_COLORS[1].primary}10`,
+                  borderColor: player1Complete ?
+                    `${PLAYER_COLORS[1].primary}30` :
+                    `${PLAYER_COLORS[1].primary}20`
+                }
+              ]}>
+                <Feather 
+                  name={player1Complete ? "check" : "x"} 
+                  size={12} 
+                  color={PLAYER_COLORS[1].primary} 
+                />
+                <Text style={[
+                  styles.completionText,
+                  { color: PLAYER_COLORS[1].primary }
+                ]}>
+                  {player1Complete ? "Vollständig" : "Unvollständig"}
+                </Text>
+              </View>
+            </View>
+          </Animated.View>
+          
+          {/* VS Divider - now perfectly centered */}
+          <Animated.View style={[styles.vsContainer, vsStyle]}>
+            <LinearGradient
+              colors={[PLAYER_COLORS[1].primary, PLAYER_COLORS[2].primary]}
+              style={styles.vsGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            >
+              <Text style={styles.vsText}>VS</Text>
+            </LinearGradient>
+          </Animated.View>
+          
+          {/* Player 2 Panel - Top player (Gelb) */}
+          <Animated.View 
+            style={[
+              styles.playerPanel,
+              { 
+                backgroundColor: isDarkMode ? 
+                  'rgba(138, 123, 70, 0.15)' : 
+                  'rgba(138, 123, 70, 0.08)',
+                borderColor: PLAYER_COLORS[2].primary,
+                // Make loser panel more transparent
+                opacity: winner !== 0 && winner !== 2 ? 0.7 : 1
+              },
+              player2Style
+            ]}
+          >
+            {/* Winner badge */}
+            {winner === 2 && (
+              <View style={styles.winnerBadge}>
+                <Text style={styles.winnerText}>SIEGER</Text>
+              </View>
+            )}
+            
+            {/* Player name with trophy for winner */}
+            <View style={styles.playerHeader}>
+              <Text style={[
+                styles.playerName,
+                { color: isDarkMode ? '#FFFFFF' : '#202124' }
+              ]}>
+                {PLAYER_COLORS[2].name}
+              </Text>
+              
+              {/* Trophy for winner or tie - moved outside the layout flow */}
+              {(winner === 2 || winner === 0) && (
+                <Animated.View 
+                  style={[styles.trophyContainer, trophy2Style]}
+                >
+                  <View style={[
+                    styles.trophyCircle,
+                    { backgroundColor: 'rgba(138, 123, 70, 0.2)' }
+                  ]}>
+                    <Feather 
+                      name={winner === 2 ? "award" : "star"} 
+                      size={winner === 2 ? 20 : 16} 
+                      color={PLAYER_COLORS[2].primary} 
+                      />
+                  </View>
+                </Animated.View>
+              )}
+            </View>
+            
+            {/* Cell completion percentage */}
+            <View style={styles.performanceContainer}>
+              <Text style={[
+                styles.performanceText,
+                { color: PLAYER_COLORS[2].primary }
+              ]}>
+                {getCellCompletionPercentage(2)}%
+              </Text>
+              
+              <View style={styles.statsRow}>
+                {/* Errors indicator - now using player color */}
+                <View style={styles.statItem}>
+                  <Feather name="heart" size={14} color={PLAYER_COLORS[2].primary} />
+                  <Text style={[
+                    styles.statValue,
+                    { color: isDarkMode ? '#E8EAED' : '#5F6368' }
+                  ]}>
+                    {maxErrors - player2Errors}/{maxErrors}
+                  </Text>
+                </View>
+                
+                {/* Hints indicator */}
+                <View style={styles.statItem}>
+                  <Feather name="help-circle" size={14} color={PLAYER_COLORS[2].primary} />
+                  <Text style={[
+                    styles.statValue,
+                    { color: isDarkMode ? '#E8EAED' : '#5F6368' }
+                  ]}>
+                    {maxHints - player2Hints}/{maxHints}
+                  </Text>
+                </View>
+              </View>
+              
+              {/* Completion status - now using player color */}
+              <View style={[
+                styles.completionBadge,
+                { 
+                  backgroundColor: player2Complete ? 
+                    `${PLAYER_COLORS[2].primary}15` : 
+                    `${PLAYER_COLORS[2].primary}10`,
+                  borderColor: player2Complete ?
+                    `${PLAYER_COLORS[2].primary}30` :
+                    `${PLAYER_COLORS[2].primary}20`
+                }
+              ]}>
+                <Feather 
+                  name={player2Complete ? "check" : "x"} 
+                  size={12} 
+                  color={PLAYER_COLORS[2].primary} 
+                />
+                <Text style={[
+                  styles.completionText,
+                  { color: PLAYER_COLORS[2].primary }
+                ]}>
+                  {player2Complete ? "Vollständig" : "Unvollständig"}
+                </Text>
+              </View>
+            </View>
+          </Animated.View>
+        </View>
+        
+        {/* Action buttons */}
+        <Animated.View style={[styles.buttonsContainer, buttonsStyle]}>
+          {/* Revanche Button */}
           <Button
             title="Revanche!"
             onPress={onNewGame}
             variant="primary"
-            style={styles.button}
-            icon={<Feather name="refresh-cw" size={20} color="white" />}
+            style={styles.revangeButton}
+            icon={<Feather name="refresh-cw" size={20} color="#FFFFFF" />}
             iconPosition="left"
           />
           
+          {/* Zum Menü Button */}
           <Button
             title="Zum Menü"
             onPress={onClose}
             variant="outline"
-            style={styles.button}
+            style={styles.menuButton}
+            textStyle={{ color: DUO_COLOR }}
           />
-        </View>
+        </Animated.View>
       </Animated.View>
     </View>
   );
 };
 
+// Styles without array syntax for button styles
 const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
@@ -642,170 +543,211 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.85)",
     zIndex: 9999,
   },
-  modalContainer: {
+  container: {
     width: "100%",
     height: "100%",
-    overflow: "hidden",
     alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 40,
   },
-  // Gradient Header
+  // Header gradient
   headerGradient: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 220,
-    zIndex: 0,
+    height: 180,
   },
-  titleContainer: {
-    width: "100%",
+  header: {
+    marginBottom: 24,
     alignItems: "center",
-    paddingTop: 40,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
     zIndex: 1,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginBottom: 8,
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.25)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#FFFFFF",
-    opacity: 0.9,
-  },
-  // Spielzeit Container
   timeContainer: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 24,
     justifyContent: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginTop: 5,
-    backgroundColor: "rgba(0,0,0,0.2)",
-  },
-  timeIcon: {
-    marginRight: 8,
   },
   timeText: {
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "600",
+    marginLeft: 8,
     fontVariant: ["tabular-nums"],
-    color: "#FFFFFF",
   },
-  // ScrollView
-  scrollView: {
-    width: "100%",
-    flex: 1,
+  resultText: {
+    fontSize: 32,
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "center",
     zIndex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
+  resultSubtext: {
+    fontSize: 16,
+    marginBottom: 36,
+    textAlign: "center",
+    opacity: 0.8,
+    zIndex: 1,
   },
-  // Player card (gleiche Hintergrundfarbe wie Modal-Hintergrund)
-  playerCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  playerCardHeader: {
+  // Battle layout styles - positioned below the title
+  battleContainer: {
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    height: 220,
+    position: "relative",
+    marginTop: 0, // No extra margin needed now
   },
-  playerTitleArea: {
-    flex: 1,
+  playerPanel: {
+    width: "45%", // Slightly reduced width to ensure proper spacing
+    height: "100%",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 2,
+    justifyContent: "flex-start",
+    position: "relative", // For winner badge
   },
-  playerCardTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  // Trophy-related styles
-  trophyContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  trophyInner: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  trophyGlow: {
-    position: 'absolute',
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    opacity: 0.3,
-  },
-  playerMessage: {
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 16,
-    fontWeight: "500",
-  },
-  // Stats container (flache Hintergrundfarbe)
-  statsContainer: {
-    flexDirection: "row",
-    borderRadius: 12,
-    padding: 12,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 4,
-    marginBottom: 2,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  divider: {
-    width: 1,
-    height: "80%",
-    marginHorizontal: 10,
-  },
-  // Button container
-  buttonContainer: {
+  // Winner badge
+  winnerBadge: {
     position: "absolute",
-    bottom: 0,
+    top: -12,
     left: 0,
     right: 0,
-    padding: 20,
-    paddingBottom: 40,
-    zIndex: 2,
+    alignItems: "center",
+    zIndex: 10,
   },
-  button: {
-    width: "100%",
+  winnerText: {
+    fontSize: 12,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    backgroundColor: DUO_COLOR,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  playerHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+    minHeight: 28, // Ensure consistent height with or without trophy
+  },
+  playerName: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  trophyContainer: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+  },
+  trophyCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // VS container - perfectly centered
+  vsContainer: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: 40,
+    height: 40,
+    marginLeft: -20, // Center horizontally
+    marginTop: -20, // Center vertically
+    zIndex: 10,
+  },
+  vsGradient: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  vsText: {
+    color: "#FFFFFF",
+    fontWeight: "900",
+    fontSize: 16,
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  // Player stats styles - with fixed heights for consistency
+  performanceContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 140, // Fixed height to ensure alignment
+  },
+  performanceText: {
+    fontSize: 32,
+    fontWeight: "800",
     marginBottom: 12,
+    height: 40, // Fixed height for label
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginBottom: 16,
+    height: 24, // Fixed height for stats row
+  },
+  statItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 4,
+  },
+  statValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 4,
+  },
+  completionBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 8,
+    height: 24, // Fixed height for completion badge
+  },
+  completionText: {
+    fontSize: 12,
+    fontWeight: "500",
+    marginLeft: 4,
+  },
+  // Button styles
+  buttonsContainer: {
+    position: "absolute",
+    bottom: 48,
+    left: 24,
+    right: 24,
+    zIndex: 5,
+  },
+  revangeButton: {
+    width: "100%",
     height: 56,
+    marginBottom: 16,
+    backgroundColor: DUO_COLOR,
+  },
+  menuButton: {
+    width: "100%",
+    height: 56,
+    borderColor: DUO_COLOR,
   },
 });
 

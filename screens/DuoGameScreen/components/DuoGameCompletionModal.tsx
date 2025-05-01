@@ -42,6 +42,7 @@ interface DuoGameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
   onNewGame: () => void;
+  onRevanche: () => void; // NEU: Eigene Funktion für Revanche
   winner: 0 | 1 | 2; // 0 = Tie (both complete)
   gameTime: number;
   player1Complete: boolean;
@@ -53,9 +54,7 @@ interface DuoGameCompletionModalProps {
   maxHints: number;
   maxErrors: number;
   winReason: "completion" | "errors";
-  // NEU: Aktueller Schwierigkeitsgrad
   currentDifficulty: Difficulty;
-  // Mock data for calculation (in real implementation, you would get these values from the game state)
   player1InitialEmptyCells?: number;
   player1SolvedCells?: number;
   player2InitialEmptyCells?: number;
@@ -66,6 +65,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   visible,
   onClose,
   onNewGame,
+  onRevanche, // NEU: Eigene Funktion für Revanche
   winner,
   gameTime,
   player1Complete,
@@ -78,7 +78,6 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   maxErrors,
   winReason,
   currentDifficulty,
-  // For demo purposes only - you should pass real values from your game state
   player1InitialEmptyCells = 40,
   player1SolvedCells = player1Complete ? 40 : 32,
   player2InitialEmptyCells = 40,
@@ -89,8 +88,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   const isDarkMode = theme.isDark;
   const router = useRouter();
   
-  // Neu: Dynamische Farbe basierend auf Gewinner
-  // Bei Unentschieden verwenden wir die grüne Farbe als Standard
+  // Dynamische Farbe basierend auf Gewinner
   const getWinnerColor = () => {
     if (winner === 2) return YELLOW_COLOR;
     return GREEN_COLOR; // Standard ist grün (für Spieler 1 oder Unentschieden)
@@ -233,21 +231,6 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
     opacity: buttonOpacity.value
   }));
 
-  // NEU: Verbesserter Handler für das Neustarten des Spiels mit dem gleichen Schwierigkeitsgrad
-  const handleRevanche = () => {
-    // Erst das Modal schließen
-    onClose();
-    
-    // Kurze Verzögerung für Animationen
-    setTimeout(() => {
-      // Direkt zum DuoGameScreen navigieren mit dem aktuellen Schwierigkeitsgrad
-      router.replace({
-        pathname: "/duo-game" as const,
-        params: { difficulty: currentDifficulty }
-      });
-    }, 200);
-  };
-  
   // Don't render when not visible
   if (!visible) return null;
 
@@ -263,7 +246,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         {/* Confetti effect for visual excitement */}
         <ConfettiEffect isActive={visible} density={winner === 0 ? 3 : 2} />
         
-        {/* Gradient header - GEÄNDERT: Dynamische Farben basierend auf Gewinner */}
+        {/* Gradient header */}
         <LinearGradient
           colors={winner === 0 
             ? [PLAYER_COLORS[1].primary, PLAYER_COLORS[2].primary, "transparent"] 
@@ -273,7 +256,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           end={{ x: 0.5, y: 0.6 }}
         />
         
-        {/* Header with game time - GEÄNDERT: Dynamische Hintergrundfarbe */}
+        {/* Header with game time */}
         <View style={styles.header}>
           <View style={[styles.timeContainer, { backgroundColor: winnerColor }]}>
             <Feather name="clock" size={18} color="#FFFFFF" />
@@ -311,13 +294,12 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   'rgba(74, 125, 120, 0.15)' : 
                   'rgba(74, 125, 120, 0.08)',
                 borderColor: PLAYER_COLORS[1].primary,
-                // Make loser panel more transparent
                 opacity: winner !== 0 && winner !== 1 ? 0.7 : 1
               },
               player1Style
             ]}
           >
-            {/* Winner badge - GEÄNDERT: Dynamische Hintergrundfarbe */}
+            {/* Winner badge */}
             {winner === 1 && (
               <View style={styles.winnerBadge}>
                 <Text style={[
@@ -336,7 +318,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 {PLAYER_COLORS[1].name}
               </Text>
               
-              {/* Trophy for winner or tie - moved outside the layout flow */}
+              {/* Trophy for winner or tie */}
               {(winner === 1 || winner === 0) && (
                 <Animated.View 
                   style={[styles.trophyContainer, trophy1Style]}
@@ -365,7 +347,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
               </Text>
               
               <View style={styles.statsRow}>
-                {/* Errors indicator - now using player color */}
+                {/* Errors indicator */}
                 <View style={styles.statItem}>
                   <Feather name="heart" size={14} color={PLAYER_COLORS[1].primary} />
                   <Text style={[
@@ -388,7 +370,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 </View>
               </View>
               
-              {/* Completion status - now using player color */}
+              {/* Completion status */}
               <View style={[
                 styles.completionBadge,
                 { 
@@ -415,7 +397,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             </View>
           </Animated.View>
           
-          {/* VS Divider - NEUGESTALTET: Professionelleres Design */}
+          {/* VS Divider */}
           <Animated.View style={[styles.vsContainer, vsStyle]}>
             <View style={[
               styles.vsCircle,
@@ -440,13 +422,12 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                   'rgba(138, 123, 70, 0.15)' : 
                   'rgba(138, 123, 70, 0.08)',
                 borderColor: PLAYER_COLORS[2].primary,
-                // Make loser panel more transparent
                 opacity: winner !== 0 && winner !== 2 ? 0.7 : 1
               },
               player2Style
             ]}
           >
-            {/* Winner badge - GEÄNDERT: Dynamische Hintergrundfarbe */}
+            {/* Winner badge */}
             {winner === 2 && (
               <View style={styles.winnerBadge}>
                 <Text style={[
@@ -465,7 +446,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 {PLAYER_COLORS[2].name}
               </Text>
               
-              {/* Trophy for winner or tie - moved outside the layout flow */}
+              {/* Trophy for winner or tie */}
               {(winner === 2 || winner === 0) && (
                 <Animated.View 
                   style={[styles.trophyContainer, trophy2Style]}
@@ -494,7 +475,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
               </Text>
               
               <View style={styles.statsRow}>
-                {/* Errors indicator - now using player color */}
+                {/* Errors indicator */}
                 <View style={styles.statItem}>
                   <Feather name="heart" size={14} color={PLAYER_COLORS[2].primary} />
                   <Text style={[
@@ -517,7 +498,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 </View>
               </View>
               
-              {/* Completion status - now using player color */}
+              {/* Completion status */}
               <View style={[
                 styles.completionBadge,
                 { 
@@ -545,18 +526,19 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           </Animated.View>
         </View>
         
-        {/* Action buttons - GEÄNDERT: Dynamische Farben für Buttons und TypeScript-Fehler behoben */}
+        {/* Action buttons - Verwende die onRevanche Funktion direkt */}
         <Animated.View style={[styles.buttonsContainer, buttonsStyle]}>
           {/* Revanche Button */}
           <Button
             title="Revanche!"
-            onPress={handleRevanche}
+            onPress={onRevanche} // Verwende direkt die von außen bereitgestellte Funktion
             variant="primary"
             style={{
               width: "100%",
               height: 56,
               marginBottom: 16,
-              backgroundColor: winnerColor
+              backgroundColor: winnerColor,
+              shadowColor: winnerColor // Match shadow color with button color
             }}
             icon={<Feather name="refresh-cw" size={20} color="#FFFFFF" />}
             iconPosition="left"
@@ -713,7 +695,7 @@ const styles = StyleSheet.create({
     marginTop: -20, // Center vertically
     zIndex: 10,
   },
-  // NEU: Überarbeiteter VS-Stil - professioneller ohne Gradient
+  // Überarbeiteter VS-Stil - professioneller ohne Gradient
   vsCircle: {
     width: 40,
     height: 40,

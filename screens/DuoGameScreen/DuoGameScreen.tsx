@@ -116,11 +116,29 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     }
   };
 
-  // Handle for changing difficulty
-  const handleChangeDifficulty = () => {
-    // Hier könntest du einen DifficultySelector einblenden
-    // Vorerst einfach zurück zum Duo-Menü navigieren
+  // NEU: Spezifische Handler für die Aktionen im Completion Modal
+  const handleCloseCompletionModal = () => {
+    setShowCompletionModal(false);
     router.replace("/duo");
+  };
+
+  // NEU: Handler für neues Spiel ohne Navigation
+  const handleStartNewGame = () => {
+    setShowCompletionModal(false);
+    gameActions.startNewGame();
+  };
+
+  // NEU: Spezifischer Handler für Revanche
+  const handleRevanche = () => {
+    setShowCompletionModal(false);
+    
+    // Kleine Verzögerung für bessere Animation
+    setTimeout(() => {
+      router.replace({
+        pathname: "/duo-game",
+        params: { difficulty: initialDifficulty }
+      });
+    }, 200);
   };
 
   // Einheitliches Schatten-System
@@ -142,20 +160,19 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           style={[
             styles.backButton, 
             { 
-              // Statt halbtransparentem Hintergrund im Light Mode:
               backgroundColor: theme.isDark 
                 ? "rgba(255,255,255,0.25)" 
-                : colors.surface, // Surface-Farbe aus dem Theme
+                : colors.surface,
             },
-            buttonShadow, // Einheitlicher Schatten
+            buttonShadow,
           ]}
           onPress={handleBackPress}
-          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }} // Increased hit area
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
           <Feather 
             name="chevron-left" 
             size={24} 
-            color={theme.isDark ? "#FFFFFF" : colors.primary} // Primärfarbe statt Schwarz
+            color={theme.isDark ? "#FFFFFF" : colors.primary}
           />
         </TouchableOpacity>
 
@@ -168,7 +185,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           />
         </View>
 
-        {/* Main content - now with full height */}
+        {/* Main content */}
         <Animated.View
           style={styles.content}
           entering={FadeIn.delay(200).duration(500)}
@@ -210,17 +227,12 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           />
         </Animated.View>
 
-        {/* Game Completion Modal - ANGEPASST: Übergabe des aktuellen Schwierigkeitsgrads */}
+        {/* Game Completion Modal - KOMPLETT NEU: Übergebe eigene Funktionen für jede Aktion */}
         <DuoGameCompletionModal
           visible={showCompletionModal}
-          onClose={() => {
-            setShowCompletionModal(false);
-            router.replace("/duo");
-          }}
-          onNewGame={() => {
-            setShowCompletionModal(false);
-            gameActions.startNewGame();
-          }}
+          onClose={handleCloseCompletionModal}
+          onNewGame={handleStartNewGame}
+          onRevanche={handleRevanche} // NEU: Spezielle Revanche-Funktion
           winner={winnerInfo.winner}
           winReason={winnerInfo.reason}
           gameTime={gameState.gameTime}
@@ -232,7 +244,6 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           player2Hints={MAX_HINTS - gameState.player2Hints}
           maxHints={MAX_HINTS}
           maxErrors={gameState.maxErrors}
-          // NEU: Aktuelle Schwierigkeit übergeben
           currentDifficulty={initialDifficulty}
         />
       </SafeAreaView>
@@ -250,27 +261,26 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 8,
-    paddingTop: 16, // Added top padding to create safe space below back button
-    justifyContent: "space-between", // Distribute components evenly
+    paddingTop: 16,
+    justifyContent: "space-between",
   },
   backButton: {
     position: "absolute",
-    top: 8, // Increased from 12 to create more separation
+    top: 8,
     left: 16,
-    width: 36, // Increased from 36 for a larger tap target
-    height: 36, // Increased from 36 for a larger tap target
+    width: 36,
+    height: 36,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
   },
-  // Style for the hidden timer
   hiddenTimer: {
     position: "absolute",
-    top: -1000, // Position it off-screen
-    opacity: 0, // Make it invisible
-    height: 1, // Minimal height
-    width: 1, // Minimal width
+    top: -1000,
+    opacity: 0,
+    height: 1,
+    width: 1,
   }
 });
 

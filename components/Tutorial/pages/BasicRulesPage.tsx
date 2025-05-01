@@ -49,21 +49,21 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   const [showMissingNumber, setShowMissingNumber] = useState(false);
 
   // Arrays with exactly one missing number
-  const rowValues = [1, 5, 7, 4, 9, 0, 8, 3, 2]; // Missing 6 at index 5
-  const colValues = [9, 2, 6, 8, 7, 1, 3, 4, 0]; // Missing 5 at index 8
+  const rowValues = [1, 2, 3, 4, 5, 0, 7, 8, 9]; // Missing 6 at index 5
+  const colValues = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // Missing 5 at index 8
   const blockValues = [
-    [7, 6, 3],
-    [9, 2, 8],
-    [5, 1, 0], // Missing 4 at [2, 2]
+    [1, 2, 3],
+    [0, 5, 6],
+    [7, 8, 9], // Missing 4 at [2, 2]
   ];
 
   // Complete arrays with all numbers
-  const completeRowValues = [1, 5, 7, 4, 9, 6, 8, 3, 2];
-  const completeColValues = [9, 2, 6, 8, 7, 1, 3, 4, 5];
+  const completeRowValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const completeColValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const completeBlockValues = [
-    [7, 6, 3],
-    [9, 2, 8],
-    [5, 1, 4],
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
   ];
 
   // Update display grid based on highlights and animation state

@@ -95,6 +95,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     if (highlightCell && highlightCell[0] === row && highlightCell[1] === col) {
       return {
         highlighted: true,
+        isSelected: true,
         color: colors.cellSelectedBackground, // Verwende Theme-Farbe für ausgewählte Zelle
       };
     }
@@ -102,6 +103,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     if (highlightRow !== undefined && row === highlightRow) {
       return {
         highlighted: true,
+        isSelected: false,
         color: effectiveRowColor,
       };
     }
@@ -109,6 +111,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     if (highlightColumn !== undefined && col === highlightColumn) {
       return {
         highlighted: true,
+        isSelected: false,
         color: effectiveColumnColor,
       };
     }
@@ -125,12 +128,13 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
       ) {
         return {
           highlighted: true,
+          isSelected: false,
           color: effectiveBlockColor,
         };
       }
     }
 
-    return { highlighted: false, color: "transparent" };
+    return { highlighted: false, isSelected: false, color: "transparent" };
   };
 
   // Get notes for a cell
@@ -156,6 +160,8 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   // Render notes grid
   const renderNotes = (row: number, col: number) => {
     const cellNotes = getCellNotes(row, col);
+    const highlightInfo = getCellHighlightInfo(row, col);
+    const isSelected = highlightInfo.isSelected;
 
     return (
       <View style={styles.notesContainer}>
@@ -164,7 +170,12 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
             key={`note-${row}-${col}-${num}`}
             style={[
               styles.noteText,
-              { color: colors.cellNotesTextColor }, // Theme-konforme Farbe
+              { 
+                // KORRIGIERT: Setze die Textfarbe basierend auf dem Auswahlstatus
+                color: isSelected 
+                  ? colors.cellSelectedTextColor // Weiß für ausgewählte Zellen
+                  : colors.cellNotesTextColor    // Standardfarbe für nicht ausgewählte
+              },
               cellNotes.includes(num) ? styles.activeNote : styles.hiddenNote,
             ]}
           >
@@ -215,6 +226,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
                 {row.map((cell, colIndex) => {
                   const isInitial = cell !== 0;
                   const highlightInfo = getCellHighlightInfo(rowIndex, colIndex);
+                  const isSelected = highlightInfo.isSelected;
 
                   return (
                     <View
@@ -247,7 +259,12 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
                       {isInitial ? (
                         <Text style={[
                           styles.cellText, 
-                          { color: colors.cellInitialTextColor },
+                          { 
+                            // KORRIGIERT: Textfarbe basierend auf Auswahlstatus
+                            color: isSelected 
+                              ? colors.cellSelectedTextColor  // Weiß für ausgewählte Zellen 
+                              : colors.cellInitialTextColor   // Theme-Farbe für initiale Zahlen
+                          },
                           styles.initialText
                         ]}>
                           {cell}

@@ -12,6 +12,7 @@ interface TutorialPageProps {
   children: ReactNode;
   onNext: () => void;
   onBack: () => void;
+  onClose: () => void; // Prop for closing tutorial
   isFirstPage?: boolean;
   isLastPage?: boolean;
   nextText?: string;
@@ -23,6 +24,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
   children,
   onNext,
   onBack,
+  onClose,
   isFirstPage = false,
   isLastPage = false,
   nextText = "Weiter",
@@ -36,24 +38,23 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
     <Animated.View style={[styles.container]} entering={FadeIn.duration(300)}>
       {/* Header with safe area padding */}
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={onBack}
-          disabled={isFirstPage}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather
-            name="chevron-left"
-            size={24}
-            color={isFirstPage ? "transparent" : colors.textPrimary}
-          />
-        </TouchableOpacity>
+        {/* Left side - empty view for spacing */}
+        <View style={styles.backButton}>
+          <View style={{ width: 24 }} />
+        </View>
 
         <Text style={[styles.title, { color: colors.textPrimary }]}>
           {title}
         </Text>
 
-        <View style={styles.rightPlaceholder} />
+        {/* Right side - close button */}
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={onClose}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Feather name="x" size={24} color={colors.textPrimary} />
+        </TouchableOpacity>
       </View>
 
       {/* Scrollable content */}
@@ -117,8 +118,9 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: "flex-start",
   },
-  rightPlaceholder: {
+  closeButton: {
     width: 40,
+    alignItems: "flex-end",
   },
   title: {
     fontSize: 22,

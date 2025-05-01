@@ -1,18 +1,17 @@
 // components/Tutorial/TutorialContainer.tsx
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useNavigation } from "@/utils/NavigationContext";
-import TutorialPage from "./TutorialPage";
+import { useRouter } from "expo-router";
 import TutorialProgress from "./components/TutorialProgress";
 
-// Import individual pages - TipsPage is removed
+// Import individual pages
 import BasicRulesPage from "./pages/BasicRulesPage";
 import GameplayPage from "./pages/GameplayPage";
 import NotesPage from "./pages/NotesPage";
-// TipsPage import removed
 
 interface TutorialContainerProps {
   onComplete: () => void;
@@ -28,31 +27,32 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const { setShowNavigation } = useNavigation();
+  const router = useRouter();
 
   // Stelle sicher, dass Navigation ausgeblendet ist, wenn TutorialContainer angezeigt wird
   useEffect(() => {
-    // Navigationleiste ausblenden
+    console.log("TutorialContainer: Mounted, hiding navigation");
     setShowNavigation(false);
     
-    // Aufräumen beim Unmount
     return () => {
+      console.log("TutorialContainer: Unmounting, showing navigation");
       setShowNavigation(true);
     };
   }, []);
 
-  // Tutorial pages - TipsPage removed
+  // Tutorial pages
   const pages = [
     { id: "basics", component: BasicRulesPage },
     { id: "gameplay", component: GameplayPage },
     { id: "notes", component: NotesPage },
-    // TipsPage entry removed
   ];
 
   const goToNextPage = useCallback(() => {
     if (currentPage < pages.length - 1) {
+      console.log(`TutorialContainer: Moving to next page (${currentPage + 1})`);
       setCurrentPage(currentPage + 1);
     } else {
-      // Navigation wieder anzeigen bevor Tutorial beendet wird
+      console.log("TutorialContainer: On last page, completing tutorial");
       setShowNavigation(true);
       onComplete();
     }
@@ -60,15 +60,31 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
 
   const goToPreviousPage = useCallback(() => {
     if (currentPage > 0) {
+      console.log(`TutorialContainer: Moving to previous page (${currentPage - 1})`);
       setCurrentPage(currentPage - 1);
     } else if (onBack) {
-      // Navigation wieder anzeigen bevor Tutorial beendet wird
+      console.log("TutorialContainer: On first page, going back");
       setShowNavigation(true);
       onBack();
     }
   }, [currentPage, onBack]);
 
-  const CurrentPageComponent = pages[currentPage].component;
+  // Handler to exit tutorial and return to start screen directly
+  const handleCloseTutorial = useCallback(() => {
+    console.log("TutorialContainer: Close tutorial requested");
+    
+    // Make sure navigation is visible again
+    setShowNavigation(true);
+    
+    try {
+      // Use the onComplete prop which should be connected to navigation
+      console.log("TutorialContainer: Calling onComplete to exit tutorial");
+      onComplete();
+    } catch (error) {
+      console.error("Error closing tutorial:", error);
+      Alert.alert("Error", "Couldn't close the tutorial properly");
+    }
+  }, [onComplete]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -82,14 +98,15 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
         />
       </View>
 
-      {/* Main Content */}
+      {/* Main Content - Use React.createElement to pass the correct props */}
       <View style={styles.pageContainer}>
-        <CurrentPageComponent
-          onNext={goToNextPage}
-          onBack={goToPreviousPage}
-          isFirstPage={currentPage === 0}
-          isLastPage={currentPage === pages.length - 1}
-        />
+        {React.createElement(pages[currentPage].component, {
+          onNext: goToNextPage,
+          onBack: goToPreviousPage,
+          onClose: handleCloseTutorial,
+          isFirstPage: currentPage === 0,
+          isLastPage: currentPage === pages.length - 1
+        })}
       </View>
     </View>
   );

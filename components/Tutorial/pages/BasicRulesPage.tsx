@@ -17,6 +17,7 @@ import { spacing } from "@/utils/theme";
 interface BasicRulesPageProps {
   onNext: () => void;
   onBack: () => void;
+  onClose: () => void; // Added this prop to interface
   isFirstPage?: boolean;
   isLastPage?: boolean;
 }
@@ -24,6 +25,7 @@ interface BasicRulesPageProps {
 const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   onNext,
   onBack,
+  onClose,
   isFirstPage = false,
   isLastPage = false,
 }) => {
@@ -193,6 +195,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
       title="Wie man spielt"
       onNext={onNext}
       onBack={onBack}
+      onClose={onClose}
       isFirstPage={isFirstPage}
       isLastPage={isLastPage}
     >

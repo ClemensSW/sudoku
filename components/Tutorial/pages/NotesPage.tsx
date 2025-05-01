@@ -1,5 +1,5 @@
 // components/Tutorial/pages/NotesPage.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
@@ -11,6 +11,7 @@ import { spacing } from "@/utils/theme";
 interface NotesPageProps {
   onNext: () => void;
   onBack: () => void;
+  onClose: () => void; // Added this prop to interface
   isFirstPage?: boolean;
   isLastPage?: boolean;
 }
@@ -18,6 +19,7 @@ interface NotesPageProps {
 const NotesPage: React.FC<NotesPageProps> = ({
   onNext,
   onBack,
+  onClose,
   isFirstPage = false,
   isLastPage = false,
 }) => {
@@ -37,20 +39,73 @@ const NotesPage: React.FC<NotesPageProps> = ({
     [0, 0, 0, 0, 8, 0, 0, 0, 0],
   ];
 
-  // Example notes
-  const [notes] = useState<{ [key: string]: number[] }>({
-    "4-4": [1, 3, 5, 7, 9],
-    "0-8": [4, 7, 8],
+  // Dynamic notes state that will change over time
+  const [animatedNotes, setAnimatedNotes] = useState<{ [key: string]: number[] }>({
+    "4-4": [], // Start with empty notes
   });
 
   // Selected cell
   const [selectedCell] = useState<[number, number]>([4, 4]);
+  
+  // Animation sequence values
+  const noteSequence = [1, 3, 5, 7, 9]; // The values we want to show in order
+  
+  // Animation effect to cycle through notes
+  useEffect(() => {
+    // Keep track of all timeouts for proper cleanup
+    const timeouts: NodeJS.Timeout[] = [];
+    
+    // Function to run the animation
+    const runAnimation = () => {
+      // Reset notes at the beginning
+      setAnimatedNotes({ "4-4": [] });
+      
+      // Add each note one by one with increasing delays
+      noteSequence.forEach((note, index) => {
+        const timeout = setTimeout(() => {
+          setAnimatedNotes(prev => ({
+            "4-4": [...(prev["4-4"] || []), note]
+          }));
+        }, 800 * (index + 1)); // 800ms between each note
+        
+        timeouts.push(timeout);
+      });
+      
+      // After showing all notes, pause briefly with all notes visible
+      const pauseTimeout = setTimeout(() => {
+        // Then clear all notes
+        setAnimatedNotes({ "4-4": [] });
+        
+        // Wait and restart the animation
+        const restartTimeout = setTimeout(() => {
+          runAnimation();
+        }, 1200); // Wait before restarting
+        
+        timeouts.push(restartTimeout);
+      }, 800 * (noteSequence.length + 1)); // Wait a bit longer after showing all notes
+      
+      timeouts.push(pauseTimeout);
+    };
+    
+    // Start the initial animation with a slight delay
+    const initialDelay = setTimeout(() => {
+      runAnimation();
+    }, 1000);
+    
+    timeouts.push(initialDelay);
+    
+    // Clean up all timeouts when component unmounts
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <TutorialPage
       title="Notizen verwenden"
       onNext={onNext}
       onBack={onBack}
+      onClose={onClose}
       isFirstPage={isFirstPage}
       isLastPage={isLastPage}
     >
@@ -63,7 +118,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
             grid={exampleGrid}
             highlightCell={selectedCell}
             showNotes={true}
-            notes={notes}
+            notes={animatedNotes} // Pass our animated notes to the board
           />
         </Animated.View>
 
@@ -85,8 +140,8 @@ const NotesPage: React.FC<NotesPageProps> = ({
           entering={FadeIn.delay(300).duration(500)}
         >
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
-            Notizen visualisieren Möglichkeiten und verwandeln komplexe Sudokus
-            in lösbare Strategieaufgaben.
+          Notizen visualisieren Möglichkeiten und verwandeln komplexe Sudokus
+          in lösbare Strategieaufgaben.
           </Text>
         </Animated.View>
       </View>

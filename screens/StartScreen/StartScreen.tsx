@@ -21,6 +21,7 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useNavigation } from "@/utils/NavigationContext";
@@ -32,6 +33,9 @@ import { getFilteredLandscapes } from "@/screens/GalleryScreen/utils/landscapes/
 import { Landscape } from "@/screens/GalleryScreen/utils/landscapes/types";
 
 const { width, height } = Dimensions.get("window");
+
+// Schlüssel für AsyncStorage
+const TUTORIAL_SHOWN_KEY = "@sudoku/tutorial_shown";
 
 const StartScreen: React.FC = () => {
   const router = useRouter();
@@ -51,6 +55,9 @@ const StartScreen: React.FC = () => {
     useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  
+  // Neuer State um zu prüfen, ob das Tutorial bereits angezeigt wurde
+  const [tutorialChecked, setTutorialChecked] = useState(false);
 
   // Calculate button area height and overlap for a smoother transition
   const BUTTON_AREA_HEIGHT = 240; // Taller button area for better proportion
@@ -59,6 +66,28 @@ const StartScreen: React.FC = () => {
 
   // Animation values for subtle UI enhancements
   const buttonScale = useSharedValue(1);
+
+  // Prüfe, ob das Tutorial bereits angezeigt wurde
+  useEffect(() => {
+    const checkIfTutorialShown = async () => {
+      try {
+        const tutorialShown = await AsyncStorage.getItem(TUTORIAL_SHOWN_KEY);
+        console.log("Tutorial previously shown:", !!tutorialShown);
+        
+        // Wenn das Tutorial noch nicht angezeigt wurde, automatisch anzeigen
+        if (!tutorialShown) {
+          console.log("First app start - showing tutorial");
+          setShowHowToPlay(true);
+        }
+        setTutorialChecked(true);
+      } catch (error) {
+        console.error("Error checking tutorial status:", error);
+        setTutorialChecked(true); // Fehlerbehandlung - trotzdem fortfahren
+      }
+    };
+    
+    checkIfTutorialShown();
+  }, []);
 
   // Load a random favorite or completed landscape when component mounts
   useEffect(() => {
@@ -137,7 +166,17 @@ const StartScreen: React.FC = () => {
     setShowNavigation(false);
   };
 
-  const handleCloseHowToPlay = () => {
+  // Tutorial abgeschlossen - merken, dass es angezeigt wurde
+  const handleTutorialComplete = async () => {
+    try {
+      // Tutorial als angezeigt markieren
+      await AsyncStorage.setItem(TUTORIAL_SHOWN_KEY, "true");
+      console.log("Tutorial marked as shown");
+    } catch (error) {
+      console.error("Error saving tutorial status:", error);
+    }
+    
+    // Tutorial Modal schließen
     setShowHowToPlay(false);
     setShowNavigation(true);
   };
@@ -240,10 +279,11 @@ const StartScreen: React.FC = () => {
         onConfirm={handleStartWithDifficulty}
       />
 
-      {showHowToPlay && (
+      {/* Tutorial Modal with proper callback for first-time users */}
+      {tutorialChecked && (
         <HowToPlayModal
           visible={showHowToPlay}
-          onClose={handleCloseHowToPlay}
+          onClose={handleTutorialComplete}
         />
       )}
     </View>

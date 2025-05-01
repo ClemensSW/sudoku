@@ -20,6 +20,7 @@ import SudokuBoardDemo from "./SudokuBoardDemo";
 interface GameplayPageProps {
   onNext: () => void;
   onBack: () => void;
+  onClose: () => void; // Added this prop to interface
   isFirstPage?: boolean;
   isLastPage?: boolean;
 }
@@ -27,6 +28,7 @@ interface GameplayPageProps {
 const GameplayPage: React.FC<GameplayPageProps> = ({
   onNext,
   onBack,
+  onClose,
   isFirstPage = false,
   isLastPage = false,
 }) => {
@@ -209,6 +211,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
       title="Spielablauf"
       onNext={onNext}
       onBack={onBack}
+      onClose={onClose}
       isFirstPage={isFirstPage}
       isLastPage={isLastPage}
     >

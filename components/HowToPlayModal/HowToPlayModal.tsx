@@ -1,17 +1,16 @@
 // components/HowToPlayModal/HowToPlayModal.tsx
-import React, { useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import React, { useEffect, useCallback } from "react";
+import { View, StyleSheet, Alert } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useNavigationControl } from "@/app/_layout"; // Direkte Import aus _layout
+import { useNavigationControl } from "@/app/_layout";
 import TutorialContainer from "../Tutorial/TutorialContainer";
+import { useRouter } from "expo-router";
 
 interface HowToPlayModalProps {
   visible: boolean;
   onClose: () => void;
 }
-
-const { width, height } = Dimensions.get("window");
 
 const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
   visible,
@@ -19,23 +18,48 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
-  // Direkter Zugriff auf den neuen NavigationContext
   const { setHideBottomNav } = useNavigationControl();
+  const router = useRouter();
 
   // Navigation-Kontrolle basierend auf Modal-Sichtbarkeit
   useEffect(() => {
     if (visible) {
-      // Navigationleiste ausblenden
+      console.log("HowToPlayModal: Visible, hiding bottom nav");
       setHideBottomNav(true);
     }
     
-    // Aufräumen beim Unmount oder wenn nicht mehr sichtbar
     return () => {
+      console.log("HowToPlayModal: Cleanup, showing bottom nav");
       setHideBottomNav(false);
     };
   }, [visible, setHideBottomNav]);
 
+  // Wenn nicht sichtbar, nichts rendern
   if (!visible) return null;
+
+  // Zentrale Funktion zum Schließen des Tutorials und Navigieren zum Startbildschirm
+  const handleTutorialExit = () => {
+    console.log("HowToPlayModal: Tutorial exit requested");
+    
+    try {
+      // Zuerst das Modal schließen
+      onClose();
+      
+      // Kurzer Timeout, um sicherzustellen, dass die UI-Updates abgeschlossen sind
+      setTimeout(() => {
+        console.log("HowToPlayModal: Navigating to start screen");
+        try {
+          // Direkt zum Index navigieren (StartScreen)
+          router.push('/');
+        } catch (routerError) {
+          console.error("Router navigation error:", routerError);
+          Alert.alert("Navigation Error", "Could not navigate to start screen");
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Error in tutorial exit handler:", error);
+    }
+  };
 
   return (
     <Animated.View 
@@ -47,7 +71,7 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
       entering={FadeIn.duration(300)}
     >
       <TutorialContainer 
-        onComplete={onClose}
+        onComplete={handleTutorialExit}
         onBack={onClose}
       />
     </Animated.View>

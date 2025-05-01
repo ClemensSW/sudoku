@@ -25,20 +25,46 @@ interface AnimatedBoardProps {
   animationDelay?: number;
 }
 
+// Berechnen der optimalen Board-Größe - exakt wie in SudokuBoardDemo
+const BOARD_SIZE = 320;
+const GRID_SIZE = BOARD_SIZE * 0.95;
+const CELL_SIZE = GRID_SIZE / 9;
+
 const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   grid,
   highlightRow,
   highlightColumn,
   highlightBlock,
   highlightCell,
-  highlightRowColor = "rgba(76, 99, 230, 0.35)", // Vibrant blue
-  highlightColumnColor = "rgba(255, 64, 129, 0.35)", // Vibrant pink
-  highlightBlockColor = "rgba(76, 175, 80, 0.35)", // Vibrant green
+  highlightRowColor,
+  highlightColumnColor,
+  highlightBlockColor,
   showNotes = false,
   notes = {},
   animationDelay = 0,
 }) => {
   const theme = useTheme();
+  const { colors } = theme;
+
+  // Standardfarben für Hervorhebungen, wenn nicht explizit angegeben
+  // Die Farben sind so gewählt, dass sie im Light und Dark Mode gut aussehen
+  // und deutlich unterscheidbar bleiben
+  const defaultHighlightRowColor = theme.isDark 
+    ? "rgba(138, 180, 248, 0.35)" // Blau im Dark Mode
+    : "rgba(66, 133, 244, 0.35)"; // Blau im Light Mode
+    
+  const defaultHighlightColumnColor = theme.isDark 
+    ? "rgba(242, 139, 130, 0.35)" // Rot im Dark Mode
+    : "rgba(234, 67, 53, 0.35)"; // Rot im Light Mode
+    
+  const defaultHighlightBlockColor = theme.isDark 
+    ? "rgba(129, 201, 149, 0.35)" // Grün im Dark Mode
+    : "rgba(52, 168, 83, 0.35)"; // Grün im Light Mode
+
+  // Die finalen, effektiven Highlight-Farben
+  const effectiveRowColor = highlightRowColor || defaultHighlightRowColor;
+  const effectiveColumnColor = highlightColumnColor || defaultHighlightColumnColor;
+  const effectiveBlockColor = highlightBlockColor || defaultHighlightBlockColor;
 
   // Animation values
   const scale = useSharedValue(0.9);
@@ -69,21 +95,21 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     if (highlightCell && highlightCell[0] === row && highlightCell[1] === col) {
       return {
         highlighted: true,
-        color: "rgba(66, 133, 244, 0.5)", // Google blue for selected cell
+        color: colors.cellSelectedBackground, // Verwende Theme-Farbe für ausgewählte Zelle
       };
     }
 
     if (highlightRow !== undefined && row === highlightRow) {
       return {
         highlighted: true,
-        color: highlightRowColor,
+        color: effectiveRowColor,
       };
     }
 
     if (highlightColumn !== undefined && col === highlightColumn) {
       return {
         highlighted: true,
-        color: highlightColumnColor,
+        color: effectiveColumnColor,
       };
     }
 
@@ -99,7 +125,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
       ) {
         return {
           highlighted: true,
-          color: highlightBlockColor,
+          color: effectiveBlockColor,
         };
       }
     }
@@ -138,6 +164,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
             key={`note-${row}-${col}-${num}`}
             style={[
               styles.noteText,
+              { color: colors.cellNotesTextColor }, // Theme-konforme Farbe
               cellNotes.includes(num) ? styles.activeNote : styles.hiddenNote,
             ]}
           >
@@ -150,54 +177,93 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
 
   return (
     <Animated.View style={[styles.container, boardStyle]}>
-      <View style={styles.board}>
-        {grid.map((row, rowIndex) => (
-          <View key={`row-${rowIndex}`} style={styles.row}>
-            {row.map((cell, colIndex) => {
-              const isInitial = cell !== 0;
-              const highlightInfo = getCellHighlightInfo(rowIndex, colIndex);
+      <View style={styles.boardWrapper}>
+        <View style={[styles.board, { backgroundColor: colors.boardBackgroundColor }]}>
+          <View style={[styles.gridContainer, { borderColor: colors.boardBorderColor }]}>
+            {/* Gridlinien als absolute Elemente */}
+            <View
+              style={[
+                styles.gridLine,
+                styles.horizontalLine,
+                { top: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
+              ]}
+            />
+            <View
+              style={[
+                styles.gridLine,
+                styles.horizontalLine,
+                { top: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
+              ]}
+            />
+            <View
+              style={[
+                styles.gridLine,
+                styles.verticalLine,
+                { left: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
+              ]}
+            />
+            <View
+              style={[
+                styles.gridLine,
+                styles.verticalLine,
+                { left: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
+              ]}
+            />
+            
+            {grid.map((row, rowIndex) => (
+              <View key={`row-${rowIndex}`} style={styles.row}>
+                {row.map((cell, colIndex) => {
+                  const isInitial = cell !== 0;
+                  const highlightInfo = getCellHighlightInfo(rowIndex, colIndex);
 
-              return (
-                <View
-                  key={`cell-${rowIndex}-${colIndex}`}
-                  style={[
-                    styles.cell,
-                    (colIndex + 1) % 3 === 0 &&
-                      colIndex !== 8 &&
-                      styles.rightBorder,
-                    (rowIndex + 1) % 3 === 0 &&
-                      rowIndex !== 8 &&
-                      styles.bottomBorder,
-                  ]}
-                >
-                  {/* Highlight background */}
-                  {highlightInfo.highlighted && (
-                    <Animated.View
+                  return (
+                    <View
+                      key={`cell-${rowIndex}-${colIndex}`}
                       style={[
-                        styles.cellBackground,
-                        {
-                          backgroundColor: highlightInfo.color,
-                        },
-                        highlightStyle,
+                        styles.cell,
+                        (colIndex + 1) % 3 === 0 &&
+                          colIndex !== 8 &&
+                          styles.rightBorder,
+                        (rowIndex + 1) % 3 === 0 &&
+                          rowIndex !== 8 &&
+                          styles.bottomBorder,
+                        { borderColor: colors.boardCellBorderColor },
                       ]}
-                    />
-                  )}
+                    >
+                      {/* Highlight background */}
+                      {highlightInfo.highlighted && (
+                        <Animated.View
+                          style={[
+                            styles.cellBackground,
+                            {
+                              backgroundColor: highlightInfo.color,
+                            },
+                            highlightStyle,
+                          ]}
+                        />
+                      )}
 
-                  {/* Cell content */}
-                  {isInitial ? (
-                    <Text style={[styles.cellText, styles.initialText]}>
-                      {cell}
-                    </Text>
-                  ) : showNotes ? (
-                    renderNotes(rowIndex, colIndex)
-                  ) : (
-                    <Text style={styles.cellText}></Text>
-                  )}
-                </View>
-              );
-            })}
+                      {/* Cell content */}
+                      {isInitial ? (
+                        <Text style={[
+                          styles.cellText, 
+                          { color: colors.cellInitialTextColor },
+                          styles.initialText
+                        ]}>
+                          {cell}
+                        </Text>
+                      ) : showNotes ? (
+                        renderNotes(rowIndex, colIndex)
+                      ) : (
+                        <Text style={[styles.cellText, { color: colors.cellTextColor }]}></Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
           </View>
-        ))}
+        </View>
       </View>
     </Animated.View>
   );
@@ -209,15 +275,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 20,
   },
-  board: {
-    width: 300,
-    height: 300,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: "rgba(255, 255, 255, 0.25)",
-    backgroundColor: "#1E2233",
-    padding: 3,
+  boardWrapper: {
+    borderRadius: 16,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  board: {
+    width: BOARD_SIZE,
+    height: BOARD_SIZE,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0,
+  },
+  gridContainer: {
+    width: GRID_SIZE,
+    height: GRID_SIZE,
+    flexDirection: "column",
+    borderWidth: 1.5,
+    overflow: "hidden",
+    borderRadius: 8,
+    position: "relative",
   },
   row: {
     flex: 1,
@@ -228,16 +309,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.15)",
     position: "relative",
   },
   rightBorder: {
     borderRightWidth: 1.5,
-    borderRightColor: "rgba(255, 255, 255, 0.2)",
   },
   bottomBorder: {
     borderBottomWidth: 1.5,
-    borderBottomColor: "rgba(255, 255, 255, 0.2)",
   },
   cellBackground: {
     position: "absolute",
@@ -249,11 +327,9 @@ const styles = StyleSheet.create({
   cellText: {
     fontSize: 18,
     fontWeight: "500",
-    color: "#FFFFFF",
   },
   initialText: {
     fontWeight: "700",
-    color: "#FFFFFF",
   },
   notesContainer: {
     flexDirection: "row",
@@ -270,10 +346,24 @@ const styles = StyleSheet.create({
     padding: 1,
   },
   activeNote: {
-    color: "rgba(255, 255, 255, 0.8)",
+    opacity: 1,
   },
   hiddenNote: {
     opacity: 0,
+  },
+  gridLine: {
+    position: "absolute",
+    zIndex: 5,
+  },
+  horizontalLine: {
+    width: GRID_SIZE,
+    height: 1.5,
+    left: 0,
+  },
+  verticalLine: {
+    width: 1.5,
+    height: GRID_SIZE,
+    top: 0,
   },
 });
 

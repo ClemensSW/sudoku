@@ -24,9 +24,6 @@ interface GameplayPageProps {
   isLastPage?: boolean;
 }
 
-// Neue Teal-Farbe statt der alten blauen Farbe
-const BUTTON_COLOR = "#4A7D78"; // Neue Teal-Farbe
-
 const GameplayPage: React.FC<GameplayPageProps> = ({
   onNext,
   onBack,
@@ -94,25 +91,24 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     setGridState([...exampleGrid.map((row) => [...row])]);
     setSelectedCell(null);
 
-    // Animation mit kürzeren Pausen zwischen den Schritten (angepasst an BasicRulesPage)
+    // Animation mit kürzeren Pausen zwischen den Schritten
     setTimeout(() => {
-      // Step 1: Zelle auswählen - die Hervorhebung der verwandten Zellen
-      // geschieht automatisch in der SudokuBoardDemo-Komponente
+      // Step 1: Zelle auswählen
       setSelectedCell([targetRow, targetCol]);
       setStepNumber(1);
 
-      // Kürzere Pause vor dem nächsten Schritt
+      // Pause vor dem nächsten Schritt
       setTimeout(() => {
         // Step 2: Nummer auswählen
         numberScales[targetIndex].value = withSequence(
-          withTiming(0.8, { duration: 300 }),
-          withTiming(1.1, { duration: 300 }),
-          withTiming(1, { duration: 300 })
+          withTiming(0.9, { duration: 100 }),
+          withTiming(1.1, { duration: 150 }),
+          withTiming(1, { duration: 150 })
         );
 
         setStepNumber(2);
 
-        // Kürzere Pause vor dem Platzieren der Zahl
+        // Pause vor dem Platzieren der Zahl
         setTimeout(() => {
           // Step 3: Zahl in der Zelle anzeigen
           const newGrid = [...gridState];
@@ -120,7 +116,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           setGridState(newGrid);
           setStepNumber(3);
 
-          // Kürzere Pause am Ende, dann Animation zurücksetzen und neu starten
+          // Pause am Ende, dann Animation zurücksetzen und neu starten
           animationRef.current = setTimeout(() => {
             setAnimationRunning(false);
 
@@ -148,20 +144,20 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     }
   };
 
-  // Render function for the number pad buttons - exactly as in the game
+  // Render function for the number pad buttons - EXAKT wie im Spiel
   const renderNumberButtons = () => {
     return (
       <View style={styles.numberPadContainer}>
         <View style={styles.numbersRow}>
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
-            // Create animated style for each button
+            // Animierter Stil für jeden Button
             const animatedStyle = useAnimatedStyle(() => {
               return {
                 transform: [{ scale: numberScales[index].value }],
-                backgroundColor: BUTTON_COLOR, // Neue Teal-Farbe
               };
             });
 
+            // Die folgenden Stile entsprechen genau dem, was in NumberPad.tsx verwendet wird
             return (
               <View
                 key={`num-${num}`}
@@ -169,7 +165,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
-                  paddingHorizontal: 2,
+                  paddingHorizontal: 1, // Exakt wie in NumberPad.styles.ts
                 }}
               >
                 <Animated.View
@@ -180,7 +176,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                       borderRadius: 12,
                       justifyContent: "center",
                       alignItems: "center",
-                      backgroundColor: BUTTON_COLOR, // Neue Teal-Farbe
+                      backgroundColor: colors.primary, // Theme-Farbe statt fester Farbe
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.25,
@@ -190,7 +186,15 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                     animatedStyle,
                   ]}
                 >
-                  <Text style={styles.buttonText}>{num}</Text>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: "600",
+                      color: colors.buttonText, // Theme-Farbe für den Text
+                    }}
+                  >
+                    {num}
+                  </Text>
                 </Animated.View>
               </View>
             );
@@ -217,7 +221,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
             puzzle={gridState}
             initialPuzzle={exampleGrid}
             selectedCell={selectedCell}
-            onCellPress={() => {}} // Dummy function, wir brauchen keine Interaktion
+            onCellPress={() => {}} // Dummy function, keine Interaktion nötig
           />
         </Animated.View>
 
@@ -230,10 +234,10 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           </Text>
         </Animated.View>
 
-        {/* Number Pad mit stilgetreuem Styling */}
+        {/* Number Pad mit exakt dem gleichen Styling wie im Spiel */}
         {renderNumberButtons()}
 
-        {/* Visuelle Anzeige: Pfeil vom NumberPad zum Board */}
+        {/* Pfeil zur Visualisierung der Auswahl */}
         {stepNumber === 2 && (
           <Animated.View
             style={styles.arrowContainer}
@@ -242,7 +246,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
             <Feather
               name="arrow-up"
               size={28}
-              color={BUTTON_COLOR} // Neue Teal-Farbe
+              color={colors.primary} // Auch hier Theme-Farbe
               style={styles.arrow}
             />
           </Animated.View>
@@ -265,7 +269,7 @@ const styles = StyleSheet.create({
   },
   instructionContainer: {
     width: "100%",
-    height: 60, // Feste Höhe für konsistentes Layout
+    height: 60,
     marginTop: 8,
     marginBottom: 28,
     paddingHorizontal: 16,
@@ -278,12 +282,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 22,
   },
-  // Number pad styling to exactly match the real game
+  
+  // Number pad styling - EXAKT wie im echten Spiel
   numberPadContainer: {
     width: "100%",
     paddingHorizontal: 8,
     marginTop: 16,
-    alignSelf: "center",
   },
   numbersRow: {
     flexDirection: "row",
@@ -292,15 +296,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 70,
   },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
+  
   // Animation helper elements
   arrowContainer: {
     position: "absolute",
-    bottom: 170, // Position it above the number pad
+    bottom: 170,
     alignSelf: "center",
     zIndex: 10,
   },

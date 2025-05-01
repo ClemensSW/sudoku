@@ -1,6 +1,7 @@
 // components/Tutorial/pages/SudokuBoardDemo.tsx
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface SudokuBoardDemoProps {
   puzzle: number[][];
@@ -20,6 +21,9 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
   selectedCell,
   onCellPress,
 }) => {
+  const theme = useTheme();
+  const { colors } = theme;
+
   const renderCell = (row: number, col: number) => {
     const value = puzzle[row][col];
     const isInitial = initialPuzzle[row][col] !== 0;
@@ -34,14 +38,20 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
       Math.floor(selectedCell[0] / 3) === Math.floor(row / 3) &&
       Math.floor(selectedCell[1] / 3) === Math.floor(col / 3);
 
-    // Die verschiedenen Zellhintergründe
-    let cellBackgroundStyle = null;
-
-    // Exakt wie in SudokuCell.styles.ts definiert
+    // Generiere die Theme-konformen Hintergrundfarben
+    let backgroundColor = "transparent";
+    let textColor = colors.cellTextColor; // Standard-Textfarbe
+    
     if (isSelected) {
-      cellBackgroundStyle = styles.selectedBackground;
+      backgroundColor = colors.cellSelectedBackground;
+      textColor = colors.cellSelectedTextColor;
     } else if (isInSameRow || isInSameCol || isInSameBox) {
-      cellBackgroundStyle = styles.relatedBackground;
+      backgroundColor = colors.cellRelatedBackground;
+    }
+    
+    // Anfängliche (vorgegebene) Werte haben eine andere Textfarbe/Stil
+    if (isInitial) {
+      textColor = colors.cellInitialTextColor;
     }
 
     return (
@@ -51,15 +61,22 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
           styles.cell,
           (row + 1) % 3 === 0 && row !== 8 && styles.bottomBorder,
           (col + 1) % 3 === 0 && col !== 8 && styles.rightBorder,
+          { borderColor: colors.boardCellBorderColor },
         ]}
       >
         {/* Hintergrund für Hervorhebungen */}
-        {cellBackgroundStyle && (
-          <View style={[styles.cellBackground, cellBackgroundStyle]} />
+        {backgroundColor !== "transparent" && (
+          <View style={[styles.cellBackground, { backgroundColor }]} />
         )}
 
         {/* Zelleninhalt */}
-        <Text style={[styles.cellText, isInitial && styles.initialCellText]}>
+        <Text 
+          style={[
+            styles.cellText, 
+            { color: textColor },
+            isInitial && styles.initialCellText
+          ]}
+        >
           {value !== 0 ? value.toString() : ""}
         </Text>
       </View>
@@ -68,35 +85,45 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
 
   return (
     <View style={styles.boardWrapper}>
-      <View style={styles.board}>
-        <View style={styles.gridContainer}>
+      <View 
+        style={[
+          styles.board, 
+          { backgroundColor: colors.boardBackgroundColor }
+        ]}
+      >
+        <View 
+          style={[
+            styles.gridContainer,
+            { borderColor: colors.boardBorderColor }
+          ]}
+        >
           {/* Gridlinien als absolute Elemente */}
           <View
             style={[
               styles.gridLine,
               styles.horizontalLine,
-              { top: CELL_SIZE * 3 },
+              { top: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
             ]}
           />
           <View
             style={[
               styles.gridLine,
               styles.horizontalLine,
-              { top: CELL_SIZE * 6 },
+              { top: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
             ]}
           />
           <View
             style={[
               styles.gridLine,
               styles.verticalLine,
-              { left: CELL_SIZE * 3 },
+              { left: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
             ]}
           />
           <View
             style={[
               styles.gridLine,
               styles.verticalLine,
-              { left: CELL_SIZE * 6 },
+              { left: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
             ]}
           />
 
@@ -129,7 +156,6 @@ const styles = StyleSheet.create({
     height: BOARD_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1E2233", // Dunklerer, eher anthrazitfarbener Hintergrund
     borderWidth: 0,
   },
   gridContainer: {
@@ -137,7 +163,6 @@ const styles = StyleSheet.create({
     height: GRID_SIZE,
     flexDirection: "column",
     borderWidth: 1.5,
-    borderColor: "rgba(255, 255, 255, 0.25)",
     overflow: "hidden",
     borderRadius: 8,
     position: "relative",
@@ -152,16 +177,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.15)",
     position: "relative",
   },
   bottomBorder: {
     borderBottomWidth: 2,
-    borderBottomColor: "rgba(255, 255, 255, 0.25)",
   },
   rightBorder: {
     borderRightWidth: 2,
-    borderRightColor: "rgba(255, 255, 255, 0.25)",
   },
   cellBackground: {
     position: "absolute",
@@ -171,16 +193,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 1,
   },
-  // Diese Stile entsprechen exakt denen in SudokuCell.styles.ts
-  selectedBackground: {
-    backgroundColor: "#4361EE",
-  },
-  relatedBackground: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-  },
   cellText: {
     fontSize: 18,
-    color: "#FFFFFF",
     zIndex: 2,
   },
   initialCellText: {
@@ -188,7 +202,6 @@ const styles = StyleSheet.create({
   },
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     zIndex: 5,
   },
   horizontalLine: {

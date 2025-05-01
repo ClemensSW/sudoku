@@ -21,16 +21,6 @@ interface BasicRulesPageProps {
   isLastPage?: boolean;
 }
 
-// Define colors for highlighting
-const ROW_COLOR = "#4C63E6"; // Vibrant blue
-const COLUMN_COLOR = "#FF4081"; // Vibrant pink
-const BLOCK_COLOR = "#4CAF50"; // Vibrant green
-
-// Semi-transparent versions for board highlighting
-const ROW_COLOR_BG = "rgba(76, 99, 230, 0.35)";
-const COLUMN_COLOR_BG = "rgba(255, 64, 129, 0.35)";
-const BLOCK_COLOR_BG = "rgba(76, 175, 80, 0.35)";
-
 const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   onNext,
   onBack,
@@ -121,7 +111,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 
   // Cycle through highlighting examples with missing number animation
   useEffect(() => {
-    // Simplify to just three basic animations plus clear
+    // Demonstrationen der drei grundlegenden Sudoku-Regeln
     const animations = [
       // Highlight a row with row number
       { row: 3, column: undefined, block: undefined },
@@ -183,6 +173,21 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
     };
   }, []);
 
+  // Definiere die Hervorhebungsfarben basierend auf der Theme-Farbe
+  // Wir nutzen jetzt die gleichen Farben, die auch in AnimatedBoard definiert wurden
+  // Im Light und Dark Mode gut unterscheidbar
+  const rowHighlightColor = theme.isDark 
+    ? "rgba(138, 180, 248, 0.35)" // Blau im Dark Mode
+    : "rgba(66, 133, 244, 0.35)"; // Blau im Light Mode
+    
+  const columnHighlightColor = theme.isDark 
+    ? "rgba(242, 139, 130, 0.35)" // Rot im Dark Mode
+    : "rgba(234, 67, 53, 0.35)"; // Rot im Light Mode
+    
+  const blockHighlightColor = theme.isDark 
+    ? "rgba(129, 201, 149, 0.35)" // Grün im Dark Mode
+    : "rgba(52, 168, 83, 0.35)"; // Grün im Light Mode
+
   return (
     <TutorialPage
       title="Wie man spielt"
@@ -200,10 +205,9 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
           highlightRow={highlightState.row}
           highlightColumn={highlightState.column}
           highlightBlock={highlightState.block}
-          highlightRowColor={ROW_COLOR_BG}
-          highlightColumnColor={COLUMN_COLOR_BG}
-          highlightBlockColor={BLOCK_COLOR_BG}
-          // Remove highlightCell prop completely if it exists
+          highlightRowColor={rowHighlightColor}
+          highlightColumnColor={columnHighlightColor}
+          highlightBlockColor={blockHighlightColor}
         />
 
         <Animated.View
@@ -216,7 +220,13 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
           </Text>
 
           <View style={styles.highlightRow}>
-            <Text style={[styles.highlightText, { color: ROW_COLOR }]}>
+            <Text 
+              style={[
+                styles.highlightText, 
+                // Gleiche Farbe wie die Reihenhervorhebung, aber intensiver
+                { color: theme.isDark ? "#8AB4F8" : "#4285F4" }
+              ]}
+            >
               Reihe
             </Text>
             <Text
@@ -224,7 +234,13 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             >
               , jede
             </Text>
-            <Text style={[styles.highlightText, { color: COLUMN_COLOR }]}>
+            <Text 
+              style={[
+                styles.highlightText, 
+                // Gleiche Farbe wie die Spaltenhervorhebung, aber intensiver
+                { color: theme.isDark ? "#F28B82" : "#EA4335" }
+              ]}
+            >
               Spalte
             </Text>
             <Text
@@ -232,7 +248,13 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             >
               und jeder
             </Text>
-            <Text style={[styles.highlightText, { color: BLOCK_COLOR }]}>
+            <Text 
+              style={[
+                styles.highlightText, 
+                // Gleiche Farbe wie die Blockhervorhebung, aber intensiver
+                { color: theme.isDark ? "#81C995" : "#34A853" }
+              ]}
+            >
               Block
             </Text>
           </View>

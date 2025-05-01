@@ -326,17 +326,17 @@ export const loadSettings = async (): Promise<GameSettings> => {
 
 // NEU: Utility-Funktionen für Difficulty-Modal
 
-// Bestimme die freigeschalteten Schwierigkeitsgrade - ANGEPASST
+// Bestimme die freigeschalteten Schwierigkeitsgrade - ZURÜCKGESETZT
 export const getUnlockedDifficulties = (stats: GameStats): Difficulty[] => {
   const unlocked: Difficulty[] = ["easy"]; // Leicht ist immer verfügbar
   
-  // Medium wird freigeschaltet, wenn 3 Leicht gelöst wurden (vorher: 1)
-  if ((stats.completedEasy || 0) >= 3) {
+  // Medium wird freigeschaltet, wenn 1 Leicht gelöst wurde
+  if ((stats.completedEasy || 0) >= 1) {
     unlocked.push("medium");
   }
   
-  // Schwer wird freigeschaltet, wenn 6 Medium gelöst wurden (vorher: 3)
-  if ((stats.completedMedium || 0) >= 6) {
+  // Schwer wird freigeschaltet, wenn 3 Medium gelöst wurden
+  if ((stats.completedMedium || 0) >= 3) {
     unlocked.push("hard");
   }
   
@@ -348,31 +348,31 @@ export const getUnlockedDifficulties = (stats: GameStats): Difficulty[] => {
   return unlocked;
 };
 
-// Berechne die Fortschrittsnachricht für das Freischalten - ANGEPASST
+// Berechne die Fortschrittsnachricht für das Freischalten - ZURÜCKGESETZT
 export const getProgressMessage = (stats: GameStats): string => {
   if ((stats.completedHard || 0) >= 9) {
     return "Alle Schwierigkeitsgrade sind freigeschaltet!";
-  } else if ((stats.completedMedium || 0) >= 6) {
+  } else if ((stats.completedMedium || 0) >= 3) {
     const remaining = 9 - (stats.completedHard || 0);
     return `Löse noch ${remaining} Sudoku auf Schwer, um Experte freizuschalten.`;
-  } else if ((stats.completedEasy || 0) >= 3) {
-    const remaining = 6 - (stats.completedMedium || 0);
+  } else if ((stats.completedEasy || 0) >= 1) {
+    const remaining = 3 - (stats.completedMedium || 0);
     return `Löse noch ${remaining} Sudoku auf Mittel, um Schwer freizuschalten.`;
   } else {
-    const remaining = 3 - (stats.completedEasy || 0);
+    const remaining = 1 - (stats.completedEasy || 0);
     return `Löse noch ${remaining} Sudoku auf Leicht, um Mittel freizuschalten.`;
   }
 };
 
-// Berechne den Fortschrittswert (0-100%) für den Fortschrittsbalken - ANGEPASST
+// Berechne den Fortschrittswert (0-100%) für den Fortschrittsbalken - ZURÜCKGESETZT
 export const getProgressValue = (stats: GameStats): number => {
   if ((stats.completedHard || 0) >= 9) {
     return 100; // Alles freigeschaltet
-  } else if ((stats.completedMedium || 0) >= 6) {
+  } else if ((stats.completedMedium || 0) >= 3) {
     return Math.min(100, ((stats.completedHard || 0) / 9) * 100); // Fortschritt zu Experte
-  } else if ((stats.completedEasy || 0) >= 3) {
-    return Math.min(100, ((stats.completedMedium || 0) / 6) * 100); // Fortschritt zu Schwer (geändert von 3 zu 6)
+  } else if ((stats.completedEasy || 0) >= 1) {
+    return Math.min(100, ((stats.completedMedium || 0) / 3) * 100); // Fortschritt zu Schwer
   } else {
-    return Math.min(100, ((stats.completedEasy || 0) / 3) * 100); // Fortschritt zu Medium (geändert von 1 zu 3)
+    return Math.min(100, ((stats.completedEasy || 0) / 1) * 100); // Fortschritt zu Medium
   }
 };

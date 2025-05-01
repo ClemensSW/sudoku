@@ -730,8 +730,6 @@ const styles = StyleSheet.create({
   vsText: {
     fontWeight: "900",
     fontSize: 16,
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
   },
   // Player stats styles - with fixed heights for consistency
   performanceContainer: {

@@ -17,6 +17,7 @@ import ConfettiEffect from "@/components/GameCompletionModal/components/Confetti
 import Button from "@/components/Button/Button";
 import { useRouter } from "expo-router";
 import { Difficulty } from "@/utils/sudoku";
+import CircularProgress from "./CircularProgress";
 
 // Duo Mode primary colors - used consistently throughout
 const GREEN_COLOR = "#4A7D78";
@@ -132,24 +133,24 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   };
   
   // Calculate cell completion percentage
-const getCellCompletionPercentage = (player: 1 | 2): number => {
-  // Bei einem Unentschieden (beide haben fertig) oder wenn dieser Spieler
-  // durch vollständiges Lösen seines Bereichs gewonnen hat
-  if (winner === 0 || (winner === player && winReason === "completion")) {
-    return 100;
-  }
-  
-  // Für alle anderen Fälle berechnen wir den tatsächlichen Prozentsatz
-  if (player === 1) {
-    // Vermeidung von Division durch Null
-    if (player1InitialEmptyCells === 0) return 0;
-    return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
-  } else {
-    // Vermeidung von Division durch Null
-    if (player2InitialEmptyCells === 0) return 0;
-    return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
-  }
-};
+  const getCellCompletionPercentage = (player: 1 | 2): number => {
+    // Bei einem Unentschieden (beide haben fertig) oder wenn dieser Spieler
+    // durch vollständiges Lösen seines Bereichs gewonnen hat
+    if (winner === 0 || (winner === player && winReason === "completion")) {
+      return 100;
+    }
+    
+    // Für alle anderen Fälle berechnen wir den tatsächlichen Prozentsatz
+    if (player === 1) {
+      // Vermeidung von Division durch Null
+      if (player1InitialEmptyCells === 0) return 0;
+      return Math.round((player1SolvedCells / player1InitialEmptyCells) * 100);
+    } else {
+      // Vermeidung von Division durch Null
+      if (player2InitialEmptyCells === 0) return 0;
+      return Math.round((player2SolvedCells / player2InitialEmptyCells) * 100);
+    }
+  };
   
   // Start animations when modal becomes visible
   useEffect(() => {
@@ -343,15 +344,29 @@ const getCellCompletionPercentage = (player: 1 | 2): number => {
               )}
             </View>
             
-            {/* Cell completion percentage */}
+            {/* Improved Performance Container for Player 1 */}
             <View style={styles.performanceContainer}>
-              <Text style={[
-                styles.performanceText,
-                { color: PLAYER_COLORS[1].primary }
-              ]}>
-                {getCellCompletionPercentage(1)}%
-              </Text>
+              {/* Circular progress indicator with percentage */}
+              <View style={styles.progressCircleContainer}>
+                <CircularProgress
+                  percentage={getCellCompletionPercentage(1)}
+                  size={90}
+                  strokeWidth={8}
+                  color={PLAYER_COLORS[1].primary}
+                  bgColor={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}
+                  textColor={PLAYER_COLORS[1].primary}
+                />
+                
+                {/* Status text below the circle */}
+                <Text style={[
+                  styles.progressStatusText,
+                  { color: isDarkMode ? colors.textSecondary : '#5F6368' }
+                ]}>
+                  {getCellCompletionPercentage(1) === 100 ? "Vollständig" : "Ausgefüllt"}
+                </Text>
+              </View>
               
+              {/* Stats row for player 1 */}
               <View style={styles.statsRow}>
                 {/* Errors indicator */}
                 <View style={styles.statItem}>
@@ -374,31 +389,6 @@ const getCellCompletionPercentage = (player: 1 | 2): number => {
                     {maxHints - player1Hints}/{maxHints}
                   </Text>
                 </View>
-              </View>
-              
-              {/* Completion status */}
-              <View style={[
-                styles.completionBadge,
-                { 
-                  backgroundColor: player1Complete ? 
-                    `${PLAYER_COLORS[1].primary}15` : 
-                    `${PLAYER_COLORS[1].primary}10`,
-                  borderColor: player1Complete ?
-                    `${PLAYER_COLORS[1].primary}30` :
-                    `${PLAYER_COLORS[1].primary}20`
-                }
-              ]}>
-                <Feather 
-                  name={player1Complete ? "check" : "x"} 
-                  size={12} 
-                  color={PLAYER_COLORS[1].primary} 
-                />
-                <Text style={[
-                  styles.completionText,
-                  { color: PLAYER_COLORS[1].primary }
-                ]}>
-                  {player1Complete ? "Vollständig" : "Unvollständig"}
-                </Text>
               </View>
             </View>
           </Animated.View>
@@ -471,15 +461,29 @@ const getCellCompletionPercentage = (player: 1 | 2): number => {
               )}
             </View>
             
-            {/* Cell completion percentage */}
+            {/* Improved Performance Container for Player 2 */}
             <View style={styles.performanceContainer}>
-              <Text style={[
-                styles.performanceText,
-                { color: PLAYER_COLORS[2].primary }
-              ]}>
-                {getCellCompletionPercentage(2)}%
-              </Text>
+              {/* Circular progress indicator with percentage */}
+              <View style={styles.progressCircleContainer}>
+                <CircularProgress
+                  percentage={getCellCompletionPercentage(2)}
+                  size={90}
+                  strokeWidth={8}
+                  color={PLAYER_COLORS[2].primary}
+                  bgColor={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}
+                  textColor={PLAYER_COLORS[2].primary}
+                />
+                
+                {/* Status text below the circle */}
+                <Text style={[
+                  styles.progressStatusText,
+                  { color: isDarkMode ? colors.textSecondary : '#5F6368' }
+                ]}>
+                  {getCellCompletionPercentage(2) === 100 ? "Vollständig" : "Ausgefüllt"}
+                </Text>
+              </View>
               
+              {/* Stats row for player 2 */}
               <View style={styles.statsRow}>
                 {/* Errors indicator */}
                 <View style={styles.statItem}>
@@ -502,31 +506,6 @@ const getCellCompletionPercentage = (player: 1 | 2): number => {
                     {maxHints - player2Hints}/{maxHints}
                   </Text>
                 </View>
-              </View>
-              
-              {/* Completion status */}
-              <View style={[
-                styles.completionBadge,
-                { 
-                  backgroundColor: player2Complete ? 
-                    `${PLAYER_COLORS[2].primary}15` : 
-                    `${PLAYER_COLORS[2].primary}10`,
-                  borderColor: player2Complete ?
-                    `${PLAYER_COLORS[2].primary}30` :
-                    `${PLAYER_COLORS[2].primary}20`
-                }
-              ]}>
-                <Feather 
-                  name={player2Complete ? "check" : "x"} 
-                  size={12} 
-                  color={PLAYER_COLORS[2].primary} 
-                />
-                <Text style={[
-                  styles.completionText,
-                  { color: PLAYER_COLORS[2].primary }
-                ]}>
-                  {player2Complete ? "Vollständig" : "Unvollständig"}
-                </Text>
               </View>
             </View>
           </Animated.View>
@@ -719,18 +698,24 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     fontSize: 16,
   },
-  // Player stats styles - with fixed heights for consistency
+  // New improved performance container styles
   performanceContainer: {
     alignItems: "center",
     justifyContent: "center",
-    height: 140, // Fixed height to ensure alignment
+    height: 140,
+    width: "100%",
   },
-  performanceText: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginBottom: 12,
-    height: 40, // Fixed height for label
+  progressCircleContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
   },
+  progressStatusText: {
+    fontSize: 14,
+    fontWeight: "500",
+    textAlign: "center",
+  },
+  // Player stats styles
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -746,21 +731,6 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 14,
     fontWeight: "600",
-    marginLeft: 4,
-  },
-  completionBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginTop: 8,
-    height: 24, // Fixed height for completion badge
-  },
-  completionText: {
-    fontSize: 12,
-    fontWeight: "500",
     marginLeft: 4,
   },
   // Button styles

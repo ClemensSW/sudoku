@@ -7,7 +7,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { useNavigationControl } from "@/app/_layout";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
-import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
+import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
 
 // Import core components without animations
@@ -89,7 +89,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   const handleBack = () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
       showAlert(
-        quitGameAlert(() => {
+        duoQuitGameAlert(() => {
           router.replace("/duo");
         })
       );

@@ -263,11 +263,33 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
     {
       text: "Abbrechen",
       style: "cancel" as ButtonType,
-      onPress: onCancel
+      onPress: onCancel || (() => {})
     },
     {
       text: "Zum Menü",
       style: "primary" as ButtonType,
+      onPress: onConfirm
+    }
+  ] as AlertButton[]
+});
+
+/**
+ * Create quit game confirmation alert styled specifically for Duo Mode
+ * Uses teal color (#4A7D78) for the icon and confirm button
+ */
+export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
+  title: "Zurück zum Hauptmenü?",
+  message: "Dein aktueller Spielfortschritt geht verloren.",
+  type: "duoMode" as AlertType, // Custom type for Duo Mode
+  buttons: [
+    {
+      text: "Abbrechen",
+      style: "cancel" as ButtonType,
+      onPress: onCancel || (() => {})
+    },
+    {
+      text: "Zum Menü",
+      style: "duoButton" as ButtonType, // Custom style for Duo Mode
       onPress: onConfirm
     }
   ] as AlertButton[]

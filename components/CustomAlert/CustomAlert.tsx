@@ -19,7 +19,6 @@ import Animated, {
   SlideInUp,
   SlideOutDown,
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
@@ -30,7 +29,8 @@ export type ButtonType =
   | "primary"
   | "success"
   | "danger"
-  | "cancel";
+  | "cancel"
+  | "duoButton";
 
 // Define alert types with different visual styles
 export type AlertType =
@@ -38,7 +38,8 @@ export type AlertType =
   | "success"
   | "error"
   | "warning"
-  | "confirmation";
+  | "confirmation"
+  | "duoMode";
 
 // Interface for button config
 export interface AlertButton {
@@ -90,7 +91,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   useEffect(() => {
     if (visible) {
       setIsVisible(true);
-      // Provide haptic feedback based on alert type mit der neuen Utility
+      // Provide haptic feedback based on alert type with the new utility
       switch (type) {
         case "success":
           triggerHaptic("success");
@@ -167,6 +168,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "warning":
         return "alert-triangle";
       case "confirmation":
+      case "duoMode": // Use same icon as confirmation
         return "help-circle";
       default:
         return "info";
@@ -184,6 +186,8 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
         return colors.warning;
       case "confirmation":
         return colors.info;
+      case "duoMode":
+        return "#4A7D78"; // Teal color for Duo Mode
       default:
         return colors.primary;
     }
@@ -216,6 +220,11 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           ...baseStyle,
           backgroundColor: colors.error,
         };
+      case "duoButton":
+        return {
+          ...baseStyle,
+          backgroundColor: "#4A7D78", // Teal color for Duo Mode
+        };
       case "cancel":
         return {
           ...baseStyle,
@@ -245,6 +254,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
     switch (buttonType) {
       case "primary":
       case "success":
+      case "duoButton": // Add this case to match duoButton
         return {
           ...baseStyle,
           color: colors.buttonText,

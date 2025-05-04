@@ -9,24 +9,19 @@ import Animated, {
   withTiming,
   FadeIn,
 } from "react-native-reanimated";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
-// Player themes based on the provided color palette - VERBESSERTE KONTRASTE
+// Player themes based on the provided color palette
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
-    background: "rgba(74, 125, 120, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
-    heart: {
-      active: "#4A7D78", // Teal
-      inactive: "rgba(255, 100, 100, 0.85)", // Red with opacity
-    },
+    background: "rgba(74, 125, 120, 0.2)",
+    heart: "#4A7D78", // Teal - default color
   },
   // Player 2 (top)
   2: {
-    background: "rgba(243, 239, 227, 0.2)", // Erhöhter Kontrast (0.1 -> 0.2)
-    heart: {
-      active: "#5B5D6E", // Dark blue-gray
-      inactive: "rgba(255, 100, 100, 0.85)", // Red with opacity
-    },
+    background: "rgba(243, 239, 227, 0.2)",
+    heart: "#5B5D6E", // Dark blue-gray - default color
   },
 };
 
@@ -43,6 +38,9 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   maxErrors,
   compact = false,
 }) => {
+  // Get theme for warning color
+  const { colors } = useTheme();
+  
   // Animation for pulse effect when losing a heart
   const scale = useSharedValue(1);
   const previousErrors = React.useRef(errorsCount);
@@ -68,12 +66,23 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
 
   // Get theme based on player
   const theme = PLAYER_THEMES[player];
+  
+  // Calculate remaining hearts
+  const heartsRemaining = maxErrors - errorsCount;
+
+  // Get heart color based on remaining hearts
+  const getHeartColor = (index: number) => {
+    // If this is the last heart AND there's only one heart remaining, use warning color
+    if (index === 0 && heartsRemaining === 1) {
+      return colors.warning; // Match single player warning color
+    }
+    // Otherwise use the player's theme color
+    return theme.heart;
+  };
 
   // Heart size based on compact mode
   const heartSize = compact ? 16 : 20;
 
-  // WICHTIG: Player 2 braucht eine GEGENDREHUNG, da der Container bereits gedreht ist
-  // Wir drehen den Indikator für Player 2 um 180° zurück, damit die Herzen richtig ausgerichtet sind
   return (
     <Animated.View 
       style={[
@@ -85,11 +94,11 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
     >
       <View style={styles.heartsRow}>
         {Array.from({ length: maxErrors }).map((_, index) => {
-          // Hearts are filled from left to right
-          const isLost = index < errorsCount;
+          // Hearts are filled from right to left (remaining errors)
+          const isFilled = index < heartsRemaining;
           
           // Apply animation only to the most recently lost heart
-          const isAnimated = index === errorsCount - 1;
+          const isAnimated = index === heartsRemaining;
           
           return (
             <Animated.View
@@ -100,12 +109,13 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
                 isAnimated && animatedStyle,
               ]}
             >
-              <Feather
-                name="heart"
-                size={heartSize}
-                color={isLost ? theme.heart.inactive : theme.heart.active}
-                style={{ opacity: isLost ? 1 : 0.85 }}
-              />
+              {isFilled && (
+                <Feather
+                  name="heart"
+                  size={heartSize}
+                  color={getHeartColor(index)}
+                />
+              )}
             </Animated.View>
           );
         })}
@@ -119,10 +129,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    alignSelf: "center", // Better centering
+    alignSelf: "center",
     margin: 4,
-    justifyContent: "center", // Vertically center hearts
-    // Schatten für bessere Sichtbarkeit
+    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -133,10 +142,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     margin: 0,
-    minWidth: 60, // Ensure enough space for hearts
-    alignItems: "center", // Center horizontally
-    justifyContent: "center", // Center vertically
-    // Schatten für den Kompakt-Modus entfernen
+    minWidth: 60,
+    alignItems: "center",
+    justifyContent: "center",
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -147,9 +155,15 @@ const styles = StyleSheet.create({
   },
   heartContainer: {
     marginHorizontal: 3,
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   compactHeartContainer: {
     marginHorizontal: 2,
+    width: 16,
+    height: 16,
   },
 });
 

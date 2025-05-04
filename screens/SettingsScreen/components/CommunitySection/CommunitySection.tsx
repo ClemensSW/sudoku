@@ -6,7 +6,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import styles from "./CommunitySection.styles";
-import ReviewManager from "@/components/ReviewSystem/ReviewManager";
+import ReviewManager from "@/screens/SettingsScreen/components/ReviewSystem/ReviewManager";
 
 interface CommunitySectionProps {
   onSupportPress: () => void;

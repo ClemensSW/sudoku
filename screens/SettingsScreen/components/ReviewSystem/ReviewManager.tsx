@@ -1,4 +1,4 @@
-// ReviewManager.tsx
+// screens/SettingsScreen/components/ReviewSystem/ReviewManager.tsx
 import React, { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import RatingModal from './RatingModal';
@@ -11,22 +11,22 @@ import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { triggerHaptic } from '@/utils/haptics';
 
 interface ReviewManagerProps {
-  // Ist der Manager aktiv/sichtbar
+  // Is the manager active/visible
   isVisible: boolean;
   
-  // Play Store ID deiner App
+  // Play Store ID of your app
   appPackageName: string;
   
-  // Email-Adresse für Feedback
+  // Email address for feedback
   feedbackEmail: string;
   
-  // Callback wenn der Review Manager geschlossen wird
+  // Callback when the Review Manager is closed
   onClose: () => void;
   
-  // Callback wenn Bewertung auf PlayStore abgegeben wird
+  // Callback when rating is submitted to PlayStore
   onPlayStoreRedirect?: () => void;
   
-  // Callback wenn Feedback abgesendet wird
+  // Callback when feedback is sent
   onFeedbackSent?: (data: FeedbackData) => void;
 }
 
@@ -38,19 +38,19 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   onPlayStoreRedirect,
   onFeedbackSent
 }) => {
-  // State für die verschiedenen Modals
+  // State for the different modals
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   
-  // Bewertungsdaten
+  // Rating data
   const [rating, setRating] = useState<Rating | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
   
-  // Custom Alert für Erfolgs-/Fehlermeldungen
+  // Custom Alert for success/error messages
   const { showAlert } = useAlert();
 
-  // Initial anzeigen, wenn isVisible true ist
+  // Show initially when isVisible is true
   useEffect(() => {
     if (isVisible) {
       setShowRatingModal(true);
@@ -59,7 +59,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
     }
   }, [isVisible]);
 
-  // Zurücksetzen aller States
+  // Reset all states
   const resetAll = () => {
     setShowRatingModal(false);
     setShowCategoryModal(false);
@@ -68,17 +68,17 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
     setCategory(null);
   };
 
-  // Hauptschließen-Funktion
+  // Main close function
   const handleClose = () => {
     resetAll();
     onClose();
   };
 
-  // Bewertungsmodal: Bewertung ausgewählt
+  // Rating modal: Rating selected
   const handleRate = async (selectedRating: Rating) => {
     setRating(selectedRating);
     
-    // Nur 5-Sterne-Bewertungen gehen zum Play Store
+    // Only 5-star ratings go directly to Play Store
     if (selectedRating === 5) {
       triggerHaptic('success');
       setShowRatingModal(false);
@@ -89,76 +89,58 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
           onPlayStoreRedirect();
         }
       } catch (error) {
-        console.error('Fehler beim Öffnen des Play Store:', error);
+        console.error('Error opening Play Store:', error);
       }
       
-      // Nach kurzer Verzögerung alles zurücksetzen
+      // Reset after a short delay
       setTimeout(() => {
         handleClose();
       }, 500);
     } 
-    // Bei 4 Sternen: Danke & schließen
-    else if (selectedRating === 4) {
-      triggerHaptic('success');
-      setShowRatingModal(false);
-      
-      showAlert({
-        title: TEXTS.FEEDBACK_SENT_TITLE,
-        message: TEXTS.FEEDBACK_SENT_SUBTITLE,
-        type: 'success',
-        buttons: [
-          {
-            text: TEXTS.FEEDBACK_SENT_BUTTON,
-            onPress: handleClose,
-            style: 'primary'
-          }
-        ],
-      });
-    }
-    // 1-3 Sterne: Zur Kategorie-Auswahl
+    // 1-4 stars: Go to category selection for more detailed feedback
     else {
-      triggerHaptic('warning');
+      triggerHaptic(selectedRating === 4 ? 'light' : 'warning');
       setShowRatingModal(false);
       
-      // Kleine Verzögerung für bessere UX
+      // Small delay for better UX
       setTimeout(() => {
         setShowCategoryModal(true);
       }, 300);
     }
   };
 
-  // Kategoriemodal: Kategorie ausgewählt
+  // Category modal: Category selected
   const handleSelectCategory = (selectedCategory: FeedbackCategory) => {
     setCategory(selectedCategory);
     setShowCategoryModal(false);
     
-    // Kleine Verzögerung für bessere UX
+    // Small delay for better UX
     setTimeout(() => {
       setShowFeedbackModal(true);
     }, 300);
   };
 
-  // Feedbackmodal: Feedback abgesendet
+  // Feedback modal: Feedback submitted
   const handleSubmitFeedback = async (data: FeedbackData) => {
-    // Log für Debugging
+    // Log for debugging
     logFeedbackData(data);
     
-    // Modal schließen
+    // Close modal
     setShowFeedbackModal(false);
     
     // Haptic Feedback
     triggerHaptic('success');
     
     try {
-      // Feedback per E-Mail senden
+      // Send feedback via email
       const sent = await sendFeedbackViaEmail(data, feedbackEmail);
       
-      // Callback ausführen, wenn vorhanden
+      // Execute callback if present
       if (onFeedbackSent) {
         onFeedbackSent(data);
       }
       
-      // Erfolgs- oder Fehlermeldung anzeigen
+      // Show success or error message
       if (sent) {
         showAlert({
           title: TEXTS.FEEDBACK_SENT_TITLE,
@@ -173,7 +155,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
           ],
         });
       } else {
-        // Wenn keine E-Mail-App verfügbar ist
+        // If no email app is available
         showAlert({
           title: 'Feedback konnte nicht gesendet werden',
           message: `Bitte sende dein Feedback direkt an: ${feedbackEmail}`,
@@ -188,9 +170,9 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
         });
       }
     } catch (error) {
-      console.error('Fehler beim Senden des Feedbacks:', error);
+      console.error('Error sending feedback:', error);
       
-      // Fehlermeldung anzeigen
+      // Show error message
       showAlert({
         title: 'Ein Fehler ist aufgetreten',
         message: 'Dein Feedback konnte leider nicht gesendet werden. Bitte versuche es später noch einmal.',

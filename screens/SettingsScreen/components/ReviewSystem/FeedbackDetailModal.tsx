@@ -1,4 +1,4 @@
-// FeedbackDetailModal.tsx
+// screens/SettingsScreen/components/ReviewSystem/FeedbackDetailModal.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Modal,
@@ -9,14 +9,13 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Animated,
-  TouchableWithoutFeedback,
-  ScrollView
+  SafeAreaView,
+  StatusBar
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles } from './styles';
 import { FeedbackData, FeedbackCategory, Rating } from './types';
-import { TEXTS, FEEDBACK_CATEGORIES } from './constants';
+import { TEXTS } from './constants';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { triggerHaptic } from '@/utils/haptics';
 
@@ -37,178 +36,116 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
 }) => {
   const [details, setDetails] = useState('');
   const [email, setEmail] = useState('');
-  const [fadeAnim] = useState(new Animated.Value(0));
   const detailsInputRef = useRef<TextInput>(null);
   const theme = useTheme();
   const themeStyles = getThemeStyles(theme.isDark);
 
-  // Kategorie-Label abrufen
-  const getCategoryLabel = () => {
-    if (!category) return '';
-    const found = FEEDBACK_CATEGORIES.find(cat => cat.id === category);
-    return found ? found.label : '';
-  };
-
-  // Animation beim Öffnen/Schließen
+  // Reset and focus on open
   useEffect(() => {
     if (visible) {
-      setDetails(''); // Reset beim Öffnen
+      setDetails('');
       setEmail('');
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true
-      }).start();
-
-      // Verzögerung für den Fokus, damit die Animation zuerst läuft
+      
+      // Focus the text input after a short delay
       setTimeout(() => {
         detailsInputRef.current?.focus();
-      }, 500);
-    } else {
-      fadeAnim.setValue(0);
+      }, 300);
     }
-  }, [visible, fadeAnim]);
+  }, [visible]);
 
-  // Feedback absenden
+  // Handle submission
   const handleSubmit = () => {
+    if (details.trim().length === 0) return;
+    
     triggerHaptic('medium');
     
     const feedbackData: FeedbackData = {
       rating,
       category: category || undefined,
-      details: details.trim() || undefined,
+      details: details.trim(),
       email: email.trim() || undefined
     };
     
     onSubmit(feedbackData);
-    setDetails('');
-    setEmail('');
   };
 
   return (
     <Modal
       visible={visible}
-      transparent
-      animationType="fade"
+      animationType="slide"
+      presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          style={styles.modalBackground}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      <SafeAreaView 
+        style={[styles.fullscreenModal, { backgroundColor: themeStyles.background }]}
+      >
+        <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
+        
+        {/* Header Bar */}
+        <View 
+          style={[
+            styles.headerBar, 
+            { borderBottomColor: themeStyles.borderColor }
+          ]}
         >
-          <TouchableWithoutFeedback>
-            <Animated.View
+          <TouchableOpacity onPress={onClose} hitSlop={{ top: 15, right: 15, bottom: 15, left: 15 }}>
+            <Feather name="arrow-left" size={24} color={themeStyles.text} />
+          </TouchableOpacity>
+          
+          <Text style={[styles.headerTitle, { color: themeStyles.text }]}>
+          Wie kann ich dir helfen?
+          </Text>
+          
+          <View style={{ width: 24 }} />
+        </View>
+        
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.fullscreenContent}>
+            {/* Main Feedback Input */}
+            <TextInput
+              ref={detailsInputRef}
               style={[
-                styles.modalContainer,
+                styles.feedbackInput,
                 {
-                  backgroundColor: themeStyles.background,
-                  opacity: fadeAnim,
-                  transform: [
-                    {
-                      translateY: fadeAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0]
-                      })
-                    }
-                  ]
+                  backgroundColor: themeStyles.inputBackground,
+                  color: themeStyles.text,
+                  borderColor: themeStyles.borderColor,
+                  borderWidth: 1
                 }
               ]}
-            >
-              {/* Close Button */}
+              placeholder="Erzähl uns weitere Einzelheiten..."
+              placeholderTextColor={themeStyles.secondaryText}
+              multiline
+              textAlignVertical="top"
+              value={details}
+              onChangeText={setDetails}
+              autoFocus={false}
+            />
+            
+            {/* Submit Button - Fixed at bottom */}
+            <View style={{ flex: 1, justifyContent: 'flex-end' }}>
               <TouchableOpacity
-                style={styles.closeButton}
-                onPress={onClose}
-                hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                style={[
+                  styles.buttonContainer,
+                  {
+                    backgroundColor: details.trim().length > 0 
+                      ? themeStyles.buttonBackground 
+                      : themeStyles.borderColor,
+                    opacity: details.trim().length > 0 ? 1 : 0.5
+                  }
+                ]}
+                onPress={handleSubmit}
+                disabled={details.trim().length === 0}
               >
-                <Feather name="x" size={24} color={themeStyles.secondaryText} />
+                <Text style={styles.buttonText}>Senden</Text>
               </TouchableOpacity>
-
-              <ScrollView
-                style={{ width: '100%' }}
-                contentContainerStyle={{ alignItems: 'center' }}
-                keyboardShouldPersistTaps="handled"
-              >
-                {/* Header */}
-                <Text style={[styles.titleText, { color: themeStyles.text }]}>
-                  {TEXTS.FEEDBACK_DETAIL_TITLE}
-                </Text>
-                
-                {/* Category Label */}
-                {category && (
-                  <Text
-                    style={[
-                      styles.subtitleText,
-                      { color: themeStyles.secondaryText, marginBottom: 16 }
-                    ]}
-                  >
-                    {getCategoryLabel()}
-                  </Text>
-                )}
-
-                {/* Feedback Text Input */}
-                <TextInput
-                  ref={detailsInputRef}
-                  style={[
-                    styles.feedbackInput,
-                    {
-                      backgroundColor: themeStyles.inputBackground,
-                      color: themeStyles.text,
-                      borderColor: themeStyles.borderColor,
-                      borderWidth: 1
-                    }
-                  ]}
-                  placeholder={TEXTS.FEEDBACK_DETAIL_PLACEHOLDER}
-                  placeholderTextColor={themeStyles.secondaryText}
-                  multiline
-                  textAlignVertical="top"
-                  value={details}
-                  onChangeText={setDetails}
-                />
-
-                {/* Optional Email */}
-                <TextInput
-                  style={[
-                    styles.emailInput,
-                    {
-                      backgroundColor: themeStyles.inputBackground,
-                      color: themeStyles.text,
-                      borderColor: themeStyles.borderColor,
-                      borderWidth: 1
-                    }
-                  ]}
-                  placeholder={TEXTS.FEEDBACK_DETAIL_EMAIL_PLACEHOLDER}
-                  placeholderTextColor={themeStyles.secondaryText}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-                />
-
-                {/* Submit Button */}
-                <TouchableOpacity
-                  style={[
-                    styles.buttonContainer,
-                    {
-                      backgroundColor: details.trim().length > 0
-                        ? themeStyles.buttonBackground
-                        : themeStyles.borderColor,
-                      opacity: details.trim().length > 0 ? 1 : 0.7
-                    }
-                  ]}
-                  onPress={handleSubmit}
-                  disabled={details.trim().length === 0}
-                >
-                  <Text style={styles.buttonText}>
-                    {TEXTS.FEEDBACK_DETAIL_BUTTON}
-                  </Text>
-                </TouchableOpacity>
-              </ScrollView>
-            </Animated.View>
-          </TouchableWithoutFeedback>
+            </View>
+          </View>
         </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+      </SafeAreaView>
     </Modal>
   );
 };

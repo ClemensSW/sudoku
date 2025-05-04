@@ -1,4 +1,4 @@
-// FeedbackCategoryModal.tsx
+// screens/SettingsScreen/components/ReviewSystem/FeedbackCategoryModal.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
@@ -6,8 +6,8 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Animated,
-  TouchableWithoutFeedback
+  SafeAreaView,
+  StatusBar
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles } from './styles';
@@ -28,31 +28,23 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
   onSelectCategory
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<FeedbackCategory | null>(null);
-  const [fadeAnim] = useState(new Animated.Value(0));
   const theme = useTheme();
   const themeStyles = getThemeStyles(theme.isDark);
 
-  // Animation beim Öffnen/Schließen
+  // Reset selection when modal opens
   useEffect(() => {
     if (visible) {
-      setSelectedCategory(null); // Reset beim Öffnen
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true
-      }).start();
-    } else {
-      fadeAnim.setValue(0);
+      setSelectedCategory(null);
     }
-  }, [visible, fadeAnim]);
+  }, [visible]);
 
-  // Kategorie auswählen
+  // Handle category selection
   const handleCategorySelect = (category: FeedbackCategory) => {
     triggerHaptic('light');
     setSelectedCategory(category);
   };
 
-  // Auswahl bestätigen
+  // Confirm selection
   const handleConfirm = () => {
     if (selectedCategory) {
       triggerHaptic('medium');
@@ -63,127 +55,117 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
   return (
     <Modal
       visible={visible}
-      transparent
-      animationType="fade"
+      animationType="slide"
+      presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalBackground}>
-          <TouchableWithoutFeedback>
-            <Animated.View
-              style={[
-                styles.modalContainer,
-                {
-                  backgroundColor: themeStyles.background,
-                  opacity: fadeAnim,
-                  transform: [
-                    {
-                      translateY: fadeAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0]
-                      })
-                    }
-                  ]
-                }
-              ]}
-            >
-              {/* Close Button */}
+      <SafeAreaView 
+        style={[styles.fullscreenModal, { backgroundColor: themeStyles.background }]}
+      >
+        <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
+        
+        {/* Header Bar */}
+        <View 
+          style={[
+            styles.headerBar, 
+            { borderBottomColor: themeStyles.borderColor }
+          ]}
+        >
+          <TouchableOpacity onPress={onClose} hitSlop={{ top: 15, right: 15, bottom: 15, left: 15 }}>
+            <Feather name="arrow-left" size={24} color={themeStyles.text} />
+          </TouchableOpacity>
+          
+          <Text style={[styles.headerTitle, { color: themeStyles.text }]}>
+            {TEXTS.FEEDBACK_CATEGORY_TITLE}
+          </Text>
+          
+          <View style={{ width: 24 }} />
+        </View>
+        
+        <View style={styles.fullscreenContent}>
+          {/* Categories List */}
+          <ScrollView
+            style={styles.categoriesContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {FEEDBACK_CATEGORIES.map((cat) => (
               <TouchableOpacity
-                style={styles.closeButton}
-                onPress={onClose}
-                hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}
-              >
-                <Feather name="x" size={24} color={themeStyles.secondaryText} />
-              </TouchableOpacity>
-
-              {/* Header */}
-              <Text style={[styles.titleText, { color: themeStyles.text }]}>
-                {TEXTS.FEEDBACK_CATEGORY_TITLE}
-              </Text>
-
-              {/* Categories */}
-              <ScrollView
-                style={styles.categoriesContainer}
-                showsVerticalScrollIndicator={false}
-              >
-                {FEEDBACK_CATEGORIES.map((cat) => (
-                  <TouchableOpacity
-                    key={cat.id}
-                    style={[
-                      styles.categoryItem,
-                      {
-                        backgroundColor: selectedCategory === cat.id 
-                          ? `${theme.colors.primary}15`
-                          : 'transparent'
-                      }
-                    ]}
-                    onPress={() => handleCategorySelect(cat.id)}
-                    activeOpacity={0.7}
-                  >
-                    {/* Radio Circle */}
-                    <View style={[
-                      styles.categoryRadio,
-                      { 
-                        borderColor: selectedCategory === cat.id
-                          ? theme.colors.primary 
-                          : themeStyles.secondaryText
-                      }
-                    ]}>
-                      {selectedCategory === cat.id && (
-                        <View style={[
-                          styles.categoryRadioSelected,
-                          { backgroundColor: theme.colors.primary }
-                        ]} />
-                      )}
-                    </View>
-
-                    {/* Icon */}
-                    <View style={[
-                      styles.categoryIconContainer,
-                      { 
-                        backgroundColor: `${theme.colors.primary}15`
-                      }
-                    ]}>
-                      <Feather
-                        name={CATEGORY_ICONS[cat.id]}
-                        size={20}
-                        color={theme.colors.primary}
-                      />
-                    </View>
-
-                    {/* Label */}
-                    <Text style={[
-                      styles.categoryLabel,
-                      { color: themeStyles.text }
-                    ]}>
-                      {cat.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-
-              {/* Action Button */}
-              <TouchableOpacity
+                key={cat.id}
                 style={[
-                  styles.buttonContainer,
+                  styles.categoryItem,
                   {
-                    backgroundColor: selectedCategory
-                      ? themeStyles.buttonBackground
-                      : themeStyles.borderColor,
-                    opacity: selectedCategory ? 1 : 0.7
+                    backgroundColor: selectedCategory === cat.id 
+                      ? `${theme.colors.primary}15`
+                      : 'transparent'
                   }
                 ]}
-                onPress={handleConfirm}
-                disabled={!selectedCategory}
+                onPress={() => handleCategorySelect(cat.id)}
+                activeOpacity={0.7}
               >
-                <Text style={styles.buttonText}>
-                  {TEXTS.FEEDBACK_CATEGORY_BUTTON}
+                {/* Radio Button */}
+                <View style={[
+                  styles.categoryRadio,
+                  { 
+                    borderColor: selectedCategory === cat.id
+                      ? theme.colors.primary 
+                      : themeStyles.secondaryText
+                  }
+                ]}>
+                  {selectedCategory === cat.id && (
+                    <View style={[
+                      styles.categoryRadioSelected,
+                      { backgroundColor: theme.colors.primary }
+                    ]} />
+                  )}
+                </View>
+
+                {/* Icon */}
+                <View style={[
+                  styles.categoryIconContainer,
+                  { 
+                    backgroundColor: `${theme.colors.primary}15`
+                  }
+                ]}>
+                  <Feather
+                    name={CATEGORY_ICONS[cat.id]}
+                    size={20}
+                    color={theme.colors.primary}
+                  />
+                </View>
+
+                {/* Label */}
+                <Text style={[
+                  styles.categoryLabel,
+                  { color: themeStyles.text }
+                ]}>
+                  {cat.label}
                 </Text>
               </TouchableOpacity>
-            </Animated.View>
-          </TouchableWithoutFeedback>
+            ))}
+          </ScrollView>
+
+          {/* Continue Button */}
+          <View style={{ marginTop: 'auto' }}>
+            <TouchableOpacity
+              style={[
+                styles.buttonContainer,
+                {
+                  backgroundColor: selectedCategory
+                    ? themeStyles.buttonBackground
+                    : themeStyles.borderColor,
+                  opacity: selectedCategory ? 1 : 0.5
+                }
+              ]}
+              onPress={handleConfirm}
+              disabled={!selectedCategory}
+            >
+              <Text style={styles.buttonText}>
+                {TEXTS.FEEDBACK_CATEGORY_BUTTON}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </TouchableWithoutFeedback>
+      </SafeAreaView>
     </Modal>
   );
 };

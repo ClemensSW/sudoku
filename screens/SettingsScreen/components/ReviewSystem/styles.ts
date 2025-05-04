@@ -1,6 +1,8 @@
-// styles.ts
-import { StyleSheet } from 'react-native';
+// screens/SettingsScreen/components/ReviewSystem/styles.ts
+import { StyleSheet, Dimensions } from 'react-native';
 import { spacing, colors } from '@/utils/theme';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Define the theme interfaces to properly type our theme styles
 interface ThemeStyles {
@@ -22,25 +24,53 @@ interface EmojiColors {
 }
 
 export const styles = StyleSheet.create({
-  // Modal Container Styles
+  // Bottom Sheet Modal Styles
   modalBackground: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
+    justifyContent: 'flex-end', // Changed to align at bottom
     alignItems: 'center',
   },
   modalContainer: {
-    width: '85%',
-    maxWidth: 350,
-    borderRadius: 16,
-    padding: spacing.md,
+    width: '100%', // Full width
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 24,
+    paddingBottom: 32,
+    paddingHorizontal: 24,
     alignItems: 'center',
   },
   closeButton: {
     position: 'absolute',
-    top: 12,
-    left: 12,
+    top: 16,
+    left: 16,
     zIndex: 100,
+  },
+  
+  // Fullscreen Modal Styles
+  fullscreenModal: {
+    flex: 1,
+    width: '100%',
+    height: SCREEN_HEIGHT,
+  },
+  fullscreenContent: {
+    flex: 1,
+    padding: 24,
+  },
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    flex: 1,
   },
   
   // Content Styles
@@ -50,53 +80,49 @@ export const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: 24,
   },
   titleText: {
-    fontSize: 20,
-    fontWeight: '700', // Fixed: Use string values supported by React Native
+    fontSize: 24,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 8,
   },
   subtitleText: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: spacing.lg,
-    paddingHorizontal: spacing.sm,
+    marginBottom: 32,
+    paddingHorizontal: 16,
   },
   
   // Star Rating Styles
   starsContainer: {
     flexDirection: 'row',
-    marginVertical: spacing.md,
+    marginVertical: 32,
   },
   starButton: {
-    padding: spacing.xs,
-  },
-  star: {
-    width: 40,
-    height: 40,
+    padding: 8,
   },
   
   // Category Selection Styles
   categoriesContainer: {
     width: '100%',
-    marginBottom: spacing.md,
+    marginBottom: 24,
   },
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 8,
-    marginBottom: spacing.xs,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 8,
   },
   categoryRadio: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    marginRight: spacing.sm,
+    marginRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -109,7 +135,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: spacing.sm,
+    marginRight: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -121,38 +147,46 @@ export const styles = StyleSheet.create({
   // Feedback Form Styles
   feedbackInput: {
     width: '100%',
-    height: 150,
-    borderRadius: 8,
-    padding: spacing.sm,
-    marginBottom: spacing.md,
+    minHeight: 180,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
     textAlignVertical: 'top',
   },
   emailInput: {
     width: '100%',
-    height: 48,
-    borderRadius: 8,
-    padding: spacing.sm,
-    marginBottom: spacing.md,
+    height: 52,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
   },
   
-  // Button Styles
+  // Button Styles - Updated to match the screenshots
   buttonContainer: {
     width: '100%',
-    height: 50,
-    borderRadius: 25,
+    height: 56,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing.sm,
+    marginTop: 16,
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: '700', // Fixed: Use string values supported by React Native
+    fontWeight: '700',
     color: 'white',
+  },
+  
+  // Animation handle for bottom sheet
+  dragHandle: {
+    width: 40,
+    height: 5,
+    borderRadius: 2.5,
+    marginBottom: 16,
+    alignSelf: 'center',
   },
 });
 
 // Separate theme colors into their own object (not part of StyleSheet)
-// This prevents type issues with backgroundColor, color, etc.
 export const themeStyles: Record<'light' | 'dark', ThemeStyles> = {
   light: {
     background: '#FFFFFF',
@@ -172,23 +206,23 @@ export const themeStyles: Record<'light' | 'dark', ThemeStyles> = {
   }
 };
 
-// Separate emoji colors into their own object (not part of StyleSheet)
+// Separate emoji colors into their own object
 export const emojiColors: EmojiColors = {
-  fiveStar: '#FFCC00',    // Gold for 5 stars
-  fourStar: '#FFCC00',    // Gold for 4 stars
-  threeStar: '#FFCC00',   // Gold for 3 stars
+  fiveStar: '#FFD700',    // Gold for 5 stars
+  fourStar: '#FFD700',    // Gold for 4 stars
+  threeStar: '#FFD700',   // Gold for 3 stars
   twoStar: '#FF6B6B',     // Red for 2 stars
   oneStar: '#FF6B6B',     // Red for 1 star
 };
 
-// Dynamic Theme Functions - exported for components
+// Dynamic Theme Functions
 export const getThemeStyles = (isDark: boolean): ThemeStyles => {
   return isDark ? themeStyles.dark : themeStyles.light;
 };
 
 export const getEmojiBackgroundColor = (rating: number): string => {
   switch(rating) {
-    case 5: return `${emojiColors.fiveStar}30`; // 30 is transparency
+    case 5: return `${emojiColors.fiveStar}30`;
     case 4: return `${emojiColors.fourStar}30`;
     case 3: return `${emojiColors.threeStar}30`;
     case 2: return `${emojiColors.twoStar}30`;

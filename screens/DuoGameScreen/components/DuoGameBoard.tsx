@@ -35,6 +35,7 @@ interface DuoGameBoardProps {
   getCellOwner: (row: number, col: number) => 0 | 1 | 2;
   onCellPress: (player: 1 | 2, row: number, col: number) => void;
   isLoading?: boolean;
+  showErrors?: boolean; // Added this prop to control error display
 }
 
 const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
@@ -44,6 +45,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   getCellOwner,
   onCellPress,
   isLoading = false,
+  showErrors = true, // Default to true for backward compatibility
 }) => {
   // Animation values
   const scale = useSharedValue(0.95);
@@ -121,6 +123,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
         isSelected={isSelectedByPlayer1 || isSelectedByPlayer2}
         onPress={() => handleCellPress(row, col)}
         rotateForPlayer2={true}
+        showErrors={showErrors} // Pass down the showErrors prop
       />
     );
   };

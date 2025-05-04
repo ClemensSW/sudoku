@@ -9,6 +9,7 @@ import { useNavigationControl } from "@/app/_layout";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
+import { GameSettings } from "@/utils/storage"; // Added import for GameSettings type
 
 // Import existing components
 import DuoGameBoard from "./components/DuoGameBoard";
@@ -65,7 +66,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
       setWinnerInfo({ winner, reason });
       setShowCompletionModal(true);
     },
-    gameSettings.showMistakes // Übergebe die showMistakes-Einstellung an useDuoGameState
+    gameSettings.showMistakes // Pass the showMistakes setting to useDuoGameState
   );
 
   // Hide navigation
@@ -127,8 +128,8 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     router.replace("/duo");
   };
 
-  // Handle settings changes
-  const handleSettingsChanged = (key: keyof any, value: boolean | string) => {
+  // Handle settings changes - Fixed type for key parameter
+  const handleSettingsChanged = (key: keyof GameSettings, value: boolean | string) => {
     gameSettings.updateSetting(key, value);
   };
 
@@ -234,6 +235,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           getCellOwner={gameActions.getCellOwner}
           onCellPress={gameActions.handleCellPress}
           isLoading={false}
+          showErrors={gameSettings.showMistakes} // Pass showMistakes to board
         />
 
         {/* Player 1 Controls (Bottom) */}

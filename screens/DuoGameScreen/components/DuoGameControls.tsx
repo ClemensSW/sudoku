@@ -8,11 +8,11 @@ import {
   Dimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, { 
-  FadeIn, 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring 
+import Animated, {
+  FadeIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
 import DuoErrorIndicator from "./DuoErrorIndicator";
@@ -111,7 +111,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   const player = position === "top" ? 2 : 1;
   const theme = PLAYER_THEMES[player].controls;
   const { isDark } = useTheme(); // Get dark mode state
-  
+
   // Animation values for buttons
   const noteScale = useSharedValue(1);
   const hintScale = useSharedValue(1);
@@ -124,11 +124,11 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   ) => {
     // Spring animation for press effect
     scaleValue.value = withSpring(0.9, { damping: 9, stiffness: 400 });
-    
+
     setTimeout(() => {
       scaleValue.value = withSpring(1, { damping: 12, stiffness: 400 });
     }, 100);
-    
+
     triggerHaptic("light");
     callback();
   };
@@ -144,11 +144,11 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   const noteAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: noteScale.value }],
   }));
-  
+
   const hintAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: hintScale.value }],
   }));
-  
+
   // Get background color based on theme mode
   const getBackgroundColor = () => {
     // Für beide Spieler jetzt das gleiche Muster
@@ -161,7 +161,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
       <View style={styles.numbersRow}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
           const isDisabled = disabled;
-          
+
           return (
             <Animated.View
               key={`num-${player}-${num}`}
@@ -182,7 +182,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 ]}
                 onPress={() => {
                   if (!isDisabled) {
-                    handleButtonPress(numberScales[i], () => 
+                    handleButtonPress(numberScales[index], () =>
                       onNumberPress(player, num)
                     );
                   }
@@ -250,14 +250,16 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   : theme.actionButton.iconColor
               }
             />
-            <Text style={[
-              styles.actionButtonText,
-              { 
-                color: disabled 
-                  ? theme.actionButton.disabledIconColor 
-                  : theme.actionButton.textColor 
-              }
-            ]}>
+            <Text
+              style={[
+                styles.actionButtonText,
+                {
+                  color: disabled
+                    ? theme.actionButton.disabledIconColor
+                    : theme.actionButton.textColor,
+                },
+              ]}
+            >
               Notizen
             </Text>
           </TouchableOpacity>
@@ -265,9 +267,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 
         {/* Error Indicator - ZENTRIERT */}
         <View style={styles.errorIndicatorContainer}>
-          <DuoErrorIndicator 
-            player={player} 
-            errorsCount={errorsCount} 
+          <DuoErrorIndicator
+            player={player}
+            errorsCount={errorsCount}
             maxErrors={maxErrors}
             compact={true}
             showErrors={showErrors} // Neue Prop weitergeben
@@ -299,14 +301,17 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   : theme.actionButton.iconColor
               }
             />
-            <Text style={[
-              styles.actionButtonText,
-              { 
-                color: hintDisabled || disabled
-                  ? theme.actionButton.disabledIconColor 
-                  : theme.actionButton.textColor 
-              }
-            ]}>
+            <Text
+              style={[
+                styles.actionButtonText,
+                {
+                  color:
+                    hintDisabled || disabled
+                      ? theme.actionButton.disabledIconColor
+                      : theme.actionButton.textColor,
+                },
+              ]}
+            >
               Hinweis {hintsRemaining > 0 ? `(${hintsRemaining})` : ""}
             </Text>
           </TouchableOpacity>

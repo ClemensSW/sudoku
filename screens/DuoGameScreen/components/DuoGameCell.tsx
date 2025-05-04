@@ -76,6 +76,7 @@ interface DuoGameCellProps {
   isSelected: boolean;
   onPress: (row: number, col: number) => void;
   rotateForPlayer2?: boolean;
+  showErrors?: boolean; // New prop to control error display
 }
 
 const DuoGameCell: React.FC<DuoGameCellProps> = ({
@@ -86,6 +87,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   isSelected,
   onPress,
   rotateForPlayer2 = true,
+  showErrors = true, // Default to true for backward compatibility
 }) => {
   const theme = PLAYER_THEMES[player];
 
@@ -110,24 +112,23 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     };
   });
 
-  // Determine cell background color - GEÄNDERT: Initiale Zellen haben keinen speziellen Hintergrund mehr
+  // Determine cell background color - UPDATED to respect showErrors setting
   const getCellBackgroundColor = () => {
-    if (!cell.isValid) {
+    // Only show error background if showErrors is true
+    if (!cell.isValid && showErrors) {
       return theme.error.background;
     }
     if (isSelected) {
       return theme.selectedBackground;
     }
     // Keine spezielle Hintergrundfarbe mehr für initiale Zellen
-    // if (cell.isInitial) {
-    //   return theme.initial.background;
-    // }
     return theme.cellBackground;
   };
 
-  // Determine text color
+  // Determine text color - UPDATED to respect showErrors setting
   const getTextColor = () => {
-    if (!cell.isValid) {
+    // Only show error text color if showErrors is true
+    if (!cell.isValid && showErrors) {
       return theme.error.textColor;
     }
     if (cell.isInitial) {

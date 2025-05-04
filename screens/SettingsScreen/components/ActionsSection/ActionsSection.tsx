@@ -49,14 +49,6 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
           <Text style={[styles.actionTitle, { color: buttonColor }]}>
             Spiel beenden
           </Text>
-          <Text
-            style={[
-              styles.actionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Zurück zum {isDuoMode ? "Duo-Menü" : "Hauptmenü"}
-          </Text>
         </View>
         <Feather
           name="chevron-right"

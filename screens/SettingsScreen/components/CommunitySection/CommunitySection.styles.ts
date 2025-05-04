@@ -31,8 +31,4 @@ export default StyleSheet.create({
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },
-  actionDescription: {
-    fontSize: 14,
-    opacity: 0.8,
-  },
 });

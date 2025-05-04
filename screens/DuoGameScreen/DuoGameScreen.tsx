@@ -9,7 +9,7 @@ import { useNavigationControl } from "@/app/_layout";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
-import { GameSettings } from "@/utils/storage"; // Added import for GameSettings type
+import { GameSettings } from "@/utils/storage";
 
 // Import existing components
 import DuoGameBoard from "./components/DuoGameBoard";
@@ -128,7 +128,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     router.replace("/duo");
   };
 
-  // Handle settings changes - Fixed type for key parameter
+  // Handle settings changes
   const handleSettingsChanged = (key: keyof GameSettings, value: boolean | string) => {
     gameSettings.updateSetting(key, value);
   };
@@ -174,7 +174,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar hidden={true} />
       
-      {/* Back button - FIXED CENTERING */}
+      {/* Back button */}
       <View style={styles.backButtonContainer}>
         <TouchableOpacity 
           style={[styles.backButton, { backgroundColor: colors.surface }]}
@@ -188,7 +188,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         </TouchableOpacity>
       </View>
       
-      {/* New Settings button - Same style as back button but on right side */}
+      {/* Settings button */}
       <View style={styles.settingsButtonContainer}>
         <TouchableOpacity 
           style={[styles.backButton, { backgroundColor: colors.surface }]}
@@ -211,7 +211,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         />
       </View>
       
-      {/* Main game content - REMOVED PADDING */}
+      {/* Main game content */}
       <View style={styles.content}>
         {/* Player 2 Controls (Top) */}
         <DuoGameControls
@@ -219,12 +219,13 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           onNumberPress={gameActions.handleNumberPress}
           onNoteToggle={gameActions.handleNoteToggle}
           onHint={gameActions.handleHint}
+          onClear={gameActions.handleClear} // Löschen-Funktion hinzugefügt
           noteMode={gameState.player2NoteMode}
           disabled={gameState.player2Complete || gameState.player2Errors >= gameState.maxErrors}
           hintsRemaining={gameState.player2Hints}
           errorsCount={gameState.player2Errors}
           maxErrors={gameState.maxErrors}
-          showErrors={gameSettings.showMistakes} // Pass showMistakes to controls
+          showErrors={gameSettings.showMistakes}
         />
 
         {/* Game Board */}
@@ -235,7 +236,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           getCellOwner={gameActions.getCellOwner}
           onCellPress={gameActions.handleCellPress}
           isLoading={false}
-          showErrors={gameSettings.showMistakes} // Pass showMistakes to board
+          showErrors={gameSettings.showMistakes}
         />
 
         {/* Player 1 Controls (Bottom) */}
@@ -244,12 +245,13 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           onNumberPress={gameActions.handleNumberPress}
           onNoteToggle={gameActions.handleNoteToggle}
           onHint={gameActions.handleHint}
+          onClear={gameActions.handleClear} // Löschen-Funktion hinzugefügt
           noteMode={gameState.player1NoteMode}
           disabled={gameState.player1Complete || gameState.player1Errors >= gameState.maxErrors}
           hintsRemaining={gameState.player1Hints}
           errorsCount={gameState.player1Errors}
           maxErrors={gameState.maxErrors}
-          showErrors={gameSettings.showMistakes} // Pass showMistakes to controls
+          showErrors={gameSettings.showMistakes}
         />
       </View>
       
@@ -314,7 +316,7 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 10,
   },
-  // Add settings button positioning - same style but on right
+  // Settings button positioning
   settingsButtonContainer: {
     position: "absolute",
     top: 20,
@@ -326,8 +328,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     justifyContent: "center",
-    alignItems: "center", // Center icon horizontally
-    // Added proper shadow
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,

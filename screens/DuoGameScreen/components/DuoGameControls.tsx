@@ -21,11 +21,12 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
 const NUMBER_BUTTON_SIZE = Math.min((width - 40) / 9, 40);
-// Breite Button-Größen angepasst, um Platz für Fehleranzeige zu machen
-const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 110); // Etwas schmaler
+// Breite Button-Größen angepasst für alle Szenarien
+const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 95); // Etwas schmaler für drei Buttons
+const ACTION_BUTTON_WIDTH_TWO = Math.min(width / 3 - 8, 110); // Breiter für zwei Buttons
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
-// Player themes to match the board colors - VERBESSERTE KONTRASTE FÜR LIGHT MODE
+// Player themes to match the board colors
 const PLAYER_THEMES = {
   // Player 1 (bottom)
   1: {
@@ -39,7 +40,7 @@ const PLAYER_THEMES = {
         disabledTextColor: "rgba(241, 244, 251, 0.5)", // Faded white
       },
       actionButton: {
-        background: "rgba(64, 107, 109, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
+        background: "rgba(64, 107, 109, 0.9)", // Erhöhter Kontrast
         activeBackground: "#4A7D78", // Full teal when active
         iconColor: "#F1F4FB", // Light blue/white
         textColor: "#F1F4FB", // Light blue/white
@@ -49,7 +50,7 @@ const PLAYER_THEMES = {
       },
     },
   },
-  // Player 2 (top) - UPDATED COLORS
+  // Player 2 (top)
   2: {
     controls: {
       darkBackgroundColor: "rgba(243, 239, 227, 0.2)", // Original für Dark Mode
@@ -61,7 +62,7 @@ const PLAYER_THEMES = {
         disabledTextColor: "rgba(243, 239, 227, 0.5)", // Faded beige
       },
       actionButton: {
-        background: "rgba(91, 93, 110, 0.9)", // Erhöhter Kontrast (0.8 -> 0.9)
+        background: "rgba(91, 93, 110, 0.9)", // Erhöhter Kontrast
         activeBackground: "#4D4F5C", // Even darker blue-gray for active state
         iconColor: "#F3EFE3", // Light beige (same as numberButton.textColor)
         textColor: "#F3EFE3", // Light beige
@@ -87,12 +88,13 @@ interface DuoGameControlsProps {
   onNumberPress: (player: 1 | 2, number: number) => void;
   onNoteToggle: (player: 1 | 2) => void;
   onHint: (player: 1 | 2) => void;
+  onClear: (player: 1 | 2) => void; // Neue Prop für die Löschfunktion
   noteMode: boolean;
   disabled?: boolean;
   hintsRemaining: number;
   errorsCount: number;
   maxErrors: number;
-  showErrors?: boolean; // Neue Prop für Fehleranzeige
+  showErrors?: boolean; // Prop für Fehleranzeige
 }
 
 const DuoGameControls: React.FC<DuoGameControlsProps> = ({
@@ -100,6 +102,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   onNumberPress,
   onNoteToggle,
   onHint,
+  onClear, // Neue Prop verwenden
   noteMode,
   disabled = false,
   hintsRemaining = 3,
@@ -115,6 +118,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   // Animation values for buttons
   const noteScale = useSharedValue(1);
   const hintScale = useSharedValue(1);
+  const clearScale = useSharedValue(1); // Neuer SharedValue für den Löschbutton
   const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
 
   // Button animation handler
@@ -145,13 +149,16 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
     transform: [{ scale: noteScale.value }],
   }));
 
+  const clearAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: clearScale.value }],
+  }));
+
   const hintAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: hintScale.value }],
   }));
 
   // Get background color based on theme mode
   const getBackgroundColor = () => {
-    // Für beide Spieler jetzt das gleiche Muster
     return isDark ? theme.darkBackgroundColor : theme.lightBackgroundColor;
   };
 
@@ -214,15 +221,25 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   // Render action buttons and error indicator in the same row
   const renderActionButtonsRow = () => {
     const hintDisabled = hintsRemaining <= 0 || disabled;
+    
+    // Wähle die passende Button-Breite je nach Anzahl der anzuzeigenden Buttons
+    const buttonWidth = !showErrors ? ACTION_BUTTON_WIDTH : ACTION_BUTTON_WIDTH_TWO;
 
     return (
       <View style={styles.actionButtonsRow}>
         {/* Note button - LINKS */}
-        <Animated.View style={[styles.actionButtonWrapper, noteAnimatedStyle]}>
+        <Animated.View 
+          style={[
+            styles.actionButtonWrapper, 
+            { width: buttonWidth },
+            noteAnimatedStyle
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.actionButton,
               {
+                width: buttonWidth,
                 backgroundColor: noteMode
                   ? theme.actionButton.activeBackground
                   : theme.actionButton.background,
@@ -265,24 +282,85 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Error Indicator - ZENTRIERT */}
-        <View style={styles.errorIndicatorContainer}>
-          <DuoErrorIndicator
-            player={player}
-            errorsCount={errorsCount}
-            maxErrors={maxErrors}
-            compact={true}
-            showErrors={showErrors} // Neue Prop weitergeben
-          />
-        </View>
+        {/* Zeige entweder Error Indicator ODER Clear Button */}
+        {showErrors ? (
+          // Error Indicator - ZENTRIERT - nur wenn showErrors true ist
+          <View style={styles.errorIndicatorContainer}>
+            <DuoErrorIndicator
+              player={player}
+              errorsCount={errorsCount}
+              maxErrors={maxErrors}
+              compact={true}
+              showErrors={showErrors}
+            />
+          </View>
+        ) : (
+          // Löschen Button - ZENTRIERT - nur wenn showErrors false ist
+          <Animated.View 
+            style={[
+              styles.actionButtonWrapper, 
+              { width: buttonWidth },
+              clearAnimatedStyle
+            ]}
+          >
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { 
+                  width: buttonWidth,
+                  backgroundColor: theme.actionButton.background
+                },
+                buttonShadow,
+                disabled && styles.disabledButton,
+              ]}
+              onPress={() => {
+                if (!disabled) {
+                  handleButtonPress(clearScale, () => onClear(player));
+                }
+              }}
+              disabled={disabled}
+            >
+              <Feather
+                name="trash-2"
+                size={18}
+                color={
+                  disabled
+                    ? theme.actionButton.disabledIconColor
+                    : theme.actionButton.iconColor
+                }
+              />
+              <Text
+                style={[
+                  styles.actionButtonText,
+                  {
+                    color: disabled
+                      ? theme.actionButton.disabledIconColor
+                      : theme.actionButton.textColor,
+                  },
+                ]}
+              >
+                Löschen
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
 
         {/* Hint button - RECHTS */}
-        <Animated.View style={[styles.actionButtonWrapper, hintAnimatedStyle]}>
+        <Animated.View 
+          style={[
+            styles.actionButtonWrapper, 
+            { width: buttonWidth },
+            hintAnimatedStyle
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { backgroundColor: theme.actionButton.background },
-              buttonShadow, // Einheitlicher Schatten
+              { 
+                width: buttonWidth,
+                backgroundColor: theme.actionButton.background 
+              },
+              buttonShadow,
               (hintDisabled || disabled) && styles.disabledButton,
             ]}
             onPress={() => {
@@ -329,7 +407,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
       ]}
       entering={FadeIn.duration(500)}
     >
-      {/* Action buttons row with error indicator */}
+      {/* Action buttons row with error indicator or clear button */}
       {renderActionButtonsRow()}
 
       {/* Number buttons row */}
@@ -345,37 +423,34 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     alignItems: "center",
     margin: 4,
-    alignSelf: "center", // Zentriert den Container selbst
+    alignSelf: "center",
   },
   topContainer: {
     transform: [{ rotate: "180deg" }],
   },
-  // Action buttons row jetzt mit drei Elementen gleichmäßig verteilt
+  // Action buttons row mit gleichmäßiger Verteilung
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "center", // Zentrale Ausrichtung statt space-between
-    alignItems: "center", // Vertikal zentrieren
+    justifyContent: "space-between", // Gleichmäßig verteilt
+    alignItems: "center",
     width: "100%",
     marginVertical: 4,
-    paddingHorizontal: 0, // Kein horizontales Padding
-    height: ACTION_BUTTON_HEIGHT, // Feste Höhe für bessere Ausrichtung
+    paddingHorizontal: 8, // Etwas Abstand zum Rand
+    height: ACTION_BUTTON_HEIGHT,
   },
   // Container for error indicator with centered alignment
   errorIndicatorContainer: {
-    width: 76, // Etwas schmaler für bessere Gesamtverteilung
+    width: ACTION_BUTTON_WIDTH_TWO,
     height: ACTION_BUTTON_HEIGHT,
-    alignItems: "center", // Horizontal zentrieren
-    justifyContent: "center", // Vertikal zentrieren
-    paddingHorizontal: 0, // Kein zusätzliches Padding
+    alignItems: "center",
+    justifyContent: "center",
   },
   actionButtonWrapper: {
-    width: ACTION_BUTTON_WIDTH, // Feste Breite statt flex
     alignItems: "center",
     justifyContent: "center",
     height: ACTION_BUTTON_HEIGHT,
   },
   actionButton: {
-    width: ACTION_BUTTON_WIDTH,
     height: ACTION_BUTTON_HEIGHT,
     borderRadius: 12,
     flexDirection: "row",
@@ -385,9 +460,9 @@ const styles = StyleSheet.create({
   },
   // Text für die Action Buttons
   actionButtonText: {
-    fontSize: 13, // Kleiner für bessere Platzausnutzung
+    fontSize: 13,
     fontWeight: "600",
-    marginLeft: 5, // Weniger Abstand zum Icon
+    marginLeft: 5,
   },
   disabledButton: {
     opacity: 0.5,

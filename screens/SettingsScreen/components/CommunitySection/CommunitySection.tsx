@@ -104,14 +104,6 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           >
             Fehler gefunden?
           </Text>
-          <Text
-            style={[
-              styles.actionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Sende mir eine E-Mail mit deinem Feedback
-          </Text>
         </View>
         <Feather
           name="chevron-right"
@@ -141,14 +133,6 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
             style={[styles.actionTitle, { color: colors.textPrimary }]}
           >
             Mit Freunden teilen
-          </Text>
-          <Text
-            style={[
-              styles.actionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Fordere sie zum Sudoku-Duell heraus
           </Text>
         </View>
         <Feather

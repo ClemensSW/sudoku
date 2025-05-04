@@ -64,7 +64,8 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     (winner, reason) => {
       setWinnerInfo({ winner, reason });
       setShowCompletionModal(true);
-    }
+    },
+    gameSettings.showMistakes // Übergebe die showMistakes-Einstellung an useDuoGameState
   );
 
   // Hide navigation
@@ -76,26 +77,26 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   }, [setHideBottomNav]);
 
   // In DuoGameScreen.tsx, update this useEffect
-useEffect(() => {
-  if (!gameInitialized) {
-    console.log("Starting game initialization (once)");
-    // Delay game initialization
-    const timer = setTimeout(() => {
-      try {
-        gameActions.startNewGame();
-        setGameInitialized(true);
-        // Add extra delay before showing content
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error("Error starting new game:", error);
-      }
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }
-}, [gameInitialized]); // Only depend on gameInitialized
+  useEffect(() => {
+    if (!gameInitialized) {
+      console.log("Starting game initialization (once)");
+      // Delay game initialization
+      const timer = setTimeout(() => {
+        try {
+          gameActions.startNewGame();
+          setGameInitialized(true);
+          // Add extra delay before showing content
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 500);
+        } catch (error) {
+          console.error("Error starting new game:", error);
+        }
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameInitialized]); // Only depend on gameInitialized
 
   // Simple back button handler with confirmation
   const handleBack = () => {
@@ -124,6 +125,11 @@ useEffect(() => {
   const handleQuitFromSettings = () => {
     setShowSettings(false);
     router.replace("/duo");
+  };
+
+  // Handle settings changes
+  const handleSettingsChanged = (key: keyof any, value: boolean | string) => {
+    gameSettings.updateSetting(key, value);
   };
 
   // Simple handlers for modal
@@ -217,6 +223,7 @@ useEffect(() => {
           hintsRemaining={gameState.player2Hints}
           errorsCount={gameState.player2Errors}
           maxErrors={gameState.maxErrors}
+          showErrors={gameSettings.showMistakes} // Pass showMistakes to controls
         />
 
         {/* Game Board */}
@@ -240,6 +247,7 @@ useEffect(() => {
           hintsRemaining={gameState.player1Hints}
           errorsCount={gameState.player1Errors}
           maxErrors={gameState.maxErrors}
+          showErrors={gameSettings.showMistakes} // Pass showMistakes to controls
         />
       </View>
       
@@ -272,7 +280,7 @@ useEffect(() => {
         visible={showSettings}
         onClose={handleSettingsClose}
         onQuitGame={handleQuitFromSettings}
-        onSettingsChanged={gameSettings.updateSetting}
+        onSettingsChanged={handleSettingsChanged}
       />
     </View>
   );

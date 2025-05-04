@@ -20,7 +20,7 @@ const DuoGameSettingsPanel: React.FC<DuoGameSettingsPanelProps> = ({
   if (!visible) return null;
 
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View style={styles.container}>
       <SettingsScreen
         onBackToGame={onClose}
         onQuitGame={onQuitGame}
@@ -33,17 +33,17 @@ const DuoGameSettingsPanel: React.FC<DuoGameSettingsPanelProps> = ({
 };
 
 const styles = StyleSheet.create({
-    container: {
-      zIndex: 1000, // Make sure it's above everything else
-      backgroundColor: 'rgba(0,0,0,0.9)', // Optional semi-transparent background
-      elevation: 10, // For Android
-      position: 'absolute', // Make sure it's positioned absolutely
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-    }
-  });
-  
+  container: {
+    ...StyleSheet.absoluteFillObject, // Equivalent to StyleSheet.absoluteFill
+    zIndex: 9999, // Very high zIndex to ensure it's above everything
+    elevation: 100, // High elevation for Android
+    backgroundColor: 'rgba(0,0,0,0.95)', // Nearly opaque background
+    position: 'absolute', // Explizite Position
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  }
+});
 
 export default DuoGameSettingsPanel;

@@ -92,6 +92,7 @@ interface DuoGameControlsProps {
   hintsRemaining: number;
   errorsCount: number;
   maxErrors: number;
+  showErrors?: boolean; // Neue Prop für Fehleranzeige
 }
 
 const DuoGameControls: React.FC<DuoGameControlsProps> = ({
@@ -104,6 +105,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   hintsRemaining = 3,
   errorsCount = 0,
   maxErrors = 3,
+  showErrors = true, // Standardwert true
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
@@ -157,8 +159,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   const renderNumberButtons = () => {
     return (
       <View style={styles.numbersRow}>
-        {Array.from({ length: 9 }, (_, i) => {
-          const num = i + 1;
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
           const isDisabled = disabled;
           
           return (
@@ -166,7 +167,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               key={`num-${player}-${num}`}
               style={[
                 styles.numberButtonContainer,
-                getNumberAnimatedStyle(i),
+                getNumberAnimatedStyle(index),
               ]}
             >
               <TouchableOpacity
@@ -269,6 +270,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             errorsCount={errorsCount} 
             maxErrors={maxErrors}
             compact={true}
+            showErrors={showErrors} // Neue Prop weitergeben
           />
         </View>
 

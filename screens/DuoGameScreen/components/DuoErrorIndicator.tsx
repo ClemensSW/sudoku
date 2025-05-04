@@ -1,6 +1,6 @@
 // screens/DuoGameScreen/components/DuoErrorIndicator.tsx
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
@@ -30,6 +30,7 @@ interface DuoErrorIndicatorProps {
   errorsCount: number;
   maxErrors: number;
   compact?: boolean;
+  showErrors?: boolean; // Neue Prop für Fehleranzeige
 }
 
 const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
@@ -37,6 +38,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   errorsCount,
   maxErrors,
   compact = false,
+  showErrors = true, // Standardwert true
 }) => {
   // Get theme for warning color
   const { colors } = useTheme();
@@ -82,6 +84,39 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
 
   // Heart size based on compact mode
   const heartSize = compact ? 16 : 20;
+
+  // WENN FEHLER AUSGEBLENDET SIND - Unendlichkeitszeichen anzeigen
+  if (!showErrors) {
+    return (
+      <Animated.View 
+        style={[
+          styles.container,
+          compact && styles.compactContainer,
+          { backgroundColor: "transparent" } // Transparenter Hintergrund
+        ]}
+        entering={FadeIn.duration(300)}
+      >
+        <View style={styles.heartsRow}>
+          {/* Ein Herz mit Unendlichkeitszeichen */}
+          <View style={styles.heartContainer}>
+            <Feather 
+              name="heart" 
+              size={heartSize} 
+              color={theme.heart} 
+            />
+          </View>
+          <Text
+            style={[
+              styles.infinityText,
+              { color: theme.heart, marginLeft: 4 },
+            ]}
+          >
+            ∞
+          </Text>
+        </View>
+      </Animated.View>
+    );
+  }
 
   return (
     <Animated.View 
@@ -164,6 +199,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     width: 16,
     height: 16,
+  },
+  // Stil für das Unendlichkeitssymbol
+  infinityText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: -3, // Leicht angepasst für bessere vertikale Ausrichtung
   },
 });
 

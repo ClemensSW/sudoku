@@ -105,7 +105,8 @@ function generateInitialPlayerAreas(): [PlayerArea, PlayerArea] {
 export const useDuoGameState = (
   initialDifficulty: Difficulty = "medium",
   onQuit?: () => void,
-  onGameComplete?: GameCompletionCallback
+  onGameComplete?: GameCompletionCallback,
+  showMistakes: boolean = true // Neuer Parameter für die Fehleranzeige
 ): [DuoGameState, DuoGameActions] => {
   // Game state
   const [board, setBoard] = useState<SudokuBoardType>([]);
@@ -497,7 +498,8 @@ export const useDuoGameState = (
       };
 
       // NEUE LOGIK: Entferne Notizen in ALLEN relevanten Zellen, wenn die Antwort korrekt ist
-      if (isCorrectSolution) {
+      // ODER wenn "Fehler anzeigen" deaktiviert ist (wie im Single-Player-Modus)
+      if (isCorrectSolution || !showMistakes) {
         updatedBoard = removeNotesFromRelatedCells(
           updatedBoard,
           row,
@@ -513,35 +515,37 @@ export const useDuoGameState = (
         // Invalid or incorrect move - provide haptic feedback
         triggerHaptic("error");
         
-        // Increment error counter for this player
-        if (player === 1) {
-          const newErrorCount = player1Errors + 1;
-          setPlayer1Errors(newErrorCount);
-          
-          if (newErrorCount >= maxErrors) {
-            // Player 1 has lost due to too many errors
-            handlePlayerLost(1);
+        // Increment error counter for this player - NUR WENN FEHLER ANGEZEIGT WERDEN
+        if (showMistakes) {
+          if (player === 1) {
+            const newErrorCount = player1Errors + 1;
+            setPlayer1Errors(newErrorCount);
+            
+            if (newErrorCount >= maxErrors) {
+              // Player 1 has lost due to too many errors
+              handlePlayerLost(1);
+            }
+          } else {
+            const newErrorCount = player2Errors + 1;
+            setPlayer2Errors(newErrorCount);
+            
+            if (newErrorCount >= maxErrors) {
+              // Player 2 has lost due to too many errors
+              handlePlayerLost(2);
+            }
           }
-        } else {
-          const newErrorCount = player2Errors + 1;
-          setPlayer2Errors(newErrorCount);
           
-          if (newErrorCount >= maxErrors) {
-            // Player 2 has lost due to too many errors
-            handlePlayerLost(2);
-          }
+          // Automatically clear the wrong entry after a short delay
+          setTimeout(() => {
+            const clearedBoard = [...board];
+            clearedBoard[row][col] = {
+              ...board[row][col],
+              value: 0, // Clear the value
+              isValid: true, // Reset valid state
+            };
+            setBoard(clearedBoard);
+          }, 800); // Show error for 800ms
         }
-        
-        // Automatically clear the wrong entry after a short delay
-        setTimeout(() => {
-          const clearedBoard = [...board];
-          clearedBoard[row][col] = {
-            ...board[row][col],
-            value: 0, // Clear the value
-            isValid: true, // Reset valid state
-          };
-          setBoard(clearedBoard);
-        }, 800); // Show error for 800ms
       } else {
         // Valid move and correct solution - good feedback
         triggerHaptic("medium");
@@ -577,7 +581,8 @@ export const useDuoGameState = (
       maxErrors, 
       handlePlayerLost, 
       removeNotesFromRelatedCells,
-      updatePlayerProgress
+      updatePlayerProgress,
+      showMistakes // Neue Abhängigkeit
     ]
   );
 

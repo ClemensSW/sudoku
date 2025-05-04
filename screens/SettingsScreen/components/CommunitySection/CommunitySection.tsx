@@ -1,11 +1,12 @@
 // screens/SettingsScreen/components/CommunitySection/CommunitySection.tsx
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Linking, Clipboard } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import styles from "./CommunitySection.styles";
+import ReviewManager from "@/components/ReviewSystem/ReviewManager";
 
 interface CommunitySectionProps {
   onSupportPress: () => void;
@@ -21,61 +22,27 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const { showAlert } = useAlert();
+  const [showReviewSystem, setShowReviewSystem] = useState(false);
 
-  // Verbesserte Fehlerbericht-Funktion mit besserer Fehlerbehandlung
-  const handleReportBug = async () => {
+  // Feedback-Button Handler
+  const handleFeedbackPress = () => {
     triggerHaptic("light");
-    
-    // E-Mail-Daten
-    const email = "info@sudokuduo.app";
-    const subject = "Fehlerbericht%20Sudoku%20Duo";
-    const body = "Beschreibe%20hier%20den%20Fehler:";
-    
-    // Erstelle den mailto-Link - bereits kodiert für bessere Kompatibilität
-    const url = `mailto:${email}?subject=${subject}&body=${body}`;
-    
-    try {
-      // Prüfe, ob ein E-Mail-Client verfügbar ist
-      const canOpen = await Linking.canOpenURL(url);
-      
-      if (canOpen) {
-        // Öffne den E-Mail-Client
-        await Linking.openURL(url);
-      } else {
-        // Falls kein E-Mail-Client geöffnet werden kann, zeige eine Meldung an
-        showAlert({
-          title: "E-Mail-Client nicht verfügbar",
-          message: `Bitte sende dein Feedback manuell an: ${email}`,
-          type: "info",
-          buttons: [{ text: "OK", style: "primary" }]
-        });
-      }
-    } catch (error) {
-      console.error("Error opening email client:", error);
-      
-      // Benutzerfreundliche Fehlermeldung
-      showAlert({
-        title: "E-Mail konnte nicht geöffnet werden",
-        message: `Bitte sende dein Feedback manuell an: ${email}`,
-        type: "warning",
-        buttons: [
-          { 
-            text: "E-Mail kopieren", 
-            style: "primary",
-            onPress: () => {
-              Clipboard.setString(email);
-              showAlert({
-                title: "E-Mail kopiert",
-                message: "Die E-Mail-Adresse wurde in die Zwischenablage kopiert.",
-                type: "success",
-                buttons: [{ text: "OK", style: "primary" }]
-              });
-            }
-          },
-          { text: "Abbrechen", style: "cancel" }
-        ]
-      });
-    }
+    setShowReviewSystem(true);
+  };
+
+  // Schließen des Review-Systems
+  const handleCloseReview = () => {
+    setShowReviewSystem(false);
+  };
+
+  // Fehlerberichtsfunktion (falls der Nutzer auf Google Play weitergeleitet wird)
+  const handlePlayStoreRedirect = () => {
+    console.log("Nutzer zur Google Play Store Bewertung weitergeleitet");
+  };
+
+  // Feedback wurde abgeschickt
+  const handleFeedbackSent = (data: any) => {
+    console.log("Feedback erhalten:", data);
   };
 
   return (
@@ -85,24 +52,32 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      {/* Bug Report Button */}
+      {/* Feedback Button - vorher "Fehler gefunden?" */}
       <TouchableOpacity
         style={styles.actionButton}
-        onPress={handleReportBug}
+        onPress={handleFeedbackPress}
       >
         <View
           style={[
             styles.actionIconContainer,
-            { backgroundColor: `${colors.error}15` },
+            { backgroundColor: `${colors.info}20` },
           ]}
         >
-          <Feather name="alert-circle" size={20} color={colors.error} />
+          <Feather name="message-circle" size={20} color={colors.info} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text
             style={[styles.actionTitle, { color: colors.textPrimary }]}
           >
-            Fehler gefunden?
+            Feedback senden
+          </Text>
+          <Text
+            style={[
+              styles.actionDescription,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Hilf mir, die App zu verbessern
           </Text>
         </View>
         <Feather
@@ -171,6 +146,16 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           color={colors.textSecondary}
         />
       </TouchableOpacity>
+
+      {/* Review Manager */}
+      <ReviewManager 
+        isVisible={showReviewSystem}
+        appPackageName="de.playfusiongate.sudokuduo"
+        feedbackEmail="info@playfusion-gate.de"
+        onClose={handleCloseReview}
+        onPlayStoreRedirect={handlePlayStoreRedirect}
+        onFeedbackSent={handleFeedbackSent}
+      />
     </View>
   );
 };

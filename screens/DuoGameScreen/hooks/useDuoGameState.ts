@@ -133,7 +133,7 @@ export const useDuoGameState = (
   const [player2SolvedCells, setPlayer2SolvedCells] = useState(0);
   
   // Statisch initialisierte Spielerbereiche
-  const [playerAreas] = useState<[PlayerArea, PlayerArea]>(generateInitialPlayerAreas());
+  const [playerAreas] = useState<[PlayerArea, PlayerArea]>(() => generateInitialPlayerAreas());
   
   // Debug-Info-Objekt - WICHTIG: Nicht als Ref verwenden, sondern als normalen State
   const [debugInfo, setDebugInfo] = useState({

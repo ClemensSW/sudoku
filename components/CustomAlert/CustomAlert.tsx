@@ -110,7 +110,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 
   // Auto-dismiss functionality
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
 
     if (autoDismiss && isVisible) {
       timer = setTimeout(() => {

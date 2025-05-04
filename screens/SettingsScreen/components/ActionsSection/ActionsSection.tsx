@@ -8,17 +8,22 @@ import styles from "./ActionsSection.styles";
 interface ActionsSectionProps {
   showGameFeatures: boolean;
   onQuitGame?: () => void;
+  isDuoMode?: boolean; // New prop to indicate Duo mode
 }
 
 const ActionsSection: React.FC<ActionsSectionProps> = ({
   showGameFeatures,
   onQuitGame,
+  isDuoMode = false, // Default to false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Wenn nicht im Spielkontext, geben wir nichts zurück
+  // If not in game context, return nothing
   if (!showGameFeatures || !onQuitGame) return null;
+
+  // Use different color for button in Duo mode
+  const buttonColor = isDuoMode ? "#4A7D78" : colors.error;
 
   return (
     <View
@@ -35,13 +40,13 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
         <View
           style={[
             styles.actionIconContainer,
-            { backgroundColor: `${colors.error}20` },
+            { backgroundColor: `${buttonColor}20` },
           ]}
         >
-          <Feather name="x-circle" size={20} color={colors.error} />
+          <Feather name="x-circle" size={20} color={buttonColor} />
         </View>
         <View style={styles.actionTextContainer}>
-          <Text style={[styles.actionTitle, { color: colors.error }]}>
+          <Text style={[styles.actionTitle, { color: buttonColor }]}>
             Spiel beenden
           </Text>
           <Text
@@ -50,7 +55,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
               { color: colors.textSecondary },
             ]}
           >
-            Zurück zum Hauptmenü
+            Zurück zum {isDuoMode ? "Duo-Menü" : "Hauptmenü"}
           </Text>
         </View>
         <Feather

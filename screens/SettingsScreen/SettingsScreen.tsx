@@ -35,7 +35,7 @@ import {
   HelpSection,
   ActionsSection,
   CommunitySection,
-  AppearanceSettings, // Import neue Komponente
+  AppearanceSettings,
 } from "./components";
 
 import styles from "./SettingsScreen.styles";
@@ -49,6 +49,7 @@ interface SettingsScreenProps {
     value: boolean | string
   ) => void;
   fromGame?: boolean;
+  isDuoMode?: boolean; // New prop to indicate Duo mode
 }
 
 const SettingsScreen: React.FC<SettingsScreenProps> = ({
@@ -57,6 +58,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onAutoNotes,
   onSettingsChanged,
   fromGame = false,
+  isDuoMode = false, // Default to false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -70,7 +72,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
-  const showGameFeatures = fromGame && !!onAutoNotes && !!onQuitGame;
+  const showGameFeatures = fromGame && !!onQuitGame;
 
   useEffect(() => {
     const loadData = async () => {
@@ -227,8 +229,8 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </RNText>
 
           <HelpSection
-            showGameFeatures={showGameFeatures}
-            onAutoNotes={showGameFeatures ? handleAutoNotes : undefined}
+            showGameFeatures={showGameFeatures && !isDuoMode} // Only show game-specific features in single-player mode
+            onAutoNotes={showGameFeatures && !isDuoMode ? handleAutoNotes : undefined}
             onHowToPlay={() => setShowHowToPlay(true)}
           />
         </Animated.View>
@@ -263,6 +265,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <GameSettings
               settings={settings}
               onSettingChange={handleSettingChange}
+              isDuoMode={isDuoMode} // Pass isDuoMode flag to GameSettings
             />
           )}
         </Animated.View>
@@ -282,6 +285,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <ActionsSection
               showGameFeatures={showGameFeatures}
               onQuitGame={onQuitGame}
+              isDuoMode={isDuoMode} // Pass isDuoMode flag to ActionsSection
             />
           </Animated.View>
         )}

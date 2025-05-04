@@ -10,14 +10,19 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
 
-// Import core components without animations
+// Import existing components
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
 import DuoGameCompletionModal from "./components/DuoGameCompletionModal";
 import Timer from "@/components/Timer/Timer";
 
+// Add this import for settings panel
+import DuoGameSettingsPanel from "./components/DuoGameSettingsPanel";
+
 // Game Logic
 import { useDuoGameState } from "./hooks/useDuoGameState";
+// Import settings hook
+import { useGameSettings } from "../GameScreen/hooks/useGameSettings";
 
 // Constants
 const MAX_HINTS = 3;
@@ -46,6 +51,12 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     reason: "completion" as "completion" | "errors"
   });
 
+  // Add this state for settings panel
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // Add game settings hook
+  const gameSettings = useGameSettings();
+
   // Initialize game state with simplified game complete callback
   const [gameState, gameActions] = useDuoGameState(
     initialDifficulty,
@@ -64,26 +75,27 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     };
   }, [setHideBottomNav]);
 
-  // Initialize game once
-  useEffect(() => {
-    if (!gameInitialized) {
-      // Delay game initialization
-      const timer = setTimeout(() => {
-        try {
-          gameActions.startNewGame();
-          setGameInitialized(true);
-          // Add extra delay before showing content
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 500);
-        } catch (error) {
-          console.error("Error starting new game:", error);
-        }
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [gameInitialized, gameActions]);
+  // In DuoGameScreen.tsx, update this useEffect
+useEffect(() => {
+  if (!gameInitialized) {
+    console.log("Starting game initialization (once)");
+    // Delay game initialization
+    const timer = setTimeout(() => {
+      try {
+        gameActions.startNewGame();
+        setGameInitialized(true);
+        // Add extra delay before showing content
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      } catch (error) {
+        console.error("Error starting new game:", error);
+      }
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }
+}, [gameInitialized]); // Only depend on gameInitialized
 
   // Simple back button handler with confirmation
   const handleBack = () => {
@@ -96,6 +108,22 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     } else {
       router.replace("/duo");
     }
+  };
+
+  // Add settings button handler
+  const handleSettingsPress = () => {
+    setShowSettings(true);
+  };
+
+  // Add settings close handler
+  const handleSettingsClose = () => {
+    setShowSettings(false);
+  };
+
+  // Add quit from settings handler
+  const handleQuitFromSettings = () => {
+    setShowSettings(false);
+    router.replace("/duo");
   };
 
   // Simple handlers for modal
@@ -147,6 +175,20 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         >
           <Feather 
             name="chevron-left" 
+            size={24} 
+            color={colors.textPrimary}
+          />
+        </TouchableOpacity>
+      </View>
+      
+      {/* New Settings button - Same style as back button but on right side */}
+      <View style={styles.settingsButtonContainer}>
+        <TouchableOpacity 
+          style={[styles.backButton, { backgroundColor: colors.surface }]}
+          onPress={handleSettingsPress}
+        >
+          <Feather 
+            name="settings" 
             size={24} 
             color={colors.textPrimary}
           />
@@ -224,6 +266,14 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         player2InitialEmptyCells={gameState.player2InitialEmptyCells}
         player2SolvedCells={gameState.player2SolvedCells}
       />
+      
+      {/* Settings Panel */}
+      <DuoGameSettingsPanel
+        visible={showSettings}
+        onClose={handleSettingsClose}
+        onQuitGame={handleQuitFromSettings}
+        onSettingsChanged={gameSettings.updateSetting}
+      />
     </View>
   );
 };
@@ -252,6 +302,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 16,
+    zIndex: 10,
+  },
+  // Add settings button positioning - same style but on right
+  settingsButtonContainer: {
+    position: "absolute",
+    top: 20,
+    right: 16,
     zIndex: 10,
   },
   backButton: {

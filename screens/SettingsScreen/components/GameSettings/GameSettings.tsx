@@ -8,11 +8,13 @@ import styles from "./GameSettings.styles";
 interface GameSettingsProps {
   settings: GameSettingsType | null;
   onSettingChange: (key: keyof GameSettingsType, value: boolean | string) => void;
+  isDuoMode?: boolean; // New prop to indicate Duo mode
 }
 
 const GameSettings: React.FC<GameSettingsProps> = ({
   settings,
   onSettingChange,
+  isDuoMode = false, // Default to false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -29,77 +31,82 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         }
       ]}
     >
-      {/* Highlight related cells */}
-      <View
-        style={[
-          styles.settingRow,
-          { borderBottomColor: colors.border },
-        ]}
-      >
-        <View style={styles.settingTextContainer}>
-          <Text
-            style={[styles.settingTitle, { color: colors.textPrimary }]}
-          >
-            Zellen hervorheben
-          </Text>
-          <Text
+      {/* Only show these settings in single player mode */}
+      {!isDuoMode && (
+        <>
+          {/* Highlight related cells */}
+          <View
             style={[
-              styles.settingDescription,
-              { color: colors.textSecondary },
+              styles.settingRow,
+              { borderBottomColor: colors.border },
             ]}
           >
-            Zeile, Spalte und Box hervorheben
-          </Text>
-        </View>
-        <Switch
-          value={settings.highlightRelatedCells}
-          onValueChange={(value) =>
-            onSettingChange("highlightRelatedCells", value)
-          }
-          trackColor={{
-            false: colors.buttonDisabled,
-            true: colors.primary,
-          }}
-          thumbColor="#FFFFFF"
-        />
-      </View>
+            <View style={styles.settingTextContainer}>
+              <Text
+                style={[styles.settingTitle, { color: colors.textPrimary }]}
+              >
+                Zellen hervorheben
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                Zeile, Spalte und Box hervorheben
+              </Text>
+            </View>
+            <Switch
+              value={settings.highlightRelatedCells}
+              onValueChange={(value) =>
+                onSettingChange("highlightRelatedCells", value)
+              }
+              trackColor={{
+                false: colors.buttonDisabled,
+                true: colors.primary,
+              }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
 
-      {/* Highlight same values */}
-      <View
-        style={[
-          styles.settingRow,
-          { borderBottomColor: colors.border },
-        ]}
-      >
-        <View style={styles.settingTextContainer}>
-          <Text
-            style={[styles.settingTitle, { color: colors.textPrimary }]}
-          >
-            Gleiche Zahlen hervorheben
-          </Text>
-          <Text
+          {/* Highlight same values */}
+          <View
             style={[
-              styles.settingDescription,
-              { color: colors.textSecondary },
+              styles.settingRow,
+              { borderBottomColor: colors.border },
             ]}
           >
-            Alle Zellen mit gleichen Werten markieren
-          </Text>
-        </View>
-        <Switch
-          value={settings.highlightSameValues}
-          onValueChange={(value) =>
-            onSettingChange("highlightSameValues", value)
-          }
-          trackColor={{
-            false: colors.buttonDisabled,
-            true: colors.primary,
-          }}
-          thumbColor="#FFFFFF"
-        />
-      </View>
+            <View style={styles.settingTextContainer}>
+              <Text
+                style={[styles.settingTitle, { color: colors.textPrimary }]}
+              >
+                Gleiche Zahlen hervorheben
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                Alle Zellen mit gleichen Werten markieren
+              </Text>
+            </View>
+            <Switch
+              value={settings.highlightSameValues}
+              onValueChange={(value) =>
+                onSettingChange("highlightSameValues", value)
+              }
+              trackColor={{
+                false: colors.buttonDisabled,
+                true: colors.primary,
+              }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </>
+      )}
 
-      {/* Show Errors */}
+      {/* Show Errors - Keep in both modes */}
       <View
         style={[
           styles.settingRow,
@@ -134,7 +141,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         />
       </View>
 
-      {/* Vibration */}
+      {/* Vibration - Keep in both modes */}
       <View style={styles.settingRow}>
         <View style={styles.settingTextContainer}>
           <Text

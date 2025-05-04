@@ -20,7 +20,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
-const NUMBER_BUTTON_SIZE = Math.min((width - 32) / 9, 38);
+const NUMBER_BUTTON_SIZE = Math.min((width - 40) / 9, 40);
 // Breite Button-Größen angepasst, um Platz für Fehleranzeige zu machen
 const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 110); // Etwas schmaler
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
@@ -334,10 +334,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
     paddingVertical: 4,
     alignItems: "center",
-    borderRadius: 12,
     margin: 4,
     alignSelf: "center", // Zentriert den Container selbst
   },
@@ -394,6 +393,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginTop: 4,
+    marginBottom: 4,
   },
   numberButtonContainer: {
     width: NUMBER_BUTTON_SIZE + 4,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   numberButton: {
     width: NUMBER_BUTTON_SIZE,
-    height: NUMBER_BUTTON_SIZE,
+    height: "100%",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",

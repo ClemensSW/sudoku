@@ -1,41 +1,59 @@
 // utils/billing/BillingManager.ts
-import { EventEmitter } from "events";
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Produkt-Interface
+// Define event types for type-safety
+export enum BillingEvents {
+  PURCHASE_SUCCESS = 'PURCHASE_SUCCESS',
+  PURCHASE_FAILED = 'PURCHASE_FAILED',
+  RESTORE_SUCCESS = 'RESTORE_SUCCESS',
+  RESTORE_FAILED = 'RESTORE_FAILED',
+  SUBSCRIPTION_STATUS_CHANGED = 'SUBSCRIPTION_STATUS_CHANGED',
+}
+
+// Define product types
 export interface Product {
-  productId: string;
+  id: string;
   title: string;
   description: string;
   price: string;
-  icon: string;
-  color: string;
+  priceAmountMicros: number;
+  priceCurrencyCode: string;
   subscriptionPeriod?: string;
+  freeTrialPeriod?: string;
 }
 
-// Definition unserer Produkt-IDs
-export const PRODUCT_IDS = {
-  // Einmalige Produkte
-  SUDOKU_COFFEE: "sudoku_coffee",
-  SUDOKU_BREAKFAST: "sudoku_breakfast",
-  SUDOKU_LUNCH: "sudoku_lunch",
-  SUDOKU_FEAST: "sudoku_feast",
+// Define purchase types
+export interface Purchase {
+  productId: string;
+  transactionId: string;
+  transactionDate: number;
+  purchaseToken?: string;
+  dataAndroid?: string;
+  signatureAndroid?: string;
+  originalTransactionDateIOS?: number;
+  originalTransactionIdentifierIOS?: string;
+}
 
-  // Abonnements
-  MONTHLY_SUPPORT: "monthly_support",
-  YEARLY_SUPPORT: "yearly_support",
+// Create a dummy native module for the emitter
+// In a real app, you would use an actual native module for IAP
+const DummyNativeModule = NativeModules.BillingModule || {
+  addListener: () => {},
+  removeListeners: () => {},
 };
 
-/**
- * Mock-BillingManager für Entwicklungs- und Vorschauzwecke
- *
- * Diese Klasse simuliert In-App-Käufe für die Entwicklung, bevor
- * die tatsächliche Google Play Billing-Integration implementiert wird.
- */
-class BillingManager extends EventEmitter {
+class BillingManager {
   private static instance: BillingManager;
+  private eventEmitter: NativeEventEmitter;
+  private products: Map<string, Product> = new Map();
+  private purchases: Map<string, Purchase> = new Map();
   private isInitialized: boolean = false;
-  private products: Product[] = [];
-  private subscriptions: Product[] = [];
+  private STORAGE_KEY = '@billing_manager_purchases';
+
+  private constructor() {
+    // Using NativeEventEmitter instead of Node's EventEmitter
+    this.eventEmitter = new NativeEventEmitter(DummyNativeModule);
+  }
 
   public static getInstance(): BillingManager {
     if (!BillingManager.instance) {
@@ -44,134 +62,148 @@ class BillingManager extends EventEmitter {
     return BillingManager.instance;
   }
 
-  private constructor() {
-    super();
-    this.setupProducts();
-  }
+  /**
+   * Initialize the billing manager
+   */
+  public async initialize(): Promise<boolean> {
+    if (this.isInitialized) return true;
 
-  // Produkte mit Icons und Farben einrichten
-  private setupProducts(): void {
-    this.products = [
-      {
-        productId: PRODUCT_IDS.SUDOKU_COFFEE,
-        title: "Sudoku-Kaffee",
-        description: "Eine kleine Erfrischung für den Entwickler",
-        price: "2,99 €",
-        icon: "☕",
-        color: "#795548",
-      },
-      {
-        productId: PRODUCT_IDS.SUDOKU_BREAKFAST,
-        title: "Sudoku-Frühstück",
-        description: "Ein guter Start in den Entwicklertag",
-        price: "4,99 €",
-        icon: "🥐",
-        color: "#FF9800",
-      },
-      {
-        productId: PRODUCT_IDS.SUDOKU_LUNCH,
-        title: "Sudoku-Mittagessen",
-        description: "Energie für neue Features & Verbesserungen",
-        price: "9,99 €",
-        icon: "🍱",
-        color: "#4CAF50",
-      },
-      {
-        productId: PRODUCT_IDS.SUDOKU_FEAST,
-        title: "Sudoku-Festmahl",
-        description:
-          "Eine großzügige Unterstützung für monatelange Entwicklung",
-        price: "19,99 €",
-        icon: "🍲",
-        color: "#9C27B0",
-      },
-    ];
-
-    this.subscriptions = [
-      {
-        productId: PRODUCT_IDS.MONTHLY_SUPPORT,
-        title: "Monatliche Denksport-Unterstützung",
-        description:
-          "Regelmäßige Unterstützung für kontinuierliche Verbesserungen",
-        price: "1,99 € / Monat",
-        icon: "🧩",
-        color: "#2196F3",
-        subscriptionPeriod: "P1M",
-      },
-      {
-        productId: PRODUCT_IDS.YEARLY_SUPPORT,
-        title: "Jahres-Rätselförderung",
-        description: "Langfristige Entwicklungsunterstützung zum Sparpreis",
-        price: "9,99 € / Jahr",
-        icon: "🏆",
-        color: "#FFC107",
-        subscriptionPeriod: "P1Y",
-      },
-    ];
-  }
-
-  // Initialisiere (simuliert)
-  public async initialize(): Promise<void> {
-    // Simulierte Verzögerung für realistisches Verhalten
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.isInitialized = true;
-        this.emit("ready");
-        resolve();
-      }, 1000);
-    });
-  }
-
-  // Get all available products
-  public getAllProducts(): Product[] {
-    return this.products;
-  }
-
-  // Get all available subscriptions
-  public getAllSubscriptions(): Product[] {
-    return this.subscriptions;
-  }
-
-  // Simuliere einen Kauf
-  public async purchaseProduct(productId: string): Promise<boolean> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    // Prüfen, ob das Produkt existiert
-    const product = [...this.products, ...this.subscriptions].find(
-      (p) => p.productId === productId
-    );
-
-    if (!product) {
-      this.emit("purchase-error", { code: "ITEM_UNAVAILABLE" });
+    try {
+      // Load any stored purchases
+      await this.loadStoredPurchases();
+      
+      // Here you would normally initialize a real IAP library
+      // like react-native-iap or react-native-purchases
+      console.log('BillingManager initialized');
+      
+      this.isInitialized = true;
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize BillingManager:', error);
       return false;
     }
-
-    // Simuliere eine Kaufverzögerung
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Zufällig erfolgreicher oder fehlgeschlagener Kauf (für Testzwecke)
-        const isSuccessful = Math.random() > 0.2; // 80% Erfolgsrate
-
-        if (isSuccessful) {
-          this.emit("purchase-completed", {
-            productId,
-            purchaseTime: Date.now(),
-          });
-          resolve(true);
-        } else {
-          this.emit("purchase-error", { code: "USER_CANCELED" });
-          resolve(false);
-        }
-      }, 2000);
-    });
   }
 
-  // Aufräumen
-  public async disconnect(): Promise<void> {
-    this.isInitialized = false;
+  /**
+   * Get available products from the store
+   */
+  public async getProducts(productIds: string[]): Promise<Product[]> {
+    if (!this.isInitialized) await this.initialize();
+    
+    // In a real implementation, you would fetch products from the store
+    // This is just a mock implementation
+    const mockProducts: Product[] = productIds.map(id => ({
+      id,
+      title: `Product ${id}`,
+      description: `Description for ${id}`,
+      price: '$4.99',
+      priceAmountMicros: 4990000,
+      priceCurrencyCode: 'USD',
+      subscriptionPeriod: id.includes('subscription') ? 'P1M' : undefined
+    }));
+    
+    mockProducts.forEach(product => this.products.set(product.id, product));
+    return mockProducts;
+  }
+
+  /**
+   * Purchase a product
+   */
+  public async purchaseProduct(productId: string): Promise<Purchase | null> {
+    if (!this.isInitialized) await this.initialize();
+    
+    try {
+      // Mock purchase process
+      const purchase: Purchase = {
+        productId,
+        transactionId: `transaction_${Date.now()}`,
+        transactionDate: Date.now(),
+        purchaseToken: Platform.OS === 'android' ? `token_${Date.now()}` : undefined,
+      };
+      
+      // Store the purchase
+      this.purchases.set(productId, purchase);
+      await this.savePurchases();
+      
+      // Emit success event
+      this.eventEmitter.emit(BillingEvents.PURCHASE_SUCCESS, purchase);
+      
+      return purchase;
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      this.eventEmitter.emit(BillingEvents.PURCHASE_FAILED, { error, productId });
+      return null;
+    }
+  }
+
+  /**
+   * Restore purchases
+   */
+  public async restorePurchases(): Promise<Purchase[]> {
+    if (!this.isInitialized) await this.initialize();
+    
+    try {
+      // In a real implementation, you would call the store's restore purchases API
+      // For this mock, we're just returning our stored purchases
+      const purchases = Array.from(this.purchases.values());
+      
+      this.eventEmitter.emit(BillingEvents.RESTORE_SUCCESS, purchases);
+      return purchases;
+    } catch (error) {
+      console.error('Restore purchases failed:', error);
+      this.eventEmitter.emit(BillingEvents.RESTORE_FAILED, { error });
+      return [];
+    }
+  }
+
+  /**
+   * Check if a product is purchased
+   */
+  public isPurchased(productId: string): boolean {
+    return this.purchases.has(productId);
+  }
+
+  /**
+   * Add event listener
+   */
+  public addListener(event: BillingEvents, listener: (...args: any[]) => void): { remove: () => void } {
+    const subscription = this.eventEmitter.addListener(event, listener);
+    return {
+      remove: () => subscription.remove()
+    };
+  }
+
+  /**
+   * Remove all listeners
+   */
+  public removeAllListeners(event: BillingEvents): void {
+    this.eventEmitter.removeAllListeners(event);
+  }
+
+  /**
+   * Save purchases to AsyncStorage
+   */
+  private async savePurchases(): Promise<void> {
+    const purchasesArray = Array.from(this.purchases.values());
+    await AsyncStorage.setItem(this.STORAGE_KEY, JSON.stringify(purchasesArray));
+  }
+
+  /**
+   * Load purchases from AsyncStorage
+   */
+  private async loadStoredPurchases(): Promise<void> {
+    try {
+      const storedPurchases = await AsyncStorage.getItem(this.STORAGE_KEY);
+      if (storedPurchases) {
+        const purchases: Purchase[] = JSON.parse(storedPurchases);
+        purchases.forEach(purchase => {
+          this.purchases.set(purchase.productId, purchase);
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load stored purchases:', error);
+    }
   }
 }
 
-export default BillingManager;
+export default BillingManager.getInstance();

@@ -1,26 +1,23 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
-import React, { useEffect, useState } from "react";
-import { View, BackHandler, StyleSheet, TouchableOpacity } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
-
+import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { Feather } from "@expo/vector-icons";
+import { useNavigationControl } from "@/app/_layout";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
-import { useNavigationControl } from "@/app/_layout";
+import { Difficulty } from "@/utils/sudoku";
 
-// Duo Game Components
+// Import core components without animations
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
 import DuoGameCompletionModal from "./components/DuoGameCompletionModal";
-import Timer from "@/components/Timer/Timer"; // Import Timer directly
+import Timer from "@/components/Timer/Timer";
 
 // Game Logic
 import { useDuoGameState } from "./hooks/useDuoGameState";
-import { Difficulty } from "@/utils/sudoku";
 
 // Constants
 const MAX_HINTS = 3;
@@ -29,82 +26,67 @@ interface DuoGameScreenProps {
   initialDifficulty?: Difficulty;
 }
 
-const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
-  initialDifficulty = "medium",
+const DuoGameScreen: React.FC<DuoGameScreenProps> = ({ 
+  initialDifficulty = "medium" 
 }) => {
   const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
-  const { showAlert } = useAlert();
   const { setHideBottomNav } = useNavigationControl();
-
-  // States für das Completion Modal
+  const { showAlert } = useAlert();
+  
+  // States for game initialization
+  const [isLoading, setIsLoading] = useState(true);
+  const [gameInitialized, setGameInitialized] = useState(false);
+  
+  // States for the Completion Modal
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [winnerInfo, setWinnerInfo] = useState<{
-    winner: 0 | 1 | 2;
-    reason: "completion" | "errors";
-  }>({
-    winner: 0,
-    reason: "completion",
+  const [winnerInfo, setWinnerInfo] = useState({
+    winner: 0 as 0 | 1 | 2,
+    reason: "completion" as "completion" | "errors"
   });
 
-  // Callback für Spielende
-  const handleGameComplete = (
-    winner: 0 | 1 | 2,
-    reason: "completion" | "errors"
-  ) => {
-    setWinnerInfo({ winner, reason });
-    setTimeout(() => {
-      setShowCompletionModal(true);
-    }, 800);
-  };
-
-  // Use the duo game state hook with completion callback
+  // Initialize game state with simplified game complete callback
   const [gameState, gameActions] = useDuoGameState(
     initialDifficulty,
-    () => {
-      router.replace("/duo");
-    },
-    handleGameComplete
+    () => router.replace("/duo"),
+    (winner, reason) => {
+      setWinnerInfo({ winner, reason });
+      setShowCompletionModal(true);
+    }
   );
 
-  // Start a new game on mount
-  useEffect(() => {
-    gameActions.startNewGame();
-  }, []);
-
-  // Hide navigation when component mounts
+  // Hide navigation
   useEffect(() => {
     setHideBottomNav(true);
-    
-    // Clean up when component unmounts
     return () => {
       setHideBottomNav(false);
     };
-  }, []);
+  }, [setHideBottomNav]);
 
-  // Handle back button press
+  // Initialize game once
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        if (gameState.isGameRunning && !gameState.isGameComplete) {
-          showAlert(
-            quitGameAlert(() => {
-              router.replace("/duo");
-            })
-          );
-          return true; // Prevents default back action
+    if (!gameInitialized) {
+      // Delay game initialization
+      const timer = setTimeout(() => {
+        try {
+          gameActions.startNewGame();
+          setGameInitialized(true);
+          // Add extra delay before showing content
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 500);
+        } catch (error) {
+          console.error("Error starting new game:", error);
         }
-        return false; // Allow default back action
-      }
-    );
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameInitialized, gameActions]);
 
-    return () => backHandler.remove();
-  }, [gameState.isGameRunning, gameState.isGameComplete]);
-
-  // Handle back navigation
-  const handleBackPress = () => {
+  // Simple back button handler with confirmation
+  const handleBack = () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
       showAlert(
         quitGameAlert(() => {
@@ -116,142 +98,132 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     }
   };
 
-  // Spezifische Handler für die Aktionen im Completion Modal
-  const handleCloseCompletionModal = () => {
+  // Simple handlers for modal
+  const handleCloseModal = () => {
     setShowCompletionModal(false);
     router.replace("/duo");
   };
 
-  // Handler für neues Spiel ohne Navigation
-  const handleStartNewGame = () => {
+  const handleNewGame = () => {
     setShowCompletionModal(false);
-    gameActions.startNewGame();
-  };
-
-  // Spezifischer Handler für Revanche
-  const handleRevanche = () => {
-    setShowCompletionModal(false);
-    
-    // Kleine Verzögerung für bessere Animation
+    setIsLoading(true);
     setTimeout(() => {
-      router.replace({
-        pathname: "/duo-game",
-        params: { difficulty: initialDifficulty }
-      });
-    }, 200);
+      gameActions.startNewGame();
+      setIsLoading(false);
+    }, 500);
   };
 
-  // Einheitliches Schatten-System
-  const buttonShadow = {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: theme.isDark ? 0.3 : 0.15,
-    shadowRadius: 3,
-    elevation: 4,
+  const handleRematch = () => {
+    setShowCompletionModal(false);
+    router.replace({
+      pathname: "/duo-game",
+      params: { difficulty: initialDifficulty }
+    });
   };
+
+  // Loading screen
+  if (isLoading || gameState.board.length === 0) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar hidden={true} />
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.loadingText, { color: colors.textPrimary }]}>
+            Spiel wird geladen...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
-
-      <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-        {/* Verbesserter Zurück-Button */}
+      <StatusBar hidden={true} />
+      
+      {/* Back button - FIXED CENTERING */}
+      <View style={styles.backButtonContainer}>
         <TouchableOpacity 
-          style={[
-            styles.backButton, 
-            { 
-              backgroundColor: theme.isDark 
-                ? "rgba(255,255,255,0.25)" 
-                : colors.surface,
-            },
-            buttonShadow,
-          ]}
-          onPress={handleBackPress}
-          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          style={[styles.backButton, { backgroundColor: colors.surface }]}
+          onPress={handleBack}
         >
           <Feather 
             name="chevron-left" 
             size={24} 
-            color={theme.isDark ? "#FFFFFF" : colors.primary}
+            color={colors.textPrimary}
           />
         </TouchableOpacity>
-
-        {/* Hidden Timer component to track game time */}
-        <View style={styles.hiddenTimer}>
-          <Timer
-            isRunning={gameState.isGameRunning}
-            initialTime={gameState.gameTime}
-            onTimeUpdate={gameActions.handleTimeUpdate}
-          />
-        </View>
-
-        {/* Main content */}
-        <Animated.View
-          style={styles.content}
-          entering={FadeIn.delay(200).duration(500)}
-        >
-          {/* Player 2 Controls (Top) */}
-          <DuoGameControls
-            position="top"
-            onNumberPress={gameActions.handleNumberPress}
-            onNoteToggle={gameActions.handleNoteToggle}
-            onHint={gameActions.handleHint}
-            noteMode={gameState.player2NoteMode}
-            disabled={gameState.player2Complete || gameState.player2Errors >= gameState.maxErrors}
-            hintsRemaining={gameState.player2Hints}
-            errorsCount={gameState.player2Errors}
-            maxErrors={gameState.maxErrors}
-          />
-
-          {/* Game Board */}
-          <DuoGameBoard
-            board={gameState.board}
-            player1Cell={gameState.player1Cell}
-            player2Cell={gameState.player2Cell}
-            getCellOwner={gameActions.getCellOwner}
-            onCellPress={gameActions.handleCellPress}
-            isLoading={gameState.isLoading}
-          />
-
-          {/* Player 1 Controls (Bottom) */}
-          <DuoGameControls
-            position="bottom"
-            onNumberPress={gameActions.handleNumberPress}
-            onNoteToggle={gameActions.handleNoteToggle}
-            onHint={gameActions.handleHint}
-            noteMode={gameState.player1NoteMode}
-            disabled={gameState.player1Complete || gameState.player1Errors >= gameState.maxErrors}
-            hintsRemaining={gameState.player1Hints}
-            errorsCount={gameState.player1Errors}
-            maxErrors={gameState.maxErrors}
-          />
-        </Animated.View>
-
-        {/* Game Completion Modal - Mit Fortschrittsdaten */}
-        <DuoGameCompletionModal
-          visible={showCompletionModal}
-          onClose={handleCloseCompletionModal}
-          onNewGame={handleStartNewGame}
-          onRevanche={handleRevanche}
-          winner={winnerInfo.winner}
-          winReason={winnerInfo.reason}
-          gameTime={gameState.gameTime}
-          player1Complete={gameState.player1Complete}
-          player2Complete={gameState.player2Complete}
-          player1Errors={gameState.player1Errors}
-          player2Errors={gameState.player2Errors}
-          player1Hints={MAX_HINTS - gameState.player1Hints}
-          player2Hints={MAX_HINTS - gameState.player2Hints}
-          maxHints={MAX_HINTS}
-          maxErrors={gameState.maxErrors}
-          currentDifficulty={initialDifficulty}
-          // Übergebe die Fortschrittsdaten
-          player1InitialEmptyCells={gameState.player1InitialEmptyCells}
-          player1SolvedCells={gameState.player1SolvedCells}
-          player2InitialEmptyCells={gameState.player2InitialEmptyCells}
-          player2SolvedCells={gameState.player2SolvedCells}
+      </View>
+      
+      {/* Hidden timer */}
+      <View style={styles.hiddenTimer}>
+        <Timer
+          isRunning={gameState.isGameRunning}
+          initialTime={gameState.gameTime}
+          onTimeUpdate={gameActions.handleTimeUpdate}
         />
-      </SafeAreaView>
+      </View>
+      
+      {/* Main game content - REMOVED PADDING */}
+      <View style={styles.content}>
+        {/* Player 2 Controls (Top) */}
+        <DuoGameControls
+          position="top"
+          onNumberPress={gameActions.handleNumberPress}
+          onNoteToggle={gameActions.handleNoteToggle}
+          onHint={gameActions.handleHint}
+          noteMode={gameState.player2NoteMode}
+          disabled={gameState.player2Complete || gameState.player2Errors >= gameState.maxErrors}
+          hintsRemaining={gameState.player2Hints}
+          errorsCount={gameState.player2Errors}
+          maxErrors={gameState.maxErrors}
+        />
+
+        {/* Game Board */}
+        <DuoGameBoard
+          board={gameState.board}
+          player1Cell={gameState.player1Cell}
+          player2Cell={gameState.player2Cell}
+          getCellOwner={gameActions.getCellOwner}
+          onCellPress={gameActions.handleCellPress}
+          isLoading={false}
+        />
+
+        {/* Player 1 Controls (Bottom) */}
+        <DuoGameControls
+          position="bottom"
+          onNumberPress={gameActions.handleNumberPress}
+          onNoteToggle={gameActions.handleNoteToggle}
+          onHint={gameActions.handleHint}
+          noteMode={gameState.player1NoteMode}
+          disabled={gameState.player1Complete || gameState.player1Errors >= gameState.maxErrors}
+          hintsRemaining={gameState.player1Hints}
+          errorsCount={gameState.player1Errors}
+          maxErrors={gameState.maxErrors}
+        />
+      </View>
+      
+      {/* Game Completion Modal */}
+      <DuoGameCompletionModal
+        visible={showCompletionModal}
+        onClose={handleCloseModal}
+        onNewGame={handleNewGame}
+        onRevanche={handleRematch}
+        winner={winnerInfo.winner}
+        winReason={winnerInfo.reason}
+        gameTime={gameState.gameTime}
+        player1Complete={gameState.player1Complete}
+        player2Complete={gameState.player2Complete}
+        player1Errors={gameState.player1Errors}
+        player2Errors={gameState.player2Errors}
+        player1Hints={MAX_HINTS - gameState.player1Hints}
+        player2Hints={MAX_HINTS - gameState.player2Hints}
+        maxHints={MAX_HINTS}
+        maxErrors={gameState.maxErrors}
+        currentDifficulty={initialDifficulty}
+        player1InitialEmptyCells={gameState.player1InitialEmptyCells}
+        player1SolvedCells={gameState.player1SolvedCells}
+        player2InitialEmptyCells={gameState.player2InitialEmptyCells}
+        player2SolvedCells={gameState.player2SolvedCells}
+      />
     </View>
   );
 };
@@ -260,25 +232,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  safeArea: {
+  loadingContainer: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 18,
+    fontWeight: "500",
   },
   content: {
     flex: 1,
-    padding: 8,
-    paddingTop: 16,
-    justifyContent: "space-between",
+    paddingTop: 60,
+    paddingBottom: 24,
+    justifyContent: "space-between", 
+  },
+  // Fixed back button positioning
+  backButtonContainer: {
+    position: "absolute",
+    top: 20,
+    left: 16,
+    zIndex: 10,
   },
   backButton: {
-    position: "absolute",
-    top: 8,
-    left: 16,
     width: 36,
     height: 36,
-    borderRadius: 20,
+    borderRadius: 18,
     justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100,
+    alignItems: "center", // Center icon horizontally
+    // Added proper shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
   },
   hiddenTimer: {
     position: "absolute",

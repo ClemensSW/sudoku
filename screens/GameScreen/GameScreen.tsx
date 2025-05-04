@@ -69,6 +69,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const [gameInitialized, setGameInitialized] = useState(false); // New state to track initialization
 
   // Animation values
   const headerOpacity = useSharedValue(1);
@@ -76,14 +77,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
   // Hide navigation when component mounts
   useEffect(() => {
-    // Explicitly hide navigation bar
-    setHideBottomNav(true);
+    console.log("HIDING BOTTOM NAV in GameScreen");
+    // Explicitly hide navigation bar with delay to ensure context is available
+    setTimeout(() => {
+      setHideBottomNav(true);
+    }, 100);
     
     // Clean up when component unmounts
     return () => {
+      console.log("SHOWING BOTTOM NAV in GameScreen cleanup");
       setHideBottomNav(false);
     };
-  }, []);
+  }, [setHideBottomNav]); // Added setHideBottomNav as dependency
 
   // Initialize animations when the component mounts
   useEffect(() => {
@@ -99,12 +104,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }, 800);
   }, []);
 
-  // Initialize game
+  // Initialize game only once
   useEffect(() => {
-    setTimeout(() => {
-      gameActions.startNewGame();
-    }, 300);
-  }, []);
+    // Only initialize once
+    if (!gameInitialized) {
+      console.log("Starting new game...");
+      setTimeout(() => {
+        gameActions.startNewGame();
+        setGameInitialized(true);
+      }, 300);
+    }
+  }, [gameInitialized, gameActions]);
 
   // Handle back button
   useEffect(() => {

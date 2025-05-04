@@ -8,6 +8,7 @@
     "scheme": "sudokuduo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "plugins": [
       "expo-router",
       "expo-font",
@@ -16,7 +17,8 @@
     "ios": {
       "supportsTablet": true,
       "statusBarHidden": true,
-      "bundleIdentifier": "com.yourdomain.sudoku"
+      "bundleIdentifier": "com.yourdomain.sudoku",
+      "jsEngine": "jsc"
     },
     "android": {
       "adaptiveIcon": {

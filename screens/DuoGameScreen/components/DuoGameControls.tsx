@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   numberText: {
-    fontSize: NUMBER_BUTTON_SIZE * 0.5,
+    fontSize: NUMBER_BUTTON_SIZE * 0.6,
     fontWeight: "600",
   },
   // Helper for 6 and 9 when rotated

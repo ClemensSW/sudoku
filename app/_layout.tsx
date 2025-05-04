@@ -42,18 +42,17 @@ function AppContainer() {
 
   // Verstecke Navigation auf bestimmten Seiten automatisch
   useEffect(() => {
-    // Debug-Info hinzufügen
-    console.log("Current pathname:", pathname);
-    
-    // Game-spezifische Erkennung
+    // Game-spezifische Erkennung - VERBESSERTE ERKENNUNG
     const isGameScreen = 
       pathname === "/game" || 
       pathname === "/(game)" || 
       pathname?.startsWith("/game") || 
       pathname?.startsWith("/(game)") ||
-      pathname?.includes("game");
+      pathname?.includes("game") ||
+      pathname === "/duo-game" || 
+      pathname?.startsWith("/duo-game");
       
-    // Gallery-spezifische Erkennung (NEU)
+    // Gallery-spezifische Erkennung
     const isGalleryScreen = 
       pathname === "/gallery" || 
       pathname?.startsWith("/gallery");
@@ -61,15 +60,10 @@ function AppContainer() {
     // Andere Screens, die Navigation verstecken sollten
     const isOtherHiddenScreen = 
       pathname === "/settings" || 
-      pathname?.startsWith("/settings") ||
-      pathname === "/duo-game" || 
-      pathname?.startsWith("/duo-game");
+      pathname?.startsWith("/settings");
     
     // Navigation verstecken, wenn wir auf einem dieser Screens sind
     const shouldHideNav = isGameScreen || isGalleryScreen || isOtherHiddenScreen;
-    console.log("Should hide nav:", shouldHideNav, 
-                "isGameScreen:", isGameScreen, 
-                "isGalleryScreen:", isGalleryScreen);
     
     setHideBottomNav(shouldHideNav);
   }, [pathname]);
@@ -105,7 +99,7 @@ function AppContainer() {
           <Stack.Screen name="duo-game" />
         </Stack>
 
-        {/* Bottom Navigation */}
+        {/* Bottom Navigation - fixed to avoid TypeScript error */}
         {!hideBottomNav && <BottomNavigation />}
       </View>
     </NavigationContext.Provider>

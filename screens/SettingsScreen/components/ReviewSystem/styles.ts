@@ -1,7 +1,25 @@
-// components/ReviewSystem/styles.ts
-
+// styles.ts
 import { StyleSheet } from 'react-native';
-import { spacing, colors, typography } from '@/utils/theme';
+import { spacing, colors } from '@/utils/theme';
+
+// Define the theme interfaces to properly type our theme styles
+interface ThemeStyles {
+  background: string;
+  text: string;
+  secondaryText: string;
+  inputBackground: string;
+  buttonBackground: string;
+  borderColor: string;
+}
+
+// Define emoji colors interface
+interface EmojiColors {
+  fiveStar: string;
+  fourStar: string;
+  threeStar: string;
+  twoStar: string;
+  oneStar: string;
+}
 
 export const styles = StyleSheet.create({
   // Modal Container Styles
@@ -35,13 +53,13 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   titleText: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
+    fontSize: 20,
+    fontWeight: '700', // Fixed: Use string values supported by React Native
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
   subtitleText: {
-    fontSize: typography.size.md,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: spacing.lg,
     paddingHorizontal: spacing.sm,
@@ -97,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   categoryLabel: {
     flex: 1,
-    fontSize: typography.size.md,
+    fontSize: 16,
   },
   
   // Feedback Form Styles
@@ -127,13 +145,16 @@ export const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   buttonText: {
-    fontSize: typography.size.md,
-    fontWeight: typography.weight.bold,
+    fontSize: 16,
+    fontWeight: '700', // Fixed: Use string values supported by React Native
     color: 'white',
   },
-  
-  // Dynamic Theme Colors - Diese werden zur Laufzeit angewendet
-  lightTheme: {
+});
+
+// Separate theme colors into their own object (not part of StyleSheet)
+// This prevents type issues with backgroundColor, color, etc.
+export const themeStyles: Record<'light' | 'dark', ThemeStyles> = {
+  light: {
     background: '#FFFFFF',
     text: '#202124',
     secondaryText: '#5F6368',
@@ -141,48 +162,48 @@ export const styles = StyleSheet.create({
     buttonBackground: '#4285F4',
     borderColor: '#E8EAED',
   },
-  darkTheme: {
+  dark: {
     background: '#202124',
     text: '#E8EAED',
     secondaryText: '#9AA0A6',
     inputBackground: '#303134',
     buttonBackground: '#8AB4F8',
     borderColor: '#5F6368',
-  },
-  
-  // Emoji-bezogene Farben
-  emojiColors: {
-    fiveStar: '#FFCC00',    // Gold für 5 Sterne
-    fourStar: '#FFCC00',    // Gold für 4 Sterne
-    threeStar: '#FFCC00',   // Gold für 3 Sterne
-    twoStar: '#FF6B6B',     // Rot für 2 Sterne
-    oneStar: '#FF6B6B',     // Rot für 1 Stern
-  }
-});
-
-// Dynamische Theme-Funktionen - werden für die Komponenten exportiert
-export const getThemeStyles = (isDark: boolean) => {
-  return isDark ? styles.darkTheme : styles.lightTheme;
-};
-
-export const getEmojiBackgroundColor = (rating: number) => {
-  switch(rating) {
-    case 5: return `${styles.emojiColors.fiveStar}30`; // 30 ist Transparenz
-    case 4: return `${styles.emojiColors.fourStar}30`;
-    case 3: return `${styles.emojiColors.threeStar}30`;
-    case 2: return `${styles.emojiColors.twoStar}30`;
-    case 1: return `${styles.emojiColors.oneStar}30`;
-    default: return `${styles.emojiColors.fiveStar}30`;
   }
 };
 
-export const getEmojiColor = (rating: number) => {
+// Separate emoji colors into their own object (not part of StyleSheet)
+export const emojiColors: EmojiColors = {
+  fiveStar: '#FFCC00',    // Gold for 5 stars
+  fourStar: '#FFCC00',    // Gold for 4 stars
+  threeStar: '#FFCC00',   // Gold for 3 stars
+  twoStar: '#FF6B6B',     // Red for 2 stars
+  oneStar: '#FF6B6B',     // Red for 1 star
+};
+
+// Dynamic Theme Functions - exported for components
+export const getThemeStyles = (isDark: boolean): ThemeStyles => {
+  return isDark ? themeStyles.dark : themeStyles.light;
+};
+
+export const getEmojiBackgroundColor = (rating: number): string => {
   switch(rating) {
-    case 5: return styles.emojiColors.fiveStar;
-    case 4: return styles.emojiColors.fourStar;
-    case 3: return styles.emojiColors.threeStar;
-    case 2: return styles.emojiColors.twoStar;
-    case 1: return styles.emojiColors.oneStar;
-    default: return styles.emojiColors.fiveStar;
+    case 5: return `${emojiColors.fiveStar}30`; // 30 is transparency
+    case 4: return `${emojiColors.fourStar}30`;
+    case 3: return `${emojiColors.threeStar}30`;
+    case 2: return `${emojiColors.twoStar}30`;
+    case 1: return `${emojiColors.oneStar}30`;
+    default: return `${emojiColors.fiveStar}30`;
+  }
+};
+
+export const getEmojiColor = (rating: number): string => {
+  switch(rating) {
+    case 5: return emojiColors.fiveStar;
+    case 4: return emojiColors.fourStar;
+    case 3: return emojiColors.threeStar;
+    case 2: return emojiColors.twoStar;
+    case 1: return emojiColors.oneStar;
+    default: return emojiColors.fiveStar;
   }
 };

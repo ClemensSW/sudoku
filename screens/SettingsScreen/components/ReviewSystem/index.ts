@@ -1,5 +1,4 @@
-// components/ReviewSystem/index.ts
-
+// index.ts
 // Hauptkomponente exportieren
 export { default as ReviewManager } from './ReviewManager';
 

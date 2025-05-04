@@ -1,5 +1,4 @@
-// components/ReviewSystem/FeedbackCategoryModal.tsx
-
+// FeedbackCategoryModal.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
@@ -59,11 +58,6 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
       triggerHaptic('medium');
       onSelectCategory(selectedCategory);
     }
-  };
-
-  // Icon für die Kategorie erhalten
-  const getCategoryIcon = (category: FeedbackCategory) => {
-    return CATEGORY_ICONS[category] || 'help-circle';
   };
 
   return (
@@ -151,7 +145,7 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
                       }
                     ]}>
                       <Feather
-                        name={getCategoryIcon(cat.id)}
+                        name={CATEGORY_ICONS[cat.id]}
                         size={20}
                         color={theme.colors.primary}
                       />

@@ -1,5 +1,4 @@
-// components/ReviewSystem/RatingModal.tsx
-
+// RatingModal.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
@@ -15,6 +14,7 @@ import { Rating } from './types';
 import { TEXTS, RATING_EMOJIS } from './constants';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { triggerHaptic } from '@/utils/haptics';
+import { FeatherIconName } from './feather-icons';
 
 interface RatingModalProps {
   visible: boolean;
@@ -31,7 +31,7 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
   const themeStyles = getThemeStyles(theme.isDark);
 
   // Emoji und Texte basierend auf der Bewertung
-  const getEmojiName = () => {
+  const getEmojiName = (): FeatherIconName => {
     if (!selectedRating) return 'star';
     
     if (selectedRating === 5) return RATING_EMOJIS.FIVE_STARS;
@@ -88,10 +88,12 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
           style={{
             transform: [
               { scale: starAnimations[index] },
-              { rotate: starAnimations[index].interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0deg', '0deg']
-              })}
+              { 
+                rotate: starAnimations[index].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0deg', '0deg']
+                })
+              }
             ]
           }}
         >
@@ -101,7 +103,7 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
             activeOpacity={0.7}
           >
             <Feather
-              name={isFilled ? 'star' : 'star'}
+              name="star"
               size={36}
               color={isFilled ? getEmojiColor(selectedRating || 5) : themeStyles.borderColor}
               style={{ opacity: isFilled ? 1 : 0.5 }}

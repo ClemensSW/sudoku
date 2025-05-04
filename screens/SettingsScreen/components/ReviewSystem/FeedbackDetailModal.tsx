@@ -1,5 +1,4 @@
-// components/ReviewSystem/FeedbackDetailModal.tsx
-
+// FeedbackDetailModal.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Modal,
@@ -16,7 +15,7 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles } from './styles';
-import { FeedbackData, FeedbackCategory } from './types';
+import { FeedbackData, FeedbackCategory, Rating } from './types';
 import { TEXTS, FEEDBACK_CATEGORIES } from './constants';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { triggerHaptic } from '@/utils/haptics';
@@ -24,7 +23,7 @@ import { triggerHaptic } from '@/utils/haptics';
 interface FeedbackDetailModalProps {
   visible: boolean;
   category: FeedbackCategory | null;
-  rating: number;
+  rating: Rating;
   onClose: () => void;
   onSubmit: (data: FeedbackData) => void;
 }

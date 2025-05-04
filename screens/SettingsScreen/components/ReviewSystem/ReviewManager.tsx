@@ -1,7 +1,6 @@
-// components/ReviewSystem/ReviewManager.tsx
-
+// ReviewManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import RatingModal from './RatingModal';
 import FeedbackCategoryModal from './FeedbackCategoryModal';
 import FeedbackDetailModal from './FeedbackDetailModal';
@@ -224,13 +223,15 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       />
       
       {/* Feedback Detail Modal */}
-      <FeedbackDetailModal
-        visible={showFeedbackModal}
-        category={category}
-        rating={rating || 0}
-        onClose={handleClose}
-        onSubmit={handleSubmitFeedback}
-      />
+      {rating && (
+        <FeedbackDetailModal
+          visible={showFeedbackModal}
+          category={category}
+          rating={rating}
+          onClose={handleClose}
+          onSubmit={handleSubmitFeedback}
+        />
+      )}
     </>
   );
 };

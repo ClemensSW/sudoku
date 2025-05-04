@@ -1,12 +1,47 @@
-// screens/SettingsScreen/components/CommunitySection/CommunitySection.tsx
+// CommunitySection.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Linking, Clipboard } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
-import styles from "./CommunitySection.styles";
 import ReviewManager from "@/screens/SettingsScreen/components/ReviewSystem/ReviewManager";
+
+// Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
+const customStyles = StyleSheet.create({
+  settingsGroup: {
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  actionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
+  actionTextContainer: {
+    flex: 1,
+  },
+  actionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  actionDescription: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
+});
 
 interface CommunitySectionProps {
   onSupportPress: () => void;
@@ -48,32 +83,32 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   return (
     <View
       style={[
-        styles.settingsGroup,
+        customStyles.settingsGroup,
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
       {/* Feedback Button - vorher "Fehler gefunden?" */}
       <TouchableOpacity
-        style={styles.actionButton}
+        style={customStyles.actionButton}
         onPress={handleFeedbackPress}
       >
         <View
           style={[
-            styles.actionIconContainer,
+            customStyles.actionIconContainer,
             { backgroundColor: `${colors.info}20` },
           ]}
         >
           <Feather name="message-circle" size={20} color={colors.info} />
         </View>
-        <View style={styles.actionTextContainer}>
+        <View style={customStyles.actionTextContainer}>
           <Text
-            style={[styles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             Feedback senden
           </Text>
           <Text
             style={[
-              styles.actionDescription,
+              customStyles.actionDescription,
               { color: colors.textSecondary },
             ]}
           >
@@ -90,22 +125,22 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
       {/* Share button */}
       <TouchableOpacity
         style={[
-          styles.actionButton,
+          customStyles.actionButton,
           { borderTopWidth: 1, borderTopColor: colors.border }
         ]}
         onPress={onSharePress}
       >
         <View
           style={[
-            styles.actionIconContainer,
+            customStyles.actionIconContainer,
             { backgroundColor: `${colors.success}20` },
           ]}
         >
           <Feather name="share-2" size={20} color={colors.success} />
         </View>
-        <View style={styles.actionTextContainer}>
+        <View style={customStyles.actionTextContainer}>
           <Text
-            style={[styles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             Mit Freunden teilen
           </Text>
@@ -120,22 +155,22 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
       {/* About button */}
       <TouchableOpacity
         style={[
-          styles.actionButton,
+          customStyles.actionButton,
           { borderTopWidth: 1, borderTopColor: colors.border }
         ]}
         onPress={onAboutPress}
       >
         <View
           style={[
-            styles.actionIconContainer,
+            customStyles.actionIconContainer,
             { backgroundColor: `${colors.info}20` },
           ]}
         >
           <Feather name="info" size={20} color={colors.info} />
         </View>
-        <View style={styles.actionTextContainer}>
+        <View style={customStyles.actionTextContainer}>
           <Text
-            style={[styles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             Über Sudoku Duo
           </Text>

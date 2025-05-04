@@ -1,5 +1,4 @@
-// components/ReviewSystem/utils.ts
-
+// utils.ts
 import { Linking, Platform } from 'react-native';
 import { FeedbackData } from './types';
 import { EMAIL_CONFIG } from './constants';

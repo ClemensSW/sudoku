@@ -1,6 +1,6 @@
-// components/ReviewSystem/constants.ts
-
+// constants.ts
 import { FeedbackCategory } from './types';
+import { FeatherIconName } from './feather-icons'; // Wir importieren den Typ aus der lokalen Datei
 
 // Texte für die verschiedenen Schritte des Bewertungsprozesses
 export const TEXTS = {
@@ -19,7 +19,7 @@ export const TEXTS = {
   NEGATIVE_SUBTITLE: 'Hilf mir, die App zu verbessern, und beschreibe dein Problem',
   
   // Feedback Kategorie Auswahl
-  FEEDBACK_CATEGORY_TITLE: 'Wie kann ich dir helfen?',
+  FEEDBACK_CATEGORY_TITLE: 'Wie können wir dir helfen?',
   FEEDBACK_CATEGORY_BUTTON: 'Weiter',
   
   // Feedback Detail
@@ -44,24 +44,24 @@ export const FEEDBACK_CATEGORIES: Array<{id: FeedbackCategory, label: string}> =
 ];
 
 // Emoji-Typen basierend auf Bewertungen
-export const RATING_EMOJIS = {
-  FIVE_STARS: 'heart-eyes', // Emoji mit Herzaugen für 5 Sterne
-  FOUR_STARS: 'smile',      // Lächelnder Emoji für 4 Sterne
-  THREE_STARS: 'neutral',   // Neutraler Emoji für 3 Sterne
-  TWO_STARS: 'frown',       // Trauriger Emoji für 2 Sterne
-  ONE_STAR: 'sad',          // Sehr trauriger Emoji für 1 Stern
+export const RATING_EMOJIS: Record<string, FeatherIconName> = {
+  FIVE_STARS: 'heart', // Herz-Icon für 5 Sterne
+  FOUR_STARS: 'smile',  // Lächeln-Icon für 4 Sterne
+  THREE_STARS: 'meh',   // Neutrales Icon für 3 Sterne
+  TWO_STARS: 'frown',   // Trauriges Icon für 2 Sterne
+  ONE_STAR: 'alert-circle',  // Alarm für 1 Stern
 };
 
 // Icons für die Kategorie-Auswahl
-export const CATEGORY_ICONS = {
+export const CATEGORY_ICONS: Record<FeedbackCategory, FeatherIconName> = {
   'problem': 'alert-circle',
   'missing': 'package',
-  'idea': 'bulb',
+  'idea': 'zap', // Dies muss ein gültiges Feather-Icon sein
   'complicated': 'help-circle',
   'other': 'more-horizontal'
 };
 
-// Config für den Feedback-Sender
+// Konfiguration für den Feedback-Sender
 export const EMAIL_CONFIG = {
   SUBJECT_PREFIX: 'Sudoku Duo Feedback: ',
   BODY_TEMPLATE: (data: string) => `Feedback-Details:\n\n${data}`

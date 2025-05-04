@@ -53,7 +53,7 @@ const PLAYER_THEMES = {
   // Player 2 (top)
   2: {
     controls: {
-      darkBackgroundColor: "rgba(243, 239, 227, 0.2)", // Original für Dark Mode
+      darkBackgroundColor: "#292a2d", // Original für Dark Mode
       lightBackgroundColor: "rgba(138, 123, 70, 0.15)", // Neue Farbe für Light Mode
       numberButton: {
         background: "#5B5D6E", // Dark blue-gray

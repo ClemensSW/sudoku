@@ -19,7 +19,6 @@ const PLAYER_THEMES = {
     selectedBackground: "#406B6D", // Darker teal
     initial: {
       // Entfernt speziellen Hintergrund für initiale Zellen:
-      // background: "#3D6B67", // Nur fontWeight wird jetzt verwendet
       textColor: "#F1F4FB", // Same text color
     },
     notes: {
@@ -27,6 +26,7 @@ const PLAYER_THEMES = {
     },
     error: {
       background: "rgba(255, 100, 100, 0.4)", // Erhöhter Kontrast (0.3 -> 0.4)
+      selectedBackground: "rgba(255, 120, 120, 0.6)", // NEU: Stärkerer Fehler für Auswahl
       textColor: "#FFD5D5", // Light red
     },
   },
@@ -37,7 +37,6 @@ const PLAYER_THEMES = {
     selectedBackground: "#E6E0C5", // Lighter beige
     initial: {
       // Entfernt speziellen Hintergrund für initiale Zellen:
-      // background: "#E8E4D8", // Nur fontWeight wird jetzt verwendet
       textColor: "#5B5D6E", // Same text color
     },
     notes: {
@@ -45,6 +44,7 @@ const PLAYER_THEMES = {
     },
     error: {
       background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
+      selectedBackground: "rgba(255, 120, 120, 0.5)", // NEU: Stärkerer Fehler für Auswahl
       textColor: "#BB5555", // Darker red
     },
   },
@@ -55,7 +55,6 @@ const PLAYER_THEMES = {
     selectedBackground: "#C5D1CF", // Slightly darker neutral
     initial: {
       // Entfernt speziellen Hintergrund für initiale Zellen:
-      // background: "#D0D8D7", // Nur fontWeight wird jetzt verwendet
       textColor: "#2D3045", // Same text color
     },
     notes: {
@@ -63,6 +62,7 @@ const PLAYER_THEMES = {
     },
     error: {
       background: "rgba(255, 100, 100, 0.3)", // Erhöhter Kontrast (0.2 -> 0.3)
+      selectedBackground: "rgba(255, 120, 120, 0.5)", // NEU: Stärkerer Fehler für Auswahl
       textColor: "#BB5555", // Darker red
     },
   },
@@ -112,16 +112,24 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     };
   });
 
-  // Determine cell background color - UPDATED to respect showErrors setting
+  // Determine cell background color - UPDATED to handle selected error cells
   const getCellBackgroundColor = () => {
-    // Only show error background if showErrors is true
+    // Spezieller Fall: Ausgewählte fehlerhafte Zelle - kombinierter Stil
+    if (isSelected && !cell.isValid && showErrors) {
+      return theme.error.selectedBackground;
+    }
+    
+    // Normale fehlerhafte Zelle
     if (!cell.isValid && showErrors) {
       return theme.error.background;
     }
+    
+    // Normal ausgewählte Zelle
     if (isSelected) {
       return theme.selectedBackground;
     }
-    // Keine spezielle Hintergrundfarbe mehr für initiale Zellen
+    
+    // Standard-Hintergrund
     return theme.cellBackground;
   };
 

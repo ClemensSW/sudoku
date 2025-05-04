@@ -279,7 +279,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <RNText
               style={[styles.sectionTitle, { color: colors.textPrimary }]}
             >
-              Aktionen
+              Aktion
             </RNText>
 
             <ActionsSection

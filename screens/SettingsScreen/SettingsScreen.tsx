@@ -172,9 +172,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const handleAboutPress = () => {
     triggerHaptic("light");
     showAlert({
-      title: "Sudoku Duo",
+      title: "Über Sudoku Duo",
       message:
-        "Version 1.0.0\n\nEntwickelt mit ♥ und Spaß am Denksport.\n\nDanke, dass du Sudoku Duo spielst!",
+        "Version 1.0.0\n\nHi! Ich bin Clemens – und Sudoku Duo ist meine erste selbst entwickelte App.\n\nIch liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.\n\nWenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo weiterzuentwickeln – Schritt für Schritt.\n\nDanke, dass du dabei bist.\nHappy Puzzling! 🧩",
       type: "info",
       buttons: [{ text: "OK", style: "primary" }],
     });
@@ -230,7 +230,9 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
           <HelpSection
             showGameFeatures={showGameFeatures && !isDuoMode} // Only show game-specific features in single-player mode
-            onAutoNotes={showGameFeatures && !isDuoMode ? handleAutoNotes : undefined}
+            onAutoNotes={
+              showGameFeatures && !isDuoMode ? handleAutoNotes : undefined
+            }
             onHowToPlay={() => setShowHowToPlay(true)}
           />
         </Animated.View>
@@ -258,7 +260,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           entering={FadeInDown.delay(300).duration(500)}
         >
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Spieleinstellungen
+            Spiel
           </RNText>
 
           {settings && (

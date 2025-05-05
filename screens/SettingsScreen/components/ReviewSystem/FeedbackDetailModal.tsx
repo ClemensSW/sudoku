@@ -116,7 +116,7 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
                   borderWidth: 1
                 }
               ]}
-              placeholder="Erzähl uns weitere Einzelheiten..."
+              placeholder="Erzähl mir weitere Einzelheiten..."
               placeholderTextColor={themeStyles.secondaryText}
               multiline
               textAlignVertical="top"

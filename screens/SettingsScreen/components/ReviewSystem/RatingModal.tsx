@@ -149,8 +149,10 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
             <Feather
               name="star"
               size={40}
-              color={isFilled ? getEmojiColor(selectedRating || 5) : themeStyles.borderColor}
-              style={{ opacity: isFilled ? 1 : 0.5 }}
+              // Modified color logic to improve contrast in light mode
+              color={isFilled ? getEmojiColor(selectedRating || 5) : theme.isDark ? themeStyles.borderColor : '#BCBCBC'}
+              // Increased opacity for better visibility
+              style={{ opacity: isFilled ? 1 : 0.8 }}
             />
           </TouchableOpacity>
         </Animated.View>

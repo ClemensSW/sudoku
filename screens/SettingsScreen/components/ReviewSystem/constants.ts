@@ -12,7 +12,7 @@ export const TEXTS = {
   // Positive Feedback (5 stars)
   POSITIVE_TITLE: 'Ich mag dich auch!',
   POSITIVE_SUBTITLE: 'Danke für deine Unterstützung',
-  POSITIVE_BUTTON_PLAY_STORE: 'Im Google Play bewerten',
+  POSITIVE_BUTTON_PLAY_STORE: 'Im Play Store bewerten',
   
   // Negative Feedback (1-4 stars)
   NEGATIVE_TITLE: 'Danke für deine Ehrlichkeit!',

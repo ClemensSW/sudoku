@@ -7,7 +7,10 @@ import styles from "./GameSettings.styles";
 
 interface GameSettingsProps {
   settings: GameSettingsType | null;
-  onSettingChange: (key: keyof GameSettingsType, value: boolean | string) => void;
+  onSettingChange: (
+    key: keyof GameSettingsType,
+    value: boolean | string
+  ) => void;
   isDuoMode?: boolean; // New prop to indicate Duo mode
 }
 
@@ -24,11 +27,11 @@ const GameSettings: React.FC<GameSettingsProps> = ({
   return (
     <View
       style={[
-        styles.settingsGroup, 
-        { 
+        styles.settingsGroup,
+        {
           backgroundColor: colors.surface,
-          borderColor: colors.border 
-        }
+          borderColor: colors.border,
+        },
       ]}
     >
       {/* Only show these settings in single player mode */}
@@ -36,10 +39,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         <>
           {/* Highlight related cells */}
           <View
-            style={[
-              styles.settingRow,
-              { borderBottomColor: colors.border },
-            ]}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
           >
             <View style={styles.settingTextContainer}>
               <Text
@@ -71,10 +71,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
           {/* Highlight same values */}
           <View
-            style={[
-              styles.settingRow,
-              { borderBottomColor: colors.border },
-            ]}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
           >
             <View style={styles.settingTextContainer}>
               <Text
@@ -107,32 +104,20 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       )}
 
       {/* Show Errors - Keep in both modes */}
-      <View
-        style={[
-          styles.settingRow,
-          { borderBottomColor: colors.border },
-        ]}
-      >
+      <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
         <View style={styles.settingTextContainer}>
-          <Text
-            style={[styles.settingTitle, { color: colors.textPrimary }]}
-          >
+          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
             Fehler anzeigen
           </Text>
           <Text
-            style={[
-              styles.settingDescription,
-              { color: colors.textSecondary },
-            ]}
+            style={[styles.settingDescription, { color: colors.textSecondary }]}
           >
             Falsche Zahlen hervorheben
           </Text>
         </View>
         <Switch
           value={settings.showMistakes}
-          onValueChange={(value) =>
-            onSettingChange("showMistakes", value)
-          }
+          onValueChange={(value) => onSettingChange("showMistakes", value)}
           trackColor={{
             false: colors.buttonDisabled,
             true: colors.primary,
@@ -142,27 +127,25 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       </View>
 
       {/* Vibration - Keep in both modes */}
-      <View style={styles.settingRow}>
+      <View
+        style={[
+          styles.settingRow,
+          { borderBottomColor: colors.border }, // Diese Zeile verursacht den Strich
+        ]}
+      >
         <View style={styles.settingTextContainer}>
-          <Text
-            style={[styles.settingTitle, { color: colors.textPrimary }]}
-          >
+          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
             Vibration
           </Text>
           <Text
-            style={[
-              styles.settingDescription,
-              { color: colors.textSecondary },
-            ]}
+            style={[styles.settingDescription, { color: colors.textSecondary }]}
           >
             Haptisches Feedback beim Tippen
           </Text>
         </View>
         <Switch
           value={settings.vibration}
-          onValueChange={(value) =>
-            onSettingChange("vibration", value)
-          }
+          onValueChange={(value) => onSettingChange("vibration", value)}
           trackColor={{
             false: colors.buttonDisabled,
             true: colors.primary,

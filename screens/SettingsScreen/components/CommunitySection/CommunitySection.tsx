@@ -161,13 +161,17 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         onPress={onAboutPress}
       >
         <View
-          style={[
-            customStyles.actionIconContainer,
-            { backgroundColor: `${colors.info}20` },
-          ]}
-        >
-          <Feather name="info" size={20} color={colors.info} />
-        </View>
+  style={[
+    customStyles.actionIconContainer,
+    { backgroundColor: theme.isDark ? "rgba(138, 120, 180, 0.15)" : "rgba(110, 90, 160, 0.12)" },
+  ]}
+>
+  <Feather 
+    name="info" 
+    size={20} 
+    color={theme.isDark ? "#8A78B4" : "#6E5AA0"} 
+  />
+</View>
         <View style={customStyles.actionTextContainer}>
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}

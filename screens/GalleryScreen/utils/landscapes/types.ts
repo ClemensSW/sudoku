@@ -1,3 +1,4 @@
+// screens/GalleryScreen/utils/landscapes/types.ts
 import { ImageSourcePropType } from "react-native";
 
 /**
@@ -51,6 +52,7 @@ export interface LandscapeCollection {
   currentImageId: string;                   // Aktuell in Arbeit
   lastUsedFavoriteIndex: number;            // Für Rotation
   lastChangedDate: string;                  // Für täglichen Wechsel
+  version?: number;                         // NEU: Versionsnummer für Aktualisierungen
 }
 
 /**

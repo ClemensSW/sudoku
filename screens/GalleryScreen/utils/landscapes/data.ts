@@ -1,6 +1,10 @@
 // screens/GalleryScreen/utils/landscapes/data.ts
 import { Landscape, LandscapeSegment } from "./types";
 
+// Aktuelle Version der Landschaftssammlung
+// WICHTIG: Erhöhen, wenn neue Bilder hinzugefügt werden!
+export const CURRENT_COLLECTION_VERSION = 1;
+
 /**
  * Erzeugt ein Array von 9 leeren Segmenten für ein neues Landschaftsbild
  */
@@ -127,7 +131,10 @@ export const initialLandscapes: Landscape[] = [
     category: "valleys",
   },
   
-  
+  /* 
+   * Hier kannst du neue Landschaften hinzufügen und CURRENT_COLLECTION_VERSION erhöhen,
+   * damit bestehende Nutzer die neuen Bilder erhalten
+   */
 ];
 
 /**
@@ -247,5 +254,6 @@ export const getDefaultCollectionState = () => {
     currentImageId, // Das zweite Bild als aktuelles Bild setzen
     lastUsedFavoriteIndex: 0,
     lastChangedDate: new Date().toISOString(),
+    version: CURRENT_COLLECTION_VERSION, // Aktuelle Versionsnummer
   };
 };

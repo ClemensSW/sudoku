@@ -174,7 +174,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     showAlert({
       title: "Über Sudoku Duo",
       message:
-        "Version 1.0.0\n\nHi! Ich bin Clemens – und Sudoku Duo ist meine erste selbst entwickelte App.\n\nIch liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.\n\nWenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo weiterzuentwickeln – Schritt für Schritt.\n\nDanke, dass du dabei bist.\nHappy Puzzling! 🧩",
+        "Version 1.0.0\n\nHi! Ich bin Clemens – und Sudoku Duo ist meine erste selbst entwickelte App.\n\nIch liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.\n\nWenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln.\n\nDanke, dass du dabei bist.\nHappy Puzzling! 🧩",
       type: "info", // Behalte "info"
       buttons: [{ text: "OK", style: "primary" }],
     });

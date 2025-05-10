@@ -12,6 +12,28 @@ export default StyleSheet.create({
     flex: 1,
   },
   
+  // New custom header container for info button
+  customHeaderContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
+    zIndex: 10,
+  },
+  
+  // Info button style
+  infoButton: {
+    position: "absolute",
+    right: 16,
+    top: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 5,
+  },
+  
   // New wrapper for tabs to add elevation effect
   tabsContainerWrapper: {
     width: "100%",

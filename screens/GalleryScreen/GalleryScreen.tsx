@@ -25,6 +25,7 @@ import { useNavigation } from "@/utils/NavigationContext";
 import { StatusBar } from "expo-status-bar";
 import styles from "./GalleryScreen.styles";
 import { ThemeColors } from "@/utils/theme/types";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -83,6 +84,7 @@ const GalleryScreen: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const router = useRouter();
+  const { showAlert } = useAlert();
 
   // Use the correct navigation context hook
   const { hideNavigation } = useNavigation();
@@ -182,6 +184,25 @@ const GalleryScreen: React.FC = () => {
   // Navigate directly to LeistungScreen instead of going back
   const handleBack = () => {
     router.push("/leistung");
+  };
+
+  // Show gallery info alert
+  const showGalleryInfo = () => {
+    showAlert({
+      title: "Deine Bildsammlung",
+      message: 
+        "Löse Sudokus, um nach und nach wunderschöne Bilder freizuschalten. " +
+        "Für jedes gelöste Rätsel wird ein Bildsegment enthüllt.\n\n" +
+        "Vollständig freigeschaltete Bilder kannst du zu deinen Favoriten hinzufügen. " +
+        "Diese Favoriten werden dann abwechselnd als Hintergrundbild auf der Startseite angezeigt.",
+      type: "info",
+      buttons: [
+        { 
+          text: "Verstanden", 
+          style: "primary" 
+        }
+      ],
+    });
   };
 
   // Close detail modal
@@ -304,8 +325,15 @@ const GalleryScreen: React.FC = () => {
       {/* Ensure status bar is in the right mode for the theme */}
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      {/* Header */}
-      <Header title="Deine Sammlung" onBackPress={handleBack} />
+      {/* Header with Info Button */}
+      <Header 
+        title="Deine Sammlung" 
+        onBackPress={handleBack} 
+        rightAction={{
+          icon: "info",
+          onPress: showGalleryInfo
+        }}
+      />
 
       {/* Content */}
       <Animated.View style={styles.content} entering={FadeIn.duration(400)}>

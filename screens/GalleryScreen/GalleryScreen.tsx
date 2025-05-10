@@ -119,9 +119,19 @@ const GalleryScreen: React.FC = () => {
     [key: string]: { x: number; width: number };
   }>({});
 
-  // Use the useLandscapes Hook
-  const { landscapes, isLoading, toggleFavorite, changeFilter, reload } =
-    useLandscapes(activeTab);
+  // Use the useLandscapes Hook with erweiterten Funktionen
+  const {
+    landscapes,
+    isLoading,
+    toggleFavorite,
+    changeFilter,
+    reload,
+    collection,
+    setCurrentProject
+  } = useLandscapes(activeTab);
+
+  // Berechne die aktuelle Bild-ID für das Freischalten
+  const currentImageId = collection?.currentImageId || "";
 
   // Change filter when tab changes
   useEffect(() => {
@@ -181,6 +191,29 @@ const GalleryScreen: React.FC = () => {
     }
   };
 
+  // Handler für die Bildauswahl
+  const handleSelectAsProject = async (landscape: Landscape) => {
+    const success = await setCurrentProject(landscape.id);
+    
+    if (success) {
+      // Feedback für den Nutzer anzeigen
+      showAlert({
+        title: "Bild ausgewählt",
+        message: `„${landscape.name}" wird nun durch Lösen von Sudokus schrittweise freigeschaltet.`,
+        type: "success",
+        buttons: [{ text: "OK", style: "primary" }],
+      });
+      
+      // Daten aktualisieren - vollständig neu laden
+      await reload();
+      
+      // Detail-Modal schließen mit Verzögerung
+      setTimeout(() => {
+        setDetailModalVisible(false);
+      }, 500);
+    }
+  };
+
   // Navigate directly to LeistungScreen instead of going back
   const handleBack = () => {
     router.push("/leistung");
@@ -193,6 +226,7 @@ const GalleryScreen: React.FC = () => {
       message: 
         "Löse Sudokus, um nach und nach wunderschöne Bilder freizuschalten. " +
         "Für jedes gelöste Rätsel wird ein Bildsegment enthüllt.\n\n" +
+        "Du kannst selbst auswählen, welches Bild du als nächstes freischalten möchtest, indem du in der Detailansicht auf 'Dieses Bild freischalten' tippst.\n\n" +
         "Vollständig freigeschaltete Bilder kannst du zu deinen Favoriten hinzufügen. " +
         "Diese Favoriten werden dann abwechselnd als Hintergrundbild auf der Startseite angezeigt.",
       type: "info",
@@ -348,6 +382,7 @@ const GalleryScreen: React.FC = () => {
               isLoading={isLoading}
               onImagePress={handleImagePress}
               onToggleFavorite={handleToggleFavorite}
+              currentImageId={currentImageId}
             />
           ) : (
             <EmptyState activeTab={activeTab} router={router} colors={colors} />
@@ -355,12 +390,14 @@ const GalleryScreen: React.FC = () => {
         </View>
       </Animated.View>
 
-      {/* Detail Modal */}
+      {/* Detail Modal mit allen neuen Props */}
       <ImageDetailModal
         visible={detailModalVisible}
         landscape={selectedLandscape}
         onClose={handleCloseDetailModal}
         onToggleFavorite={handleToggleFavorite}
+        onSelectAsProject={handleSelectAsProject}
+        currentImageId={currentImageId}
       />
     </View>
   );

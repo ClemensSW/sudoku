@@ -33,6 +33,8 @@ interface ImageDetailModalProps {
   landscape: Landscape | null;
   onClose: () => void;
   onToggleFavorite?: (landscape: Landscape) => void;
+  onSelectAsProject?: (landscape: Landscape) => void;
+  currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
 }
 
 // Tag component for reusability
@@ -63,6 +65,8 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   landscape,
   onClose,
   onToggleFavorite,
+  onSelectAsProject,
+  currentImageId,
 }) => {
   const theme = useTheme();
   const { colors: themeColors } = theme;
@@ -77,6 +81,9 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const headerOpacity = useSharedValue(1);
   const footerOpacity = useSharedValue(1);
   const imageScale = useSharedValue(1);
+
+  // Prüfen, ob dieses Bild aktuell freigeschaltet wird
+  const isCurrentProject = landscape && currentImageId === landscape.id && !landscape.isComplete;
 
   // Hide status bar for immersive view
   useEffect(() => {
@@ -133,6 +140,13 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
     // Call callback
     onToggleFavorite(landscape);
+  };
+
+  // Handle für die Projektauswahl
+  const handleSelectAsProject = () => {
+    if (landscape && onSelectAsProject && !landscape.isComplete) {
+      onSelectAsProject(landscape);
+    }
   };
 
   // Toggle controls visibility on image tap
@@ -420,7 +434,36 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
               type="date"
             />
           )}
+
+          {/* Current Project tag - für das aktuelle freizuschaltende Bild */}
+          {isCurrentProject && (
+            <Tag icon="target" text="Wird gerade freigeschaltet" type="currentProject" />
+          )}
         </View>
+
+        {/* Action Button für die Bildauswahl - nur für unvollständige Bilder, die NICHT bereits ausgewählt sind */}
+        {landscape && !landscape.isComplete && !isCurrentProject && (
+          <View style={styles.footerActionButton}>
+            <TouchableOpacity
+              style={[
+                styles.selectProjectButton,
+                { backgroundColor: themeColors.primary }
+              ]}
+              onPress={handleSelectAsProject}
+              activeOpacity={0.8}
+            >
+              <Feather
+                name="target"
+                size={16}
+                color="#FFFFFF"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.selectButtonText}>
+                Dieses Bild freischalten
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </Animated.View>
   );

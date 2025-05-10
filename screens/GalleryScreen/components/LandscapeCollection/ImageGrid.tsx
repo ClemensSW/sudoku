@@ -30,16 +30,21 @@ const LandscapeCard = React.memo(
     index,
     onImagePress,
     onToggleFavorite,
+    currentImageId,
   }: {
     item: Landscape;
     index: number;
     onImagePress?: (landscape: Landscape) => void;
     onToggleFavorite?: (landscape: Landscape) => void;
+    currentImageId?: string;
   }) => {
     // Use key to ensure we don't re-render unnecessarily
     const cardKey = `${item.id}-${item.progress}-${item.isComplete}`;
     const theme = useTheme();
     const { colors } = theme;
+
+    // Prüfen, ob dieses Bild aktuell freigeschaltet wird
+    const isCurrentProject = currentImageId === item.id && !item.isComplete;
 
     // Animation-values
     const scale = useSharedValue(1);
@@ -97,7 +102,7 @@ const LandscapeCard = React.memo(
       return categories[category] || category;
     };
 
-    // Get badge color based on state
+    // Get badge color based on state - zurück zur ursprünglichen Logik ohne isCurrentProject
     const getBadgeColor = () => {
       // Verwende error-Farbe (rot) für Favoriten
       if (item.isFavorite) {
@@ -110,7 +115,7 @@ const LandscapeCard = React.memo(
       return colors.primary;
     };
 
-    // Get badge icon based on state
+    // Get badge icon based on state - zurück zur ursprünglichen Logik ohne isCurrentProject
     const getBadgeIcon = () => {
       // Zeige Herz-Icon wenn es ein Favorit ist
       if (item.isFavorite) {
@@ -126,7 +131,7 @@ const LandscapeCard = React.memo(
     // Prüfen, ob es sich um das spezielle zweite Bild handelt
     const isSpecialPreunlockedImage = item.progress === 8;
 
-    // Get badge text based on state
+    // Get badge text based on state - zurück zur ursprünglichen Logik ohne isCurrentProject
     const getBadgeText = () => {
       if (item.isComplete || item.isFavorite) {
         return ""; // No text for complete items or favorites
@@ -208,7 +213,25 @@ const LandscapeCard = React.memo(
               style={styles.imageGradient}
             />
 
-            {/* Statusabzeichen mit Animation */}
+            {/* Aktiv-Badge links oben anzeigen, wenn dieses Bild aktuell freigeschaltet wird */}
+            {isCurrentProject && (
+              <View
+                style={[
+                  styles.currentProjectBadge,
+                  { backgroundColor: colors.info }
+                ]}
+              >
+                <Feather
+                  name="target"
+                  size={12}
+                  color="#FFFFFF"
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={styles.badgeText}>Aktiv</Text>
+              </View>
+            )}
+
+            {/* Statusabzeichen mit Animation - wie vorher, rechts oben */}
             <Animated.View
               style={[
                 styles.statusBadge,
@@ -248,6 +271,7 @@ interface ImageGridProps {
   isLoading?: boolean;
   onImagePress?: (landscape: Landscape) => void;
   onToggleFavorite?: (landscape: Landscape) => void;
+  currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
 }
 
 const ImageGrid: React.FC<ImageGridProps> = ({
@@ -255,6 +279,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   isLoading = false,
   onImagePress,
   onToggleFavorite,
+  currentImageId,
 }) => {
   const theme = useTheme();
   const { colors } = theme;
@@ -297,6 +322,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
             index={index}
             onImagePress={onImagePress}
             onToggleFavorite={onToggleFavorite}
+            currentImageId={currentImageId}
           />
         )}
         keyExtractor={(item) => item.id}

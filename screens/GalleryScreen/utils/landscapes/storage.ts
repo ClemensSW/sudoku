@@ -1,39 +1,23 @@
-// screens/GalleryScreen/utils/landscapes/storage.ts mit Versionskontrolle für Updates
+// utils/landscapes/storage.ts mit Sperre für doppelte Freischaltungen
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Landscape, LandscapeCollection, UnlockEvent } from "./types";
-import { getDefaultCollectionState, initialLandscapes, CURRENT_COLLECTION_VERSION } from "./data";
+import { getDefaultCollectionState } from "./data";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
 const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Für Sperre
-const LAST_UNLOCK_EVENT_KEY = "@sudoku/last_unlock_event"; // Für Event-Speicherung
+const LAST_UNLOCK_EVENT_KEY = "@sudoku/last_unlock_event"; // NEU: Für Event-Speicherung
 
 /**
  * Lädt die Landschaftssammlung aus dem AsyncStorage
  * Initialisiert eine neue Sammlung, falls keine existiert
- * Aktualisiert die bestehende Sammlung, wenn neue Bilder in einem App-Update hinzugefügt wurden
  */
 export const loadLandscapeCollection = async (): Promise<LandscapeCollection> => {
   try {
     const storedData = await AsyncStorage.getItem(LANDSCAPE_COLLECTION_KEY);
-    
     if (storedData) {
-      const parsedCollection = JSON.parse(storedData) as LandscapeCollection;
-      
-      // Prüfen, ob die Sammlung eine Version hat und ob sie aktuell ist
-      const storedVersion = parsedCollection.version || 0;
-      
-      // Wenn die gespeicherte Version älter ist als die aktuelle, Daten zusammenführen
-      if (storedVersion < CURRENT_COLLECTION_VERSION) {
-        console.log(`Aktualisiere Landschaftssammlung von Version ${storedVersion} auf ${CURRENT_COLLECTION_VERSION}`);
-        const updatedCollection = mergeCollectionWithNewLandscapes(parsedCollection);
-        await saveLandscapeCollection(updatedCollection);
-        return updatedCollection;
-      }
-      
-      return parsedCollection;
+      return JSON.parse(storedData) as LandscapeCollection;
     }
-    
     // Keine Daten vorhanden, initialisiere mit Standardwerten
     const defaultCollection = getDefaultCollectionState();
     await saveLandscapeCollection(defaultCollection);
@@ -46,82 +30,11 @@ export const loadLandscapeCollection = async (): Promise<LandscapeCollection> =>
 };
 
 /**
- * Führt die bestehende Sammlung mit neuen Landschaften zusammen
- * Erhält dabei den Fortschritt der bestehenden Bilder
- */
-const mergeCollectionWithNewLandscapes = (storedCollection: LandscapeCollection): LandscapeCollection => {
-  // Aktuelle Standardsammlung zum Vergleich
-  const defaultCollection = getDefaultCollectionState();
-  
-  // Bilder aus der gespeicherten Sammlung
-  const storedLandscapes = storedCollection.landscapes || {};
-  
-  // Neue zusammengeführte Sammlung mit aktualisierten Bildern
-  const mergedCollection: LandscapeCollection = {
-    ...storedCollection,
-    landscapes: { ...storedLandscapes },
-    version: CURRENT_COLLECTION_VERSION // Aktualisiere die Version
-  };
-  
-  // Prüfe jede Landschaft in der aktuellen Version
-  Object.values(defaultCollection.landscapes).forEach(newLandscape => {
-    const existingLandscape = storedLandscapes[newLandscape.id];
-    
-    if (!existingLandscape) {
-      // Neue Landschaft hinzufügen
-      console.log(`Neue Landschaft hinzugefügt: ${newLandscape.id}`);
-      mergedCollection.landscapes[newLandscape.id] = newLandscape;
-    } else {
-      // Bestehende Landschaft beibehalten, aber Metadaten aktualisieren
-      // (z.B. wenn sich Beschreibungen oder andere Eigenschaften geändert haben)
-      mergedCollection.landscapes[newLandscape.id] = {
-        ...newLandscape,
-        // Diese Eigenschaften vom vorhandenen Bild beibehalten
-        segments: existingLandscape.segments,
-        progress: existingLandscape.progress,
-        isComplete: existingLandscape.isComplete,
-        isFavorite: existingLandscape.isFavorite,
-        completedAt: existingLandscape.completedAt
-      };
-    }
-  });
-  
-  // Stelle sicher, dass currentImageId auf ein existierendes Bild verweist
-  if (!mergedCollection.landscapes[mergedCollection.currentImageId]) {
-    // Falls das aktuelle Bild nicht mehr existiert (unwahrscheinlich, aber möglich),
-    // setze ein neues aktuelles Bild (das erste nicht abgeschlossene)
-    const incompleteLandscapeId = Object.keys(mergedCollection.landscapes).find(
-      id => !mergedCollection.landscapes[id].isComplete
-    );
-    
-    if (incompleteLandscapeId) {
-      mergedCollection.currentImageId = incompleteLandscapeId;
-    } else {
-      // Wenn alle abgeschlossen sind, nimm einfach das erste
-      mergedCollection.currentImageId = Object.keys(mergedCollection.landscapes)[0];
-    }
-  }
-  
-  // Überprüfe Favoriten und entferne solche, die nicht mehr existieren
-  mergedCollection.favorites = mergedCollection.favorites.filter(
-    id => mergedCollection.landscapes[id]
-  );
-  
-  return mergedCollection;
-};
-
-/**
  * Speichert die Landschaftssammlung im AsyncStorage
  */
 export const saveLandscapeCollection = async (collection: LandscapeCollection): Promise<void> => {
   try {
-    // Stelle sicher, dass die Version gesetzt ist
-    const collectionWithVersion = {
-      ...collection,
-      version: collection.version || CURRENT_COLLECTION_VERSION
-    };
-    
-    await AsyncStorage.setItem(LANDSCAPE_COLLECTION_KEY, JSON.stringify(collectionWithVersion));
+    await AsyncStorage.setItem(LANDSCAPE_COLLECTION_KEY, JSON.stringify(collection));
   } catch (error) {
     console.error("Fehler beim Speichern der Landschaftssammlung:", error);
   }
@@ -156,7 +69,7 @@ const markAsUnlocked = async (): Promise<void> => {
 };
 
 /**
- * Speichert das letzte Freischaltungsereignis
+ * NEU: Speichert das letzte Freischaltungsereignis
  */
 export const saveUnlockEvent = async (event: UnlockEvent | null): Promise<void> => {
   try {
@@ -173,7 +86,7 @@ export const saveUnlockEvent = async (event: UnlockEvent | null): Promise<void> 
 };
 
 /**
- * Ruft das letzte Freischaltungsereignis ab und löscht es danach
+ * NEU: Ruft das letzte Freischaltungsereignis ab und löscht es danach
  */
 export const getAndClearLastUnlockEvent = async (): Promise<UnlockEvent | null> => {
   try {
@@ -185,6 +98,29 @@ export const getAndClearLastUnlockEvent = async (): Promise<UnlockEvent | null> 
   } catch (error) {
     console.error("Fehler beim Abrufen des Unlock-Events:", error);
     return null;
+  }
+};
+
+/**
+ * Ändert das aktuelle Bild, das als nächstes freigeschaltet werden soll
+ */
+export const setCurrentProject = async (landscapeId: string): Promise<boolean> => {
+  try {
+    const collection = await loadLandscapeCollection();
+    
+    // Prüfen, ob das Bild existiert und nicht bereits vollständig ist
+    if (!collection.landscapes[landscapeId]) return false;
+    if (collection.landscapes[landscapeId].isComplete) return false;
+    
+    // Aktuelles Bild aktualisieren
+    collection.currentImageId = landscapeId;
+    
+    // Speichern
+    await saveLandscapeCollection(collection);
+    return true;
+  } catch (error) {
+    console.error("Fehler beim Ändern des freizuschaltenden Bildes:", error);
+    return false;
   }
 };
 

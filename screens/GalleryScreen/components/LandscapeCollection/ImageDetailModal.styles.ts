@@ -34,6 +34,11 @@ export const tagColors = {
     background: "rgba(136, 152, 170, 0.85)",
     text: "#FFFFFF",
     icon: "#FFFFFF"
+  },
+  currentProject: {
+    background: "rgba(66, 153, 225, 0.85)",
+    text: "#FFFFFF",
+    icon: "#FFFFFF"
   }
 };
 
@@ -278,5 +283,32 @@ export default StyleSheet.create({
     color: "rgba(255, 255, 255, 0.7)",
     textAlign: "center",
     maxWidth: "80%",
+  },
+
+  // Neue Styles für den Freischalt-Button
+  footerActionButton: {
+    marginTop: spacing.md,
+    width: "100%",
+    alignItems: "center",
+  },
+
+  selectProjectButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: 24,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+
+  selectButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

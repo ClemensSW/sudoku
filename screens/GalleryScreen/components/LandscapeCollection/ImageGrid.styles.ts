@@ -173,4 +173,23 @@ export default StyleSheet.create({
     alignItems: "center",
     paddingVertical: spacing.xxl,
   },
+
+  // Neues Badge für das aktuelle Projekt
+  currentProjectBadge: {
+    position: "absolute",
+    top: spacing.sm,
+    left: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
+    borderRadius: 12,
+    backgroundColor: "rgba(66, 133, 244, 0.9)",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(0, 0, 0, 0.5)",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+  },
 });

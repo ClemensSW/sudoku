@@ -11,6 +11,7 @@ import {
   getFilteredLandscapes,
   getCurrentLandscape,
   getAndClearLastUnlockEvent,
+  setCurrentProject as setCurrentProjectStorage,
 } from "@/screens/GalleryScreen/utils/landscapes/storage";
 
 /**
@@ -115,6 +116,23 @@ export const useLandscapes = (initialFilter = "all") => {
     [filter, loadCollection, loadFilteredLandscapes]
   );
 
+  // NEU: Setzt das aktuelle Projekt (Bild zum Freischalten)
+  const setCurrentProject = useCallback(async (landscapeId: string) => {
+    try {
+      const success = await setCurrentProjectStorage(landscapeId);
+      if (success) {
+        // Daten neu laden
+        await loadCollection();
+        await loadCurrentLandscape();
+        await loadFilteredLandscapes(filter);
+      }
+      return success;
+    } catch (error) {
+      console.error("Fehler beim Ändern des freizuschaltenden Bildes:", error);
+      return false;
+    }
+  }, [loadCollection, loadCurrentLandscape, loadFilteredLandscapes, filter]);
+
   // Filter ändern
   const changeFilter = useCallback(
     (newFilter: string) => {
@@ -147,7 +165,8 @@ export const useLandscapes = (initialFilter = "all") => {
     toggleFavorite,
     changeFilter,
     clearUnlockEvent,
-    getLastUnlockEvent, // NEU: Funktion hinzugefügt
+    getLastUnlockEvent,
+    setCurrentProject, // Neue Funktion
     reload: loadCollection,
   };
 };

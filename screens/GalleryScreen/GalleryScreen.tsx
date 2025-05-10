@@ -1,6 +1,6 @@
 // screens/GalleryScreen/GalleryScreen.tsx
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { View, Text, TouchableOpacity, SafeAreaView, Dimensions, useWindowDimensions } from "react-native";
 import { useRouter, Router } from "expo-router";
 import Animated, {
   FadeIn,
@@ -26,6 +26,7 @@ import { StatusBar } from "expo-status-bar";
 import styles from "./GalleryScreen.styles";
 import { ThemeColors } from "@/utils/theme/types";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -85,6 +86,10 @@ const GalleryScreen: React.FC = () => {
   const { colors } = theme;
   const router = useRouter();
   const { showAlert } = useAlert();
+  const insets = useSafeAreaInsets();
+  
+  // Get screen dimensions for responsive design
+  const { width: screenWidth } = useWindowDimensions();
 
   // Use the correct navigation context hook
   const { hideNavigation } = useNavigation();
@@ -119,7 +124,11 @@ const GalleryScreen: React.FC = () => {
     [key: string]: { x: number; width: number };
   }>({});
 
-  // Use the useLandscapes Hook with erweiterten Funktionen
+  // Determine display mode based on screen size
+  const isCompactMode = screenWidth < 370; // Threshold for smaller screens
+  const isSmallMode = screenWidth < 420 && screenWidth >= 370; // Middle size screens
+  
+  // Use the useLandscapes Hook mit erweiterten Funktionen
   const {
     landscapes,
     isLoading,
@@ -158,13 +167,34 @@ const GalleryScreen: React.FC = () => {
     width: indicatorWidth.value,
   }));
 
-  // Tab data
-  const tabs: Array<{ id: LandscapeFilter; label: string; icon: string }> = [
-    { id: "all", label: "Alle", icon: "grid" },
-    { id: "inProgress", label: "In Arbeit", icon: "clock" },
-    { id: "completed", label: "Komplett", icon: "check-circle" },
-    { id: "favorites", label: "Favoriten", icon: "heart" },
-  ];
+  // Tab data with responsive labels
+  const tabs = useMemo(() => {
+    if (isCompactMode) {
+      // For very small screens, use only icons with ultra-short labels
+      return [
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "OK", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favs", icon: "heart" },
+      ];
+    } else if (isSmallMode) {
+      // For small screens, use short labels
+      return [
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+      ];
+    } else {
+      // For larger screens, use full labels
+      return [
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "In Arbeit", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+      ];
+    }
+  }, [isCompactMode, isSmallMode]);
 
   // Handler for image tap
   const handleImagePress = (landscape: Landscape) => {
@@ -222,20 +252,19 @@ const GalleryScreen: React.FC = () => {
   // Show gallery info alert
   const showGalleryInfo = () => {
     showAlert({
-      title: "Deine Bildsammlung",
+      title: "So funktioniert’s",
       message: 
-        "Löse Sudokus, um nach und nach wunderschöne Bilder freizuschalten. " +
-        "Für jedes gelöste Rätsel wird ein Bildsegment enthüllt.\n\n" +
-        "Du kannst selbst auswählen, welches Bild du als nächstes freischalten möchtest, indem du in der Detailansicht auf 'Dieses Bild freischalten' tippst.\n\n" +
-        "Vollständig freigeschaltete Bilder kannst du zu deinen Favoriten hinzufügen. " +
-        "Diese Favoriten werden dann abwechselnd als Hintergrundbild auf der Startseite angezeigt.",
+        "🧩\nBILDER SAMMELN\n" +
+        "Jedes gelöste Sudoku bringt dich einem neuen Bild näher – schalte sie alle frei und fülle deine Galerie!\n\n" +
+        "🎯\nAUSWÄHLEN\n" +
+        "Entscheide selbst, welches Bild du als Nächstes sammeln möchtest. Tippe dazu in der Detailansicht auf „Dieses Bild freischalten“.\n\n" +
+        "❤️\nFAVORITEN\n" +
+        "Markiere vollständige Bilder als Favorit – so erscheinen sie auf deinem Startbildschirm.",
       type: "info",
-      buttons: [
-        { 
-          text: "Verstanden", 
-          style: "primary" 
-        }
-      ],
+      buttons: [{ 
+        text: "Verstanden", 
+        style: "primary" 
+      }],
     });
   };
 
@@ -269,7 +298,7 @@ const GalleryScreen: React.FC = () => {
     }
   };
 
-  // Render tab buttons
+  // Render tab buttons - jetzt am unteren Bildschirmrand mit responsivem Design
   const renderTabs = () => {
     return (
       <View
@@ -282,6 +311,9 @@ const GalleryScreen: React.FC = () => {
             shadowColor: theme.isDark
               ? colors.shadow // "rgba(0, 0, 0, 0.3)"
               : colors.shadow, // "rgba(60, 64, 67, 0.10)"
+            borderTopColor: theme.isDark
+              ? "rgba(255,255,255,0.1)"  // Helle Farbe im dunklen Modus
+              : "rgba(0,0,0,0.05)",      // Dunkle Farbe im hellen Modus
           },
         ]}
       >
@@ -289,20 +321,28 @@ const GalleryScreen: React.FC = () => {
           style={[
             styles.tabsContainer,
             {
-              borderBottomColor: theme.isDark
-                ? "rgba(255,255,255,0.05)"
-                : "rgba(0,0,0,0.05)",
+              borderTopColor: theme.isDark
+                ? "rgba(255,255,255,0.1)"  // Helle Farbe im dunklen Modus
+                : "rgba(0,0,0,0.05)",      // Dunkle Farbe im hellen Modus
             },
           ]}
         >
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
+            
+            // Determine if we should show text based on screen size
+            const showTabText = !isCompactMode;
+            
+            // Use the appropriate label based on screen size
+            const tabLabel = isSmallMode ? tab.shortLabel : tab.label;
 
             return (
               <TouchableOpacity
                 key={tab.id}
                 style={[
                   styles.tabButton,
+                  isCompactMode ? styles.compactTabButton : null,
+                  isSmallMode ? styles.smallTabButton : null,
                   isActive && [
                     styles.activeTabButton,
                     {
@@ -317,24 +357,28 @@ const GalleryScreen: React.FC = () => {
               >
                 <Feather
                   name={tab.icon as any}
-                  size={16}
+                  size={isCompactMode ? 18 : 16}
                   color={isActive ? colors.primary : colors.textSecondary}
-                  style={styles.tabIcon}
+                  style={showTabText ? styles.tabIcon : undefined}
                 />
-                <Text
-                  style={[
-                    styles.tabText,
-                    { color: isActive ? colors.primary : colors.textSecondary },
-                    isActive && styles.activeTabText,
-                  ]}
-                >
-                  {tab.label}
-                </Text>
+                {showTabText && (
+                  <Text
+                    style={[
+                      styles.tabText,
+                      isSmallMode && styles.smallTabText,
+                      { color: isActive ? colors.primary : colors.textSecondary },
+                      isActive && styles.activeTabText,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {tabLabel}
+                  </Text>
+                )}
               </TouchableOpacity>
             );
           })}
 
-          {/* Animated indicator */}
+          {/* Animated indicator - jetzt oben statt unten */}
           <Animated.View
             style={[
               styles.tabIndicator,
@@ -369,12 +413,15 @@ const GalleryScreen: React.FC = () => {
         }}
       />
 
-      {/* Content */}
-      <Animated.View style={styles.content} entering={FadeIn.duration(400)}>
-        {/* Tabs */}
-        {renderTabs()}
-
-        {/* Main content area with adjusted padding for better spacing */}
+      {/* Content - Now with space at the bottom for tabs */}
+      <Animated.View 
+        style={[
+          styles.content, 
+          { paddingBottom: insets.bottom + 60 } // Add space for bottom tabs + safe area
+        ]} 
+        entering={FadeIn.duration(400)}
+      >
+        {/* Main content area */}
         <View style={styles.galleryContent}>
           {landscapes.length > 0 ? (
             <ImageGrid
@@ -389,6 +436,11 @@ const GalleryScreen: React.FC = () => {
           )}
         </View>
       </Animated.View>
+
+      {/* Bottom Tab Navigation */}
+      <SafeAreaView style={styles.bottomTabContainer}>
+        {renderTabs()}
+      </SafeAreaView>
 
       {/* Detail Modal mit allen neuen Props */}
       <ImageDetailModal

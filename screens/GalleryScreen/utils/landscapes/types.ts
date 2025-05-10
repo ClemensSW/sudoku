@@ -38,7 +38,9 @@ export type LandscapeCategory =
   | "sunsets"
   | "gardens"
   | "sky"
-  | "waterfalls";
+  | "waterfalls"
+  | "valleys"
+  | "birds";
 
 /**
  * Status der Sammlung im Storage

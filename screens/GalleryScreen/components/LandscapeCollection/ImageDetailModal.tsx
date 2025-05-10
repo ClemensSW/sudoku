@@ -103,6 +103,8 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       gardens: "Gärten",
       sky: "Himmel",
       waterfalls: "Wasserfälle",
+      valleys: "Täler",
+      birds: "Völgel",
     };
     return categories[category] || category;
   };

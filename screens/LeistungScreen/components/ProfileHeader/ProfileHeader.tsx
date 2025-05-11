@@ -27,9 +27,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const isDefaultName = !name || name === "User" || name === "Jerome";
   const [isEditingName, setIsEditingName] = useState(isDefaultName);
   const [editedName, setEditedName] = useState(isDefaultName ? "" : name);
-
-  // Get current level from stats
-  const currentLevel = stats.totalXP > 0 ? Math.floor(stats.totalXP / 30) + 1 : 1;
   
   // Stats container background color
   const statsBackgroundColor = theme.isDark
@@ -67,9 +64,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       {/* Profile Picture */}
       <Pressable 
         style={[
-  styles.avatarContainer,
-  { backgroundColor: descriptionColor }
-]}
+          styles.avatarContainer,
+          { backgroundColor: descriptionColor }
+        ]}
         onPress={onChangeAvatar}
       >
         <Image
@@ -118,16 +115,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           { backgroundColor: statsBackgroundColor }
         ]}
       >
-        {/* Level */}
+        {/* Experience Points - Changed from Level */}
         <View style={styles.statItem}>
           <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
             <Feather name="flag" size={20} color={iconColor} />
           </View>
           <Text style={[styles.statValue, { color: valueColor }]}>
-            {currentLevel}
+            {stats.totalXP}
           </Text>
           <Text style={[styles.statLabel, { color: labelColor }]}>
-            Level Ups
+            EP
           </Text>
           <Text style={[styles.statDescription, { color: descriptionColor }]}>
             Deine Reise
@@ -159,10 +156,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             {completedLandscapesCount}
           </Text>
           <Text style={[styles.statLabel, { color: labelColor }]}>
-            Bilder
+            {completedLandscapesCount === 1 ? "Bild" : "Bilder"}
           </Text>
           <Text style={[styles.statDescription, { color: descriptionColor }]}>
-            Schöne Gallery
+            Schöne Galerie
           </Text>
         </View>
       </View>

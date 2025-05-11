@@ -628,7 +628,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                     : colors.textSecondary
                 }
               ]}>
-                Noch {levelInfo.xpForNextLevel} EP
+                Noch {levelInfo.xpForNextLevel} Erfahrungspunkte
               </Text>
             )}
           </View>

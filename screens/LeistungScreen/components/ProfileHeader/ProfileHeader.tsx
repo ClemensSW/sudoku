@@ -1,5 +1,5 @@
 // screens/LeistungScreen/components/ProfileHeader/ProfileHeader.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -23,8 +23,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(name);
+  // Check if name is empty or a default name like "User" or "Jerome"
+  const isDefaultName = !name || name === "User" || name === "Jerome";
+  const [isEditingName, setIsEditingName] = useState(isDefaultName);
+  const [editedName, setEditedName] = useState(isDefaultName ? "" : name);
 
   // Get current level from stats
   const currentLevel = stats.totalXP > 0 ? Math.floor(stats.totalXP / 30) + 1 : 1;
@@ -47,10 +49,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     ? 'rgba(66, 133, 244, 0.2)' 
     : 'rgba(66, 133, 244, 0.1)';
 
-  // Display name with placeholder
-  const displayName = name || "Tippe zum Bearbeiten";
-  const isPlaceholder = !name;
-
   const handleNameEdit = () => {
     if (isEditingName) {
       // Save name
@@ -68,7 +66,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     >
       {/* Profile Picture */}
       <Pressable 
-        style={styles.avatarContainer} 
+        style={[
+  styles.avatarContainer,
+  { backgroundColor: descriptionColor }
+]}
         onPress={onChangeAvatar}
       >
         <Image
@@ -96,23 +97,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         ) : (
           <Pressable 
             onPress={() => setIsEditingName(true)}
-            style={styles.editableNameContainer}
+            style={styles.nameContainer}
           >
             <Text 
               style={[
                 styles.name, 
-                { color: colors.textPrimary },
-                isPlaceholder && styles.placeholderName
+                { color: colors.textPrimary }
               ]}
             >
-              {displayName}
+              {isDefaultName ? "" : name}
             </Text>
-            <Feather 
-              name="edit-2" 
-              size={16} 
-              color={colors.textSecondary} 
-              style={styles.editIcon}
-            />
           </Pressable>
         )}
       </View>
@@ -184,37 +178,25 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     marginBottom: 12,
-    elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 5,
+    borderRadius: 70,
+    padding: 4,
   },
   avatar: {
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: 70,
   },
   nameContainer: {
     marginBottom: 24,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: 16,
-  },
-  editableNameContainer: {
-    flexDirection: "row",
     alignItems: "center",
   },
   name: {
     fontSize: 24,
     fontWeight: "700",
-  },
-  placeholderName: {
-    opacity: 0.7,
-    fontStyle: "italic",
-  },
-  editIcon: {
-    marginLeft: 8,
   },
   nameInput: {
     fontSize: 24,

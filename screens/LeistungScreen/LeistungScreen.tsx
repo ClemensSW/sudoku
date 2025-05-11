@@ -6,116 +6,200 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { loadStats, GameStats } from "@/utils/storage";
+import { loadUserProfile, updateUserName, UserProfile } from "@/utils/profileStorage";
 import Header from "@/components/Header/Header";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
-import LevelProgress from "@/components/GameCompletionModal/components/LevelProgress/LevelProgress";
-import StreakDisplay from "@/components/GameCompletionModal/components/StreakDisplay/StreakDisplay";
-import BestTimesChart from "./components/BestTimesChart/BestTimesChart";
-// Import PuzzleProgress component and useLandscapes hook
-import { PuzzleProgress } from "@/screens/GalleryScreen/components/LandscapeCollection";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
+import { useAlert } from "@/components/CustomAlert/AlertProvider";
+
+// New components
+import ProfileHeader from "./components/ProfileHeader";
+// Import TabItem type directly from TabNavigator
+import TabNavigator from "./components/TabNavigator";
+import type { TabItem } from "./components/TabNavigator";
+import LevelTab from "./components/LevelTab";
+import GalleryTab from "./components/GalleryTab";
+import StreakTab from "./components/StreakTab";
+import TimeTab from "./components/TimeTab";
+
+// Tab IDs
+type TabId = "level" | "gallery" | "streak" | "times";
 
 const LeistungScreen: React.FC = () => {
   const router = useRouter();
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
+  const { showAlert } = useAlert();
+  
+  // States
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabId>("level");
+  const [profile, setProfile] = useState<UserProfile>({ name: "User" });
+  
+  // Use landscapes hook to get completed images count
+  const { landscapes, isLoading: isLoadingLandscapes } = useLandscapes("completed");
 
-  // Add the useLandscapes hook to get the current landscape
-  const { currentLandscape } = useLandscapes();
-
+  // Load stats and profile data
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
+        // Load game stats
         const loadedStats = await loadStats();
         setStats(loadedStats);
+        
+        // Load user profile
+        const userProfile = await loadUserProfile();
+        setProfile(userProfile);
       } catch (error) {
-        console.error("Error loading stats:", error);
+        console.error("Error loading data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchStats();
+    fetchData();
   }, []);
 
-  // Handler for "View Gallery" button
-  const handleViewGallery = () => {
-    router.push("/gallery");
+  // Tab configuration
+  const tabs: TabItem[] = [
+    { id: "level", label: "Level" },
+    { id: "gallery", label: "Sammlung" },
+    { id: "streak", label: "Serie" },
+    { id: "times", label: "Zeiten" },
+  ];
+
+  // Handle tab change
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId as TabId);
   };
 
-  // Consistent card spacing helper function
-  const renderCard = (Component: React.ReactNode, isLast: boolean = false) => (
-    <View style={isLast ? null : styles.cardContainer}>{Component}</View>
-  );
+  // Handle name change
+  const handleNameChange = async (name: string) => {
+    try {
+      const updatedProfile = await updateUserName(name);
+      setProfile(updatedProfile);
+    } catch (error) {
+      console.error("Error updating name:", error);
+    }
+  };
 
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
+  // Handle avatar change
+  const handleAvatarChange = () => {
+    showAlert({
+      title: "Avatar ändern",
+      message: "Diese Funktion wird in einer zukünftigen Version verfügbar sein.",
+      type: "info",
+      buttons: [{ text: "OK", style: "primary" }],
+    });
+  };
 
-      <View style={{ flex: 1 }}>
+  // Settings button handler
+  const handleOpenSettings = () => {
+    router.push("/settings");
+  };
+
+  // Render the active tab content
+  const renderTabContent = () => {
+    if (!stats) return null;
+    
+    switch (activeTab) {
+      case "level":
+        return <LevelTab stats={stats} />;
+      case "gallery":
+        return <GalleryTab />;
+      case "streak":
+        return <StreakTab stats={stats} />;
+      case "times":
+        return <TimeTab stats={stats} />;
+      default:
+        return <LevelTab stats={stats} />;
+    }
+  };
+
+  // Show loading state while data is loading
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
         <Header
           title="Meine Leistung"
           rightAction={{
             icon: "settings",
-            onPress: () => router.push("/settings"),
+            onPress: handleOpenSettings,
           }}
         />
-
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: Math.max(insets.bottom + 100, 120) },
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {isLoading ? (
-            <LoadingState />
-          ) : stats ? (
-            <>
-              {/* Level Progress */}
-              {renderCard(
-                <LevelProgress
-                  stats={stats}
-                  difficulty="medium" // Standard value as there's no current game
-                  justCompleted={false} // No recently completed game
-                />
-              )}
-
-              {/* Add PuzzleProgress component - only if landscape exists */}
-              {currentLandscape &&
-                renderCard(
-                  <PuzzleProgress
-                    landscape={currentLandscape}
-                    onViewGallery={handleViewGallery}
-                  />
-                )}
-
-              {/* Streak Display - always show */}
-              {renderCard(
-                <StreakDisplay
-                  currentStreak={stats.currentStreak}
-                  longestStreak={stats.longestStreak}
-                  isRecord={
-                    stats.currentStreak === stats.longestStreak &&
-                    stats.longestStreak > 2
-                  }
-                  style={{ marginBottom: 16 }}
-                />
-              )}
-
-              {/* Best Times Chart - last item, no bottom margin needed */}
-              {renderCard(<BestTimesChart stats={stats} />, true)}
-            </>
-          ) : (
-            <EmptyState />
-          )}
-        </ScrollView>
+        <LoadingState />
       </View>
+    );
+  }
+
+  // Show empty state if no stats available
+  if (!stats) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <Header
+          title="Meine Leistung"
+          rightAction={{
+            icon: "settings",
+            onPress: handleOpenSettings,
+          }}
+        />
+        <EmptyState />
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={theme.isDark ? "light" : "dark"} />
+
+      {/* Header - Fixed at the top */}
+      <Header
+        title="Meine Leistung"
+        rightAction={{
+          icon: "settings",
+          onPress: handleOpenSettings,
+        }}
+      />
+
+      {/* ScrollView for ALL content (including profile and tabs) */}
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 20 } // Add extra padding at bottom for safe area
+        ]}
+        showsVerticalScrollIndicator={true}
+      >
+        {/* Profile Header */}
+        <View style={styles.profileContainer}>
+          <ProfileHeader 
+            stats={stats}
+            name={profile.name}
+            onChangeName={handleNameChange}
+            onChangeAvatar={handleAvatarChange}
+            completedLandscapesCount={landscapes.length}
+          />
+        </View>
+
+        {/* Tab Navigator - This will scroll with the content */}
+        <View style={styles.tabSection}>
+          <TabNavigator
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        </View>
+
+        {/* Tab Content */}
+        <View style={styles.tabContentContainer}>
+          {renderTabContent()}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -124,16 +208,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollView: {
+  scrollContainer: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    // No horizontal padding - it will be handled by the child components
   },
-  // New consistent card container with proper spacing
-  cardContainer: {
-    marginBottom: 12, // Consistent spacing between all cards
+  profileContainer: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  tabSection: {
+    width: '100%', // Full width
+  },
+  tabContentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 64,
   },
 });
 

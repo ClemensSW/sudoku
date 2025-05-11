@@ -6,16 +6,21 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { loadStats, GameStats } from "@/utils/storage";
-import { loadUserProfile, updateUserName, UserProfile } from "@/utils/profileStorage";
+import { 
+  loadUserProfile, 
+  updateUserName, 
+  updateUserAvatar, 
+  UserProfile 
+} from "@/utils/profileStorage";
+import { getAvatarUri } from "@/utils/avatarStorage";
 import Header from "@/components/Header/Header";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 
-// New components
+// Components
 import ProfileHeader from "./components/ProfileHeader";
-// Import TabItem type directly from TabNavigator
 import TabNavigator from "./components/TabNavigator";
 import type { TabItem } from "./components/TabNavigator";
 import LevelTab from "./components/LevelTab";
@@ -38,14 +43,17 @@ const LeistungScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("level");
   const [profile, setProfile] = useState<UserProfile>({ name: "User" });
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
   
   // Use landscapes hook to get completed images count
   const { landscapes, isLoading: isLoadingLandscapes } = useLandscapes("completed");
 
-  // Load stats and profile data
+  // Load all data
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+        
         // Load game stats
         const loadedStats = await loadStats();
         setStats(loadedStats);
@@ -53,6 +61,19 @@ const LeistungScreen: React.FC = () => {
         // Load user profile
         const userProfile = await loadUserProfile();
         setProfile(userProfile);
+        
+        // Load avatar (if exists)
+        const uri = await getAvatarUri();
+        // First check if profile already has a reference to an avatar
+        if (userProfile.avatarUri) {
+          setAvatarUri(userProfile.avatarUri);
+        } 
+        // If not, check if there's a standalone avatar in the filesystem
+        else if (uri) {
+          // Update the profile with the found avatar
+          await updateUserAvatar(uri);
+          setAvatarUri(uri);
+        }
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -87,13 +108,20 @@ const LeistungScreen: React.FC = () => {
   };
 
   // Handle avatar change
-  const handleAvatarChange = () => {
-    showAlert({
-      title: "Avatar ändern",
-      message: "Diese Funktion wird in einer zukünftigen Version verfügbar sein.",
-      type: "info",
-      buttons: [{ text: "OK", style: "primary" }],
-    });
+  const handleAvatarChange = async (uri: string | null) => {
+    try {
+      const updatedProfile = await updateUserAvatar(uri);
+      setAvatarUri(uri);
+      setProfile(updatedProfile);
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      showAlert({
+        title: "Fehler",
+        message: "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut.",
+        type: "error",
+        buttons: [{ text: "OK", style: "primary" }],
+      });
+    }
   };
 
   // Settings button handler
@@ -180,6 +208,7 @@ const LeistungScreen: React.FC = () => {
           <ProfileHeader 
             stats={stats}
             name={profile.name}
+            avatarUri={avatarUri}
             onChangeName={handleNameChange}
             onChangeAvatar={handleAvatarChange}
             completedLandscapesCount={landscapes.length}

@@ -1,59 +1,81 @@
 // screens/LeistungScreen/components/ProfileHeader/ProfileHeader.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
+import AvatarPicker from "@/components/AvatarPicker";
 
 interface ProfileHeaderProps {
   stats: GameStats;
   name: string;
+  avatarUri?: string | null;
   onChangeName?: (name: string) => void;
-  onChangeAvatar?: () => void;
+  onChangeAvatar?: (uri: string | null) => void;
   completedLandscapesCount: number;
 }
+
+const DEFAULT_AVATAR = require("@/assets/images/avatars/default.webp");
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   stats,
   name,
+  avatarUri,
   onChangeName,
   onChangeAvatar,
   completedLandscapesCount,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  // Check if name is empty or a default name like "User" or "Jerome"
+  
+  // Zustandsvariablen
   const isDefaultName = !name || name === "User" || name === "Jerome";
   const [isEditingName, setIsEditingName] = useState(isDefaultName);
   const [editedName, setEditedName] = useState(isDefaultName ? "" : name);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   
-  // Stats container background color
+  // Referenz zum TextInput
+  const inputRef = useRef<TextInput>(null);
+  
+  // Styles und Farben
   const statsBackgroundColor = theme.isDark
     ? 'rgba(66, 133, 244, 0.12)'
     : 'rgba(219, 234, 254, 0.9)';
   
-  // Determine text colors with proper contrast
   const valueColor = theme.isDark ? '#FFFFFF' : colors.textPrimary;
   const labelColor = theme.isDark ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary;
   const descriptionColor = theme.isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
-  
-  // Icon colors
   const iconColor = theme.isDark ? colors.primary : colors.primary;
-  
-  // Icon backgrounds
   const iconBgColor = theme.isDark 
     ? 'rgba(66, 133, 244, 0.2)' 
     : 'rgba(66, 133, 244, 0.1)';
 
+  // Name bearbeiten
   const handleNameEdit = () => {
     if (isEditingName) {
-      // Save name
+      // Name speichern
       if (onChangeName && editedName.trim()) {
         onChangeName(editedName.trim());
       }
     }
     setIsEditingName(!isEditingName);
+  };
+
+  // Avatar-Picker öffnen/schließen
+  const openAvatarPicker = () => {
+    setShowAvatarPicker(true);
+  };
+
+  const closeAvatarPicker = () => {
+    setShowAvatarPicker(false);
+  };
+
+  // Avatar-Änderungen verarbeiten
+  const handleAvatarChange = (uri: string | null) => {
+    if (onChangeAvatar) {
+      onChangeAvatar(uri);
+    }
   };
 
   return (
@@ -65,32 +87,38 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <Pressable 
         style={[
           styles.avatarContainer,
-          { backgroundColor: descriptionColor }
+          { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }
         ]}
-        onPress={onChangeAvatar}
+        onPress={openAvatarPicker}
       >
         <Image
-          source={require("@/assets/images/avatars/default.webp")}
+          source={avatarUri ? { uri: avatarUri } : DEFAULT_AVATAR}
           style={styles.avatar}
+          resizeMode="cover"
         />
+        <View style={styles.avatarOverlay}>
+          <Feather name="camera" size={20} color="#FFFFFF" />
+        </View>
       </Pressable>
 
       {/* User Name */}
       <View style={styles.nameContainer}>
         {isEditingName ? (
-          <TextInput
-            style={[
-              styles.nameInput, 
-              { color: colors.textPrimary, borderColor: colors.primary }
-            ]}
-            value={editedName}
-            onChangeText={setEditedName}
-            autoFocus
-            onBlur={handleNameEdit}
-            onSubmitEditing={handleNameEdit}
-            placeholder="Dein Name"
-            placeholderTextColor={colors.textSecondary}
-          />
+          <Pressable onPress={() => inputRef.current?.focus()}>
+            <TextInput
+              ref={inputRef}
+              style={[
+                styles.nameInput, 
+                { color: colors.textPrimary, borderColor: colors.primary }
+              ]}
+              value={editedName}
+              onChangeText={setEditedName}
+              onBlur={handleNameEdit}
+              onSubmitEditing={handleNameEdit}
+              placeholder="Dein Name"
+              placeholderTextColor={colors.textSecondary}
+            />
+          </Pressable>
         ) : (
           <Pressable 
             onPress={() => setIsEditingName(true)}
@@ -108,14 +136,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         )}
       </View>
 
-      {/* Stats Section - With styled background */}
+      {/* Stats Section */}
       <View
         style={[
           styles.statsContainer,
           { backgroundColor: statsBackgroundColor }
         ]}
       >
-        {/* Experience Points - Changed from Level */}
+        {/* Experience Points */}
         <View style={styles.statItem}>
           <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
             <Feather name="flag" size={20} color={iconColor} />
@@ -163,6 +191,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Text>
         </View>
       </View>
+
+      {/* Avatar Picker Modal */}
+      <AvatarPicker
+        visible={showAvatarPicker}
+        onClose={closeAvatarPicker}
+        onImageSelected={handleAvatarChange}
+        currentAvatarUri={avatarUri || null}
+      />
     </Animated.View>
   );
 };
@@ -174,6 +210,7 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
   },
   avatarContainer: {
+    position: 'relative',
     marginBottom: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -185,7 +222,20 @@ const styles = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    borderRadius: 70,
+    borderRadius: 60,
+  },
+  avatarOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   nameContainer: {
     marginBottom: 24,

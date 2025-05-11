@@ -1,61 +1,93 @@
 // utils/profileStorage.ts
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const PROFILE_KEY = "@sudoku/user_profile";
+// Der Storage-Key für das Nutzerprofil
+const USER_PROFILE_KEY = '@sudoku/user_profile';
 
+// Schnittstelle für das Nutzerprofil
 export interface UserProfile {
   name: string;
-  avatarId?: string;
+  avatarUri?: string | null;
+  // Hier können in Zukunft weitere Profilfelder hinzugefügt werden
 }
 
-const DEFAULT_PROFILE: UserProfile = {
-  name: "Jerome",
-  avatarId: "default",
-};
-
-export const saveUserProfile = async (profile: UserProfile): Promise<void> => {
-  try {
-    await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-  } catch (error) {
-    console.error("Error saving user profile:", error);
-  }
-};
-
+/**
+ * Lädt das Nutzerprofil aus dem AsyncStorage
+ * @returns Das gespeicherte Nutzerprofil oder ein Standardprofil, wenn keines gefunden wurde
+ */
 export const loadUserProfile = async (): Promise<UserProfile> => {
   try {
-    const storedProfile = await AsyncStorage.getItem(PROFILE_KEY);
-    if (storedProfile) {
-      return JSON.parse(storedProfile) as UserProfile;
+    const profileData = await AsyncStorage.getItem(USER_PROFILE_KEY);
+    
+    if (profileData) {
+      return JSON.parse(profileData) as UserProfile;
     }
-    // No stored profile, use default
-    await saveUserProfile(DEFAULT_PROFILE);
-    return DEFAULT_PROFILE;
+    
+    // Standardprofil, wenn keines gefunden wurde
+    return { name: 'User' };
   } catch (error) {
-    console.error("Error loading user profile:", error);
-    return DEFAULT_PROFILE;
+    console.error('Fehler beim Laden des Nutzerprofils:', error);
+    
+    // Standardprofil im Fehlerfall
+    return { name: 'User' };
   }
 };
 
+/**
+ * Speichert das Nutzerprofil im AsyncStorage
+ * @param profile Das zu speichernde Nutzerprofil
+ * @returns Das gespeicherte Nutzerprofil
+ */
+export const saveUserProfile = async (profile: UserProfile): Promise<UserProfile> => {
+  try {
+    await AsyncStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+    return profile;
+  } catch (error) {
+    console.error('Fehler beim Speichern des Nutzerprofils:', error);
+    throw error;
+  }
+};
+
+/**
+ * Aktualisiert den Nutzernamen im Profil
+ * @param name Der neue Nutzername
+ * @returns Das aktualisierte Nutzerprofil
+ */
 export const updateUserName = async (name: string): Promise<UserProfile> => {
   try {
-    const profile = await loadUserProfile();
-    const updatedProfile = { ...profile, name };
+    const currentProfile = await loadUserProfile();
+    
+    const updatedProfile = {
+      ...currentProfile,
+      name
+    };
+    
     await saveUserProfile(updatedProfile);
     return updatedProfile;
   } catch (error) {
-    console.error("Error updating user name:", error);
-    return { name, avatarId: "default" };
+    console.error('Fehler beim Aktualisieren des Nutzernamens:', error);
+    throw error;
   }
 };
 
-export const updateUserAvatar = async (avatarId: string): Promise<UserProfile> => {
+/**
+ * Aktualisiert den Avatar-URI im Profil
+ * @param avatarUri Der URI des neuen Avatars oder null, um ihn zu entfernen
+ * @returns Das aktualisierte Nutzerprofil
+ */
+export const updateUserAvatar = async (avatarUri: string | null): Promise<UserProfile> => {
   try {
-    const profile = await loadUserProfile();
-    const updatedProfile = { ...profile, avatarId };
+    const currentProfile = await loadUserProfile();
+    
+    const updatedProfile = {
+      ...currentProfile,
+      avatarUri
+    };
+    
     await saveUserProfile(updatedProfile);
     return updatedProfile;
   } catch (error) {
-    console.error("Error updating user avatar:", error);
-    return { name: "User", avatarId };
+    console.error('Fehler beim Aktualisieren des Avatars:', error);
+    throw error;
   }
 };

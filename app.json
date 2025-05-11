@@ -10,6 +10,13 @@
     "newArchEnabled": true,
     "jsEngine": "hermes",
     "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um ein Profilbild auszuwählen.",
+          "cameraPermission": "Die App benötigt Zugriff auf die Kamera, um ein Profilbild aufzunehmen."
+        }
+      ],
       "expo-router",
       "expo-font",
       "expo-web-browser"
@@ -37,20 +44,14 @@
       "intentFilters": [
         {
           "action": "MAIN",
-          "category": [
-            "LAUNCHER",
-            "DEFAULT"
-          ]
+          "category": ["LAUNCHER", "DEFAULT"]
         },
         {
           "action": "VIEW",
           "data": {
             "scheme": "mailto"
           },
-          "category": [
-            "DEFAULT",
-            "BROWSABLE"
-          ]
+          "category": ["DEFAULT", "BROWSABLE"]
         }
       ]
     },

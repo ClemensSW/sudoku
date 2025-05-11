@@ -97,7 +97,7 @@ const LandscapeCard = React.memo(
         sky: "Himmel",
         waterfalls: "Wasserfälle",
         valleys: "Täler",
-        birds: "Völgel",
+        birds: "Vögel",
       };
       return categories[category] || category;
     };

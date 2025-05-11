@@ -45,11 +45,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   const emptyStateTexts: Record<LandscapeFilter, string> = {
     all: "Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten.",
     inProgress:
-      "Du hast noch keine Landschaften, an denen du arbeitest. Löse ein Sudoku, um zu beginnen!",
+      "Du hast noch kein Bild, an den du arbeitest. Löse ein Sudoku, um zu beginnen!",
     completed:
-      "Du hast noch keine Landschaften vollständig freigeschaltet. Löse 9 Sudokus, um dein erstes Bild freizuschalten!",
+      "Du hast noch kein Bild vollständig freigeschaltet. Löse 9 Sudokus, um dein erstes Bild freizuschalten!",
     favorites:
-      "Du hast noch keine Landschaften als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol.",
+      "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol.",
   };
 
   return (
@@ -229,7 +229,7 @@ const GalleryScreen: React.FC = () => {
       // Feedback für den Nutzer anzeigen
       showAlert({
         title: "Bild ausgewählt",
-        message: `„${landscape.name}" wird nun durch Lösen von Sudokus schrittweise freigeschaltet.`,
+        message: `„${landscape.name}" wird nun durch Lösen von Sudokus freigeschaltet.`,
         type: "success",
         buttons: [{ text: "OK", style: "primary" }],
       });
@@ -258,7 +258,7 @@ const GalleryScreen: React.FC = () => {
         "Jedes gelöste Sudoku bringt dich einem neuen Bild näher – schalte sie alle frei und fülle deine Galerie!\n\n" +
         "🎯\nAUSWÄHLEN\n" +
         "Entscheide selbst, welches Bild du als Nächstes sammeln möchtest. Tippe dazu in der Detailansicht auf „Dieses Bild freischalten“.\n\n" +
-        "❤️\nFAVORITEN\n" +
+        "❤️\nFAVORITEN SETZEN\n" +
         "Markiere vollständige Bilder als Favorit – so erscheinen sie auf deinem Startbildschirm.",
       type: "info",
       buttons: [{ 

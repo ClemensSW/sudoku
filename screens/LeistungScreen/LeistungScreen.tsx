@@ -1,5 +1,5 @@
 // screens/LeistungScreen/LeistungScreen.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -37,6 +37,11 @@ const LeistungScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
+  
+  // Add a ref to the ScrollView
+  const scrollViewRef = useRef<ScrollView>(null);
+  // Add a ref to track the tab section position
+  const tabSectionPosition = useRef<number>(0);
 
   // States
   const [stats, setStats] = useState<GameStats | null>(null);
@@ -93,9 +98,26 @@ const LeistungScreen: React.FC = () => {
     { id: "times", label: "Zeiten" },
   ];
 
-  // Handle tab change
+  // Handle tab change with scrolling to content
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
+    
+    // Scroll to the tab section with a slight delay to allow for state update
+    setTimeout(() => {
+      if (scrollViewRef.current && tabSectionPosition.current > 0) {
+        // Scroll to the tab section position
+        scrollViewRef.current.scrollTo({
+          y: tabSectionPosition.current - 20, // Subtract a small offset for better visibility
+          animated: true
+        });
+      }
+    }, 100);
+  };
+
+  // Measure the position of the tab section
+  const handleTabSectionLayout = (event: any) => {
+    const { y } = event.nativeEvent.layout;
+    tabSectionPosition.current = y;
   };
 
   // Handle name change
@@ -108,16 +130,16 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // handleAvatarChange Funktion in LeistungScreen.tsx
+  // handleAvatarChange function in LeistungScreen.tsx
   const handleAvatarChange = async (uri: string | null) => {
     try {
       const updatedProfile = await updateUserAvatar(uri);
-      setAvatarUri(uri); // Direkte Aktualisierung der State-Variable
+      setAvatarUri(uri); // Direct state update
       setProfile(updatedProfile);
 
-      // Debug-Ausgabe
-      console.log("Avatar aktualisiert:", uri);
-      console.log("Aktualisiertes Profil:", updatedProfile);
+      // Debug output
+      console.log("Avatar updated:", uri);
+      console.log("Updated profile:", updatedProfile);
     } catch (error) {
       console.error("Error updating avatar:", error);
       showAlert({
@@ -202,6 +224,7 @@ const LeistungScreen: React.FC = () => {
 
       {/* ScrollView for ALL content (including profile and tabs) */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollContainer}
         contentContainerStyle={[
           styles.scrollContent,
@@ -222,7 +245,10 @@ const LeistungScreen: React.FC = () => {
         </View>
 
         {/* Tab Navigator - This will scroll with the content */}
-        <View style={styles.tabSection}>
+        <View 
+          style={styles.tabSection}
+          onLayout={handleTabSectionLayout}
+        >
           <TabNavigator
             tabs={tabs}
             activeTab={activeTab}

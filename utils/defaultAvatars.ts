@@ -9,6 +9,7 @@ export interface DefaultAvatar {
   source: ImageSourcePropType;
   name: string;
   category?: string; // Optional für Kategorisierung
+  premium?: boolean; // Neue Eigenschaft: Kennzeichnet Premium-Avatare
 }
 
 // Vordefinierte Avatare (hier können einfach mehr hinzugefügt werden)

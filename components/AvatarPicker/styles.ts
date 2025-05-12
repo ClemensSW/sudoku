@@ -81,7 +81,7 @@ export default StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     height: 3,
-    width: '33.3%',
+    // No width defined here as it will be determined dynamically
   },
   
   // Option Styles

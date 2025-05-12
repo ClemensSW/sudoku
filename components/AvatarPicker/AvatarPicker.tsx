@@ -1,5 +1,5 @@
 // components/AvatarPicker/AvatarPicker.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Modal, Pressable, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -34,14 +34,13 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('default');
   
-  // Animation values for tab indicator
+  // Tab measurements
+  const tabMeasurements = useRef<{[key in TabType]?: { x: number, width: number }}>({});
+  const tabIndicatorWidth = useSharedValue(0);
   const tabIndicatorPosition = useSharedValue(0);
   
   // Current avatar preview adjustment for default avatars
   const [previewUri, setPreviewUri] = useState<any>(null);
-  
-  // Get screen dimensions for calculations
-  const { width } = Dimensions.get('window');
   
   useEffect(() => {
     if (currentAvatarUri) {
@@ -52,26 +51,34 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     }
   }, [currentAvatarUri]);
   
-  // Update tab indicator position - KORRIGIERT
+  // Update indicator when active tab changes
   useEffect(() => {
-    // Die Breite eines Tabs (33.33% der Gesamtbreite)
-    const tabWidth = width / 3;
+    const currentTabMeasurements = tabMeasurements.current[activeTab];
     
-    // Position berechnen (0, 1, oder 2 multipliziert mit der Breite eines Tabs)
-    let tabIndex = 0;
-    switch(activeTab) {
-      case 'default': tabIndex = 0; break;
-      case 'gallery': tabIndex = 1; break;
-      case 'camera': tabIndex = 2; break;
+    if (currentTabMeasurements) {
+      tabIndicatorPosition.value = withTiming(currentTabMeasurements.x, { duration: 300 });
+      tabIndicatorWidth.value = withTiming(currentTabMeasurements.width, { duration: 300 });
     }
-    
-    tabIndicatorPosition.value = withTiming(tabIndex * tabWidth, { duration: 300 });
-  }, [activeTab, width]);
+  }, [activeTab]);
   
-  // Korrigierter animierter Style
+  // Measure tab layout
+  const measureTab = (tab: TabType, event: any) => {
+    const { x, width } = event.nativeEvent.layout;
+    tabMeasurements.current[tab] = { x, width };
+    
+    // If this is the active tab and it's being measured for the first time,
+    // update the indicator position and width immediately
+    if (tab === activeTab && tabIndicatorWidth.value === 0) {
+      tabIndicatorPosition.value = x;
+      tabIndicatorWidth.value = width;
+    }
+  };
+  
+  // Animation style for tab indicator
   const tabIndicatorStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: tabIndicatorPosition.value }],
+      width: tabIndicatorWidth.value,
     };
   });
   
@@ -361,6 +368,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                   }
                 ]}
                 onPress={() => setActiveTab('default')}
+                onLayout={(event) => measureTab('default', event)}
               >
                 <Feather 
                   name="grid" 
@@ -386,6 +394,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                   }
                 ]}
                 onPress={() => setActiveTab('gallery')}
+                onLayout={(event) => measureTab('gallery', event)}
               >
                 <Feather 
                   name="image" 
@@ -411,6 +420,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                   }
                 ]}
                 onPress={() => setActiveTab('camera')}
+                onLayout={(event) => measureTab('camera', event)}
               >
                 <Feather 
                   name="camera" 

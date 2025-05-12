@@ -6,11 +6,11 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { loadStats, GameStats } from "@/utils/storage";
-import { 
-  loadUserProfile, 
-  updateUserName, 
-  updateUserAvatar, 
-  UserProfile 
+import {
+  loadUserProfile,
+  updateUserName,
+  updateUserAvatar,
+  UserProfile,
 } from "@/utils/profileStorage";
 import { getAvatarUri } from "@/utils/avatarStorage";
 import Header from "@/components/Header/Header";
@@ -37,37 +37,38 @@ const LeistungScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
-  
+
   // States
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("level");
   const [profile, setProfile] = useState<UserProfile>({ name: "User" });
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
-  
+
   // Use landscapes hook to get completed images count
-  const { landscapes, isLoading: isLoadingLandscapes } = useLandscapes("completed");
+  const { landscapes, isLoading: isLoadingLandscapes } =
+    useLandscapes("completed");
 
   // Load all data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Load game stats
         const loadedStats = await loadStats();
         setStats(loadedStats);
-        
+
         // Load user profile
         const userProfile = await loadUserProfile();
         setProfile(userProfile);
-        
+
         // Load avatar (if exists)
         const uri = await getAvatarUri();
         // First check if profile already has a reference to an avatar
         if (userProfile.avatarUri) {
           setAvatarUri(userProfile.avatarUri);
-        } 
+        }
         // If not, check if there's a standalone avatar in the filesystem
         else if (uri) {
           // Update the profile with the found avatar
@@ -107,17 +108,22 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // Handle avatar change
+  // handleAvatarChange Funktion in LeistungScreen.tsx
   const handleAvatarChange = async (uri: string | null) => {
     try {
       const updatedProfile = await updateUserAvatar(uri);
-      setAvatarUri(uri);
+      setAvatarUri(uri); // Direkte Aktualisierung der State-Variable
       setProfile(updatedProfile);
+
+      // Debug-Ausgabe
+      console.log("Avatar aktualisiert:", uri);
+      console.log("Aktualisiertes Profil:", updatedProfile);
     } catch (error) {
       console.error("Error updating avatar:", error);
       showAlert({
         title: "Fehler",
-        message: "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut.",
+        message:
+          "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut.",
         type: "error",
         buttons: [{ text: "OK", style: "primary" }],
       });
@@ -132,7 +138,7 @@ const LeistungScreen: React.FC = () => {
   // Render the active tab content
   const renderTabContent = () => {
     if (!stats) return null;
-    
+
     switch (activeTab) {
       case "level":
         return <LevelTab stats={stats} />;
@@ -195,17 +201,17 @@ const LeistungScreen: React.FC = () => {
       />
 
       {/* ScrollView for ALL content (including profile and tabs) */}
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 } // Add extra padding at bottom for safe area
+          { paddingBottom: insets.bottom + 20 }, // Add extra padding at bottom for safe area
         ]}
         showsVerticalScrollIndicator={true}
       >
         {/* Profile Header */}
         <View style={styles.profileContainer}>
-          <ProfileHeader 
+          <ProfileHeader
             stats={stats}
             name={profile.name}
             avatarUri={avatarUri}
@@ -225,9 +231,7 @@ const LeistungScreen: React.FC = () => {
         </View>
 
         {/* Tab Content */}
-        <View style={styles.tabContentContainer}>
-          {renderTabContent()}
-        </View>
+        <View style={styles.tabContentContainer}>{renderTabContent()}</View>
       </ScrollView>
     </View>
   );
@@ -249,7 +253,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tabSection: {
-    width: '100%', // Full width
+    width: "100%", // Full width
   },
   tabContentContainer: {
     paddingHorizontal: 16,

@@ -79,10 +79,13 @@ export const updateUserAvatar = async (avatarUri: string | null): Promise<UserPr
   try {
     const currentProfile = await loadUserProfile();
     
+    // Neues Profil mit aktualisierten Avatardaten
     const updatedProfile = {
       ...currentProfile,
       avatarUri
     };
+    
+    console.log('Aktualisiere Profilbild zu:', avatarUri); // Debug-Ausgabe
     
     await saveUserProfile(updatedProfile);
     return updatedProfile;

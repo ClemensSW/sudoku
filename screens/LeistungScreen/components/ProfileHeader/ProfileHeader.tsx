@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "@/components/AvatarPicker";
+import { isDefaultAvatarPath, getAvatarIdFromPath, getAvatarById, getAvatarSourceFromUri, DEFAULT_AVATAR } from '@/utils/defaultAvatars';
 
 interface ProfileHeaderProps {
   stats: GameStats;
@@ -15,8 +16,6 @@ interface ProfileHeaderProps {
   onChangeAvatar?: (uri: string | null) => void;
   completedLandscapesCount: number;
 }
-
-const DEFAULT_AVATAR = require("@/assets/images/avatars/default.webp");
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   stats,
@@ -77,6 +76,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       onChangeAvatar(uri);
     }
   };
+  
+  // Avatar-Quelle ermitteln
+  const getAvatarSource = () => {
+    return getAvatarSourceFromUri(avatarUri, DEFAULT_AVATAR);
+  };
 
   return (
     <Animated.View
@@ -92,7 +96,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         onPress={openAvatarPicker}
       >
         <Image
-          source={avatarUri ? { uri: avatarUri } : DEFAULT_AVATAR}
+          source={getAvatarSource()}
           style={styles.avatar}
           resizeMode="cover"
         />
@@ -197,7 +201,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         visible={showAvatarPicker}
         onClose={closeAvatarPicker}
         onImageSelected={handleAvatarChange}
-        currentAvatarUri={avatarUri || null}
+        currentAvatarUri={avatarUri ?? null}
       />
     </Animated.View>
   );

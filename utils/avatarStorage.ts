@@ -1,6 +1,7 @@
 // utils/avatarStorage.ts
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isDefaultAvatarPath, getAvatarIdFromPath, getDefaultAvatarPath } from './defaultAvatars';
 
 // Konstanten
 const AVATAR_DIRECTORY = `${FileSystem.documentDirectory}avatars/`;
@@ -26,6 +27,12 @@ export const ensureAvatarDirectoryExists = async (): Promise<void> => {
  */
 export const saveAvatar = async (uri: string): Promise<string> => {
   try {
+    // Wenn es sich um einen Default-Avatar handelt, speichere den Pfad direkt
+    if (isDefaultAvatarPath(uri)) {
+      await AsyncStorage.setItem(AVATAR_PATH_KEY, uri);
+      return uri;
+    }
+    
     // Stelle sicher, dass das Verzeichnis existiert
     await ensureAvatarDirectoryExists();
     
@@ -52,6 +59,17 @@ export const saveAvatar = async (uri: string): Promise<string> => {
 };
 
 /**
+ * Speichert einen vordefinierten Avatar
+ * @param avatarId ID des vordefinierten Avatars
+ * @returns Der Pfad zum gespeicherten Avatar
+ */
+export const saveDefaultAvatar = async (avatarId: string): Promise<string> => {
+  const avatarPath = getDefaultAvatarPath(avatarId);
+  await AsyncStorage.setItem(AVATAR_PATH_KEY, avatarPath);
+  return avatarPath;
+};
+
+/**
  * Lädt den gespeicherten Avatar-Pfad
  * @returns Das URI des gespeicherten Avatars oder null, wenn keiner gefunden wurde
  */
@@ -61,6 +79,11 @@ export const getAvatarUri = async (): Promise<string | null> => {
     
     if (!avatarUri) {
       return null;
+    }
+    
+    // Wenn es sich um einen Default-Avatar handelt, gib den Pfad direkt zurück
+    if (isDefaultAvatarPath(avatarUri)) {
+      return avatarUri;
     }
     
     // Überprüfe, ob die Datei existiert
@@ -86,9 +109,12 @@ export const deleteAvatar = async (): Promise<void> => {
     const avatarUri = await AsyncStorage.getItem(AVATAR_PATH_KEY);
     
     if (avatarUri) {
-      const fileInfo = await FileSystem.getInfoAsync(avatarUri);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(avatarUri);
+      // Wenn es kein Default-Avatar ist, lösche die Datei
+      if (!isDefaultAvatarPath(avatarUri)) {
+        const fileInfo = await FileSystem.getInfoAsync(avatarUri);
+        if (fileInfo.exists) {
+          await FileSystem.deleteAsync(avatarUri);
+        }
       }
       
       await AsyncStorage.removeItem(AVATAR_PATH_KEY);

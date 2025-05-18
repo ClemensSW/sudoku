@@ -20,102 +20,7 @@ export const defaultAvatars: DefaultAvatar[] = [
     name: '',
     category: 'Standart'
   },
-  {
-    id: 'avatar1',
-    source: require('@/assets/images/avatars/anime/avatar1.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar2',
-    source: require('@/assets/images/avatars/anime/avatar2.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar3',
-    source: require('@/assets/images/avatars/anime/avatar3.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar4',
-    source: require('@/assets/images/avatars/anime/avatar4.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar5',
-    source: require('@/assets/images/avatars/anime/avatar5.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar6',
-    source: require('@/assets/images/avatars/anime/avatar6.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar7',
-    source: require('@/assets/images/avatars/anime/avatar7.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar8',
-    source: require('@/assets/images/avatars/anime/avatar8.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar9',
-    source: require('@/assets/images/avatars/anime/avatar9.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar10',
-    source: require('@/assets/images/avatars/anime/avatar10.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar11',
-    source: require('@/assets/images/avatars/anime/avatar11.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar12',
-    source: require('@/assets/images/avatars/anime/avatar12.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar13',
-    source: require('@/assets/images/avatars/anime/avatar13.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar14',
-    source: require('@/assets/images/avatars/anime/avatar14.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar15',
-    source: require('@/assets/images/avatars/anime/avatar15.webp'),
-    name: '',
-    category: 'Anime'
-  },
-  {
-    id: 'avatar16',
-    source: require('@/assets/images/avatars/anime/avatar16.webp'),
-    name: '',
-    category: 'Anime'
-  },
+  
   // Cartoons
   {
     id: 'avatar17',
@@ -986,6 +891,104 @@ export const defaultAvatars: DefaultAvatar[] = [
     source: require('@/assets/images/avatars/cartoon/avatar161.webp'),
     name: '',
     category: 'Cartoon'
+  },
+
+  // Anime
+  {
+    id: 'avatar1',
+    source: require('@/assets/images/avatars/anime/avatar1.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar2',
+    source: require('@/assets/images/avatars/anime/avatar2.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar3',
+    source: require('@/assets/images/avatars/anime/avatar3.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar4',
+    source: require('@/assets/images/avatars/anime/avatar4.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar5',
+    source: require('@/assets/images/avatars/anime/avatar5.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar6',
+    source: require('@/assets/images/avatars/anime/avatar6.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar7',
+    source: require('@/assets/images/avatars/anime/avatar7.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar8',
+    source: require('@/assets/images/avatars/anime/avatar8.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar9',
+    source: require('@/assets/images/avatars/anime/avatar9.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar10',
+    source: require('@/assets/images/avatars/anime/avatar10.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar11',
+    source: require('@/assets/images/avatars/anime/avatar11.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar12',
+    source: require('@/assets/images/avatars/anime/avatar12.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar13',
+    source: require('@/assets/images/avatars/anime/avatar13.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar14',
+    source: require('@/assets/images/avatars/anime/avatar14.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar15',
+    source: require('@/assets/images/avatars/anime/avatar15.webp'),
+    name: '',
+    category: 'Anime'
+  },
+  {
+    id: 'avatar16',
+    source: require('@/assets/images/avatars/anime/avatar16.webp'),
+    name: '',
+    category: 'Anime'
   },
   
 ];

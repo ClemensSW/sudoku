@@ -56,7 +56,7 @@ const AvatarOption: React.FC<AvatarOptionProps> = ({
         ]}
         numberOfLines={1}
       >
-        {avatar.name}
+        {avatar.name || ' '}
       </Text>
     </View>
   );

@@ -1,17 +1,38 @@
 // components/AvatarPicker/AvatarPicker.tsx
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, Pressable, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
-import { saveAvatar, deleteAvatar, getAvatarUri } from '@/utils/avatarStorage';
-import { useTheme } from '@/utils/theme/ThemeProvider';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import { isDefaultAvatarPath, getAvatarIdFromPath, getAvatarById, getAvatarSourceFromUri, DEFAULT_AVATAR } from '@/utils/defaultAvatars';
-import DefaultAvatars from './DefaultAvatars';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring } from 'react-native-reanimated';
-import styles from './styles';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  Pressable,
+  Image,
+  Alert,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
+import { saveAvatar, deleteAvatar, getAvatarUri } from "@/utils/avatarStorage";
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
+import {
+  isDefaultAvatarPath,
+  getAvatarIdFromPath,
+  getAvatarById,
+  getAvatarSourceFromUri,
+  DEFAULT_AVATAR,
+} from "@/utils/defaultAvatars";
+import DefaultAvatars from "./DefaultAvatars";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+} from "react-native-reanimated";
+import styles from "./styles";
 
 interface AvatarPickerProps {
   visible: boolean;
@@ -20,28 +41,30 @@ interface AvatarPickerProps {
   currentAvatarUri: string | null;
 }
 
-type TabType = 'default' | 'gallery' | 'camera';
+type TabType = "default" | "gallery" | "camera";
 
 const AvatarPicker: React.FC<AvatarPickerProps> = ({
   visible,
   onClose,
   onImageSelected,
-  currentAvatarUri
+  currentAvatarUri,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('default');
-  
+  const [activeTab, setActiveTab] = useState<TabType>("default");
+
   // Tab measurements
-  const tabMeasurements = useRef<{[key in TabType]?: { x: number, width: number }}>({});
+  const tabMeasurements = useRef<{
+    [key in TabType]?: { x: number; width: number };
+  }>({});
   const tabIndicatorWidth = useSharedValue(0);
   const tabIndicatorPosition = useSharedValue(0);
-  
+
   // Current avatar preview adjustment for default avatars
   const [previewUri, setPreviewUri] = useState<any>(null);
-  
+
   useEffect(() => {
     if (currentAvatarUri) {
       // Die neue Hilfsfunktion verwenden
@@ -50,22 +73,26 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
       setPreviewUri(null);
     }
   }, [currentAvatarUri]);
-  
+
   // Update indicator when active tab changes
   useEffect(() => {
     const currentTabMeasurements = tabMeasurements.current[activeTab];
-    
+
     if (currentTabMeasurements) {
-      tabIndicatorPosition.value = withTiming(currentTabMeasurements.x, { duration: 300 });
-      tabIndicatorWidth.value = withTiming(currentTabMeasurements.width, { duration: 300 });
+      tabIndicatorPosition.value = withTiming(currentTabMeasurements.x, {
+        duration: 300,
+      });
+      tabIndicatorWidth.value = withTiming(currentTabMeasurements.width, {
+        duration: 300,
+      });
     }
   }, [activeTab]);
-  
+
   // Measure tab layout
   const measureTab = (tab: TabType, event: any) => {
     const { x, width } = event.nativeEvent.layout;
     tabMeasurements.current[tab] = { x, width };
-    
+
     // If this is the active tab and it's being measured for the first time,
     // update the indicator position and width immediately
     if (tab === activeTab && tabIndicatorWidth.value === 0) {
@@ -73,7 +100,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
       tabIndicatorWidth.value = width;
     }
   };
-  
+
   // Animation style for tab indicator
   const tabIndicatorStyle = useAnimatedStyle(() => {
     return {
@@ -81,38 +108,42 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
       width: tabIndicatorWidth.value,
     };
   });
-  
+
   // Fotogalerie-Zugriff anfordern und ein Bild auswählen
   const pickImage = async () => {
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (status !== 'granted') {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
         Alert.alert(
-          'Zugriff benötigt',
-          'Um ein Profilbild auszuwählen, benötigt die App Zugriff auf deine Fotobibliothek.',
-          [{ text: 'OK' }]
+          "Zugriff benötigt",
+          "Um ein Profilbild auszuwählen, benötigt die App Zugriff auf deine Fotobibliothek.",
+          [{ text: "OK" }]
         );
         return;
       }
-      
+
       setIsLoading(true);
-      
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
       });
-      
+
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const processedUri = await processImage(result.assets[0].uri);
         onImageSelected(processedUri);
         onClose();
       }
     } catch (error) {
-      console.error('Fehler beim Auswählen des Bildes:', error);
-      Alert.alert('Fehler', 'Das Bild konnte nicht ausgewählt werden. Bitte versuche es erneut.');
+      console.error("Fehler beim Auswählen des Bildes:", error);
+      Alert.alert(
+        "Fehler",
+        "Das Bild konnte nicht ausgewählt werden. Bitte versuche es erneut."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -122,32 +153,35 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const takePhoto = async () => {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      
-      if (status !== 'granted') {
+
+      if (status !== "granted") {
         Alert.alert(
-          'Zugriff benötigt',
-          'Um ein Foto aufzunehmen, benötigt die App Zugriff auf deine Kamera.',
-          [{ text: 'OK' }]
+          "Zugriff benötigt",
+          "Um ein Foto aufzunehmen, benötigt die App Zugriff auf deine Kamera.",
+          [{ text: "OK" }]
         );
         return;
       }
-      
+
       setIsLoading(true);
-      
+
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
       });
-      
+
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const processedUri = await processImage(result.assets[0].uri);
         onImageSelected(processedUri);
         onClose();
       }
     } catch (error) {
-      console.error('Fehler beim Aufnehmen des Fotos:', error);
-      Alert.alert('Fehler', 'Das Foto konnte nicht aufgenommen werden. Bitte versuche es erneut.');
+      console.error("Fehler beim Aufnehmen des Fotos:", error);
+      Alert.alert(
+        "Fehler",
+        "Das Foto konnte nicht aufgenommen werden. Bitte versuche es erneut."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -162,12 +196,12 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         [{ resize: { width: 500, height: 500 } }],
         { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
       );
-      
+
       // Bild im App-Verzeichnis speichern
       const savedUri = await saveAvatar(manipulatedImage.uri);
       return savedUri;
     } catch (error) {
-      console.error('Fehler bei der Bildverarbeitung:', error);
+      console.error("Fehler bei der Bildverarbeitung:", error);
       throw error;
     }
   };
@@ -176,24 +210,27 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const removeCurrentAvatar = async () => {
     try {
       setIsLoading(true);
-      
+
       // Bestätigungsdialog anzeigen
       Alert.alert(
-        'Profilbild entfernen',
-        'Möchtest du dein aktuelles Profilbild wirklich entfernen?',
+        "Profilbild entfernen",
+        "Möchtest du dein aktuelles Profilbild wirklich entfernen?",
         [
-          { text: 'Abbrechen', style: 'cancel' },
+          { text: "Abbrechen", style: "cancel" },
           {
-            text: 'Entfernen',
-            style: 'destructive',
+            text: "Entfernen",
+            style: "destructive",
             onPress: async () => {
               try {
                 await deleteAvatar();
                 onImageSelected(null);
                 onClose();
               } catch (error) {
-                console.error('Fehler beim Entfernen des Avatars:', error);
-                Alert.alert('Fehler', 'Das Profilbild konnte nicht entfernt werden.');
+                console.error("Fehler beim Entfernen des Avatars:", error);
+                Alert.alert(
+                  "Fehler",
+                  "Das Profilbild konnte nicht entfernt werden."
+                );
               } finally {
                 setIsLoading(false);
               }
@@ -202,43 +239,53 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         ]
       );
     } catch (error) {
-      console.error('Fehler beim Entfernen des Avatars:', error);
+      console.error("Fehler beim Entfernen des Avatars:", error);
       setIsLoading(false);
     }
   };
-  
+
   // Render the tab content based on active tab
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'default':
+      case "default":
         return (
           <DefaultAvatars
             currentAvatarUri={currentAvatarUri}
             onImageSelected={onImageSelected}
             onLoading={setIsLoading}
-            onClose={onClose} // Neue Prop übergeben
+            onClose={onClose}
           />
         );
-        
-      case 'gallery':
+
+      case "gallery":
         return (
           <View style={styles.optionsContainer}>
             <Pressable
               style={({ pressed }) => [
                 styles.option,
                 {
-                  backgroundColor: pressed 
-                    ? theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
-                    : theme.isDark ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)'
-                }
+                  backgroundColor: pressed
+                    ? theme.isDark
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(0,0,0,0.05)"
+                    : theme.isDark
+                    ? "rgba(255,255,255,0.01)"
+                    : "rgba(0,0,0,0.01)",
+                },
               ]}
               onPress={pickImage}
               disabled={isLoading}
             >
-              <View style={[
-                styles.iconContainer,
-                { backgroundColor: theme.isDark ? 'rgba(66, 133, 244, 0.2)' : 'rgba(66, 133, 244, 0.1)' }
-              ]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  {
+                    backgroundColor: theme.isDark
+                      ? "rgba(66, 133, 244, 0.2)"
+                      : "rgba(66, 133, 244, 0.1)",
+                  },
+                ]}
+              >
                 <Feather name="image" size={24} color={colors.primary} />
               </View>
               <Text style={[styles.optionText, { color: colors.textPrimary }]}>
@@ -247,26 +294,36 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             </Pressable>
           </View>
         );
-        
-      case 'camera':
+
+      case "camera":
         return (
           <View style={styles.optionsContainer}>
             <Pressable
               style={({ pressed }) => [
                 styles.option,
                 {
-                  backgroundColor: pressed 
-                    ? theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
-                    : theme.isDark ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)'
-                }
+                  backgroundColor: pressed
+                    ? theme.isDark
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(0,0,0,0.05)"
+                    : theme.isDark
+                    ? "rgba(255,255,255,0.01)"
+                    : "rgba(0,0,0,0.01)",
+                },
               ]}
               onPress={takePhoto}
               disabled={isLoading}
             >
-              <View style={[
-                styles.iconContainer,
-                { backgroundColor: theme.isDark ? 'rgba(66, 133, 244, 0.2)' : 'rgba(66, 133, 244, 0.1)' }
-              ]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  {
+                    backgroundColor: theme.isDark
+                      ? "rgba(66, 133, 244, 0.2)"
+                      : "rgba(66, 133, 244, 0.1)",
+                  },
+                ]}
+              >
                 <Feather name="camera" size={24} color={colors.primary} />
               </View>
               <Text style={[styles.optionText, { color: colors.textPrimary }]}>
@@ -275,7 +332,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             </Pressable>
           </View>
         );
-        
+
       default:
         return null;
     }
@@ -290,32 +347,33 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={[
-          styles.modalBackdrop,
-          {backgroundColor: 'rgba(0,0,0,0.65)'}
-        ]}>
-        <BlurView 
-          intensity={25} 
-          tint={theme.isDark ? 'dark' : 'light'} 
+      <View
+        style={[styles.modalBackdrop, { backgroundColor: "rgba(0,0,0,0.65)" }]}
+      >
+        <BlurView
+          intensity={25}
+          tint={theme.isDark ? "dark" : "light"}
           style={styles.modalOverlay}
         >
-          <View style={[
-            styles.modalContainer,
-            {
-              backgroundColor: theme.isDark ? colors.card : colors.background,
-              paddingBottom: insets.bottom + 16
-            }
-          ]}>
+          <View
+            style={[
+              styles.modalContainer,
+              {
+                backgroundColor: theme.isDark ? colors.card : colors.background,
+                paddingBottom: insets.bottom + 16,
+              },
+            ]}
+          >
             {/* Header */}
             <View style={styles.header}>
               <Text style={[styles.title, { color: colors.textPrimary }]}>
                 Profilbild ändern
               </Text>
-              <Pressable 
+              <Pressable
                 onPress={onClose}
                 style={({ pressed }) => [
                   styles.closeButton,
-                  { opacity: pressed ? 0.7 : 1 }
+                  { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
                 <Feather name="x" size={24} color={colors.textSecondary} />
@@ -325,29 +383,33 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             {/* Current Avatar Preview */}
             {previewUri && (
               <View style={styles.previewContainer}>
-                <Image 
-                  source={previewUri} 
-                  style={styles.previewImage} 
-                />
-                
+                <Image source={previewUri} style={styles.previewImage} />
+
                 {/* Remove button */}
                 <Pressable
                   style={({ pressed }) => [
                     {
                       opacity: pressed ? 0.8 : 1,
-                      backgroundColor: theme.isDark ? 'rgba(244, 67, 54, 0.2)' : 'rgba(244, 67, 54, 0.1)',
+                      backgroundColor: theme.isDark
+                        ? "rgba(244, 67, 54, 0.2)"
+                        : "rgba(244, 67, 54, 0.1)",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       borderRadius: 18,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }
+                      flexDirection: "row",
+                      alignItems: "center",
+                    },
                   ]}
                   onPress={removeCurrentAvatar}
                   disabled={isLoading}
                 >
-                  <Feather name="trash-2" size={16} color="#F44336" style={{ marginRight: 6 }} />
-                  <Text style={{ color: '#F44336', fontWeight: '600' }}>
+                  <Feather
+                    name="trash-2"
+                    size={16}
+                    color="#F44336"
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={{ color: "#F44336", fontWeight: "600" }}>
                     Entfernen
                   </Text>
                 </Pressable>
@@ -355,88 +417,127 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             )}
 
             {/* Tab Navigation */}
-            <View style={[
-              styles.tabContainer,
-              { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }
-            ]}>
+            <View
+              style={[
+                styles.tabContainer,
+                {
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.03)"
+                    : "rgba(0,0,0,0.03)",
+                },
+              ]}
+            >
               {/* Default Avatars Tab */}
-              <Pressable 
+              <Pressable
                 style={[
                   styles.tabButton,
-                  activeTab === 'default' && { 
-                    backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' 
-                  }
+                  activeTab === "default" && {
+                    backgroundColor: theme.isDark
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(0,0,0,0.05)",
+                  },
                 ]}
-                onPress={() => setActiveTab('default')}
-                onLayout={(event) => measureTab('default', event)}
+                onPress={() => setActiveTab("default")}
+                onLayout={(event) => measureTab("default", event)}
               >
-                <Feather 
-                  name="grid" 
-                  size={18} 
-                  color={activeTab === 'default' ? colors.primary : colors.textSecondary} 
-                />
-                <Text style={[
-                  styles.tabButtonText,
-                  { 
-                    color: activeTab === 'default' ? colors.primary : colors.textSecondary 
+                <Feather
+                  name="grid"
+                  size={18}
+                  color={
+                    activeTab === "default"
+                      ? colors.primary
+                      : colors.textSecondary
                   }
-                ]}>
+                />
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    {
+                      color:
+                        activeTab === "default"
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
+                  ]}
+                >
                   Avatare
                 </Text>
               </Pressable>
-              
+
               {/* Gallery Tab */}
-              <Pressable 
+              <Pressable
                 style={[
                   styles.tabButton,
-                  activeTab === 'gallery' && { 
-                    backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' 
-                  }
+                  activeTab === "gallery" && {
+                    backgroundColor: theme.isDark
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(0,0,0,0.05)",
+                  },
                 ]}
-                onPress={() => setActiveTab('gallery')}
-                onLayout={(event) => measureTab('gallery', event)}
+                onPress={() => setActiveTab("gallery")}
+                onLayout={(event) => measureTab("gallery", event)}
               >
-                <Feather 
-                  name="image" 
-                  size={18} 
-                  color={activeTab === 'gallery' ? colors.primary : colors.textSecondary} 
-                />
-                <Text style={[
-                  styles.tabButtonText,
-                  { 
-                    color: activeTab === 'gallery' ? colors.primary : colors.textSecondary 
+                <Feather
+                  name="image"
+                  size={18}
+                  color={
+                    activeTab === "gallery"
+                      ? colors.primary
+                      : colors.textSecondary
                   }
-                ]}>
+                />
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    {
+                      color:
+                        activeTab === "gallery"
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
+                  ]}
+                >
                   Galerie
                 </Text>
               </Pressable>
-              
+
               {/* Camera Tab */}
-              <Pressable 
+              <Pressable
                 style={[
                   styles.tabButton,
-                  activeTab === 'camera' && { 
-                    backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' 
-                  }
+                  activeTab === "camera" && {
+                    backgroundColor: theme.isDark
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(0,0,0,0.05)",
+                  },
                 ]}
-                onPress={() => setActiveTab('camera')}
-                onLayout={(event) => measureTab('camera', event)}
+                onPress={() => setActiveTab("camera")}
+                onLayout={(event) => measureTab("camera", event)}
               >
-                <Feather 
-                  name="camera" 
-                  size={18} 
-                  color={activeTab === 'camera' ? colors.primary : colors.textSecondary} 
-                />
-                <Text style={[
-                  styles.tabButtonText,
-                  { 
-                    color: activeTab === 'camera' ? colors.primary : colors.textSecondary 
+                <Feather
+                  name="camera"
+                  size={18}
+                  color={
+                    activeTab === "camera"
+                      ? colors.primary
+                      : colors.textSecondary
                   }
-                ]}>
+                />
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    {
+                      color:
+                        activeTab === "camera"
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
+                  ]}
+                >
                   Kamera
                 </Text>
               </Pressable>
-              
+
               {/* Active Tab Indicator */}
               <Animated.View
                 style={[

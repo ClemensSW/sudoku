@@ -1,6 +1,6 @@
 // components/AvatarPicker/DefaultAvatars.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ScrollView } from 'react-native';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import AvatarOption from './AvatarOption';
 import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath } from '@/utils/defaultAvatars';
@@ -11,7 +11,7 @@ interface DefaultAvatarsProps {
   currentAvatarUri: string | null;
   onImageSelected: (uri: string) => void;
   onLoading: (isLoading: boolean) => void;
-  onClose: () => void; // Neue Prop hinzugefügt
+  onClose: () => void;
 }
 
 const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
@@ -24,7 +24,7 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
   const colors = theme.colors;
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const categorizedAvatars = getAvatarsByCategory();
+  const avatarsByCategory = getAvatarsByCategory();
   
   // Set initial selected avatar if it matches a default avatar
   useEffect(() => {
@@ -47,9 +47,8 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
       // Notify parent component
       onImageSelected(avatarPath);
       
-      // Kurze Verzögerung, damit der Nutzer die Auswahl sieht
+      // Short delay to let the user see the selection
       setTimeout(() => {
-        // Diese Zeile fehlte - wir müssen das onClose vom übergeordneten AvatarPicker aufrufen
         onClose();
       }, 300);
     } catch (error) {
@@ -59,32 +58,46 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
       onLoading(false);
     }
   };
+
+  // Check if we have any avatars
+  const hasAvatars = Object.values(avatarsByCategory).some(category => category.length > 0);
   
+  if (!hasAvatars) {
+    return (
+      <View style={styles.emptyState}>
+        <Text style={{ color: colors.textSecondary }}>
+          Keine Avatare verfügbar
+        </Text>
+      </View>
+    );
+  }
+
+  // Directly using ScrollView with windowing optimization to maintain original layout
   return (
-    <ScrollView
+    <ScrollView 
       style={{ maxHeight: 400 }}
       showsVerticalScrollIndicator={true}
+      contentContainerStyle={styles.gridContainer}
+      removeClippedSubviews={true} // Optimization
     >
-      <View style={styles.gridContainer}>
-        {Object.entries(categorizedAvatars).map(([category, avatars]) => (
-          <View key={category}>
-            <Text style={[styles.categoryTitle, { color: colors.textPrimary }]}>
-              {category}
-            </Text>
-            <View style={styles.gridRow}>
-              {avatars.map((avatar) => (
-                <AvatarOption
-                  key={avatar.id}
-                  avatar={avatar}
-                  isSelected={selectedAvatar === avatar.id}
-                  onSelect={handleSelectAvatar}
-                  isNew={avatar.id === 'avatar8'} // Als Beispiel, kann auf Basis realer Daten angepasst werden
-                />
-              ))}
-            </View>
+      {Object.entries(avatarsByCategory).map(([category, avatars]) => (
+        <View key={category}>
+          <Text style={[styles.categoryTitle, { color: colors.textPrimary }]}>
+            {category}
+          </Text>
+          <View style={styles.gridRow}>
+            {avatars.map((avatar) => (
+              <AvatarOption
+                key={avatar.id}
+                avatar={avatar}
+                isSelected={selectedAvatar === avatar.id}
+                onSelect={handleSelectAvatar}
+                isNew={avatar.id === 'avatar8'} // Example
+              />
+            ))}
           </View>
-        ))}
-      </View>
+        </View>
+      ))}
     </ScrollView>
   );
 };

@@ -6,8 +6,7 @@ export default StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     borderWidth: 1,
-    overflow: 'hidden',
-    elevation: 2, // Leichter Schatten für Android
+    overflow: "hidden",
     shadowColor: "#000", // Schatten für iOS
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -17,15 +16,15 @@ export default StyleSheet.create({
     padding: 16,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -41,7 +40,7 @@ export default StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 4, // Etwas mehr Abstand
   },
   description: {
@@ -52,36 +51,36 @@ export default StyleSheet.create({
   priceBar: {
     marginTop: 16, // Mehr Abstand zum Content
     padding: 12, // Mehr Padding für bessere Lesbarkeit
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   price: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   savings: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     paddingHorizontal: 10,
     paddingVertical: 4, // Mehr Platz für den Text
     borderRadius: 16,
   },
   subscribeButton: {
-    paddingHorizontal: 14, 
+    paddingHorizontal: 14,
     paddingVertical: 8, // Höhere Schaltfläche für bessere Bedienung
     borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   subscribeText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     marginRight: 6, // Mehr Abstand zum Icon
-    color: 'white',
+    color: "white",
   },
   bestValueBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 12,
     right: 12,
     paddingHorizontal: 12,
@@ -92,17 +91,19 @@ export default StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     zIndex: 10,
+    transform: [{ rotate: "6deg" }],
   },
   bestValueText: {
     fontSize: 12,
-    fontWeight: '700',
-    color: 'white',
+    fontWeight: "700",
+    color: "white",
   },
   shine: {
-    position: 'absolute',
-    width: 60,
-    height: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    transform: [{ rotate: '25deg' }, { translateX: -100 }],
+    position: "absolute",
+    width: 80,
+    height: 800, // Deutlich erhöht für vollständige Abdeckung
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    transform: [{ rotate: "25deg" }, { translateX: -150 }],
+    top: -300, // Positionierung angepasst
   },
 });

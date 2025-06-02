@@ -84,8 +84,10 @@ export default StyleSheet.create({
   },
   shine: {
     position: "absolute",
-    width: 60,
-    height: 200,
+    width: 80,
+    height: 600, // Deutlich erhöht für vollständige Abdeckung
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     transform: [{ rotate: "25deg" }, { translateX: -100 }],
+    top: -200, // Positionierung angepasst
   },
 });

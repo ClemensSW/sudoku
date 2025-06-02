@@ -35,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
-  const shinePosition = useSharedValue(-100);
+  const shinePosition = useSharedValue(-150);
 
   // Use random description if available
   const description =
@@ -47,10 +47,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (isPopular) {
       // Periodic shine animation
       const animateShine = () => {
-        shinePosition.value = -100;
+        shinePosition.value = -150;
         shinePosition.value = withDelay(
           2000 + Math.random() * 4000, // Random delay between animations
-          withTiming(400, {
+          withTiming(500, {
             duration: 1000,
             easing: Easing.out(Easing.ease),
           })
@@ -101,6 +101,49 @@ const ProductCard: React.FC<ProductCardProps> = ({
     };
   });
 
+  // Professionelle Farben für Light Mode
+  const getPriceContainerStyle = () => {
+    if (theme.isDark) {
+      return {
+        backgroundColor: "rgba(255,255,255,0.15)",
+      };
+    } else {
+      // Light Mode: Dezente, professionelle Farben
+      switch (product.productId) {
+        case 'sudoku_coffee':
+          return { backgroundColor: "#FFF4E6" }; // Sehr helles Orange/Braun
+        case 'sudoku_breakfast':
+          return { backgroundColor: "#FFE8E8" }; // Sehr helles Rosa
+        case 'sudoku_lunch':
+          return { backgroundColor: "#E8F7F7" }; // Sehr helles Türkis
+        case 'sudoku_feast':
+          return { backgroundColor: "#F3E8FF" }; // Sehr helles Lila
+        default:
+          return { backgroundColor: "#F5F5F7" }; // Fallback: Apple-Style Grau
+      }
+    }
+  };
+
+  const getPriceTextColor = () => {
+    if (theme.isDark) {
+      return "white";
+    } else {
+      // Light Mode: Dunklere, lesbare Versionen der Produktfarben
+      switch (product.productId) {
+        case 'sudoku_coffee':
+          return "#5D4037"; // Dunkles Braun
+        case 'sudoku_breakfast':
+          return "#C41E3A"; // Dunkles Rot
+        case 'sudoku_lunch':
+          return "#00695C"; // Dunkles Türkis
+        case 'sudoku_feast':
+          return "#5E35B1"; // Dunkles Lila
+        default:
+          return colors.textPrimary;
+      }
+    }
+  };
+
   return (
     <Animated.View
       entering={FadeInRight.delay(200 + index * 100).duration(500)}
@@ -117,7 +160,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {
             borderColor: theme.isDark
               ? "rgba(255,255,255,0.15)"
-              : product.color + "30",
+              : "#E8EAED", // Professionelle graue Border im Light Mode
             backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
           },
         ]}
@@ -127,12 +170,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Animated.View
             style={[
               styles.shine,
-              shineAnimatedStyle,
-              {
-                backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(255,255,255,0.3)",
-              },
+              shineAnimatedStyle
             ]}
           />
         )}
@@ -142,7 +180,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: product.color + (theme.isDark ? "30" : "15") },
+              { 
+                backgroundColor: theme.isDark 
+                  ? product.color + "30" 
+                  : getPriceContainerStyle().backgroundColor // Gleiche dezente Farbe wie Preisschild
+              },
             ]}
           >
             <Text style={styles.icon}>{product.icon}</Text>
@@ -172,18 +214,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <View
             style={[
               styles.priceContainer,
-              {
-                backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.15)"
-                  : product.color + "20",
-              },
+              getPriceContainerStyle(),
             ]}
           >
             <Text
               style={[
                 styles.price,
                 {
-                  color: theme.isDark ? "white" : product.color,
+                  color: getPriceTextColor(),
                 },
               ]}
             >
@@ -194,7 +232,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Popular badge */}
         {isPopular && (
-          <View style={styles.popularBadge}>
+          <View style={[
+            styles.popularBadge,
+            {
+              backgroundColor: theme.isDark ? "#FF6B6B" : "#EA4335", // Professionelleres Rot im Light Mode
+            }
+          ]}>
             <Text style={styles.popularText}>Beliebt</Text>
           </View>
         )}

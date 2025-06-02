@@ -25,24 +25,24 @@ export const bannerMessages = [
   // Humorvolle Beschreibungen für Produkte
   export const productDescriptions = {
     sudoku_coffee: [
-      "Für einen Kaffee, der mich wach hält, während ich neue Rätsel erstelle",
-      "Ein Espresso für mehr kreative Energie bei der Entwicklung",
-      "Damit ich beim Programmieren nicht einschlafe"
+      "Ein Kaffee für neue Rätsel-Ideen",
+      "Espresso gleich mehr kreative Energie",
+      "Koffein für besseren Code"
     ],
     sudoku_breakfast: [
-      "Ein leckeres Frühstück für Gehirnnahrung bei der App-Entwicklung",
-      "Damit ich nicht mit leerem Magen Bugs jagen muss",
-      "Wer gut frühstückt, programmiert besser!"
+      "Gehirnnahrung für neue Features",
+      "Kein Hunger gleich weniger Bugs",
+      "Gutes Frühstück, guter Code!"
     ],
     sudoku_lunch: [
-      "Für ein Mittagessen, das meine grauen Zellen versorgt",
-      "Hungrige Entwickler machen mehr Fehler - danke für das Mittagessen!",
-      "Eine vollwertige Mahlzeit für vollwertige Features"
+      "Power für die grauen Zellen",
+      "Mittagspause gleich neue Ideen",
+      "Eine Mahlzeit für neue Features"
     ],
     sudoku_feast: [
-      "Ein Festmahl für den Entwickler und seine Familie",
-      "So viel Großzügigkeit verdient ein königliches Mahl und viele neue Features",
-      "Wow! Dafür gibt's nicht nur Essen, sondern gleich Updates für Wochen"
+      "Ein Fest für die ganze Familie",
+      "Großzügigkeit gleich viele Updates",
+      "Königliche Unterstützung!"
     ]
   };
   

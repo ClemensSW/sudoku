@@ -82,19 +82,16 @@ export default StyleSheet.create({
   },
   bestValueBadge: {
     position: 'absolute',
-    top: -10,
-    right: 20,
+    top: 12,
+    right: 12,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: 'white',
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2, // Stärkerer Schatten
+    shadowOpacity: 0.2,
     shadowRadius: 3,
     zIndex: 10,
-    elevation: 3, // Für Android
   },
   bestValueText: {
     fontSize: 12,

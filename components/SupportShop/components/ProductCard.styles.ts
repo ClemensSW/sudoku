@@ -22,7 +22,6 @@ export default StyleSheet.create({
   innerContainer: {
     alignItems: "center",
     justifyContent: "space-between",
-    minHeight: 220, // Etwas mehr Höhe für den Inhalt
   },
   iconContainer: {
     width: 56,
@@ -49,8 +48,8 @@ export default StyleSheet.create({
     fontSize: 14, // Größer für bessere Lesbarkeit
     lineHeight: 18,
     textAlign: "center",
-    marginBottom: 16,
-    minHeight: 54, // Mehr Platz für Text
+    marginBottom: 8,
+    minHeight: 0, // Mehr Platz für Text
     flexShrink: 1,
   },
   priceContainer: {

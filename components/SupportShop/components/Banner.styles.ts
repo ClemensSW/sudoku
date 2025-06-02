@@ -9,7 +9,6 @@ export default StyleSheet.create({
     marginBottom: 24, // Abstand zum nächsten Abschnitt
     overflow: "hidden",
     position: "relative",
-    elevation: 3, // Stärker sichtbarer Schatten für Android
     shadowColor: "#000", // Schatten für iOS
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,

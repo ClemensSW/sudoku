@@ -257,12 +257,7 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
             Einmalige Unterstützung
           </Text>
 
-          <Text
-            style={[styles.sectionDescription, { color: colors.textSecondary }]}
-          >
-            Mit einer einmaligen Unterstützung hilfst du mir, diese App
-            werbefrei zu halten und weiterzuentwickeln.
-          </Text>
+          
 
           <View style={styles.productsGrid}>
             {products.map((product, index) => (
@@ -287,12 +282,7 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
             Regelmäßige Unterstützung
           </Text>
 
-          <Text
-            style={[styles.sectionDescription, { color: colors.textSecondary }]}
-          >
-            Mit einer regelmäßigen Unterstützung sorgst du für kontinuierliche
-            Updates und neue Features.
-          </Text>
+          
 
           {subscriptions.map((subscription, index) => (
             <SubscriptionCard

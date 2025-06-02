@@ -14,7 +14,6 @@ export default StyleSheet.create({
     borderWidth: 1,
     overflow: "hidden",
     position: "relative",
-    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -36,7 +35,6 @@ export default StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 2,
   },
   icon: {
     fontSize: 28,

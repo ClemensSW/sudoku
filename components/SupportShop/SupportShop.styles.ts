@@ -50,12 +50,6 @@ export default StyleSheet.create({
     marginTop: 24,
     marginBottom: 12,
   },
-  sectionDescription: {
-    fontSize: 15,
-    opacity: 0.7,
-    marginBottom: 20,
-    lineHeight: 22,
-  },
   productsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",

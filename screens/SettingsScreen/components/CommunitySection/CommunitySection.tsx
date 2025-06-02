@@ -81,15 +81,53 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   };
 
   return (
+    
     <View
       style={[
         customStyles.settingsGroup,
         { backgroundColor: colors.surface, borderColor: colors.border },
       ]}
     >
-      {/* Feedback Button - vorher "Fehler gefunden?" */}
+      {/* Support Button */}
       <TouchableOpacity
         style={customStyles.actionButton}
+        onPress={onSupportPress}
+      >
+        <View
+          style={[
+            customStyles.actionIconContainer,
+            { backgroundColor: "#FFDD00" },
+          ]}
+        >
+          <Text style={{ fontSize: 20 }}>☕</Text>
+        </View>
+        <View style={customStyles.actionTextContainer}>
+          <Text
+            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+          >
+            Kostenlos spielen
+          </Text>
+          <Text
+            style={[
+              customStyles.actionDescription,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Entwicklung freiwillig unterstützen
+          </Text>
+        </View>
+        <Feather
+          name="chevron-right"
+          size={20}
+          color={colors.textSecondary}
+        />
+      </TouchableOpacity>
+      {/* Feedback Button - vorher "Fehler gefunden?" */}
+      <TouchableOpacity
+        style={[
+          customStyles.actionButton,
+          { borderTopWidth: 1, borderTopColor: colors.border }
+        ]}
         onPress={handleFeedbackPress}
       >
         <View
@@ -121,7 +159,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           color={colors.textSecondary}
         />
       </TouchableOpacity>
-
+            
       {/* Share button */}
       <TouchableOpacity
         style={[

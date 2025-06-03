@@ -47,7 +47,7 @@ class BillingManager {
       },
       {
         productId: 'sudoku_breakfast',
-        title: 'Frühstückspause',
+        title: 'Frühstück',
         description: 'Ein leckeres Frühstück',
         price: '€4,99',
         color: '#FF6B6B',
@@ -55,7 +55,7 @@ class BillingManager {
       },
       {
         productId: 'sudoku_lunch',
-        title: 'Mittagspause',
+        title: 'Mittagsessen',
         description: 'Ein nahrhaftes Mittagessen',
         price: '€9,99',
         color: '#4ECDC4',

@@ -4,7 +4,7 @@
 export const BILLING_CONFIG = {
   // RevenueCat API Keys
   // Diese findest du in deinem RevenueCat Dashboard unter Project Settings > API Keys
-  REVENUECAT_API_KEY_ANDROID: 'YOUR_ANDROID_API_KEY_HERE', // TODO: Ersetze mit deinem echten Key
+  REVENUECAT_API_KEY_ANDROID: 'goog_qNBqCJdmLfwCXpjoccatTQOJZSd', // TODO: Ersetze mit deinem echten Key
   REVENUECAT_API_KEY_IOS: 'YOUR_IOS_API_KEY_HERE', // TODO: Ersetze mit deinem echten Key
   
   // Google Play Product IDs

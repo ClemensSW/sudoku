@@ -25,7 +25,7 @@
       "supportsTablet": true,
       "statusBarHidden": true,
       "bundleIdentifier": "com.yourdomain.sudoku",
-      "jsEngine": "jsc"
+      "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {

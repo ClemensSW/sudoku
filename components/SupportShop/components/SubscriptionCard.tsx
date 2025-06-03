@@ -148,7 +148,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               { backgroundColor: subscription.color },
             ]}
           >
-            <Text style={styles.bestValueText}>Beste Wahl</Text>
+            <Text style={styles.bestValueText}>Stärkste Hilfe</Text>
           </View>
         )}
 

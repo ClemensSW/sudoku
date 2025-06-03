@@ -1,4 +1,12 @@
 // utils/billing/BillingManager.ts
+import { Platform } from 'react-native';
+import Purchases, {
+  PurchasesOffering,
+  PurchasesPackage,
+  CustomerInfo,
+  PURCHASES_ERROR_CODE,
+} from 'react-native-purchases';
+import { BILLING_CONFIG } from './config';
 
 // Product interface matching SupportShop expectations
 export interface Product {
@@ -8,23 +16,30 @@ export interface Product {
   price: string;
   color: string;
   icon: string;
+  revenueCatId?: string; // For mapping to RevenueCat products
 }
 
-// Simple event emitter for React Native
-interface EventListeners {
-  [event: string]: Array<(...args: any[]) => void>;
-}
+// Event types
+type EventListeners = {
+  'purchase-completed': Array<(purchase: any) => void>;
+  'purchase-error': Array<(error: any) => void>;
+  'restore-completed': Array<(info: CustomerInfo) => void>;
+};
 
-// Mock implementation of BillingManager for development
 class BillingManager {
   private static instance: BillingManager;
   private products: Product[] = [];
   private subscriptions: Product[] = [];
   private isInitialized: boolean = false;
-  private listeners: EventListeners = {};
+  private listeners: EventListeners = {
+    'purchase-completed': [],
+    'purchase-error': [],
+    'restore-completed': [],
+  };
+  private offerings: PurchasesOffering | null = null;
 
   private constructor() {
-    this.initializeMockProducts();
+    this.initializeProductDefinitions();
   }
 
   public static getInstance(): BillingManager {
@@ -34,16 +49,18 @@ class BillingManager {
     return BillingManager.instance;
   }
 
-  private initializeMockProducts() {
-    // Mock one-time products
+  private initializeProductDefinitions() {
+    // Product definitions with RevenueCat IDs
+    // Diese IDs müssen mit den IDs in Google Play Console übereinstimmen
     this.products = [
       {
         productId: 'sudoku_coffee',
-        title: 'Kaffee-Pause',
+        title: 'Kaffee',
         description: 'Spendiere mir einen Kaffee',
         price: '€1,99',
         color: '#8B4513',
-        icon: '☕'
+        icon: '☕',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.COFFEE
       },
       {
         productId: 'sudoku_breakfast',
@@ -51,15 +68,17 @@ class BillingManager {
         description: 'Ein leckeres Frühstück',
         price: '€4,99',
         color: '#FF6B6B',
-        icon: '🥐'
+        icon: '🥐',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.BREAKFAST
       },
       {
         productId: 'sudoku_lunch',
-        title: 'Mittagsessen',
+        title: 'Mittagessen',
         description: 'Ein nahrhaftes Mittagessen',
         price: '€9,99',
         color: '#4ECDC4',
-        icon: '🍱'
+        icon: '🍱',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.LUNCH
       },
       {
         productId: 'sudoku_feast',
@@ -67,11 +86,11 @@ class BillingManager {
         description: 'Ein königliches Festmahl',
         price: '€19,99',
         color: '#9B59B6',
-        icon: '👑'
+        icon: '👑',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.FEAST
       }
     ];
 
-    // Mock subscriptions
     this.subscriptions = [
       {
         productId: 'monthly_support',
@@ -79,7 +98,8 @@ class BillingManager {
         description: 'Unterstütze die App-Entwicklung jeden Monat',
         price: '€2,99/Monat',
         color: '#3498DB',
-        icon: '📅'
+        icon: '📅',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.MONTHLY_SUB
       },
       {
         productId: 'yearly_support',
@@ -87,16 +107,81 @@ class BillingManager {
         description: 'Spare 17% mit jährlicher Unterstützung',
         price: '€29,99/Jahr',
         color: '#27AE60',
-        icon: '🎯'
+        icon: '🎯',
+        revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.YEARLY_SUB
       }
     ];
   }
 
   public async initialize(): Promise<void> {
-    // Mock initialization
-    console.log('BillingManager: Mock initialization');
-    this.isInitialized = true;
-    return Promise.resolve();
+    if (this.isInitialized) {
+      console.log('BillingManager: Already initialized');
+      return;
+    }
+
+    try {
+      // Configure RevenueCat
+      const apiKey = Platform.OS === 'ios' 
+        ? BILLING_CONFIG.REVENUECAT_API_KEY_IOS 
+        : BILLING_CONFIG.REVENUECAT_API_KEY_ANDROID;
+      
+      if (apiKey === 'YOUR_ANDROID_API_KEY_HERE' || apiKey === 'YOUR_IOS_API_KEY_HERE') {
+        console.warn('BillingManager: Using mock mode - RevenueCat API keys not configured');
+        // Use mock mode if keys are not set
+        this.isInitialized = true;
+        return;
+      }
+
+      Purchases.configure({ apiKey });
+
+      // Enable debug logs in development
+      if (__DEV__) {
+        Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+      }
+
+      // Fetch offerings
+      await this.fetchOfferings();
+
+      // Update product prices from RevenueCat
+      await this.updateProductPrices();
+
+      this.isInitialized = true;
+      console.log('BillingManager: Initialized successfully');
+    } catch (error) {
+      console.error('BillingManager: Failed to initialize', error);
+      throw error;
+    }
+  }
+
+  private async fetchOfferings(): Promise<void> {
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current !== null) {
+        this.offerings = offerings.current;
+        console.log('BillingManager: Fetched offerings', this.offerings);
+      }
+    } catch (error) {
+      console.error('BillingManager: Failed to fetch offerings', error);
+    }
+  }
+
+  private async updateProductPrices(): Promise<void> {
+    if (!this.offerings) return;
+
+    // Update product prices from RevenueCat packages
+    const allProducts = [...this.products, ...this.subscriptions];
+    
+    for (const product of allProducts) {
+      if (product.revenueCatId) {
+        const rcPackage = this.offerings.availablePackages.find(
+          pkg => pkg.product.identifier === product.revenueCatId
+        );
+        
+        if (rcPackage) {
+          product.price = rcPackage.product.priceString;
+        }
+      }
+    }
   }
 
   public getAllProducts(): Product[] {
@@ -108,47 +193,108 @@ class BillingManager {
   }
 
   public async purchaseProduct(productId: string): Promise<void> {
-    // Mock purchase process
-    console.log(`BillingManager: Mock purchase of ${productId}`);
-    
-    // Simulate async purchase
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Simulate success (in production, this would handle real purchases)
-    const product = [...this.products, ...this.subscriptions].find(p => p.productId === productId);
-    if (product) {
-      this.emit('purchase-completed', { productId, product });
-    } else {
-      this.emit('purchase-error', { error: 'Product not found', productId });
-    }
-  }
+    try {
+      const allProducts = [...this.products, ...this.subscriptions];
+      const product = allProducts.find(p => p.productId === productId);
+      
+      if (!product || !product.revenueCatId) {
+        throw new Error('Product not found or invalid configuration');
+      }
 
-  // Simple event emitter implementation
-  public on(event: string, listener: (...args: any[]) => void): void {
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
-    }
-    this.listeners[event].push(listener);
-  }
+      // Check if using mock mode
+      if (!this.offerings) {
+        console.log(`BillingManager: Mock purchase of ${productId}`);
+        // Simulate purchase in mock mode
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        this.emit('purchase-completed', { productId, product });
+        return;
+      }
 
-  public removeAllListeners(event?: string): void {
-    if (event) {
-      delete this.listeners[event];
-    } else {
-      this.listeners = {};
-    }
-  }
+      // Find the package in RevenueCat offerings
+      const rcPackage = this.offerings.availablePackages.find(
+        pkg => pkg.product.identifier === product.revenueCatId
+      );
 
-  private emit(event: string, ...args: any[]): void {
-    if (this.listeners[event]) {
-      this.listeners[event].forEach(listener => {
-        try {
-          listener(...args);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
+      if (!rcPackage) {
+        throw new Error('Product not found in RevenueCat offerings');
+      }
+
+      // Make the purchase
+      const purchaseResult = await Purchases.purchasePackage(rcPackage);
+      
+      console.log('BillingManager: Purchase successful', purchaseResult);
+      this.emit('purchase-completed', {
+        productId,
+        product,
+        customerInfo: purchaseResult.customerInfo,
+      });
+
+    } catch (error) {
+      console.error('BillingManager: Purchase error', error);
+      
+      // Type guard for PurchasesError
+      if (error && typeof error === 'object' && 'code' in error) {
+        const purchasesError = error as { code: string };
+        // Handle specific RevenueCat errors
+        if (purchasesError.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+          // User cancelled - don't emit error
+          return;
         }
+      }
+      
+      this.emit('purchase-error', { error, productId });
+    }
+  }
+
+  public async restorePurchases(): Promise<void> {
+    try {
+      const customerInfo = await Purchases.restorePurchases();
+      console.log('BillingManager: Restore successful', customerInfo);
+      this.emit('restore-completed', customerInfo);
+    } catch (error) {
+      console.error('BillingManager: Restore error', error);
+      throw error;
+    }
+  }
+
+  public async getCustomerInfo(): Promise<CustomerInfo | null> {
+    try {
+      return await Purchases.getCustomerInfo();
+    } catch (error) {
+      console.error('BillingManager: Failed to get customer info', error);
+      return null;
+    }
+  }
+
+  // Event emitter implementation
+  public on<K extends keyof EventListeners>(
+    event: K,
+    listener: EventListeners[K][0]
+  ): void {
+    this.listeners[event].push(listener as any);
+  }
+
+  public removeAllListeners<K extends keyof EventListeners>(event?: K): void {
+    if (event) {
+      this.listeners[event] = [];
+    } else {
+      Object.keys(this.listeners).forEach((key) => {
+        this.listeners[key as K] = [];
       });
     }
+  }
+
+  private emit<K extends keyof EventListeners>(
+    event: K,
+    ...args: Parameters<EventListeners[K][0]>
+  ): void {
+    this.listeners[event].forEach((listener) => {
+      try {
+        (listener as any)(...args);
+      } catch (error) {
+        console.error(`Error in event listener for ${event}:`, error);
+      }
+    });
   }
 }
 

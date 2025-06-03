@@ -40,7 +40,7 @@
       },
       "package": "de.playfusiongate.sudokuduo",
       "versionCode": 1,
-      "permissions": [],
+      "permissions": ["com.android.vending.BILLING"],
       "intentFilters": [
         {
           "action": "MAIN",

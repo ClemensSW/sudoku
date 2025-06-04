@@ -31,7 +31,7 @@ export const tagColors = {
     icon: "#FFFFFF"
   },
   date: {
-    background: "rgba(136, 152, 170, 0.85)",
+    background: "rgba(45, 206, 137, 0.85)",
     text: "#FFFFFF",
     icon: "#FFFFFF"
   },
@@ -69,7 +69,7 @@ export default StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    resizeMode: "cover",
   },
   
   // Header Styles
@@ -167,15 +167,7 @@ export default StyleSheet.create({
   },
   
   // Landscape Info
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: spacing.xs,
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
+  
   
   description: {
     fontSize: 15,
@@ -275,14 +267,6 @@ export default StyleSheet.create({
   progressBar: {
     height: "100%",
     borderRadius: 4,
-  },
-  
-  hintText: {
-    marginTop: spacing.md,
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.7)",
-    textAlign: "center",
-    maxWidth: "80%",
   },
 
   // Neue Styles für den Freischalt-Button

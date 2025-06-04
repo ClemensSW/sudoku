@@ -292,12 +292,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         />
       </View>
 
-      {/* Hint text */}
-      <Text style={styles.hintText}>
-        {isSpecialPreunlockedImage
-          ? "Löse ein Sudoku, um das letzte Segment freizuschalten"
-          : "Löse weitere Sudokus, um das Bild vollständig freizuschalten"}
-      </Text>
     </View>
   );
 
@@ -394,21 +388,21 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
       {/* Footer content */}
       <View style={styles.footerContent}>
-        {/* Title and description */}
-        <Text style={styles.title}>{landscape.name}</Text>
+        {/* description */}
 
         <Text style={styles.description}>{landscape.description}</Text>
 
         {/* Tags */}
         <View style={styles.tagsContainer}>
           {/* Category tag */}
+          {/*
           <Tag
             icon="image"
             text={getCategoryName(landscape.category)}
             type="category"
           />
 
-          {/* Status tag */}
+          
           {landscape.isComplete ? (
             <Tag icon="check-circle" text="Komplett" type="complete" />
           ) : isSpecialPreunlockedImage ? (
@@ -420,7 +414,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
               type="inProgress"
             />
           )}
-
+          */}
           {/* Favorite tag */}
           {landscape.isFavorite && (
             <Tag icon="heart" text="Favorit" type="favorite" />

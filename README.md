@@ -12,18 +12,21 @@
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
+<br>
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
 - [Development](#development)
 - [Building](#building)
 - [Architecture](#architecture)
-- [Contributing](#contributing)
 - [License](#license)
+- [Project Structure](#project-structure)
+
+<br>
 
 ## 🎮 Overview
 
@@ -36,6 +39,8 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 - **Zen Progression System**: Level up through mindful gameplay with motivational messages
 - **Personalization**: Unlock stunning backgrounds and customize your avatar
 - **Professional Polish**: Smooth animations, haptic feedback, and intuitive UI
+
+<br>
 
 ## ✨ Features
 
@@ -70,6 +75,8 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 - Multiple highlighting options
 - Accessibility-focused design
 
+<br>
+
 ## 🛠️ Tech Stack
 
 ### Core Technologies
@@ -94,6 +101,8 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
   - Expo Haptics
   - Expo Image Picker
   - Expo File System
+
+<br>
 
 ## 🚀 Getting Started
 
@@ -127,6 +136,7 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
    - Press `i` for iOS
    - Scan QR code with Expo Go app
 
+<br>
 
 ## 💻 Development
 
@@ -161,6 +171,8 @@ npm test                 # Run all tests
 npm test -- --watch     # Watch mode
 ```
 
+<br>
+
 ## 🏗️ Building
 
 ### Development Build
@@ -194,6 +206,8 @@ npx expo run:android
 - App configuration: `app.json`
 - Environment variables: Create `.env` file (see `.env.example`)
 
+<br>
+
 ## 🏛️ Architecture
 
 ### Component Architecture
@@ -213,49 +227,20 @@ npx expo run:android
 - Lazy loading for heavy components
 - Efficient animation with Reanimated
 
-## 🤝 Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add amazing feature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. **Open a Pull Request**
-
-### Contribution Guidelines
-- Follow existing code style
-- Add tests for new features
-- Update documentation
-- Keep commits atomic and descriptive
-
-### Development Setup for Contributors
-1. Set up RevenueCat (optional):
-   - Create account at revenue.cat
-   - Add API keys to `utils/billing/config.ts`
-   
-2. Configure EAS:
-   - Install EAS CLI: `npm install -g eas-cli`
-   - Login: `eas login`
-   - Configure: `eas build:configure`
+<br>
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+<br>
+
 ## 🙏 Acknowledgments
 
 - Built with ❤️ as a hobby project
-- Special thanks to the React Native and Expo communities
+- Special thanks for all tester to the React Native and Expo communities
+
+<br>
 
 ## 📞 Contact
 
@@ -265,9 +250,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-  Made with ☕ and 🎯 for puzzle lovers everywhere
-</div>
+
 
 <br>
 
@@ -785,3 +768,7 @@ sudoku
       └─ typography.ts
 
 ```
+
+<div align="center">
+  Made with ☕ and ❤️ for puzzle lovers everywhere
+</div>

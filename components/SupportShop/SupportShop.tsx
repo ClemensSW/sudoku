@@ -305,9 +305,7 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
           entering={SlideInUp.delay(600).duration(500)}
         >
           <Text style={[styles.thanksText, { color: colors.textPrimary }]}>
-            Vielen Dank, dass du dir die Zeit genommen hast, dir die
-            Unterstützungsmöglichkeiten anzusehen. Ich schätze jede Form der
-            Unterstützung sehr!
+            Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!
           </Text>
           <Text style={styles.thanksEmoji}>❤️</Text>
         </Animated.View>

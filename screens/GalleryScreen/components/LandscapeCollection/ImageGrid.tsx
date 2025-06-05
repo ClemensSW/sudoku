@@ -19,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/screens/GalleryScreen/utils/landscapes/types";
+import { getCategoryName } from "@/screens/GalleryScreen/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
@@ -82,24 +83,6 @@ const LandscapeCard = React.memo(
 
     const handlePressOut = () => {
       scale.value = withSpring(1, { damping: 15 });
-    };
-
-    // Get category name based on category type
-    const getCategoryName = (category: string): string => {
-      const categories: Record<string, string> = {
-        mountains: "Berge",
-        forests: "Wälder",
-        lakes: "Seen",
-        beaches: "Strände",
-        winter: "Winter",
-        sunsets: "Sonnenuntergänge",
-        gardens: "Gärten",
-        sky: "Himmel",
-        waterfalls: "Wasserfälle",
-        valleys: "Täler",
-        birds: "Vögel",
-      };
-      return categories[category] || category;
     };
 
     // Get badge color based on state - zurück zur ursprünglichen Logik ohne isCurrentProject

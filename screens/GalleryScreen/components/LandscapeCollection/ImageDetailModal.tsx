@@ -98,24 +98,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     };
   }, [visible]);
 
-  // Category mapping
-  const getCategoryName = (category: string): string => {
-    const categories: Record<string, string> = {
-      mountains: "Berge",
-      forests: "Wälder",
-      lakes: "Seen",
-      beaches: "Strände",
-      winter: "Winter",
-      sunsets: "Sonnenuntergänge",
-      gardens: "Gärten",
-      sky: "Himmel",
-      waterfalls: "Wasserfälle",
-      valleys: "Täler",
-      birds: "Völgel",
-    };
-    return categories[category] || category;
-  };
-
   // Format date
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "";
@@ -389,32 +371,10 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       {/* Footer content */}
       <View style={styles.footerContent}>
         {/* description */}
-
         <Text style={styles.description}>{landscape.description}</Text>
 
         {/* Tags */}
         <View style={styles.tagsContainer}>
-          {/* Category tag */}
-          {/*
-          <Tag
-            icon="image"
-            text={getCategoryName(landscape.category)}
-            type="category"
-          />
-
-          
-          {landscape.isComplete ? (
-            <Tag icon="check-circle" text="Komplett" type="complete" />
-          ) : isSpecialPreunlockedImage ? (
-            <Tag icon="clock" text="Fast fertig" type="almostComplete" />
-          ) : (
-            <Tag
-              icon="clock"
-              text={`${landscape.progress}/9`}
-              type="inProgress"
-            />
-          )}
-          */}
           {/* Favorite tag */}
           {landscape.isFavorite && (
             <Tag icon="heart" text="Favorit" type="favorite" />

@@ -1,5 +1,6 @@
 // screens/GalleryScreen/utils/landscapes/types.ts
 import { ImageSourcePropType } from "react-native";
+import { LandscapeCategory } from "./data";
 
 /**
  * Repräsentiert ein einzelnes Segment eines Landschaftsbildes
@@ -24,24 +25,8 @@ export interface Landscape {
   isComplete: boolean;                // Ob alle Segmente freigeschaltet sind
   isFavorite: boolean;                // Ob als Favorit markiert
   completedAt?: string;               // Wann komplett freigeschaltet
-  category: LandscapeCategory;        // Kategorie des Bildes
+  category: LandscapeCategory;        // Kategorie des Bildes (importiert aus data.ts)
 }
-
-/**
- * Kategorien für Landschaftsbilder
- */
-export type LandscapeCategory = 
-  | "mountains" 
-  | "forests" 
-  | "lakes" 
-  | "beaches" 
-  | "winter"
-  | "sunsets"
-  | "gardens"
-  | "sky"
-  | "waterfalls"
-  | "valleys"
-  | "birds";
 
 /**
  * Status der Sammlung im Storage
@@ -52,7 +37,7 @@ export interface LandscapeCollection {
   currentImageId: string;                   // Aktuell in Arbeit
   lastUsedFavoriteIndex: number;            // Für Rotation
   lastChangedDate: string;                  // Für täglichen Wechsel
-  version?: number;                         // NEU: Versionsnummer für Aktualisierungen
+  version?: number;                         // Versionsnummer für Aktualisierungen
 }
 
 /**

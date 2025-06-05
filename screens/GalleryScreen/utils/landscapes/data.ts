@@ -6,6 +6,35 @@ import { Landscape, LandscapeSegment } from "./types";
 export const CURRENT_COLLECTION_VERSION = 1;
 
 /**
+ * KATEGORIEN DEFINITION UND ÜBERSETZUNG
+ * Hier neue Kategorien hinzufügen - automatisch überall verfügbar!
+ */
+export const LANDSCAPE_CATEGORIES = {
+  mountains: "Berge",
+  forests: "Wälder", 
+  lakes: "Seen",
+  beaches: "Strände",
+  winter: "Winter",
+  sunsets: "Sonnenuntergänge",
+  gardens: "Gärten",
+  sky: "Himmel",
+  waterfalls: "Wasserfälle",
+  valleys: "Täler",
+  birds: "Vögel",
+  // Neue Kategorien einfach hier hinzufügen:
+  // deserts: "Wüsten",
+  // cities: "Städte",
+} as const;
+
+// Typ für Kategorien (wird automatisch aus dem Objekt generiert)
+export type LandscapeCategory = keyof typeof LANDSCAPE_CATEGORIES;
+
+// Helper-Funktion für Kategorie-Namen
+export const getCategoryName = (category: string): string => {
+  return LANDSCAPE_CATEGORIES[category as LandscapeCategory] || category;
+};
+
+/**
  * Erzeugt ein Array von 9 leeren Segmenten für ein neues Landschaftsbild
  */
 const createEmptySegments = (): LandscapeSegment[] => {
@@ -16,8 +45,16 @@ const createEmptySegments = (): LandscapeSegment[] => {
 };
 
 /**
- * Initiale Sammlung von Landschaftsbildern
- * Hinweis: Die tatsächlichen Bildpfade müssen angepasst werden
+ * BILDSAMMLUNG
+ * Hier neue Bilder hinzufügen - einfach das Schema kopieren!
+ * 
+ * Anleitung:
+ * 1. Bilder in assets/imageCollection/[kategorie]/ ablegen
+ *    - [name]_640.jpg (Preview)
+ *    - [name]_1920.jpg (Vollbild)
+ * 2. Neuen Eintrag hier hinzufügen
+ * 3. CURRENT_COLLECTION_VERSION erhöhen
+ * 4. Fertig!
  */
 export const initialLandscapes: Landscape[] = [
   {
@@ -132,8 +169,21 @@ export const initialLandscapes: Landscape[] = [
   },
   
   /* 
-   * Hier kannst du neue Landschaften hinzufügen und CURRENT_COLLECTION_VERSION erhöhen,
-   * damit bestehende Nutzer die neuen Bilder erhalten
+   * 🎨 NEUE BILDER HIER HINZUFÜGEN 🎨
+   * 
+   * Beispiel:
+   * {
+   *   id: "sunset-tropical",
+   *   name: "Tropischer Sonnenuntergang",
+   *   description: "Palmen silhouettiert vor einem feurigen Abendhimmel",
+   *   previewSource: require("@/assets/imageCollection/sunsets/sunset-tropical_640.jpg"),
+   *   fullSource: require("@/assets/imageCollection/sunsets/sunset-tropical_1920.jpg"),
+   *   segments: createEmptySegments(),
+   *   progress: 0,
+   *   isComplete: false,
+   *   isFavorite: false,
+   *   category: "sunsets",
+   * },
    */
 ];
 

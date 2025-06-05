@@ -5,26 +5,6 @@ const { width, height } = Dimensions.get("window");
 
 // Tag colors - vibrant, modern palette
 export const tagColors = {
-  category: {
-    background: "rgba(94, 114, 228, 0.85)",
-    text: "#FFFFFF",
-    icon: "#FFFFFF"
-  },
-  complete: {
-    background: "rgba(45, 206, 137, 0.85)",
-    text: "#FFFFFF",
-    icon: "#FFFFFF"
-  },
-  inProgress: {
-    background: "rgba(251, 99, 64, 0.85)",
-    text: "#FFFFFF",
-    icon: "#FFFFFF"
-  },
-  almostComplete: {
-    background: "rgba(255, 214, 0, 0.85)",
-    text: "#FFFFFF",
-    icon: "#FFFFFF"
-  },
   favorite: {
     background: "rgba(245, 54, 92, 0.85)",
     text: "#FFFFFF",
@@ -167,8 +147,6 @@ export default StyleSheet.create({
   },
   
   // Landscape Info
-  
-  
   description: {
     fontSize: 15,
     color: "rgba(255, 255, 255, 0.85)",

@@ -204,7 +204,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             </View>
             
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-              Filter & Info
+              Filter
             </Text>
             
             <View style={styles.headerRight}>

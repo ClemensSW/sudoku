@@ -109,7 +109,7 @@ export default StyleSheet.create({
   // Content
   scrollView: {
     flex: 1,
-    maxHeight: height * 0.45, // Begrenzte Höhe für ScrollView
+    maxHeight: height * 0.4, // Begrenzte Höhe für ScrollView
   },
   
   scrollContent: {
@@ -170,11 +170,11 @@ export default StyleSheet.create({
   // Footer - Wichtig: Feste Höhe und immer sichtbar
   footer: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.md,
     paddingBottom: 0, // Wird dynamisch im JSX gesetzt
     borderTopWidth: 1,
     flexDirection: "column",
-    gap: spacing.xs,
+    gap: spacing.md,
     // Feste Position am unteren Rand
     position: "relative",
     bottom: 0,
@@ -190,7 +190,7 @@ export default StyleSheet.create({
   },
   
   applyButton: {
-    paddingVertical: spacing.sm + 2,
+    paddingVertical: spacing.md + 2,
     paddingHorizontal: spacing.xl,
     borderRadius: radius.xl,
     alignItems: "center",

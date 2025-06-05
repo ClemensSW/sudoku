@@ -293,7 +293,11 @@ sudoku
 │  │  │  └─ lake-1_640.jpg
 │  │  ├─ mountains
 │  │  │  ├─ mountains-fuji_1920.jpg
-│  │  │  └─ mountains-fuji_640.jpg
+│  │  │  ├─ mountains-fuji_19202.jpg
+│  │  │  ├─ mountains-fuji_19204.jpg
+│  │  │  ├─ mountains-fuji_19205.jpg
+│  │  │  ├─ mountains-fuji_640.jpg
+│  │  │  └─ mountains-fuji_640b.jpg
 │  │  ├─ sky
 │  │  │  ├─ milky-way_1920.jpg
 │  │  │  └─ milky-way_640.jpg
@@ -309,167 +313,12 @@ sudoku
 │  │  ├─ avatars
 │  │  │  ├─ anime
 │  │  │  │  ├─ avatar1.webp
-│  │  │  │  ├─ avatar10.webp
-│  │  │  │  ├─ avatar11.webp
-│  │  │  │  ├─ avatar12.webp
-│  │  │  │  ├─ avatar13.webp
-│  │  │  │  ├─ avatar14.webp
-│  │  │  │  ├─ avatar15.webp
-│  │  │  │  ├─ avatar16.webp
 │  │  │  │  ├─ avatar2.webp
 │  │  │  │  ├─ avatar3.webp
-│  │  │  │  ├─ avatar4.webp
-│  │  │  │  ├─ avatar5.webp
-│  │  │  │  ├─ avatar6.webp
-│  │  │  │  ├─ avatar7.webp
-│  │  │  │  ├─ avatar8.webp
-│  │  │  │  └─ avatar9.webp
+│  │  │  │  ├─ ...
 │  │  │  ├─ cartoon
-│  │  │  │  ├─ avatar100.webp
-│  │  │  │  ├─ avatar101.webp
-│  │  │  │  ├─ avatar102.webp
-│  │  │  │  ├─ avatar103.webp
-│  │  │  │  ├─ avatar104.webp
-│  │  │  │  ├─ avatar105.webp
-│  │  │  │  ├─ avatar106.webp
-│  │  │  │  ├─ avatar107.webp
-│  │  │  │  ├─ avatar108.webp
-│  │  │  │  ├─ avatar109.webp
-│  │  │  │  ├─ avatar110.webp
-│  │  │  │  ├─ avatar111.webp
-│  │  │  │  ├─ avatar112.webp
-│  │  │  │  ├─ avatar113.webp
-│  │  │  │  ├─ avatar114.webp
-│  │  │  │  ├─ avatar115.webp
-│  │  │  │  ├─ avatar116.webp
-│  │  │  │  ├─ avatar117.webp
-│  │  │  │  ├─ avatar118.webp
-│  │  │  │  ├─ avatar119.webp
-│  │  │  │  ├─ avatar120.webp
-│  │  │  │  ├─ avatar121.webp
-│  │  │  │  ├─ avatar122.webp
-│  │  │  │  ├─ avatar123.webp
-│  │  │  │  ├─ avatar124.webp
-│  │  │  │  ├─ avatar125.webp
-│  │  │  │  ├─ avatar126.webp
-│  │  │  │  ├─ avatar127.webp
-│  │  │  │  ├─ avatar128.webp
-│  │  │  │  ├─ avatar129.webp
-│  │  │  │  ├─ avatar130.webp
-│  │  │  │  ├─ avatar131.webp
-│  │  │  │  ├─ avatar132.webp
-│  │  │  │  ├─ avatar133.webp
-│  │  │  │  ├─ avatar134.webp
-│  │  │  │  ├─ avatar135.webp
-│  │  │  │  ├─ avatar136.webp
-│  │  │  │  ├─ avatar137.webp
-│  │  │  │  ├─ avatar138.webp
-│  │  │  │  ├─ avatar139.webp
-│  │  │  │  ├─ avatar140.webp
-│  │  │  │  ├─ avatar141.webp
-│  │  │  │  ├─ avatar142.webp
-│  │  │  │  ├─ avatar143.webp
-│  │  │  │  ├─ avatar144.webp
-│  │  │  │  ├─ avatar145.webp
-│  │  │  │  ├─ avatar146.webp
-│  │  │  │  ├─ avatar147.webp
-│  │  │  │  ├─ avatar148.webp
-│  │  │  │  ├─ avatar149.webp
-│  │  │  │  ├─ avatar150.webp
-│  │  │  │  ├─ avatar151.webp
-│  │  │  │  ├─ avatar152.webp
-│  │  │  │  ├─ avatar153.webp
-│  │  │  │  ├─ avatar154.webp
-│  │  │  │  ├─ avatar155.webp
-│  │  │  │  ├─ avatar156.webp
-│  │  │  │  ├─ avatar157.webp
-│  │  │  │  ├─ avatar158.webp
-│  │  │  │  ├─ avatar159.webp
-│  │  │  │  ├─ avatar160.webp
-│  │  │  │  ├─ avatar161.webp
 │  │  │  │  ├─ avatar17.webp
-│  │  │  │  ├─ avatar18.webp
-│  │  │  │  ├─ avatar19.webp
-│  │  │  │  ├─ avatar20.webp
-│  │  │  │  ├─ avatar21.webp
-│  │  │  │  ├─ avatar22.webp
-│  │  │  │  ├─ avatar23.webp
-│  │  │  │  ├─ avatar24.webp
-│  │  │  │  ├─ avatar25.webp
-│  │  │  │  ├─ avatar26.webp
-│  │  │  │  ├─ avatar27.webp
-│  │  │  │  ├─ avatar28.webp
-│  │  │  │  ├─ avatar29.webp
-│  │  │  │  ├─ avatar30.webp
-│  │  │  │  ├─ avatar31.webp
-│  │  │  │  ├─ avatar32.webp
-│  │  │  │  ├─ avatar33.webp
-│  │  │  │  ├─ avatar34.webp
-│  │  │  │  ├─ avatar35.webp
-│  │  │  │  ├─ avatar36.webp
-│  │  │  │  ├─ avatar37.webp
-│  │  │  │  ├─ avatar38.webp
-│  │  │  │  ├─ avatar39.webp
-│  │  │  │  ├─ avatar40.webp
-│  │  │  │  ├─ avatar41.webp
-│  │  │  │  ├─ avatar42.webp
-│  │  │  │  ├─ avatar43.webp
-│  │  │  │  ├─ avatar44.webp
-│  │  │  │  ├─ avatar45.webp
-│  │  │  │  ├─ avatar46.webp
-│  │  │  │  ├─ avatar47.webp
-│  │  │  │  ├─ avatar48.webp
-│  │  │  │  ├─ avatar49.webp
-│  │  │  │  ├─ avatar50.webp
-│  │  │  │  ├─ avatar51.webp
-│  │  │  │  ├─ avatar52.webp
-│  │  │  │  ├─ avatar53.webp
-│  │  │  │  ├─ avatar54.webp
-│  │  │  │  ├─ avatar55.webp
-│  │  │  │  ├─ avatar56.webp
-│  │  │  │  ├─ avatar57.webp
-│  │  │  │  ├─ avatar58.webp
-│  │  │  │  ├─ avatar59.webp
-│  │  │  │  ├─ avatar60.webp
-│  │  │  │  ├─ avatar61.webp
-│  │  │  │  ├─ avatar62.webp
-│  │  │  │  ├─ avatar63.webp
-│  │  │  │  ├─ avatar64.webp
-│  │  │  │  ├─ avatar65.webp
-│  │  │  │  ├─ avatar66.webp
-│  │  │  │  ├─ avatar67.webp
-│  │  │  │  ├─ avatar68.webp
-│  │  │  │  ├─ avatar69.webp
-│  │  │  │  ├─ avatar70.webp
-│  │  │  │  ├─ avatar71.webp
-│  │  │  │  ├─ avatar72.webp
-│  │  │  │  ├─ avatar73.webp
-│  │  │  │  ├─ avatar74.webp
-│  │  │  │  ├─ avatar75.webp
-│  │  │  │  ├─ avatar76.webp
-│  │  │  │  ├─ avatar77.webp
-│  │  │  │  ├─ avatar78.webp
-│  │  │  │  ├─ avatar79.webp
-│  │  │  │  ├─ avatar80.webp
-│  │  │  │  ├─ avatar81.webp
-│  │  │  │  ├─ avatar82.webp
-│  │  │  │  ├─ avatar83.webp
-│  │  │  │  ├─ avatar84.webp
-│  │  │  │  ├─ avatar85.webp
-│  │  │  │  ├─ avatar86.webp
-│  │  │  │  ├─ avatar87.webp
-│  │  │  │  ├─ avatar88.webp
-│  │  │  │  ├─ avatar89.webp
-│  │  │  │  ├─ avatar90.webp
-│  │  │  │  ├─ avatar91.webp
-│  │  │  │  ├─ avatar92.webp
-│  │  │  │  ├─ avatar93.webp
-│  │  │  │  ├─ avatar94.webp
-│  │  │  │  ├─ avatar95.webp
-│  │  │  │  ├─ avatar96.webp
-│  │  │  │  ├─ avatar97.webp
-│  │  │  │  ├─ avatar98.webp
-│  │  │  │  └─ avatar99.webp
+│  │  │  │  ├─ ...
 │  │  │  └─ default.webp
 │  │  ├─ background
 │  │  │  ├─ kenrokuen-garden-9511300_1920.jpg
@@ -633,6 +482,13 @@ sudoku
 │  │  └─ index.ts
 │  ├─ GalleryScreen
 │  │  ├─ components
+│  │  │  ├─ FilterModal
+│  │  │  │  ├─ components
+│  │  │  │  │  ├─ CategoryGrid.tsx
+│  │  │  │  │  └─ InfoSection.tsx
+│  │  │  │  ├─ FilterModal.styles.ts
+│  │  │  │  ├─ FilterModal.tsx
+│  │  │  │  └─ index.ts
 │  │  │  └─ LandscapeCollection
 │  │  │     ├─ ImageDetailModal.styles.ts
 │  │  │     ├─ ImageDetailModal.tsx

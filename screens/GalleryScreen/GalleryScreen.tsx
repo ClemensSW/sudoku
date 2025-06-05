@@ -15,11 +15,13 @@ import {
   Landscape,
   LandscapeFilter,
 } from "@/screens/GalleryScreen/utils/landscapes/types";
+import { LandscapeCategory } from "@/screens/GalleryScreen/utils/landscapes/data";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import {
   ImageGrid,
   ImageDetailModal,
 } from "@/screens/GalleryScreen/components/LandscapeCollection";
+import { FilterModal } from "@/screens/GalleryScreen/components/FilterModal";
 import Header from "@/components/Header/Header";
 import { useNavigation } from "@/utils/NavigationContext";
 import { StatusBar } from "expo-status-bar";
@@ -120,6 +122,8 @@ const GalleryScreen: React.FC = () => {
     null
   );
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<LandscapeCategory[]>([]);
   const [tabLayouts, setTabLayouts] = useState<{
     [key: string]: { x: number; width: number };
   }>({});
@@ -130,7 +134,7 @@ const GalleryScreen: React.FC = () => {
   
   // Use the useLandscapes Hook mit erweiterten Funktionen
   const {
-    landscapes,
+    landscapes: allLandscapes,
     isLoading,
     toggleFavorite,
     changeFilter,
@@ -138,6 +142,18 @@ const GalleryScreen: React.FC = () => {
     collection,
     setCurrentProject
   } = useLandscapes(activeTab);
+
+  // Filter landscapes by selected categories
+  const landscapes = useMemo(() => {
+    // Wenn keine Kategorien ausgewählt sind, zeige alle
+    if (selectedCategories.length === 0) {
+      return allLandscapes;
+    }
+    // Filtere nach ausgewählten Kategorien
+    return allLandscapes.filter(landscape => 
+      selectedCategories.includes(landscape.category as LandscapeCategory)
+    );
+  }, [allLandscapes, selectedCategories]);
 
   // Berechne die aktuelle Bild-ID für das Freischalten
   const currentImageId = collection?.currentImageId || "";
@@ -249,23 +265,14 @@ const GalleryScreen: React.FC = () => {
     router.push("/leistung");
   };
 
-  // Show gallery info alert
-  const showGalleryInfo = () => {
-    showAlert({
-      title: "So funktioniert’s",
-      message: 
-        "🧩\nBILDER SAMMELN\n" +
-        "Jedes gelöste Sudoku bringt dich einem neuen Bild näher – schalte sie alle frei und fülle deine Galerie!\n\n" +
-        "🎯\nAUSWÄHLEN\n" +
-        "Entscheide selbst, welches Bild du als Nächstes sammeln möchtest. Tippe dazu in der Detailansicht auf „Dieses Bild freischalten“.\n\n" +
-        "❤️\nFAVORITEN SETZEN\n" +
-        "Markiere vollständige Bilder als Favorit – so erscheinen sie auf deinem Startbildschirm.",
-      type: "info",
-      buttons: [{ 
-        text: "Verstanden", 
-        style: "primary" 
-      }],
-    });
+  // Show filter modal
+  const showFilterModal = () => {
+    setFilterModalVisible(true);
+  };
+
+  // Apply filter
+  const handleApplyFilter = (categories: LandscapeCategory[]) => {
+    setSelectedCategories(categories);
   };
 
   // Close detail modal
@@ -393,6 +400,18 @@ const GalleryScreen: React.FC = () => {
 
   const backgroundColor = colors.background;
 
+  // Get count of total and filtered images
+  const totalImages = allLandscapes.length;
+  const filteredCount = landscapes.length;
+  
+  // Calculate preview count for filter modal
+  const getPreviewFilteredCount = (categories: LandscapeCategory[]) => {
+    if (categories.length === 0) return totalImages;
+    return allLandscapes.filter(landscape => 
+      categories.includes(landscape.category as LandscapeCategory)
+    ).length;
+  };
+
   return (
     <View
       style={[
@@ -403,15 +422,31 @@ const GalleryScreen: React.FC = () => {
       {/* Ensure status bar is in the right mode for the theme */}
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      {/* Header with Info Button */}
+      {/* Header with Filter Button */}
       <Header 
         title="Deine Sammlung" 
         onBackPress={handleBack} 
         rightAction={{
-          icon: "info",
-          onPress: showGalleryInfo
+          icon: "filter",
+          onPress: showFilterModal
         }}
       />
+
+      {/* Show active filter count if filters are applied */}
+      {selectedCategories.length > 0 && (
+        <View style={[styles.filterBadge, { backgroundColor: colors.surface }]}>
+          <Feather name="filter" size={14} color={colors.primary} />
+          <Text style={[styles.filterBadgeText, { color: colors.textPrimary }]}>
+            {selectedCategories.length} Filter aktiv
+          </Text>
+          <TouchableOpacity
+            onPress={() => setSelectedCategories([])}
+            style={styles.filterClearButton}
+          >
+            <Feather name="x" size={14} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Content - Now with space at the bottom for tabs */}
       <Animated.View 
@@ -441,6 +476,17 @@ const GalleryScreen: React.FC = () => {
       <SafeAreaView style={styles.bottomTabContainer}>
         {renderTabs()}
       </SafeAreaView>
+
+      {/* Filter Modal */}
+      <FilterModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        selectedCategories={selectedCategories}
+        onApplyFilter={handleApplyFilter}
+        totalImages={totalImages}
+        filteredCount={filteredCount}
+        allLandscapes={allLandscapes}
+      />
 
       {/* Detail Modal mit allen neuen Props */}
       <ImageDetailModal

@@ -34,6 +34,35 @@ export default StyleSheet.create({
     zIndex: 5,
   },
   
+  // Filter Badge Styles
+  filterBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+    borderRadius: radius.xl,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  
+  filterBadgeText: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginLeft: spacing.xs,
+    flex: 1,
+  },
+  
+  filterClearButton: {
+    marginLeft: spacing.sm,
+    padding: spacing.xxs,
+  },
+  
   // Bottom Tab Container - neu für untere Navigation
   bottomTabContainer: {
     position: 'absolute',

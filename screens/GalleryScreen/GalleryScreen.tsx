@@ -1,6 +1,13 @@
 // screens/GalleryScreen/GalleryScreen.tsx
 import React, { useState, useEffect, useMemo } from "react";
-import { View, Text, TouchableOpacity, SafeAreaView, Dimensions, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+  useWindowDimensions,
+} from "react-native";
 import { useRouter, Router } from "expo-router";
 import Animated, {
   FadeIn,
@@ -89,7 +96,7 @@ const GalleryScreen: React.FC = () => {
   const router = useRouter();
   const { showAlert } = useAlert();
   const insets = useSafeAreaInsets();
-  
+
   // Get screen dimensions for responsive design
   const { width: screenWidth } = useWindowDimensions();
 
@@ -123,7 +130,9 @@ const GalleryScreen: React.FC = () => {
   );
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<LandscapeCategory[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    LandscapeCategory[]
+  >([]);
   const [tabLayouts, setTabLayouts] = useState<{
     [key: string]: { x: number; width: number };
   }>({});
@@ -131,7 +140,7 @@ const GalleryScreen: React.FC = () => {
   // Determine display mode based on screen size
   const isCompactMode = screenWidth < 370; // Threshold for smaller screens
   const isSmallMode = screenWidth < 420 && screenWidth >= 370; // Middle size screens
-  
+
   // Use the useLandscapes Hook mit erweiterten Funktionen
   const {
     landscapes: allLandscapes,
@@ -140,7 +149,7 @@ const GalleryScreen: React.FC = () => {
     changeFilter,
     reload,
     collection,
-    setCurrentProject
+    setCurrentProject,
   } = useLandscapes(activeTab);
 
   // Filter landscapes by selected categories
@@ -150,7 +159,7 @@ const GalleryScreen: React.FC = () => {
       return allLandscapes;
     }
     // Filtere nach ausgewählten Kategorien
-    return allLandscapes.filter(landscape => 
+    return allLandscapes.filter((landscape) =>
       selectedCategories.includes(landscape.category as LandscapeCategory)
     );
   }, [allLandscapes, selectedCategories]);
@@ -188,26 +197,86 @@ const GalleryScreen: React.FC = () => {
     if (isCompactMode) {
       // For very small screens, use only icons with ultra-short labels
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "OK", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favs", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "Aktiv",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "OK",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favs",
+          icon: "heart",
+        },
       ];
     } else if (isSmallMode) {
       // For small screens, use short labels
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "Aktiv",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "Komplett",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favoriten",
+          icon: "heart",
+        },
       ];
     } else {
       // For larger screens, use full labels
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "In Arbeit", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "In Arbeit",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "Komplett",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favoriten",
+          icon: "heart",
+        },
       ];
     }
   }, [isCompactMode, isSmallMode]);
@@ -240,7 +309,7 @@ const GalleryScreen: React.FC = () => {
   // Handler für die Bildauswahl
   const handleSelectAsProject = async (landscape: Landscape) => {
     const success = await setCurrentProject(landscape.id);
-    
+
     if (success) {
       // Feedback für den Nutzer anzeigen
       showAlert({
@@ -249,10 +318,10 @@ const GalleryScreen: React.FC = () => {
         type: "success",
         buttons: [{ text: "OK", style: "primary" }],
       });
-      
+
       // Daten aktualisieren - vollständig neu laden
       await reload();
-      
+
       // Detail-Modal schließen mit Verzögerung
       setTimeout(() => {
         setDetailModalVisible(false);
@@ -319,8 +388,8 @@ const GalleryScreen: React.FC = () => {
               ? colors.shadow // "rgba(0, 0, 0, 0.3)"
               : colors.shadow, // "rgba(60, 64, 67, 0.10)"
             borderTopColor: theme.isDark
-              ? "rgba(255,255,255,0.1)"  // Helle Farbe im dunklen Modus
-              : "rgba(0,0,0,0.05)",      // Dunkle Farbe im hellen Modus
+              ? "rgba(255,255,255,0.1)" // Helle Farbe im dunklen Modus
+              : "rgba(0,0,0,0.05)", // Dunkle Farbe im hellen Modus
           },
         ]}
       >
@@ -329,17 +398,17 @@ const GalleryScreen: React.FC = () => {
             styles.tabsContainer,
             {
               borderTopColor: theme.isDark
-                ? "rgba(255,255,255,0.1)"  // Helle Farbe im dunklen Modus
-                : "rgba(0,0,0,0.05)",      // Dunkle Farbe im hellen Modus
+                ? "rgba(255,255,255,0.1)" // Helle Farbe im dunklen Modus
+                : "rgba(0,0,0,0.05)", // Dunkle Farbe im hellen Modus
             },
           ]}
         >
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
-            
+
             // Determine if we should show text based on screen size
             const showTabText = !isCompactMode;
-            
+
             // Use the appropriate label based on screen size
             const tabLabel = isSmallMode ? tab.shortLabel : tab.label;
 
@@ -373,7 +442,9 @@ const GalleryScreen: React.FC = () => {
                     style={[
                       styles.tabText,
                       isSmallMode && styles.smallTabText,
-                      { color: isActive ? colors.primary : colors.textSecondary },
+                      {
+                        color: isActive ? colors.primary : colors.textSecondary,
+                      },
                       isActive && styles.activeTabText,
                     ]}
                     numberOfLines={1}
@@ -403,11 +474,11 @@ const GalleryScreen: React.FC = () => {
   // Get count of total and filtered images
   const totalImages = allLandscapes.length;
   const filteredCount = landscapes.length;
-  
+
   // Calculate preview count for filter modal
   const getPreviewFilteredCount = (categories: LandscapeCategory[]) => {
     if (categories.length === 0) return totalImages;
-    return allLandscapes.filter(landscape => 
+    return allLandscapes.filter((landscape) =>
       categories.includes(landscape.category as LandscapeCategory)
     ).length;
   };
@@ -419,16 +490,15 @@ const GalleryScreen: React.FC = () => {
         { backgroundColor }, // Applied solid background color instead of image
       ]}
     >
-      {/* Ensure status bar is in the right mode for the theme */}
-      <StatusBar style={theme.isDark ? "light" : "dark"} />
+      <StatusBar hidden={true} />
 
       {/* Header with Filter Button */}
-      <Header 
-        title="Deine Sammlung" 
-        onBackPress={handleBack} 
+      <Header
+        title="Deine Sammlung"
+        onBackPress={handleBack}
         rightAction={{
           icon: "filter",
-          onPress: showFilterModal
+          onPress: showFilterModal,
         }}
       />
 
@@ -449,11 +519,11 @@ const GalleryScreen: React.FC = () => {
       )}
 
       {/* Content - Now with space at the bottom for tabs */}
-      <Animated.View 
+      <Animated.View
         style={[
-          styles.content, 
-          { paddingBottom: insets.bottom + 60 } // Add space for bottom tabs + safe area
-        ]} 
+          styles.content,
+          { paddingBottom: insets.bottom + 60 }, // Add space for bottom tabs + safe area
+        ]}
         entering={FadeIn.duration(400)}
       >
         {/* Main content area */}
@@ -473,9 +543,11 @@ const GalleryScreen: React.FC = () => {
       </Animated.View>
 
       {/* Bottom Tab Navigation */}
-      <SafeAreaView style={styles.bottomTabContainer}>
+      <View
+        style={[styles.bottomTabContainer, { paddingBottom: insets.bottom }]}
+      >
         {renderTabs()}
-      </SafeAreaView>
+      </View>
 
       {/* Filter Modal */}
       <FilterModal

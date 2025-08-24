@@ -84,7 +84,7 @@ export default StyleSheet.create({
   },
   
   tabsContainer: {
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.sm,
     paddingTop: spacing.sm,
     paddingHorizontal: spacing.sm, // Reduced from lg to sm for more space
     flexDirection: "row",

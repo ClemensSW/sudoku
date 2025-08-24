@@ -5,15 +5,10 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Modal,
   BackHandler,
   Platform,
 } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInDown,
-  SlideOutDown,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -37,7 +32,7 @@ export interface FilterModalProps {
   onApplyFilter: (categories: LandscapeCategory[]) => void;
   totalImages: number;
   filteredCount: number;
-  allLandscapes?: any[]; // Für Preview-Berechnung
+  allLandscapes?: any[];
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -53,19 +48,15 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   
-  // Local state for temporary selections
   const [tempSelectedCategories, setTempSelectedCategories] = useState<LandscapeCategory[]>(selectedCategories);
   
-  // Animation values
-  const modalY = useSharedValue(0);
+  const modalY = useSharedValue(1000);
   const backdropOpacity = useSharedValue(0);
   
-  // Sync with prop changes
   useEffect(() => {
     setTempSelectedCategories(selectedCategories);
   }, [selectedCategories]);
   
-  // Handle Android back button
   useEffect(() => {
     if (!visible) return;
     
@@ -77,23 +68,26 @@ const FilterModal: React.FC<FilterModalProps> = ({
     return () => backHandler.remove();
   }, [visible]);
   
-  // Animation on mount/unmount
   useEffect(() => {
     if (visible) {
-      backdropOpacity.value = withTiming(1, { duration: 300 });
-      modalY.value = withSpring(0, { damping: 20 });
+      // Kleine Verzögerung damit alles korrekt rendert
+      setTimeout(() => {
+        backdropOpacity.value = withTiming(1, { duration: 300 });
+        modalY.value = withSpring(0, { damping: 20 });
+      }, 10);
+    } else {
+      backdropOpacity.value = withTiming(0, { duration: 200 });
+      modalY.value = withTiming(1000, { duration: 200 });
     }
   }, [visible]);
   
-  // Handle close with animation
   const handleClose = () => {
     backdropOpacity.value = withTiming(0, { duration: 200 });
-    modalY.value = withTiming(100, { duration: 200 }, () => {
+    modalY.value = withTiming(1000, { duration: 200 }, () => {
       runOnJS(onClose)();
     });
   };
   
-  // Handle category toggle
   const handleCategoryToggle = (category: LandscapeCategory) => {
     setTempSelectedCategories(prev => {
       const isSelected = prev.includes(category);
@@ -105,25 +99,21 @@ const FilterModal: React.FC<FilterModalProps> = ({
     });
   };
   
-  // Select all categories
   const handleSelectAll = () => {
     setTempSelectedCategories([]);
   };
   
-  // Apply filters
   const handleApply = () => {
     onApplyFilter(tempSelectedCategories);
     handleClose();
   };
   
-  // Reset filters
   const handleReset = () => {
     setTempSelectedCategories([]);
     onApplyFilter([]);
     handleClose();
   };
   
-  // Animated styles
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
     opacity: backdropOpacity.value,
   }));
@@ -132,35 +122,27 @@ const FilterModal: React.FC<FilterModalProps> = ({
     transform: [{ translateY: modalY.value }],
   }));
   
-  // Calculate if all categories are selected
   const allCategoriesSelected = tempSelectedCategories.length === 0 || 
     tempSelectedCategories.length === Object.keys(LANDSCAPE_CATEGORIES).length;
   
-  // Get filtered count preview
   const getPreviewCount = () => {
     if (tempSelectedCategories.length === 0) return totalImages;
     
-    // Wenn allLandscapes verfügbar ist, berechne die tatsächliche Anzahl
     if (allLandscapes && allLandscapes.length > 0) {
       return allLandscapes.filter((landscape: any) => 
         tempSelectedCategories.includes(landscape.category as LandscapeCategory)
       ).length;
     }
     
-    // Fallback auf die übergebene filteredCount
     return filteredCount;
   };
   
+  // WICHTIG: Nicht rendern wenn nicht sichtbar
   if (!visible) return null;
   
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      statusBarTranslucent
-      onRequestClose={handleClose}
-    >
+    // ÄNDERUNG: View statt Modal mit absolutem Container
+    <View style={styles.absoluteContainer}>
       {/* Backdrop */}
       <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
         <TouchableOpacity
@@ -170,7 +152,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         />
       </Animated.View>
       
-      {/* Modal Content */}
+      {/* Modal Content - GENAU WIE VORHER */}
       <Animated.View
         style={[
           styles.modalContainer,
@@ -247,7 +229,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   { 
                     borderColor: allCategoriesSelected ? colors.primary : colors.border,
                     backgroundColor: allCategoriesSelected ? colors.primary : "transparent",
-                    borderWidth: 2, // Immer 2px Border
+                    borderWidth: 2,
                   }
                 ]}
                 onPress={handleSelectAll}
@@ -260,7 +242,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 </Text>
               </TouchableOpacity>
               
-              {/* Category Grid */}
+              {/* Category Grid - VERWENDET DIE ORIGINALE KOMPONENTE */}
               <CategoryGrid
                 selectedCategories={tempSelectedCategories}
                 onToggleCategory={handleCategoryToggle}
@@ -268,7 +250,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               />
             </View>
             
-            {/* Info Section */}
+            {/* Info Section - VERWENDET DIE ORIGINALE KOMPONENTE */}
             <View style={[styles.section, styles.infoSectionContainer]}>
               <InfoSection />
             </View>
@@ -285,13 +267,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               paddingBottom: Math.max(insets.bottom, spacing.md)
             }
           ]}>
-            <View style={styles.footerInfo}>
-              <Text style={[styles.footerInfoText, { color: colors.textSecondary }]}>
-                {allCategoriesSelected 
-                  ? `${totalImages} Bilder werden angezeigt`
-                  : `${getPreviewCount()} von ${totalImages} Bildern`}
-              </Text>
-            </View>
+            
             
             <TouchableOpacity
               style={[styles.applyButton, { backgroundColor: colors.primary }]}
@@ -304,7 +280,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           </View>
         </View>
       </Animated.View>
-    </Modal>
+    </View>
   );
 };
 

@@ -1,11 +1,6 @@
 // screens/GameScreen/GameScreen.tsx
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  BackHandler,
-} from "react-native";
+import { View, Text, ScrollView, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -82,7 +77,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     setTimeout(() => {
       setHideBottomNav(true);
     }, 100);
-    
+
     // Clean up when component unmounts
     return () => {
       console.log("SHOWING BOTTOM NAV in GameScreen cleanup");
@@ -94,7 +89,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   useEffect(() => {
     // Start with header fully visible
     headerOpacity.value = 1;
-    
+
     // Fade in controls after a delay
     setTimeout(() => {
       controlsOpacity.value = withTiming(1, {
@@ -141,14 +136,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       // Navigate to game screen with difficulty parameter to completely restart the game
       router.replace({
         pathname: "/game",
-        params: { difficulty: gameState.difficulty }
+        params: { difficulty: gameState.difficulty },
       });
     }, 200);
   };
 
   // Check for game completion and show modal
   useEffect(() => {
-    if (gameState.isGameComplete && !showCompletionModal && !showGameOverModal) {
+    if (
+      gameState.isGameComplete &&
+      !showCompletionModal &&
+      !showGameOverModal
+    ) {
       if (gameState.isGameLost && !gameState.isUserQuit) {
         // Only show game over modal if game was lost due to errors (not a manual quit)
         setTimeout(() => {
@@ -191,7 +190,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   // Handle hint press with alerts
   const handleHintPress = () => {
     const result = gameActions.handleHintPress();
-    
+
     if (result) {
       switch (result.type) {
         case "cell-hint":
@@ -223,14 +222,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const handleBackPress = () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
       showAlert(
-        quitGameAlert(
-          async () => {
-            // Mark as quit/loss in statistics before navigating
-            await gameActions.handleQuitGame();
-            router.navigate("../");
-          },
-          undefined
-        )
+        quitGameAlert(async () => {
+          // Mark as quit/loss in statistics before navigating
+          await gameActions.handleQuitGame();
+          router.navigate("../");
+        }, undefined)
       );
     } else {
       router.navigate("../");
@@ -268,9 +264,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   };
 
   // If board is not yet loaded
+  // If board is not yet loaded
   if (gameState.board.length === 0) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+            paddingBottom: insets.bottom, // NEU HINZUFÜGEN
+          },
+        ]}
+      >
         <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
         <View style={styles.loadingContainer}>
           <Animated.View
@@ -297,9 +302,16 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+          paddingBottom: insets.bottom, // NEU HINZUFÜGEN
+        },
+      ]}
+    >
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
-
       {/* Background decoration */}
       <Animated.View
         style={[
@@ -351,7 +363,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
             />
 
             {/* Game Controls */}
-            <Animated.View style={[styles.controlsContainer, controlsAnimatedStyle]}>
+            <Animated.View
+              style={[styles.controlsContainer, controlsAnimatedStyle]}
+            >
               <GameControls
                 onNumberPress={handleNumberPress}
                 onErasePress={gameActions.handleErasePress}

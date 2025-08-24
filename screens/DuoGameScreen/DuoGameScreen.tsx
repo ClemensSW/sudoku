@@ -10,7 +10,7 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
 import { GameSettings } from "@/utils/storage";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // Import existing components
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
@@ -32,29 +32,30 @@ interface DuoGameScreenProps {
   initialDifficulty?: Difficulty;
 }
 
-const DuoGameScreen: React.FC<DuoGameScreenProps> = ({ 
-  initialDifficulty = "medium" 
+const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
+  initialDifficulty = "medium",
 }) => {
   const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
+  const insets = useSafeAreaInsets();
   const { setHideBottomNav } = useNavigationControl();
   const { showAlert } = useAlert();
-  
+
   // States for game initialization
   const [isLoading, setIsLoading] = useState(true);
   const [gameInitialized, setGameInitialized] = useState(false);
-  
+
   // States for the Completion Modal
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [winnerInfo, setWinnerInfo] = useState({
     winner: 0 as 0 | 1 | 2,
-    reason: "completion" as "completion" | "errors"
+    reason: "completion" as "completion" | "errors",
   });
 
   // Add this state for settings panel
   const [showSettings, setShowSettings] = useState(false);
-  
+
   // Add game settings hook
   const gameSettings = useGameSettings();
 
@@ -94,7 +95,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           console.error("Error starting new game:", error);
         }
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [gameInitialized]); // Only depend on gameInitialized
@@ -129,7 +130,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   };
 
   // Handle settings changes
-  const handleSettingsChanged = (key: keyof GameSettings, value: boolean | string) => {
+  const handleSettingsChanged = (
+    key: keyof GameSettings,
+    value: boolean | string
+  ) => {
     gameSettings.updateSetting(key, value);
   };
 
@@ -152,14 +156,22 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
     setShowCompletionModal(false);
     router.replace({
       pathname: "/duo-game",
-      params: { difficulty: initialDifficulty }
+      params: { difficulty: initialDifficulty },
     });
   };
 
   // Loading screen
   if (isLoading || gameState.board.length === 0) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+            paddingBottom: insets.bottom, // NEU HINZUFÜGEN
+          },
+        ]}
+      >
         <StatusBar hidden={true} />
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: colors.textPrimary }]}>
@@ -171,37 +183,37 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+          paddingBottom: insets.bottom, // NEU HINZUFÜGEN
+        },
+      ]}
+    >
       <StatusBar hidden={true} />
-      
+
       {/* Back button */}
       <View style={styles.backButtonContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.backButton, { backgroundColor: colors.surface }]}
           onPress={handleBack}
         >
-          <Feather 
-            name="chevron-left" 
-            size={24} 
-            color={colors.textPrimary}
-          />
+          <Feather name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
-      
+
       {/* Settings button */}
       <View style={styles.settingsButtonContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.backButton, { backgroundColor: colors.surface }]}
           onPress={handleSettingsPress}
         >
-          <Feather 
-            name="settings" 
-            size={24} 
-            color={colors.textPrimary}
-          />
+          <Feather name="settings" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
-      
+
       {/* Hidden timer */}
       <View style={styles.hiddenTimer}>
         <Timer
@@ -210,7 +222,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           onTimeUpdate={gameActions.handleTimeUpdate}
         />
       </View>
-      
+
       {/* Main game content */}
       <View style={styles.content}>
         {/* Player 2 Controls (Top) */}
@@ -221,7 +233,10 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           onHint={gameActions.handleHint}
           onClear={gameActions.handleClear} // Löschen-Funktion hinzugefügt
           noteMode={gameState.player2NoteMode}
-          disabled={gameState.player2Complete || gameState.player2Errors >= gameState.maxErrors}
+          disabled={
+            gameState.player2Complete ||
+            gameState.player2Errors >= gameState.maxErrors
+          }
           hintsRemaining={gameState.player2Hints}
           errorsCount={gameState.player2Errors}
           maxErrors={gameState.maxErrors}
@@ -247,14 +262,17 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
           onHint={gameActions.handleHint}
           onClear={gameActions.handleClear} // Löschen-Funktion hinzugefügt
           noteMode={gameState.player1NoteMode}
-          disabled={gameState.player1Complete || gameState.player1Errors >= gameState.maxErrors}
+          disabled={
+            gameState.player1Complete ||
+            gameState.player1Errors >= gameState.maxErrors
+          }
           hintsRemaining={gameState.player1Hints}
           errorsCount={gameState.player1Errors}
           maxErrors={gameState.maxErrors}
           showErrors={gameSettings.showMistakes}
         />
       </View>
-      
+
       {/* Game Completion Modal */}
       <DuoGameCompletionModal
         visible={showCompletionModal}
@@ -278,7 +296,7 @@ const DuoGameScreen: React.FC<DuoGameScreenProps> = ({
         player2InitialEmptyCells={gameState.player2InitialEmptyCells}
         player2SolvedCells={gameState.player2SolvedCells}
       />
-      
+
       {/* Settings Panel */}
       <DuoGameSettingsPanel
         visible={showSettings}
@@ -307,7 +325,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
     paddingBottom: 24,
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
   },
   // Fixed back button positioning
   backButtonContainer: {
@@ -341,7 +359,7 @@ const styles = StyleSheet.create({
     opacity: 0,
     height: 1,
     width: 1,
-  }
+  },
 });
 
 export default DuoGameScreen;

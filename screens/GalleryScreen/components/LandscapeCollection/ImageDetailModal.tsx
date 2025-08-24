@@ -83,18 +83,22 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const imageScale = useSharedValue(1);
 
   // Prüfen, ob dieses Bild aktuell freigeschaltet wird
-  const isCurrentProject = landscape && currentImageId === landscape.id && !landscape.isComplete;
+  const isCurrentProject =
+    landscape && currentImageId === landscape.id && !landscape.isComplete;
 
   // Hide status bar for immersive view
   useEffect(() => {
     if (visible) {
       setStatusBarHidden(true);
     } else {
-      setStatusBarHidden(false);
+      setStatusBarHidden(true);
     }
 
+    // WICHTIG: Cleanup-Funktion, die beim Unmount aufgerufen wird
     return () => {
-      setStatusBarHidden(false);
+      setStatusBarHidden(true);
+      // Explizit die StatusBar wieder verstecken für die Hauptapp
+      StatusBar.setHidden(true);
     };
   }, [visible]);
 
@@ -273,7 +277,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           ]}
         />
       </View>
-
     </View>
   );
 
@@ -391,7 +394,11 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
           {/* Current Project tag - für das aktuelle freizuschaltende Bild */}
           {isCurrentProject && (
-            <Tag icon="target" text="Wird gerade freigeschaltet" type="currentProject" />
+            <Tag
+              icon="target"
+              text="Wird gerade freigeschaltet"
+              type="currentProject"
+            />
           )}
         </View>
 
@@ -401,7 +408,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
             <TouchableOpacity
               style={[
                 styles.selectProjectButton,
-                { backgroundColor: themeColors.primary }
+                { backgroundColor: themeColors.primary },
               ]}
               onPress={handleSelectAsProject}
               activeOpacity={0.8}

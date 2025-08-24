@@ -5,7 +5,18 @@ import { spacing, radius } from "@/utils/theme";
 const { width, height } = Dimensions.get("window");
 
 export default StyleSheet.create({
-  // Backdrop
+  // NEU: Absoluter Container statt Modal
+  absoluteContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+    elevation: 9999,
+  },
+  
+  // Backdrop - UNVERÄNDERT
   backdrop: {
     position: "absolute",
     top: 0,
@@ -19,13 +30,13 @@ export default StyleSheet.create({
     flex: 1,
   },
   
-  // Modal Container
+  // Modal Container - UNVERÄNDERT
   modalContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    maxHeight: height * 0.7, // Noch kleiner für bessere Sichtbarkeit
+    maxHeight: height * 0.7,
   },
   
   blurBackground: {
@@ -49,7 +60,7 @@ export default StyleSheet.create({
     }),
   },
   
-  // Header
+  // Header - UNVERÄNDERT
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -106,10 +117,10 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   
-  // Content
+  // Content - UNVERÄNDERT
   scrollView: {
     flex: 1,
-    maxHeight: height * 0.4, // Begrenzte Höhe für ScrollView
+    maxHeight: height * 0.4,
   },
   
   scrollContent: {
@@ -117,7 +128,7 @@ export default StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   
-  // Sections
+  // Sections - UNVERÄNDERT
   section: {
     paddingHorizontal: spacing.lg,
     marginBottom: spacing.lg,
@@ -138,7 +149,7 @@ export default StyleSheet.create({
     fontWeight: "400",
   },
   
-  // All Categories Button
+  // All Categories Button - UNVERÄNDERT
   allButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -159,7 +170,7 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   
-  // Info Section
+  // Info Section - UNVERÄNDERT
   infoSectionContainer: {
     marginTop: spacing.md,
     paddingTop: spacing.md,
@@ -167,15 +178,14 @@ export default StyleSheet.create({
     borderTopColor: "rgba(0, 0, 0, 0.05)",
   },
   
-  // Footer - Wichtig: Feste Höhe und immer sichtbar
+  // Footer - UNVERÄNDERT
   footer: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-    paddingBottom: 0, // Wird dynamisch im JSX gesetzt
+    paddingBottom: 0,
     borderTopWidth: 1,
     flexDirection: "column",
     gap: spacing.md,
-    // Feste Position am unteren Rand
     position: "relative",
     bottom: 0,
   },

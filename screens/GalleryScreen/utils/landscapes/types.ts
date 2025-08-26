@@ -1,55 +1,56 @@
 // screens/GalleryScreen/utils/landscapes/types.ts
-import { ImageSourcePropType } from "react-native";
-import { LandscapeCategory } from "./data";
 
-/**
- * Repräsentiert ein einzelnes Segment eines Landschaftsbildes
- */
+// Export the category type from data.ts
+export type LandscapeCategory = 
+  | "cities"
+  | "architecture"
+  | "animals"
+  | "plants"
+  | "landscapes"
+  | "water"
+  | "sky"
+  | "path";
+
+// Segment-Typ für die einzelnen Teile eines Bildes
 export interface LandscapeSegment {
-  id: number;         // Index des Segments (0-8)
-  isUnlocked: boolean; // Ob das Segment freigeschaltet ist
-  unlockedAt?: string; // Wann das Segment freigeschaltet wurde
+  id: number;
+  isUnlocked: boolean;
+  unlockedAt?: string; // ISO-String des Freischaltungszeitpunkts
 }
 
-/**
- * Repräsentiert ein einzelnes Landschaftsbild in der Sammlung
- */
+// Haupttyp für Landschaftsbilder
 export interface Landscape {
-  id: string;           // Eindeutige ID
-  name: string;         // Name der Landschaft
-  description: string;  // Kurze Beschreibung
-  previewSource: ImageSourcePropType; // Vorschaubild (komplett)
-  fullSource: ImageSourcePropType;    // Vollbild für Hintergrund
-  segments: LandscapeSegment[];       // Die 9 Segmente des Bildes
-  progress: number;                   // Anzahl freigeschalteter Segmente (0-9)
-  isComplete: boolean;                // Ob alle Segmente freigeschaltet sind
-  isFavorite: boolean;                // Ob als Favorit markiert
-  completedAt?: string;               // Wann komplett freigeschaltet
-  category: LandscapeCategory;        // Kategorie des Bildes (importiert aus data.ts)
+  id: string;
+  name: string;
+  description: string;
+  previewSource: any; // Image source type
+  fullSource: any; // Image source type
+  segments: LandscapeSegment[];
+  progress: number; // Anzahl freigeschalteter Segmente (0-9)
+  isComplete: boolean;
+  isFavorite: boolean;
+  category: LandscapeCategory;
+  completedAt?: string; // ISO-String des Abschlusszeitpunkts
 }
 
-/**
- * Status der Sammlung im Storage
- */
+// Collection-Typ für die gesamte Sammlung
 export interface LandscapeCollection {
-  landscapes: Record<string, Landscape>;   // Alle Landschaften
-  favorites: string[];                      // IDs der Favoriten
-  currentImageId: string;                   // Aktuell in Arbeit
-  lastUsedFavoriteIndex: number;            // Für Rotation
-  lastChangedDate: string;                  // Für täglichen Wechsel
-  version?: number;                         // Versionsnummer für Aktualisierungen
+  landscapes: Record<string, Landscape>;
+  favorites: string[]; // Array von Landschafts-IDs
+  currentImageId: string | null; // ID des aktuell freigeschalteten Bildes
+  lastUsedFavoriteIndex: number;
+  lastChangedDate: string; // ISO-String
+  version: number; // Versionsnummer der Collection
 }
 
-/**
- * Filter-Optionen für die Galerie
- */
+// Filter-Typ für die Galerie-Tabs
 export type LandscapeFilter = "all" | "inProgress" | "completed" | "favorites";
 
-/**
- * Event-Typ beim Freischalten eines neuen Segments oder kompletten Bildes
- */
+// Unlock-Event für die Historie
 export interface UnlockEvent {
-  type: "segment" | "complete"; // Segment oder komplettes Bild
-  landscapeId: string;         // ID der betroffenen Landschaft
-  segmentId?: number;          // ID des Segments (bei segment-Typ)
+  landscapeId: string;
+  segmentIndex: number;
+  unlockedAt: string; // ISO-String
+  sudokuDifficulty?: "easy" | "medium" | "hard" | "expert";
+  sudokuTime?: number; // Zeit in Sekunden
 }

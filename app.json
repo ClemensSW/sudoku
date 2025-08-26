@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sudoku Duo",
     "slug": "sudoku-duo",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sudokuduo",
@@ -40,6 +40,8 @@
       },
       "package": "de.playfusiongate.sudokuduo",
       "versionCode": 1,
+      "targetSdkVersion": 35,
+      "compileSdkVersion": 35,
       "permissions": ["com.android.vending.BILLING"],
       "intentFilters": [
         {

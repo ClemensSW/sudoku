@@ -138,7 +138,7 @@ const StartScreen: React.FC = () => {
     }
 
     // Fallback to default image
-    return require("@/assets/imageCollection/mountains/mountains-fuji_1920.jpg");
+    return require("@/assets/imageCollection/sudoku-duo_1920.jpg");
   };
 
   // Game action handlers

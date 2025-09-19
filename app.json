@@ -10,20 +10,21 @@
     "newArchEnabled": true,
     "jsEngine": "hermes",
     "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um ein Profilbild auszuwählen.",
-          "cameraPermission": "Die App benötigt Zugriff auf die Kamera, um ein Profilbild aufzunehmen."
-        }
-      ],
+      ["expo-image-picker", {
+        "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um ein Profilbild auszuwählen.",
+        "cameraPermission": "Die App benötigt Zugriff auf die Kamera, um ein Profilbild aufzunehmen."
+      }],
       "expo-router",
       "expo-font",
       "expo-web-browser"
     ],
+    "androidStatusBar": {
+      "hidden": true,
+      "translucent": true,
+      "backgroundColor": "#00000000"
+    },
     "ios": {
       "supportsTablet": true,
-      "statusBarHidden": true,
       "bundleIdentifier": "com.yourdomain.sudoku",
       "jsEngine": "hermes"
     },
@@ -33,28 +34,12 @@
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "statusBar": {
-        "hidden": true,
-        "translucent": true,
-        "backgroundColor": "#00000000"
-      },
       "package": "de.playfusiongate.sudokuduo",
       "versionCode": 1,
-      "targetSdkVersion": 35,
-      "compileSdkVersion": 35,
       "permissions": ["com.android.vending.BILLING"],
       "intentFilters": [
-        {
-          "action": "MAIN",
-          "category": ["LAUNCHER", "DEFAULT"]
-        },
-        {
-          "action": "VIEW",
-          "data": {
-            "scheme": "mailto"
-          },
-          "category": ["DEFAULT", "BROWSABLE"]
-        }
+        { "action": "MAIN", "category": ["LAUNCHER", "DEFAULT"] },
+        { "action": "VIEW", "data": { "scheme": "mailto" }, "category": ["DEFAULT", "BROWSABLE"] }
       ]
     },
     "web": {
@@ -67,16 +52,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "experiments": {
-      "typedRoutes": true
-    },
+    "experiments": { "typedRoutes": true },
     "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "1b6add40-870a-4135-9786-bc0120501791"
-      }
+      "router": { "origin": false },
+      "eas": { "projectId": "1b6add40-870a-4135-9786-bc0120501791" }
     }
   }
 }

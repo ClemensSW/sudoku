@@ -1,12 +1,13 @@
-// utils/landscapes/storage.ts mit Sperre für doppelte Freischaltungen
+// screens/GalleryScreen/utils/landscapes/storage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Landscape, LandscapeCollection, UnlockEvent } from "./types";
+import { Landscape, LandscapeCollection, UnlockEvent, LandscapeSegment } from "./types";
 import { getDefaultCollectionState } from "./data";
+import { sortLandscapes } from "./sorting";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
 const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Für Sperre
-const LAST_UNLOCK_EVENT_KEY = "@sudoku/last_unlock_event"; // NEU: Für Event-Speicherung
+const LAST_UNLOCK_EVENT_KEY = "@sudoku/last_unlock_event"; // Für Event-Speicherung
 
 /**
  * Lädt die Landschaftssammlung aus dem AsyncStorage
@@ -40,7 +41,9 @@ export const saveLandscapeCollection = async (collection: LandscapeCollection): 
   }
 };
 
-// Prüft, ob eine Freischaltung innerhalb eines Zeitfensters bereits stattgefunden hat
+/**
+ * Prüft, ob eine Freischaltung innerhalb eines Zeitfensters bereits stattgefunden hat
+ */
 const hasRecentlyUnlocked = async (): Promise<boolean> => {
   try {
     const lastUnlockTimestamp = await AsyncStorage.getItem(LAST_UNLOCK_KEY);
@@ -59,7 +62,9 @@ const hasRecentlyUnlocked = async (): Promise<boolean> => {
   }
 };
 
-// Markiere eine Freischaltung als durchgeführt
+/**
+ * Markiert eine Freischaltung als durchgeführt
+ */
 const markAsUnlocked = async (): Promise<void> => {
   try {
     await AsyncStorage.setItem(LAST_UNLOCK_KEY, Date.now().toString());
@@ -69,7 +74,7 @@ const markAsUnlocked = async (): Promise<void> => {
 };
 
 /**
- * NEU: Speichert das letzte Freischaltungsereignis
+ * Speichert das letzte Freischaltungsereignis
  */
 export const saveUnlockEvent = async (event: UnlockEvent | null): Promise<void> => {
   try {
@@ -86,7 +91,7 @@ export const saveUnlockEvent = async (event: UnlockEvent | null): Promise<void> 
 };
 
 /**
- * NEU: Ruft das letzte Freischaltungsereignis ab und löscht es danach
+ * Ruft das letzte Freischaltungsereignis ab und löscht es danach
  */
 export const getAndClearLastUnlockEvent = async (): Promise<UnlockEvent | null> => {
   try {
@@ -99,6 +104,20 @@ export const getAndClearLastUnlockEvent = async (): Promise<UnlockEvent | null> 
     console.error("Fehler beim Abrufen des Unlock-Events:", error);
     return null;
   }
+};
+
+/**
+ * Findet die ID der nächsten unvollständigen Landschaft
+ */
+const findNextIncompleteImage = (collection: LandscapeCollection): string | null => {
+  const { landscapes } = collection;
+  
+  // Finde Landschaften, die noch nicht vollständig sind
+  const incompleteLandscapeIds = Object.keys(landscapes).filter(
+    (id: string) => !landscapes[id].isComplete
+  );
+  
+  return incompleteLandscapeIds.length > 0 ? incompleteLandscapeIds[0] : null;
 };
 
 /**
@@ -140,9 +159,18 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     const collection = await loadLandscapeCollection();
     const { currentImageId, landscapes } = collection;
     
-    // Aktuelle Landschaft abrufen
+    // ✅ FIX: Prüfe ob currentImageId null ist
+    if (!currentImageId) {
+      console.log("Keine aktuelle Landschaft gesetzt");
+      return null;
+    }
+    
+    // ✅ FIX: Jetzt ist sicher, dass currentImageId ein string ist
     const landscape = landscapes[currentImageId];
-    if (!landscape) return null;
+    if (!landscape) {
+      console.log("Landschaft nicht gefunden für ID:", currentImageId);
+      return null;
+    }
     
     // Bereits vollständig freigeschaltet?
     if (landscape.isComplete) {
@@ -156,8 +184,8 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
       return null; // Keine weitere Aktion möglich
     }
     
-    // Finde das nächste unfreigeschaltete Segment
-    const segmentIndex = landscape.segments.findIndex(s => !s.isUnlocked);
+    // ✅ FIX: Explizite Typisierung für findIndex callback
+    const segmentIndex = landscape.segments.findIndex((s: LandscapeSegment) => !s.isUnlocked);
     if (segmentIndex === -1) return null;
     
     // Segment freischalten
@@ -178,34 +206,21 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     // Freischaltung als erfolgt markieren
     await markAsUnlocked();
     
+    // ✅ FIX: currentImageId ist garantiert string an dieser Stelle
     const unlockEvent: UnlockEvent = {
-        type: isComplete ? "complete" : "segment",
-        landscapeId: currentImageId,
-        segmentId: isComplete ? undefined : segmentIndex
-      };
-      
-      // Event speichern
-      await saveUnlockEvent(unlockEvent);
+      landscapeId: currentImageId, // TypeScript-Fehler behoben
+      segmentIndex: segmentIndex,
+      unlockedAt: new Date().toISOString(),
+    };
+    
+    // Event speichern
+    await saveUnlockEvent(unlockEvent);
     
     return unlockEvent;
   } catch (error) {
     console.error("Fehler beim Freischalten eines Segments:", error);
     return null;
   }
-};
-
-/**
- * Findet die ID der nächsten unvollständigen Landschaft
- */
-const findNextIncompleteImage = (collection: LandscapeCollection): string | null => {
-  const { landscapes } = collection;
-  
-  // Finde Landschaften, die noch nicht vollständig sind
-  const incompleteLandscapeIds = Object.keys(landscapes).filter(
-    id => !landscapes[id].isComplete
-  );
-  
-  return incompleteLandscapeIds.length > 0 ? incompleteLandscapeIds[0] : null;
 };
 
 /**
@@ -230,7 +245,7 @@ export const toggleFavorite = async (landscapeId: string): Promise<boolean> => {
       collection.favorites.push(landscapeId);
     } else {
       // Aus Favoriten entfernen
-      collection.favorites = collection.favorites.filter(id => id !== landscapeId);
+      collection.favorites = collection.favorites.filter((id: string) => id !== landscapeId);
     }
     
     await saveLandscapeCollection(collection);
@@ -253,67 +268,124 @@ export const getDailyBackground = async (): Promise<Landscape | null> => {
     // Wenn keine Favoriten vorhanden sind, nimm das erste vollständige Bild
     // oder gib null zurück, wenn keines verfügbar ist
     if (favorites.length === 0) {
-      const completeLandscapes = Object.values(landscapes).filter(l => l.isComplete);
+      const completeLandscapes = Object.values(landscapes).filter((l: Landscape) => l.isComplete);
       return completeLandscapes.length > 0 ? completeLandscapes[0] : null;
     }
     
-    // Prüfe, ob ein Tageswechsel stattgefunden hat
-    const today = new Date().toISOString().split("T")[0];
-    const lastDate = lastChangedDate.split("T")[0];
-    
-    if (today === lastDate) {
-      // Gleicher Tag - behalte das aktuelle Bild
-      return landscapes[favorites[lastUsedFavoriteIndex]] || null;
+    // Nur ein Favorit - verwende ihn
+    if (favorites.length === 1) {
+      return landscapes[favorites[0]] || null;
     }
     
-    // Neuer Tag - rotiere zum nächsten Favoriten
-    const newIndex = (lastUsedFavoriteIndex + 1) % favorites.length;
-    collection.lastUsedFavoriteIndex = newIndex;
-    collection.lastChangedDate = new Date().toISOString();
+    // Mehrere Favoriten - rotiere täglich
+    const today = new Date().toDateString();
+    const lastChanged = new Date(lastChangedDate).toDateString();
     
-    await saveLandscapeCollection(collection);
-    return landscapes[favorites[newIndex]] || null;
+    if (today !== lastChanged) {
+      // Neuer Tag - wechsle zum nächsten Favoriten
+      const nextIndex = (lastUsedFavoriteIndex + 1) % favorites.length;
+      collection.lastUsedFavoriteIndex = nextIndex;
+      collection.lastChangedDate = new Date().toISOString();
+      await saveLandscapeCollection(collection);
+      
+      return landscapes[favorites[nextIndex]] || null;
+    }
+    
+    // Gleicher Tag - verwende den aktuellen Favoriten
+    const currentFavoriteId = favorites[lastUsedFavoriteIndex];
+    return landscapes[currentFavoriteId] || null;
   } catch (error) {
-    console.error("Fehler beim Abrufen des Hintergrundbildes:", error);
+    console.error("Fehler beim Laden des Hintergrundbildes:", error);
     return null;
   }
 };
 
 /**
- * Gibt die aktuelle, in Bearbeitung befindliche Landschaft zurück
- */
-export const getCurrentLandscape = async (): Promise<Landscape | null> => {
-  try {
-    const collection = await loadLandscapeCollection();
-    return collection.landscapes[collection.currentImageId] || null;
-  } catch (error) {
-    console.error("Fehler beim Abrufen der aktuellen Landschaft:", error);
-    return null;
-  }
-};
-
-/**
- * Liefert alle Landschaften mit dem angegebenen Filter zurück
+ * Holt gefilterte Landschaften basierend auf dem Filter-Typ
  */
 export const getFilteredLandscapes = async (filter: string): Promise<Landscape[]> => {
   try {
     const collection = await loadLandscapeCollection();
-    let landscapes = Object.values(collection.landscapes);
-    const currentImageId = collection.currentImageId;
+    const { landscapes, currentImageId } = collection;
+    
+    let filteredLandscapes: Landscape[] = [];
     
     switch (filter) {
+      case "all":
+        filteredLandscapes = Object.values(landscapes);
+        break;
       case "inProgress":
-        // Include landscapes that have progress OR are the current active project
-        return landscapes.filter(l => !l.isComplete);
+        filteredLandscapes = Object.values(landscapes).filter((l: Landscape) => l.progress > 0 && !l.isComplete);
+        break;
       case "completed":
-        return landscapes.filter(l => l.isComplete);
+        filteredLandscapes = Object.values(landscapes).filter((l: Landscape) => l.isComplete);
+        break;
       case "favorites":
-        return landscapes.filter(l => l.isFavorite);
+        filteredLandscapes = Object.values(landscapes).filter((l: Landscape) => l.isFavorite);
+        break;
       default:
-        return landscapes;
+        filteredLandscapes = Object.values(landscapes);
     }
+    
+    // Sortiere die Landschaften
+    return sortLandscapes(filteredLandscapes, currentImageId);
   } catch (error) {
     console.error("Fehler beim Filtern der Landschaften:", error);
     return [];
   }
 };
+
+/**
+ * Holt die aktuelle aktive Landschaft
+ */
+export const getCurrentLandscape = async (): Promise<Landscape | null> => {
+  try {
+    const collection = await loadLandscapeCollection();
+    const { currentImageId, landscapes } = collection;
+    
+    // ✅ FIX: Prüfe ob currentImageId null ist
+    if (!currentImageId) {
+      return null;
+    }
+    
+    // ✅ FIX: Jetzt ist sicher, dass currentImageId ein string ist
+    return landscapes[currentImageId] || null;
+  } catch (error) {
+    console.error("Fehler beim Laden der aktuellen Landschaft:", error);
+    return null;
+  }
+};
+
+/**
+ * Holt eine spezifische Landschaft anhand ihrer ID
+ */
+export const getLandscapeById = async (landscapeId: string): Promise<Landscape | null> => {
+  try {
+    const collection = await loadLandscapeCollection();
+    return collection.landscapes[landscapeId] || null;
+  } catch (error) {
+    console.error("Fehler beim Laden der Landschaft:", error);
+    return null;
+  }
+};
+
+/**
+ * Holt alle Landschaften als Array
+ */
+export const getAllLandscapes = async (): Promise<Landscape[]> => {
+  try {
+    const collection = await loadLandscapeCollection();
+    const { currentImageId } = collection;
+    const landscapes = Object.values(collection.landscapes);
+    
+    return sortLandscapes(landscapes, currentImageId);
+  } catch (error) {
+    console.error("Fehler beim Laden aller Landschaften:", error);
+    return [];
+  }
+};
+
+/**
+ * Setzt den aktuellen Projekt-Alias für setCurrentProject
+ */
+export const setCurrentProjectAlias = setCurrentProject;

@@ -4,8 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
-  Dimensions,
   useWindowDimensions,
 } from "react-native";
 import { useRouter, Router } from "expo-router";
@@ -22,7 +20,10 @@ import {
   Landscape,
   LandscapeFilter,
 } from "@/screens/GalleryScreen/utils/landscapes/types";
-import { LandscapeCategory } from "@/screens/GalleryScreen/utils/landscapes/data";
+import {
+  LandscapeCategory,
+  sortLandscapesForGallery,
+} from "@/screens/GalleryScreen/utils/landscapes/data";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import {
   ImageGrid,
@@ -36,6 +37,7 @@ import styles from "./GalleryScreen.styles";
 import { ThemeColors } from "@/utils/theme/types";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useIsFocused } from "@react-navigation/native";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -96,6 +98,7 @@ const GalleryScreen: React.FC = () => {
   const router = useRouter();
   const { showAlert } = useAlert();
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
 
   // Get screen dimensions for responsive design
   const { width: screenWidth } = useWindowDimensions();
@@ -109,18 +112,11 @@ const GalleryScreen: React.FC = () => {
 
   // Hide bottom navigation more aggressively
   useEffect(() => {
-    // Hide navigation as soon as component mounts
     hideNavigation();
-
-    // Extra safety check - re-hide navigation after a short delay
     const timer = setTimeout(() => {
       hideNavigation();
     }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      // No need to reset on unmount as the receiving screen will control its own navigation
-    };
+    return () => clearTimeout(timer);
   }, [hideNavigation]);
 
   // States
@@ -137,42 +133,33 @@ const GalleryScreen: React.FC = () => {
     [key: string]: { x: number; width: number };
   }>({});
 
-  // Determine display mode based on screen size
-  const isCompactMode = screenWidth < 370; // Threshold for smaller screens
-  const isSmallMode = screenWidth < 420 && screenWidth >= 370; // Middle size screens
+  // Key, um bei jedem Fokus die Gruppe (5) neu zu mischen
+  const [shuffleKey, setShuffleKey] = useState(0);
+  useEffect(() => {
+    if (isFocused) setShuffleKey((k) => k + 1);
+  }, [isFocused]);
 
-  // Use the useLandscapes Hook mit erweiterten Funktionen
+  // Determine display mode based on screen size
+  const isCompactMode = screenWidth < 370;
+  const isSmallMode = screenWidth < 420 && screenWidth >= 370;
+
+  // useLandscapes liefert sowohl eine (ggf. gefilterte) Liste als auch die Collection
   const {
-    landscapes: allLandscapes,
+    landscapes: hookLandscapes, // vom Hook sortiert/gefiltert je nach activeTab
     isLoading,
     toggleFavorite,
     changeFilter,
     reload,
-    collection,
+    collection, // enthält { landscapes: Record<string, Landscape>, favorites, currentImageId, ... }
     setCurrentProject,
   } = useLandscapes(activeTab);
 
-  // Filter landscapes by selected categories
-  const landscapes = useMemo(() => {
-    // Wenn keine Kategorien ausgewählt sind, zeige alle
-    if (selectedCategories.length === 0) {
-      return allLandscapes;
-    }
-    // Filtere nach ausgewählten Kategorien
-    return allLandscapes.filter((landscape) =>
-      selectedCategories.includes(landscape.category as LandscapeCategory)
-    );
-  }, [allLandscapes, selectedCategories]);
-
-  // Berechne die aktuelle Bild-ID für das Freischalten
-  const currentImageId = collection?.currentImageId || "";
-
-  // Change filter when tab changes
+  // Change filter when tab changes (für den Hook-internen Zustand)
   useEffect(() => {
     changeFilter(activeTab);
   }, [activeTab, changeFilter]);
 
-  // Update indicator position when active tab changes
+  // Animated indicator follows active tab
   useEffect(() => {
     if (tabLayouts[activeTab]) {
       indicatorPosition.value = withTiming(tabLayouts[activeTab].x, {
@@ -184,7 +171,7 @@ const GalleryScreen: React.FC = () => {
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
     }
-  }, [activeTab, tabLayouts]);
+  }, [activeTab, tabLayouts, indicatorPosition, indicatorWidth]);
 
   // Animated style for the tab indicator
   const indicatorStyle = useAnimatedStyle(() => ({
@@ -195,91 +182,49 @@ const GalleryScreen: React.FC = () => {
   // Tab data with responsive labels
   const tabs = useMemo(() => {
     if (isCompactMode) {
-      // For very small screens, use only icons with ultra-short labels
       return [
-        {
-          id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
-          icon: "grid",
-        },
-        {
-          id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "Aktiv",
-          icon: "clock",
-        },
-        {
-          id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "OK",
-          icon: "check-circle",
-        },
-        {
-          id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favs",
-          icon: "heart",
-        },
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "OK", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favs", icon: "heart" },
       ];
     } else if (isSmallMode) {
-      // For small screens, use short labels
       return [
-        {
-          id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
-          icon: "grid",
-        },
-        {
-          id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "Aktiv",
-          icon: "clock",
-        },
-        {
-          id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "Komplett",
-          icon: "check-circle",
-        },
-        {
-          id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favoriten",
-          icon: "heart",
-        },
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
       ];
     } else {
-      // For larger screens, use full labels
       return [
-        {
-          id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
-          icon: "grid",
-        },
-        {
-          id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "In Arbeit",
-          icon: "clock",
-        },
-        {
-          id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "Komplett",
-          icon: "check-circle",
-        },
-        {
-          id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favoriten",
-          icon: "heart",
-        },
+        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
+        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "In Arbeit", icon: "clock" },
+        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
+        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
       ];
     }
   }, [isCompactMode, isSmallMode]);
+
+  // Aktuelle Bild-ID für das Freischalten
+  const currentImageId = collection?.currentImageId || "";
+
+  // ---- Zentrale Stelle: Reihenfolge bestimmen ----
+  // Für Tab "Alle" nutzen wir unsere Wunsch-Reihenfolge aus data.ts,
+  // für die anderen Tabs übernehmen wir die vom Hook kommende Liste.
+  const baseList: Landscape[] = useMemo(() => {
+    if (!collection) return hookLandscapes;
+    if (activeTab !== "all") return hookLandscapes;
+    // shuffleKey in dependency => (5) wird bei Fokus neu gemischt
+    return sortLandscapesForGallery(collection);
+  }, [collection, hookLandscapes, activeTab, shuffleKey]);
+
+  // Danach (optional) Kategorie-Filter anwenden
+  const landscapes = useMemo(() => {
+    if (selectedCategories.length === 0) return baseList;
+    return baseList.filter((l) =>
+      selectedCategories.includes(l.category as LandscapeCategory)
+    );
+  }, [baseList, selectedCategories]);
 
   // Handler for image tap
   const handleImagePress = (landscape: Landscape) => {
@@ -289,16 +234,9 @@ const GalleryScreen: React.FC = () => {
 
   // Handler for favorite toggle - optimized to prevent full reloads
   const handleToggleFavorite = async (landscape: Landscape) => {
-    // Toggle only in the storage without triggering a full reload
     const newStatus = await toggleFavorite(landscape.id);
-
-    // Update the local state of the landscape to reflect the change
-    // This prevents a full reload of the landscapes array
     landscape.isFavorite = newStatus;
-
-    // If we're in the detail modal, update the selected landscape too
     if (selectedLandscape && selectedLandscape.id === landscape.id) {
-      // Set the favorite status in the currently displayed landscape
       setSelectedLandscape({
         ...selectedLandscape,
         isFavorite: newStatus,
@@ -306,26 +244,18 @@ const GalleryScreen: React.FC = () => {
     }
   };
 
-  // Handler für die Bildauswahl
+  // Handler: Bild als Projekt wählen (aktuelles Freischaltbild setzen)
   const handleSelectAsProject = async (landscape: Landscape) => {
     const success = await setCurrentProject(landscape.id);
-
     if (success) {
-      // Feedback für den Nutzer anzeigen
       showAlert({
         title: "Bild ausgewählt",
         message: `„${landscape.name}" wird nun durch Lösen von Sudokus freigeschaltet.`,
         type: "success",
         buttons: [{ text: "OK", style: "primary" }],
       });
-
-      // Daten aktualisieren - vollständig neu laden
       await reload();
-
-      // Detail-Modal schließen mit Verzögerung
-      setTimeout(() => {
-        setDetailModalVisible(false);
-      }, 500);
+      setTimeout(() => setDetailModalVisible(false), 500);
     }
   };
 
@@ -335,9 +265,7 @@ const GalleryScreen: React.FC = () => {
   };
 
   // Show filter modal
-  const showFilterModal = () => {
-    setFilterModalVisible(true);
-  };
+  const showFilterModal = () => setFilterModalVisible(true);
 
   // Apply filter
   const handleApplyFilter = (categories: LandscapeCategory[]) => {
@@ -347,162 +275,130 @@ const GalleryScreen: React.FC = () => {
   // Close detail modal
   const handleCloseDetailModal = () => {
     setDetailModalVisible(false);
-
-    // Delay to reload data after closing
-    setTimeout(() => {
-      reload();
-    }, 300);
+    setTimeout(() => reload(), 300);
   };
 
   // Switch tab
-  const handleTabPress = (tabId: LandscapeFilter) => {
-    setActiveTab(tabId);
-  };
+  const handleTabPress = (tabId: LandscapeFilter) => setActiveTab(tabId);
 
   // Save the layout of a tab
   const handleTabLayout = (tabId: string, event: any) => {
     const { x, width } = event.nativeEvent.layout;
-    setTabLayouts((prev) => ({
-      ...prev,
-      [tabId]: { x, width },
-    }));
-
-    // If this is the initial active tab, set the indicator position immediately
+    setTabLayouts((prev) => ({ ...prev, [tabId]: { x, width } }));
     if (tabId === activeTab && !tabLayouts[tabId]) {
       indicatorPosition.value = x;
       indicatorWidth.value = width;
     }
   };
 
-  // Render tab buttons - jetzt am unteren Bildschirmrand mit responsivem Design
-  const renderTabs = () => {
-    return (
+  // Render tab buttons (unten)
+  const renderTabs = () => (
+    <View
+      style={[
+        styles.tabsContainerWrapper,
+        {
+          backgroundColor: theme.isDark
+            ? "rgba(41, 42, 45, 0.95)"
+            : "rgba(255, 255, 255, 0.95)",
+          shadowColor: colors.shadow,
+          borderTopColor: theme.isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
+        },
+      ]}
+    >
       <View
         style={[
-          styles.tabsContainerWrapper,
+          styles.tabsContainer,
           {
-            backgroundColor: theme.isDark
-              ? "rgba(41, 42, 45, 0.95)" // Leicht transparentes surface (#292A2D)
-              : "rgba(255, 255, 255, 0.95)", // Leicht transparentes Weiß
-            shadowColor: theme.isDark
-              ? colors.shadow // "rgba(0, 0, 0, 0.3)"
-              : colors.shadow, // "rgba(60, 64, 67, 0.10)"
             borderTopColor: theme.isDark
-              ? "rgba(255,255,255,0.1)" // Helle Farbe im dunklen Modus
-              : "rgba(0,0,0,0.05)", // Dunkle Farbe im hellen Modus
+              ? "rgba(255,255,255,0.1)"
+              : "rgba(0,0,0,0.05)",
           },
         ]}
       >
-        <View
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          const showTabText = !isCompactMode;
+          const tabLabel = isSmallMode ? tab.shortLabel : tab.label;
+          return (
+            <TouchableOpacity
+              key={tab.id}
+              style={[
+                styles.tabButton,
+                isCompactMode ? styles.compactTabButton : null,
+                isSmallMode ? styles.smallTabButton : null,
+                isActive && [
+                  styles.activeTabButton,
+                  {
+                    backgroundColor: theme.isDark
+                      ? "rgba(138, 180, 248, 0.12)"
+                      : "rgba(66, 133, 244, 0.08)",
+                  },
+                ],
+              ]}
+              onPress={() => handleTabPress(tab.id)}
+              onLayout={(e) => handleTabLayout(tab.id, e)}
+            >
+              <Feather
+                name={tab.icon as any}
+                size={isCompactMode ? 18 : 16}
+                color={isActive ? colors.primary : colors.textSecondary}
+                style={showTabText ? styles.tabIcon : undefined}
+              />
+              {showTabText && (
+                <Text
+                  style={[
+                    styles.tabText,
+                    isSmallMode && styles.smallTabText,
+                    { color: isActive ? colors.primary : colors.textSecondary },
+                    isActive && styles.activeTabText,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {tabLabel}
+                </Text>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+
+        {/* Animated indicator */}
+        <Animated.View
           style={[
-            styles.tabsContainer,
-            {
-              borderTopColor: theme.isDark
-                ? "rgba(255,255,255,0.1)" // Helle Farbe im dunklen Modus
-                : "rgba(0,0,0,0.05)", // Dunkle Farbe im hellen Modus
-            },
+            styles.tabIndicator,
+            { backgroundColor: colors.primary },
+            indicatorStyle,
           ]}
-        >
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-
-            // Determine if we should show text based on screen size
-            const showTabText = !isCompactMode;
-
-            // Use the appropriate label based on screen size
-            const tabLabel = isSmallMode ? tab.shortLabel : tab.label;
-
-            return (
-              <TouchableOpacity
-                key={tab.id}
-                style={[
-                  styles.tabButton,
-                  isCompactMode ? styles.compactTabButton : null,
-                  isSmallMode ? styles.smallTabButton : null,
-                  isActive && [
-                    styles.activeTabButton,
-                    {
-                      backgroundColor: theme.isDark
-                        ? "rgba(138, 180, 248, 0.12)" // Leicht transparentes primaryLight
-                        : "rgba(66, 133, 244, 0.08)", // Subtile Primärfarbe
-                    },
-                  ],
-                ]}
-                onPress={() => handleTabPress(tab.id)}
-                onLayout={(e) => handleTabLayout(tab.id, e)}
-              >
-                <Feather
-                  name={tab.icon as any}
-                  size={isCompactMode ? 18 : 16}
-                  color={isActive ? colors.primary : colors.textSecondary}
-                  style={showTabText ? styles.tabIcon : undefined}
-                />
-                {showTabText && (
-                  <Text
-                    style={[
-                      styles.tabText,
-                      isSmallMode && styles.smallTabText,
-                      {
-                        color: isActive ? colors.primary : colors.textSecondary,
-                      },
-                      isActive && styles.activeTabText,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {tabLabel}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-
-          {/* Animated indicator - jetzt oben statt unten */}
-          <Animated.View
-            style={[
-              styles.tabIndicator,
-              { backgroundColor: colors.primary },
-              indicatorStyle,
-            ]}
-          />
-        </View>
+        />
       </View>
-    );
-  };
+    </View>
+  );
 
   const backgroundColor = colors.background;
 
-  // Get count of total and filtered images
-  const totalImages = allLandscapes.length;
+  // Counts für Filter-Modal
+  const totalImages = hookLandscapes.length;
   const filteredCount = landscapes.length;
-
-  // Calculate preview count for filter modal
   const getPreviewFilteredCount = (categories: LandscapeCategory[]) => {
     if (categories.length === 0) return totalImages;
-    return allLandscapes.filter((landscape) =>
-      categories.includes(landscape.category as LandscapeCategory)
+    return hookLandscapes.filter((l) =>
+      categories.includes(l.category as LandscapeCategory)
     ).length;
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor }, // Applied solid background color instead of image
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor }]}>
       <StatusBar hidden={true} />
 
-      {/* Header with Filter Button */}
+      {/* Header */}
       <Header
         title="Deine Sammlung"
         onBackPress={handleBack}
-        rightAction={{
-          icon: "filter",
-          onPress: showFilterModal,
-        }}
+        rightAction={{ icon: "filter", onPress: showFilterModal }}
       />
 
-      {/* Show active filter count if filters are applied */}
+      {/* Aktive Filter-Badge */}
       {selectedCategories.length > 0 && (
         <View style={[styles.filterBadge, { backgroundColor: colors.surface }]}>
           <Feather name="filter" size={14} color={colors.primary} />
@@ -518,15 +414,11 @@ const GalleryScreen: React.FC = () => {
         </View>
       )}
 
-      {/* Content - Now with space at the bottom for tabs */}
+      {/* Inhalt */}
       <Animated.View
-        style={[
-          styles.content,
-          { paddingBottom: insets.bottom + 60 }, // Add space for bottom tabs + safe area
-        ]}
+        style={[styles.content, { paddingBottom: insets.bottom + 60 }]}
         entering={FadeIn.duration(400)}
       >
-        {/* Main content area */}
         <View style={styles.galleryContent}>
           {landscapes.length > 0 ? (
             <ImageGrid
@@ -542,10 +434,8 @@ const GalleryScreen: React.FC = () => {
         </View>
       </Animated.View>
 
-      {/* Bottom Tab Navigation */}
-      <View
-        style={[styles.bottomTabContainer, { paddingBottom: insets.bottom }]}
-      >
+      {/* Tabs unten */}
+      <View style={[styles.bottomTabContainer, { paddingBottom: insets.bottom }]}>
         {renderTabs()}
       </View>
 
@@ -557,10 +447,10 @@ const GalleryScreen: React.FC = () => {
         onApplyFilter={handleApplyFilter}
         totalImages={totalImages}
         filteredCount={filteredCount}
-        allLandscapes={allLandscapes}
+        allLandscapes={hookLandscapes}
       />
 
-      {/* Detail Modal mit allen neuen Props */}
+      {/* Detail-Modal */}
       <ImageDetailModal
         visible={detailModalVisible}
         landscape={selectedLandscape}

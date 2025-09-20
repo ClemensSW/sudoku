@@ -293,7 +293,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 
       <Animated.View
         style={[styles.alertContainer, { backgroundColor: colors.surface }]}
-        entering={SlideInUp.springify().damping(15)}
+        entering={SlideInUp.springify().damping(30).stiffness(300)}
         exiting={SlideOutDown.duration(200)}
       >
         {/* Alert Header with Icon */}

@@ -125,9 +125,7 @@ const LandscapeCard = React.memo(
     return (
       <Animated.View
         style={[styles.cardContainer, { backgroundColor: colors.card }]}
-        entering={SlideInRight.delay(index * 100)
-          .springify()
-          .damping(15)}
+        entering={SlideInRight.delay(index * 100).duration(400)}
       >
         <Animated.View style={cardAnimatedStyle}>
           <TouchableOpacity
@@ -201,7 +199,7 @@ const LandscapeCard = React.memo(
               <View
                 style={[
                   styles.currentProjectBadge,
-                  { backgroundColor: colors.info }
+                  { backgroundColor: colors.info },
                 ]}
               >
                 <Feather

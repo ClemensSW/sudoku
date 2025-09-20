@@ -20,7 +20,10 @@ import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing } from "@/utils/theme";
-import { LANDSCAPE_CATEGORIES, LandscapeCategory } from "@/screens/GalleryScreen/utils/landscapes/data";
+import {
+  LANDSCAPE_CATEGORIES,
+  LandscapeCategory,
+} from "@/screens/GalleryScreen/utils/landscapes/data";
 import CategoryGrid from "./components/CategoryGrid";
 import InfoSection from "./components/InfoSection";
 import styles from "./FilterModal.styles";
@@ -47,99 +50,107 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  
-  const [tempSelectedCategories, setTempSelectedCategories] = useState<LandscapeCategory[]>(selectedCategories);
-  
+
+  const [tempSelectedCategories, setTempSelectedCategories] =
+    useState<LandscapeCategory[]>(selectedCategories);
+
   const modalY = useSharedValue(1000);
   const backdropOpacity = useSharedValue(0);
-  
+
   useEffect(() => {
     setTempSelectedCategories(selectedCategories);
   }, [selectedCategories]);
-  
+
   useEffect(() => {
     if (!visible) return;
-    
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      handleClose();
-      return true;
-    });
-    
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        handleClose();
+        return true;
+      }
+    );
+
     return () => backHandler.remove();
   }, [visible]);
-  
+
   useEffect(() => {
     if (visible) {
       // Kleine Verzögerung damit alles korrekt rendert
       setTimeout(() => {
         backdropOpacity.value = withTiming(1, { duration: 300 });
-        modalY.value = withSpring(0, { damping: 20 });
+        modalY.value = withSpring(0, {
+          damping: 30, // Höherer Wert = weniger Bouncing
+          stiffness: 300,
+        });
       }, 10);
     } else {
       backdropOpacity.value = withTiming(0, { duration: 200 });
       modalY.value = withTiming(1000, { duration: 200 });
     }
   }, [visible]);
-  
+
   const handleClose = () => {
     backdropOpacity.value = withTiming(0, { duration: 200 });
     modalY.value = withTiming(1000, { duration: 200 }, () => {
       runOnJS(onClose)();
     });
   };
-  
+
   const handleCategoryToggle = (category: LandscapeCategory) => {
-    setTempSelectedCategories(prev => {
+    setTempSelectedCategories((prev) => {
       const isSelected = prev.includes(category);
       if (isSelected) {
-        return prev.filter(c => c !== category);
+        return prev.filter((c) => c !== category);
       } else {
         return [...prev, category];
       }
     });
   };
-  
+
   const handleSelectAll = () => {
     setTempSelectedCategories([]);
   };
-  
+
   const handleApply = () => {
     onApplyFilter(tempSelectedCategories);
     handleClose();
   };
-  
+
   const handleReset = () => {
     setTempSelectedCategories([]);
     onApplyFilter([]);
     handleClose();
   };
-  
+
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
     opacity: backdropOpacity.value,
   }));
-  
+
   const modalAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: modalY.value }],
   }));
-  
-  const allCategoriesSelected = tempSelectedCategories.length === 0 || 
+
+  const allCategoriesSelected =
+    tempSelectedCategories.length === 0 ||
     tempSelectedCategories.length === Object.keys(LANDSCAPE_CATEGORIES).length;
-  
+
   const getPreviewCount = () => {
     if (tempSelectedCategories.length === 0) return totalImages;
-    
+
     if (allLandscapes && allLandscapes.length > 0) {
-      return allLandscapes.filter((landscape: any) => 
+      return allLandscapes.filter((landscape: any) =>
         tempSelectedCategories.includes(landscape.category as LandscapeCategory)
       ).length;
     }
-    
+
     return filteredCount;
   };
-  
+
   // WICHTIG: Nicht rendern wenn nicht sichtbar
   if (!visible) return null;
-  
+
   return (
     // ÄNDERUNG: View statt Modal mit absolutem Container
     <View style={styles.absoluteContainer}>
@@ -151,14 +162,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
           onPress={handleClose}
         />
       </Animated.View>
-      
+
       {/* Modal Content - GENAU WIE VORHER */}
-      <Animated.View
-        style={[
-          styles.modalContainer,
-          modalAnimatedStyle
-        ]}
-      >
+      <Animated.View style={[styles.modalContainer, modalAnimatedStyle]}>
         {Platform.OS === "ios" && (
           <BlurView
             intensity={95}
@@ -166,29 +172,38 @@ const FilterModal: React.FC<FilterModalProps> = ({
             style={[styles.blurBackground, { overflow: "hidden" }]}
           />
         )}
-        
-        <View style={[
-          styles.modalContent,
-          { backgroundColor: Platform.OS === "ios" 
-            ? "transparent" 
-            : theme.isDark ? colors.surface : colors.background 
-          }
-        ]}>
+
+        <View
+          style={[
+            styles.modalContent,
+            {
+              backgroundColor:
+                Platform.OS === "ios"
+                  ? "transparent"
+                  : theme.isDark
+                  ? colors.surface
+                  : colors.background,
+            },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <TouchableOpacity
-                style={[styles.closeButton, { backgroundColor: colors.surface }]}
+                style={[
+                  styles.closeButton,
+                  { backgroundColor: colors.surface },
+                ]}
                 onPress={handleClose}
               >
                 <Feather name="x" size={20} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
-            
+
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
               Filter
             </Text>
-            
+
             <View style={styles.headerRight}>
               {!allCategoriesSelected && (
                 <TouchableOpacity
@@ -202,7 +217,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               )}
             </View>
           </View>
-          
+
           {/* Scrollable Content */}
           <ScrollView
             style={styles.scrollView}
@@ -212,36 +227,53 @@ const FilterModal: React.FC<FilterModalProps> = ({
             {/* Filter Section */}
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                <Text
+                  style={[styles.sectionTitle, { color: colors.textPrimary }]}
+                >
                   Nach Kategorien filtern
                 </Text>
-                <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-                  {allCategoriesSelected 
-                    ? "Alle Kategorien anzeigen" 
+                <Text
+                  style={[
+                    styles.sectionSubtitle,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  {allCategoriesSelected
+                    ? "Alle Kategorien anzeigen"
                     : `${tempSelectedCategories.length} ausgewählt`}
                 </Text>
               </View>
-              
+
               {/* All Categories Button */}
               <TouchableOpacity
                 style={[
                   styles.allButton,
-                  { 
-                    borderColor: allCategoriesSelected ? colors.primary : colors.border,
-                    backgroundColor: allCategoriesSelected ? colors.primary : "transparent",
+                  {
+                    borderColor: allCategoriesSelected
+                      ? colors.primary
+                      : colors.border,
+                    backgroundColor: allCategoriesSelected
+                      ? colors.primary
+                      : "transparent",
                     borderWidth: 2,
-                  }
+                  },
                 ]}
                 onPress={handleSelectAll}
               >
-                <Text style={[
-                  styles.allButtonText,
-                  { color: allCategoriesSelected ? "#FFFFFF" : colors.textPrimary }
-                ]}>
+                <Text
+                  style={[
+                    styles.allButtonText,
+                    {
+                      color: allCategoriesSelected
+                        ? "#FFFFFF"
+                        : colors.textPrimary,
+                    },
+                  ]}
+                >
                   Alle Kategorien
                 </Text>
               </TouchableOpacity>
-              
+
               {/* Category Grid - VERWENDET DIE ORIGINALE KOMPONENTE */}
               <CategoryGrid
                 selectedCategories={tempSelectedCategories}
@@ -249,33 +281,30 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 allSelected={allCategoriesSelected}
               />
             </View>
-            
+
             {/* Info Section - VERWENDET DIE ORIGINALE KOMPONENTE */}
             <View style={[styles.section, styles.infoSectionContainer]}>
               <InfoSection />
             </View>
           </ScrollView>
-          
+
           {/* Footer Actions */}
-          <View style={[
-            styles.footer,
-            { 
-              backgroundColor: Platform.OS === "ios" 
-                ? "transparent" 
-                : colors.background,
-              borderTopColor: colors.border,
-              paddingBottom: Math.max(insets.bottom, spacing.md)
-            }
-          ]}>
-            
-            
+          <View
+            style={[
+              styles.footer,
+              {
+                backgroundColor:
+                  Platform.OS === "ios" ? "transparent" : colors.background,
+                borderTopColor: colors.border,
+                paddingBottom: Math.max(insets.bottom, spacing.md),
+              },
+            ]}
+          >
             <TouchableOpacity
               style={[styles.applyButton, { backgroundColor: colors.primary }]}
               onPress={handleApply}
             >
-              <Text style={styles.applyButtonText}>
-                Filter anwenden
-              </Text>
+              <Text style={styles.applyButtonText}>Filter anwenden</Text>
             </TouchableOpacity>
           </View>
         </View>

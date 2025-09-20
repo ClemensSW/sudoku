@@ -304,10 +304,7 @@ export const getFilteredLandscapes = async (filter: string): Promise<Landscape[]
     switch (filter) {
       case "inProgress":
         // Include landscapes that have progress OR are the current active project
-        return landscapes.filter(l => 
-          (l.progress > 0 && !l.isComplete) || // Original condition
-          (l.id === currentImageId && !l.isComplete) // Add current project even with 0 progress
-        );
+        return landscapes.filter(l => !l.isComplete);
       case "completed":
         return landscapes.filter(l => l.isComplete);
       case "favorites":

@@ -154,11 +154,6 @@ const GalleryScreen: React.FC = () => {
     setCurrentProject,
   } = useLandscapes(activeTab);
 
-  // Change filter when tab changes (für den Hook-internen Zustand)
-  useEffect(() => {
-    changeFilter(activeTab);
-  }, [activeTab, changeFilter]);
-
   // Animated indicator follows active tab
   useEffect(() => {
     if (tabLayouts[activeTab]) {
@@ -183,24 +178,84 @@ const GalleryScreen: React.FC = () => {
   const tabs = useMemo(() => {
     if (isCompactMode) {
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "OK", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favs", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "Offen",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "OK",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favs",
+          icon: "heart",
+        },
       ];
     } else if (isSmallMode) {
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "Aktiv", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "Offen",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "Komplett",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favoriten",
+          icon: "heart",
+        },
       ];
     } else {
       return [
-        { id: "all" as LandscapeFilter, label: "Alle", shortLabel: "Alle", icon: "grid" },
-        { id: "inProgress" as LandscapeFilter, label: "In Arbeit", shortLabel: "In Arbeit", icon: "clock" },
-        { id: "completed" as LandscapeFilter, label: "Komplett", shortLabel: "Komplett", icon: "check-circle" },
-        { id: "favorites" as LandscapeFilter, label: "Favoriten", shortLabel: "Favoriten", icon: "heart" },
+        {
+          id: "all" as LandscapeFilter,
+          label: "Alle",
+          shortLabel: "Alle",
+          icon: "grid",
+        },
+        {
+          id: "inProgress" as LandscapeFilter,
+          label: "In Arbeit",
+          shortLabel: "Offen",
+          icon: "clock",
+        },
+        {
+          id: "completed" as LandscapeFilter,
+          label: "Komplett",
+          shortLabel: "Komplett",
+          icon: "check-circle",
+        },
+        {
+          id: "favorites" as LandscapeFilter,
+          label: "Favoriten",
+          shortLabel: "Favoriten",
+          icon: "heart",
+        },
       ];
     }
   }, [isCompactMode, isSmallMode]);
@@ -213,9 +268,28 @@ const GalleryScreen: React.FC = () => {
   // für die anderen Tabs übernehmen wir die vom Hook kommende Liste.
   const baseList: Landscape[] = useMemo(() => {
     if (!collection) return hookLandscapes;
-    if (activeTab !== "all") return hookLandscapes;
-    // shuffleKey in dependency => (5) wird bei Fokus neu gemischt
-    return sortLandscapesForGallery(collection);
+
+    // Für "all" Tab: verwende die spezielle Sortierung mit allen Bildern
+    if (activeTab === "all") {
+      return sortLandscapesForGallery(collection);
+    }
+
+    // Für "inProgress" Tab: wende die spezielle Sortierung nur auf die gefilterten Bilder an
+    if (activeTab === "inProgress") {
+      // Erstelle eine gefilterte Collection nur mit nicht-kompletten Bildern
+      const filteredCollection = {
+        ...collection,
+        landscapes: Object.fromEntries(
+          Object.entries(collection.landscapes).filter(
+            ([_, landscape]) => !landscape.isComplete
+          )
+        ),
+      };
+      return sortLandscapesForGallery(filteredCollection);
+    }
+
+    // Für andere Tabs: verwende die vom Hook gefilterten Daten
+    return hookLandscapes;
   }, [collection, hookLandscapes, activeTab, shuffleKey]);
 
   // Danach (optional) Kategorie-Filter anwenden
@@ -279,7 +353,11 @@ const GalleryScreen: React.FC = () => {
   };
 
   // Switch tab
-  const handleTabPress = (tabId: LandscapeFilter) => setActiveTab(tabId);
+  // Switch tab
+  const handleTabPress = (tabId: LandscapeFilter) => {
+    setActiveTab(tabId);
+    changeFilter(tabId); // Direkt den Filter ändern
+  };
 
   // Save the layout of a tab
   const handleTabLayout = (tabId: string, event: any) => {
@@ -435,7 +513,9 @@ const GalleryScreen: React.FC = () => {
       </Animated.View>
 
       {/* Tabs unten */}
-      <View style={[styles.bottomTabContainer, { paddingBottom: insets.bottom }]}>
+      <View
+        style={[styles.bottomTabContainer, { paddingBottom: insets.bottom }]}
+      >
         {renderTabs()}
       </View>
 

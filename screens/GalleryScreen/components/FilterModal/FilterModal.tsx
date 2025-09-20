@@ -226,6 +226,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           >
             {/* Filter Section */}
             <View style={styles.section}>
+              {/*
               <View style={styles.sectionHeader}>
                 <Text
                   style={[styles.sectionTitle, { color: colors.textPrimary }]}
@@ -243,6 +244,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     : `${tempSelectedCategories.length} ausgewählt`}
                 </Text>
               </View>
+              */}
 
               {/* All Categories Button */}
               <TouchableOpacity

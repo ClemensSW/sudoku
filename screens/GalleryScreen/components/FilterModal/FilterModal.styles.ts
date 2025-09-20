@@ -120,7 +120,7 @@ export default StyleSheet.create({
   // Content - UNVERÄNDERT
   scrollView: {
     flex: 1,
-    maxHeight: height * 0.4,
+    maxHeight: height * 0.34,
   },
   
   scrollContent: {

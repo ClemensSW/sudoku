@@ -47,29 +47,29 @@ const InfoSection: React.FC = () => {
   return (
     <View>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-        So funktioniert deine Sammlung
+        So funktioniert deine Galerie
       </Text>
       
       <View style={styles.infoContainer}>
         <InfoItem
           icon="grid"
           iconColor={colors.primary}
-          title="Bilder sammeln"
-          description="Jedes gelöste Sudoku bringt dich einem neuen Bild näher – schalte sie alle frei und fülle deine Galerie!"
+          title="Sammeln"
+          description="Löse Sudokus, um Bilder freizuschalten."
         />
         
         <InfoItem
           icon="target"
           iconColor={colors.info}
-          title="Bild auswählen"
-          description="Entscheide selbst, welches Bild du als Nächstes sammeln möchtest. Tippe dazu in der Detailansicht auf 'Dieses Bild freischalten'."
+          title="Ziel wählen"
+          description="Tippe auf „Dieses Bild freischalten“, um ein Zielbild auszuwählen."
         />
         
         <InfoItem
           icon="heart"
           iconColor={colors.error}
-          title="Favoriten setzen"
-          description="Markiere vollständige Bilder als Favorit – so erscheinen sie auf deinem Startbildschirm."
+          title="Favoriten"
+          description="Markiere Bilder als Favoriten – sie landen auf deinem Startbildschirm."
         />
       </View>
     </View>

@@ -28,6 +28,10 @@ import GalleryTab from "./components/GalleryTab";
 import StreakTab from "./components/StreakTab";
 import TimeTab from "./components/TimeTab";
 
+// NEU: Support-bezogene Imports
+import SupportBanner from "./components/SupportBanner/SupportBanner";
+import SupportShop from "@/components/SupportShop/SupportShop";
+
 // Tab IDs
 type TabId = "level" | "gallery" | "streak" | "times";
 
@@ -37,46 +41,41 @@ const LeistungScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
-  
-  // Add a ref to the ScrollView
+
+  // Scroll + Layout Refs
   const scrollViewRef = useRef<ScrollView>(null);
-  // Add a ref to track the tab section position
   const tabSectionPosition = useRef<number>(0);
 
-  // States
+  // State
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("level");
   const [profile, setProfile] = useState<UserProfile>({ name: "User" });
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
 
-  // Use landscapes hook to get completed images count
-  const { landscapes, isLoading: isLoadingLandscapes } =
-    useLandscapes("completed");
+  // NEU: State für Support Shop
+  const [showSupportShop, setShowSupportShop] = useState(false);
 
-  // Load all data
+  // Landscapes (für Anzahl abgeschlossener Bilder)
+  const { landscapes } = useLandscapes("completed");
+
+  // Daten laden (Stats, Profil, Avatar)
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
 
-        // Load game stats
         const loadedStats = await loadStats();
         setStats(loadedStats);
 
-        // Load user profile
         const userProfile = await loadUserProfile();
         setProfile(userProfile);
 
-        // Load avatar (if exists)
         const uri = await getAvatarUri();
-        // First check if profile already has a reference to an avatar
+
         if (userProfile.avatarUri) {
           setAvatarUri(userProfile.avatarUri);
-        }
-        // If not, check if there's a standalone avatar in the filesystem
-        else if (uri) {
-          // Update the profile with the found avatar
+        } else if (uri) {
           await updateUserAvatar(uri);
           setAvatarUri(uri);
         }
@@ -90,7 +89,7 @@ const LeistungScreen: React.FC = () => {
     fetchData();
   }, []);
 
-  // Tab configuration
+  // Tabs
   const tabs: TabItem[] = [
     { id: "level", label: "Level" },
     { id: "gallery", label: "Sammlung" },
@@ -98,29 +97,25 @@ const LeistungScreen: React.FC = () => {
     { id: "times", label: "Zeiten" },
   ];
 
-  // Handle tab change with scrolling to content
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
-    
-    // Scroll to the tab section with a slight delay to allow for state update
+
     setTimeout(() => {
       if (scrollViewRef.current && tabSectionPosition.current > 0) {
-        // Scroll to the tab section position
         scrollViewRef.current.scrollTo({
-          y: tabSectionPosition.current - 20, // Subtract a small offset for better visibility
-          animated: true
+          y: tabSectionPosition.current - 20,
+          animated: true,
         });
       }
     }, 100);
   };
 
-  // Measure the position of the tab section
   const handleTabSectionLayout = (event: any) => {
     const { y } = event.nativeEvent.layout;
     tabSectionPosition.current = y;
   };
 
-  // Handle name change
+  // Profiländerungen
   const handleNameChange = async (name: string) => {
     try {
       const updatedProfile = await updateUserName(name);
@@ -130,14 +125,12 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // handleAvatarChange function in LeistungScreen.tsx
   const handleAvatarChange = async (uri: string | null) => {
     try {
       const updatedProfile = await updateUserAvatar(uri);
-      setAvatarUri(uri); // Direct state update
+      setAvatarUri(uri);
       setProfile(updatedProfile);
 
-      // Debug output
       console.log("Avatar updated:", uri);
       console.log("Updated profile:", updatedProfile);
     } catch (error) {
@@ -152,12 +145,16 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // Settings button handler
+  // Settings
   const handleOpenSettings = () => {
     router.push("/settings");
   };
 
-  // Render the active tab content
+  // Support Shop
+  const handleOpenSupportShop = () => setShowSupportShop(true);
+  const handleCloseSupportShop = () => setShowSupportShop(false);
+
+  // Tab Content
   const renderTabContent = () => {
     if (!stats) return null;
 
@@ -175,7 +172,7 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // Show loading state while data is loading
+  // Loading
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -192,7 +189,7 @@ const LeistungScreen: React.FC = () => {
     );
   }
 
-  // Show empty state if no stats available
+  // Empty
   if (!stats) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -209,6 +206,7 @@ const LeistungScreen: React.FC = () => {
     );
   }
 
+  // Normal
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
@@ -222,15 +220,15 @@ const LeistungScreen: React.FC = () => {
         }}
       />
 
-      {/* ScrollView for ALL content (including profile and tabs) */}
+      {/* ScrollView for ALL content */}
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollContainer}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 }, // Add extra padding at bottom for safe area
+          { paddingBottom: insets.bottom + 20 },
         ]}
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator
       >
         {/* Profile Header */}
         <View style={styles.profileContainer}>
@@ -244,11 +242,11 @@ const LeistungScreen: React.FC = () => {
           />
         </View>
 
-        {/* Tab Navigator - This will scroll with the content */}
-        <View 
-          style={styles.tabSection}
-          onLayout={handleTabSectionLayout}
-        >
+        {/* SUPPORT BANNER – Einstieg mit Callback */}
+        <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
+
+        {/* Tab Navigator */}
+        <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
           <TabNavigator
             tabs={tabs}
             activeTab={activeTab}
@@ -257,8 +255,23 @@ const LeistungScreen: React.FC = () => {
         </View>
 
         {/* Tab Content */}
-        <View style={styles.tabContentContainer}>{renderTabContent()}</View>
+        <View style={styles.tabContentContainer}>
+          {activeTab === "gallery" ? (
+            <>
+              <GalleryTab />
+            </>
+          ) : activeTab === "times" ? (
+            <>
+              <TimeTab stats={stats} />
+            </>
+          ) : (
+            renderTabContent()
+          )}
+        </View>
       </ScrollView>
+
+      {/* Support Shop Modal – Vollbild Overlay */}
+      {showSupportShop && <SupportShop onClose={handleCloseSupportShop} />}
     </View>
   );
 };
@@ -271,7 +284,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    // No horizontal padding - it will be handled by the child components
+    // No horizontal padding - handled by child components
   },
   profileContainer: {
     paddingHorizontal: 16,
@@ -279,7 +292,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tabSection: {
-    width: "100%", // Full width
+    width: "100%",
   },
   tabContentContainer: {
     paddingHorizontal: 16,

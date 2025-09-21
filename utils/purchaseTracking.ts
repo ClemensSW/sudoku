@@ -1,0 +1,169 @@
+// utils/purchaseTracking.ts
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const PURCHASE_KEY = "@user_has_purchased";
+const BANNER_INTERACTIONS_KEY = "@banner_interactions";
+const PURCHASE_DATE_KEY = "@purchase_date";
+const PURCHASE_ITEM_KEY = "@purchased_items";
+
+interface BannerInteraction {
+  type: 'banner_click' | 'close_click' | 'dismiss';
+  timestamp: string;
+}
+
+interface PurchaseItem {
+  id: string;
+  name: string;
+  price: number;
+  timestamp: string;
+}
+
+/**
+ * Check if user has made any purchase
+ */
+export const checkHasPurchased = async (): Promise<boolean> => {
+  try {
+    const hasPurchased = await AsyncStorage.getItem(PURCHASE_KEY);
+    return hasPurchased === "true";
+  } catch (error) {
+    console.error("Error checking purchase status:", error);
+    return false;
+  }
+};
+
+/**
+ * Mark user as having purchased
+ */
+export const markAsPurchased = async (item?: PurchaseItem): Promise<boolean> => {
+  try {
+    // Set purchase flag
+    await AsyncStorage.setItem(PURCHASE_KEY, "true");
+    
+    // Save purchase date
+    await AsyncStorage.setItem(PURCHASE_DATE_KEY, new Date().toISOString());
+    
+    // Save purchased item details if provided
+    if (item) {
+      const existingItems = await getPurchasedItems();
+      existingItems.push(item);
+      await AsyncStorage.setItem(PURCHASE_ITEM_KEY, JSON.stringify(existingItems));
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error marking as purchased:", error);
+    return false;
+  }
+};
+
+/**
+ * Get all purchased items
+ */
+export const getPurchasedItems = async (): Promise<PurchaseItem[]> => {
+  try {
+    const items = await AsyncStorage.getItem(PURCHASE_ITEM_KEY);
+    return items ? JSON.parse(items) : [];
+  } catch (error) {
+    console.error("Error getting purchased items:", error);
+    return [];
+  }
+};
+
+/**
+ * Track banner interaction
+ */
+export const trackBannerInteraction = async (
+  type: 'banner_click' | 'close_click' | 'dismiss'
+): Promise<void> => {
+  try {
+    const existingInteractions = await getBannerInteractions();
+    const newInteraction: BannerInteraction = {
+      type,
+      timestamp: new Date().toISOString(),
+    };
+    
+    existingInteractions.push(newInteraction);
+    
+    // Keep only last 50 interactions
+    const limitedInteractions = existingInteractions.slice(-50);
+    
+    await AsyncStorage.setItem(
+      BANNER_INTERACTIONS_KEY,
+      JSON.stringify(limitedInteractions)
+    );
+  } catch (error) {
+    console.error("Error tracking banner interaction:", error);
+  }
+};
+
+/**
+ * Get all banner interactions
+ */
+export const getBannerInteractions = async (): Promise<BannerInteraction[]> => {
+  try {
+    const interactions = await AsyncStorage.getItem(BANNER_INTERACTIONS_KEY);
+    return interactions ? JSON.parse(interactions) : [];
+  } catch (error) {
+    console.error("Error getting banner interactions:", error);
+    return [];
+  }
+};
+
+/**
+ * Get purchase date if exists
+ */
+export const getPurchaseDate = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem(PURCHASE_DATE_KEY);
+  } catch (error) {
+    console.error("Error getting purchase date:", error);
+    return null;
+  }
+};
+
+/**
+ * Reset purchase status (for testing)
+ */
+export const resetPurchaseStatus = async (): Promise<void> => {
+  try {
+    await AsyncStorage.multiRemove([
+      PURCHASE_KEY,
+      PURCHASE_DATE_KEY,
+      PURCHASE_ITEM_KEY,
+      BANNER_INTERACTIONS_KEY,
+    ]);
+  } catch (error) {
+    console.error("Error resetting purchase status:", error);
+  }
+};
+
+/**
+ * Check if should show banner based on interactions
+ * (e.g., don't show if dismissed too many times recently)
+ */
+export const shouldShowBanner = async (): Promise<boolean> => {
+  try {
+    // First check if purchased
+    const hasPurchased = await checkHasPurchased();
+    if (hasPurchased) return false;
+    
+    // Check recent dismissals
+    const interactions = await getBannerInteractions();
+    const recentDismissals = interactions.filter(
+      (i) => {
+        if (i.type !== 'dismiss') return false;
+        const interactionDate = new Date(i.timestamp);
+        const daysSince = (Date.now() - interactionDate.getTime()) / (1000 * 60 * 60 * 24);
+        return daysSince < 7; // Dismissals in last 7 days
+      }
+    );
+    
+    // Don't show if dismissed more than 3 times in last week
+    if (recentDismissals.length >= 3) return false;
+    
+    return true;
+  } catch (error) {
+    console.error("Error checking if should show banner:", error);
+    return true; // Show by default if error
+  }
+};

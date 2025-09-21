@@ -34,6 +34,9 @@ import BillingManager, { Product } from "@/utils/billing/BillingManager";
 import { getRandomConfirmMessage } from "./utils/supportMessages";
 import styles from "./SupportShop.styles";
 
+// NEU: Import der Purchase-Tracking Funktionen
+import { markAsPurchased } from "@/utils/purchaseTracking";
+
 interface SupportShopProps {
   onClose: () => void;
 }
@@ -136,16 +139,38 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
     }
   };
 
-  // Handle successful purchase
-  const handlePurchaseCompleted = (purchase: any) => {
+  // Handle successful purchase - HIER IST DIE INTEGRATION
+  const handlePurchaseCompleted = async (purchase: any) => {
     // Strong success haptic
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     // Show success state in overlay
     setPurchaseSuccess(true);
 
+    // ================ NEU: KAUF REGISTRIERUNG ================
+    // Registriere den Kauf für den Support-Banner
+    try {
+      if (currentPurchase) {
+        await markAsPurchased({
+          id: currentPurchase.productId,
+          name: currentPurchase.title,
+          price: parseFloat(currentPurchase.price) || 0, // Konvertiere String zu Number
+          timestamp: new Date().toISOString(),
+        });
+        
+        console.log("Kauf wurde registriert - Support-Banner wird entfernt");
+      }
+    } catch (error) {
+      console.error("Fehler beim Registrieren des Kaufs:", error);
+      // Fehler beim Registrieren sollte den Kauf-Flow nicht unterbrechen
+    }
+    // ========================================================
+
     // Get random thank you message
     const { title, message } = getRandomConfirmMessage();
+    
+    // NEU: Erweitere die Nachricht um Banner-Info
+    const enhancedMessage = message + " Der Support-Banner wurde entfernt.";
 
     // After delay, hide overlay and show toast
     setTimeout(() => {
@@ -153,11 +178,11 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
       setPurchaseSuccess(false);
       setCurrentPurchase(null);
 
-      // Show success message toast
+      // Show success message toast with enhanced message
       setSuccessMessage({
         visible: true,
         title,
-        message,
+        message: enhancedMessage, // Verwende erweiterte Nachricht
       });
 
       // Auto-hide message after delay
@@ -257,8 +282,6 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
             Einmalige Unterstützung
           </Text>
 
-          
-
           <View style={styles.productsGrid}>
             {products.map((product, index) => (
               <ProductCard
@@ -281,8 +304,6 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Regelmäßige Unterstützung
           </Text>
-
-          
 
           {subscriptions.map((subscription, index) => (
             <SubscriptionCard

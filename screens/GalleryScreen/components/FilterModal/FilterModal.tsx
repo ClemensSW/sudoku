@@ -14,6 +14,7 @@ import Animated, {
   withSpring,
   withTiming,
   runOnJS,
+  Easing,
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
@@ -80,9 +81,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
       // Kleine Verzögerung damit alles korrekt rendert
       setTimeout(() => {
         backdropOpacity.value = withTiming(1, { duration: 300 });
-        modalY.value = withSpring(0, {
-          damping: 30, // Höherer Wert = weniger Bouncing
-          stiffness: 300,
+        modalY.value = withTiming(0, {
+          duration: 300, // Dauer in Millisekunden
+          easing: Easing.out(Easing.cubic), // Geschmeidige Kurve
         });
       }, 10);
     } else {

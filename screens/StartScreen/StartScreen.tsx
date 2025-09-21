@@ -55,7 +55,7 @@ const StartScreen: React.FC = () => {
     useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  
+
   // Neuer State um zu prüfen, ob das Tutorial bereits angezeigt wurde
   const [tutorialChecked, setTutorialChecked] = useState(false);
 
@@ -73,7 +73,7 @@ const StartScreen: React.FC = () => {
       try {
         const tutorialShown = await AsyncStorage.getItem(TUTORIAL_SHOWN_KEY);
         console.log("Tutorial previously shown:", !!tutorialShown);
-        
+
         // Wenn das Tutorial noch nicht angezeigt wurde, automatisch anzeigen
         if (!tutorialShown) {
           console.log("First app start - showing tutorial");
@@ -85,7 +85,7 @@ const StartScreen: React.FC = () => {
         setTutorialChecked(true); // Fehlerbehandlung - trotzdem fortfahren
       }
     };
-    
+
     checkIfTutorialShown();
   }, []);
 
@@ -138,7 +138,7 @@ const StartScreen: React.FC = () => {
     }
 
     // Fallback to default image
-    return require("@/assets/imageCollection/sudoku-duo_1920.JPG");
+    return require("@/assets/imageCollection/sudoku-duo_1920.jpg");
   };
 
   // Game action handlers
@@ -175,7 +175,7 @@ const StartScreen: React.FC = () => {
     } catch (error) {
       console.error("Error saving tutorial status:", error);
     }
-    
+
     // Tutorial Modal schließen
     setShowHowToPlay(false);
     setShowNavigation(true);
@@ -265,8 +265,6 @@ const StartScreen: React.FC = () => {
               <Text style={styles.startButtonText}>Neues Spiel</Text>
             </TouchableOpacity>
           </Animated.View>
-
-          
         </View>
       </View>
 

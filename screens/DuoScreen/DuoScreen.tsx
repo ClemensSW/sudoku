@@ -218,7 +218,7 @@ const DuoScreen: React.FC = () => {
             {/* Central content container for visualizer and button - removed entrance animation */}
             <View style={styles.centralContentContainer}>
               {/* Board visualizer with instant loading */}
-              <DuoBoardVisualizer noAnimation={true} />
+              <DuoBoardVisualizer noAnimation={false} />
 
               {/* Start Game Button - below visualizer with proper spacing */}
               <View style={styles.buttonContainer}>

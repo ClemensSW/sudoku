@@ -1,6 +1,6 @@
 // screens/SettingsScreen/components/AppearanceSettings/AppearanceSettings.tsx
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
@@ -20,6 +20,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const [isChanging, setIsChanging] = React.useState(false);
 
   if (!settings) return null;
 
@@ -32,10 +33,24 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
     { id: "dark", label: "Dunkel", icon: "moon" }
   ];
 
-  // Change theme
-  const handleThemeChange = (value: "light" | "dark") => {
+  // NEU: Optimiertes Theme-Change mit direktem Update
+  const handleThemeChange = async (value: "light" | "dark") => {
+    // Verhindern von mehrfachen Klicks während des Wechsels
+    if (isChanging || value === currentTheme) return;
+    
     triggerHaptic("light");
+    setIsChanging(true);
+    
+    // Direkt das Theme im Provider aktualisieren
+    await theme.updateTheme(value);
+    
+    // Settings-Handler aufrufen (für lokale State-Updates)
     onSettingChange("darkMode", value);
+    
+    // Nach kurzer Verzögerung wieder aktivieren
+    setTimeout(() => {
+      setIsChanging(false);
+    }, 300);
   };
 
   return (
@@ -48,7 +63,8 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
           borderColor: colors.border,
           borderWidth: 1,
           borderRadius: 12,
-          marginBottom: spacing.md
+          marginBottom: spacing.md,
+          opacity: isChanging ? 0.7 : 1, // Visuelles Feedback während des Wechsels
         }
       ]}
     >
@@ -62,6 +78,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
           ]}
           onPress={() => handleThemeChange(option.id as "light" | "dark")}
           activeOpacity={0.7}
+          disabled={isChanging} // Deaktivieren während des Wechsels
         >
           <Feather 
             name={option.icon as any} 
@@ -84,6 +101,20 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
           </Text>
         </TouchableOpacity>
       ))}
+      
+      {/* Loading Indicator während des Wechsels */}
+      {isChanging && (
+        <View 
+          style={{
+            position: 'absolute',
+            right: 12,
+            top: '50%',
+            marginTop: -10,
+          }}
+        >
+          <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+      )}
     </Animated.View>
   );
 };

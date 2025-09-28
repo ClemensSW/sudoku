@@ -4,64 +4,53 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+
   backgroundImage: {
     position: "absolute",
     width: width,
     height: height,
     opacity: 0.2,
   },
+
   scrollContent: {
     paddingBottom: 100, // Space for bottom navigation
   },
+
+  // FULL-WIDTH STAGE CONTAINER (kein Padding!)
   mainScreen: {
     alignItems: "center",
-    justifyContent: "space-between", // Changed to space-between for better spacing
-    paddingHorizontal: 20,
+    justifyContent: "space-between",
     position: "relative",
+    overflow: "hidden", // schneidet Effekte sauber am Rand ab
   },
-  // Container to group visualizer and button together
+
+  // absoluter Overlay-Layer für den Visualizer
+  overlayLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
+    pointerEvents: "box-none",
+  },
+
+  // Content-Container bekommt das Padding (nicht der Parent!)
   centralContentContainer: {
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    paddingBottom: 20,
-    // Add padding top to move content down from header
     paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    zIndex: 2, // über dem Overlay
   },
-  buttonContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 40, // Space between visualizer and button
-  },
-  startButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 30,
-    width: "100%",
-    maxWidth: 320,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  startButtonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  // Adjusted positioning for scroll indicator to be closer to navigation bar
+
+  // Scroll-Indicator sichtbar über Overlay
   scrollIndicatorContainer: {
-    marginBottom: 40, // Reduced to bring the indicator closer to nav bar
+    marginBottom: 40,
     width: "100%",
     alignItems: "center",
+    zIndex: 2, // über dem Overlay
   },
+
   featuresScreen: {
     minHeight: height * 0.9,
     paddingHorizontal: 20,

@@ -1,673 +1,498 @@
 // screens/DuoScreen/components/DuoBoardVisualizer/DuoBoardVisualizer.tsx
-import React, { useEffect } from "react";
-import { View, Image, StyleSheet, Text, Platform } from "react-native";
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withRepeat, 
+// Overlay Visualizer — "Sudoku Duo: Mountain Storm"
+// - Animationen: Orbit, Aura, Ring, Breath, Tap-Pulse (unverändert)
+// - Logo pulsiert, dreht sich NICHT
+// - Farben aus Logo: 
+//    Dark  → Teal: #4A7D78, Digits: #F1F4FB
+//    Light → Warm (Glows): #F3EFE3, Digits: #5B5D6E
+// - Performance: Animated.Text, React.memo, Rasterization nur nativ (Platform.select), moderate Dichte
+// - Keine Marker, keine Windstreifen, keine Shards, kein Shadow
+
+import React, { useMemo, useCallback } from "react";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Image,
+  ImageSourcePropType,
+  ViewStyle,
+  StyleProp,
+  Text,
+  Platform,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
   withTiming,
+  withRepeat,
   withSequence,
-  withDelay,
   Easing,
   interpolate,
-  Extrapolation,
-  FadeIn,
-  FadeInUp,
-  runOnJS
+  cancelAnimation,
 } from "react-native-reanimated";
+import type { SharedValue } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
-import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useFocusEffect } from "@react-navigation/native";
 
-// Premium-Größe für maximale Wirkung
-const VISUALIZER_SIZE = 280;
-const ENERGY_RING_SIZE = VISUALIZER_SIZE * 1.4;
+// ---------- Helpers (worklets) ----------
+const clamp = (v: number, lo: number, hi: number) => {
+  "worklet";
+  return Math.max(lo, Math.min(hi, v));
+};
+const lerp = (a: number, b: number, t: number) => {
+  "worklet";
+  return a + (b - a) * t;
+};
 
-interface DuoBoardVisualizerProps {
-  noAnimation?: boolean;
+// ---------- Palette ----------
+const PAL = {
+  dark: {
+    teal: "#4A7D78",
+    digit: "#F1F4FB",
+    ringSoft: "rgba(74,125,120,0.20)",
+    ringMid: "rgba(74,125,120,0.40)",
+    auraTint: "rgba(74,125,120,0.15)",
+  },
+  light: {
+    warm: "#F3EFE3",            // Glow/Aura-Tint
+    digit: "#5B5D6E",           // Ziffern
+    ringSoft: "rgba(91,93,110,0.14)",
+    ringMid: "rgba(91,93,110,0.28)",
+    auraTint: "rgba(243,239,227,0.18)", // Warmes InnerGlow
+  },
+};
+
+// ---------- Assets ----------
+const APP_LOGO: ImageSourcePropType = require("@/assets/images/app-logo.png");
+
+// ---------- Types ----------
+type VortexSeed = {
+  digit: number;
+  r0: number;
+  angle0: number;
+  zIndex: number;
+  wobble: number;
+  lifeOffset: number;
+  size: number;
+  opacity: number;
+};
+
+function mulberry32(a: number) {
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
-  noAnimation = false
-}) => {
-  const theme = useTheme();
-  const colors = theme.colors;
-  
-  // Haupt-Animationswerte
-  const scale = useSharedValue(1);
-  
-  // Energie-Ring Animationen
-  const energyRingRotation = useSharedValue(0);
-  const energyRingScale = useSharedValue(0.8);
-  const energyRingOpacity = useSharedValue(0);
-  
-  // Glow und Aura Effekte
-  const glowPulse = useSharedValue(0.2);
-  const auraExpand = useSharedValue(0);
-  const sparkleOpacity = useSharedValue(0);
-  
-  // Schatten-Dynamik
-  const shadowScale = useSharedValue(0.9);
-  const shadowOpacity = useSharedValue(0.2);
-  
-  // Eingangs-Animation
-  const entranceScale = useSharedValue(0);
-  const entranceOpacity = useSharedValue(0);
-  
-  // Start-Animationen beim Mount
-  useEffect(() => {
-    // Eingangs-Animation (nur beim ersten Mount)
-    entranceScale.value = withTiming(1, {
-      duration: 800,
-      easing: Easing.bezier(0.34, 1.56, 0.64, 1), // Bounce-Effekt
-    });
-    
-    entranceOpacity.value = withTiming(1, {
-      duration: 600,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-    });
-    
-    if (!noAnimation) {
-      // Verzögerte Start der Loop-Animationen
-      setTimeout(() => {
-        // === NUR PULSIERUNGS-ANIMATION (Größer/Kleiner) ===
-        scale.value = withRepeat(
-          withSequence(
-            withTiming(1.08, { 
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withTiming(1, { 
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            })
-          ),
-          -1,
-          false
-        );
-        
-        // === ENERGIE-RING ROTATION (Kontinuierlich) ===
-        energyRingRotation.value = withRepeat(
-          withTiming(360, {
-            duration: 8000,
-            easing: Easing.linear
-          }),
-          -1,
-          false
-        );
-        
-        // === ENERGIE-RING PULSIERUNG ===
-        energyRingScale.value = withRepeat(
-          withSequence(
-            withTiming(1.15, {
-              duration: 2000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withTiming(1, {
-              duration: 2000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            })
-          ),
-          -1,
-          false
-        );
-        
-        // === ENERGIE-RING OPACITY ===
-        energyRingOpacity.value = withRepeat(
-          withSequence(
-            withTiming(0.9, {
-              duration: 1500,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withTiming(0.3, {
-              duration: 1500,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            })
-          ),
-          -1,
-          false
-        );
-        
-        // === GLOW PULS-EFFEKT ===
-        glowPulse.value = withRepeat(
-          withSequence(
-            withTiming(1, {
-              duration: 1200,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withDelay(300,
-              withTiming(0.3, {
-                duration: 1200,
-                easing: Easing.bezier(0.42, 0, 0.58, 1)
-              })
-            )
-          ),
-          -1,
-          false
-        );
-        
-        // === AURA EXPANSION ===
-        auraExpand.value = withRepeat(
-          withSequence(
-            withTiming(1, {
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 1, 1)
-            }),
-            withTiming(0, {
-              duration: 100,
-              easing: Easing.linear
-            })
-          ),
-          -1,
-          false
-        );
-        
-        // === SPARKLE EFFEKT ===
-        sparkleOpacity.value = withRepeat(
-          withSequence(
-            withDelay(2000,
-              withTiming(1, {
-                duration: 300,
-                easing: Easing.bezier(0, 0, 0.58, 1)
-              })
-            ),
-            withTiming(0, {
-              duration: 500,
-              easing: Easing.bezier(0.42, 0, 1, 1)
-            }),
-            withDelay(1200, withTiming(0, { duration: 0 }))
-          ),
-          -1,
-          false
-        );
-        
-        
-        
-        // === SCHATTEN ANIMATION (pulsiert mit dem Logo) ===
-        shadowScale.value = withRepeat(
-          withSequence(
-            withTiming(1.1, {
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withTiming(0.9, {
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            })
-          ),
-          -1,
-          false
-        );
-        
-        shadowOpacity.value = withRepeat(
-          withSequence(
-            withTiming(0.3, {
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            }),
-            withTiming(0.2, {
-              duration: 3000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1)
-            })
-          ),
-          -1,
-          false
-        );
-        
-      }, 300); // Kleine Verzögerung nach der Eingangsanimation
-    }
-  }, [noAnimation]);
-  
-  // === ANIMIERTE STYLES ===
-  
-  // Logo-Container Animation
-  const logoAnimatedStyle = useAnimatedStyle(() => {
+// ---------- Props ----------
+interface DuoBoardVisualizerProps {
+  size?: number;
+  stageWidth?: number;
+  stageHeight?: number;
+  noAnimation?: boolean;
+  interactive?: boolean;
+  renderTopVignette?: boolean;
+  isDark?: boolean;
+  style?: StyleProp<ViewStyle>;
+  onLogoPress?: () => void;
+  performance?: "low" | "balanced" | "high";
+}
+
+// Animated.Text spart einen View pro Ziffer
+const AT = Animated.createAnimatedComponent(Text);
+
+// Memoized digit component (keine React-Re-renders)
+const VortexDigit = React.memo(function VortexDigitComp({
+  seed,
+  vortexClock,
+  entrance,
+  W,
+  H,
+  S,
+  isDark,
+}: {
+  seed: VortexSeed;
+  vortexClock: SharedValue<number>;
+  entrance: SharedValue<number>;
+  W: number;
+  H: number;
+  S: number;
+  isDark: boolean;
+}) {
+  const scaleUnit = S / 300;
+  const VORTEX_TURB = 0.18;
+  const VORTEX_MIN_RADIUS = S * 0.25;
+  const VORTEX_MAX_RADIUS = Math.min(W, H) * 0.48;
+
+  const styleA = useAnimatedStyle(() => {
+    const t = (vortexClock.value + seed.lifeOffset) % 1;
+    const wobble = Math.sin(t * Math.PI * 2 * (1.2 + seed.wobble)) * VORTEX_TURB * 12 * scaleUnit;
+    const r = clamp(seed.r0 + wobble, VORTEX_MIN_RADIUS * 0.9, VORTEX_MAX_RADIUS * 1.03);
+    const angle = seed.angle0 + t * 360; // fixer Speed
+    const rad = (angle * Math.PI) / 180;
+
+    const cx = W / 2;
+    const cy = H / 2 - 10 * scaleUnit;
+    const x = cx + Math.cos(rad) * r;
+    const y = cy + Math.sin(rad) * r * 0.8;
+
+    const depth = (y - H * 0.2) / (H * 0.7);
+    const sc = lerp(0.70, 1.18, clamp(depth, 0, 1));
+    const op = clamp(seed.opacity * (0.7 + depth * 0.5) * entrance.value, 0, 1);
+
     return {
-      transform: [
-        { scale: entranceScale.value * scale.value },
-        { perspective: 1200 }
-      ],
-      opacity: entranceOpacity.value,
-    };
-  });
-  
-  // Energie-Ring Animation
-  const energyRingStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { rotate: `${energyRingRotation.value}deg` },
-        { scale: energyRingScale.value }
-      ],
-      opacity: energyRingOpacity.value * entranceOpacity.value,
-    };
-  });
-  
-  // Haupt-Glow Effekt
-  const mainGlowStyle = useAnimatedStyle(() => {
-    const glowScale = interpolate(
-      glowPulse.value,
-      [0.3, 1],
-      [1.2, 1.5],
-      Extrapolation.CLAMP
-    );
-    
-    return {
-      opacity: glowPulse.value * entranceOpacity.value * 0.8,
-      transform: [{ scale: glowScale }],
-    };
-  });
-  
-  // Aura Expansion Effekt
-  const auraStyle = useAnimatedStyle(() => {
-    const auraScale = interpolate(
-      auraExpand.value,
-      [0, 1],
-      [0.8, 2],
-      Extrapolation.CLAMP
-    );
-    
-    const auraOpacity = interpolate(
-      auraExpand.value,
-      [0, 0.5, 1],
-      [0.8, 0.4, 0],
-      Extrapolation.CLAMP
-    );
-    
-    return {
-      transform: [{ scale: auraScale }],
-      opacity: auraOpacity * entranceOpacity.value,
-    };
-  });
-  
-  // Sparkle/Glitzer Effekt
-  const sparkleStyle = useAnimatedStyle(() => {
-    return {
-      opacity: sparkleOpacity.value * entranceOpacity.value,
-      transform: [
-        { scale: interpolate(sparkleOpacity.value, [0, 1], [0.8, 1.2]) }
-      ],
-    };
-  });
-  
-  // Dynamischer Schatten
-  const shadowStyle = useAnimatedStyle(() => {
-    return {
-      opacity: shadowOpacity.value * entranceOpacity.value,
-      transform: [
-        { scaleX: shadowScale.value },
-        { scaleY: shadowScale.value * 0.4 }
-      ],
-    };
-  });
-  
-  // Innerer Glow für Tiefe
-  const innerGlowStyle = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(
-        glowPulse.value,
-        [0.3, 1],
-        [0.5, 0.9],
-        Extrapolation.CLAMP
-      ) * entranceOpacity.value,
+      transform: [{ translateX: x - 10 * scaleUnit }, { translateY: y - 10 * scaleUnit }, { scale: sc }],
+      opacity: op,
+      zIndex: seed.zIndex,
     };
   });
 
+  const digitColor = isDark ? PAL.dark.digit : PAL.light.digit;
+  const textShadowColor = isDark ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.22)";
+
   return (
-    <View style={styles.container}>
-      {/* Dynamischer Schatten */}
-      <Animated.View style={[styles.shadow, shadowStyle]}>
+    <AT
+      style={[
+        styleA,
+        {
+          position: "absolute",
+          fontSize: seed.size,
+          fontWeight: "700",
+          color: digitColor,
+          textShadowRadius: 2,
+          textShadowOffset: { width: 0, height: 0 },
+          textShadowColor,
+          includeFontPadding: false,
+          textAlignVertical: "center",
+          textAlign: "center",
+        },
+      ]}
+    >
+      {seed.digit}
+    </AT>
+  );
+});
+
+const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
+  size = 300,
+  stageWidth,
+  stageHeight,
+  noAnimation = false,
+  interactive = true,
+  renderTopVignette = false,
+  isDark = true,
+  style,
+  onLogoPress,
+  performance = "balanced",
+}) => {
+  // --- Maße ---
+  const S = size;
+  const W = stageWidth ?? S;
+  const H = stageHeight ?? S + 140;
+  const scaleUnit = S / 300;
+
+  // --- Performance profile & density ---
+  const baseCount = performance === "low" ? 24 : performance === "high" ? 48 : 36;
+  const density = clamp(Math.sqrt((W * H) / (300 * 440)), 0.85, 1.25);
+  const VORTEX_COUNT = Math.min(64, Math.round(baseCount * density));
+
+  // --- Shared clocks ---
+  const entrance = useSharedValue(0);
+  const breath = useSharedValue(0);
+  const vortexClock = useSharedValue(0);
+  const auraClock = useSharedValue(0);
+  const boostPulse = useSharedValue(0);
+
+  // --- Seeds ---
+  const vortexSeeds: VortexSeed[] = useMemo(() => {
+    const seeds: VortexSeed[] = [];
+    const VORTEX_MIN_RADIUS = S * 0.25;
+    const VORTEX_MAX_RADIUS = Math.min(W, H) * 0.48;
+    for (let i = 0; i < VORTEX_COUNT; i++) {
+      const rnd = mulberry32(0x1000 + i);
+      const digit = 1 + Math.floor(rnd() * 9);
+      const r0 = lerp(VORTEX_MIN_RADIUS, VORTEX_MAX_RADIUS, rnd());
+      const angle0 = rnd() * 360;
+      const zIndex = Math.round(lerp(5, 15, rnd()));
+      const wobble = lerp(0.5, 1.2, rnd());
+      const lifeOffset = rnd();
+      const sizePx = lerp(14 * scaleUnit, 24 * scaleUnit, rnd());
+      const opacity = lerp(isDark ? 0.65 : 0.75, isDark ? 1.0 : 0.95, rnd());
+      seeds.push({ digit, r0, angle0, zIndex, wobble, lifeOffset, size: sizePx, opacity });
+    }
+    return seeds;
+  }, [W, H, S, VORTEX_COUNT, isDark]);
+
+  // --- Lifecycle ---
+  const stopAll = useCallback(() => {
+    cancelAnimation(entrance);
+    cancelAnimation(breath);
+    cancelAnimation(vortexClock);
+    cancelAnimation(auraClock);
+    cancelAnimation(boostPulse);
+    entrance.value = 0;
+    breath.value = 0;
+    vortexClock.value = 0;
+    auraClock.value = 0;
+    boostPulse.value = 0;
+  }, [entrance, breath, vortexClock, auraClock, boostPulse]);
+
+  const startAll = useCallback(() => {
+    entrance.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
+    if (!noAnimation) {
+      breath.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.cubic) }),
+          withTiming(0, { duration: 2400, easing: Easing.inOut(Easing.cubic) })
+        ),
+        -1,
+        false
+      );
+      vortexClock.value = withRepeat(withTiming(1, { duration: 14000, easing: Easing.linear }), -1, false);
+      auraClock.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 3200, easing: Easing.inOut(Easing.cubic) }),
+          withTiming(0, { duration: 3200, easing: Easing.inOut(Easing.cubic) })
+        ),
+        -1,
+        false
+      );
+    }
+  }, [noAnimation, entrance, breath, vortexClock, auraClock]);
+
+  useFocusEffect(
+    useCallback(() => {
+      startAll();
+      return () => stopAll();
+    }, [startAll, stopAll])
+  );
+
+  // --- Interaction (logo only) ---
+  const onPressIn = useCallback(() => {
+    if (!interactive) return;
+    boostPulse.value = 0;
+    boostPulse.value = withSequence(
+      withTiming(1, { duration: 200, easing: Easing.out(Easing.cubic) }),
+      withTiming(0, { duration: 400, easing: Easing.out(Easing.quad) })
+    );
+  }, [interactive, boostPulse]);
+
+  const onPressLogo = useCallback(() => {
+    if (!interactive) return;
+    onLogoPress?.();
+  }, [interactive, onLogoPress]);
+
+  // --- Animated styles ---
+  const auraStyle = useAnimatedStyle(() => {
+    const sc = lerp(0.9, 1.9, auraClock.value);
+    const base = isDark ? 0.18 : 0.08;
+    const peak = isDark ? 0.32 : 0.16;
+    const o = lerp(base, peak, breath.value) + boostPulse.value * (isDark ? 0.10 : 0.06);
+    return {
+      transform: [{ scale: sc }],
+      opacity: clamp(o, 0, isDark ? 0.5 : 0.25) * entrance.value,
+    };
+  });
+
+  const energyRingStyle = useAnimatedStyle(() => {
+    const rot = interpolate(vortexClock.value, [0, 1], [0, 360]);
+    const scalePulse =
+      lerp(1.0, 1.08, auraClock.value) *
+      lerp(0.985, 1.015, breath.value) *
+      lerp(1.0, 1.03, boostPulse.value);
+    const base = isDark ? 0.22 : 0.12;
+    const peak = isDark ? 0.46 : 0.22;
+    const op = lerp(base, peak, auraClock.value);
+    return {
+      transform: [{ rotate: `${rot}deg` }, { scale: scalePulse }],
+      opacity: op * entrance.value,
+    };
+  });
+
+  const innerGlowStyle = useAnimatedStyle(() => {
+    const base = isDark ? 0.22 : 0.10;
+    const peak = isDark ? 0.40 : 0.18;
+    const o = lerp(base, peak, breath.value);
+    const sc = lerp(1.06, 1.28, auraClock.value);
+    return {
+      opacity: o * entrance.value,
+      transform: [{ scale: sc }],
+    };
+  });
+
+  const logoStyle = useAnimatedStyle(() => {
+    const base = lerp(1, 1.04, breath.value);
+    const boost = lerp(1, 1.05, boostPulse.value);
+    const finalScale = base * boost;
+    // KEINE Rotation mehr:
+    return {
+      transform: [{ scale: finalScale }, { perspective: 1200 }],
+      opacity: entrance.value,
+    };
+  });
+
+  // --- Styles ---
+  const styles = useMemo(() => makeStyles({ S, W, H, isDark }), [S, W, H, isDark]);
+
+  // --- Rasterization nur nativ (verhindert TS-Fehler auf Web) ---
+  const rasterizeStyle: any = Platform.select({
+    ios: { shouldRasterizeIOS: true },
+    android: { renderToHardwareTextureAndroid: true },
+    default: {},
+  });
+
+  // --- Render ---
+  const ringSoft = isDark ? PAL.dark.ringSoft : PAL.light.ringSoft;
+  const ringMid = isDark ? PAL.dark.ringMid : PAL.light.ringMid;
+  const auraTint = isDark ? PAL.dark.auraTint : PAL.light.auraTint;
+
+  return (
+    <View style={[{ width: W, height: H }, styles.root, style]} pointerEvents="box-none">
+      {/* optionale Top-Vignette */}
+      {renderTopVignette && (
+        <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} pointerEvents="none">
+          <LinearGradient
+            colors={[isDark ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.12)", "rgba(0,0,0,0.06)", "rgba(0,0,0,0)"]}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+          />
+        </View>
+      )}
+
+      {/* Vortex (Full Stage) */}
+      <View style={[StyleSheet.absoluteFill, { zIndex: 10 }]} pointerEvents="none">
+        {vortexSeeds.map((seed, i) => (
+          <VortexDigit
+            key={`vx-${i}`}
+            seed={seed}
+            vortexClock={vortexClock}
+            entrance={entrance}
+            W={W}
+            H={H}
+            S={S}
+            isDark={isDark}
+          />
+        ))}
+      </View>
+
+      {/* Aura (zentriert) – Rasterize nur nativ */}
+      <Animated.View
+        style={[
+          styles.centerLayer,
+          {
+            width: S * 2.2,
+            height: S * 2.2,
+            zIndex: 12,
+            left: W / 2 - (S * 2.2) / 2,
+            top: H / 2 - (S * 2.2) / 2,
+          },
+          rasterizeStyle,
+          auraStyle,
+        ]}
+        pointerEvents="none"
+      >
         <LinearGradient
-          colors={['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0)']}
-          style={styles.shadowGradient}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-        />
-      </Animated.View>
-      
-      {/* Aura Expansion Effekt */}
-      <Animated.View style={[styles.auraContainer, auraStyle]} pointerEvents="none">
-        <LinearGradient
-          colors={[
-            'rgba(74, 125, 120, 0)',
-            'rgba(74, 125, 120, 0.15)',
-            'rgba(74, 125, 120, 0)'
+          colors={[auraTint, "transparent"]}
+          style={[
+            StyleSheet.absoluteFill,
+            { borderRadius: S * 1.1, borderWidth: 2, borderColor: isDark ? PAL.dark.teal : "rgba(91,93,110,0.18)" },
           ]}
-          style={styles.aura}
           start={{ x: 0.5, y: 0.5 }}
           end={{ x: 1, y: 1 }}
         />
       </Animated.View>
-      
-      {/* Energie-Ring */}
-      <Animated.View style={[styles.energyRing, energyRingStyle]} pointerEvents="none">
+
+      {/* Energiering (ohne Marker) – Rasterize nur nativ */}
+      <Animated.View
+        style={[
+          styles.centerLayer,
+          {
+            width: S * 1.45,
+            height: S * 1.45,
+            zIndex: 15,
+            left: W / 2 - (S * 1.45) / 2,
+            top: H / 2 - (S * 1.45) / 2,
+          },
+          rasterizeStyle,
+          energyRingStyle,
+        ]}
+        pointerEvents="none"
+      >
         <LinearGradient
-          colors={[
-            'transparent',
-            'rgba(74, 125, 120, 0.2)',
-            'rgba(74, 125, 120, 0.4)',
-            'rgba(74, 125, 120, 0.2)',
-            'transparent'
+          colors={["transparent", ringSoft, ringMid, ringSoft, "transparent"]}
+          style={[
+            StyleSheet.absoluteFill,
+            { borderRadius: (S * 1.45) / 2, borderWidth: 3, borderColor: ringSoft },
           ]}
-          style={styles.energyRingGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         />
-        {/* Energie-Partikel */}
-        <View style={styles.energyParticleContainer}>
-          <EnergyParticle delay={0} />
-          <EnergyParticle delay={500} />
-          <EnergyParticle delay={1000} />
-          <EnergyParticle delay={1500} />
-        </View>
       </Animated.View>
-      
-      {/* Haupt-Glow Effekt */}
-      <Animated.View style={[styles.mainGlow, mainGlowStyle]} pointerEvents="none">
-        <LinearGradient
-          colors={[
-            'rgba(74, 125, 120, 0.6)',
-            'rgba(74, 125, 120, 0.3)',
-            'rgba(74, 125, 120, 0.1)',
-            'rgba(74, 125, 120, 0)'
-          ]}
-          style={styles.glowGradient}
-          start={{ x: 0.5, y: 0.5 }}
-          end={{ x: 1, y: 1 }}
+
+      {/* Innerer Glow – Rasterize nur nativ */}
+      <Animated.View
+        style={[
+          styles.centerLayer,
+          {
+            width: S * 1.5,
+            height: S * 1.5,
+            zIndex: 16,
+            left: W / 2 - (S * 1.5) / 2,
+            top: H / 2 - (S * 1.5) / 2,
+          },
+          rasterizeStyle,
+          innerGlowStyle,
+        ]}
+        pointerEvents="none"
+      >
+        <View
+          style={{
+            width: "70%",
+            height: "70%",
+            borderRadius: (S * 1.5 * 0.7) / 2,
+            backgroundColor: isDark ? "rgba(74,125,120,0.18)" : "rgba(243,239,227,0.20)",
+          }}
         />
       </Animated.View>
-      
-      {/* Innerer Glow */}
-      <Animated.View style={[styles.innerGlow, innerGlowStyle]} pointerEvents="none">
-        <View style={styles.innerGlowCore} />
-      </Animated.View>
-      
-      {/* Sparkle/Glitzer Effekt */}
-      <Animated.View style={[styles.sparkleContainer, sparkleStyle]} pointerEvents="none">
-        <View style={styles.sparkle} />
-        <View style={[styles.sparkle, styles.sparkle2]} />
-        <View style={[styles.sparkle, styles.sparkle3]} />
-        <View style={[styles.sparkle, styles.sparkle4]} />
-      </Animated.View>
-      
-      {/* Logo mit allen Effekten */}
-      <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
-        {/* Das App-Logo */}
-        <Image
-          source={require("@/assets/images/app-logo.png")}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
-      </Animated.View>
-      
-      {/* Motivierender Text */}
-      {!noAnimation && (
-        <Animated.View 
-          entering={FadeInUp.delay(800).duration(600)} 
-          style={styles.motivationTextContainer}
+
+      {/* Logo + Interaktion */}
+      <Animated.View
+        style={[
+          styles.centerLayer,
+          { width: S, height: S, zIndex: 20, left: W / 2 - S / 2, top: H / 2 - S / 2 },
+          logoStyle,
+        ]}
+        pointerEvents="box-none"
+      >
+        <Pressable
+          onPressIn={onPressIn}
+          onPress={onLogoPress}
+          android_disableSound
+          style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
         >
-          <Text style={styles.motivationText}>GRÜN VS GELB</Text>
-        </Animated.View>
-      )}
+          <Image source={APP_LOGO} style={{ width: "78%", height: "78%" }} resizeMode="contain" />
+        </Pressable>
+      </Animated.View>
     </View>
   );
 };
 
-// Energie-Partikel Komponente
-const EnergyParticle: React.FC<{ delay: number }> = ({ delay }) => {
-  const rotation = useSharedValue(0);
-  const opacity = useSharedValue(0);
-  
-  useEffect(() => {
-    rotation.value = withDelay(
-      delay,
-      withRepeat(
-        withTiming(360, {
-          duration: 3000,
-          easing: Easing.linear
-        }),
-        -1,
-        false
-      )
-    );
-    
-    opacity.value = withDelay(
-      delay,
-      withRepeat(
-        withSequence(
-          withTiming(1, { duration: 500 }),
-          withTiming(1, { duration: 2000 }),
-          withTiming(0, { duration: 500 })
-        ),
-        -1,
-        false
-      )
-    );
-  }, []);
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
-    opacity: opacity.value,
-  }));
-  
-  return (
-    <Animated.View style={[styles.energyParticle, animatedStyle]}>
-      <View style={styles.energyDot} />
-    </Animated.View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    width: VISUALIZER_SIZE,
-    height: VISUALIZER_SIZE + 100, // Extra Raum für Effekte und Text
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  
-  // Logo Styles
-  logoContainer: {
-    width: VISUALIZER_SIZE,
-    height: VISUALIZER_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    zIndex: 20,
-  },
-  logoImage: {
-    width: "80%",
-    height: "80%",
-    zIndex: 2,
-  },
-  
-  // Energie-Ring
-  energyRing: {
-    position: 'absolute',
-    width: ENERGY_RING_SIZE,
-    height: ENERGY_RING_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 15,
-  },
-  energyRingGradient: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: ENERGY_RING_SIZE / 2,
-    borderWidth: 3,
-    borderColor: 'rgba(74, 125, 120, 0.3)',
-  },
-  energyParticleContainer: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  energyParticle: {
-    position: 'absolute',
-    width: ENERGY_RING_SIZE * 0.9,
-    height: ENERGY_RING_SIZE * 0.9,
-    left: '5%',
-    top: '5%',
-  },
-  energyDot: {
-    position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#4A7D78',
-    shadowColor: '#4A7D78',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  
-  // Glow Effekte
-  mainGlow: {
-    position: 'absolute',
-    width: VISUALIZER_SIZE * 1.8,
-    height: VISUALIZER_SIZE * 1.8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 8,
-  },
-  glowGradient: {
-    width: '100%',
-    height: '100%',
-    borderRadius: VISUALIZER_SIZE * 0.9,
-  },
-  innerGlow: {
-    position: 'absolute',
-    width: VISUALIZER_SIZE,
-    height: VISUALIZER_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  innerGlowCore: {
-    width: '70%',
-    height: '70%',
-    borderRadius: VISUALIZER_SIZE * 0.35,
-    backgroundColor: 'rgba(74, 125, 120, 0.15)',
-    shadowColor: '#4A7D78',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 30,
-  },
-  
-  // Aura Effekt
-  auraContainer: {
-    position: 'absolute',
-    width: VISUALIZER_SIZE * 2,
-    height: VISUALIZER_SIZE * 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 5,
-  },
-  aura: {
-    width: '100%',
-    height: '100%',
-    borderRadius: VISUALIZER_SIZE,
-    borderWidth: 2,
-    borderColor: 'rgba(74, 125, 120, 0.2)',
-  },
-  
-  // Sparkle Effekte
-  sparkleContainer: {
-    position: 'absolute',
-    width: VISUALIZER_SIZE,
-    height: VISUALIZER_SIZE,
-    zIndex: 25,
-  },
-  sparkle: {
-    position: 'absolute',
-    width: 4,
-    height: 4,
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    shadowColor: '#fff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    top: '20%',
-    left: '25%',
-  },
-  sparkle2: {
-    top: '30%',
-    left: '70%',
-    width: 3,
-    height: 3,
-  },
-  sparkle3: {
-    top: '65%',
-    left: '20%',
-    width: 5,
-    height: 5,
-  },
-  sparkle4: {
-    top: '70%',
-    left: '75%',
-    width: 3,
-    height: 3,
-  },
-  
-  // Highlight und Glanz
-  highlightOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '40%',
-    borderTopLeftRadius: VISUALIZER_SIZE * 0.1,
-    borderTopRightRadius: VISUALIZER_SIZE * 0.1,
-    zIndex: 3,
-  },
-  shineEffect: {
-    position: 'absolute',
-    top: '10%',
-    left: '30%',
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderRadius: 20,
-    transform: [{ scaleX: 0.5 }],
-    zIndex: 4,
-  },
-  
-  // Schatten
-  shadow: {
-    position: 'absolute',
-    bottom: 20,
-    width: VISUALIZER_SIZE * 0.6,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
-  shadowGradient: {
-    width: '100%',
-    height: '100%',
-    borderRadius: VISUALIZER_SIZE * 0.3,
-  },
-  
-  // Motivationstext
-  motivationTextContainer: {
-    position: 'absolute',
-    bottom: -10,
-    alignItems: 'center',
-    zIndex: 30,
-  },
-  motivationText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#4A7D78',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    opacity: 0.9,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-});
+// ---------- Style helpers ----------
+function makeStyles(cfg: { S: number; W: number; H: number; isDark: boolean }) {
+  return StyleSheet.create({
+    root: {
+      position: "relative",
+      overflow: "hidden",
+    },
+    centerLayer: {
+      position: "absolute",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  });
+}
 
 export default DuoBoardVisualizer;

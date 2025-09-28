@@ -271,7 +271,12 @@ const LeistungScreen: React.FC = () => {
       </ScrollView>
 
       {/* Support Shop Modal – Vollbild Overlay */}
-      {showSupportShop && <SupportShop onClose={handleCloseSupportShop} />}
+      {showSupportShop && (
+        <SupportShop
+          onClose={() => setShowSupportShop(false)}
+          hideNavOnClose={true} // ← Navigation bleibt versteckt
+        />
+      )}
     </View>
   );
 };

@@ -321,7 +321,10 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
       {/* Support Shop Modal */}
       {showSupportShop && (
-        <SupportShop onClose={() => setShowSupportShop(false)} />
+        <SupportShop
+          onClose={() => setShowSupportShop(false)}
+          hideNavOnClose={true} // ← Navigation bleibt versteckt
+        />
       )}
     </Animated.View>
   );

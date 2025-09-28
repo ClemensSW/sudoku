@@ -1,3 +1,4 @@
+// components/SupportShop/SupportShop.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -23,6 +24,9 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 
+// NEU: Import Navigation Control
+import { useNavigationControl } from "@/app/_layout";
+
 // Components
 import Banner from "./components/Banner";
 import ProductCard from "./components/ProductCard";
@@ -32,27 +36,28 @@ import PurchaseOverlay from "./components/PurchaseOverlay";
 // Utils
 import BillingManager, { Product } from "@/utils/billing/BillingManager";
 import { getRandomConfirmMessage } from "./utils/supportMessages";
-import styles from "./SupportShop.styles";
-
-// NEU: Import der Purchase-Tracking Funktionen
 import { markAsPurchased } from "@/utils/purchaseTracking";
+import styles from "./SupportShop.styles";
 
 interface SupportShopProps {
   onClose: () => void;
+  hideNavOnClose?: boolean; // NEU: Optional prop um zu steuern, ob Nav versteckt bleiben soll
 }
 
-const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
+const SupportShop: React.FC<SupportShopProps> = ({ onClose, hideNavOnClose = false }) => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  
+  // NEU: Navigation Control verwenden
+  const { setHideBottomNav } = useNavigationControl();
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [subscriptions, setSubscriptions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
-  const [billingManager, setBillingManager] = useState<BillingManager | null>(
-    null
-  );
+  const [billingManager, setBillingManager] = useState<BillingManager | null>(null);
   const [currentPurchase, setCurrentPurchase] = useState<Product | null>(null);
   const [successMessage, setSuccessMessage] = useState({
     visible: false,
@@ -64,6 +69,19 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
   const getPopularProductId = () => {
     return "sudoku_lunch";
   };
+
+  // NEU: Navigation beim Öffnen und Schließen kontrollieren
+  useEffect(() => {
+    // Bottom Navigation beim Öffnen verstecken
+    setHideBottomNav(true);
+    
+    // Cleanup: Navigation nur wieder anzeigen, wenn nicht von Settings geöffnet
+    return () => {
+      if (!hideNavOnClose) {
+        setHideBottomNav(false);
+      }
+    };
+  }, [setHideBottomNav, hideNavOnClose]);
 
   // Initialize billing and load products
   useEffect(() => {
@@ -139,7 +157,7 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
     }
   };
 
-  // Handle successful purchase - HIER IST DIE INTEGRATION
+  // Handle successful purchase
   const handlePurchaseCompleted = async (purchase: any) => {
     // Strong success haptic
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -147,14 +165,14 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
     // Show success state in overlay
     setPurchaseSuccess(true);
 
-    // ================ NEU: KAUF REGISTRIERUNG ================
+    // KAUF REGISTRIERUNG
     // Registriere den Kauf für den Support-Banner
     try {
       if (currentPurchase) {
         await markAsPurchased({
           id: currentPurchase.productId,
           name: currentPurchase.title,
-          price: parseFloat(currentPurchase.price) || 0, // Konvertiere String zu Number
+          price: parseFloat(currentPurchase.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
           timestamp: new Date().toISOString(),
         });
         
@@ -164,50 +182,78 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
       console.error("Fehler beim Registrieren des Kaufs:", error);
       // Fehler beim Registrieren sollte den Kauf-Flow nicht unterbrechen
     }
-    // ========================================================
 
     // Get random thank you message
     const { title, message } = getRandomConfirmMessage();
     
-    // NEU: Erweitere die Nachricht um Banner-Info
+    // Erweitere die Nachricht um Banner-Info
     const enhancedMessage = message + " Der Support-Banner wurde entfernt.";
 
-    // After delay, hide overlay and show toast
+    // Show success message
+    setSuccessMessage({
+      visible: true,
+      title,
+      message: enhancedMessage,
+    });
+
+    // Reset purchase states after delay
     setTimeout(() => {
       setPurchasing(false);
       setPurchaseSuccess(false);
       setCurrentPurchase(null);
 
-      // Show success message toast with enhanced message
-      setSuccessMessage({
-        visible: true,
-        title,
-        message: enhancedMessage, // Verwende erweiterte Nachricht
-      });
-
-      // Auto-hide message after delay
+      // Hide success message after another delay
       setTimeout(() => {
-        setSuccessMessage((prev) => ({ ...prev, visible: false }));
-      }, 4000);
+        setSuccessMessage({ visible: false, title: "", message: "" });
+      }, 3000);
+
+      // Close the shop if appropriate
+      // You might want to keep it open so users can make additional purchases
+      // onClose();
     }, 2000);
   };
 
   // Handle purchase error
   const handlePurchaseError = (error: any) => {
-    // Error haptic
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-    // Reset state
+    console.error("Purchase error:", error);
     setPurchasing(false);
-    setPurchaseSuccess(false);
     setCurrentPurchase(null);
+    setPurchaseSuccess(false);
 
-    // Show error alert
+    // Don't show error for user cancellation
+    if (error?.error?.code === 'USER_CANCELLED') {
+      return;
+    }
+
+    // Show error alert for other errors
     Alert.alert(
-      "Kauf nicht abgeschlossen",
-      "Beim Kaufvorgang ist ein Problem aufgetreten. Keine Sorge, es wurde nichts abgebucht.",
+      "Fehler beim Kauf",
+      "Es gab ein Problem beim Kaufvorgang. Bitte versuche es später erneut.",
       [{ text: "OK" }]
     );
+  };
+
+  // Get random confirmation message
+  const getRandomConfirmMessage = () => {
+    const messages = [
+      {
+        title: "Vielen Dank für deine Unterstützung!",
+        message: "Dein Beitrag hilft dabei, die App kontinuierlich zu verbessern. Du bist super! 🎉"
+      },
+      {
+        title: "Wow, du bist großartig!",
+        message: "Mit deiner Unterstützung kann ich weiterhin an coolen Features arbeiten. Danke! 🙏"
+      },
+      {
+        title: "High Five! ✋",
+        message: "Danke für deine Unterstützung! Jetzt habe ich noch mehr Motivation, die App zu verbessern."
+      },
+      {
+        title: "Jubel, Trubel, Heiterkeit! 🎊",
+        message: "Deine Unterstützung sorgt für gute Laune und neue Sudoku-Features!"
+      }
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
   };
 
   // Loading state
@@ -215,26 +261,16 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose }) => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Feather name="x" size={24} color={colors.textPrimary} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-            Unterstützung
-          </Text>
-          <View style={{ width: 40 }} />
-        </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Lade Unterstützungsoptionen...
+            Lade Produkte...
           </Text>
         </View>
       </View>
     );
   }
 
-  // Main shop view
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />

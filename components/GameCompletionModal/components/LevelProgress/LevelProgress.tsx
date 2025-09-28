@@ -272,7 +272,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           style={[
             styles.sectionCard,
             {
-              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
               borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
             },
           ]}
@@ -411,7 +411,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           style={[
             styles.sectionCard,
             {
-              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
               borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
             },
           ]}

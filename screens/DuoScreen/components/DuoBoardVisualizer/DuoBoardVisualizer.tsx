@@ -559,7 +559,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
         >
           <Image
             source={APP_LOGO}
-            style={{ width: "78%", height: "78%" }}
+            style={{ width: "70%", height: "70%" }}
             resizeMode="contain"
           />
         </Pressable>

@@ -1,5 +1,5 @@
 // screens/LeistungScreen/components/SupportBanner/SupportBanner.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
@@ -11,9 +11,11 @@ import Animated, {
   SlideInDown,
   interpolate,
   Easing,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { checkHasPurchased, trackBannerInteraction } from "@/utils/purchaseTracking";
 import styles from "./SupportBanner.styles";
@@ -39,51 +41,24 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const purchaseIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Check purchase status on mount
-  useEffect(() => {
-    let mounted = true;
-
-    const checkPurchaseStatus = async () => {
-      const purchased = await checkHasPurchased();
-      if (!mounted) return;
-      setHasPurchased(purchased);
-      if (!purchased) {
-        setIsVisible(true);
-        startAnimations();
-      } else {
-        stopAnimations();
-        setIsVisible(false);
-      }
-    };
-
-    checkPurchaseStatus();
-
-    // Re-check periodically (gemäß deiner Logik)
-    purchaseIntervalRef.current = setInterval(checkPurchaseStatus, 2000);
-
-    return () => {
-      mounted = false;
-      if (purchaseIntervalRef.current) clearInterval(purchaseIntervalRef.current);
-      stopAnimations();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Start animations (mit weniger “Bouncing”)
-  const startAnimations = () => {
+  // Start animations (mit weniger "Bouncing")
+  const startAnimations = useCallback(() => {
+    // Prüfen ob Animation schon läuft
+    if (heartbeatIntervalRef.current) return;
+    
     // Subtler pulse
     scale.value = withSequence(
-      withDelay(800, withSpring(1.01, { damping: 44, stiffness: 70 })),
-      withSpring(1, { damping: 40, stiffness: 65 })
+      withDelay(800, withSpring(1.005, { damping: 60, stiffness: 100 })),
+      withSpring(1, { damping: 60, stiffness: 100 })
     );
 
-    // Shimmer einmalig (falls du Loop willst: withRepeat(withTiming(...), -1, true))
+    // Shimmer einmalig
     shimmer.value = withDelay(
       400,
       withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.ease) })
     );
 
-    // Heart beat animation (deutlich reduzierte Amplituden)
+    // Heart beat animation (deutlich reduzierte Amplituden für weniger Bounce)
     const heartBeatAnimation = () => {
       heartBeat.value = withSequence(
         withTiming(1.08, { duration: 220 }),
@@ -94,15 +69,65 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
     };
 
     heartBeatAnimation();
-    heartbeatIntervalRef.current = setInterval(heartBeatAnimation, 3000);
-  };
+    heartbeatIntervalRef.current = setInterval(heartBeatAnimation, 1500); // Langsamer: alle 5 Sekunden
+  }, [scale, shimmer, heartBeat]);
 
-  const stopAnimations = () => {
+  // Stop animations mit vollständigem Cleanup
+  const stopAnimations = useCallback(() => {
+    // Intervall stoppen
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current);
       heartbeatIntervalRef.current = null;
     }
-  };
+    
+    // Alle Animationen canceln
+    cancelAnimation(scale);
+    cancelAnimation(shimmer);
+    cancelAnimation(heartBeat);
+    cancelAnimation(closeButtonScale);
+    
+    // Werte zurücksetzen
+    scale.value = 1;
+    shimmer.value = 0;
+    heartBeat.value = 1;
+    closeButtonScale.value = 1;
+  }, [scale, shimmer, heartBeat, closeButtonScale]);
+
+  // Verwende useFocusEffect statt useEffect für bessere Performance mit React Navigation
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+
+      const checkPurchaseStatus = async () => {
+        const purchased = await checkHasPurchased();
+        if (!mounted) return;
+        setHasPurchased(purchased);
+        if (!purchased) {
+          setIsVisible(true);
+          startAnimations();
+        } else {
+          stopAnimations();
+          setIsVisible(false);
+        }
+      };
+
+      // Initial check
+      checkPurchaseStatus();
+
+      // Re-check nur alle 30 Sekunden (statt alle 2 Sekunden!)
+      purchaseIntervalRef.current = setInterval(checkPurchaseStatus, 30000);
+
+      // Cleanup beim Verlassen der Seite
+      return () => {
+        mounted = false;
+        if (purchaseIntervalRef.current) {
+          clearInterval(purchaseIntervalRef.current);
+          purchaseIntervalRef.current = null;
+        }
+        stopAnimations();
+      };
+    }, [startAnimations, stopAnimations])
+  );
 
   // Handle banner press
   const handlePress = async () => {
@@ -129,7 +154,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
       withTiming(1, { duration: 140 })
     );
 
-    // Dein Wunsch: Close öffnet auch den Shop
+    // Close öffnet auch den Shop
     setTimeout(() => {
       onOpenSupportShop();
     }, 260);
@@ -149,10 +174,6 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
     transform: [{ scale: heartBeat.value }],
   }));
 
-  const closeButtonAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: closeButtonScale.value }],
-  }));
-
   // Don't render if user has purchased
   if (hasPurchased || !isVisible) {
     return null;
@@ -160,7 +181,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
 
   return (
     <Animated.View
-      entering={SlideInDown.delay(300).springify().damping(28)}
+      entering={SlideInDown.delay(300).duration(400).easing(Easing.out(Easing.ease))}
       style={[containerAnimatedStyle]}
     >
       <TouchableOpacity
@@ -174,7 +195,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
             colors={
               theme.isDark
                 ? ["#1a1a2e", "#16213e", "#1a1a2e"]
-                : ["#f8f9fa", "#ffffff", "#f8f9fa"]
+                : ["#fff5f0", "#ffeaa7", "#fff5f0"]
             }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -262,28 +283,6 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
             </View>
           </LinearGradient>
 
-          {/* Close button – außerhalb positioniert */}
-          <Pressable
-            onPress={handleClose}
-            style={({ pressed }) => [
-              styles.closeButtonOuter,
-              {
-                backgroundColor: pressed
-                  ? theme.isDark
-                    ? "rgba(255, 255, 255, 0.22)"
-                    : "rgba(0, 0, 0, 0.12)"
-                  : theme.isDark
-                  ? "rgba(255, 255, 255, 0.16)"
-                  : "rgba(0, 0, 0, 0.08)",
-                shadowColor: theme.isDark ? "#000" : "#000",
-              },
-            ]}
-            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-          >
-            <Animated.View style={closeButtonAnimatedStyle}>
-              <Feather name="x" size={16} color={colors.textSecondary} />
-            </Animated.View>
-          </Pressable>
         </View>
       </TouchableOpacity>
     </Animated.View>

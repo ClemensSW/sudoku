@@ -76,23 +76,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
 
-  // ALT: closeButton (im Card-Inhalt) entfällt.
-  // NEU: außerhalb der Karte positioniert:
-  closeButtonOuter: {
-    position: "absolute",
-    top: -12,     // halb außerhalb nach oben
-    right: -12,   // halb außerhalb nach rechts
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 20,
-    elevation: 6, // Android Schatten
-    shadowOffset: { width: 0, height: 2 }, // iOS Schatten
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
 
   premiumBadge: {
     position: "absolute",

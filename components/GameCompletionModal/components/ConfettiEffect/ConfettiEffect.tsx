@@ -1,220 +1,224 @@
-import React, { useEffect, useState } from "react";
-import { View, Dimensions } from "react-native";
+// components/GameCompletionModal/components/ConfettiEffect/ConfettiEffect.tsx
+import React, { useEffect, useMemo, useState } from "react";
+import { View, Dimensions, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withSequence,
-  withDelay,
-  withRepeat,
-  Easing,
   cancelAnimation,
+  Easing,
 } from "react-native-reanimated";
-import { useTheme } from "@/utils/theme/ThemeProvider";
-import styles from "./ConfettiEffect.styles";
+import type { SharedValue } from "react-native-reanimated";
+
+type Shape = "square" | "rectangle" | "circle" | "triangle";
 
 interface ConfettiProps {
   isActive: boolean;
-  duration?: number;
-  density?: number; // 1-10, Anzahl der Konfettistücke
+  duration?: number;   // Gesamtdauer (ms)
+  density?: number;    // 1–10
+  intensity?: "subtle" | "normal" | "party";
+  burst?: boolean;
+  palette?: string[];
 }
 
-// Screen dimensions for positioning confetti
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: W, height: H } = Dimensions.get("window");
 
-// Confetti colors
-const CONFETTI_COLORS = [
-  "#FFC700", // Gold
-  "#FF4081", // Pink
-  "#00E676", // Green
-  "#2979FF", // Blue
-  "#AA00FF", // Purple
-  "#FF3D00", // Orange
-];
+const DEFAULT_COLORS = ["#FFB703","#FB5607","#8338EC","#3A86FF","#FF006E","#2EC4B6"];
+const SHAPES: Shape[] = ["square","rectangle","circle","triangle"];
 
-// Confetti shapes
-const CONFETTI_SHAPES = ["square", "rectangle", "circle", "triangle"] as const;
+// ---------- Utils ----------
+const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+const pick = <T,>(arr: T[]) => arr[(Math.random() * arr.length) | 0];
 
-// Type for a single confetti piece
-interface ConfettiPiece {
+type RangeTuple = [number, number];
+
+interface PresetCfg {
+  swayAmp: RangeTuple;
+  spin: RangeTuple;
+  size: RangeTuple;
+}
+
+function intensityPreset(kind: NonNullable<ConfettiProps["intensity"]>): PresetCfg {
+  switch (kind) {
+    case "subtle":
+      return { swayAmp: [6, 14],  spin: [120, 280], size: [5, 10] };
+    case "party":
+      return { swayAmp: [14, 32], spin: [360, 900], size: [8, 16] };
+    case "normal":
+    default:
+      return { swayAmp: [10, 24], spin: [220, 520], size: [6, 12] };
+  }
+}
+
+interface Particle {
   id: number;
-  x: number;
-  delay: number;
+  x0: number;
+  y0: number;
+  size: number;
+  shape: Shape;
   color: string;
-  shape: typeof CONFETTI_SHAPES[number];
-  rotation: number;
-  scale: number;
+
+  offset: number;    // Startversatz [0..1)
+  swayAmp: number;   // px
+  swayFreq: number;  // Zyklen pro Dauer
+  swayPhase: number;
+
+  fallPower: number; // 0.7–1.1
+  spin: number;      // Grad über Lebenszeit
+  depth: number;     // 0.85–1.25 (Skalierung/Alpha)
 }
+
+const BASE_TRIANGLE = {
+  width: 0,
+  height: 0,
+  borderLeftWidth: 5,
+  borderRightWidth: 5,
+  borderBottomWidth: 10,
+};
 
 const ConfettiEffect: React.FC<ConfettiProps> = ({
   isActive,
-  duration = 5000,
-  density = 2,
+  duration = 4000,
+  density = 3,
+  intensity = "normal",
+  burst = true,
+  palette,
 }) => {
-  const theme = useTheme();
-  const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
-  const [isVisible, setIsVisible] = useState(false);
-  
-  // Calculate number of confetti pieces based on density
-  const pieceCount = Math.min(Math.max(density, 1), 5) * 20;
-  
-  // Generate confetti pieces with random properties
-  const generateConfetti = () => {
-    const pieces: ConfettiPiece[] = [];
-    
-    for (let i = 0; i < pieceCount; i++) {
-      pieces.push({
+  const colors = palette && palette.length ? palette : DEFAULT_COLORS;
+  const count = Math.min(Math.max(density, 1), 10) * 25; // 25–250
+  const burstCount = burst ? Math.round(count * 0.35) : 0;
+
+  const [visible, setVisible] = useState(false);
+  const progress = useSharedValue(0);
+
+  const particles = useMemo<Particle[]>(() => {
+    const preset = intensityPreset(intensity);
+
+    const make = (i: number, isBurst = false): Particle => {
+      const depth = rnd(0.85, 1.25);
+      const size = rnd(...preset.size) * depth;
+      const x0 = isBurst ? W * 0.5 + rnd(-W * 0.15, W * 0.15) : rnd(0, W);
+      const y0 = rnd(-80, -20);
+
+      return {
         id: i,
-        x: Math.random() * screenWidth,
-        delay: Math.random() * 2000, // Random delay up to 2 seconds
-        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-        shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
-        rotation: Math.random() * 360,
-        scale: 0.5 + Math.random() * 1.5, // Random size between 0.5 and 2
-      });
-    }
-    
-    return pieces;
-  };
-  
-  // Start the confetti animation when isActive changes
+        x0,
+        y0,
+        size,
+        shape: pick(SHAPES),
+        color: pick(colors),
+        offset: isBurst ? rnd(0, 0.15) : rnd(0, 0.9),
+        swayAmp: rnd(...preset.swayAmp) * depth,
+        swayFreq: rnd(0.7, 1.4),
+        swayPhase: rnd(0, Math.PI * 2),
+        fallPower: rnd(0.7, 1.05),
+        spin: rnd(...preset.spin) * (Math.random() < 0.5 ? -1 : 1),
+        depth,
+      };
+    };
+
+    const list: Particle[] = [];
+    for (let i = 0; i < burstCount; i++) list.push(make(i, true));
+    for (let i = burstCount; i < count; i++) list.push(make(i, false));
+    return list;
+  }, [count, intensity, burst, colors.join("|")]);
+
   useEffect(() => {
     if (isActive) {
-      // Generate confetti pieces and start animation
-      setConfetti(generateConfetti());
-      setIsVisible(true);
-      
-      // End the animation after the specified duration
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-      }, duration);
-      
-      return () => clearTimeout(timer);
+      setVisible(true);
+      progress.value = 0;
+      progress.value = withTiming(1, { duration, easing: Easing.linear });
+      const t = setTimeout(() => setVisible(false), duration + 150);
+      return () => {
+        clearTimeout(t);
+        cancelAnimation(progress);
+      };
     } else {
-      setIsVisible(false);
+      setVisible(false);
+      cancelAnimation(progress);
     }
-  }, [isActive, duration]);
-  
-  // If no confetti pieces exist or not visible, show nothing
-  if (!isVisible || confetti.length === 0) {
-    return null;
-  }
-  
+  }, [isActive, duration, progress]);
+
+  if (!visible) return null;
+
   return (
     <View style={styles.container} pointerEvents="none">
-      {confetti.map((piece) => (
-        <ConfettiPiece key={piece.id} piece={piece} />
+      {particles.map((p) => (
+        <ConfettiPiece key={p.id} p={p} progress={progress} />
       ))}
     </View>
   );
 };
 
-// Single confetti piece with animation
-interface ConfettiPieceProps {
-  piece: ConfettiPiece;
-}
-
-const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ piece }) => {
-  // Animation values
-  const translateY = useSharedValue(-20);
-  const translateX = useSharedValue(0);
-  const rotate = useSharedValue(0);
-  const opacity = useSharedValue(0);
-  
-  // Start the animation when component mounts
-  useEffect(() => {
-    // Initial delay
-    const startAnimation = () => {
-      // Fade in
-      opacity.value = withTiming(1, { duration: 300 });
-      
-      // Fall animation with slight sideways movement
-      translateY.value = withTiming(screenHeight + 100, { 
-        duration: 3000 + Math.random() * 3000,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
-      
-      // Random sideways movement (swaying)
-      translateX.value = withRepeat(
-        withSequence(
-          withTiming(15 * (Math.random() < 0.5 ? -1 : 1), { 
-            duration: 1000 + Math.random() * 1000,
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          }),
-          withTiming(-15 * (Math.random() < 0.5 ? -1 : 1), { 
-            duration: 1000 + Math.random() * 1000,
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-          })
-        ),
-        -1, // Infinite repetition
-        false
-      );
-      
-      // Rotation
-      rotate.value = withRepeat(
-        withTiming(360, { 
-          duration: 1000 + Math.random() * 2000,
-          easing: Easing.linear,
-        }),
-        -1, // Infinite repetition
-        false
-      );
-    };
-    
-    // Delay start based on the confetti piece
-    const timeout = setTimeout(startAnimation, piece.delay);
-    
-    // Cleanup on unmount
-    return () => {
-      clearTimeout(timeout);
-      cancelAnimation(translateY);
-      cancelAnimation(translateX);
-      cancelAnimation(rotate);
-      cancelAnimation(opacity);
-    };
-  }, []);
-  
-  // Animated style for movement and rotation
+const ConfettiPiece: React.FC<{ p: Particle; progress: SharedValue<number> }> = ({
+  p,
+  progress,
+}) => {
   const animatedStyle = useAnimatedStyle(() => {
+    // --- clamp01 inline als Worklet-fähige Logik ---
+    let lp = progress.value - p.offset;
+    lp = lp / (1 - p.offset + 1e-6);
+    if (lp < 0) lp = 0;
+    else if (lp > 1) lp = 1;
+
+    const y = p.y0 + Math.pow(lp, p.fallPower) * (H + 160);
+    const x = p.x0 + Math.sin((lp * Math.PI * 2 * p.swayFreq) + p.swayPhase) * p.swayAmp;
+    const rot = p.spin * lp;
+    const scale = p.depth;
+    const baseAlpha = 0.9 * (1 - Math.pow(lp, 1.2));
+    const alpha = baseAlpha < 0 ? 0 : baseAlpha > 1 ? 1 : baseAlpha;
+
     return {
       transform: [
-        { translateX: piece.x },
-        { translateY: translateY.value },
-        { translateX: translateX.value },
-        { rotate: `${rotate.value}deg` },
-        { scale: piece.scale },
+        { translateX: x },
+        { translateY: y },
+        { rotate: `${rot}deg` },
+        { scale },
       ],
-      opacity: opacity.value,
-      backgroundColor: piece.shape !== "triangle" ? piece.color : "transparent",
-      borderBottomColor: piece.shape === "triangle" ? piece.color : "transparent",
+      opacity: alpha,
     };
-  });
-  
-  // Choose the right style based on shape
-  const getShapeStyle = () => {
-    switch (piece.shape) {
+  }, [p]);
+
+  const shapeStyle = useMemo(() => {
+    const s = Math.max(6, p.size);
+    switch (p.shape) {
       case "square":
-        return styles.confettiSquare;
+        return { width: s, height: s, borderRadius: 2, backgroundColor: p.color };
       case "rectangle":
-        return styles.confettiRectangle;
+        return { width: s * 1.6, height: s * 0.8, borderRadius: 2, backgroundColor: p.color };
       case "circle":
-        return styles.confettiCircle;
+        return { width: s, height: s, borderRadius: s / 2, backgroundColor: p.color };
       case "triangle":
-        return styles.confettiTriangle;
+        return {
+          ...BASE_TRIANGLE,
+          borderLeftWidth: s * 0.6,
+          borderRightWidth: s * 0.6,
+          borderBottomWidth: s * 1.2,
+          borderLeftColor: "transparent",
+          borderRightColor: "transparent",
+          borderBottomColor: p.color,
+          backgroundColor: "transparent",
+        };
       default:
-        return styles.confettiSquare;
+        return { width: s, height: s, borderRadius: 2, backgroundColor: p.color };
     }
-  };
-  
-  return (
-    <Animated.View
-      style={[
-        styles.confettiPiece,
-        getShapeStyle(),
-        animatedStyle,
-      ]}
-    />
-  );
+  }, [p.shape, p.size, p.color]);
+
+  return <Animated.View pointerEvents="none" style={[styles.piece, animatedStyle, shapeStyle]} />;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    zIndex: 50,
+    overflow: "hidden",
+  },
+  piece: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+  },
+});
 
 export default ConfettiEffect;

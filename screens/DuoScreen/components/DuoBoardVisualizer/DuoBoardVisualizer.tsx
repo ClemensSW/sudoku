@@ -48,8 +48,8 @@ const PAL = {
     auraTint: "rgba(74,125,120,0.15)",
   },
   light: {
-    warm: "#F3EFE3",            // Glow/Aura-Tint
-    digit: "#5B5D6E",           // Ziffern
+    warm: "#F3EFE3", // Glow/Aura-Tint
+    digit: "#5B5D6E", // Ziffern
     ringSoft: "rgba(91,93,110,0.14)",
     ringMid: "rgba(91,93,110,0.28)",
     auraTint: "rgba(243,239,227,0.18)", // Warmes InnerGlow
@@ -122,8 +122,16 @@ const VortexDigit = React.memo(function VortexDigitComp({
 
   const styleA = useAnimatedStyle(() => {
     const t = (vortexClock.value + seed.lifeOffset) % 1;
-    const wobble = Math.sin(t * Math.PI * 2 * (1.2 + seed.wobble)) * VORTEX_TURB * 12 * scaleUnit;
-    const r = clamp(seed.r0 + wobble, VORTEX_MIN_RADIUS * 0.9, VORTEX_MAX_RADIUS * 1.03);
+    const wobble =
+      Math.sin(t * Math.PI * 2 * (1.2 + seed.wobble)) *
+      VORTEX_TURB *
+      12 *
+      scaleUnit;
+    const r = clamp(
+      seed.r0 + wobble,
+      VORTEX_MIN_RADIUS * 0.9,
+      VORTEX_MAX_RADIUS * 1.03
+    );
     const angle = seed.angle0 + t * 360; // fixer Speed
     const rad = (angle * Math.PI) / 180;
 
@@ -133,11 +141,15 @@ const VortexDigit = React.memo(function VortexDigitComp({
     const y = cy + Math.sin(rad) * r * 0.8;
 
     const depth = (y - H * 0.2) / (H * 0.7);
-    const sc = lerp(0.70, 1.18, clamp(depth, 0, 1));
+    const sc = lerp(0.7, 1.18, clamp(depth, 0, 1));
     const op = clamp(seed.opacity * (0.7 + depth * 0.5) * entrance.value, 0, 1);
 
     return {
-      transform: [{ translateX: x - 10 * scaleUnit }, { translateY: y - 10 * scaleUnit }, { scale: sc }],
+      transform: [
+        { translateX: x - 10 * scaleUnit },
+        { translateY: y - 10 * scaleUnit },
+        { scale: sc },
+      ],
       opacity: op,
       zIndex: seed.zIndex,
     };
@@ -189,7 +201,8 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
 
   // --- Performance profile & density ---
   // REDUCED: Weniger Digits für bessere Performance
-  const baseCount = performance === "low" ? 18 : performance === "high" ? 36 : 24;
+  const baseCount =
+    performance === "low" ? 18 : performance === "high" ? 36 : 24;
   const density = clamp(Math.sqrt((W * H) / (300 * 440)), 0.85, 1.25);
   const VORTEX_COUNT = Math.min(48, Math.round(baseCount * density)); // Max 48 statt 64
 
@@ -218,7 +231,16 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
       const lifeOffset = rnd();
       const sizePx = lerp(14 * scaleUnit, 24 * scaleUnit, rnd());
       const opacity = lerp(isDark ? 0.65 : 0.75, isDark ? 1.0 : 0.95, rnd());
-      seeds.push({ digit, r0, angle0, zIndex, wobble, lifeOffset, size: sizePx, opacity });
+      seeds.push({
+        digit,
+        r0,
+        angle0,
+        zIndex,
+        wobble,
+        lifeOffset,
+        size: sizePx,
+        opacity,
+      });
     }
     return seeds;
   }, [VORTEX_COUNT, S]); // REMOVED: W, H, isDark als Dependencies (weniger Re-Renders)
@@ -231,14 +253,14 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
     cancelAnimation(vortexClock);
     cancelAnimation(auraClock);
     cancelAnimation(boostPulse);
-    
+
     // Werte zurücksetzen
     entrance.value = 0;
     breath.value = 0;
     vortexClock.value = 0;
     auraClock.value = 0;
     boostPulse.value = 0;
-    
+
     // Animation als gestoppt markieren
     isAnimationRunning.current = false;
   }, []); // Keine Dependencies - stabile Funktion
@@ -247,11 +269,14 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   const startAll = useCallback(() => {
     // Prüfen ob Animation bereits läuft
     if (isAnimationRunning.current) return;
-    
+
     isAnimationRunning.current = true;
-    
-    entrance.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
-    
+
+    entrance.value = withTiming(1, {
+      duration: 800,
+      easing: Easing.out(Easing.cubic),
+    });
+
     if (!noAnimation) {
       breath.value = withRepeat(
         withSequence(
@@ -261,14 +286,14 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
         -1,
         false
       );
-      
+
       // SLOWER: Langsamere Rotationen für bessere Performance
       vortexClock.value = withRepeat(
         withTiming(1, { duration: 18000, easing: Easing.linear }), // 18s statt 14s
-        -1, 
+        -1,
         false
       );
-      
+
       auraClock.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 3600, easing: Easing.inOut(Easing.cubic) }), // Etwas langsamer
@@ -285,7 +310,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
     useCallback(() => {
       // Start nur wenn nicht bereits laufend
       startAll();
-      
+
       // Cleanup beim Verlassen
       return () => {
         stopAll();
@@ -313,7 +338,8 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
     const sc = lerp(0.9, 1.9, auraClock.value);
     const base = isDark ? 0.18 : 0.08;
     const peak = isDark ? 0.32 : 0.16;
-    const o = lerp(base, peak, breath.value) + boostPulse.value * (isDark ? 0.10 : 0.06);
+    const o =
+      lerp(base, peak, breath.value) + boostPulse.value * (isDark ? 0.1 : 0.06);
     return {
       transform: [{ scale: sc }],
       opacity: clamp(o, 0, isDark ? 0.5 : 0.25) * entrance.value,
@@ -336,8 +362,8 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   });
 
   const innerGlowStyle = useAnimatedStyle(() => {
-    const base = isDark ? 0.22 : 0.10;
-    const peak = isDark ? 0.40 : 0.18;
+    const base = isDark ? 0.22 : 0.1;
+    const peak = isDark ? 0.4 : 0.18;
     const o = lerp(base, peak, breath.value);
     const sc = lerp(1.06, 1.28, auraClock.value);
     return {
@@ -358,7 +384,10 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   });
 
   // --- Styles ---
-  const styles = useMemo(() => makeStyles({ S, W, H, isDark }), [S, W, H, isDark]);
+  const styles = useMemo(
+    () => makeStyles({ S, W, H, isDark }),
+    [S, W, H, isDark]
+  );
 
   // --- Rasterization nur nativ (verhindert TS-Fehler auf Web) ---
   const rasterizeStyle: any = Platform.select({
@@ -373,21 +402,31 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   const auraTint = isDark ? PAL.dark.auraTint : PAL.light.auraTint;
 
   return (
-    <View style={[{ width: W, height: H }, styles.root, style]} pointerEvents="box-none">
+    <View
+      style={[{ width: W, height: H }, styles.root, style]}
+      pointerEvents="box-none"
+    >
       {/* optionale Top-Vignette */}
       {renderTopVignette && (
-        <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} pointerEvents="none">
-          <LinearGradient
-            colors={[isDark ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.12)", "rgba(0,0,0,0.06)", "rgba(0,0,0,0)"]}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-          />
-        </View>
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              zIndex: 2,
+              backgroundColor: isDark
+                ? "rgba(0,0,0,0)" // Dark-Mode Overlay
+                : "rgba(0,0,0,0)", // Light-Mode Overlay (transparent)
+            },
+          ]}
+          pointerEvents="none"
+        />
       )}
 
       {/* Vortex (Full Stage) */}
-      <View style={[StyleSheet.absoluteFill, { zIndex: 10 }]} pointerEvents="none">
+      <View
+        style={[StyleSheet.absoluteFill, { zIndex: 10 }]}
+        pointerEvents="none"
+      >
         {vortexSeeds.map((seed, i) => (
           <VortexDigit
             key={`vx-${i}`}
@@ -422,7 +461,11 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
           colors={[auraTint, "transparent"]}
           style={[
             StyleSheet.absoluteFill,
-            { borderRadius: S * 1.1, borderWidth: 2, borderColor: isDark ? PAL.dark.teal : "rgba(91,93,110,0.18)" },
+            {
+              borderRadius: S * 1.1,
+              borderWidth: 2,
+              borderColor: isDark ? PAL.dark.teal : "rgba(91,93,110,0.18)",
+            },
           ]}
           start={{ x: 0.5, y: 0.5 }}
           end={{ x: 1, y: 1 }}
@@ -449,7 +492,11 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
           colors={["transparent", ringSoft, ringMid, ringSoft, "transparent"]}
           style={[
             StyleSheet.absoluteFill,
-            { borderRadius: (S * 1.45) / 2, borderWidth: 3, borderColor: ringSoft },
+            {
+              borderRadius: (S * 1.45) / 2,
+              borderWidth: 3,
+              borderColor: ringSoft,
+            },
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -477,7 +524,9 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             width: "70%",
             height: "70%",
             borderRadius: (S * 1.5 * 0.7) / 2,
-            backgroundColor: isDark ? "rgba(74,125,120,0.18)" : "rgba(243,239,227,0.20)",
+            backgroundColor: isDark
+              ? "rgba(74,125,120,0.18)"
+              : "rgba(243,239,227,0.20)",
           }}
         />
       </Animated.View>
@@ -486,7 +535,13 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
       <Animated.View
         style={[
           styles.centerLayer,
-          { width: S, height: S, zIndex: 20, left: W / 2 - S / 2, top: H / 2 - S / 2 },
+          {
+            width: S,
+            height: S,
+            zIndex: 20,
+            left: W / 2 - S / 2,
+            top: H / 2 - S / 2,
+          },
           logoStyle,
         ]}
         pointerEvents="box-none"
@@ -495,9 +550,18 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
           onPressIn={onPressIn}
           onPress={onPressLogo}
           android_disableSound
-          style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <Image source={APP_LOGO} style={{ width: "78%", height: "78%" }} resizeMode="contain" />
+          <Image
+            source={APP_LOGO}
+            style={{ width: "78%", height: "78%" }}
+            resizeMode="contain"
+          />
         </Pressable>
       </Animated.View>
     </View>

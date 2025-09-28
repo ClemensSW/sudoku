@@ -1,7 +1,8 @@
 // components/GameCompletionModal/components/LevelProgress/LevelProgress.tsx
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Pressable } from "react-native";
-import Animated, {
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { View, Text, Pressable, LayoutChangeEvent } from "react-native";
+import Animated,
+{
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -10,41 +11,44 @@ import Animated, {
   FadeIn,
   FadeOut,
   SlideInUp,
-  SlideOutDown,
   Easing,
+  useAnimatedReaction,
+  runOnJS,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import Svg, {
+  Path as SvgPath,
+  Circle as SvgCircle,
+  Defs,
+  LinearGradient as SvgLinearGradient,
+  Stop,
+  G,
+} from "react-native-svg";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { calculateXpGain, milestones } from "./utils/levelData"; // Importiere milestones
+import { milestones as milestoneMessages } from "./utils/levelData";
 import LevelBadge from "./components/LevelBadge";
 import { LevelProgressOptions } from "./utils/types";
-import { GameStats, markMilestoneReached } from "@/utils/storage"; // Importiere markMilestoneReached
+import { GameStats, markMilestoneReached } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./LevelProgress.styles";
 import { triggerHaptic } from "@/utils/haptics";
 
+// Für die Pfad-Berechnung (laut Vorgabe)
+const MILESTONE_LEVELS = [5, 10, 15, 20];
+
 interface LevelProgressProps {
-  // Either XP or Stats must be provided
   xp?: number;
   previousXp?: number;
-  
-  // OR: Stats-based view
   stats?: GameStats;
   difficulty?: Difficulty | string;
   justCompleted?: boolean;
-  
-  // Optional: Show XP gain
   xpGain?: number;
-  
-  // Optional styling and behavior
   style?: any;
   compact?: boolean;
   onLevelUp?: (oldLevel: number, newLevel: number) => void;
   onPathChange?: (oldPathId: string, newPathId: string) => void;
   onPress?: () => void;
-  
-  // Configuration options
   options?: LevelProgressOptions;
 }
 
@@ -62,759 +66,519 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   onPress,
   options = {},
 }) => {
-  // Use theme for colors
   const theme = useTheme();
   const colors = theme.colors;
-  
-  // Default options merged with user-provided options
+
   const defaultOptions: LevelProgressOptions = {
     enableLevelUpAnimation: true,
     usePathColors: true,
     showPathDescription: !compact,
-    showMilestones: true, // GEÄNDERT: Standardmäßig aktiviert
-    textVisibility: 'toggle',
+    showMilestones: true,
+    textVisibility: "toggle",
     highContrastText: false,
   };
-  
   const finalOptions = { ...defaultOptions, ...options };
-  
-  // State for text expansion - always start collapsed
+
   const [textExpanded, setTextExpanded] = useState(false);
-  // NEU: State für die Anzeige von Meilenstein-Nachrichten
   const [showMilestone, setShowMilestone] = useState(false);
   const [milestoneMessage, setMilestoneMessage] = useState("");
   const [milestoneLevel, setMilestoneLevel] = useState(0);
-  
-  // GEÄNDERT: Direkte Verwendung von stats.totalXP statt calculateExperience
-  const calculatedXp = stats ? stats.totalXP : 0;
-  
-  // Use either directly provided XP or calculated XP from stats
-  const currentXp = xp !== undefined ? xp : calculatedXp;
-  // If xpGain is provided and a game was just completed, subtract it to get previous XP
-  const prevXp = previousXp !== undefined ? previousXp : (justCompleted && xpGain ? currentXp - xpGain : currentXp);
-  
-  // Calculate level information with the hook
-  const levelInfo = useLevelInfo(currentXp);
-  const previousLevelInfo = prevXp !== currentXp ? useLevelInfo(prevXp) : levelInfo;
-  
-  // Check if level has changed - this is critical for correct progress display
-  const hasLevelChanged = levelInfo.currentLevel > previousLevelInfo.currentLevel;
-  
-  // State for level-up animation and effects
   const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
   const levelUpTriggered = useRef(false);
-  
-  // Animation values
+
+  const calculatedXp = stats ? stats.totalXP : 0;
+  const currentXp = xp !== undefined ? xp : calculatedXp;
+  const prevXp =
+    previousXp !== undefined
+      ? previousXp
+      : justCompleted && xpGain
+      ? currentXp - (xpGain ?? 0)
+      : currentXp;
+
+  const levelInfo = useLevelInfo(currentXp);
+  const previousLevelInfo =
+    prevXp !== currentXp ? useLevelInfo(prevXp) : levelInfo;
+
+  const hasLevelChanged =
+    levelInfo.currentLevel > previousLevelInfo.currentLevel;
+
+  // Reanimated
   const containerScale = useSharedValue(1);
   const progressWidth = useSharedValue(0);
-  const previousProgressWidth = useSharedValue(0); // For previous XP position
+  const previousProgressWidth = useSharedValue(0);
   const xpGainScale = useSharedValue(1);
   const badgePulse = useSharedValue(1);
-  const gainIndicatorOpacity = useSharedValue(0); // For XP gain section in progress bar
-  const milestoneScale = useSharedValue(0.95); // NEU: Animation für Meilenstein
-  
-  // Animation values for path indicators - Create all on component level
-  const pathIndicator0Scale = useSharedValue(1);
-  const pathIndicator1Scale = useSharedValue(1);
-  const pathIndicator2Scale = useSharedValue(1);
-  const pathIndicator3Scale = useSharedValue(1);
-  const pathIndicator4Scale = useSharedValue(1);
-  
-  // Combine into an array for easier access
-  const pathIndicatorScales = [
-    pathIndicator0Scale,
-    pathIndicator1Scale,
-    pathIndicator2Scale,
-    pathIndicator3Scale,
-    pathIndicator4Scale
-  ];
-  
-  // NEU: Funktion zum Überprüfen und Anzeigen von Meilensteinen
-  const checkAndShowMilestone = async () => {
-    if (!stats || !finalOptions.showMilestones) return;
-    
-    // Prüfe, ob ein neuer Meilenstein erreicht wurde
-    const reachedMilestones = stats.reachedMilestones || [];
-    
-    // Iteriere durch alle definierten Meilensteine
-    for (const level of Object.keys(milestones).map(Number)) {
-      // Wenn das Level oder höher erreicht ist, aber noch nicht als erreicht markiert
-      if (levelInfo.currentLevel >= level && !reachedMilestones.includes(level)) {
-        // Speichere den Meilenstein
-        setMilestoneMessage(milestones[level]);
-        setMilestoneLevel(level);
-        
-        // Markiere als erreicht in der Datenbank
-        await markMilestoneReached(level);
-        
-        // Zeige den Meilenstein an
+  const gainIndicatorOpacity = useSharedValue(0);
+  const milestoneScale = useSharedValue(0.95);
+
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: containerScale.value }],
+  }));
+  const progressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+  }));
+  const previousProgressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${previousProgressWidth.value}%`,
+  }));
+  const xpGainAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: xpGainScale.value }],
+  }));
+  const badgeAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: badgePulse.value }],
+  }));
+  const gainIndicatorAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: gainIndicatorOpacity.value,
+  }));
+  const milestoneAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: milestoneScale.value }],
+  }));
+
+  const progressColor = finalOptions.usePathColors
+    ? levelInfo.currentPath.color
+    : colors.primary;
+
+  const toggleTextVisibility = () => {
+    setTextExpanded((s) => !s);
+    triggerHaptic("light");
+  };
+
+  const closeMilestone = () => {
+    milestoneScale.value = withTiming(0.9, {
+      duration: 200,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
+    setTimeout(() => setShowMilestone(false), 200);
+  };
+
+  // ---- Milestone-Check extrahiert, damit er auch ohne Level-Up greift
+  const checkAndShowMilestone = useCallback(async () => {
+    if (!finalOptions.showMilestones) return;
+    const reached = stats?.reachedMilestones || [];
+    for (const lvl of Object.keys(milestoneMessages).map(Number)) {
+      if (levelInfo.currentLevel >= lvl && !reached.includes(lvl)) {
+        setMilestoneMessage(milestoneMessages[lvl]);
+        setMilestoneLevel(lvl);
+        await markMilestoneReached(lvl);
         setShowMilestone(true);
-        
-        // Haptisches Feedback
         triggerHaptic("success");
-        
-        // Animation starten
         milestoneScale.value = withSequence(
           withTiming(1.05, { duration: 300 }),
           withTiming(1, { duration: 200 })
         );
-        
-        // Nur einen Meilenstein auf einmal anzeigen
         break;
       }
     }
-  };
-  
-  // Pre-calculate all animated styles at component level
-  const pathIndicator0Style = useAnimatedStyle(() => ({
-    transform: [{ scale: pathIndicator0Scale.value }],
-  }));
-  
-  const pathIndicator1Style = useAnimatedStyle(() => ({
-    transform: [{ scale: pathIndicator1Scale.value }],
-  }));
-  
-  const pathIndicator2Style = useAnimatedStyle(() => ({
-    transform: [{ scale: pathIndicator2Scale.value }],
-  }));
-  
-  const pathIndicator3Style = useAnimatedStyle(() => ({
-    transform: [{ scale: pathIndicator3Scale.value }],
-  }));
-  
-  const pathIndicator4Style = useAnimatedStyle(() => ({
-    transform: [{ scale: pathIndicator4Scale.value }],
-  }));
-  
-  // Combine into an array for easier access
-  const pathIndicatorStyles = [
-    pathIndicator0Style,
-    pathIndicator1Style,
-    pathIndicator2Style,
-    pathIndicator3Style,
-    pathIndicator4Style
-  ];
-  
-  // NEU: Animated Style für Meilenstein-Container
-  const milestoneAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: milestoneScale.value }],
-  }));
-  
-  // Toggle function for text visibility
-  const toggleTextVisibility = () => {
-    setTextExpanded(!textExpanded);
-    triggerHaptic("light");
-  };
-  
-  // NEU: Schließen der Meilenstein-Anzeige
-  const closeMilestone = () => {
-    // Ausblenden mit Animation
-    milestoneScale.value = withTiming(0.9, { 
-      duration: 200,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-    });
-    
-    // State nach Abschluss der Animation zurücksetzen
-    setTimeout(() => {
-      setShowMilestone(false);
-    }, 200);
-  };
-  
-  // Check for actual level-up - important correction
+  }, [finalOptions.showMilestones, levelInfo.currentLevel, milestoneScale, stats]);
+
   useEffect(() => {
-    // Calculate the previous progress percentage based on previous level
     const prevLevelStartXp = previousLevelInfo.levelData.xp;
-    const nextLevelXp = previousLevelInfo.nextLevelData?.xp || (prevLevelStartXp + 100);
+    const nextLevelXp =
+      previousLevelInfo.nextLevelData?.xp || prevLevelStartXp + 100;
     const prevLevelRange = nextLevelXp - prevLevelStartXp;
-    
-    // If level has changed, set previous progress to 0
-    // otherwise, calculate the previous percentage correctly
+
     const prevPercentage = hasLevelChanged
-      ? 0 // Start from 0 when level has changed
+      ? 0
       : Math.min(100, ((prevXp - prevLevelStartXp) / prevLevelRange) * 100);
-    
-    // Set initial values for animation - with small delay to ensure rendering is complete
+
     setTimeout(() => {
       previousProgressWidth.value = prevPercentage;
-      progressWidth.value = hasLevelChanged ? 0 : prevPercentage; // Start from 0 if level changed
+      progressWidth.value = hasLevelChanged ? 0 : prevPercentage;
     }, 50);
-    
-    // Show progress transition with a slight delay
+
     setTimeout(() => {
-      // If a level change occurred, start from 0 and animate to current percentage
-      // This creates a cleaner animation for level-ups
       if (hasLevelChanged) {
-        // For level changes, use a longer duration and more pronounced animation
-        progressWidth.value = withTiming(levelInfo.progressPercentage, { 
-          duration: 1500, 
-          easing: Easing.bezierFn(0.22, 1, 0.36, 1) // More emphasizing easing
+        progressWidth.value = withTiming(levelInfo.progressPercentage, {
+          duration: 1500,
+          easing: Easing.bezierFn(0.22, 1, 0.36, 1),
         });
       } else {
-        // For normal XP gains, use standard animation
-        progressWidth.value = withTiming(levelInfo.progressPercentage, { 
-          duration: 1200, 
-          easing: Easing.bezierFn(0.34, 1.56, 0.64, 1) // Bouncy easing
+        progressWidth.value = withTiming(levelInfo.progressPercentage, {
+          duration: 1200,
+          easing: Easing.bezierFn(0.34, 1.56, 0.64, 1),
         });
-        
-        // Only show gain indicator if there was an actual gain and NO level change
         if (xpGain && xpGain > 0) {
-          // Delay the gain indicator slightly to ensure proper layering
           setTimeout(() => {
             gainIndicatorOpacity.value = withTiming(1, { duration: 400 });
           }, 200);
         }
       }
     }, 800);
-    
-    // Animate path indicators
-    setTimeout(() => {
-      // Animate current path indicator
-      if (levelInfo.levelData.pathIndex >= 0 && levelInfo.levelData.pathIndex < pathIndicatorScales.length) {
-        pathIndicatorScales[levelInfo.levelData.pathIndex].value = withSequence(
-          withTiming(1.2, { duration: 300 }),
-          withTiming(1, { duration: 200 })
-        );
-      }
-    }, 400);
-    
-    // Only trigger level-up on actual level changes, not on every game
-    const didLevelUp = (previousXp !== undefined || xpGain !== undefined) && 
-                      levelInfo.currentLevel > previousLevelInfo.currentLevel;
-    
+
+    const didLevelUp =
+      (previousXp !== undefined || xpGain !== undefined) &&
+      levelInfo.currentLevel > previousLevelInfo.currentLevel;
+
     if (didLevelUp && finalOptions.enableLevelUpAnimation && !levelUpTriggered.current) {
-      // Set the flag to prevent multiple triggers
       levelUpTriggered.current = true;
-      
-      // Give haptic feedback for level-up
       triggerHaptic("success");
-      
-      // Show level-up overlay with a slight delay
       setTimeout(() => {
         setShowLevelUpOverlay(true);
-        
-        // Highlight the container
         containerScale.value = withSequence(
           withTiming(1.05, { duration: 300 }),
           withTiming(1, { duration: 300 })
         );
-        
-        // Create a badge pulse effect
         badgePulse.value = withSequence(
           withTiming(1.2, { duration: 500 }),
           withTiming(1, { duration: 300 })
         );
       }, 800);
-      
-      // Call event handler if provided
-      if (onLevelUp) {
-        onLevelUp(previousLevelInfo.currentLevel, levelInfo.currentLevel);
-      }
-      
-      // Hide level-up overlay after a delay
+
+      onLevelUp?.(previousLevelInfo.currentLevel, levelInfo.currentLevel);
+
       setTimeout(() => {
         setShowLevelUpOverlay(false);
         setTimeout(() => {
           levelUpTriggered.current = false;
-          
-          // NEU: Nach dem Level-Up, prüfe auf neue Meilensteine
+          // Nach dem Overlay auch Milestones anzeigen
           checkAndShowMilestone();
         }, 500);
       }, 4000);
-    } else if (!levelUpTriggered.current) {
-      // NEU: Wenn kein Level-Up, prüfe trotzdem auf Meilensteine bei neuer Erstellung
+    } else {
+      // Kein Level-Up? Trotzdem Milestones prüfen (z. B. bei initialem Render nach Sync)
       checkAndShowMilestone();
     }
-    
-    // Check for path change
-    if (previousLevelInfo && 
-        previousLevelInfo.currentPath.id !== levelInfo.currentPath.id && 
-        onPathChange) {
-      onPathChange(previousLevelInfo.currentPath.id, levelInfo.currentPath.id);
-    }
-    
-    // XP Gain animation, if provided
-    if (xpGain && xpGain > 0) {
-      xpGainScale.value = withSequence(
-        withDelay(500, withTiming(1.2, { duration: 300 })),
-        withTiming(1, { duration: 200 })
-      );
-    }
-  }, [currentXp, prevXp, levelInfo, previousLevelInfo, xpGain, hasLevelChanged]);
-  
-  // Animated styles
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: containerScale.value }],
-  }));
-  
-  const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value}%`,
-  }));
-  
-  const previousProgressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${previousProgressWidth.value}%`,
-  }));
-  
-  const xpGainAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: xpGainScale.value }],
-  }));
-  
-  const badgeAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: badgePulse.value }],
-  }));
-  
-  const gainIndicatorAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: gainIndicatorOpacity.value,
-  }));
-  
-  // Decide the color to display based on options
-  const progressColor = finalOptions.usePathColors 
-    ? levelInfo.currentPath.color 
-    : colors.primary;
-    
+  }, [
+    currentXp,
+    prevXp,
+    levelInfo,
+    previousLevelInfo,
+    xpGain,
+    hasLevelChanged,
+    finalOptions.enableLevelUpAnimation,
+    onLevelUp,
+    previousXp,
+    containerScale,
+    progressWidth,
+    previousProgressWidth,
+    badgePulse,
+    gainIndicatorOpacity,
+    xpGainScale,
+    checkAndShowMilestone,
+  ]);
+
+  // ---------- Layout: Zwei Cards: (1) Level, (2) Pfad ----------
   return (
-    <Pressable 
-      onPress={onPress}
-      style={({ pressed }) => [
-        { opacity: pressed ? 0.9 : 1 }
-      ]}
-    >
-      <Animated.View 
+    <Pressable onPress={onPress} style={({ pressed }) => [{ opacity: pressed ? 0.96 : 1 }]}>
+      <Animated.View
         style={[
           styles.container,
-          {
-            backgroundColor: colors.surface,
-            borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
-          },
-          compact ? styles.compactContainer : null,
           containerAnimatedStyle,
-          style
+          style,
         ]}
-        entering={FadeIn.duration(500)}
+        entering={FadeIn.duration(350)}
       >
-        {/* Level header with badge */}
-        <View style={[
-          styles.header,
-          { alignItems: 'center', marginBottom: 16 }
-        ]}>
-          <Animated.View style={badgeAnimatedStyle}>
-            <LevelBadge 
-              levelInfo={levelInfo}
-              size={compact ? 44 : 56}
-              showAnimation={showLevelUpOverlay}
-            />
-          </Animated.View>
-          
-          <View style={styles.levelInfoContainer}>
-            {/* Hauptüberschrift: Level-Name (nicht Level-Nummer) */}
-            <Text style={[
-              styles.levelName, 
-              { 
-                color: finalOptions.highContrastText 
-                  ? theme.isDark ? '#FFFFFF' : '#000000' 
-                  : colors.textPrimary,
-                fontSize: 20,
-                fontWeight: "700",
-              }
-            ]}>
-              {levelInfo.levelData.name}
-            </Text>
-            
-            {/* Level-Beschreibung - immer sichtbar */}
-            <Text style={[
-              styles.levelMessage, 
-              { 
-                color: finalOptions.highContrastText 
-                  ? theme.isDark ? '#FFFFFF' : '#000000' 
-                  : colors.textSecondary,
-                fontSize: 14,
-                marginTop: 4,
-                lineHeight: 18
-              }
-            ]}>
-              {levelInfo.levelData.message}
-            </Text>
+        {/* ========== Card 1: LEVEL ========== */}
+        <View
+          style={[
+            styles.sectionCard,
+            {
+              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+            },
+          ]}
+        >
+          {/* Header (Badge + Titel/Message + EP-Gewinn) */}
+          <View style={[styles.header, { alignItems: "center", marginBottom: 18 }]}>
+            <Animated.View style={badgeAnimatedStyle}>
+              <LevelBadge
+                levelInfo={levelInfo}
+                size={compact ? 44 : 56}
+                showAnimation={showLevelUpOverlay}
+              />
+            </Animated.View>
+
+            <View style={styles.levelInfoContainer}>
+              <Text style={[styles.levelName, { color: colors.textPrimary }]}>
+                {levelInfo.levelData.name}
+              </Text>
+
+              <Text style={[styles.levelMessage, { color: colors.textSecondary }]}>
+                {levelInfo.levelData.message}
+              </Text>
+
+              {xpGain && xpGain > 0 && justCompleted && (
+                <Animated.View
+                  style={[
+                    styles.gainChip,
+                    {
+                      backgroundColor: theme.isDark
+                        ? hexToRGBA(progressColor, 0.9)
+                        : hexToRGBA(progressColor, 1),
+                      borderColor: theme.isDark
+                        ? hexToRGBA(progressColor, 0.55)
+                        : hexToRGBA(progressColor, 0.35),
+                    },
+                    xpGainAnimatedStyle,
+                  ]}
+                >
+                  <Feather name="plus" size={14} color="#FFFFFF" />
+                  <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
+                    {xpGain} Erfahrungspunkte
+                  </Text>
+                </Animated.View>
+              )}
+            </View>
+          </View>
+
+          {/* EP-Fortschritt */}
+          <View style={styles.progressSection}>
+            <View style={[styles.xpInfoRow, { marginBottom: 8 }]}>
+              <Text style={[styles.xpText, { color: colors.textPrimary }]}>
+                Level {levelInfo.currentLevel + 1}
+              </Text>
+              {levelInfo.nextLevelData && (
+                <Text style={[styles.xpToGo, { color: colors.textSecondary }]}>
+                  Noch {levelInfo.xpForNextLevel} EP
+                </Text>
+              )}
+            </View>
+
+            <View style={[styles.progressBarContainer, { height: 12, borderRadius: 6 }]}>
+              <View
+                style={[
+                  styles.progressBackground,
+                  {
+                    backgroundColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+                    borderRadius: 6,
+                    overflow: "hidden",
+                    position: "relative",
+                  },
+                ]}
+              >
+                {/* Aktueller Fortschritt */}
+                <Animated.View
+                  style={[
+                    styles.progressFill,
+                    {
+                      backgroundColor: progressColor,
+                      borderRadius: 6,
+                      position: "absolute",
+                      height: "100%",
+                      left: 0,
+                      zIndex: 1,
+                    },
+                    progressAnimatedStyle,
+                  ]}
+                />
+
+                {/* Vorheriger Fortschritt (gedimmt) */}
+                {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
+                  <Animated.View
+                    style={[
+                      {
+                        position: "absolute",
+                        height: "100%",
+                        backgroundColor: theme.isDark
+                          ? `${progressColor}40`
+                          : `${progressColor}30`,
+                        borderRadius: 6,
+                        left: 0,
+                        zIndex: 2,
+                      },
+                      previousProgressAnimatedStyle,
+                    ]}
+                  />
+                )}
+
+                {/* EP-Gewinn Highlight */}
+                {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
+                  <Animated.View
+                    style={[
+                      {
+                        position: "absolute",
+                        height: "100%",
+                        backgroundColor: "#ffffff80",
+                        borderRadius: 6,
+                        left: `${previousProgressWidth.value}%`,
+                        width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
+                        zIndex: 3,
+                        opacity: 1,
+                      },
+                      gainIndicatorAnimatedStyle,
+                    ]}
+                  />
+                )}
+              </View>
+            </View>
           </View>
         </View>
-        
-        {/* Pfadanzeige mit Toggle-Button */}
-        <View style={[
-          styles.pathInfoContainer,
-          { 
-            flexDirection: 'column',
-            borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-            paddingBottom: 12,
-            marginBottom: 12
-          }
-        ]}>
-          {/* Pfadname mit Toggle-Button */}
-          <Pressable 
-            onPress={toggleTextVisibility}
-            style={({ pressed }) => [
-              styles.pathHeaderRow,
-              { 
-                opacity: pressed ? 0.8 : 1,
-                backgroundColor: pressed 
-                  ? theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' 
-                  : 'transparent',
-                borderRadius: 8,
-                padding: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }
-            ]}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {/* Farbiger Pfad-Indikator */}
-              <View style={{
-                width: 12,
-                height: 12,
-                borderRadius: 6,
-                backgroundColor: levelInfo.currentPath.color,
-                marginRight: 8
-              }} />
-              
-              {/* Nur Pfadname (ohne Fortschritt) */}
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: finalOptions.highContrastText 
-                  ? theme.isDark ? '#FFFFFF' : '#000000' 
-                  : colors.textPrimary
-              }}>
-                {levelInfo.currentPath.name}
+
+        {/* Abstand zwischen den Cards */}
+        <View style={{ height: 32 }} />
+
+        {/* ========== Card 2: PFAD („Deine Reise“) ========== */}
+        <View
+          style={[
+            styles.sectionCard,
+            {
+              backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+            },
+          ]}
+        >
+          {/* Card-Header mit Icon + Titel */}
+          <View style={styles.headerContainer}>
+            <View style={styles.headerLeft}>
+              <View
+                style={[
+                  styles.headerIconWrap,
+                  {
+                    backgroundColor: theme.isDark
+                      ? hexToRGBA(progressColor, 0.20)
+                      : hexToRGBA(progressColor, 0.12),
+                    borderColor: theme.isDark
+                      ? hexToRGBA(progressColor, 0.35)
+                      : hexToRGBA(progressColor, 0.25),
+                  },
+                ]}
+              >
+                <Feather name="map" size={14} color={progressColor} />
+              </View>
+              <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+                Deine Reise
               </Text>
             </View>
-            
-            {/* Auf/Zu-Pfeil */}
-            <Feather 
-              name={textExpanded ? "chevron-up" : "chevron-down"} 
-              size={18} 
-              color={colors.textSecondary} 
-            />
-          </Pressable>
-          
-          {/* Ausgeklappter Bereich mit Pfad-Fortschritt und Beschreibung */}
-          {textExpanded && (
-            <Animated.View 
-              style={[
-                styles.pathContent,
-                { 
-                  marginTop: 8,
-                  padding: 12,
-                  backgroundColor: finalOptions.highContrastText 
-                    ? theme.isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.7)' 
-                    : theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-                  borderRadius: 8,
-                  borderLeftWidth: 3,
-                  borderLeftColor: levelInfo.currentPath.color
-                }
+          </View>
+
+          {/* Trail */}
+          <PathTrail
+            color={progressColor}
+            isDark={theme.isDark}
+            currentLevel={levelInfo.currentLevel}
+            previousLevel={previousLevelInfo.currentLevel}
+            milestoneLevels={MILESTONE_LEVELS}
+          />
+
+          {/* Vollflächig klickbarer Path-Details-Button */}
+          {finalOptions.showPathDescription && (
+            <Pressable
+              onPress={toggleTextVisibility}
+              accessibilityRole="button"
+              accessibilityLabel="Pfaddetails anzeigen oder verbergen"
+              style={({ pressed }) => [
+                styles.pathDetailsCard,
+                {
+                  borderColor: theme.isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
+                  backgroundColor: pressed
+                    ? theme.isDark
+                      ? "rgba(255,255,255,0.06)"
+                      : "rgba(0,0,0,0.04)"
+                    : theme.isDark
+                    ? "rgba(255,255,255,0.03)"
+                    : "rgba(0,0,0,0.02)",
+                },
               ]}
-              entering={FadeIn.duration(300)}
+              hitSlop={8}
             >
-              {/* Pfad-Fortschrittsanzeige mit Text und Balken */}
-              <View style={{
-                marginBottom: 12,
-                paddingBottom: 10,
-                borderBottomWidth: 1,
-                borderBottomColor: theme.isDark 
-                  ? 'rgba(255,255,255,0.1)' 
-                  : 'rgba(0,0,0,0.05)'
-              }}>
-                {/* Textuelle Anzeige "Pfad X von 5" */}
-                <Text style={{
-                  fontSize: 14,
-                  fontWeight: '600',
-                  textAlign: 'center',
-                  marginBottom: 8,
-                  color: finalOptions.highContrastText 
-                    ? theme.isDark ? '#FFFFFF' : '#000000' 
-                    : colors.textPrimary
-                }}>
-                  Pfad {levelInfo.levelData.pathIndex + 1} von 5
-                </Text>
-                
-                {/* Visuelle Balken-Anzeige */}
-                <View style={{ 
-                  flexDirection: 'row', 
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 8
-                }}>
-                  {[0, 1, 2, 3, 4].map((index) => (
-                    <Animated.View 
-                      key={`path-indicator-${index}`}
-                      style={[
-                        {
-                          width: index === levelInfo.levelData.pathIndex ? 36 : 24,
-                          height: index === levelInfo.levelData.pathIndex ? 10 : 6,
-                          borderRadius: 4,
-                          backgroundColor: index === levelInfo.levelData.pathIndex 
-                            ? levelInfo.currentPath.color
-                            : index < levelInfo.levelData.pathIndex
-                              ? `${levelInfo.currentPath.color}80` // Completed paths (dimmed)
-                              : theme.isDark 
-                                ? 'rgba(255,255,255,0.2)' 
-                                : 'rgba(0,0,0,0.1)', // Future paths
-                          marginHorizontal: 4,
-                        },
-                        pathIndicatorStyles[index] // Verwende die vordefinierten Styles
-                      ]}
-                    />
-                  ))}
+              <View style={styles.pathDetailsHeader}>
+                <View style={styles.pathDetailsHeaderLeft}>
+                  <View style={[styles.pathColorDot, { backgroundColor: progressColor }]} />
+                  <Text style={[styles.descriptionTitle, { color: colors.textPrimary }]}>
+                    {levelInfo.currentPath.name}
+                  </Text>
+                </View>
+
+                <View style={styles.pathDetailsHeaderRight}>
+                  <Feather
+                    name={textExpanded ? "chevron-up" : "chevron-down"}
+                    size={18}
+                    color={colors.textSecondary}
+                  />
                 </View>
               </View>
-              
-              {/* Pfad-Beschreibung */}
-              <Text style={[
-                styles.textContainer,
-                { 
-                  color: finalOptions.highContrastText 
-                    ? theme.isDark ? '#FFFFFF' : '#000000' 
-                    : colors.textSecondary,
-                  fontSize: 14,
-                  lineHeight: 20
-                }
-              ]}>
-                {levelInfo.currentPath.description}
+
+              {textExpanded && (
+                <Animated.View
+                  style={[
+                    styles.descriptionBody,
+                    {
+                      borderLeftColor: progressColor,
+                      backgroundColor: theme.isDark
+                        ? "rgba(255,255,255,0.035)"
+                        : "rgba(0,0,0,0.02)",
+                    },
+                  ]}
+                  entering={FadeIn.duration(240)}
+                >
+                  <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+                    {levelInfo.currentPath.description}
+                  </Text>
+                </Animated.View>
+              )}
+            </Pressable>
+          )}
+
+          {/* Meilenstein-Hinweis (IN der Pfad-Card) */}
+          {showMilestone && (
+            <Animated.View
+              style={[
+                styles.milestoneContainer,
+                {
+                    backgroundColor: theme.isDark ? `${progressColor}20` : `${progressColor}10`,
+                    borderColor: progressColor,
+                },
+                milestoneAnimatedStyle,
+              ]}
+              entering={SlideInUp.duration(300).springify()}
+            >
+              <View style={styles.milestoneHeader}>
+                <View style={styles.milestoneHeaderLeft}>
+                  <Feather name="award" size={18} color={progressColor} style={{ marginRight: 8 }} />
+                  <Text style={[styles.milestoneTitle, { color: colors.textPrimary }]}>
+                    Meilenstein erreicht!
+                  </Text>
+                </View>
+
+                <Pressable
+                  onPress={closeMilestone}
+                  style={({ pressed }) => [
+                    styles.milestoneCloseButton,
+                    {
+                      backgroundColor: pressed
+                        ? theme.isDark
+                          ? "rgba(255,255,255,0.10)"
+                          : "rgba(0,0,0,0.06)"
+                        : "transparent",
+                    },
+                  ]}
+                >
+                  <Feather name="x" size={18} color={colors.textSecondary} />
+                </Pressable>
+              </View>
+
+              <Text style={[styles.milestoneText, { color: colors.textSecondary }]}>
+                {milestoneMessage}
               </Text>
             </Animated.View>
           )}
         </View>
-        
-        {/* Progress section - Redesigned for better clarity */}
-        <View style={styles.progressSection}>
-          {/* XP display with better layout */}
-          <View style={[
-            styles.xpInfoRow,
-            { marginBottom: 8 }
-          ]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={[
-                styles.xpText, 
-                { 
-                  color: finalOptions.highContrastText 
-                    ? theme.isDark ? '#FFFFFF' : '#000000' 
-                    : colors.textPrimary
-                }
-              ]}>
-                Level {levelInfo.currentLevel + 1}
-              </Text>
-              
-              {/* Show +XP gain next to level number */}
-              {xpGain && xpGain > 0 && justCompleted && (
-                <Animated.Text
-                  style={[
-                    {
-                      marginLeft: 8,
-                      color: progressColor,
-                      fontWeight: '700',
-                      fontSize: 16,
-                    },
-                    xpGainAnimatedStyle
-                  ]}
-                >
-                  +{xpGain} EP
-                </Animated.Text>
-              )}
-            </View>
-            
-            {levelInfo.nextLevelData && (
-              <Text style={[
-                styles.xpToGo, 
-                { 
-                  color: finalOptions.highContrastText 
-                    ? theme.isDark ? '#FFFFFF' : '#000000' 
-                    : colors.textSecondary
-                }
-              ]}>
-                Noch {levelInfo.xpForNextLevel} Erfahrungspunkte
-              </Text>
-            )}
-          </View>
-          
-          {/* Progress bar - Enhanced visuals with before/after indication */}
-          <View style={[
-            styles.progressBarContainer,
-            { height: 8, borderRadius: 4 }
-          ]}>
-            <View 
-              style={[
-                styles.progressBackground,
-                { 
-                  backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                  position: 'relative'
-                }
-              ]}
-            >
-              {/* Render order is important for proper layering */}
-              
-              {/* 1. Current progress (base layer) */}
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  { 
-                    backgroundColor: progressColor,
-                    borderRadius: 4,
-                    position: 'absolute',
-                    height: '100%',
-                    left: 0,
-                    zIndex: 1, // Lowest z-index
-                  },
-                  progressAnimatedStyle
-                ]}
-              />
-              
-              {/* 2. Previous progress (shown dimmed) - ONLY IF NO LEVEL CHANGE */}
-              {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
-                <Animated.View
-                  style={[
-                    {
-                      position: 'absolute',
-                      height: '100%',
-                      backgroundColor: theme.isDark 
-                        ? `${progressColor}40` // More transparent to be more subtle
-                        : `${progressColor}30`,
-                      borderRadius: 4,
-                      left: 0,
-                      zIndex: 2, // Middle z-index
-                    },
-                    previousProgressAnimatedStyle
-                  ]}
-                />
-              )}
-              
-              {/* 3. Gain indicator (bright highlight for new XP) - ONLY IF NO LEVEL CHANGE */}
-              {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
-                <Animated.View
-                  style={[
-                    {
-                      position: 'absolute',
-                      height: '100%',
-                      backgroundColor: "#ffffff80",
-                      borderRadius: 4,
-                      left: `${previousProgressWidth.value}%`,
-                      width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
-                      zIndex: 3, // Highest z-index to ensure it's on top
-                      opacity: 1, // Slightly transparent to see underlying elements
-                    },
-                    gainIndicatorAnimatedStyle
-                  ]}
-                />
-              )}
-            </View>
-          </View>
-        </View>
-        
-        {/* NEU: Meilenstein-Anzeige */}
-        {showMilestone && (
-          <Animated.View
-            style={[
-              styles.milestoneContainer,
-              {
-                backgroundColor: theme.isDark 
-                  ? `${progressColor}20` 
-                  : `${progressColor}10`,
-                borderColor: progressColor,
-                marginTop: 16,
-                padding: 16,
-                borderRadius: 12,
-                borderWidth: 1,
-                position: "relative",
-              },
-              milestoneAnimatedStyle
-            ]}
-            entering={SlideInUp.duration(300).springify()}
-          >
-            {/* Header */}
-            <View style={{ 
-              flexDirection: "row", 
-              alignItems: "center", 
-              justifyContent: "space-between",
-              marginBottom: 8
-            }}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Feather 
-                  name="award" 
-                  size={18} 
-                  color={progressColor} 
-                  style={{ marginRight: 8 }}
-                />
-                <Text style={{ 
-                  fontSize: 16, 
-                  fontWeight: "700", 
-                  color: colors.textPrimary 
-                }}>
-                  Meilenstein erreicht!
-                </Text>
-              </View>
-              
-              {/* Close button */}
-              <Pressable
-                onPress={closeMilestone}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                  backgroundColor: pressed 
-                    ? theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
-                    : 'transparent',
-                  padding: 4,
-                  borderRadius: 12,
-                })}
-              >
-                <Feather name="x" size={18} color={colors.textSecondary} />
-              </Pressable>
-            </View>
-            
-            {/* Meilenstein-Nachricht */}
-            <Text style={{ 
-              fontSize: 15, 
-              lineHeight: 22, 
-              color: colors.textSecondary,
-              marginBottom: 4,
-            }}>
-              {milestoneMessage}
-            </Text>
-            
-            
-          </Animated.View>
-        )}
-        
-        {/* Level Up Overlay - Completely redesigned for impact */}
+
+        {/* Level Up Overlay (global über beiden Cards) */}
         {showLevelUpOverlay && (
-          <Animated.View 
-            style={[
-              styles.levelUpOverlay,
-              { backgroundColor: 'rgba(0,0,0,0.75)' }
-            ]}
+          <Animated.View
+            style={[styles.levelUpOverlay, { backgroundColor: "rgba(0,0,0,0.75)" }]}
             entering={FadeIn.duration(300)}
             exiting={FadeOut.duration(300)}
           >
-            <View style={[
-              styles.levelUpContent,
-              { 
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                borderColor: progressColor,
-                borderWidth: 2,
-                padding: 24,
-                borderRadius: 20
-              }
-            ]}>
-              <Text style={[
-                styles.levelUpText,
-                finalOptions.highContrastText && styles.levelUpTextHighContrast
-              ]}>
-                LEVEL UP!
-              </Text>
-              
-              <LevelBadge 
+            <View
+              style={[
+                styles.levelUpContent,
+                {
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  borderColor: progressColor,
+                  borderWidth: 2,
+                  padding: 24,
+                  borderRadius: 20,
+                },
+              ]}
+            >
+              <Text style={[styles.levelUpText]}>LEVEL UP!</Text>
+              <LevelBadge
                 levelInfo={levelInfo}
-                size={80}
+                size={84}
                 showAnimation={true}
                 animationDelay={300}
               />
-              
             </View>
           </Animated.View>
         )}
@@ -824,3 +588,313 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
 };
 
 export default LevelProgress;
+
+/* ===================================================================
+   Unterkomponenten (Pfad-Block + Trail)
+   =================================================================== */
+
+type PathTrailProps = {
+  color: string;
+  isDark: boolean;
+  currentLevel: number;
+  previousLevel: number;
+  milestoneLevels: number[]; // [5, 10, 15, 20]
+};
+
+// utils
+function hexToRGBA(hex: string, alpha: number) {
+  const m = hex.replace("#", "");
+  const r = parseInt(m.substring(0, 2), 16) || 0;
+  const g = parseInt(m.substring(2, 4), 16) || 0;
+  const b = parseInt(m.substring(4, 6), 16) || 0;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/**
+ * Mappt den Level auf "Trail-Einheiten":
+ * 0  -> Start
+ * 5  -> 1. Milestone
+ * 10 -> 2. Milestone
+ * 15 -> 3. Milestone
+ * 20 -> 4. Milestone
+ * Dazwischen linear interpoliert (z.B. Level 12 => 2 + 0.4 = 2.4)
+ */
+function levelToUnits(level: number, ms: number[]) {
+  const sorted = [...ms].sort((a, b) => a - b);
+  if (level <= 0) return 0;
+  for (let i = 0; i < sorted.length; i++) {
+    const m = sorted[i];
+    if (level < m) {
+      const start = i === 0 ? 0 : sorted[i - 1];
+      const t = (level - start) / (m - start);
+      return i + Math.max(0, Math.min(1, t));
+    }
+  }
+  return sorted.length; // >= letzter Milestone
+}
+
+const PathTrail: React.FC<PathTrailProps> = ({
+  color,
+  isDark,
+  currentLevel,
+  previousLevel,
+  milestoneLevels,
+}) => {
+  const [w, setW] = useState(0);
+  const h = 120;
+  const padX = 16;
+  const baseY = 70;
+  const amp = 24;
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    setW(e.nativeEvent.layout.width);
+  };
+
+  const TOTAL_NODES = milestoneLevels.length + 1; // Start + Milestones
+
+  // animierter Wegfortschritt (in Node-Einheiten)
+  const prevUnits = useMemo(
+    () => levelToUnits(previousLevel, milestoneLevels),
+    [previousLevel, milestoneLevels]
+  );
+  const curUnits = useMemo(
+    () => levelToUnits(currentLevel, milestoneLevels),
+    [currentLevel, milestoneLevels]
+  );
+
+  const sv = useSharedValue(prevUnits);
+  const [p, setP] = useState(prevUnits);
+
+  useEffect(() => {
+    sv.value = withTiming(curUnits, {
+      duration: 1200,
+      easing: Easing.bezierFn(0.22, 1, 0.36, 1),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curUnits]);
+
+  useAnimatedReaction(
+    () => sv.value,
+    (v) => {
+      runOnJS(setP)(v);
+    },
+    [sv]
+  );
+
+  // Wegpunkte (Nodes) generieren
+  const nodes = useMemo(() => {
+    if (w === 0) return [];
+    const usable = Math.max(80, w - padX * 2);
+    const step = usable / (TOTAL_NODES - 1);
+    return Array.from({ length: TOTAL_NODES }, (_, i) => {
+      const x = padX + i * step;
+      const y =
+        i % 2 === 0
+          ? baseY + (i === 0 ? 0 : amp * 0.22)
+          : baseY - (i === TOTAL_NODES - 2 ? amp * 0.45 : amp);
+      return { x, y };
+    });
+  }, [w, TOTAL_NODES]);
+
+  // Geschwungener Pfad (kubisch)
+  const trailPath = useMemo(() => {
+    if (nodes.length === 0) return "";
+    let d = `M ${nodes[0].x} ${nodes[0].y}`;
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const p0 = nodes[i];
+      const p1 = nodes[i + 1];
+      const dx = p1.x - p0.x;
+      const c1 = { x: p0.x + dx * 0.35, y: p0.y };
+      const c2 = { x: p1.x - dx * 0.35, y: p1.y };
+      d += ` C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${p1.x} ${p1.y}`;
+    }
+    return d;
+  }, [nodes]);
+
+  // Punkt auf kubischer Kurve
+  const cubicPoint = (p0: any, c1: any, c2: any, p1: any, t: number) => {
+    const mt = 1 - t;
+    const x =
+      mt * mt * mt * p0.x +
+      3 * mt * mt * t * c1.x +
+      3 * mt * t * t * c2.x +
+      t * t * t * p1.x;
+    const y =
+      mt * mt * mt * p0.y +
+      3 * mt * mt * t * c1.y +
+      3 * mt * t * t * c2.y +
+      t * t * t * p1.y;
+    return { x, y };
+  };
+
+  // ---- Füllpfad exakt bis tEnd (fein gesampelt) ----
+  const filledPath = useMemo(() => {
+    if (nodes.length === 0) return "";
+
+    const clamp = (x: number, a: number, b: number) =>
+      Math.max(a, Math.min(b, x));
+    const prog = clamp(p, 0, TOTAL_NODES - 1);
+    const segIndex = Math.floor(prog);
+    const tEnd = prog - segIndex; // Anteil im aktuellen Segment [0..1]
+
+    const points: { x: number; y: number }[] = [];
+    points.push(nodes[0]);
+
+    const SAMPLES_FULL = 24; // feinere Auflösung
+    // Vollständige Segmente bis segIndex-1
+    for (let i = 0; i < segIndex; i++) {
+      const p0 = nodes[i];
+      const p1 = nodes[i + 1];
+      const dx = p1.x - p0.x;
+      const c1 = { x: p0.x + dx * 0.35, y: p0.y };
+      const c2 = { x: p1.x - dx * 0.35, y: p1.y };
+      for (let s = 1; s <= SAMPLES_FULL; s++) {
+        const t = s / SAMPLES_FULL;
+        points.push(cubicPoint(p0, c1, c2, p1, t));
+      }
+    }
+
+    // Teilsegment bis tEnd
+    if (segIndex < TOTAL_NODES - 1) {
+      const p0 = nodes[segIndex];
+      const p1 = nodes[segIndex + 1];
+      const dx = p1.x - p0.x;
+      const c1 = { x: p0.x + dx * 0.35, y: p0.y };
+      const c2 = { x: p1.x - dx * 0.35, y: p1.y };
+
+      if (tEnd > 0) {
+        const endSteps = Math.max(1, Math.ceil(SAMPLES_FULL * tEnd));
+        for (let s = 1; s <= endSteps; s++) {
+          // WICHTIG: letzter t exakt = tEnd
+          const t = (s / endSteps) * tEnd;
+          points.push(cubicPoint(p0, c1, c2, p1, t));
+        }
+      }
+    }
+
+    if (points.length <= 1) return "";
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      d += ` L ${points[i].x} ${points[i].y}`;
+    }
+    return d;
+  }, [nodes, p, TOTAL_NODES]);
+
+  // Marker-Position
+  const marker = useMemo(() => {
+    if (nodes.length === 0) return { x: 0, y: 0 };
+    const clamp = (x: number, a: number, b: number) =>
+      Math.max(a, Math.min(b, x));
+    const prog = clamp(p, 0, TOTAL_NODES - 1);
+    const i = Math.floor(prog);
+    const tEnd = prog - i;
+
+    if (i >= TOTAL_NODES - 1) return nodes[TOTAL_NODES - 1];
+
+    const p0 = nodes[i];
+    const p1 = nodes[i + 1];
+    const dx = p1.x - p0.x;
+    const c1 = { x: p0.x + dx * 0.35, y: p0.y };
+    const c2 = { x: p1.x - dx * 0.35, y: p1.y };
+    return cubicPoint(p0, c1, c2, p1, tEnd);
+  }, [nodes, p, TOTAL_NODES]);
+
+  const trailBg = isDark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.10)";
+  const fillGlow = hexToRGBA(color, 0.18);
+
+  const markerPulse = useSharedValue(1);
+  useEffect(() => {
+    markerPulse.value = withSequence(
+      withTiming(1.12, { duration: 700, easing: Easing.out(Easing.quad) }),
+      withTiming(1.0, { duration: 700, easing: Easing.inOut(Easing.quad) })
+    );
+  }, [markerPulse, curUnits]);
+
+  const markerStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        { translateX: marker.x - 7 },
+        { translateY: marker.y - 7 },
+        { scale: markerPulse.value },
+      ],
+    }),
+    [marker]
+  );
+
+  return (
+    <View style={styles.trailContainer} onLayout={onLayout}>
+      {w > 0 && (
+        <>
+          <Svg width={"100%"} height={h}>
+            <Defs>
+              <SvgLinearGradient id="trailGradient" x1="0" y1="0" x2="1" y2="0">
+                <Stop offset="0" stopColor={hexToRGBA(color, 0.85)} />
+                <Stop offset="1" stopColor={hexToRGBA(color, 0.65)} />
+              </SvgLinearGradient>
+            </Defs>
+
+            {/* Hintergrund-Trail */}
+            <SvgPath
+              d={trailPath}
+              stroke={trailBg}
+              strokeWidth={9}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+
+            {/* Gefüllter Bereich bis Marker (mit Glow) */}
+            {filledPath !== "" && (
+              <>
+                <SvgPath
+                  d={filledPath}
+                  stroke={fillGlow}
+                  strokeWidth={11}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                <SvgPath
+                  d={filledPath}
+                  stroke={"url(#trailGradient)"}
+                  strokeWidth={9}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </>
+            )}
+
+            {/* Wegpunkte */}
+            <G>
+              {nodes.map((pt, idx) => {
+                const done = p >= idx - 0.02;
+                const outer = done ? color : trailBg;
+                const inner = done
+                  ? "#ffffff"
+                  : isDark
+                  ? "rgba(255,255,255,0.45)"
+                  : "rgba(0,0,0,0.45)";
+                return (
+                  <G key={`wp-${idx}`}>
+                    <SvgCircle cx={pt.x} cy={pt.y} r={9.5} fill={outer} />
+                    <SvgCircle cx={pt.x} cy={pt.y} r={5.5} fill={inner} />
+                  </G>
+                );
+              })}
+            </G>
+          </Svg>
+
+          {/* Beweglicher Marker */}
+          <Animated.View
+            style={[
+              styles.trailMarker,
+              { backgroundColor: "#fff", shadowColor: color },
+              markerStyle,
+            ]}
+          />
+        </>
+      )}
+    </View>
+  );
+};

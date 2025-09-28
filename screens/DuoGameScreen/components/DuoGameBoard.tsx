@@ -21,12 +21,12 @@ const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
 const CELL_SIZE = SHARED_CELL_SIZE;
 
-// Player color themes - verbesserte Sichtbarkeit
+// Player color themes
 const PLAYER_COLORS = {
   1: "#4A7D78", // Teal - Player 1 (bottom)
   2: "#F3EFE3", // Light beige - Player 2 (top)
-  0: "#E0E8E7", // Medium light neutral - Middle cell
-};
+  0: "#E0E8E7", // Neutral - Middle cell
+} as const;
 
 interface DuoGameBoardProps {
   board: SudokuBoard;
@@ -35,7 +35,7 @@ interface DuoGameBoardProps {
   getCellOwner: (row: number, col: number) => 0 | 1 | 2;
   onCellPress: (player: 1 | 2, row: number, col: number) => void;
   isLoading?: boolean;
-  showErrors?: boolean; // Added this prop to control error display
+  showErrors?: boolean;
 }
 
 const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
@@ -45,16 +45,14 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   getCellOwner,
   onCellPress,
   isLoading = false,
-  showErrors = true, // Default to true for backward compatibility
+  showErrors = true,
 }) => {
-  // Animation values
+  // --- One-time board entrance animation & subtle loading scale ---
   const scale = useSharedValue(0.95);
   const opacity = useSharedValue(0);
 
-  // Initialize animations when board is ready
   React.useEffect(() => {
     if (board.length > 0) {
-      // Animate board entry
       scale.value = withTiming(1, {
         duration: 500,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
@@ -64,126 +62,95 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
     }
-  }, [board]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board.length]);
 
-  // Update animation based on loading state
   React.useEffect(() => {
-    // Scale slightly down when loading
     scale.value = withTiming(isLoading ? 0.97 : 1, {
       duration: 300,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
-  }, [isLoading]);
+  }, [isLoading, scale]);
 
-  // Animated styles
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-      opacity: opacity.value,
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
 
-  // Handle cell press and determine which player's area it belongs to
-  const handleCellPress = (row: number, col: number) => {
-    const playerNum = getCellOwner(row, col);
-
-    if (playerNum === 0) {
-      // For the middle cell, let both players press it
-      // Determine which player based on which one has an active selection
-      if (player1Cell) {
-        onCellPress(1, row, col);
-      } else if (player2Cell) {
-        onCellPress(2, row, col);
-      } else {
-        // Default to player 1 if no one has an active selection
-        onCellPress(1, row, col);
-      }
-    } else {
-      onCellPress(playerNum, row, col);
-    }
-  };
-
-  // Render a cell based on its coordinates
-  const renderCell = (row: number, col: number) => {
-    const cellData = board[row][col];
-    const playerNum = getCellOwner(row, col);
-
-    const isSelectedByPlayer1 =
-      player1Cell?.row === row && player1Cell?.col === col;
-    const isSelectedByPlayer2 =
-      player2Cell?.row === row && player2Cell?.col === col;
-
-    return (
-      <DuoGameCell
-        key={`cell-${row}-${col}`}
-        cell={cellData}
-        row={row}
-        col={col}
-        player={playerNum}
-        isSelected={isSelectedByPlayer1 || isSelectedByPlayer2}
-        onPress={() => handleCellPress(row, col)}
-        rotateForPlayer2={true}
-        showErrors={showErrors} // Pass down the showErrors prop
-      />
+  // --- Precompute static ownership grid to avoid calling getCellOwner 81x per render ---
+  const ownerGrid: (0 | 1 | 2)[][] = React.useMemo(() => {
+    if (!board || board.length === 0) return [];
+    const rows = board.length;
+    const cols = board[0].length;
+    const og: (0 | 1 | 2)[][] = Array.from({ length: rows }, (_, r) =>
+      Array.from({ length: cols }, (_, c) => getCellOwner(r, c))
     );
-  };
+    return og;
+  }, [board, getCellOwner]);
 
-  // Calculate area heights based on percentages of the board
-  const topAreaHeight = BOARD_SIZE * 0.47; // Player 2 (top) area - 45%
-  const gradientHeight = BOARD_SIZE * 0.15; // Gradient area - 10%
-  const bottomAreaHeight = BOARD_SIZE * 0.45; // Player 1 (bottom) area - 45%
+  // --- Stable cell press handler (no per-cell closures) ---
+  const onCellPressStable = React.useCallback(
+    (row: number, col: number) => {
+      const playerNum = ownerGrid[row]?.[col] ?? getCellOwner(row, col);
+
+      if (playerNum === 0) {
+        // Middle cell: pick the player with an active selection; fallback to P1
+        if (player1Cell) {
+          onCellPress(1, row, col);
+        } else if (player2Cell) {
+          onCellPress(2, row, col);
+        } else {
+          onCellPress(1, row, col);
+        }
+      } else {
+        onCellPress(playerNum as 1 | 2, row, col);
+      }
+    },
+    [getCellOwner, onCellPress, ownerGrid, player1Cell, player2Cell]
+  );
+
+  // --- Render helpers kept pure & small so React.memo on cells can shine ---
+  const isSelected = React.useCallback(
+    (row: number, col: number) =>
+      (player1Cell?.row === row && player1Cell?.col === col) ||
+      (player2Cell?.row === row && player2Cell?.col === col),
+    [player1Cell, player2Cell]
+  );
 
   return (
     <View style={styles.boardContainer}>
       <Animated.View style={[styles.boardWrapper, animatedStyle]}>
         <View style={styles.board}>
-          {/* Player Areas Background with Gradient Transition */}
-          <View style={styles.playerAreasContainer}>
-            {/* Player 2 (Top) Area Background */}
+          {/* Player areas + gradient (static) */}
+          <View style={styles.playerAreasContainer} pointerEvents="none">
             <View
               style={[
                 styles.playerAreaBackground,
-                {
-                  top: 0,
-                  height: topAreaHeight,
-                  backgroundColor: PLAYER_COLORS[2],
-                },
+                { top: 0, height: BOARD_SIZE * 0.47, backgroundColor: PLAYER_COLORS[2] },
               ]}
             />
-
-            {/* Gradient Transition in the middle */}
             <LinearGradient
               colors={[PLAYER_COLORS[2], PLAYER_COLORS[1]]}
               style={[
                 styles.gradientTransition,
-                {
-                  top: topAreaHeight,
-                  height: gradientHeight,
-                },
+                { top: BOARD_SIZE * 0.47, height: BOARD_SIZE * 0.15 },
               ]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
             />
-
-            {/* Player 1 (Bottom) Area Background */}
             <View
               style={[
                 styles.playerAreaBackground,
-                {
-                  bottom: 0,
-                  height: bottomAreaHeight,
-                  backgroundColor: PLAYER_COLORS[1],
-                },
+                { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: PLAYER_COLORS[1] },
               ]}
             />
-
-            {/* Middle Cell Background - mit verbessertem Schatten */}
+            {/* Middle cell highlight */}
             <View
               style={[
                 styles.middleCellBackground,
                 {
                   left: CELL_SIZE * 4,
-                  top: topAreaHeight + gradientHeight / 2 - CELL_SIZE / 2, // Center in the gradient area
+                  top: BOARD_SIZE * 0.47 + BOARD_SIZE * 0.15 / 2 - CELL_SIZE / 2,
                   width: CELL_SIZE,
                   height: CELL_SIZE,
                 },
@@ -191,53 +158,37 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
             />
           </View>
 
+          {/* Grid + cells */}
           <View style={styles.gridContainer}>
-            {/* Horizontal grid lines - verbesserte Sichtbarkeit */}
-            <View
-              style={[
-                styles.gridLine,
-                styles.horizontalGridLine,
-                { top: CELL_SIZE * 3 },
-              ]}
-            />
-            <View
-              style={[
-                styles.gridLine,
-                styles.horizontalGridLine,
-                { top: CELL_SIZE * 6 },
-              ]}
-            />
+            {/* 3x3 separators */}
+            <View style={[styles.gridLine, styles.horizontalGridLine, { top: CELL_SIZE * 3 }]} />
+            <View style={[styles.gridLine, styles.horizontalGridLine, { top: CELL_SIZE * 6 }]} />
+            <View style={[styles.gridLine, styles.verticalGridLine, { left: CELL_SIZE * 3 }]} />
+            <View style={[styles.gridLine, styles.verticalGridLine, { left: CELL_SIZE * 6 }]} />
 
-            {/* Vertical grid lines - verbesserte Sichtbarkeit */}
-            <View
-              style={[
-                styles.gridLine,
-                styles.verticalGridLine,
-                { left: CELL_SIZE * 3 },
-              ]}
-            />
-            <View
-              style={[
-                styles.gridLine,
-                styles.verticalGridLine,
-                { left: CELL_SIZE * 6 },
-              ]}
-            />
-
-            {/* Render all cells */}
-            {board.map((row, rowIndex) => (
-              <View key={`row-${rowIndex}`} style={styles.row}>
-                {row.map((_, colIndex) => renderCell(rowIndex, colIndex))}
+            {/* Cells */}
+            {board.map((rowData, r) => (
+              <View key={`row-${r}`} style={styles.row}>
+                {rowData.map((cellData, c) => (
+                  <DuoGameCell
+                    key={`cell-${r}-${c}`}
+                    cell={cellData}
+                    row={r}
+                    col={c}
+                    player={ownerGrid[r]?.[c] ?? 0}
+                    isSelected={isSelected(r, c)}
+                    onPress={onCellPressStable}
+                    rotateForPlayer2={true}
+                    showErrors={showErrors}
+                  />
+                ))}
               </View>
             ))}
           </View>
 
           {/* Loading overlay */}
           {isLoading && (
-            <Animated.View
-              style={styles.loadingOverlay}
-              entering={FadeIn.duration(200)}
-            >
+            <Animated.View style={styles.loadingOverlay} entering={FadeIn.duration(200)}>
               <ActivityIndicator size="large" color="#FFFFFF" />
             </Animated.View>
           )}
@@ -257,7 +208,6 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    // Verbesserter Schatten für beide Modi
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.25,
@@ -267,82 +217,70 @@ const styles = StyleSheet.create({
   board: {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
-    backgroundColor: "transparent", // Hintergrund transparent, damit Spielerbereiche sichtbar sind
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
-
-  // Container für die Spielerbereiche
   playerAreasContainer: {
     position: "absolute",
     width: BOARD_SIZE,
     height: BOARD_SIZE,
     overflow: "hidden",
     borderRadius: 8,
-    zIndex: 0, // Unter dem Grid
+    zIndex: 0,
   },
-
-  // Gemeinsame Eigenschaften für beide Spielerbereiche
   playerAreaBackground: {
     position: "absolute",
     width: "100%",
     left: 0,
     right: 0,
   },
-
-  // Gradient für die Mittelreihe (Zeile 4)
   gradientTransition: {
     position: "absolute",
     width: "100%",
     zIndex: 1,
   },
-
-  // Separater Hintergrund für die mittlere Zelle - verbessert mit Schatten
   middleCellBackground: {
     position: "absolute",
-    backgroundColor: PLAYER_COLORS[0], // Neutrale Farbe für die mittlere Zelle
-    zIndex: 2, // Über den Spielerhintergründen und dem Gradient
-    // Schatten für bessere Sichtbarkeit
+    backgroundColor: PLAYER_COLORS[0],
+    zIndex: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
   },
-
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
-    borderWidth: 2, // Dickerer Rahmen für bessere Sichtbarkeit
-    borderColor: "rgba(0, 0, 0, 0.4)", // Dunklerer Rahmen für besseren Kontrast
+    borderWidth: 2,
+    borderColor: "rgba(0, 0, 0, 0.4)",
     overflow: "hidden",
     position: "relative",
     borderRadius: 8,
-    backgroundColor: "transparent", // Wichtig: damit die Spielerbereiche durchscheinen
-    zIndex: 1, // Über den Spielerbereichen
+    backgroundColor: "transparent",
+    zIndex: 1,
   },
   row: {
     flexDirection: "row",
     height: CELL_SIZE,
   },
-  // Grid lines - verbesserte Sichtbarkeit
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Dunklere Linien für bessere Sichtbarkeit
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     zIndex: 2,
   },
   horizontalGridLine: {
     width: GRID_SIZE,
-    height: 2, // Dickere Linie
+    height: 2,
     left: 0,
   },
   verticalGridLine: {
-    width: 2, // Dickere Linie
+    width: 2,
     height: GRID_SIZE,
     top: 0,
   },
-  // Loading overlay
   loadingOverlay: {
     position: "absolute",
     left: 0,
@@ -357,4 +295,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DuoGameBoard;
+export default React.memo(DuoGameBoard);

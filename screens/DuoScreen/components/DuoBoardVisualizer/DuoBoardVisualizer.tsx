@@ -1,14 +1,8 @@
 // screens/DuoScreen/components/DuoBoardVisualizer/DuoBoardVisualizer.tsx
 // Overlay Visualizer — "Sudoku Duo: Mountain Storm"
-// - Animationen: Orbit, Aura, Ring, Breath, Tap-Pulse (unverändert)
-// - Logo pulsiert, dreht sich NICHT
-// - Farben aus Logo: 
-//    Dark  → Teal: #4A7D78, Digits: #F1F4FB
-//    Light → Warm (Glows): #F3EFE3, Digits: #5B5D6E
-// - Performance: Animated.Text, React.memo, Rasterization nur nativ (Platform.select), moderate Dichte
-// - Keine Marker, keine Windstreifen, keine Shards, kein Shadow
+// PERFORMANCE FIX: Animationen nur einmal starten, besseres Cleanup, optimierte Dependencies
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -185,7 +179,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   isDark = true,
   style,
   onLogoPress,
-  performance = "balanced",
+  performance = "low", // CHANGED: Default auf "low" für bessere Performance
 }) => {
   // --- Maße ---
   const S = size;
@@ -194,9 +188,13 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   const scaleUnit = S / 300;
 
   // --- Performance profile & density ---
-  const baseCount = performance === "low" ? 24 : performance === "high" ? 48 : 36;
+  // REDUCED: Weniger Digits für bessere Performance
+  const baseCount = performance === "low" ? 18 : performance === "high" ? 36 : 24;
   const density = clamp(Math.sqrt((W * H) / (300 * 440)), 0.85, 1.25);
-  const VORTEX_COUNT = Math.min(64, Math.round(baseCount * density));
+  const VORTEX_COUNT = Math.min(48, Math.round(baseCount * density)); // Max 48 statt 64
+
+  // --- Animation running state ---
+  const isAnimationRunning = useRef(false);
 
   // --- Shared clocks ---
   const entrance = useSharedValue(0);
@@ -205,7 +203,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   const auraClock = useSharedValue(0);
   const boostPulse = useSharedValue(0);
 
-  // --- Seeds ---
+  // --- Seeds (weniger Dependencies für stabiles Memoization) ---
   const vortexSeeds: VortexSeed[] = useMemo(() => {
     const seeds: VortexSeed[] = [];
     const VORTEX_MIN_RADIUS = S * 0.25;
@@ -223,24 +221,37 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
       seeds.push({ digit, r0, angle0, zIndex, wobble, lifeOffset, size: sizePx, opacity });
     }
     return seeds;
-  }, [W, H, S, VORTEX_COUNT, isDark]);
+  }, [VORTEX_COUNT, S]); // REMOVED: W, H, isDark als Dependencies (weniger Re-Renders)
 
-  // --- Lifecycle ---
+  // --- Stop all animations mit vollständigem Reset ---
   const stopAll = useCallback(() => {
+    // Alle Animationen canceln
     cancelAnimation(entrance);
     cancelAnimation(breath);
     cancelAnimation(vortexClock);
     cancelAnimation(auraClock);
     cancelAnimation(boostPulse);
+    
+    // Werte zurücksetzen
     entrance.value = 0;
     breath.value = 0;
     vortexClock.value = 0;
     auraClock.value = 0;
     boostPulse.value = 0;
-  }, [entrance, breath, vortexClock, auraClock, boostPulse]);
+    
+    // Animation als gestoppt markieren
+    isAnimationRunning.current = false;
+  }, []); // Keine Dependencies - stabile Funktion
 
+  // --- Start animations nur wenn nicht bereits laufend ---
   const startAll = useCallback(() => {
+    // Prüfen ob Animation bereits läuft
+    if (isAnimationRunning.current) return;
+    
+    isAnimationRunning.current = true;
+    
     entrance.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
+    
     if (!noAnimation) {
       breath.value = withRepeat(
         withSequence(
@@ -250,23 +261,36 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
         -1,
         false
       );
-      vortexClock.value = withRepeat(withTiming(1, { duration: 14000, easing: Easing.linear }), -1, false);
+      
+      // SLOWER: Langsamere Rotationen für bessere Performance
+      vortexClock.value = withRepeat(
+        withTiming(1, { duration: 18000, easing: Easing.linear }), // 18s statt 14s
+        -1, 
+        false
+      );
+      
       auraClock.value = withRepeat(
         withSequence(
-          withTiming(1, { duration: 3200, easing: Easing.inOut(Easing.cubic) }),
-          withTiming(0, { duration: 3200, easing: Easing.inOut(Easing.cubic) })
+          withTiming(1, { duration: 3600, easing: Easing.inOut(Easing.cubic) }), // Etwas langsamer
+          withTiming(0, { duration: 3600, easing: Easing.inOut(Easing.cubic) })
         ),
         -1,
         false
       );
     }
-  }, [noAnimation, entrance, breath, vortexClock, auraClock]);
+  }, [noAnimation]); // Nur noAnimation als Dependency
 
+  // --- Lifecycle mit Focus Effect ---
   useFocusEffect(
     useCallback(() => {
+      // Start nur wenn nicht bereits laufend
       startAll();
-      return () => stopAll();
-    }, [startAll, stopAll])
+      
+      // Cleanup beim Verlassen
+      return () => {
+        stopAll();
+      };
+    }, []) // WICHTIG: Leere Dependencies für stabile Callbacks
   );
 
   // --- Interaction (logo only) ---
@@ -277,7 +301,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
       withTiming(1, { duration: 200, easing: Easing.out(Easing.cubic) }),
       withTiming(0, { duration: 400, easing: Easing.out(Easing.quad) })
     );
-  }, [interactive, boostPulse]);
+  }, [interactive]);
 
   const onPressLogo = useCallback(() => {
     if (!interactive) return;
@@ -469,7 +493,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
       >
         <Pressable
           onPressIn={onPressIn}
-          onPress={onLogoPress}
+          onPress={onPressLogo}
           android_disableSound
           style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
         >

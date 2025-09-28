@@ -8,6 +8,9 @@ import styles from "./GameModeModal.styles";
 
 export type GameMode = "local" | "online";
 
+// DUO-FARBE definieren (gleiche wie im DifficultyModal)
+const DUO_COLOR = "#4A7D78"; // Konsistentes Teal aus DifficultyModal
+
 interface GameModeModalProps {
   visible: boolean;
   onClose: () => void;
@@ -23,6 +26,9 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  
+  // Duo-Farbe konsistent mit DifficultyModal
+  const duoIconColor = DUO_COLOR; // Verwende immer die gleiche Farbe
 
   if (!visible) return null;
 
@@ -70,11 +76,14 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
             ]}
             onPress={() => onSelectMode("local")}
           >
-            <View style={styles.modeIconContainer}>
+            <View style={[
+              styles.modeIconContainer,
+              { backgroundColor: `${duoIconColor}15` } // 15 für 15% Opacity
+            ]}>
               <Feather 
                 name="users" 
                 size={28} 
-                color={colors.primary} 
+                color={duoIconColor} // HIER: Grüne Duo-Farbe statt colors.primary
               />
             </View>
             <View style={styles.modeTextContainer}>
@@ -100,6 +109,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
               { borderColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }
             ]}
             activeOpacity={0.7}
+            onPress={() => onSelectMode("online")} // Trotzdem klickbar für die Meldung
           >
             <View style={[styles.modeIconContainer, styles.disabledIconContainer]}>
               <Feather 

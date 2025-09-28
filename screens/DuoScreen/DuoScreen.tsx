@@ -1,5 +1,5 @@
 // screens/DuoScreen/DuoScreen.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,9 @@ import {
   ScrollView,
   Dimensions,
   StyleSheet,
+  InteractionManager,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -15,6 +18,7 @@ import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { Difficulty } from "@/utils/sudoku";
+import { useFocusEffect } from "@react-navigation/native";
 
 import DuoBoardVisualizer from "./components/DuoBoardVisualizer/DuoBoardVisualizer";
 import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
@@ -79,57 +83,128 @@ const DuoScreen: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<GameMode>("local");
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
+  // Performance-Optimierung States
+  const [visualizerReady, setVisualizerReady] = useState(false);
+  const [scrollPerformanceMode, setScrollPerformanceMode] = useState<
+    "low" | "balanced"
+  >("balanced");
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScrollY = useRef(0);
+
   const maxVisualizer = Math.min(width * 0.88, 340);
   const visualizerSize = Math.max(260, Math.round(maxVisualizer));
 
   const navHeight = 56;
   const mainScreenHeight = height - insets.top - insets.bottom - navHeight;
 
-  const scrollToFeatures = () => {
+  // Visualizer erst nach Navigation laden
+  useFocusEffect(
+    useCallback(() => {
+      InteractionManager.runAfterInteractions(() => {
+        setVisualizerReady(true);
+      });
+
+      return () => {
+        setVisualizerReady(false);
+        // Cleanup beim Verlassen
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+          scrollTimeoutRef.current = null;
+        }
+      };
+    }, [])
+  );
+
+  // Optimiertes Scroll-Handling
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const currentScrollY = event.nativeEvent.contentOffset.y;
+      const scrollDelta = Math.abs(currentScrollY - lastScrollY.current);
+
+      // Nur bei signifikanten Scrolls reagieren (mehr als 5px)
+      if (scrollDelta > 5) {
+        if (!isScrolling) {
+          setIsScrolling(true);
+          setScrollPerformanceMode("low");
+        }
+
+        lastScrollY.current = currentScrollY;
+
+        // Clear previous timeout
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+
+        // Performance Mode nach Scroll-Ende zurücksetzen
+        scrollTimeoutRef.current = setTimeout(() => {
+          setIsScrolling(false);
+          setScrollPerformanceMode("balanced");
+        }, 250); // Etwas länger warten für smootheres Erlebnis
+      }
+    },
+    [isScrolling]
+  );
+
+  const scrollToFeatures = useCallback(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({
         y: height - navHeight - 100,
         animated: true,
       });
     }
-  };
+  }, []);
 
-  const handleDifficultyChange = (difficulty: Difficulty) =>
+  const handleDifficultyChange = useCallback((difficulty: Difficulty) => {
     setSelectedDifficulty(difficulty);
+  }, []);
 
-  const handleStartGame = () => {
+  const handleStartGame = useCallback(() => {
     setIsAnyModalOpen(true);
     setShowGameModeModal(true);
     triggerHaptic("medium");
-  };
+  }, []);
 
-  const handleModeSelection = (mode: GameMode) => {
-    setSelectedMode(mode);
-    triggerHaptic("medium");
-    if (mode === "local") {
-      setShowGameModeModal(false);
-      setTimeout(() => setShowDifficultyModal(true), 100);
-    } else {
-      setShowGameModeModal(false);
-      setIsAnyModalOpen(false);
-      showAlert({
-        title: "In Entwicklung",
-        message:
-          "Der Online-Modus wird derzeit entwickelt und steht in Kürze zur Verfügung. Bleib gespannt!",
-        type: "info",
-        buttons: [{ text: "OK", style: "primary" }],
-      });
-    }
-  };
+  const handleModeSelection = useCallback(
+    (mode: GameMode) => {
+      setSelectedMode(mode);
+      triggerHaptic("medium");
+      if (mode === "local") {
+        setShowGameModeModal(false);
+        setTimeout(() => setShowDifficultyModal(true), 100);
+      } else {
+        setShowGameModeModal(false);
+        setIsAnyModalOpen(false);
+        showAlert({
+          title: "In Entwicklung",
+          message:
+            "Der Online-Modus wird derzeit entwickelt und steht in Kürze zur Verfügung. Bleib gespannt!",
+          type: "info",
+          buttons: [{ text: "OK", style: "primary" }],
+        });
+      }
+    },
+    [showAlert]
+  );
 
-  const handleStartWithDifficulty = () => {
+  const handleStartWithDifficulty = useCallback(() => {
     setShowDifficultyModal(false);
     setIsAnyModalOpen(false);
     router.replace({
       pathname: "/duo-game",
       params: { difficulty: selectedDifficulty },
     });
-  };
+  }, [selectedDifficulty, router]);
+
+  const handleCloseGameModeModal = useCallback(() => {
+    setShowGameModeModal(false);
+    setIsAnyModalOpen(false);
+  }, []);
+
+  const handleCloseDifficultyModal = useCallback(() => {
+    setShowDifficultyModal(false);
+    setIsAnyModalOpen(false);
+  }, []);
 
   return (
     <View
@@ -163,6 +238,12 @@ const DuoScreen: React.FC = () => {
           ref={scrollViewRef}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={100} // Optimiert für Performance
+          removeClippedSubviews={true} // Wichtig für Android
+          decelerationRate="fast" // Schnelleres Scroll-Ende
+          overScrollMode="never" // Kein Overscroll-Effekt auf Android
+          bounces={true} // iOS bounce behalten
         >
           <View
             style={[
@@ -170,19 +251,21 @@ const DuoScreen: React.FC = () => {
               { height: mainScreenHeight, justifyContent: "space-between" },
             ]}
           >
-            {/* Overlay-Visualizer füllt die ganze Main-Section */}
+            {/* Overlay-Visualizer mit Performance-Optimierungen */}
             <View style={styles.overlayLayer}>
-              <DuoBoardVisualizer
-                size={visualizerSize}
-                stageWidth={width}
-                stageHeight={mainScreenHeight}
-                noAnimation={isAnyModalOpen}
-                interactive={!isAnyModalOpen}
-                renderTopVignette={!theme.isDark}
-                isDark={theme.isDark}
-                onLogoPress={handleStartGame}
-                performance="balanced" // oder "low" auf schwächeren Devices
-              />
+              {visualizerReady && (
+                <DuoBoardVisualizer
+                  size={visualizerSize}
+                  stageWidth={width}
+                  stageHeight={mainScreenHeight}
+                  noAnimation={isAnyModalOpen || isScrolling} // Animation beim Scrollen pausieren
+                  interactive={!isAnyModalOpen && !isScrolling}
+                  renderTopVignette={!theme.isDark}
+                  isDark={theme.isDark}
+                  onLogoPress={handleStartGame}
+                  performance={scrollPerformanceMode} // Dynamische Performance
+                />
+              )}
             </View>
 
             {/* spacer */}
@@ -192,12 +275,18 @@ const DuoScreen: React.FC = () => {
             <View style={styles.centralContentContainer} />
 
             <View style={styles.scrollIndicatorContainer}>
-              <ScrollIndicator onPress={scrollToFeatures} noAnimation />
+              <ScrollIndicator
+                onPress={scrollToFeatures}
+                noAnimation={isScrolling} // Auch Indikator beim Scrollen pausieren
+              />
             </View>
           </View>
 
           <View style={styles.featuresScreen}>
-            <DuoFeatures onStartGame={handleStartGame} noAnimation />
+            <DuoFeatures
+              onStartGame={handleStartGame}
+              noAnimation={isScrolling} // Features-Animationen auch pausieren
+            />
           </View>
         </ScrollView>
       </View>
@@ -206,10 +295,7 @@ const DuoScreen: React.FC = () => {
         visible={showDifficultyModal}
         selectedDifficulty={selectedDifficulty}
         onSelectDifficulty={handleDifficultyChange}
-        onClose={() => {
-          setShowDifficultyModal(false);
-          setIsAnyModalOpen(false);
-        }}
+        onClose={handleCloseDifficultyModal}
         onConfirm={handleStartWithDifficulty}
         noBackdrop
         isTransition
@@ -220,10 +306,7 @@ const DuoScreen: React.FC = () => {
 
       <GameModeModal
         visible={showGameModeModal}
-        onClose={() => {
-          setShowGameModeModal(false);
-          setIsAnyModalOpen(false);
-        }}
+        onClose={handleCloseGameModeModal}
         onSelectMode={handleModeSelection}
         noBackdrop
       />

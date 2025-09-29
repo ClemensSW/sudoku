@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  // Wrapper (ohne „über“-Styling) – Cards enthalten die eigentliche Optik
+  // Wrapper
   container: {
     width: "100%",
   },
 
-  // ==== Reusable Card für Level & Pfad ====
+  // ==== Card ====
   sectionCard: {
     borderRadius: radius.xl,
     borderWidth: 1,
@@ -59,6 +59,7 @@ export default StyleSheet.create({
   // EP
   progressSection: {
     marginTop: spacing.lg,
+    marginBottom: spacing.xl,
   },
   xpInfoRow: {
     flexDirection: "row",
@@ -93,6 +94,116 @@ export default StyleSheet.create({
     borderRadius: radius.lg,
   },
 
+  // ==== Level-Details + Titel (Accordion) ====
+  levelDetailsCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    marginTop: spacing.md,
+  },
+  levelDetailsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  levelDetailsHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  levelColorDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  levelDetailsTitle: {
+    fontSize: 15.5,
+    fontWeight: "800",
+  },
+  levelDescriptionBody: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: 10,
+    borderLeftWidth: 3,
+  },
+
+  // Aktueller Titel Zeile
+  titleCurrentBlock: {
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  titleCurrentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6, // Abstand zur Pill darunter
+  },
+  titleCurrentText: {
+    fontSize: 14.5,
+    fontWeight: "700",
+  },
+  titlePill: {
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: "flex-start",
+    maxWidth: "100%",
+  },
+  titlePillText: {
+    fontSize: 12.5,
+    fontWeight: "800",
+  },
+
+  // Titel-Auswahl (Chips)
+  titleHeaderRow: {
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  titleHeaderLabel: {
+    fontSize: 13.5,
+    fontWeight: "800",
+    opacity: 0.9,
+  },
+  titleClearBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  titleClearText: {
+    fontSize: 12.5,
+    fontWeight: "700",
+    opacity: 0.9,
+  },
+  titleChipsWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 6,
+  },
+  titleChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    maxWidth: "100%",
+  },
+  titleChipText: {
+    fontSize: 13,
+    fontWeight: "800",
+    maxWidth: 200,
+  },
+
   // ==== Pfad-Card Header „Deine Reise“ ====
   headerContainer: {
     flexDirection: "row",
@@ -116,11 +227,6 @@ export default StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
-  },
-
-  // Pfad-Block
-  pathInfoContainer: {
-    marginTop: spacing.xs,
   },
 
   // Trail

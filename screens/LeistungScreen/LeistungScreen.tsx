@@ -9,7 +9,8 @@ import { loadStats, GameStats } from "@/utils/storage";
 import {
   loadUserProfile,
   updateUserName,
-  updateUserAvatar,
+  updateUserAvatar,     // ✅ fehlender Import ergänzt
+  updateUserTitle,      // ⬅️ NEU
   UserProfile,
 } from "@/utils/profileStorage";
 import { getAvatarUri } from "@/utils/avatarStorage";
@@ -28,11 +29,10 @@ import GalleryTab from "./components/GalleryTab";
 import StreakTab from "./components/StreakTab";
 import TimeTab from "./components/TimeTab";
 
-// NEU: Support-bezogene Imports
+// Support
 import SupportBanner from "./components/SupportBanner/SupportBanner";
 import SupportShop from "@/components/SupportShop/SupportShop";
 
-// Tab IDs
 type TabId = "level" | "gallery" | "streak" | "times";
 
 const LeistungScreen: React.FC = () => {
@@ -42,24 +42,18 @@ const LeistungScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
 
-  // Scroll + Layout Refs
   const scrollViewRef = useRef<ScrollView>(null);
   const tabSectionPosition = useRef<number>(0);
 
-  // State
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("level");
-  const [profile, setProfile] = useState<UserProfile>({ name: "User" });
+  const [profile, setProfile] = useState<UserProfile>({ name: "User", title: null });
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
 
-  // NEU: State für Support Shop
   const [showSupportShop, setShowSupportShop] = useState(false);
-
-  // Landscapes (für Anzahl abgeschlossener Bilder)
   const { landscapes } = useLandscapes("completed");
 
-  // Daten laden (Stats, Profil, Avatar)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,12 +66,12 @@ const LeistungScreen: React.FC = () => {
         setProfile(userProfile);
 
         const uri = await getAvatarUri();
-
         if (userProfile.avatarUri) {
           setAvatarUri(userProfile.avatarUri);
         } else if (uri) {
-          await updateUserAvatar(uri);
+          const updated = await updateUserAvatar(uri); // ✅ existiert jetzt
           setAvatarUri(uri);
+          setProfile(updated);
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -85,11 +79,9 @@ const LeistungScreen: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  // Tabs
   const tabs: TabItem[] = [
     { id: "level", label: "Level" },
     { id: "gallery", label: "Sammlung" },
@@ -99,13 +91,9 @@ const LeistungScreen: React.FC = () => {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
-
     setTimeout(() => {
       if (scrollViewRef.current && tabSectionPosition.current > 0) {
-        scrollViewRef.current.scrollTo({
-          y: tabSectionPosition.current - 20,
-          animated: true,
-        });
+        scrollViewRef.current.scrollTo({ y: tabSectionPosition.current - 20, animated: true });
       }
     }, 100);
   };
@@ -130,37 +118,42 @@ const LeistungScreen: React.FC = () => {
       const updatedProfile = await updateUserAvatar(uri);
       setAvatarUri(uri);
       setProfile(updatedProfile);
-
-      console.log("Avatar updated:", uri);
-      console.log("Updated profile:", updatedProfile);
     } catch (error) {
       console.error("Error updating avatar:", error);
       showAlert({
         title: "Fehler",
-        message:
-          "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut.",
+        message: "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut.",
         type: "error",
         buttons: [{ text: "OK", style: "primary" }],
       });
     }
   };
 
-  // Settings
-  const handleOpenSettings = () => {
-    router.push("/settings");
+  // ⬅️ NEU: Titel ändern & speichern
+  const handleTitleChange = async (title: string | null) => {
+    try {
+      const updated = await updateUserTitle(title);
+      setProfile(updated);
+    } catch (error) {
+      console.error("Error updating title:", error);
+    }
   };
 
-  // Support Shop
+  const handleOpenSettings = () => router.push("/settings");
   const handleOpenSupportShop = () => setShowSupportShop(true);
   const handleCloseSupportShop = () => setShowSupportShop(false);
 
-  // Tab Content
   const renderTabContent = () => {
     if (!stats) return null;
-
     switch (activeTab) {
       case "level":
-        return <LevelTab stats={stats} />;
+        return (
+          <LevelTab
+            stats={stats}
+            selectedTitle={profile.title ?? null}
+            onTitleSelect={handleTitleChange}
+          />
+        );
       case "gallery":
         return <GalleryTab />;
       case "streak":
@@ -168,66 +161,45 @@ const LeistungScreen: React.FC = () => {
       case "times":
         return <TimeTab stats={stats} />;
       default:
-        return <LevelTab stats={stats} />;
+        return (
+          <LevelTab
+            stats={stats}
+            selectedTitle={profile.title ?? null}
+            onTitleSelect={handleTitleChange}
+          />
+        );
     }
   };
 
-  // Loading
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header
-          title="Meine Leistung"
-          rightAction={{
-            icon: "settings",
-            onPress: handleOpenSettings,
-          }}
-        />
+        <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
         <LoadingState />
       </View>
     );
   }
 
-  // Empty
   if (!stats) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header
-          title="Meine Leistung"
-          rightAction={{
-            icon: "settings",
-            onPress: handleOpenSettings,
-          }}
-        />
+        <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
         <EmptyState />
       </View>
     );
   }
 
-  // Normal
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
+      <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
 
-      {/* Header - Fixed at the top */}
-      <Header
-        title="Meine Leistung"
-        rightAction={{
-          icon: "settings",
-          onPress: handleOpenSettings,
-        }}
-      />
-
-      {/* ScrollView for ALL content */}
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollContainer}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 },
-        ]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator
       >
         {/* Profile Header */}
@@ -239,66 +211,41 @@ const LeistungScreen: React.FC = () => {
             onChangeName={handleNameChange}
             onChangeAvatar={handleAvatarChange}
             completedLandscapesCount={landscapes.length}
+            title={profile.title ?? null} // ✅ Titel anzeigen
           />
         </View>
 
-        {/* SUPPORT BANNER – Einstieg mit Callback */}
+        {/* Support */}
         <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
 
-        {/* Tab Navigator */}
+        {/* Tabs */}
         <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
-          <TabNavigator
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
+          <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
         </View>
 
-        {/* Tab Content */}
         <View style={styles.tabContentContainer}>
           {activeTab === "gallery" ? (
-            <>
-              <GalleryTab />
-            </>
+            <GalleryTab />
           ) : activeTab === "times" ? (
-            <>
-              <TimeTab stats={stats} />
-            </>
+            <TimeTab stats={stats} />
           ) : (
             renderTabContent()
           )}
         </View>
       </ScrollView>
 
-      {/* Support Shop Modal – Vollbild Overlay */}
       {showSupportShop && <SupportShop onClose={handleCloseSupportShop} />}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flex: 1,
-  },
-  scrollContent: {
-    // No horizontal padding - handled by child components
-  },
-  profileContainer: {
-    paddingHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  tabSection: {
-    width: "100%",
-  },
-  tabContentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 64,
-  },
+  container: { flex: 1 },
+  scrollContainer: { flex: 1 },
+  scrollContent: {},
+  profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
+  tabSection: { width: "100%" },
+  tabContentContainer: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 64 },
 });
 
 export default LeistungScreen;

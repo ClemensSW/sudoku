@@ -1,13 +1,17 @@
 // components/GameCompletionModal/components/LevelProgress/LevelProgress.tsx
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { View, Text, Pressable, LayoutChangeEvent } from "react-native";
-import Animated,
-{
+import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
-  withDelay,
   FadeIn,
   FadeOut,
   SlideInUp,
@@ -25,8 +29,12 @@ import Svg, {
   G,
 } from "react-native-svg";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { milestones as milestoneMessages } from "./utils/levelData";
+import {
+  milestones as milestoneMessages,
+  levels as LEVELS,
+} from "./utils/levelData";
 import LevelBadge from "./components/LevelBadge";
+import TitleSelect from "./components/TitleSelect";
 import { LevelProgressOptions } from "./utils/types";
 import { GameStats, markMilestoneReached } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
@@ -50,6 +58,10 @@ interface LevelProgressProps {
   onPathChange?: (oldPathId: string, newPathId: string) => void;
   onPress?: () => void;
   options?: LevelProgressOptions;
+
+  /** NEU: Titel-Auswahl */
+  selectedTitle?: string | null;
+  onTitleSelect?: (title: string | null) => void;
 }
 
 const LevelProgress: React.FC<LevelProgressProps> = ({
@@ -65,6 +77,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   onPathChange,
   onPress,
   options = {},
+
+  selectedTitle = null,
+  onTitleSelect,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -79,12 +94,17 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   };
   const finalOptions = { ...defaultOptions, ...options };
 
-  const [textExpanded, setTextExpanded] = useState(false);
+  const [pathDescExpanded, setPathDescExpanded] = useState(false);
+  const [levelDescExpanded, setLevelDescExpanded] = useState(false);
   const [showMilestone, setShowMilestone] = useState(false);
   const [milestoneMessage, setMilestoneMessage] = useState("");
   const [milestoneLevel, setMilestoneLevel] = useState(0);
   const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
   const levelUpTriggered = useRef(false);
+
+  // Titel lokaler State (spiegelt Prop, falls von außen gesetzt)
+  const [localTitle, setLocalTitle] = useState<string | null>(selectedTitle);
+  useEffect(() => setLocalTitle(selectedTitle), [selectedTitle]);
 
   const calculatedXp = stats ? stats.totalXP : 0;
   const currentXp = xp !== undefined ? xp : calculatedXp;
@@ -101,6 +121,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
 
   const hasLevelChanged =
     levelInfo.currentLevel > previousLevelInfo.currentLevel;
+
+  // Titel, die bis zum aktuellen Level freigeschaltet sind
+  const unlockedTitles = useMemo(
+    () => LEVELS.slice(0, levelInfo.currentLevel + 1).map((l) => l.name),
+    [levelInfo.currentLevel]
+  );
 
   // Reanimated
   const containerScale = useSharedValue(1);
@@ -137,10 +163,14 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     ? levelInfo.currentPath.color
     : colors.primary;
 
-  const toggleTextVisibility = () => {
-    setTextExpanded((s) => !s);
+  const togglePathDescription = () => {
+    setPathDescExpanded((s) => !s);
     triggerHaptic("light");
   };
+  const toggleLevelDescription = useCallback(() => {
+    setLevelDescExpanded((s) => !s);
+    triggerHaptic("light");
+  }, []);
 
   const closeMilestone = () => {
     milestoneScale.value = withTiming(0.9, {
@@ -168,7 +198,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         break;
       }
     }
-  }, [finalOptions.showMilestones, levelInfo.currentLevel, milestoneScale, stats]);
+  }, [
+    finalOptions.showMilestones,
+    levelInfo.currentLevel,
+    milestoneScale,
+    stats,
+  ]);
 
   useEffect(() => {
     const prevLevelStartXp = previousLevelInfo.levelData.xp;
@@ -208,7 +243,11 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       (previousXp !== undefined || xpGain !== undefined) &&
       levelInfo.currentLevel > previousLevelInfo.currentLevel;
 
-    if (didLevelUp && finalOptions.enableLevelUpAnimation && !levelUpTriggered.current) {
+    if (
+      didLevelUp &&
+      finalOptions.enableLevelUpAnimation &&
+      !levelUpTriggered.current
+    ) {
       levelUpTriggered.current = true;
       triggerHaptic("success");
       setTimeout(() => {
@@ -256,15 +295,19 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
     checkAndShowMilestone,
   ]);
 
+  const handleTitlePick = (title: string | null) => {
+    setLocalTitle(title);
+    onTitleSelect?.(title ?? null);
+  };
+
   // ---------- Layout: Zwei Cards: (1) Level, (2) Pfad ----------
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [{ opacity: pressed ? 0.96 : 1 }]}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [{ opacity: pressed ? 0.96 : 1 }]}
+    >
       <Animated.View
-        style={[
-          styles.container,
-          containerAnimatedStyle,
-          style,
-        ]}
+        style={[styles.container, containerAnimatedStyle, style]}
         entering={FadeIn.duration(350)}
       >
         {/* ========== Card 1: LEVEL ========== */}
@@ -273,12 +316,16 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             styles.sectionCard,
             {
               backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
-              borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+              borderColor: theme.isDark
+                ? "rgba(255,255,255,0.10)"
+                : "rgba(0,0,0,0.06)",
             },
           ]}
         >
-          {/* Header (Badge + Titel/Message + EP-Gewinn) */}
-          <View style={[styles.header, { alignItems: "center", marginBottom: 18 }]}>
+          {/* Header (Badge + Titel) */}
+          <View
+            style={[styles.header, { alignItems: "center", marginBottom: 18 }]}
+          >
             <Animated.View style={badgeAnimatedStyle}>
               <LevelBadge
                 levelInfo={levelInfo}
@@ -291,36 +338,33 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               <Text style={[styles.levelName, { color: colors.textPrimary }]}>
                 {levelInfo.levelData.name}
               </Text>
-
-              <Text style={[styles.levelMessage, { color: colors.textSecondary }]}>
-                {levelInfo.levelData.message}
-              </Text>
-
-              {xpGain && xpGain > 0 && justCompleted && (
-                <Animated.View
-                  style={[
-                    styles.gainChip,
-                    {
-                      backgroundColor: theme.isDark
-                        ? hexToRGBA(progressColor, 0.9)
-                        : hexToRGBA(progressColor, 1),
-                      borderColor: theme.isDark
-                        ? hexToRGBA(progressColor, 0.55)
-                        : hexToRGBA(progressColor, 0.35),
-                    },
-                    xpGainAnimatedStyle,
-                  ]}
-                >
-                  <Feather name="plus" size={14} color="#FFFFFF" />
-                  <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
-                    {xpGain} Erfahrungspunkte
-                  </Text>
-                </Animated.View>
-              )}
             </View>
           </View>
 
-          {/* EP-Fortschritt */}
+          {/* Gain-Chip */}
+          {xpGain && xpGain > 0 && justCompleted && (
+            <Animated.View
+              style={[
+                styles.gainChip,
+                {
+                  backgroundColor: theme.isDark
+                    ? hexToRGBA(progressColor, 0.9)
+                    : hexToRGBA(progressColor, 1),
+                  borderColor: theme.isDark
+                    ? hexToRGBA(progressColor, 0.55)
+                    : hexToRGBA(progressColor, 0.35),
+                },
+                xpGainAnimatedStyle,
+              ]}
+            >
+              <Feather name="plus" size={14} color="#FFFFFF" />
+              <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
+                {xpGain} Erfahrungspunkte
+              </Text>
+            </Animated.View>
+          )}
+
+          {/* EP-Fortschritt (JETZT vor dem Dropdown) */}
           <View style={styles.progressSection}>
             <View style={[styles.xpInfoRow, { marginBottom: 8 }]}>
               <Text style={[styles.xpText, { color: colors.textPrimary }]}>
@@ -333,12 +377,19 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               )}
             </View>
 
-            <View style={[styles.progressBarContainer, { height: 12, borderRadius: 6 }]}>
+            <View
+              style={[
+                styles.progressBarContainer,
+                { height: 12, borderRadius: 6 },
+              ]}
+            >
               <View
                 style={[
                   styles.progressBackground,
                   {
-                    backgroundColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+                    backgroundColor: theme.isDark
+                      ? "rgba(255,255,255,0.10)"
+                      : "rgba(0,0,0,0.06)",
                     borderRadius: 6,
                     overflow: "hidden",
                     position: "relative",
@@ -390,7 +441,10 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                         backgroundColor: "#ffffff80",
                         borderRadius: 6,
                         left: `${previousProgressWidth.value}%`,
-                        width: `${levelInfo.progressPercentage - previousProgressWidth.value}%`,
+                        width: `${
+                          levelInfo.progressPercentage -
+                          previousProgressWidth.value
+                        }%`,
                         zIndex: 3,
                         opacity: 1,
                       },
@@ -401,6 +455,128 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               </View>
             </View>
           </View>
+
+          {/* Level-Details + Titel-Auswahl (Dropdown jetzt am ENDE) */}
+          <Pressable
+            onPress={toggleLevelDescription}
+            accessibilityRole="button"
+            accessibilityLabel="Levelbeschreibung und Titel-Auswahl anzeigen oder verbergen"
+            hitSlop={8}
+            style={({ pressed }) => [
+              styles.levelDetailsCard,
+              {
+                borderColor: theme.isDark
+                  ? "rgba(255,255,255,0.12)"
+                  : "rgba(0,0,0,0.08)",
+                backgroundColor: pressed
+                  ? theme.isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(0,0,0,0.04)"
+                  : theme.isDark
+                  ? "rgba(255,255,255,0.03)"
+                  : "rgba(0,0,0,0.02)",
+              },
+            ]}
+          >
+            <View style={styles.levelDetailsHeader}>
+              <View style={styles.levelDetailsHeaderLeft}>
+                <View
+                  style={[
+                    styles.levelColorDot,
+                    { backgroundColor: progressColor },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.levelDetailsTitle,
+                    { color: colors.textPrimary },
+                  ]}
+                >
+                  Dein Titel
+                </Text>
+              </View>
+              <Feather
+                name={levelDescExpanded ? "chevron-up" : "chevron-down"}
+                size={18}
+                color={colors.textSecondary}
+              />
+            </View>
+
+            {levelDescExpanded && (
+              <Animated.View
+                entering={FadeIn.duration(200)}
+                style={[
+                  styles.levelDescriptionBody,
+                  {
+                    borderLeftColor: progressColor,
+                    backgroundColor: theme.isDark
+                      ? "rgba(255,255,255,0.035)"
+                      : "rgba(0,0,0,0.02)",
+                  },
+                ]}
+              >
+                {/* Beschreibung */}
+                <Text
+                  style={[
+                    styles.levelMessage,
+                    { color: colors.textSecondary, marginBottom: 12 },
+                  ]}
+                >
+                  {levelInfo.levelData.message}
+                </Text>
+
+                {/* Aktueller Titel (zweizeilig: Header oben, Pill darunter) */}
+                <View style={styles.titleCurrentBlock}>
+                  <View style={styles.titleCurrentHeader}>
+                    <Feather name="award" size={16} color={progressColor} />
+                    <Text
+                      style={[
+                        styles.titleCurrentText,
+                        { color: colors.textPrimary },
+                      ]}
+                    >
+                      Aktueller Titel:
+                    </Text>
+                  </View>
+
+                  <View
+                    style={[
+                      styles.titlePill,
+                      {
+                        backgroundColor: hexToRGBA(
+                          progressColor,
+                          theme.isDark ? 0.25 : 0.15
+                        ),
+                        borderColor: hexToRGBA(
+                          progressColor,
+                          theme.isDark ? 0.45 : 0.3
+                        ),
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.titlePillText,
+                        { color: colors.textPrimary },
+                      ]}
+                      // kein numberOfLines -> darf umbrechen
+                    >
+                      {localTitle || "—"}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Auswahl freigeschalteter Titel */}
+                <TitleSelect
+                  titles={unlockedTitles}
+                  selected={localTitle}
+                  onSelect={handleTitlePick}
+                  color={progressColor}
+                  isDark={theme.isDark}
+                />
+              </Animated.View>
+            )}
+          </Pressable>
         </View>
 
         {/* Abstand zwischen den Cards */}
@@ -412,7 +588,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             styles.sectionCard,
             {
               backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
-              borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+              borderColor: theme.isDark
+                ? "rgba(255,255,255,0.10)"
+                : "rgba(0,0,0,0.06)",
             },
           ]}
         >
@@ -424,7 +602,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                   styles.headerIconWrap,
                   {
                     backgroundColor: theme.isDark
-                      ? hexToRGBA(progressColor, 0.20)
+                      ? hexToRGBA(progressColor, 0.2)
                       : hexToRGBA(progressColor, 0.12),
                     borderColor: theme.isDark
                       ? hexToRGBA(progressColor, 0.35)
@@ -452,13 +630,15 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           {/* Vollflächig klickbarer Path-Details-Button */}
           {finalOptions.showPathDescription && (
             <Pressable
-              onPress={toggleTextVisibility}
+              onPress={togglePathDescription}
               accessibilityRole="button"
               accessibilityLabel="Pfaddetails anzeigen oder verbergen"
               style={({ pressed }) => [
                 styles.pathDetailsCard,
                 {
-                  borderColor: theme.isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
+                  borderColor: theme.isDark
+                    ? "rgba(255,255,255,0.12)"
+                    : "rgba(0,0,0,0.08)",
                   backgroundColor: pressed
                     ? theme.isDark
                       ? "rgba(255,255,255,0.06)"
@@ -472,22 +652,32 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             >
               <View style={styles.pathDetailsHeader}>
                 <View style={styles.pathDetailsHeaderLeft}>
-                  <View style={[styles.pathColorDot, { backgroundColor: progressColor }]} />
-                  <Text style={[styles.descriptionTitle, { color: colors.textPrimary }]}>
+                  <View
+                    style={[
+                      styles.pathColorDot,
+                      { backgroundColor: progressColor },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.descriptionTitle,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
                     {levelInfo.currentPath.name}
                   </Text>
                 </View>
 
                 <View style={styles.pathDetailsHeaderRight}>
                   <Feather
-                    name={textExpanded ? "chevron-up" : "chevron-down"}
+                    name={pathDescExpanded ? "chevron-up" : "chevron-down"}
                     size={18}
                     color={colors.textSecondary}
                   />
                 </View>
               </View>
 
-              {textExpanded && (
+              {pathDescExpanded && (
                 <Animated.View
                   style={[
                     styles.descriptionBody,
@@ -500,7 +690,12 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                   ]}
                   entering={FadeIn.duration(240)}
                 >
-                  <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+                  <Text
+                    style={[
+                      styles.descriptionText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
                     {levelInfo.currentPath.description}
                   </Text>
                 </Animated.View>
@@ -514,8 +709,10 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
               style={[
                 styles.milestoneContainer,
                 {
-                    backgroundColor: theme.isDark ? `${progressColor}20` : `${progressColor}10`,
-                    borderColor: progressColor,
+                  backgroundColor: theme.isDark
+                    ? `${progressColor}20`
+                    : `${progressColor}10`,
+                  borderColor: progressColor,
                 },
                 milestoneAnimatedStyle,
               ]}
@@ -523,8 +720,18 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
             >
               <View style={styles.milestoneHeader}>
                 <View style={styles.milestoneHeaderLeft}>
-                  <Feather name="award" size={18} color={progressColor} style={{ marginRight: 8 }} />
-                  <Text style={[styles.milestoneTitle, { color: colors.textPrimary }]}>
+                  <Feather
+                    name="award"
+                    size={18}
+                    color={progressColor}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text
+                    style={[
+                      styles.milestoneTitle,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
                     Meilenstein erreicht!
                   </Text>
                 </View>
@@ -546,7 +753,9 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 </Pressable>
               </View>
 
-              <Text style={[styles.milestoneText, { color: colors.textSecondary }]}>
+              <Text
+                style={[styles.milestoneText, { color: colors.textSecondary }]}
+              >
                 {milestoneMessage}
               </Text>
             </Animated.View>
@@ -556,7 +765,10 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         {/* Level Up Overlay (global über beiden Cards) */}
         {showLevelUpOverlay && (
           <Animated.View
-            style={[styles.levelUpOverlay, { backgroundColor: "rgba(0,0,0,0.75)" }]}
+            style={[
+              styles.levelUpOverlay,
+              { backgroundColor: "rgba(0,0,0,0.75)" },
+            ]}
             entering={FadeIn.duration(300)}
             exiting={FadeOut.duration(300)}
           >
@@ -765,8 +977,7 @@ const PathTrail: React.FC<PathTrailProps> = ({
       if (tEnd > 0) {
         const endSteps = Math.max(1, Math.ceil(SAMPLES_FULL * tEnd));
         for (let s = 1; s <= endSteps; s++) {
-          // WICHTIG: letzter t exakt = tEnd
-          const t = (s / endSteps) * tEnd;
+          const t = (s / endSteps) * tEnd; // letzter t exakt = tEnd
           points.push(cubicPoint(p0, c1, c2, p1, t));
         }
       }

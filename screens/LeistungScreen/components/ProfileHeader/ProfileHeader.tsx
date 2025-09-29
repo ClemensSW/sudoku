@@ -3,13 +3,7 @@ import React, { useState, useRef } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Platform } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
-import Animated, {
-  FadeIn,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
+import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "@/components/AvatarPicker";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/utils/defaultAvatars";
@@ -21,6 +15,9 @@ interface ProfileHeaderProps {
   onChangeName?: (name: string) => void;
   onChangeAvatar?: (uri: string | null) => void;
   completedLandscapesCount: number;
+
+  /** NEU: Ausgewählter Titel (optional) */
+  title?: string | null;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -30,6 +27,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onChangeName,
   onChangeAvatar,
   completedLandscapesCount,
+  title = null,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -60,6 +58,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const valueColor = theme.isDark ? "#FFFFFF" : colors.textPrimary;
   const labelColor = theme.isDark ? "rgba(255,255,255,0.85)" : colors.textSecondary;
   const descriptionColor = theme.isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
+  const titleBg = theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
+  const titleBorder = theme.isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.08)";
 
   // Elevation-Fix (Android Dark Mode)
   const androidElevation = Platform.OS === "android" ? (theme.isDark ? 0 : 3) : 0;
@@ -82,7 +82,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </View>
       </Pressable>
 
-      {/* Name */}
+      {/* Name + (optional) Titel als Pill darunter */}
       <View style={styles.nameContainer}>
         {isEditingName ? (
           <Pressable onPress={() => inputRef.current?.focus()}>
@@ -100,10 +100,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Pressable>
         ) : (
           <Pressable onPress={() => setIsEditingName(true)}>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>
-              {isDefaultName ? "" : name}
-            </Text>
+            <Text style={[styles.name, { color: colors.textPrimary }]}>{isDefaultName ? "" : name}</Text>
           </Pressable>
+        )}
+
+        {title && (
+          <View style={[styles.titlePill, { backgroundColor: titleBg, borderColor: titleBorder }]}>
+            <Feather name="award" size={14} color={theme.isDark ? "#fff" : "#333"} />
+            <Text style={[styles.titlePillText, { color: theme.isDark ? "#fff" : "#111" }]} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
         )}
       </View>
 
@@ -117,12 +124,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             shadowOpacity: theme.isDark ? 0.18 : 0.08, // iOS shadow
             elevation: androidElevation, // Android: Light=3, Dark=0
           },
-          Platform.OS === "android" && theme.isDark
-            ? { borderWidth: StyleSheet.hairlineWidth } // Tiefe im Dark Mode ohne Elevation
-            : null,
+          Platform.OS === "android" && theme.isDark ? { borderWidth: StyleSheet.hairlineWidth } : null,
         ]}
       >
-        {/* optionale pseudo-3D Hairlines nur für Android Dark */}
+        {/* pseudo-3D Hairlines nur für Android Dark */}
         {Platform.OS === "android" && theme.isDark && (
           <>
             <View
@@ -208,9 +213,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
 /* ---------- Subcomponents ---------- */
 
-const HairlineDivider = ({ color }: { color: string }) => (
-  <View style={[styles.divider, { backgroundColor: color }]} />
-);
+const HairlineDivider = ({ color }: { color: string }) => <View style={[styles.divider, { backgroundColor: color }]} />;
 
 const StatTile = ({
   icon,
@@ -243,11 +246,7 @@ const StatTile = ({
           <Feather name={icon} size={18} color={colors.icon} />
         </View>
         <Text
-          style={[
-            styles.statValue,
-            { color: colors.value },
-            Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null,
-          ]}
+          style={[styles.statValue, { color: colors.value }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
         >
           {value}
         </Text>
@@ -278,7 +277,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 5,
   },
-  avatar: { width: 180, height: 180, borderRadius: 60, backgroundColor: "#F8E4D9"},
+  avatar: { width: 180, height: 180, borderRadius: 60, backgroundColor: "#F8E4D9" },
   avatarOverlay: {
     position: "absolute",
     bottom: 0,
@@ -293,7 +292,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
 
-  /* Name */
+  /* Name + Titel */
   nameContainer: { marginBottom: 40, alignItems: "center" },
   name: { fontSize: 24, fontWeight: "700" },
   nameInput: {
@@ -305,6 +304,21 @@ const styles = StyleSheet.create({
     minWidth: 140,
     textAlign: "center",
   },
+  titlePill: {
+    marginTop: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  titlePillText: {
+    fontSize: 13,
+    fontWeight: "800",
+    maxWidth: 280,
+  },
 
   /* Stats Card */
   statsCard: {
@@ -313,10 +327,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 20,
     paddingHorizontal: 6,
-    shadowColor: "#000", // iOS shadow (Android ignoriert das, dort nutzen wir elevation inline)
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowRadius: 16,
-    // elevation NICHT hier setzen – wird inline je nach Theme/Platform bestimmt
   },
   statsRow: {
     flexDirection: "row",

@@ -263,9 +263,9 @@ const GalleryScreen: React.FC = () => {
   // Aktuelle Bild-ID für das Freischalten
   const currentImageId = collection?.currentImageId || "";
 
+  
   // ---- Zentrale Stelle: Reihenfolge bestimmen ----
-  // Für Tab "Alle" nutzen wir unsere Wunsch-Reihenfolge aus data.ts,
-  // für die anderen Tabs übernehmen wir die vom Hook kommende Liste.
+  // Für alle Tabs nutzen wir die spezielle Sortierung, aber mit gefilterten Daten
   const baseList: Landscape[] = useMemo(() => {
     if (!collection) return hookLandscapes;
 
@@ -274,9 +274,9 @@ const GalleryScreen: React.FC = () => {
       return sortLandscapesForGallery(collection);
     }
 
-    // Für "inProgress" Tab: wende die spezielle Sortierung nur auf die gefilterten Bilder an
+    // Für "inProgress" Tab: zeige ALLE nicht-kompletten Bilder
     if (activeTab === "inProgress") {
-      // Erstelle eine gefilterte Collection nur mit nicht-kompletten Bildern
+      // Erstelle eine gefilterte Collection mit allen nicht-kompletten Bildern
       const filteredCollection = {
         ...collection,
         landscapes: Object.fromEntries(
@@ -284,11 +284,49 @@ const GalleryScreen: React.FC = () => {
             ([_, landscape]) => !landscape.isComplete
           )
         ),
+        currentImageId: collection.currentImageId,
+        favorites: collection.favorites,
       };
       return sortLandscapesForGallery(filteredCollection);
     }
 
-    // Für andere Tabs: verwende die vom Hook gefilterten Daten
+    // Für "completed" Tab: zeige alle kompletten Bilder (inkl. dem mit progress === 9)
+    if (activeTab === "completed") {
+      // Erstelle eine gefilterte Collection nur mit kompletten Bildern
+      const filteredCollection = {
+        ...collection,
+        landscapes: Object.fromEntries(
+          Object.entries(collection.landscapes).filter(
+            ([_, landscape]) => landscape.isComplete || landscape.progress === 9
+          )
+        ),
+        // WICHTIG: currentImageId auf null setzen, damit es nicht an Position 1 kommt
+        currentImageId: null,
+        favorites: collection.favorites,
+      };
+      return sortLandscapesForGallery(filteredCollection);
+    }
+
+    // Für "favorites" Tab: zeige alle favorisierten kompletten Bilder
+    if (activeTab === "favorites") {
+      // Erstelle eine gefilterte Collection nur mit favorisierten kompletten Bildern
+      const filteredCollection = {
+        ...collection,
+        landscapes: Object.fromEntries(
+          Object.entries(collection.landscapes).filter(
+            ([_, landscape]) =>
+              landscape.isFavorite &&
+              (landscape.isComplete || landscape.progress === 9)
+          )
+        ),
+        // WICHTIG: currentImageId auf null setzen, damit es nicht an Position 1 kommt
+        currentImageId: null,
+        favorites: collection.favorites,
+      };
+      return sortLandscapesForGallery(filteredCollection);
+    }
+
+    // Fallback: verwende die vom Hook gefilterten Daten
     return hookLandscapes;
   }, [collection, hookLandscapes, activeTab, shuffleKey]);
 

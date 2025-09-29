@@ -1167,10 +1167,18 @@ const isUnlockedCompletely = (l: Landscape) =>
 const isStarted = (l: Landscape) =>
   !isUnlockedCompletely(l) && getProgress(l) > 0;
 
+// Füge diese aktualisierte Funktion am Ende der data.ts Datei hinzu (ersetze die vorhandene sortLandscapesForGallery Funktion):
+
 /**
- * Liefert die sortierte Liste für die Galerieansicht.
- * Rufe diese Funktion z.B. beim Öffnen des GalleryScreens auf,
- * damit Gruppe (5) jedes Mal neu gemischt wird.
+ * 🔢 Sortierlogik für die Galerie
+ *
+ * Reihenfolge:
+ * 1) Aktives Bild (currentImageId) - NUR wenn vorhanden UND nicht komplett
+ * 2) Alle freigeschalteten Favoriten
+ * 3) Alle anderen freigeschalteten
+ * 4) Alle angefangenen (progress 1..8), nach Fortschritt absteigend
+ *    - Tiebreaker: zuletzt freigeschaltetes Segment (neuere zuerst), dann Name
+ * 5) Alle restlichen (progress 0), jedes Mal neu zufällig gemischt
  */
 export const sortLandscapesForGallery = (
   state: CollectionState
@@ -1178,19 +1186,34 @@ export const sortLandscapesForGallery = (
   const all = Object.values(state.landscapes || {});
   const currentId = state.currentImageId || null;
 
+  // Das aktive Bild - nur relevant wenn es noch nicht komplett ist
   const active = currentId ? all.find((l) => l.id === currentId) : undefined;
+  const shouldShowActiveFirst = active && !isUnlockedCompletely(active);
 
-  const completedFavorites = all.filter(
-    (l) => l.id !== currentId && isUnlockedCompletely(l) && l.isFavorite
-  );
-  const completedOthers = all.filter(
-    (l) => l.id !== currentId && isUnlockedCompletely(l) && !l.isFavorite
-  );
-  const started = all.filter((l) => l.id !== currentId && isStarted(l));
-  const notStarted = all.filter(
-    (l) =>
-      l.id !== currentId && !isUnlockedCompletely(l) && getProgress(l) === 0
-  );
+  // Kategorisiere alle Bilder
+  const completedFavorites = all.filter((l) => {
+    // Wenn wir das aktive Bild an Position 1 zeigen, schließe es hier aus
+    if (shouldShowActiveFirst && l.id === currentId) return false;
+    return isUnlockedCompletely(l) && l.isFavorite;
+  });
+
+  const completedOthers = all.filter((l) => {
+    // Wenn wir das aktive Bild an Position 1 zeigen, schließe es hier aus
+    if (shouldShowActiveFirst && l.id === currentId) return false;
+    return isUnlockedCompletely(l) && !l.isFavorite;
+  });
+
+  const started = all.filter((l) => {
+    // Wenn wir das aktive Bild an Position 1 zeigen, schließe es hier aus
+    if (shouldShowActiveFirst && l.id === currentId) return false;
+    return isStarted(l);
+  });
+
+  const notStarted = all.filter((l) => {
+    // Wenn wir das aktive Bild an Position 1 zeigen, schließe es hier aus
+    if (shouldShowActiveFirst && l.id === currentId) return false;
+    return !isUnlockedCompletely(l) && getProgress(l) === 0;
+  });
 
   completedFavorites.sort(byCompletedAtDescThenName);
   completedOthers.sort(byCompletedAtDescThenName);
@@ -1198,12 +1221,18 @@ export const sortLandscapesForGallery = (
   shuffleInPlace(notStarted); // bei jedem Aufruf neu gemischt
 
   const result: Landscape[] = [];
-  if (active) result.push(active);
+
+  // Das aktive Bild nur an erster Stelle, wenn es noch nicht komplett ist
+  if (shouldShowActiveFirst && active) {
+    result.push(active);
+  }
+
   result.push(
     ...completedFavorites,
     ...completedOthers,
     ...started,
     ...notStarted
   );
+
   return result;
 };

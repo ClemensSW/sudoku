@@ -111,7 +111,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
   const prevXp =
     previousXp !== undefined
       ? previousXp
-      : justCompleted && xpGain
+      : justCompleted && (xpGain ?? 0) > 0
       ? currentXp - (xpGain ?? 0)
       : currentXp;
 
@@ -231,7 +231,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           duration: 1200,
           easing: Easing.bezierFn(0.34, 1.56, 0.64, 1),
         });
-        if (xpGain && xpGain > 0) {
+        if ((xpGain ?? 0) > 0) {
           setTimeout(() => {
             gainIndicatorOpacity.value = withTiming(1, { duration: 400 });
           }, 200);
@@ -342,7 +342,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           </View>
 
           {/* Gain-Chip */}
-          {xpGain && xpGain > 0 && justCompleted && (
+          {(xpGain ?? 0) > 0 && justCompleted && (
             <Animated.View
               style={[
                 styles.gainChip,
@@ -413,7 +413,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 />
 
                 {/* Vorheriger Fortschritt (gedimmt) */}
-                {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
+                {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
                   <Animated.View
                     style={[
                       {
@@ -432,7 +432,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
                 )}
 
                 {/* EP-Gewinn Highlight */}
-                {justCompleted && xpGain && xpGain > 0 && !hasLevelChanged && (
+                {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
                   <Animated.View
                     style={[
                       {

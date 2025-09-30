@@ -1,4 +1,3 @@
-// screens/LeistungScreen/components/LevelTab/LevelTab.tsx
 import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -8,8 +7,8 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface LevelTabProps {
   stats: GameStats;
-  selectedTitle?: string | null;                    // ⬅️ NEU
-  onTitleSelect?: (title: string | null) => void;   // ⬅️ NEU
+  selectedTitle?: string | null;
+  onTitleSelect?: (title: string | null) => void;
 }
 
 const LevelTab: React.FC<LevelTabProps> = ({
@@ -17,7 +16,7 @@ const LevelTab: React.FC<LevelTabProps> = ({
   selectedTitle = null,
   onTitleSelect,
 }) => {
-  // falls du Theme-Farben später brauchst – aktuell nur initialisiert
+  // Theme ggf. später verwenden
   const theme = useTheme();
 
   return (
@@ -27,23 +26,16 @@ const LevelTab: React.FC<LevelTabProps> = ({
         contentContainerStyle={styles.scrollContent}
       >
         <LevelProgress
-          // bisher
           stats={stats}
-
-          // 🔁 neue, von LevelProgress erwartete Props
           xp={stats.totalXP}
-          previousXp={stats.totalXP} // kein Completion-Flow hier -> gleich setzen
-          xpGain={0}
+          previousXp={stats.totalXP}
+          xpGain={0}              // ok, LevelProgress guardet 0 korrekt
           justCompleted={false}
-
-          // deine bisherigen Options kannst du behalten/erweitern
           options={{
             showPathDescription: true,
             showMilestones: true,
             textVisibility: "always",
           }}
-
-          // 🔁 Titelauswahl durchreichen
           selectedTitle={selectedTitle}
           onTitleSelect={onTitleSelect}
         />

@@ -1,9 +1,6 @@
-// components/GameCompletionModal/GameCompletionModal.tsx
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
 import Animated, {
-  FadeIn,
-  SlideInUp,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -18,8 +15,7 @@ import { useRouter } from "expo-router";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import { PuzzleProgress } from "@/screens/GalleryScreen/components/LandscapeCollection";
 
-
-// Import der zentralen XP-Berechnungsfunktion
+// zentralisierte XP-Berechnung
 import { calculateXpGain } from "./components/LevelProgress/utils/levelData";
 
 // Components
@@ -33,6 +29,9 @@ import Button from "@/components/Button/Button";
 // Styles
 import styles from "./GameCompletionModal.styles";
 
+// Profil-Funktionen (NEU)
+import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
+
 interface GameCompletionModalProps {
   visible: boolean;
   onClose: () => void;
@@ -44,7 +43,7 @@ interface GameCompletionModalProps {
   stats?: GameStats | null;
 }
 
-// Function to check if it's a new record
+// Helper
 const isNewRecord = (
   timeElapsed: number,
   stats: GameStats | null,
@@ -99,43 +98,58 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const colors = theme.colors;
   const router = useRouter();
 
-  // Landscape Collection Integration
+  // Landscape Integration
   const {
     currentLandscape,
-    unlockNext,
-    unlockEvent,
     clearUnlockEvent,
-    getLastUnlockEvent, // NEU: Hinzugefügt
+    getLastUnlockEvent,
   } = useLandscapes();
 
-  // State for landscape unlock tracking
-  const [newlyUnlockedSegmentId, setNewlyUnlockedSegmentId] = useState<
-    number | undefined
-  >(undefined);
+  // NEU: Titel-State fürs Modal
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+
+  // State für Unlock-UI
+  const [newlyUnlockedSegmentId, setNewlyUnlockedSegmentId] = useState<number | undefined>(undefined);
   const [landscapeCompleted, setLandscapeCompleted] = useState(false);
 
-  // Bei erfolgreicher Spielbeendigung (wenn Spiel gewonnen ist und keine Auto-Notizen verwendet wurden)
-  // und wenn das Modal sichtbar wird, hole das letzte Unlock-Event
+  // Beim Öffnen: Profil laden (Titel) + evtl. letztes Unlock-Event anzeigen
   useEffect(() => {
-    if (visible && !autoNotesUsed) {
-      // Verzögerung, um Animation der anderen Elemente abzuwarten
-      const timer = setTimeout(async () => {
-        // GEÄNDERT: Statt erneut freizuschalten, rufe das letzte gespeicherte Event ab
+    if (!visible) return;
+
+    let mounted = true;
+
+    (async () => {
+      try {
+        const p = await loadUserProfile();
+        if (mounted) setSelectedTitle(p.title ?? null);
+      } catch (e) {
+        console.error("loadUserProfile failed", e);
+      }
+    })();
+
+    const timer = setTimeout(async () => {
+      try {
         const event = await getLastUnlockEvent();
-        if (event) {
-          if (event.type === "segment") {
-            setNewlyUnlockedSegmentId(event.segmentId);
-          } else if (event.type === "complete") {
+        // TS-Fix: diskriminiere über vorhandenes Feld statt „type“
+        if (event && typeof event === "object") {
+          if ("segmentIndex" in event && typeof (event as any).segmentIndex === "number") {
+            setNewlyUnlockedSegmentId((event as any).segmentIndex);
+          } else {
             setLandscapeCompleted(true);
           }
         }
-      }, 500);
+      } catch (e) {
+        console.error("getLastUnlockEvent failed", e);
+      }
+    }, 500);
 
-      return () => clearTimeout(timer);
-    }
-  }, [visible, autoNotesUsed, getLastUnlockEvent]);
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
+  }, [visible, getLastUnlockEvent]);
 
-  // Zurücksetzen des Unlock-Event-Status, wenn das Modal geschlossen wird
+  // Bei Schließen: Unlock-Status zurücksetzen
   useEffect(() => {
     if (!visible) {
       setNewlyUnlockedSegmentId(undefined);
@@ -144,7 +158,17 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
     }
   }, [visible, clearUnlockEvent]);
 
-  // Calculate XP gain for this game using the centralized function
+  // Titel speichern (persist)
+  const handleTitleSelect = async (title: string | null) => {
+    try {
+      await updateUserTitle(title);
+      setSelectedTitle(title);
+    } catch (e) {
+      console.error("updateUserTitle failed", e);
+    }
+  };
+
+  // XP-Gewinn für dieses Spiel
   const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
 
   // Animation values
@@ -152,103 +176,64 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   const modalOpacity = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
 
-  // Status variables
-  const newRecord = isNewRecord(
-    timeElapsed,
-    stats || null,
-    difficulty,
-    autoNotesUsed
-  );
+  const newRecord = isNewRecord(timeElapsed, stats || null, difficulty, autoNotesUsed);
 
-  // Gradient Colors
   const gradientStart = getDifficultyColor(difficulty);
-  const gradientEnd = theme.isDark ? "#333333" : "#FFFFFF";
 
-  // Handle Android back button
+  // Android Back-Button
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        if (visible) {
-          onContinue();
-          return true;
-        }
-        return false;
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (visible) {
+        onContinue();
+        return true;
       }
-    );
-
+      return false;
+    });
     return () => backHandler.remove();
   }, [visible, onContinue]);
 
-  // Start animations when modal becomes visible
+  // Start-Animationen
   useEffect(() => {
-    if (visible) {
-      // Reset animation values if needed
-      modalScale.value = 0.95;
-      modalOpacity.value = 0;
-      contentOpacity.value = 0;
+    if (!visible) return;
 
-      // Start animations
-      modalScale.value = withTiming(1, {
-        duration: 350,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+    modalScale.value = 0.95;
+    modalOpacity.value = 0;
+    contentOpacity.value = 0;
 
-      modalOpacity.value = withTiming(1, {
-        duration: 400,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+    modalScale.value = withTiming(1, { duration: 350, easing: Easing.bezier(0.25, 0.1, 0.25, 1) });
+    modalOpacity.value = withTiming(1, { duration: 400, easing: Easing.bezier(0.25, 0.1, 0.25, 1) });
 
-      // Content fade in slightly delayed
-      setTimeout(() => {
-        contentOpacity.value = withTiming(1, {
-          duration: 500,
-          easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-        });
-      }, 200);
-    }
+    const t = setTimeout(() => {
+      contentOpacity.value = withTiming(1, { duration: 500, easing: Easing.bezier(0.25, 0.1, 0.25, 1) });
+    }, 200);
+
+    return () => clearTimeout(t);
   }, [visible]);
 
-  // Animated styles
-  const modalAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: modalScale.value }],
-      opacity: modalOpacity.value,
-    };
-  });
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: modalScale.value }],
+    opacity: modalOpacity.value,
+  }));
 
-  const contentAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: contentOpacity.value,
-    };
-  });
+  const contentAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+  }));
 
-  // Handler für Galerieansicht
+  // Navigation Handler
   const handleViewGallery = () => {
-    onClose(); // Modal schließen
-
-    // Kurze Verzögerung für bessere Animation
+    onClose();
     setTimeout(() => {
       router.push("/gallery");
     }, 300);
   };
 
-  // UPDATED: Properly restart the game by navigating to game screen with current difficulty
   const handleNewGame = () => {
-    // First close the modal
     onClose();
-
-    // Wait for animation to complete before navigating
     setTimeout(() => {
-      // Navigate to game screen with difficulty parameter to completely restart the game
-      router.replace({
-        pathname: "/game",
-        params: { difficulty },
-      });
+      router.replace({ pathname: "/game", params: { difficulty } });
     }, 200);
   };
 
-  // Don't render anything if not visible
   if (!visible) return null;
 
   return (
@@ -266,75 +251,54 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
           modalAnimatedStyle,
         ]}
       >
-        {/* Confetti effect for celebration */}
         <ConfettiEffect isActive={visible} />
 
-        {/* Gradient header */}
         <LinearGradient
-          colors={[
-            gradientStart,
-            theme.isDark ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)",
-          ]}
+          colors={[gradientStart, theme.isDark ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 0.8 }}
           style={styles.headerGradient}
         />
 
-        {/* Title Section */}
+        {/* Titelbereich */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Glückwunsch!</Text>
+
           {newRecord && (
-            <View
-              style={[
-                styles.difficultyBadge,
-                { backgroundColor: colors.success },
-              ]}
-            >
-              <Feather
-                name="award"
-                size={16}
-                color="white"
-                style={{ marginRight: 6 }}
-              />
+            <View style={[styles.difficultyBadge, { backgroundColor: colors.success }]}>
+              <Feather name="award" size={16} color="white" style={{ marginRight: 6 }} />
               <Text style={styles.difficultyText}>Neuer Rekord!</Text>
             </View>
           )}
-          <View
-            style={[
-              styles.difficultyBadge,
-              { backgroundColor: getDifficultyColor(difficulty) },
-            ]}
-          >
-            <Text style={styles.difficultyText}>
-              {getDifficultyName(difficulty)}
-            </Text>
+
+          <View style={[styles.difficultyBadge, { backgroundColor: getDifficultyColor(difficulty) }]}>
+            <Text style={styles.difficultyText}>{getDifficultyName(difficulty)}</Text>
           </View>
         </View>
 
-        {/* ScrollView with REORDERED components */}
+        {/* Inhalte */}
         <ScrollView
           style={{ width: "100%", flex: 1 }}
-          contentContainerStyle={[
-            styles.scrollContainer,
-            { paddingBottom: 240 }, // Increased padding to ensure more scrollable space below content
-          ]}
-          showsVerticalScrollIndicator={true}
+          contentContainerStyle={[styles.scrollContainer, { paddingBottom: 240 }]}
+          showsVerticalScrollIndicator
         >
           <Animated.View style={contentAnimatedStyle}>
-            {/* 1. Level Progress - calculate based on stats */}
+            {/* LevelProgress mit Titel-Props */}
             {stats && !autoNotesUsed && (
               <>
                 <LevelProgress
                   stats={stats}
                   difficulty={difficulty}
                   justCompleted={true}
-                  xpGain={xpGain} // Pass xpGain to LevelProgress
+                  xpGain={xpGain}
+                  selectedTitle={selectedTitle}
+                  onTitleSelect={handleTitleSelect}
                 />
                 <View style={styles.sectionSpacer} />
               </>
             )}
 
-            {/* NEUE KOMPONENTE: PuzzleProgress für Landschaftsbilder */}
+            {/* Puzzle/Landscape Fortschritt */}
             {!autoNotesUsed && currentLandscape && (
               <>
                 <PuzzleProgress
@@ -347,30 +311,25 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
               </>
             )}
 
-            {/* 2. Streak Display - only show if relevant */}
+            {/* Streak */}
             {stats && stats.currentStreak > 0 && !autoNotesUsed && (
               <>
                 <StreakDisplay
                   currentStreak={stats.currentStreak}
                   longestStreak={stats.longestStreak}
-                  isRecord={
-                    stats.currentStreak === stats.longestStreak &&
-                    stats.longestStreak > 2
-                  }
+                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
                 />
                 <View style={styles.sectionSpacer} />
               </>
             )}
 
-            {/* 3. Performance Card */}
+            {/* Performance */}
             <PerformanceCard
               timeElapsed={timeElapsed}
               previousBestTime={
                 stats
                   ? (stats[
-                      `bestTime${
-                        difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
-                      }` as keyof GameStats
+                      `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
                     ] as number)
                   : Infinity
               }
@@ -380,7 +339,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
 
             <View style={styles.sectionSpacer} />
 
-            {/* 4. Feedback Message */}
+            {/* Feedback */}
             <FeedbackMessage
               difficulty={difficulty}
               timeElapsed={timeElapsed}
@@ -389,27 +348,18 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
               streak={stats?.currentStreak || 0}
             />
 
-            {/* Auto-notes warning if needed */}
-            {autoNotesUsed && (
-              <View
-                style={[styles.separator, { backgroundColor: colors.warning }]}
-              />
-            )}
+            {autoNotesUsed && <View style={[styles.separator, { backgroundColor: colors.warning }]} />}
           </Animated.View>
         </ScrollView>
 
-        {/* Fixed Button Container with theme-aware styling */}
+        {/* Buttons unten fixiert */}
         <View
           style={[
             styles.buttonContainer,
             {
-              backgroundColor: theme.isDark
-                ? colors.background // Use background color in dark mode
-                : colors.card, // Use card color in light mode
+              backgroundColor: theme.isDark ? colors.background : colors.card,
               borderTopWidth: 1,
-              borderTopColor: theme.isDark
-                ? "rgba(255,255,255,0.1)" // Subtle border in dark mode
-                : "rgba(0,0,0,0.05)", // Subtle border in light mode
+              borderTopColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
             },
           ]}
         >

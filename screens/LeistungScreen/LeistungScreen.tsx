@@ -1,4 +1,3 @@
-// screens/LeistungScreen/LeistungScreen.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -9,8 +8,8 @@ import { loadStats, GameStats } from "@/utils/storage";
 import {
   loadUserProfile,
   updateUserName,
-  updateUserAvatar,     // ✅ fehlender Import ergänzt
-  updateUserTitle,      // ⬅️ NEU
+  updateUserAvatar,
+  updateUserTitle,
   UserProfile,
 } from "@/utils/profileStorage";
 import { getAvatarUri } from "@/utils/avatarStorage";
@@ -19,6 +18,7 @@ import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
 import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
+import { useFocusEffect } from "@react-navigation/native";
 
 // Components
 import ProfileHeader from "./components/ProfileHeader";
@@ -54,11 +54,11 @@ const LeistungScreen: React.FC = () => {
   const [showSupportShop, setShowSupportShop] = useState(false);
   const { landscapes } = useLandscapes("completed");
 
+  // Initial-Load
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-
         const loadedStats = await loadStats();
         setStats(loadedStats);
 
@@ -69,7 +69,7 @@ const LeistungScreen: React.FC = () => {
         if (userProfile.avatarUri) {
           setAvatarUri(userProfile.avatarUri);
         } else if (uri) {
-          const updated = await updateUserAvatar(uri); // ✅ existiert jetzt
+          const updated = await updateUserAvatar(uri);
           setAvatarUri(uri);
           setProfile(updated);
         }
@@ -81,6 +81,37 @@ const LeistungScreen: React.FC = () => {
     };
     fetchData();
   }, []);
+
+  // **NEU**: Refresh bei Fokus (Titel/Avatar nach Modal-Änderungen)
+  useFocusEffect(
+    React.useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        try {
+          const userProfile = await loadUserProfile();
+          if (!cancelled) setProfile(userProfile);
+
+          const uri = await getAvatarUri();
+          if (!cancelled) {
+            if (userProfile.avatarUri) {
+              setAvatarUri(userProfile.avatarUri);
+            } else if (uri) {
+              const updated = await updateUserAvatar(uri);
+              if (!cancelled) {
+                setAvatarUri(uri);
+                setProfile(updated);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("refresh profile on focus:", e);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [])
+  );
 
   const tabs: TabItem[] = [
     { id: "level", label: "Level" },
@@ -129,7 +160,6 @@ const LeistungScreen: React.FC = () => {
     }
   };
 
-  // ⬅️ NEU: Titel ändern & speichern
   const handleTitleChange = async (title: string | null) => {
     try {
       const updated = await updateUserTitle(title);
@@ -211,7 +241,7 @@ const LeistungScreen: React.FC = () => {
             onChangeName={handleNameChange}
             onChangeAvatar={handleAvatarChange}
             completedLandscapesCount={landscapes.length}
-            title={profile.title ?? null} // ✅ Titel anzeigen
+            title={profile.title ?? null}
           />
         </View>
 

@@ -57,7 +57,7 @@ const PAL = {
 };
 
 // ---------- Assets ----------
-const APP_LOGO: ImageSourcePropType = require("@/assets/images/app-logo.png");
+const APP_LOGO: ImageSourcePropType = require("@/assets/images/icon.png");
 
 // ---------- Types ----------
 type VortexSeed = {

@@ -167,20 +167,16 @@ export function solveCell(
     return newBoard;
   }
 
-  // Setze den Wert aus der Lösung
+  // Setze den Wert aus der Lösung und markiere als initial
   const correctValue = solution[row][col];
   newBoard[row][col].value = correctValue;
   newBoard[row][col].isValid = true;
   newBoard[row][col].notes = [];
-  newBoard[row][col].highlight = "hint";
+  newBoard[row][col].isInitial = true; // Markiere als initial, damit sie nicht mehr editierbar ist
+  newBoard[row][col].highlight = null; // Kein spezielles Highlighting
 
-  // Entferne die Notiz aus verwandten Zellen - NEUE ZEILE
+  // Entferne die Notiz aus verwandten Zellen
   const boardWithUpdatedNotes = removeNoteFromRelatedCells(newBoard, row, col, correctValue);
-
-  // Markiere den Wert als "hint" für visuelle Rückmeldung
-  setTimeout(() => {
-    boardWithUpdatedNotes[row][col].highlight = null;
-  }, 2000);
 
   return validateBoard(boardWithUpdatedNotes);
 }

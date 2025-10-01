@@ -88,16 +88,23 @@ const getCellTextStyle = () => {
     fontWeight: "300", // Hier setzen wir den Standard auf 300 für vom Spieler ausgefüllte Zellen
   };
 
-  // WICHTIG: Initialer Zellenwert - höchste Priorität, aber mit Vorbehalt für gleiche Werte
+  // WICHTIG: Initialer Zellenwert
   if (cell.isInitial) {
     style.fontWeight = "700";
-    
-    if (sameValueHighlight) {
+
+    // Wenn die Zelle ausgewählt ist, verwende die Selected-Farbe (weiß)
+    if (isSelected) {
+      style.color = colors.cellSelectedTextColor;
+    }
+    // Wenn gleiche Zahlen hervorgehoben werden
+    else if (sameValueHighlight) {
       style.color = colors.cellSameValueTextColor;
-    } else {
+    }
+    // Sonst normale Initial-Farbe
+    else {
       style.color = colors.cellInitialTextColor;
     }
-  } 
+  }
   // Gleiche Zahlen als zweithöchste Priorität
   else if (sameValueHighlight) {
     style.color = colors.cellSameValueTextColor;
@@ -106,7 +113,7 @@ const getCellTextStyle = () => {
   // Danach fehlerhafte Zellen
   else if (showErrors && !cell.isValid) {
     style.color = colors.cellErrorTextColor;
-  } 
+  }
   // Zuletzt ausgewählte Zellen
   else if (isSelected) {
     style.color = colors.cellSelectedTextColor;

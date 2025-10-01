@@ -16,12 +16,12 @@ import { useLandscapes } from "@/screens/GalleryScreen/hooks/useLandscapes";
 import { PuzzleProgress } from "@/screens/GalleryScreen/components/LandscapeCollection";
 
 // zentralisierte XP-Berechnung
-import { calculateXpGain } from "./components/LevelProgress/utils/levelData";
+import { calculateXpGain } from "./components/PlayerProgressionCard/utils";
 
 // Components
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
 import StreakDisplay from "./components/StreakDisplay/StreakDisplay";
-import LevelProgress from "./components/LevelProgress/LevelProgress";
+import PlayerProgressionCard from "./components/PlayerProgressionCard";
 import FeedbackMessage from "./components/FeedbackMessage/FeedbackMessage";
 import ConfettiEffect from "./components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
@@ -283,10 +283,10 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
           showsVerticalScrollIndicator
         >
           <Animated.View style={contentAnimatedStyle}>
-            {/* LevelProgress mit Titel-Props */}
+            {/* PlayerProgressionCard mit Titel-Props */}
             {stats && !autoNotesUsed && (
               <>
-                <LevelProgress
+                <PlayerProgressionCard
                   stats={stats}
                   difficulty={difficulty}
                   justCompleted={true}
@@ -329,7 +329,7 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
               previousBestTime={
                 stats
                   ? (stats[
-                      `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
+                      `bestTime${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}` as keyof GameStats
                     ] as number)
                   : Infinity
               }

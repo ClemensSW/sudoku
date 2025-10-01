@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
-import LevelProgress from "@/components/GameCompletionModal/components/LevelProgress/LevelProgress";
+import PlayerProgressionCard from "@/components/GameCompletionModal/components/PlayerProgressionCard";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface LevelTabProps {
@@ -25,11 +25,11 @@ const LevelTab: React.FC<LevelTabProps> = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <LevelProgress
+        <PlayerProgressionCard
           stats={stats}
           xp={stats.totalXP}
           previousXp={stats.totalXP}
-          xpGain={0}              // ok, LevelProgress guardet 0 korrekt
+          xpGain={0}
           justCompleted={false}
           options={{
             showPathDescription: true,

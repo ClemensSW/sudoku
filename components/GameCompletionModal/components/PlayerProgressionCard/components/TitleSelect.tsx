@@ -1,10 +1,10 @@
-// components/GameCompletionModal/components/LevelProgress/components/TitleSelect.tsx
+// components/GameCompletionModal/components/PlayerProgressionCard/components/TitleSelect.tsx
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import styles from "../LevelProgress.styles";
+import styles from "../PlayerProgressionCard.styles";
 
 type Props = {
   titles: string[];

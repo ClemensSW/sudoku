@@ -14,6 +14,9 @@ import typography from "./typography";
 import shadows from "./shadows";
 import { spacing, radius, timing } from "./index";
 import { Theme } from "./types";
+
+// Re-export Theme type for convenience
+export type { Theme } from "./types";
 import { loadSettings, saveSettings } from "@/utils/storage";
 
 // Prevent the splash screen from auto-hiding

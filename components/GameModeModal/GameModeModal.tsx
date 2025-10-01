@@ -102,14 +102,12 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
           </TouchableOpacity>
 
           {/* Online Mode Button - Disabled/Coming Soon */}
-          <TouchableOpacity
+          <View
             style={[
               styles.modeButton,
               styles.disabledModeButton,
               { borderColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }
             ]}
-            activeOpacity={0.7}
-            onPress={() => onSelectMode("online")} // Trotzdem klickbar für die Meldung
           >
             <View style={[styles.modeIconContainer, styles.disabledIconContainer]}>
               <Feather 
@@ -134,7 +132,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
                 Flexibel auf zwei Geräten
               </Text>
             </View>
-          </TouchableOpacity>
+          </View>
         </View>
       </Animated.View>
     </View>

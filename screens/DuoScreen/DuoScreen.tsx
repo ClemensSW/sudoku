@@ -25,7 +25,6 @@ import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
 import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
 import DifficultyModal from "../../components/DifficultyModal/DifficultyModal";
 import GameModeModal, { GameMode } from "../../components/GameModeModal";
-import { useAlert } from "@/components/CustomAlert/AlertProvider";
 
 import styles from "./DuoScreen.styles";
 
@@ -73,7 +72,6 @@ const DuoScreen: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  const { showAlert } = useAlert();
   const scrollViewRef = useRef<ScrollView>(null);
 
   const [showGameModeModal, setShowGameModeModal] = useState(false);
@@ -172,19 +170,9 @@ const DuoScreen: React.FC = () => {
       if (mode === "local") {
         setShowGameModeModal(false);
         setTimeout(() => setShowDifficultyModal(true), 100);
-      } else {
-        setShowGameModeModal(false);
-        setIsAnyModalOpen(false);
-        showAlert({
-          title: "In Entwicklung",
-          message:
-            "Der Online-Modus wird derzeit entwickelt und steht in Kürze zur Verfügung. Bleib gespannt!",
-          type: "info",
-          buttons: [{ text: "OK", style: "primary" }],
-        });
       }
     },
-    [showAlert]
+    []
   );
 
   const handleStartWithDifficulty = useCallback(() => {

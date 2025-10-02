@@ -2,7 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Difficulty } from "@/utils/sudoku";
 // XP-Berechnung importieren
-import { calculateXpGain } from "@/components/GameCompletionModal/components/PlayerProgressionCard/utils/levelData";
+import { calculateXpGain } from "@/screens/GameCompletionScreen/components/PlayerProgressionCard/utils/levelData";
 // Landschafts-Integration
 import {
   unlockNextSegment,

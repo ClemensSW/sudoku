@@ -28,7 +28,7 @@ import { useNavigationControl } from "@/app/_layout"; // Import navigation contr
 
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
-import GameCompletionModal from "@/components/GameCompletionModal";
+import GameCompletionScreen from "@/screens/GameCompletionScreen";
 import GameStatusBar from "@/components/GameStatusBar/GameStatusBar";
 
 // Import custom hooks
@@ -382,7 +382,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
       </View>
 
       {/* Game Completion Modal */}
-      <GameCompletionModal
+      <GameCompletionScreen
         visible={showCompletionModal}
         onClose={handleCompletionModalClose}
         onNewGame={handleCompleteGameRestart} // Use the same restart function here

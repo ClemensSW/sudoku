@@ -4,7 +4,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { GameStats } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import StreakDisplay from "@/components/GameCompletionModal/components/StreakDisplay/StreakDisplay";
+import StreakDisplay from "@/screens/GameCompletionScreen/components/StreakDisplay/StreakDisplay";
 
 interface StreakTabProps {
   stats: GameStats;

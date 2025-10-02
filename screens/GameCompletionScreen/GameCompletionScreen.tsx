@@ -27,12 +27,12 @@ import ConfettiEffect from "./components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
 
 // Styles
-import styles from "./GameCompletionModal.styles";
+import styles from "./GameCompletionScreen.styles";
 
 // Profil-Funktionen (NEU)
 import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
 
-interface GameCompletionModalProps {
+interface GameCompletionScreenProps {
   visible: boolean;
   onClose: () => void;
   onNewGame: () => void;
@@ -84,7 +84,7 @@ const getDifficultyColor = (diff: Difficulty): string => {
   return difficultyColors[diff];
 };
 
-const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
+const GameCompletionScreen: React.FC<GameCompletionScreenProps> = ({
   visible,
   onClose,
   onNewGame,
@@ -384,4 +384,4 @@ const GameCompletionModal: React.FC<GameCompletionModalProps> = ({
   );
 };
 
-export default GameCompletionModal;
+export default GameCompletionScreen;

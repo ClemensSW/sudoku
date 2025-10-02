@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
-import ConfettiEffect from "@/components/GameCompletionModal/components/ConfettiEffect/ConfettiEffect";
+import ConfettiEffect from "@/screens/GameCompletionScreen/components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
 import { useRouter } from "expo-router";
 import { Difficulty } from "@/utils/sudoku";

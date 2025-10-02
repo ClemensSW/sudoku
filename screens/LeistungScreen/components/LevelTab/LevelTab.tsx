@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
-import PlayerProgressionCard from "@/components/GameCompletionModal/components/PlayerProgressionCard";
+import PlayerProgressionCard from "@/screens/GameCompletionScreen/components/PlayerProgressionCard";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 
 interface LevelTabProps {

@@ -24,7 +24,7 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import Header from "@/components/Header/Header";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
-import SupportShop from "@/components/SupportShop/SupportShop";
+import SupportShopScreen from "@/screens/SupportShopScreen";
 import { loadSettings, saveSettings } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
@@ -321,7 +321,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
       {/* Support Shop Modal */}
       {showSupportShop && (
-        <SupportShop
+        <SupportShopScreen
           onClose={() => setShowSupportShop(false)}
           hideNavOnClose={true} // ← Navigation bleibt versteckt
         />

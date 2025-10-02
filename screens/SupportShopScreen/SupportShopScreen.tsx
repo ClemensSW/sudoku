@@ -1,4 +1,4 @@
-// components/SupportShop/SupportShop.tsx
+// screens/SupportShopScreen/SupportShopScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -37,14 +37,14 @@ import PurchaseOverlay from "./components/PurchaseOverlay";
 import BillingManager, { Product } from "@/utils/billing/BillingManager";
 import { getRandomConfirmMessage } from "./utils/supportMessages";
 import { markAsPurchased } from "@/utils/purchaseTracking";
-import styles from "./SupportShop.styles";
+import styles from "./SupportShopScreen.styles";
 
-interface SupportShopProps {
+interface SupportShopScreenProps {
   onClose: () => void;
   hideNavOnClose?: boolean; // NEU: Optional prop um zu steuern, ob Nav versteckt bleiben soll
 }
 
-const SupportShop: React.FC<SupportShopProps> = ({ onClose, hideNavOnClose = false }) => {
+const SupportShopScreen: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose = false }) => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
@@ -412,4 +412,4 @@ const SupportShop: React.FC<SupportShopProps> = ({ onClose, hideNavOnClose = fal
   );
 };
 
-export default SupportShop;
+export default SupportShopScreen;

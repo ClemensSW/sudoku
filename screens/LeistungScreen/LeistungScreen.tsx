@@ -31,7 +31,7 @@ import TimeTab from "./components/TimeTab";
 
 // Support
 import SupportBanner from "./components/SupportBanner/SupportBanner";
-import SupportShop from "@/components/SupportShop/SupportShop";
+import SupportShopScreen from "@/screens/SupportShopScreen";
 
 type TabId = "level" | "gallery" | "streak" | "times";
 
@@ -264,7 +264,7 @@ const LeistungScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      {showSupportShop && <SupportShop onClose={handleCloseSupportShop} />}
+      {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}
     </View>
   );
 };

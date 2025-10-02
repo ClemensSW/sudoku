@@ -1,10 +1,10 @@
 // app/duo-game.tsx
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
-import DuoGameScreen from "@/screens/DuoGameScreen/DuoGameScreen";
+import DuoGameScreen from "@/screens/DuoGame/DuoGame";
 import { Difficulty } from "@/utils/sudoku";
 
-export default function DuoGame() {
+export default function DuoGameRoute() {
   const params = useLocalSearchParams<{ difficulty?: string }>();
   const difficulty = params.difficulty as Difficulty | undefined;
 

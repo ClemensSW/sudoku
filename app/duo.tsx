@@ -1,7 +1,7 @@
 // app/duo.tsx
 import React from "react";
-import DuoScreen from "@/screens/DuoScreen";
+import Duo from "@/screens/Duo";
 
-export default function Duo() {
-  return <DuoScreen />;
+export default function DuoRoute() {
+  return <Duo />;
 }

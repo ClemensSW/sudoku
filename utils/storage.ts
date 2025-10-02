@@ -2,12 +2,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Difficulty } from "@/utils/sudoku";
 // XP-Berechnung importieren
-import { calculateXpGain } from "@/screens/GameCompletionScreen/components/PlayerProgressionCard/utils/levelData";
+import { calculateXpGain } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 // Landschafts-Integration
 import {
   unlockNextSegment,
   saveUnlockEvent,
-} from "@/screens/GalleryScreen/utils/landscapes/storage";
+} from "@/screens/Gallery/utils/landscapes/storage";
 
 // Schlüssel für den Storage
 const KEYS = {

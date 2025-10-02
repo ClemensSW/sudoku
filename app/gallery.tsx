@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import GalleryScreen from "@/screens/GalleryScreen/GalleryScreen";
+import Gallery from "@/screens/Gallery/Gallery";
 import { useNavigation } from "@/utils/NavigationContext";
 
 export default function GalleryRoute() {
@@ -15,5 +15,5 @@ export default function GalleryRoute() {
     // The receiving screen will control its own navigation state
   }, [hideNavigation]);
 
-  return <GalleryScreen />;
+  return <Gallery />;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import SettingsScreen from "@/screens/SettingsScreen/SettingsScreen";
+import Settings from "@/screens/Settings/Settings";
 import { useRouter } from "expo-router";
 
 export default function SettingsRoute() {
@@ -14,7 +14,7 @@ export default function SettingsRoute() {
 
   return (
     <View style={{ flex: 1 }}>
-      <SettingsScreen onBackToGame={handleBack} fromGame={false} />
+      <Settings onBackToGame={handleBack} fromGame={false} />
     </View>
   );
 }

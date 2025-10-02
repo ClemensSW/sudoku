@@ -1,4 +1,4 @@
 // screens/index.ts
-export { default as GameScreen } from './GameScreen/GameScreen';
-export { default as StartScreen } from './StartScreen/StartScreen';
-export { default as LeistungScreen } from './LeistungScreen';
+export { default as Game } from './Game/Game';
+export { default as Start } from './Start/Start';
+export { default as Leistung } from './Leistung';

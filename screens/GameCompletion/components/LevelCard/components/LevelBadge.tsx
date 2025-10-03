@@ -39,11 +39,10 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
   
   // Get path color from level info
   const pathColor = levelInfo.currentPath.color;
-  const isPathTransition = levelInfo.levelData.pathIndex === 0;
-  
+
   // Level number (1-based for display)
   const levelNumber = levelInfo.currentLevel + 1;
-  
+
   // Start animations
   useEffect(() => {
     if (showAnimation) {
@@ -52,23 +51,23 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         animationDelay,
         withSequence(
           // Slightly shrink
-          withTiming(0.8, { 
-            duration: 100, 
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
+          withTiming(0.8, {
+            duration: 100,
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1)
           }),
           // Grow larger than normal with bouncy effect
-          withTiming(1.4, { 
-            duration: 600, 
-            easing: Easing.bezier(0.25, 1.5, 0.5, 1) 
+          withTiming(1.4, {
+            duration: 600,
+            easing: Easing.bezier(0.25, 1.5, 0.5, 1)
           }),
           // Return to normal size
-          withTiming(1, { 
-            duration: 300, 
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
+          withTiming(1, {
+            duration: 300,
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1)
           })
         )
       );
-      
+
       // Small rotation for additional effect
       rotation.value = withDelay(
         animationDelay + 100,
@@ -78,7 +77,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
           withTiming(0, { duration: 300 })
         )
       );
-      
+
       // Glow effect
       glow.value = withDelay(
         animationDelay + 300,
@@ -87,7 +86,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
           withTiming(0.3, { duration: 1000 })
         )
       );
-      
+
       // Shimmer effect for excitement
       shimmer.value = withDelay(
         animationDelay + 200,
@@ -97,8 +96,8 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
           false // Don't reverse
         )
       );
-    } else if (isPathTransition) {
-      // Gentle pulsation for new path beginning
+    } else {
+      // Always show gentle pulsation
       scale.value = withRepeat(
         withSequence(
           withTiming(1.1, { duration: 1000 }),
@@ -107,7 +106,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         -1, // Infinite repeat
         true // Reverse animation
       );
-      
+
       // Continuous glow effect
       glow.value = withRepeat(
         withSequence(
@@ -118,7 +117,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         true // Reverse animation
       );
     }
-  }, [showAnimation, isPathTransition]);
+  }, [showAnimation]);
   
   // Animated styles
   const badgeAnimatedStyle = useAnimatedStyle(() => ({

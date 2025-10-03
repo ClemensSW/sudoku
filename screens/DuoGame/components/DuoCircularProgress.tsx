@@ -1,11 +1,11 @@
-// screens/DuoGameScreen/components/CircularProgress.tsx
-// Create this new component for the circular progress indicator
+// screens/DuoGameScreen/components/DuoCircularProgress.tsx
+// Circular progress indicator for Duo Game mode (static, no animation)
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
-interface CircularProgressProps {
+interface DuoCircularProgressProps {
   percentage: number;
   size: number;
   strokeWidth: number;
@@ -15,7 +15,7 @@ interface CircularProgressProps {
   fontSize?: number;
 }
 
-const CircularProgress: React.FC<CircularProgressProps> = ({
+const DuoCircularProgress: React.FC<DuoCircularProgressProps> = ({
   percentage,
   size,
   strokeWidth,
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CircularProgress;
+export default DuoCircularProgress;

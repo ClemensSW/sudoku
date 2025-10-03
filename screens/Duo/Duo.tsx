@@ -24,7 +24,7 @@ import DuoBoardVisualizer from "./components/DuoBoardVisualizer/DuoBoardVisualiz
 import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
 import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
 import DifficultyModal from "../../components/DifficultyModal/DifficultyModal";
-import GameModeModal, { GameMode } from "../../components/GameModeModal";
+import GameModeModal, { GameMode } from "./components/GameModeModal";
 
 import styles from "./Duo.styles";
 

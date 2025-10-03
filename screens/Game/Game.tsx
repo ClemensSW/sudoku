@@ -29,7 +29,7 @@ import {
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
 import GameCompletionScreen from "@/screens/GameCompletion";
-import GameStatusBar from "@/components/GameStatusBar/GameStatusBar";
+import GameStatusBar from "./components/GameStatusBar/GameStatusBar";
 
 // Import custom hooks
 import { useGameState } from "./hooks/useGameState";

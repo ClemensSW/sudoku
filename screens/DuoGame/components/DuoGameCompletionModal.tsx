@@ -17,7 +17,7 @@ import ConfettiEffect from "@/screens/GameCompletion/components/ConfettiEffect/C
 import Button from "@/components/Button/Button";
 import { useRouter } from "expo-router";
 import { Difficulty } from "@/utils/sudoku";
-import CircularProgress from "./CircularProgress";
+import DuoCircularProgress from "./DuoCircularProgress";
 
 // Duo Mode primary colors - used consistently throughout
 const GREEN_COLOR = "#4A7D78";
@@ -348,7 +348,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             <View style={styles.performanceContainer}>
               {/* Circular progress indicator with percentage */}
               <View style={styles.progressCircleContainer}>
-                <CircularProgress
+                <DuoCircularProgress
                   percentage={getCellCompletionPercentage(1)}
                   size={90}
                   strokeWidth={8}
@@ -465,7 +465,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             <View style={styles.performanceContainer}>
               {/* Circular progress indicator with percentage */}
               <View style={styles.progressCircleContainer}>
-                <CircularProgress
+                <DuoCircularProgress
                   percentage={getCellCompletionPercentage(2)}
                   size={90}
                   strokeWidth={8}

@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import styles from "./GameStatusBar.styles";
 import Timer from "@/components/Timer/Timer";
-import ErrorIndicator from "@/components/ErrorIndicator/ErrorIndicator";
+import ErrorIndicator from "../ErrorIndicator/ErrorIndicator";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 interface GameStatusBarProps {

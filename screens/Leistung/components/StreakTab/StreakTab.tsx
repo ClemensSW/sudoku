@@ -5,6 +5,7 @@ import { GameStats } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import StreakCard from "@/screens/GameCompletion/components/StreakCard";
+import { spacing } from "@/utils/theme";
 
 interface StreakTabProps {
   stats: GameStats;
@@ -46,8 +47,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContent: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.lg, // 24px - consistent with GameCompletion
+    paddingHorizontal: spacing.lg, // 24px - consistent with GameCompletion
   },
 });
 

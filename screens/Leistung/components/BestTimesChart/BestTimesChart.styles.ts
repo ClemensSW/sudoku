@@ -7,7 +7,6 @@ export default StyleSheet.create({
     width: "100%",
     borderRadius: radius.xl,
     padding: spacing.lg,
-    marginBottom: spacing.lg,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,

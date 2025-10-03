@@ -8,6 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { PuzzleProgress } from "@/screens/Gallery/components/LandscapeCollection";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
+import { spacing } from "@/utils/theme";
 
 const GalleryTab: React.FC = () => {
   const theme = useTheme();
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   contentContainer: {
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.lg, // 24px - consistent with GameCompletion
+    paddingHorizontal: spacing.lg, // 24px - consistent with GameCompletion
   },
   loadingContainer: {
     flex: 1,

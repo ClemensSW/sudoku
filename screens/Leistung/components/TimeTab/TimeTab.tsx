@@ -5,6 +5,7 @@ import { GameStats } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import BestTimesChart from "@/screens/Leistung/components/BestTimesChart/BestTimesChart";
+import { spacing } from "@/utils/theme";
 
 interface TimeTabProps {
   stats: GameStats;
@@ -39,8 +40,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContent: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.lg, // 24px - consistent with GameCompletion
+    paddingHorizontal: spacing.lg, // 24px - consistent with GameCompletion
   },
 });
 

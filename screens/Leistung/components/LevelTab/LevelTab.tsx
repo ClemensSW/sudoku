@@ -4,6 +4,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import PlayerProgressionCard from "@/screens/GameCompletion/components/PlayerProgressionCard";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { spacing } from "@/utils/theme";
 
 interface LevelTabProps {
   stats: GameStats;
@@ -50,8 +51,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContent: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.lg, // 24px - consistent with GameCompletion
+    paddingHorizontal: spacing.lg, // 24px - consistent with GameCompletion
   },
 });
 

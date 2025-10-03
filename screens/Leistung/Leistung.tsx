@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   scrollContent: {},
   profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
   tabSection: { width: "100%" },
-  tabContentContainer: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 64 },
+  tabContentContainer: {paddingBottom: 64 },
 });
 
 export default Leistung;

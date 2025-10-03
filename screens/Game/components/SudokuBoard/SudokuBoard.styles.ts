@@ -4,7 +4,10 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 export const BOARD_SIZE = Math.min(width * 0.95, 400);
 export const GRID_SIZE = BOARD_SIZE * 0.95;
-export const CELL_SIZE = GRID_SIZE / 9;
+// gridContainer hat borderWidth 1.5, der Border wird nach innen gezeichnet
+// Verfügbarer Innenraum = GRID_SIZE - (2 × 1.5) = GRID_SIZE - 3
+const GRID_BORDER_WIDTH = 1.5;
+export const CELL_SIZE = (GRID_SIZE - 2 * GRID_BORDER_WIDTH) / 9;
 
 export default StyleSheet.create({
   boardContainer: {

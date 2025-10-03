@@ -16,10 +16,13 @@ import {
   CELL_SIZE as SHARED_CELL_SIZE,
 } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 
-// Use the same constants as the regular SudokuBoard for consistency
+// Use the same board size as regular SudokuBoard
 const BOARD_SIZE = SHARED_BOARD_SIZE;
 const GRID_SIZE = BOARD_SIZE * 0.95;
-const CELL_SIZE = SHARED_CELL_SIZE;
+// DuoGameBoard has borderWidth: 2 (instead of 1.5 like SudokuBoard)
+// So we need to recalculate CELL_SIZE to account for the thicker border
+const GRID_BORDER_WIDTH = 2;
+const CELL_SIZE = (GRID_SIZE - 2 * GRID_BORDER_WIDTH) / 9;
 
 // Player color themes
 const PLAYER_COLORS = {

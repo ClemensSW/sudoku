@@ -1,5 +1,5 @@
 // screens/GalleryScreen/GalleryScreen.tsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -126,6 +126,24 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     if (isFocused) setShuffleKey((k) => k + 1);
   }, [isFocused]);
+
+  // Ref für FlatList und Scroll-Position
+  const gridRef = useRef<any>(null);
+  const scrollPosition = useRef<{ index: number; offset: number }>({ index: 0, offset: 0 });
+
+  // Track ob die initiale Animation bereits gelaufen ist
+  const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState(false);
+
+  // Setze hasInitiallyAnimated auf true nach dem ersten Fokus und Animation
+  useEffect(() => {
+    if (isFocused && !hasInitiallyAnimated) {
+      // Warte bis die Animation durchgelaufen ist
+      const timer = setTimeout(() => {
+        setHasInitiallyAnimated(true);
+      }, 1000); // Zeit für die längste Animation (letztes Item)
+      return () => clearTimeout(timer);
+    }
+  }, [isFocused, hasInitiallyAnimated]);
 
   // Determine display mode based on screen size
   const isCompactMode = screenWidth < 370;
@@ -327,7 +345,9 @@ const Gallery: React.FC = () => {
   }, [baseList, selectedCategories]);
 
   // Handler for image tap
-  const handleImagePress = (landscape: Landscape) => {
+  const handleImagePress = (landscape: Landscape, index: number) => {
+    // Speichere die aktuelle Scroll-Position
+    scrollPosition.current = { index, offset: 0 };
     setSelectedLandscape(landscape);
     setDetailModalVisible(true);
   };
@@ -375,7 +395,27 @@ const Gallery: React.FC = () => {
   // Close detail modal
   const handleCloseDetailModal = () => {
     setDetailModalVisible(false);
-    setTimeout(() => reload(), 300);
+    // Nach dem Schließen: Animation deaktivieren und zur Position zurück scrollen
+    setHasInitiallyAnimated(true);
+
+    // Warte kurz bis Modal geschlossen ist, dann scrolle zurück
+    setTimeout(() => {
+      if (gridRef.current && scrollPosition.current.index > 0) {
+        try {
+          gridRef.current.scrollToIndex({
+            index: scrollPosition.current.index,
+            animated: false,
+            viewPosition: 0.5, // Zentriere das Element
+          });
+        } catch (error) {
+          // Fallback: scrolle zu Offset wenn scrollToIndex fehlschlägt
+          gridRef.current.scrollToOffset({
+            offset: scrollPosition.current.index * 200, // Geschätzte Kartenhöhe
+            animated: false,
+          });
+        }
+      }
+    }, 100);
   };
 
   // Switch tab
@@ -526,11 +566,13 @@ const Gallery: React.FC = () => {
         <View style={styles.galleryContent}>
           {landscapes.length > 0 ? (
             <ImageGrid
+              ref={gridRef}
               landscapes={landscapes}
               isLoading={isLoading}
               onImagePress={handleImagePress}
               onToggleFavorite={handleToggleFavorite}
               currentImageId={currentImageId}
+              shouldAnimate={!hasInitiallyAnimated}
             />
           ) : (
             <EmptyState activeTab={activeTab} router={router} colors={colors} />

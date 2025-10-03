@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
-  withSequence,
-  Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
@@ -23,6 +20,7 @@ import { getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
+
 
 // Extract to a separate component to properly use hooks
 const LandscapeCard = React.memo(
@@ -32,12 +30,14 @@ const LandscapeCard = React.memo(
     onImagePress,
     onToggleFavorite,
     currentImageId,
+    shouldAnimate,
   }: {
     item: Landscape;
     index: number;
-    onImagePress?: (landscape: Landscape) => void;
+    onImagePress?: (landscape: Landscape, index: number) => void;
     onToggleFavorite?: (landscape: Landscape) => void;
     currentImageId?: string;
+    shouldAnimate?: boolean;
   }) => {
     // Use key to ensure we don't re-render unnecessarily
     const cardKey = `${item.id}-${item.progress}-${item.isComplete}`;
@@ -122,16 +122,19 @@ const LandscapeCard = React.memo(
       return isSpecialPreunlockedImage ? "1 übrig" : `${item.progress}/9`;
     };
 
+    // Nur die ersten 8 Kacheln animieren (die sichtbar sind beim Öffnen)
+    const shouldAnimateThisCard = shouldAnimate && index < 8;
+
     return (
       <Animated.View
         style={[styles.cardContainer, { backgroundColor: colors.card }]}
-        entering={SlideInRight.delay(index * 100).duration(400)}
+        entering={shouldAnimateThisCard ? SlideInRight.delay(index * 100).duration(400) : undefined}
       >
         <Animated.View style={cardAnimatedStyle}>
           <TouchableOpacity
             style={styles.imageContainer}
             activeOpacity={0.9}
-            onPress={() => onImagePress && onImagePress(item)}
+            onPress={() => onImagePress && onImagePress(item, index)}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
           >
@@ -250,20 +253,26 @@ const LandscapeCard = React.memo(
 interface ImageGridProps {
   landscapes: Landscape[];
   isLoading?: boolean;
-  onImagePress?: (landscape: Landscape) => void;
+  onImagePress?: (landscape: Landscape, index: number) => void;
   onToggleFavorite?: (landscape: Landscape) => void;
   currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
+  shouldAnimate?: boolean; // Soll die Animation abgespielt werden?
 }
 
-const ImageGrid: React.FC<ImageGridProps> = ({
+const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
   landscapes,
   isLoading = false,
   onImagePress,
   onToggleFavorite,
   currentImageId,
-}) => {
+  shouldAnimate = true,
+}, ref) => {
   const theme = useTheme();
   const { colors } = theme;
+
+  // WICHTIG: getItemLayout ist bei numColumns schwierig korrekt zu implementieren
+  // Wir verzichten darauf, da es zu Scroll-Problemen führt
+  // Die Performance-Vorteile durch removeClippedSubviews und optimierte Render-Parameter reichen aus
 
   // No content available
   if (!isLoading && landscapes.length === 0) {
@@ -296,6 +305,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
       <FlatList
+        ref={ref}
         data={landscapes}
         renderItem={({ item, index }) => (
           <LandscapeCard
@@ -304,18 +314,29 @@ const ImageGrid: React.FC<ImageGridProps> = ({
             onImagePress={onImagePress}
             onToggleFavorite={onToggleFavorite}
             currentImageId={currentImageId}
+            shouldAnimate={shouldAnimate}
           />
         )}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={styles.gridContainer}
         showsVerticalScrollIndicator={false}
-        initialNumToRender={4}
-        maxToRenderPerBatch={6}
-        windowSize={5}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        removeClippedSubviews={true}
+        onScrollToIndexFailed={(info) => {
+          // Fallback wenn scrollToIndex fehlschlägt
+          const wait = new Promise(resolve => setTimeout(resolve, 50));
+          wait.then(() => {
+            if (ref && typeof ref !== 'function' && ref.current) {
+              ref.current.scrollToIndex({ index: info.index, animated: false });
+            }
+          });
+        }}
       />
     </Animated.View>
   );
-};
+});
 
-export default React.memo(ImageGrid);
+export default ImageGrid;

@@ -1,9 +1,10 @@
 // screens/LeistungScreen/components/GalleryTab/GalleryTab.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useRouter } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { PuzzleProgress } from "@/screens/Gallery/components/LandscapeCollection";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
@@ -12,10 +13,18 @@ const GalleryTab: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
-  
+  const isFocused = useIsFocused();
+
   // Use the useLandscapes hook to get the current landscape
-  const { currentLandscape, isLoading } = useLandscapes("completed");
-  
+  const { currentLandscape, isLoading, reload } = useLandscapes("completed");
+
+  // Reload when screen is focused to get the latest current project
+  useEffect(() => {
+    if (isFocused) {
+      reload();
+    }
+  }, [isFocused, reload]);
+
   // Navigate to gallery screen
   const handleViewGallery = () => {
     router.push("/gallery");

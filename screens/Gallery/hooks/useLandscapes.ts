@@ -147,6 +147,13 @@ export const useLandscapes = (initialFilter = "all") => {
     setUnlockEvent(null);
   }, []);
 
+  // Vollständiges Neuladen aller Daten
+  const reload = useCallback(async () => {
+    await loadCollection();
+    await loadCurrentLandscape();
+    await loadFilteredLandscapes(filter);
+  }, [loadCollection, loadCurrentLandscape, loadFilteredLandscapes, filter]);
+
   // Lade die Daten beim ersten Rendern
   useEffect(() => {
     loadCollection();
@@ -167,6 +174,6 @@ export const useLandscapes = (initialFilter = "all") => {
     clearUnlockEvent,
     getLastUnlockEvent,
     setCurrentProject, // Neue Funktion
-    reload: loadCollection,
+    reload,
   };
 };

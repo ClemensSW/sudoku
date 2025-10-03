@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ScrollView } from 'react-native';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import AvatarOption from './AvatarOption';
-import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath } from '@/utils/defaultAvatars';
-import { saveDefaultAvatar } from '@/utils/avatarStorage';
+import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath } from '../../utils/defaultAvatars';
+import { saveDefaultAvatar } from '../../utils/avatarStorage';
 import styles from './styles';
 
 interface DefaultAvatarsProps {

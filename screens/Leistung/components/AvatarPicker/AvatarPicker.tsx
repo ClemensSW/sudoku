@@ -14,7 +14,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
-import { saveAvatar, deleteAvatar, getAvatarUri } from "@/utils/avatarStorage";
+import { saveAvatar, deleteAvatar, getAvatarUri } from "../../utils/avatarStorage";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
@@ -24,7 +24,7 @@ import {
   getAvatarById,
   getAvatarSourceFromUri,
   DEFAULT_AVATAR,
-} from "@/utils/defaultAvatars";
+} from "../../utils/defaultAvatars";
 import DefaultAvatars from "./DefaultAvatars";
 import Animated, {
   useSharedValue,

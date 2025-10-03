@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { checkHasPurchased, trackBannerInteraction } from "@/utils/purchaseTracking";
+import { checkHasPurchased, trackBannerInteraction } from "@/screens/SupportShop/utils/purchaseTracking";
 import styles from "./SupportBanner.styles";
 
 interface SupportBannerProps {

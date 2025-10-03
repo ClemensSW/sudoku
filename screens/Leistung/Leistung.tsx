@@ -12,7 +12,7 @@ import {
   updateUserTitle,
   UserProfile,
 } from "@/utils/profileStorage";
-import { getAvatarUri } from "@/utils/avatarStorage";
+import { getAvatarUri } from "./utils/avatarStorage";
 import Header from "@/components/Header/Header";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";

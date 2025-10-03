@@ -1,7 +1,7 @@
 // components/AvatarPicker/AvatarOption.tsx
 import React from 'react';
 import { View, Image, Text, Pressable } from 'react-native';
-import { DefaultAvatar } from '@/utils/defaultAvatars';
+import { DefaultAvatar } from '../../utils/defaultAvatars';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import styles from './styles';
 

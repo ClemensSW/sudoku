@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { Product } from "@/utils/billing/BillingManager";
+import { Product } from "../utils/billing/BillingManager";
 import styles from "./SubscriptionCard.styles";
 
 interface SubscriptionCardProps {

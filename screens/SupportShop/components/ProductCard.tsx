@@ -10,7 +10,7 @@ import Animated, {
   FadeInRight,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { Product } from "@/utils/billing/BillingManager";
+import { Product } from "../utils/billing/BillingManager";
 import { getRandomProductDescription } from "../utils/supportMessages";
 import styles from "./ProductCard.styles";
 

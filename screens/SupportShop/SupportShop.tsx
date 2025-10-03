@@ -33,9 +33,9 @@ import SubscriptionCard from "./components/SubscriptionCard";
 import PurchaseOverlay from "./components/PurchaseOverlay";
 
 // Utils
-import BillingManager, { Product } from "@/utils/billing/BillingManager";
+import BillingManager, { Product } from "./utils/billing/BillingManager";
 import { getRandomConfirmMessage } from "./utils/supportMessages";
-import { markAsPurchased } from "@/utils/purchaseTracking";
+import { markAsPurchased } from "./utils/purchaseTracking";
 import styles from "./SupportShop.styles";
 
 interface SupportShopScreenProps {

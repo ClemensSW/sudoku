@@ -6,7 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "../AvatarPicker";
-import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/utils/defaultAvatars";
+import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "../../utils/defaultAvatars";
 
 interface ProfileHeaderProps {
   stats: GameStats;

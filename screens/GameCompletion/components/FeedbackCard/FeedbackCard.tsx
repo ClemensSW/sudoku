@@ -12,9 +12,9 @@ import Animated, {
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
-import styles from "./FeedbackMessage.styles";
+import styles from "./FeedbackCard.styles";
 
-interface FeedbackMessageProps {
+export interface FeedbackCardProps {
   difficulty: Difficulty;
   timeElapsed: number;
   isNewRecord: boolean;
@@ -325,7 +325,7 @@ const formatTime = (seconds: number): string => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
 
-const FeedbackMessage: React.FC<FeedbackMessageProps> = ({
+const FeedbackCard: React.FC<FeedbackCardProps> = ({
   difficulty,
   timeElapsed,
   isNewRecord,
@@ -527,4 +527,4 @@ const FeedbackMessage: React.FC<FeedbackMessageProps> = ({
   );
 };
 
-export default FeedbackMessage;
+export default React.memo(FeedbackCard);

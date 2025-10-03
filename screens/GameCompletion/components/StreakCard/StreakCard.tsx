@@ -14,16 +14,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import styles from "./StreakDisplay.styles";
+import styles from "./StreakCard.styles";
 
-interface StreakDisplayProps {
+export interface StreakCardProps {
   currentStreak: number;
   longestStreak: number;
   isRecord: boolean;
-  style?: ViewStyle; // Hier fügen wir die style-Prop hinzu
+  style?: ViewStyle;
 }
 
-const StreakDisplay: React.FC<StreakDisplayProps> = ({
+const StreakCard: React.FC<StreakCardProps> = ({
   currentStreak,
   longestStreak,
   isRecord,
@@ -264,4 +264,4 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
   );
 };
 
-export default StreakDisplay;
+export default React.memo(StreakCard);

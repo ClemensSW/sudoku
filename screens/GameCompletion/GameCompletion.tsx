@@ -14,16 +14,17 @@ import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
-import { PuzzleProgress } from "@/screens/Gallery/components/LandscapeCollection";
 
 // zentralisierte XP-Berechnung
 import { calculateXpGain } from "./components/PlayerProgressionCard/utils";
 
-// Components
+// Components - NEW REFACTORED STRUCTURE
+import LevelCard from "./components/LevelCard";
+import PathCard from "./components/PathCard";
+import GalleryProgressCard from "./components/GalleryProgressCard";
+import StreakCard from "./components/StreakCard";
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
-import StreakDisplay from "./components/StreakDisplay/StreakDisplay";
-import PlayerProgressionCard from "./components/PlayerProgressionCard";
-import FeedbackMessage from "./components/FeedbackMessage/FeedbackMessage";
+import FeedbackCard from "./components/FeedbackCard";
 import ConfettiEffect from "./components/ConfettiEffect/ConfettiEffect";
 import Button from "@/components/Button/Button";
 
@@ -295,10 +296,10 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           showsVerticalScrollIndicator
         >
           <Animated.View style={contentAnimatedStyle}>
-            {/* PlayerProgressionCard mit Titel-Props */}
+            {/* LevelCard - Independent with scoped LevelUpOverlay ✅ */}
             {stats && !autoNotesUsed && (
               <>
-                <PlayerProgressionCard
+                <LevelCard
                   stats={stats}
                   difficulty={difficulty}
                   justCompleted={true}
@@ -310,10 +311,23 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
               </>
             )}
 
-            {/* Puzzle/Landscape Fortschritt */}
+            {/* PathCard - Independent */}
+            {stats && !autoNotesUsed && (
+              <>
+                <PathCard
+                  stats={stats}
+                  justCompleted={true}
+                  xpGain={xpGain}
+                  showPathDescription={true}
+                />
+                <View style={styles.sectionSpacer} />
+              </>
+            )}
+
+            {/* GalleryProgressCard - Renamed from PuzzleProgress */}
             {!autoNotesUsed && currentLandscape && (
               <>
-                <PuzzleProgress
+                <GalleryProgressCard
                   landscape={currentLandscape}
                   newlyUnlockedSegmentId={newlyUnlockedSegmentId}
                   isComplete={landscapeCompleted}
@@ -323,10 +337,10 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
               </>
             )}
 
-            {/* Streak */}
+            {/* StreakCard - Renamed from StreakDisplay */}
             {stats && stats.currentStreak > 0 && !autoNotesUsed && (
               <>
-                <StreakDisplay
+                <StreakCard
                   currentStreak={stats.currentStreak}
                   longestStreak={stats.longestStreak}
                   isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
@@ -335,7 +349,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
               </>
             )}
 
-            {/* Performance */}
+            {/* PerformanceCard - No changes */}
             <PerformanceCard
               timeElapsed={timeElapsed}
               previousBestTime={
@@ -351,8 +365,8 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
 
             <View style={styles.sectionSpacer} />
 
-            {/* Feedback */}
-            <FeedbackMessage
+            {/* FeedbackCard - Renamed from FeedbackMessage */}
+            <FeedbackCard
               difficulty={difficulty}
               timeElapsed={timeElapsed}
               isNewRecord={newRecord}

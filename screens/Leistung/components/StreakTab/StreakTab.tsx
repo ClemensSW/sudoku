@@ -4,7 +4,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { GameStats } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import StreakDisplay from "@/screens/GameCompletion/components/StreakDisplay/StreakDisplay";
+import StreakCard from "@/screens/GameCompletion/components/StreakCard";
 
 interface StreakTabProps {
   stats: GameStats;
@@ -26,8 +26,8 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Streak Display Component */}
-        <StreakDisplay
+        {/* Streak Card Component */}
+        <StreakCard
           currentStreak={stats.currentStreak}
           longestStreak={stats.longestStreak}
           isRecord={isRecord}

@@ -81,7 +81,8 @@ export default StyleSheet.create({
 
   scrollContainer: {
     width: "100%",
-    padding: spacing.lg,
+    paddingVertical: spacing.lg, // 24px - spacing to edge
+    paddingHorizontal: spacing.lg, // 24px - spacing to edge (matches card spacing)
     paddingBottom: 260, // Significantly increased padding to create more scrollable space at the bottom
   },
 
@@ -113,7 +114,7 @@ export default StyleSheet.create({
   },
 
   sectionSpacer: {
-    height: spacing.md,
+    height: spacing.lg, // 24px - spacing between cards
   },
 
   // Separator between sections

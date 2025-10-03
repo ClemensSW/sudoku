@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Pressable,
-  StyleSheet,
   ViewStyle,
   TextStyle,
   BackHandler,
@@ -13,15 +12,17 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  withSequence,
   Easing,
   FadeIn,
   FadeOut,
-  SlideInUp,
-  SlideOutDown,
+  runOnJS,
 } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
+import styles from "./CustomAlert.styles";
 
 // Define button types with different visual styles
 export type ButtonType =
@@ -83,15 +84,16 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   // Local state to control visibility
   const [isVisible, setIsVisible] = useState(visible);
 
-  // Animation values
-  const backgroundOpacity = useSharedValue(0);
-  const alertScale = useSharedValue(0.95);
+  // Animation values for icon
+  const iconScale = useSharedValue(0.8);
+  const iconOpacity = useSharedValue(0);
 
   // Update local visibility state when prop changes
   useEffect(() => {
     if (visible) {
       setIsVisible(true);
-      // Provide haptic feedback based on alert type with the new utility
+
+      // Provide haptic feedback based on alert type
       switch (type) {
         case "success":
           triggerHaptic("success");
@@ -105,6 +107,35 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
         default:
           triggerHaptic("medium");
       }
+
+      // Animate icon entrance
+      iconOpacity.value = withTiming(1, {
+        duration: 400,
+        easing: Easing.bezier(0.4, 0, 0.2, 1),
+      });
+      iconScale.value = withSequence(
+        withTiming(1.1, {
+          duration: 350,
+          easing: Easing.bezier(0.34, 1.56, 0.64, 1),
+        }),
+        withTiming(1, {
+          duration: 150,
+          easing: Easing.bezier(0.4, 0, 0.2, 1),
+        })
+      );
+
+      // Pulse icon for success/error (once)
+      if (type === "success" || type === "error") {
+        setTimeout(() => {
+          iconScale.value = withSequence(
+            withTiming(1.15, { duration: 200 }),
+            withTiming(1, { duration: 200 })
+          );
+        }, 600);
+      }
+    } else {
+      iconScale.value = 0.8;
+      iconOpacity.value = 0;
     }
   }, [visible, type]);
 
@@ -128,7 +159,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       () => {
         if (isVisible) {
           handleDismiss();
-          return true; // Prevent default back behavior
+          return true;
         }
         return false;
       }
@@ -147,12 +178,9 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 
   // Handle button press
   const handleButtonPress = (buttonOnPress?: () => void) => {
-    // Execute button callback if provided
     if (buttonOnPress) {
       buttonOnPress();
     }
-
-    // Dismiss alert if no callback or after callback execution
     handleDismiss();
   };
 
@@ -168,26 +196,26 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "warning":
         return "alert-triangle";
       case "confirmation":
-      case "duoMode": // Use same icon as confirmation
+      case "duoMode":
         return "help-circle";
       default:
         return "info";
     }
   };
 
-  // Get icon color based on alert type
+  // Get icon color based on alert type - softer colors
   const getIconColor = (): string => {
     switch (type) {
       case "success":
-        return colors.success;
+        return "#34D399"; // Softer green
       case "error":
-        return colors.error;
+        return "#F87171"; // Softer red
       case "warning":
-        return colors.warning;
+        return "#FBBF24"; // Warmer yellow
       case "confirmation":
-        return colors.info;
+        return "#60A5FA"; // Calmer blue
       case "duoMode":
-        return "#4A7D78"; // Teal color for Duo Mode
+        return "#4A7D78"; // Teal
       default:
         return colors.primary;
     }
@@ -196,12 +224,12 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   // Get button style based on button type
   const getButtonStyle = (buttonType: ButtonType = "default"): ViewStyle => {
     const baseStyle: ViewStyle = {
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      borderRadius: 8,
+      paddingVertical: 14,
+      paddingHorizontal: 20,
+      borderRadius: 12,
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 44,
+      minHeight: 48, // Larger touch target
     };
 
     switch (buttonType) {
@@ -213,31 +241,30 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "success":
         return {
           ...baseStyle,
-          backgroundColor: colors.success,
+          backgroundColor: "#34D399",
         };
       case "danger":
         return {
           ...baseStyle,
-          backgroundColor: colors.error,
+          backgroundColor: "#F87171",
         };
       case "duoButton":
         return {
           ...baseStyle,
-          backgroundColor: "#4A7D78", // Teal color for Duo Mode
+          backgroundColor: "#4A7D78",
         };
       case "cancel":
+        // Ghost button - no background, no border
         return {
           ...baseStyle,
           backgroundColor: "transparent",
-          borderWidth: 1,
-          borderColor: theme.isDark ? colors.border : "rgba(0,0,0,0.1)",
         };
       default:
         return {
           ...baseStyle,
           backgroundColor: theme.isDark
-            ? "rgba(255,255,255,0.1)"
-            : "rgba(0,0,0,0.05)",
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(0,0,0,0.04)",
         };
     }
   };
@@ -249,25 +276,22 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
     const baseStyle: TextStyle = {
       fontSize: 16,
       fontWeight: "600",
+      letterSpacing: 0.2,
     };
 
     switch (buttonType) {
       case "primary":
       case "success":
-      case "duoButton": // Add this case to match duoButton
-        return {
-          ...baseStyle,
-          color: colors.buttonText,
-        };
       case "danger":
+      case "duoButton":
         return {
           ...baseStyle,
-          color: "white",
+          color: "#FFFFFF",
         };
       case "cancel":
         return {
           ...baseStyle,
-          color: colors.textPrimary,
+          color: colors.textSecondary, // Softer text for cancel
         };
       default:
         return {
@@ -277,35 +301,60 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
     }
   };
 
+  // Icon animation style
+  const iconAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: iconScale.value }],
+      opacity: iconOpacity.value,
+    };
+  });
+
   if (!isVisible) return null;
 
   return (
     <Animated.View
-      style={[styles.overlay]}
-      entering={FadeIn.duration(300)}
-      exiting={FadeOut.duration(300)}
+      style={styles.overlay}
+      entering={FadeIn.duration(400).easing(Easing.bezier(0.4, 0, 0.2, 1))}
+      exiting={FadeOut.duration(250)}
       testID={testID}
     >
-      <AnimatedPressable
+      {/* Backdrop with Blur */}
+      <BlurView
+        intensity={theme.isDark ? 30 : 20}
+        tint={theme.isDark ? "dark" : "light"}
         style={styles.backdrop}
-        onPress={onBackdropPress ? handleDismiss : undefined}
-      />
+      >
+        <AnimatedPressable
+          style={styles.backdrop}
+          onPress={onBackdropPress ? handleDismiss : undefined}
+        />
+      </BlurView>
 
+      {/* Alert Container with subtle scale animation */}
       <Animated.View
         style={[styles.alertContainer, { backgroundColor: colors.surface }]}
-        entering={SlideInUp.springify().damping(30).stiffness(300)}
-        exiting={SlideOutDown.duration(200)}
+        entering={FadeIn.duration(300)
+          .easing(Easing.bezier(0.4, 0, 0.2, 1))
+          .delay(50)}
       >
         {/* Alert Header with Icon */}
         <View style={styles.alertHeader}>
-          <View
+          <Animated.View
             style={[
               styles.iconContainer,
-              { backgroundColor: `${getIconColor()}15` },
+              {
+                backgroundColor: `${getIconColor()}10`, // Very subtle background
+              },
+              iconAnimatedStyle,
             ]}
           >
-            <Feather name={getIcon() as any} size={28} color={getIconColor()} />
-          </View>
+            <Feather
+              name={getIcon() as any}
+              size={24} // Smaller icon
+              color={getIconColor()}
+              style={{ opacity: 0.9 }} // Slightly transparent
+            />
+          </Animated.View>
         </View>
 
         {/* Alert Content */}
@@ -318,110 +367,35 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           </Text>
         </View>
 
-        {/* Alert Buttons */}
+        {/* Alert Buttons - No border, cleaner spacing */}
         <View
           style={[
             styles.buttonContainer,
             buttons.length > 2 && styles.buttonStackedContainer,
-            {
-              borderTopColor: theme.isDark
-                ? "rgba(255,255,255,0.1)"
-                : "rgba(0,0,0,0.1)",
-            },
           ]}
         >
           {buttons.map((button, index) => (
-            <Animated.View
+            <View
               key={`btn-${index}`}
               style={[
                 buttons.length > 2 ? styles.buttonFullWidth : styles.buttonFlex,
               ]}
-              entering={FadeIn.delay(index * 100).duration(200)}
             >
               <TouchableOpacity
                 style={getButtonStyle(button.style)}
                 onPress={() => handleButtonPress(button.onPress)}
-                activeOpacity={0.7}
+                activeOpacity={0.75}
               >
                 <Text style={getButtonTextStyle(button.style)}>
                   {button.text}
                 </Text>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
           ))}
         </View>
       </Animated.View>
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  alertContainer: {
-    width: "85%",
-    maxWidth: 400,
-    borderRadius: 16,
-    overflow: "hidden",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  alertHeader: {
-    alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 8,
-  },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  alertContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-  },
-  alertTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  alertMessage: {
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    borderTopWidth: 1,
-    padding: 12,
-  },
-  buttonStackedContainer: {
-    flexDirection: "column",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  buttonFlex: {
-    flex: 1,
-    margin: 4,
-  },
-  buttonFullWidth: {
-    width: "100%",
-    marginBottom: 8,
-  },
-});
 
 export default CustomAlert;

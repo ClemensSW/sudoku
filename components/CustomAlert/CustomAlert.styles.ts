@@ -10,61 +10,64 @@ export default StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Lighter, less oppressive
   },
   alertContainer: {
-    width: "85%",
-    maxWidth: 400,
-    borderRadius: radius.xl,
+    width: "90%", // Narrower for elegance
+    maxWidth: 340,
+    borderRadius: 20, // Softer corners
     overflow: "hidden",
-    elevation: 5,
+    elevation: 8,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15, // Subtler shadow
+    shadowRadius: 12,
   },
   alertHeader: {
     alignItems: "center",
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.sm,
+    paddingTop: 28, // More whitespace
+    paddingBottom: 12,
   },
   iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 48, // Smaller, more subtle
+    height: 48,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
   },
   alertContent: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
+    paddingHorizontal: 28, // More generous padding
+    paddingBottom: 28,
   },
   alertTitle: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 18, // Slightly smaller
+    fontWeight: "600", // Semibold instead of bold
     textAlign: "center",
-    marginBottom: spacing.md,
+    marginBottom: 8,
+    letterSpacing: 0.3, // Airier feel
   },
   alertMessage: {
-    fontSize: 16,
+    fontSize: 15,
     textAlign: "center",
-    lineHeight: 22,
+    lineHeight: 22.5, // 1.5 line-height
+    letterSpacing: 0.2,
   },
   buttonContainer: {
     flexDirection: "row",
-    borderTopWidth: 1,
+    // No borderTop - cleaner look
+    padding: 16,
+    gap: 8, // Modern gap property for spacing
   },
   buttonStackedContainer: {
     flexDirection: "column",
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    gap: 10,
   },
   buttonFlex: {
     flex: 1,
   },
   buttonFullWidth: {
     width: "100%",
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
   },
 });

@@ -58,7 +58,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
     inProgress:
       "Du hast noch kein Bild, an den du arbeitest. Löse ein Sudoku, um zu beginnen!",
     completed:
-      "Du hast noch kein Bild vollständig freigeschaltet. Löse 9 Sudokus, um dein erstes Bild freizuschalten!",
+      "Du hast noch kein Bild vollständig freigeschaltet. Löse Sudokus, um dein erstes Bild freizuschalten!",
     favorites:
       "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol.",
   };

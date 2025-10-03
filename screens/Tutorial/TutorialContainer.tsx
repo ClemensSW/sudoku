@@ -105,7 +105,9 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    ...StyleSheet.absoluteFillObject,
     flex: 1,
+    zIndex: 1000,
   },
   pageContainer: {
     flex: 1,

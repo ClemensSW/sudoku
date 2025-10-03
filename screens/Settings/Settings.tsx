@@ -23,7 +23,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import Header from "@/components/Header/Header";
-import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
+import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
 import { loadSettings, saveSettings } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
@@ -311,12 +311,10 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
       {/* How to Play Modal */}
       {showHowToPlay && (
-        <View style={StyleSheet.absoluteFill}>
-          <HowToPlayModal
-            visible={showHowToPlay}
-            onClose={() => setShowHowToPlay(false)}
-          />
-        </View>
+        <TutorialContainer
+          onComplete={() => setShowHowToPlay(false)}
+          onBack={() => setShowHowToPlay(false)}
+        />
       )}
 
       {/* Support Shop Modal */}

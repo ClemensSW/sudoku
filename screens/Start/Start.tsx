@@ -8,7 +8,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useNavigation } from "@/contexts/navigation";
 import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
-import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
+import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import { triggerHaptic } from "@/utils/haptics";
 
 import { useBackgroundRotation } from "./hooks/useBackgroundRotation";
@@ -95,8 +95,8 @@ const Start: React.FC = () => {
         onConfirm={handleStartWithDifficulty}
       />
 
-      {tutorialChecked && (
-        <HowToPlayModal visible={showHowToPlay} onClose={onTutorialClose} />
+      {tutorialChecked && showHowToPlay && (
+        <TutorialContainer onComplete={onTutorialClose} onBack={onTutorialClose} />
       )}
     </View>
   );

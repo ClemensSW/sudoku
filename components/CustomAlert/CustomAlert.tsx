@@ -367,18 +367,18 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           </Text>
         </View>
 
-        {/* Alert Buttons - No border, cleaner spacing */}
+        {/* Alert Buttons - Stacked for 2+ buttons, reversed order so primary is on top */}
         <View
           style={[
             styles.buttonContainer,
-            buttons.length > 2 && styles.buttonStackedContainer,
+            buttons.length > 1 && styles.buttonStackedContainer,
           ]}
         >
-          {buttons.map((button, index) => (
+          {[...buttons].reverse().map((button, index) => (
             <View
               key={`btn-${index}`}
               style={[
-                buttons.length > 2 ? styles.buttonFullWidth : styles.buttonFlex,
+                buttons.length > 1 ? styles.buttonFullWidth : styles.buttonFlex,
               ]}
             >
               <TouchableOpacity

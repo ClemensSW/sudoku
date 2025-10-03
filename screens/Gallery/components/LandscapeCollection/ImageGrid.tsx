@@ -257,6 +257,7 @@ interface ImageGridProps {
   onToggleFavorite?: (landscape: Landscape) => void;
   currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
   shouldAnimate?: boolean; // Soll die Animation abgespielt werden?
+  onScroll?: (event: any) => void; // Handler für Scroll-Events
 }
 
 const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
@@ -266,6 +267,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
   onToggleFavorite,
   currentImageId,
   shouldAnimate = true,
+  onScroll,
 }, ref) => {
   const theme = useTheme();
   const { colors } = theme;
@@ -325,6 +327,8 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
         maxToRenderPerBatch={10}
         windowSize={10}
         removeClippedSubviews={true}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         onScrollToIndexFailed={(info) => {
           // Fallback wenn scrollToIndex fehlschlägt
           const wait = new Promise(resolve => setTimeout(resolve, 50));

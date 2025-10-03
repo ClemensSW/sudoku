@@ -129,7 +129,7 @@ const Gallery: React.FC = () => {
 
   // Ref für FlatList und Scroll-Position
   const gridRef = useRef<any>(null);
-  const scrollPosition = useRef<{ index: number; offset: number }>({ index: 0, offset: 0 });
+  const scrollOffset = useRef<number>(0);
 
   // Track ob die initiale Animation bereits gelaufen ist
   const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState(false);
@@ -344,10 +344,13 @@ const Gallery: React.FC = () => {
     );
   }, [baseList, selectedCategories]);
 
+  // Handler um Scroll-Position zu tracken
+  const handleScroll = (event: any) => {
+    scrollOffset.current = event.nativeEvent.contentOffset.y;
+  };
+
   // Handler for image tap
   const handleImagePress = (landscape: Landscape, index: number) => {
-    // Speichere die aktuelle Scroll-Position
-    scrollPosition.current = { index, offset: 0 };
     setSelectedLandscape(landscape);
     setDetailModalVisible(true);
   };
@@ -398,22 +401,13 @@ const Gallery: React.FC = () => {
     // Nach dem Schließen: Animation deaktivieren und zur Position zurück scrollen
     setHasInitiallyAnimated(true);
 
-    // Warte kurz bis Modal geschlossen ist, dann scrolle zurück
+    // Warte kurz bis Modal geschlossen ist, dann scrolle zurück zur exakten Position
     setTimeout(() => {
-      if (gridRef.current && scrollPosition.current.index > 0) {
-        try {
-          gridRef.current.scrollToIndex({
-            index: scrollPosition.current.index,
-            animated: false,
-            viewPosition: 0.5, // Zentriere das Element
-          });
-        } catch (error) {
-          // Fallback: scrolle zu Offset wenn scrollToIndex fehlschlägt
-          gridRef.current.scrollToOffset({
-            offset: scrollPosition.current.index * 200, // Geschätzte Kartenhöhe
-            animated: false,
-          });
-        }
+      if (gridRef.current && scrollOffset.current > 0) {
+        gridRef.current.scrollToOffset({
+          offset: scrollOffset.current,
+          animated: false,
+        });
       }
     }, 100);
   };
@@ -573,6 +567,7 @@ const Gallery: React.FC = () => {
               onToggleFavorite={handleToggleFavorite}
               currentImageId={currentImageId}
               shouldAnimate={!hasInitiallyAnimated}
+              onScroll={handleScroll}
             />
           ) : (
             <EmptyState activeTab={activeTab} router={router} colors={colors} />

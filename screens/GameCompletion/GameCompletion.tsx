@@ -17,6 +17,7 @@ import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 
 // zentralisierte XP-Berechnung
 import { calculateXpGain } from "./components/PlayerProgressionCard/utils";
+import { useLevelInfo } from "./components/PlayerProgressionCard/utils/useLevelInfo";
 
 // Components - NEW REFACTORED STRUCTURE
 import LevelCard from "./components/LevelCard";
@@ -66,25 +67,6 @@ const isNewRecord = (
   );
 };
 
-const getDifficultyName = (diff: Difficulty): string => {
-  const difficultyNames: Record<Difficulty, string> = {
-    easy: "Leicht",
-    medium: "Mittel",
-    hard: "Schwer",
-    expert: "Experte",
-  };
-  return difficultyNames[diff];
-};
-
-const getDifficultyColor = (diff: Difficulty): string => {
-  const difficultyColors: Record<Difficulty, string> = {
-    easy: "#35363A",
-    medium: "#35363A",
-    hard: "#35363A",
-    expert: "#35363A",
-  };
-  return difficultyColors[diff];
-};
 
 const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   visible,
@@ -184,14 +166,17 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   // XP-Gewinn für dieses Spiel
   const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
 
+  // Level Info für Pfad-Farbe
+  const currentXP = stats ? stats.totalXP : 0;
+  const levelInfo = useLevelInfo(currentXP);
+  const pathColor = levelInfo.currentPath.color;
+
   // Animation values
   const modalScale = useSharedValue(0.95);
   const modalOpacity = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
 
   const newRecord = isNewRecord(timeElapsed, stats || null, difficulty, autoNotesUsed);
-
-  const gradientStart = getDifficultyColor(difficulty);
 
   // Android Back-Button
   useEffect(() => {
@@ -266,29 +251,6 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
       >
         <ConfettiEffect isActive={visible} />
 
-        <LinearGradient
-          colors={[gradientStart, theme.isDark ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 0.8 }}
-          style={styles.headerGradient}
-        />
-
-        {/* Titelbereich */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Glückwunsch!</Text>
-
-          {newRecord && (
-            <View style={[styles.difficultyBadge, { backgroundColor: colors.success }]}>
-              <Feather name="award" size={16} color="white" style={{ marginRight: 6 }} />
-              <Text style={styles.difficultyText}>Neuer Rekord!</Text>
-            </View>
-          )}
-
-          <View style={[styles.difficultyBadge, { backgroundColor: getDifficultyColor(difficulty) }]}>
-            <Text style={styles.difficultyText}>{getDifficultyName(difficulty)}</Text>
-          </View>
-        </View>
-
         {/* Inhalte */}
         <ScrollView
           style={{ width: "100%", flex: 1 }}
@@ -296,6 +258,60 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           showsVerticalScrollIndicator
         >
           <Animated.View style={contentAnimatedStyle}>
+            {/* Hero Header - now inside ScrollView */}
+            <View style={styles.heroHeaderInScroll}>
+              <LinearGradient
+                colors={
+                  theme.isDark
+                    ? [colors.card, colors.background]
+                    : [colors.surface, colors.background]
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.heroGradient}
+              >
+                {/* Animated Success Icon with Glow - Dynamic Path Color */}
+                <View style={styles.heroIconWrapper}>
+                  <View style={[
+                    styles.iconGlow,
+                    { backgroundColor: `${pathColor}40` } // 25% opacity in hex
+                  ]} />
+                  <View style={[
+                    styles.iconGlowOuter,
+                    { backgroundColor: `${pathColor}20` } // 12% opacity in hex
+                  ]} />
+                  <Feather name="check-circle" size={64} color={pathColor} />
+                </View>
+
+                {/* Main Title */}
+                <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
+                  Großartig gelöst!
+                </Text>
+
+                {/* Subtitle */}
+                <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
+                  Deine Leistung im Überblick
+                </Text>
+
+                {/* Record Badge - Floating */}
+                {newRecord && (
+                  <View style={styles.recordFloatingBadge}>
+                    <LinearGradient
+                      colors={theme.isDark ? ['#FAD165', '#E6B800'] : ['#FBBC05', '#F9AB00']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.recordGradient}
+                    >
+                      <Feather name="award" size={20} color={theme.isDark ? '#202124' : 'white'} style={{ marginRight: 8 }} />
+                      <Text style={[styles.recordFloatingText, { color: theme.isDark ? '#202124' : 'white' }]}>Neuer Rekord!</Text>
+                    </LinearGradient>
+                  </View>
+                )}
+              </LinearGradient>
+            </View>
+
+            {/* Cards Container with Padding */}
+            <View style={styles.cardsContainer}>
             {/* LevelCard - Independent with scoped LevelUpOverlay ✅ */}
             {stats && !autoNotesUsed && (
               <>
@@ -375,6 +391,8 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
             />
 
             {autoNotesUsed && <View style={[styles.separator, { backgroundColor: colors.warning }]} />}
+            </View>
+            {/* End Cards Container */}
           </Animated.View>
         </ScrollView>
 

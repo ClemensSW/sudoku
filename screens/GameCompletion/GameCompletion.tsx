@@ -107,40 +107,51 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
     };
   }, [visible, hideBottomNav, resetBottomNav]);
 
-  // Beim Öffnen: Profil laden (Titel) + evtl. letztes Unlock-Event anzeigen
+  // Beim Öffnen: Profil laden (Titel) + evtl. letztes Unlock-Event anzeigen (parallelisiert)
   useEffect(() => {
     if (!visible) return;
 
     let mounted = true;
 
+    // Profile load immediately, unlock event after delay
     (async () => {
       try {
-        const p = await loadUserProfile();
+        // Load profile immediately
+        const profilePromise = loadUserProfile();
+
+        // Delay unlock event check
+        const unlockEventPromise = new Promise<void>((resolve) => {
+          setTimeout(async () => {
+            try {
+              const event = await getLastUnlockEvent();
+              // TS-Fix: diskriminiere über vorhandenes Feld statt „type"
+              if (event && typeof event === "object" && mounted) {
+                if ("segmentIndex" in event && typeof (event as any).segmentIndex === "number") {
+                  setNewlyUnlockedSegmentId((event as any).segmentIndex);
+                } else {
+                  setLandscapeCompleted(true);
+                }
+              }
+            } catch (e) {
+              console.error("getLastUnlockEvent failed", e);
+            }
+            resolve();
+          }, 500);
+        });
+
+        // Wait for profile (immediately)
+        const p = await profilePromise;
         if (mounted) setSelectedTitle(p.title ?? null);
+
+        // Unlock event will resolve on its own schedule
+        await unlockEventPromise;
       } catch (e) {
         console.error("loadUserProfile failed", e);
       }
     })();
 
-    const timer = setTimeout(async () => {
-      try {
-        const event = await getLastUnlockEvent();
-        // TS-Fix: diskriminiere über vorhandenes Feld statt „type"
-        if (event && typeof event === "object") {
-          if ("segmentIndex" in event && typeof (event as any).segmentIndex === "number") {
-            setNewlyUnlockedSegmentId((event as any).segmentIndex);
-          } else {
-            setLandscapeCompleted(true);
-          }
-        }
-      } catch (e) {
-        console.error("getLastUnlockEvent failed", e);
-      }
-    }, 500);
-
     return () => {
       mounted = false;
-      clearTimeout(timer);
     };
   }, [visible, getLastUnlockEvent]);
 

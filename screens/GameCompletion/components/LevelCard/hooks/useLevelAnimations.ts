@@ -141,8 +141,11 @@ export function useLevelAnimations({
   }, [
     currentXp,
     prevXp,
-    levelInfo,
-    previousLevelInfo,
+    levelInfo.progressPercentage,
+    levelInfo.currentLevel,
+    previousLevelInfo.levelData.xp,
+    previousLevelInfo.nextLevelData?.xp,
+    previousLevelInfo.currentLevel,
     xpGain,
     hasLevelChanged,
     onLevelUp,

@@ -1,5 +1,5 @@
 // components/GameCompletionModal/components/ConfettiEffect/ConfettiEffect.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, memo } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -21,7 +21,9 @@ interface ConfettiProps {
   palette?: string[];
 }
 
-const { width: W, height: H } = Dimensions.get("window");
+// Cache window dimensions outside component to avoid re-calculation
+const WINDOW_DIMENSIONS = Dimensions.get("window");
+const { width: W, height: H } = WINDOW_DIMENSIONS;
 
 const DEFAULT_COLORS = ["#FFB703","#FB5607","#8338EC","#3A86FF","#FF006E","#2EC4B6"];
 const SHAPES: Shape[] = ["square","rectangle","circle","triangle"];
@@ -84,7 +86,12 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
   burst = true,
   palette,
 }) => {
-  const colors = palette && palette.length ? palette : DEFAULT_COLORS;
+  // Stabilize colors array to prevent useMemo re-calculation
+  const colors = useMemo(() =>
+    palette && palette.length ? palette : DEFAULT_COLORS,
+    [palette]
+  );
+
   const count = Math.min(Math.max(density, 1), 10) * 25; // 25–250
   const burstCount = burst ? Math.round(count * 0.35) : 0;
 
@@ -121,7 +128,7 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
     for (let i = 0; i < burstCount; i++) list.push(make(i, true));
     for (let i = burstCount; i < count; i++) list.push(make(i, false));
     return list;
-  }, [count, intensity, burst, colors.join("|")]);
+  }, [count, intensity, burst, burstCount, colors]);
 
   useEffect(() => {
     if (isActive) {
@@ -150,7 +157,7 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
   );
 };
 
-const ConfettiPiece: React.FC<{ p: Particle; progress: SharedValue<number> }> = ({
+const ConfettiPiece: React.FC<{ p: Particle; progress: SharedValue<number> }> = memo(({
   p,
   progress,
 }) => {
@@ -205,7 +212,7 @@ const ConfettiPiece: React.FC<{ p: Particle; progress: SharedValue<number> }> = 
   }, [p.shape, p.size, p.color]);
 
   return <Animated.View pointerEvents="none" style={[styles.piece, animatedStyle, shapeStyle]} />;
-};
+});
 
 const styles = StyleSheet.create({
   container: {

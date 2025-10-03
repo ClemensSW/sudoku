@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -81,7 +81,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     landscape.segments.forEach((segment, index) => {
       if (segment.isUnlocked) {
         // Only animate unlocked segments to full opacity
-        const delay = index * 100; // Gradual fade-in for unlocked segments
+        const delay = index * 50; // Reduced from 100ms to 50ms for faster stagger
         segmentOpacities[index].value = withDelay(
           delay,
           withTiming(1, { duration: 500 })
@@ -104,7 +104,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         withDelay(delayAmount, withTiming(1, { duration: 600 }))
       );
     }
-  }, [landscape, newlyUnlockedSegmentId]);
+  }, [landscape, newlyUnlockedSegmentId, progressPercentage, segmentOpacities]);
 
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
@@ -145,6 +145,11 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     return theme.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.6)";
   };
 
+  // Memoized segment styles for better performance
+  const lockedStyle = useMemo(() => getLockedSegmentStyle(), [theme.isDark]);
+  const newlyUnlockedStyle = useMemo(() => getNewlyUnlockedStyle(), [colors.primary, theme.isDark]);
+  const lockIconColor = useMemo(() => getLockIconColor(), [theme.isDark]);
+
   // Render a single segment
   const renderSegment = (segment: LandscapeSegment, index: number) => {
     const isUnlocked = segment.isUnlocked;
@@ -154,10 +159,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     const segmentAnimatedStyle = useAnimatedStyle(() => ({
       opacity: isUnlocked ? segmentOpacities[index].value : 1, // Locked segments always visible (but filled with color)
     }));
-
-    // Get appropriate styling based on segment state and theme
-    const lockedStyle = getLockedSegmentStyle();
-    const newlyUnlockedStyle = getNewlyUnlockedStyle();
 
     return (
       <Animated.View
@@ -180,7 +181,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         ]}
       >
         {!isUnlocked && (
-          <Feather name="lock" size={16} color={getLockIconColor()} />
+          <Feather name="lock" size={16} color={lockIconColor} />
         )}
       </Animated.View>
     );

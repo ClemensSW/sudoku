@@ -142,18 +142,15 @@ export function useProgressAnimations({
   }, [
     currentXp,
     prevXp,
-    levelInfo,
-    previousLevelInfo,
+    levelInfo.progressPercentage,
+    levelInfo.currentLevel,
+    previousLevelInfo.levelData.xp,
+    previousLevelInfo.nextLevelData?.xp,
+    previousLevelInfo.currentLevel,
     xpGain,
     hasLevelChanged,
     enableLevelUpAnimation,
     onLevelUp,
-    containerScale,
-    progressWidth,
-    previousProgressWidth,
-    badgePulse,
-    gainIndicatorOpacity,
-    xpGainScale,
     onShowLevelUpOverlay,
   ]);
 

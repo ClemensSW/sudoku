@@ -253,7 +253,6 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               }
               max={100}
               showPercentage={false}
-              textStyle={{ color: 'transparent' }} // Make the CircularProgress's built-in text transparent
             />
             
             {/* Center value */}

@@ -100,13 +100,14 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         />
       </Svg>
 
-      {/* Textanzeige in der Mitte */}
-      <View style={styles.valueContainer}>
-        <Text style={[styles.valueText, textStyle]}>
-          {displayValue}
-          {showPercentage ? "%" : ""}
-        </Text>
-      </View>
+      {/* Textanzeige in der Mitte - nur wenn showPercentage true ist */}
+      {showPercentage && (
+        <View style={styles.valueContainer}>
+          <Text style={[styles.valueText, textStyle]}>
+            {displayValue}%
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

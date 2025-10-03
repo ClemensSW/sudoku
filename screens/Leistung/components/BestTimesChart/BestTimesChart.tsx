@@ -109,7 +109,13 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
 
   return (
     <Animated.View
-      style={[styles.bestTimesContainer, { backgroundColor: colors.surface }]}
+      style={[
+        styles.bestTimesContainer,
+        {
+          backgroundColor: colors.surface,
+          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
+        },
+      ]}
       entering={FadeInUp.delay(300).duration(500)}
     >
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>

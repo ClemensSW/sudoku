@@ -8,11 +8,10 @@ export default StyleSheet.create({
     borderRadius: radius.xl,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
   },
 
   sectionTitle: {

@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 16,
+    paddingHorizontal: 16,
   },
   loadingContainer: {
     flex: 1,

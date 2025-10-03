@@ -47,7 +47,13 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
   if (!landscape) {
     return (
       <Animated.View
-        style={[styles.container, { backgroundColor: colors.surface }]}
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.surface,
+            elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
+          },
+        ]}
         entering={FadeIn.duration(500)}
       >
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
@@ -190,7 +196,10 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: colors.surface },
+        {
+          backgroundColor: colors.surface,
+          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
+        },
         containerAnimatedStyle,
       ]}
       entering={FadeIn.duration(500)}

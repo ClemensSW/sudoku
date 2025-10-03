@@ -11,8 +11,11 @@ export default StyleSheet.create({
   // ==== Card ====
   sectionCard: {
     borderRadius: radius.xl,
-    borderWidth: 1,
     padding: spacing.lg,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
   },
 
   // Header (Badge + Text)

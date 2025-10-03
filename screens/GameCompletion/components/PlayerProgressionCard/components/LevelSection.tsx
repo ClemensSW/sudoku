@@ -74,6 +74,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
           borderColor: theme.isDark
             ? "rgba(255,255,255,0.10)"
             : "rgba(0,0,0,0.06)",
+          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
         },
       ]}
     >

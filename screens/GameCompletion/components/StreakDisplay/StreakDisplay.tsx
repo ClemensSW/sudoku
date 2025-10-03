@@ -182,7 +182,10 @@ const StreakDisplay: React.FC<StreakDisplayProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: colors.surface},
+        {
+          backgroundColor: colors.surface,
+          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
+        },
         containerAnimatedStyle,
         style // Hier wenden wir den zusätzlichen Style an
       ]}

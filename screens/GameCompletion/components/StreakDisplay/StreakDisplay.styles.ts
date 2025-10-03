@@ -6,10 +6,9 @@ export default StyleSheet.create({
     width: "100%",
     borderRadius: radius.xl,
     padding: spacing.lg,
-    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
     shadowRadius: 10,
     overflow: "hidden", // Important for the glow effect containment
   },

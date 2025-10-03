@@ -31,7 +31,7 @@ import {
 } from "@/screens/Gallery/components/LandscapeCollection";
 import { FilterModal } from "@/screens/Gallery/components/FilterModal";
 import Header from "@/components/Header/Header";
-import { useNavigation } from "@/utils/NavigationContext";
+import { useNavigation } from "@/contexts/navigation";
 import { StatusBar } from "expo-status-bar";
 import styles from "./GalleryScreen.styles";
 import { ThemeColors } from "@/utils/theme/types";
@@ -103,21 +103,9 @@ const Gallery: React.FC = () => {
   // Get screen dimensions for responsive design
   const { width: screenWidth } = useWindowDimensions();
 
-  // Use the correct navigation context hook
-  const { hideNavigation } = useNavigation();
-
   // Animated values for tab indicator
   const indicatorPosition = useSharedValue(0);
   const indicatorWidth = useSharedValue(0);
-
-  // Hide bottom navigation more aggressively
-  useEffect(() => {
-    hideNavigation();
-    const timer = setTimeout(() => {
-      hideNavigation();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [hideNavigation]);
 
   // States
   const [activeTab, setActiveTab] = useState<LandscapeFilter>("all");

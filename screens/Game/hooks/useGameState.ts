@@ -109,7 +109,6 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
   // Start a new game
   const startNewGame = useCallback(() => {
-    console.log("Starting new game");
     setIsLoading(true);
 
     // Generate a new game with current difficulty

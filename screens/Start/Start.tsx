@@ -5,7 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useNavigation } from "@/utils/NavigationContext";
+import { useNavigation } from "@/contexts/navigation";
 import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 import HowToPlayModal from "@/components/HowToPlayModal/HowToPlayModal";
@@ -22,7 +22,7 @@ const Start: React.FC = () => {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { setShowNavigation } = useNavigation();
+  const { hideBottomNav } = useNavigation();
 
   // Custom hooks
   const { backgroundImage, useFullQuality } = useBackgroundRotation();
@@ -48,18 +48,19 @@ const Start: React.FC = () => {
 
   const handleStartWithDifficulty = () => {
     setShowDifficultyModal(false);
-    router.push({ pathname: "/game", params: { difficulty: selectedDifficulty } });
+    hideBottomNav();
+    router.push({ pathname: "/(game)", params: { difficulty: selectedDifficulty } });
   };
 
   const handleHowToPlayPress = () => {
     triggerHaptic("light");
     openTutorial();
-    setShowNavigation(false);
+    // HowToPlayModal handles navigation automatically
   };
 
   const onTutorialClose = () => {
     handleTutorialComplete();
-    setShowNavigation(true);
+    // HowToPlayModal resets navigation automatically
   };
 
   return (

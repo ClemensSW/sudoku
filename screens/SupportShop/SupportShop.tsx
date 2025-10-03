@@ -24,8 +24,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 
-// NEU: Import Navigation Control
-import { useNavigationControl } from "@/app/_layout";
+import { useNavigation } from "@/contexts/navigation";
 
 // Components
 import Banner from "./components/Banner";
@@ -49,9 +48,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   
-  // NEU: Navigation Control verwenden
-  const { setHideBottomNav } = useNavigationControl();
-  
+  const { hideBottomNav, resetBottomNav } = useNavigation();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [subscriptions, setSubscriptions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,18 +68,18 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     return "sudoku_lunch";
   };
 
-  // NEU: Navigation beim Öffnen und Schließen kontrollieren
+  // Navigation beim Öffnen und Schließen kontrollieren
   useEffect(() => {
     // Bottom Navigation beim Öffnen verstecken
-    setHideBottomNav(true);
-    
-    // Cleanup: Navigation nur wieder anzeigen, wenn nicht von Settings geöffnet
+    hideBottomNav();
+
+    // Cleanup: Reset to automatic route-based logic
     return () => {
       if (!hideNavOnClose) {
-        setHideBottomNav(false);
+        resetBottomNav();
       }
     };
-  }, [setHideBottomNav, hideNavOnClose]);
+  }, [hideBottomNav, resetBottomNav, hideNavOnClose]);
 
   // Initialize billing and load products
   useEffect(() => {

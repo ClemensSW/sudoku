@@ -9,6 +9,7 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigation } from "@/contexts/navigation";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
@@ -97,6 +98,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
+  const { hideBottomNav, resetBottomNav } = useNavigation();
 
   // Landscape Integration
   const {
@@ -111,6 +113,16 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   // State für Unlock-UI
   const [newlyUnlockedSegmentId, setNewlyUnlockedSegmentId] = useState<number | undefined>(undefined);
   const [landscapeCompleted, setLandscapeCompleted] = useState(false);
+
+  // Navigation: Hide bottom nav when modal is visible
+  useEffect(() => {
+    if (visible) {
+      hideBottomNav();
+    }
+    return () => {
+      resetBottomNav();
+    };
+  }, [visible, hideBottomNav, resetBottomNav]);
 
   // Beim Öffnen: Profil laden (Titel) + evtl. letztes Unlock-Event anzeigen
   useEffect(() => {
@@ -130,7 +142,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
     const timer = setTimeout(async () => {
       try {
         const event = await getLastUnlockEvent();
-        // TS-Fix: diskriminiere über vorhandenes Feld statt „type“
+        // TS-Fix: diskriminiere über vorhandenes Feld statt „type"
         if (event && typeof event === "object") {
           if ("segmentIndex" in event && typeof (event as any).segmentIndex === "number") {
             setNewlyUnlockedSegmentId((event as any).segmentIndex);

@@ -4,7 +4,7 @@ import { View, StyleSheet, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useNavigation } from "@/utils/NavigationContext";
+import { useNavigation } from "@/contexts/navigation";
 import { useRouter } from "expo-router";
 import TutorialProgress from "./components/TutorialProgress";
 
@@ -26,19 +26,17 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  const { setShowNavigation } = useNavigation();
+  const { hideBottomNav, resetBottomNav } = useNavigation();
   const router = useRouter();
 
   // Stelle sicher, dass Navigation ausgeblendet ist, wenn TutorialContainer angezeigt wird
   useEffect(() => {
-    console.log("TutorialContainer: Mounted, hiding navigation");
-    setShowNavigation(false);
-    
+    hideBottomNav();
+
     return () => {
-      console.log("TutorialContainer: Unmounting, showing navigation");
-      setShowNavigation(true);
+      resetBottomNav();
     };
-  }, []);
+  }, [hideBottomNav, resetBottomNav]);
 
   // Tutorial pages
   const pages = [
@@ -49,42 +47,35 @@ const TutorialContainer: React.FC<TutorialContainerProps> = ({
 
   const goToNextPage = useCallback(() => {
     if (currentPage < pages.length - 1) {
-      console.log(`TutorialContainer: Moving to next page (${currentPage + 1})`);
       setCurrentPage(currentPage + 1);
     } else {
-      console.log("TutorialContainer: On last page, completing tutorial");
-      setShowNavigation(true);
+      resetBottomNav();
       onComplete();
     }
-  }, [currentPage, pages.length, onComplete]);
+  }, [currentPage, pages.length, onComplete, resetBottomNav]);
 
   const goToPreviousPage = useCallback(() => {
     if (currentPage > 0) {
-      console.log(`TutorialContainer: Moving to previous page (${currentPage - 1})`);
       setCurrentPage(currentPage - 1);
     } else if (onBack) {
-      console.log("TutorialContainer: On first page, going back");
-      setShowNavigation(true);
+      resetBottomNav();
       onBack();
     }
-  }, [currentPage, onBack]);
+  }, [currentPage, onBack, resetBottomNav]);
 
   // Handler to exit tutorial and return to start screen directly
   const handleCloseTutorial = useCallback(() => {
-    console.log("TutorialContainer: Close tutorial requested");
-    
-    // Make sure navigation is visible again
-    setShowNavigation(true);
-    
+    // Reset to automatic route-based navigation
+    resetBottomNav();
+
     try {
       // Use the onComplete prop which should be connected to navigation
-      console.log("TutorialContainer: Calling onComplete to exit tutorial");
       onComplete();
     } catch (error) {
       console.error("Error closing tutorial:", error);
       Alert.alert("Error", "Couldn't close the tutorial properly");
     }
-  }, [onComplete]);
+  }, [onComplete, resetBottomNav]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

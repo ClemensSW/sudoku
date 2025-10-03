@@ -15,6 +15,7 @@ import Animated, {
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
+import { useNavigation } from "@/contexts/navigation";
 import {
   hintCellAlert,
   noErrorsAlert,
@@ -24,7 +25,6 @@ import {
   quitGameAlert,
   gameOverAlert,
 } from "@/components/CustomAlert/AlertHelpers";
-import { useNavigationControl } from "@/app/_layout"; // Import navigation control hook
 
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
@@ -52,7 +52,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { showAlert } = useAlert();
-  const { setHideBottomNav } = useNavigationControl(); // Access navigation control
+  const { hideBottomNav, resetBottomNav } = useNavigation();
 
   // Get game state and actions from custom hook
   const [gameState, gameActions] = useGameState(initialDifficulty);
@@ -70,20 +70,13 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   const headerOpacity = useSharedValue(1);
   const controlsOpacity = useSharedValue(0);
 
-  // Hide navigation when component mounts
+  // Hide bottom navigation when game mounts
   useEffect(() => {
-    console.log("HIDING BOTTOM NAV in GameScreen");
-    // Explicitly hide navigation bar with delay to ensure context is available
-    setTimeout(() => {
-      setHideBottomNav(true);
-    }, 100);
-
-    // Clean up when component unmounts
+    hideBottomNav();
     return () => {
-      console.log("SHOWING BOTTOM NAV in GameScreen cleanup");
-      setHideBottomNav(false);
+      resetBottomNav();
     };
-  }, [setHideBottomNav]); // Added setHideBottomNav as dependency
+  }, [hideBottomNav, resetBottomNav]);
 
   // Initialize animations when the component mounts
   useEffect(() => {
@@ -101,9 +94,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
 
   // Initialize game only once
   useEffect(() => {
-    // Only initialize once
     if (!gameInitialized) {
-      console.log("Starting new game...");
       setTimeout(() => {
         gameActions.startNewGame();
         setGameInitialized(true);

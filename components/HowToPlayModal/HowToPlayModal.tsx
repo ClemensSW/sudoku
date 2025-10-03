@@ -3,7 +3,7 @@ import React, { useEffect, useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useNavigationControl } from "@/app/_layout";
+import { useNavigation } from "@/contexts/navigation";
 import TutorialContainer from "../Tutorial/TutorialContainer";
 import { useRouter } from "expo-router";
 
@@ -18,36 +18,31 @@ const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
-  const { setHideBottomNav } = useNavigationControl();
+  const { hideBottomNav, resetBottomNav } = useNavigation();
   const router = useRouter();
 
   // Navigation-Kontrolle basierend auf Modal-Sichtbarkeit
   useEffect(() => {
     if (visible) {
-      console.log("HowToPlayModal: Visible, hiding bottom nav");
-      setHideBottomNav(true);
+      hideBottomNav();
     }
-    
+
     return () => {
-      console.log("HowToPlayModal: Cleanup, showing bottom nav");
-      setHideBottomNav(false);
+      resetBottomNav();
     };
-  }, [visible, setHideBottomNav]);
+  }, [visible, hideBottomNav, resetBottomNav]);
 
   // Wenn nicht sichtbar, nichts rendern
   if (!visible) return null;
 
   // Zentrale Funktion zum Schließen des Tutorials und Navigieren zum Startbildschirm
   const handleTutorialExit = () => {
-    console.log("HowToPlayModal: Tutorial exit requested");
-    
     try {
       // Zuerst das Modal schließen
       onClose();
-      
+
       // Kurzer Timeout, um sicherzustellen, dass die UI-Updates abgeschlossen sind
       setTimeout(() => {
-        console.log("HowToPlayModal: Navigating to start screen");
         try {
           // Direkt zum Index navigieren (StartScreen)
           router.push('/');

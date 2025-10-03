@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
-import { useNavigationControl } from "@/app/_layout";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { Difficulty } from "@/utils/sudoku";
@@ -39,7 +38,6 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  const { setHideBottomNav } = useNavigationControl();
   const { showAlert } = useAlert();
 
   // States for game initialization
@@ -69,14 +67,6 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
     },
     gameSettings.showMistakes // Pass the showMistakes setting to useDuoGameState
   );
-
-  // Hide navigation
-  useEffect(() => {
-    setHideBottomNav(true);
-    return () => {
-      setHideBottomNav(false);
-    };
-  }, [setHideBottomNav]);
 
   // In DuoGameScreen.tsx, update this useEffect
   useEffect(() => {

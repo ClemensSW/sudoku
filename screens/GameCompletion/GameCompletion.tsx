@@ -260,7 +260,6 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           modalAnimatedStyle,
         ]}
       >
-        <ConfettiEffect isActive={visible} />
 
         {/* Inhalte */}
         <ScrollView
@@ -435,6 +434,9 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           />
         </View>
       </Animated.View>
+
+      {/* Confetti overlay - outside interactive content */}
+      <ConfettiEffect isActive={visible} />
     </View>
   );
 };

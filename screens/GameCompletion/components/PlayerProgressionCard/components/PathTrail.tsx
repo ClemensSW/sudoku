@@ -298,7 +298,7 @@ const PathTrail: React.FC<PathTrailProps> = ({
                   ? "#ffffff"
                   : isDark
                   ? "rgba(255,255,255,0.45)"
-                  : "rgba(0,0,0,0.45)";
+                  : "rgba(255,255,255,0.85)";
                 return (
                   <G key={`wp-${idx}`}>
                     <SvgCircle cx={pt.x} cy={pt.y} r={9.5} fill={outer} />

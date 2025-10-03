@@ -63,7 +63,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
     triggerHaptic("light");
   }, []);
 
-  const unlockedTitles = LEVELS.slice(0, levelInfo.currentLevel + 1).map((l) => l.name);
+  const unlockedTitles = LEVELS.slice(0, levelInfo.currentLevel + 1).map((l) => l.name).reverse();
 
   return (
     <View

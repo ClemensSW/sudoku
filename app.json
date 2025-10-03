@@ -38,8 +38,7 @@
       "versionCode": 1,
       "permissions": ["com.android.vending.BILLING"],
       "intentFilters": [
-        { "action": "MAIN", "category": ["LAUNCHER", "DEFAULT"] },
-        { "action": "VIEW", "data": { "scheme": "mailto" }, "category": ["DEFAULT", "BROWSABLE"] }
+        { "action": "MAIN", "category": ["LAUNCHER", "DEFAULT"] }
       ]
     },
     "web": {

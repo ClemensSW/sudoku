@@ -67,14 +67,8 @@ const calculatePerformance = (
     return 100;
   }
   
-  // For times within 90% of best time
-  if (ratio >= 0.9) {
-    return Math.round(ratio * 100);
-  }
-  
-  // For worse times, use the actual percentage but with a lower bound
-  // This gives a more realistic representation while preventing extremely low values
-  return Math.round(Math.max(20, ratio * 100));
+  // For all other times, use the actual percentage
+  return Math.round(ratio * 100);
 };
 
 const PerformanceCard: React.FC<PerformanceCardProps> = ({

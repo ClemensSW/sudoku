@@ -25,6 +25,7 @@ import {
   quitGameAlert,
   gameOverAlert,
 } from "@/components/CustomAlert/AlertHelpers";
+import { clearPausedGame } from "@/utils/storage";
 
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
@@ -246,6 +247,8 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
       quitGameAlert(async () => {
         // Mark as quit/loss in statistics before navigating
         await gameActions.handleQuitGame();
+        // Clear any paused game state
+        await clearPausedGame();
         setShowSettings(false);
         router.navigate("../");
       })

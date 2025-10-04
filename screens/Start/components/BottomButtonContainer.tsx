@@ -68,20 +68,23 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
       />
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.howToPlayButton}
-          onPress={onHowToPlayPress}
-          activeOpacity={0.7}
-        >
-          <Text
-            style={[
-              styles.howToPlayText,
-              { color: isDark ? "#FFFFFF" : "#1A2C42" },
-            ]}
+        {/* "Wie spielt man?" nur anzeigen wenn kein pausiertes Spiel vorhanden */}
+        {!pausedGame && (
+          <TouchableOpacity
+            style={styles.howToPlayButton}
+            onPress={onHowToPlayPress}
+            activeOpacity={0.7}
           >
-            Wie spielt man?
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.howToPlayText,
+                { color: isDark ? "#FFFFFF" : "#1A2C42" },
+              ]}
+            >
+              Wie spielt man?
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Resume Game Button - nur wenn pausiertes Spiel vorhanden */}
         {pausedGame && onResumeGamePress && (

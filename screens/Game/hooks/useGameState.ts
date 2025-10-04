@@ -227,8 +227,10 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       return;
     }
 
-    // Clear the cell
-    const updatedBoard = clearCellValue(board, row, col);
+    // Clear the cell value and notes
+    let updatedBoard = clearCellValue(board, row, col);
+    // Also clear notes
+    updatedBoard[row][col].notes = [];
     setBoard(updatedBoard);
     triggerHaptic("light");
   };

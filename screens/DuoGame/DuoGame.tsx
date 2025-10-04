@@ -211,7 +211,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
       {/* Hidden timer */}
       <View style={styles.hiddenTimer}>
         <Timer
-          isRunning={gameState.isGameRunning}
+          isRunning={gameState.isGameRunning && !showSettings}
           initialTime={gameState.gameTime}
           onTimeUpdate={gameActions.handleTimeUpdate}
         />

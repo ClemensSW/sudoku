@@ -357,7 +357,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           <View style={styles.gameContainer}>
             {/* Game Status Bar */}
             <GameStatusBar
-              isRunning={gameState.isGameRunning && !gameState.isGameComplete}
+              isRunning={gameState.isGameRunning && !gameState.isGameComplete && !showSettings}
               initialTime={gameState.gameTime}
               onTimeUpdate={gameActions.handleTimeUpdate}
               errorsRemaining={gameState.errorsRemaining}

@@ -115,8 +115,12 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
 
   // Add quit from settings handler
   const handleQuitFromSettings = () => {
-    setShowSettings(false);
-    router.replace("/duo");
+    showAlert(
+      duoQuitGameAlert(() => {
+        setShowSettings(false);
+        router.replace("/duo");
+      })
+    );
   };
 
   // Handle settings changes

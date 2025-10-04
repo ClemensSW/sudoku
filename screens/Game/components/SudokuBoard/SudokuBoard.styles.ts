@@ -55,20 +55,20 @@ export default StyleSheet.create({
   // Stil für Gridlinien
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Subtilere Linien
+    backgroundColor: "rgba(255, 255, 255, 0.35)", // Kräftigere Linien für bessere Sichtbarkeit der 3x3-Boxen
     zIndex: 5,
   },
 
   // Horizontale Linien zwischen den 3x3-Blöcken
   horizontalGridLine: {
     width: GRID_SIZE,
-    height: 1.5, // Dünner
+    height: 2.5, // Kräftiger für bessere Erkennbarkeit der 3x3-Boxen
     left: 0,
   },
 
   // Vertikale Linien zwischen den 3x3-Blöcken
   verticalGridLine: {
-    width: 1.5, // Dünner
+    width: 2.5, // Kräftiger für bessere Erkennbarkeit der 3x3-Boxen
     height: GRID_SIZE,
     top: 0,
   },

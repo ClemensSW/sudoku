@@ -283,7 +283,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             <RNText
               style={[styles.sectionTitle, { color: colors.textPrimary }]}
             >
-              Aktionen
+              {isDuoMode || !onPauseGame ? "Aktion" : "Aktionen"}
             </RNText>
 
             <ActionsSection

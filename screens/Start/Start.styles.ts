@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 300,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 20,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

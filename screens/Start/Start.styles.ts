@@ -91,4 +91,20 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 0.2
   },
+  resumeButton: {
+    width: "100%",
+    maxWidth: 300,
+    height: 56,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    backgroundColor: 'transparent',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resumeButtonText: {
+    fontSize: 17,
+    fontWeight: "600",
+    letterSpacing: 0.3
+  },
 });

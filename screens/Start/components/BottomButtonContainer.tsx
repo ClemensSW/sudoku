@@ -85,26 +85,39 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
 
         {/* Resume Game Button - nur wenn pausiertes Spiel vorhanden */}
         {pausedGame && onResumeGamePress && (
-          <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle, { marginBottom: 12 }]}>
+          <Animated.View style={[styles.buttonWrapper, { marginBottom: 14 }]}>
             <TouchableOpacity
-              style={[styles.startButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.resumeButton,
+                {
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
+                }
+              ]}
               onPress={onResumeGamePress}
-              activeOpacity={0.9}
-              onPressIn={onButtonPressIn}
-              onPressOut={onButtonPressOut}
+              activeOpacity={0.7}
             >
               <View style={{ alignItems: 'center', width: '100%' }}>
-                <Text style={styles.startButtonText}>Spiel fortsetzen</Text>
+                <Text style={[
+                  styles.resumeButtonText,
+                  { color: isDark ? '#E2E8F0' : '#334155' }
+                ]}>
+                  Spiel fortsetzen
+                </Text>
                 <View style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   marginTop: 4,
-                  opacity: 0.9
+                  opacity: 0.7
                 }}>
-                  <Feather name="pause-circle" size={14} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Feather
+                    name="pause-circle"
+                    size={13}
+                    color={isDark ? '#94A3B8' : '#64748B'}
+                    style={{ marginRight: 6 }}
+                  />
                   <Text style={{
                     fontSize: 13,
-                    color: '#FFFFFF',
+                    color: isDark ? '#94A3B8' : '#64748B',
                     fontWeight: '500',
                     marginRight: 8
                   }}>
@@ -112,7 +125,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
                   </Text>
                   <Text style={{
                     fontSize: 13,
-                    color: '#FFFFFF',
+                    color: isDark ? '#94A3B8' : '#64748B',
                     fontWeight: '500'
                   }}>
                     {getDifficultyLabel(pausedGame.difficulty)}

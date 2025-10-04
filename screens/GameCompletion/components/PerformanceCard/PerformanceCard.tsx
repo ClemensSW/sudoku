@@ -378,4 +378,4 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
   );
 };
 
-export default PerformanceCard;
+export default React.memo(PerformanceCard);

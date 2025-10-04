@@ -266,8 +266,16 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           style={{ width: "100%", flex: 1 }}
           contentContainerStyle={[styles.scrollContainer, { paddingBottom: 240 }]}
           showsVerticalScrollIndicator
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={3}
+          initialNumToRender={3}
+          windowSize={5}
         >
-          <Animated.View style={contentAnimatedStyle}>
+          <Animated.View
+            style={contentAnimatedStyle}
+            shouldRasterizeIOS={true}
+            renderToHardwareTextureAndroid={true}
+          >
             {/* Hero Header - now inside ScrollView */}
             <View style={styles.heroHeaderInScroll}>
               <LinearGradient

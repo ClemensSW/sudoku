@@ -72,7 +72,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
     },
     {
       icon: "star",
-      title: "Favoriten auf der Startseite",
+      title: "Favoriten",
       description: "Alle als Favorit markierten Bilder werden dir direkt auf der Startseite angezeigt.",
     },
     {
@@ -241,7 +241,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
     });
   };
 
-  // Render a single tip item
+  // Render a single tip item - vertikal angeordnet
   const renderTipItem = (tip: TipItem, index: number) => (
     <View
       key={`tip-${index}`}
@@ -257,16 +257,14 @@ const PauseModal: React.FC<PauseModalProps> = ({
         styles.tipIconContainer,
         { backgroundColor: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)" }
       ]}>
-        <Feather name={tip.icon as any} size={20} color={colors.primary} />
+        <Feather name={tip.icon as any} size={28} color={colors.primary} />
       </View>
-      <View style={styles.tipContent}>
-        <Text style={[styles.tipTitle, { color: colors.textPrimary }]}>
-          {tip.title}
-        </Text>
-        <Text style={[styles.tipDescription, { color: colors.textSecondary }]}>
-          {tip.description}
-        </Text>
-      </View>
+      <Text style={[styles.tipTitle, { color: colors.textPrimary }]}>
+        {tip.title}
+      </Text>
+      <Text style={[styles.tipDescription, { color: colors.textSecondary }]}>
+        {tip.description}
+      </Text>
     </View>
   );
 
@@ -290,16 +288,20 @@ const PauseModal: React.FC<PauseModalProps> = ({
           />
         ) : null}
 
-        {/* Dark overlay */}
+        {/* Dark overlay - klickbar zum Schließen */}
         <Animated.View style={[styles.overlay, overlayStyle]}>
-          <View style={[
-            styles.darkOverlay,
-            {
-              backgroundColor: Platform.OS === "ios"
-                ? (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.2)")
-                : (isDarkMode ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.8)")
-            }
-          ]} />
+          <TouchableOpacity
+            style={[
+              styles.darkOverlay,
+              {
+                backgroundColor: Platform.OS === "ios"
+                  ? (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.2)")
+                  : (isDarkMode ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.8)")
+              }
+            ]}
+            activeOpacity={1}
+            onPress={onResume}
+          />
 
           {/* Modal content */}
           <Animated.View

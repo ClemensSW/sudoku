@@ -85,11 +85,11 @@ export default StyleSheet.create({
   },
 
   tipsContainer: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
 
   tipsSection: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
 
   sectionTitle: {
@@ -100,39 +100,37 @@ export default StyleSheet.create({
   },
 
   tipItem: {
-    flexDirection: "row",
-    padding: spacing.md,
-    borderRadius: 12,
+    flexDirection: "column",
+    alignItems: "center",
+    padding: spacing.lg,
+    borderRadius: 16,
     borderWidth: 1,
     marginBottom: spacing.sm,
   },
 
   tipIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: spacing.md,
-  },
-
-  tipContent: {
-    flex: 1,
-    justifyContent: "center",
+    marginBottom: spacing.md,
   },
 
   tipTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    marginBottom: 4,
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: spacing.sm,
+    textAlign: "center",
   },
 
   tipDescription: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: "center",
   },
 
   buttonContainer: {
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
   },
 });

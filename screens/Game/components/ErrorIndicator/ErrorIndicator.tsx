@@ -28,6 +28,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
 
   // Animation für das Fehlerindikator-Pulsieren
   const scale = useSharedValue(1);
+  const bgOpacity = useSharedValue(0);
 
   // Berechne Animation basierend auf verbleibenden Fehlern
   React.useEffect(() => {
@@ -44,6 +45,12 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }],
+    };
+  });
+
+  const bgAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: bgOpacity.value,
     };
   });
 
@@ -67,6 +74,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
                   ? "rgba(255,255,255,0.1)"
                   : "rgba(0,0,0,0.03)",
               },
+              bgAnimatedStyle,
             ]}
           />
           <View style={styles.heartsRow}>
@@ -122,6 +130,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
                 ? "rgba(255,255,255,0.1)"
                 : "rgba(0,0,0,0.03)",
             },
+            bgAnimatedStyle,
           ]}
         />
         <View style={styles.heartsRow}>{renderHearts()}</View>

@@ -58,24 +58,36 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
   if (!showErrors) {
     return (
       <Animated.View style={styles.container} entering={FadeIn.duration(500)}>
-        <View style={styles.heartsRow}>
-          <View style={styles.heartContainer}>
-            <Feather name="heart" size={20} color={colors.primary} />
-          </View>
-          <Text
+        <View style={styles.heartsContainerBox}>
+          <Animated.View
             style={[
-              styles.infinityText,
-              { color: colors.textSecondary, marginLeft: 4 },
+              styles.containerBackground,
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(0,0,0,0.03)",
+              },
             ]}
-          >
-            ∞
-          </Text>
+          />
+          <View style={styles.heartsRow}>
+            <View style={styles.heartContainer}>
+              <Feather name="heart" size={18} color={colors.primary} />
+            </View>
+            <Text
+              style={[
+                styles.infinityText,
+                { color: colors.textSecondary, marginLeft: 4 },
+              ]}
+            >
+              ∞
+            </Text>
+          </View>
         </View>
       </Animated.View>
     );
   }
 
-  // Renderbereich für Fehlerindikatoren (Herzen) - original Verhalten
+  // Renderbereich für Fehlerindikatoren (Herzen) - mit Container wie Timer
   const renderHearts = () => {
     return Array.from({ length: maxErrors }).map((_, index) => {
       const isFilled = index < errorsRemaining;
@@ -90,7 +102,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
         >
           <Feather
             name={isFilled ? "heart" : "heart"}
-            size={20}
+            size={18}
             color={isFilled ? getColor() : colors.buttonDisabled}
             style={!isFilled && { opacity: 0.4 }}
           />
@@ -101,7 +113,19 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
 
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(500)}>
-      <View style={styles.heartsRow}>{renderHearts()}</View>
+      <View style={styles.heartsContainerBox}>
+        <Animated.View
+          style={[
+            styles.containerBackground,
+            {
+              backgroundColor: theme.isDark
+                ? "rgba(255,255,255,0.1)"
+                : "rgba(0,0,0,0.03)",
+            },
+          ]}
+        />
+        <View style={styles.heartsRow}>{renderHearts()}</View>
+      </View>
     </Animated.View>
   );
 };

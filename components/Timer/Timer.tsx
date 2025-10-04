@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -15,12 +15,16 @@ interface TimerProps {
   isRunning: boolean;
   initialTime?: number;
   onTimeUpdate?: (time: number) => void;
+  onPausePress?: () => void;
+  disabled?: boolean;
 }
 
 const Timer: React.FC<TimerProps> = ({
   isRunning,
   initialTime = 0,
   onTimeUpdate,
+  onPausePress,
+  disabled = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -104,11 +108,19 @@ const Timer: React.FC<TimerProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.timerRow}>
+      <TouchableOpacity
+        onPress={onPausePress}
+        disabled={disabled || !onPausePress}
+        style={styles.timerRow}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel="Spiel pausieren"
+        accessibilityState={{ disabled: disabled || !onPausePress }}
+      >
         <Feather
-          name="clock"
+          name="pause"
           size={18}
-          color={colors.textPrimary}
+          color={disabled ? colors.buttonDisabled : colors.textPrimary}
           style={styles.timerIcon}
         />
 
@@ -127,13 +139,13 @@ const Timer: React.FC<TimerProps> = ({
         <Animated.Text
           style={[
             styles.timerText,
-            { color: colors.textPrimary },
+            { color: disabled ? colors.textSecondary : colors.textPrimary },
             timerAnimatedStyle,
           ]}
         >
           {formatTime(time)}
         </Animated.Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

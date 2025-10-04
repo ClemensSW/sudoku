@@ -12,6 +12,8 @@ interface GameStatusBarProps {
   errorsRemaining: number;
   maxErrors: number;
   showErrors?: boolean; // Neue Prop für Fehleranzeige
+  onPausePress?: () => void;
+  pauseDisabled?: boolean;
 }
 
 const GameStatusBar: React.FC<GameStatusBarProps> = ({
@@ -21,6 +23,8 @@ const GameStatusBar: React.FC<GameStatusBarProps> = ({
   errorsRemaining,
   maxErrors,
   showErrors = true, // Standardwert true
+  onPausePress,
+  pauseDisabled = false,
 }) => {
   return (
     <Animated.View
@@ -38,6 +42,8 @@ const GameStatusBar: React.FC<GameStatusBarProps> = ({
           isRunning={isRunning}
           initialTime={initialTime}
           onTimeUpdate={onTimeUpdate}
+          onPausePress={onPausePress}
+          disabled={pauseDisabled}
         />
       </View>
     </Animated.View>

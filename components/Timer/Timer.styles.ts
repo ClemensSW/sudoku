@@ -15,6 +15,8 @@ export default StyleSheet.create({
     borderRadius: 20,
     position: "relative",
     overflow: "hidden",
+    minWidth: 44,
+    minHeight: 44,
   },
 
   timerBackground: {

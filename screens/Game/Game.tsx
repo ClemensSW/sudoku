@@ -40,6 +40,7 @@ import { useGameSettings } from "./hooks/useGameSettings";
 import GameBoard from "./components/GameBoard/GameBoard";
 import GameControls from "./components/GameControls/GameControls";
 import GameSettingsPanel from "./components/GameSettingsPanel/GameSettingsPanel";
+import PauseModal from "./components/PauseModal/PauseModal";
 
 import styles from "./Game.styles";
 
@@ -67,6 +68,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [gameInitialized, setGameInitialized] = useState(false); // New state to track initialization
+  const [showPauseModal, setShowPauseModal] = useState(false);
 
   // Animation values
   const headerOpacity = useSharedValue(1);
@@ -116,6 +118,12 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
   // Handle back button
   useEffect(() => {
     const backAction = async () => {
+      // If pause modal is open, close it
+      if (showPauseModal) {
+        handlePauseModalResume();
+        return true;
+      }
+
       if (gameState.isGameRunning && !gameState.isGameComplete) {
         // Directly call pauseGame and navigate
         await gameActions.pauseGame();
@@ -131,7 +139,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     );
 
     return () => backHandler.remove();
-  }, [gameState.isGameRunning, gameState.isGameComplete, gameActions, router]);
+  }, [gameState.isGameRunning, gameState.isGameComplete, gameActions, router, showPauseModal]);
 
   // Function to handle complete game restart - for both game over and game completion
   const handleCompleteGameRestart = () => {
@@ -265,6 +273,16 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     router.navigate("../");
   };
 
+  // Handle pause button press
+  const handlePausePress = () => {
+    setShowPauseModal(true);
+  };
+
+  // Handle pause modal resume
+  const handlePauseModalResume = () => {
+    setShowPauseModal(false);
+  };
+
   // Handlers for completion modal
   const handleCompletionModalClose = () => {
     setShowCompletionModal(false);
@@ -357,19 +375,21 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           <View style={styles.gameContainer}>
             {/* Game Status Bar */}
             <GameStatusBar
-              isRunning={gameState.isGameRunning && !gameState.isGameComplete && !showSettings}
+              isRunning={gameState.isGameRunning && !gameState.isGameComplete && !showSettings && !showPauseModal}
               initialTime={gameState.gameTime}
               onTimeUpdate={gameActions.handleTimeUpdate}
               errorsRemaining={gameState.errorsRemaining}
               maxErrors={3}
               showErrors={gameSettings.showMistakes}
+              onPausePress={handlePausePress}
+              pauseDisabled={gameState.isGameComplete}
             />
 
             {/* Game Board */}
             <GameBoard
               board={gameState.board}
               selectedCell={gameState.selectedCell}
-              onCellPress={gameActions.handleCellPress}
+              onCellPress={showPauseModal ? undefined : gameActions.handleCellPress}
               isLoading={gameState.isLoading}
               highlightRelated={gameSettings.highlightRelatedCells}
               highlightSameValues={gameSettings.highlightSameValues}
@@ -415,6 +435,16 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
         onPauseGame={handlePauseFromSettings}
         onAutoNotes={handleAutoNotesPress}
         onSettingsChanged={gameSettings.updateSetting}
+      />
+
+      {/* Pause Modal */}
+      <PauseModal
+        visible={showPauseModal}
+        onResume={handlePauseModalResume}
+        gameTime={gameState.gameTime}
+        errorsRemaining={gameState.errorsRemaining}
+        maxErrors={3}
+        difficulty={gameState.difficulty}
       />
     </View>
   );

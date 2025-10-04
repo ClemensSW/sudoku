@@ -5,7 +5,27 @@ export default StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: spacing.xs,
+  },
+
+  heartsContainerBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: 20,
+    minWidth: 44,
+    minHeight: 44,
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  containerBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
   },
 
   heartsRow: {
@@ -15,12 +35,12 @@ export default StyleSheet.create({
   },
 
   heartContainer: {
-    marginHorizontal: 3,
+    marginHorizontal: 2,
   },
 
   // Stil für das Unendlichkeitssymbol
   infinityText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     marginTop: -3, // Leicht angepasst für bessere vertikale Ausrichtung
   },

@@ -122,6 +122,7 @@ export default StyleSheet.create({
   cardsContainer: {
     paddingHorizontal: spacing.lg, // 24px horizontal padding for cards
     paddingTop: spacing.xl, // Spacing between header and first card
+    paddingBottom: spacing.md, // Prevents shadow clipping on last card
   },
 
   // Bottom fixed button container

@@ -184,7 +184,6 @@ const StreakCard: React.FC<StreakCardProps> = ({
         styles.container,
         {
           backgroundColor: colors.surface,
-          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
         },
         containerAnimatedStyle,
         style // Hier wenden wir den zusätzlichen Style an

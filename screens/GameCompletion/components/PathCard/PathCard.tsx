@@ -94,7 +94,6 @@ const PathCard: React.FC<PathCardProps> = ({
         styles.card,
         {
           backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
-          borderColor: theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
           elevation: theme.isDark ? 0 : 2,
         },
         cardAnimatedStyle,

@@ -51,7 +51,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
           styles.container,
           {
             backgroundColor: colors.surface,
-            elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
           },
         ]}
         entering={FadeIn.duration(500)}
@@ -199,7 +198,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         styles.container,
         {
           backgroundColor: colors.surface,
-          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
         },
         containerAnimatedStyle,
       ]}

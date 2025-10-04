@@ -26,8 +26,8 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
 
   // Use different color for button in Duo mode
   const buttonColor = isDuoMode ? "#4A7D78" : colors.error;
-  // Use blue color for pause button - different for light and dark mode
-  const pauseColor = theme.isDark ? "#5B9FED" : "#2563EB";
+  // Use primary color from theme for pause button
+  const pauseColor = colors.primary;
 
   return (
     <View

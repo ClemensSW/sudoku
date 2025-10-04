@@ -39,7 +39,7 @@ export default StyleSheet.create({
   heroGradient: {
     width: "100%",
     paddingTop: spacing.xl * 2.5, // Extra top padding for status bar area
-    paddingBottom: spacing.xl * 1.5,
+    paddingBottom: spacing.xl * 2.5,
     paddingHorizontal: spacing.lg,
     alignItems: "center",
     borderRadius: 0, // No border radius - full width
@@ -50,6 +50,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.lg,
+    marginVertical: spacing.xxxl,
   },
 
   iconGlow: {
@@ -73,6 +74,7 @@ export default StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.5,
     textAlign: "center",
+    marginTop: spacing.md,
     marginBottom: spacing.xs,
   },
 

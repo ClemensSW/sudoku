@@ -318,6 +318,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     // Update stats
     await updateStatsAfterGame(false, difficulty, gameTime, autoNotesUsed);
 
+    // Clear any paused game state when game is over
+    await clearPausedGame();
+
     // Reload stats
     const updatedStats = await loadStats();
     setGameStats(updatedStats);
@@ -328,7 +331,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   // Game completion handler
   const handleGameComplete = async () => {
     if (isGameComplete) return;
-    
+
     setIsGameComplete(true);
     setIsGameLost(false);
     setIsUserQuit(false);
@@ -336,6 +339,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
     // Update stats
     await updateStatsAfterGame(true, difficulty, gameTime, autoNotesUsed);
+
+    // Clear any paused game state when game is completed
+    await clearPausedGame();
 
     // Reload stats
     const updatedStats = await loadStats();
@@ -347,19 +353,22 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   // Handle game quit - counts as a loss for statistics but with user quit flag
   const handleQuitGame = async () => {
     if (isGameComplete) return;
-    
+
     setIsUserQuit(true); // Mark that this was a user-initiated quit
     setIsGameComplete(true);
     setIsGameLost(true);
     setIsGameRunning(false);
-    
+
     // Update stats as a loss
     await updateStatsAfterGame(false, difficulty, gameTime, autoNotesUsed);
-    
+
+    // Clear any paused game state when user quits
+    await clearPausedGame();
+
     // Reload stats
     const updatedStats = await loadStats();
     setGameStats(updatedStats);
-    
+
     triggerHaptic("error");
   };
 

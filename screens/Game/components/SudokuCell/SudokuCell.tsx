@@ -65,6 +65,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
   // Berechne Hintergrund basierend auf Zustand - mit Theme-Farben
   const getBackgroundStyle = () => {
+    // Priorität: Fehler > Hint > Success > Selected > Related > Schachbrett
     if (showErrors && cell.highlight === "error") {
       return { backgroundColor: colors.cellErrorBackground };
     } else if (cell.highlight === "hint") {
@@ -75,6 +76,19 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       return { backgroundColor: colors.cellSelectedBackground };
     } else if (isRelated) {
       return { backgroundColor: colors.cellRelatedBackground };
+    } else {
+      // Schachbrettmuster für 3×3-Boxen
+      const boxRow = Math.floor(row / 3);
+      const boxCol = Math.floor(col / 3);
+      const isAlternateBox = (boxRow + boxCol) % 2 === 1;
+
+      if (isAlternateBox) {
+        // Unterschiedliche Farbe für Light und Dark Mode
+        const checkerboardColor = theme.isDark
+          ? 'rgba(255, 255, 255, 0.03)'
+          : 'rgba(0, 0, 0, 0.03)';
+        return { backgroundColor: checkerboardColor };
+      }
     }
     return null;
   };

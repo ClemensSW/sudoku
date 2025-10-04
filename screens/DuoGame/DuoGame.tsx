@@ -1,6 +1,6 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -89,6 +89,24 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
       return () => clearTimeout(timer);
     }
   }, [gameInitialized]); // Only depend on gameInitialized
+
+  // Handle Android back button
+  useEffect(() => {
+    const backAction = () => {
+      if (gameState.isGameRunning && !gameState.isGameComplete) {
+        handleBack();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [gameState.isGameRunning, gameState.isGameComplete]);
 
   // Simple back button handler with confirmation
   const handleBack = () => {

@@ -14,6 +14,7 @@ const KEYS = {
   GAME_STATE: "@sudoku/game_state",
   STATISTICS: "@sudoku/statistics",
   SETTINGS: "@sudoku/settings",
+  PAUSED_GAME: "@sudoku/paused_game",
 };
 
 // Spielzustand Typ
@@ -24,6 +25,18 @@ export type GameState = {
   timeElapsed: number;
   lastPlayed: string;
   completed: boolean;
+};
+
+// Pausierter Spielstand Typ (für Einzelspieler-Modus)
+export type PausedGameState = {
+  board: any[]; // SudokuBoard type from sudoku utils
+  solution: number[][];
+  difficulty: Difficulty;
+  gameTime: number;
+  hintsRemaining: number;
+  errorsRemaining: number;
+  autoNotesUsed: boolean;
+  pausedAt: string; // ISO timestamp
 };
 
 // Spielstatistiken Typ - mit totalXP, reachedMilestones und completedByDifficulty ergänzt
@@ -374,5 +387,36 @@ export const getProgressValue = (stats: GameStats): number => {
     return Math.min(100, ((stats.completedMedium || 0) / 3) * 100); // Fortschritt zu Schwer
   } else {
     return Math.min(100, ((stats.completedEasy || 0) / 1) * 100); // Fortschritt zu Medium
+  }
+};
+
+// ===== Pausiertes Spiel Management =====
+
+// Speichere pausiertes Spiel
+export const savePausedGame = async (pausedGame: PausedGameState): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(KEYS.PAUSED_GAME, JSON.stringify(pausedGame));
+  } catch (error) {
+    console.error("Error saving paused game:", error);
+  }
+};
+
+// Lade pausiertes Spiel
+export const loadPausedGame = async (): Promise<PausedGameState | null> => {
+  try {
+    const savedGame = await AsyncStorage.getItem(KEYS.PAUSED_GAME);
+    return savedGame ? JSON.parse(savedGame) : null;
+  } catch (error) {
+    console.error("Error loading paused game:", error);
+    return null;
+  }
+};
+
+// Lösche pausiertes Spiel
+export const clearPausedGame = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(KEYS.PAUSED_GAME);
+  } catch (error) {
+    console.error("Error clearing paused game:", error);
   }
 };

@@ -44,9 +44,10 @@ import styles from "./Game.styles";
 
 interface GameScreenProps {
   initialDifficulty?: Difficulty;
+  shouldResume?: boolean;
 }
 
-const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
+const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = false }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
@@ -92,15 +93,24 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }, 800);
   }, []);
 
-  // Initialize game only once
+  // Initialize game only once - check for resume parameter
   useEffect(() => {
     if (!gameInitialized) {
-      setTimeout(() => {
-        gameActions.startNewGame();
+      setTimeout(async () => {
+        if (shouldResume) {
+          const resumed = await gameActions.resumeGame();
+          if (!resumed) {
+            // If resume failed, start new game
+            gameActions.startNewGame();
+          }
+        } else {
+          gameActions.startNewGame();
+        }
+
         setGameInitialized(true);
       }, 300);
     }
-  }, [gameInitialized, gameActions]);
+  }, [gameInitialized, gameActions, shouldResume]);
 
   // Handle back button
   useEffect(() => {
@@ -209,16 +219,12 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
     }
   };
 
-  // Handle back navigation with quit tracking
-  const handleBackPress = () => {
+  // Handle back navigation - now pauses automatically without alert
+  const handleBackPress = async () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
-      showAlert(
-        quitGameAlert(async () => {
-          // Mark as quit/loss in statistics before navigating
-          await gameActions.handleQuitGame();
-          router.navigate("../");
-        }, undefined)
-      );
+      // Pause the game automatically
+      await gameActions.pauseGame();
+      router.navigate("../");
     } else {
       router.navigate("../");
     }
@@ -235,9 +241,21 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
   };
 
   // Handle quit from settings with quit tracking
-  const handleQuitFromSettings = async () => {
-    // Mark as quit/loss in statistics before navigating
-    await gameActions.handleQuitGame();
+  const handleQuitFromSettings = () => {
+    showAlert(
+      quitGameAlert(async () => {
+        // Mark as quit/loss in statistics before navigating
+        await gameActions.handleQuitGame();
+        setShowSettings(false);
+        router.navigate("../");
+      })
+    );
+  };
+
+  // Handle pause from settings
+  const handlePauseFromSettings = async () => {
+    // Pause the game and navigate back
+    await gameActions.pauseGame();
     setShowSettings(false);
     router.navigate("../");
   };
@@ -281,7 +299,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
                 marginBottom: 16,
               }}
             >
-              Sudoku generieren...
+              {shouldResume ? "Sudoku laden..." : "Sudoku generieren..."}
             </Text>
             <Animated.View entering={FadeIn.delay(300).duration(500)}>
               <Feather name="loader" size={32} color={colors.primary} />
@@ -389,6 +407,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty }) => {
         visible={showSettings}
         onClose={handleSettingsClose}
         onQuitGame={handleQuitFromSettings}
+        onPauseGame={handlePauseFromSettings}
         onAutoNotes={handleAutoNotesPress}
         onSettingsChanged={gameSettings.updateSetting}
       />

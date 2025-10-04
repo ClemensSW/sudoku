@@ -15,7 +15,7 @@ import {
   removeNoteFromRelatedCells,
   boardToNumberGrid,
 } from "@/utils/sudoku";
-import { updateStatsAfterGame, loadStats, GameStats } from "@/utils/storage";
+import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
 
 // Constants for game
@@ -60,6 +60,8 @@ interface GameStateActions {
   handleError: (showMistakes: boolean) => void;
   updateUsedNumbers: () => void;
   handleQuitGame: () => Promise<void>;
+  pauseGame: () => Promise<void>;
+  resumeGame: () => Promise<boolean>;
 }
 
 export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameStateActions] => {
@@ -108,8 +110,11 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   }, [board]);
 
   // Start a new game
-  const startNewGame = useCallback(() => {
+  const startNewGame = useCallback(async () => {
     setIsLoading(true);
+
+    // Clear any paused game when starting new game
+    await clearPausedGame();
 
     // Generate a new game with current difficulty
     setTimeout(() => {
@@ -383,6 +388,60 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     setUsedNumbers(used);
   };
 
+  // Pause the game and save state
+  const pauseGame = async () => {
+    if (!isGameRunning || isGameComplete) return;
+
+    const pausedState: PausedGameState = {
+      board,
+      solution,
+      difficulty,
+      gameTime,
+      hintsRemaining,
+      errorsRemaining,
+      autoNotesUsed,
+      pausedAt: new Date().toISOString(),
+    };
+
+    await savePausedGame(pausedState);
+    triggerHaptic("light");
+  };
+
+  // Resume a paused game
+  const resumeGame = async (): Promise<boolean> => {
+    try {
+      const pausedState = await loadPausedGame();
+
+      if (!pausedState) {
+        return false;
+      }
+
+      // Restore game state
+      setBoard(pausedState.board);
+      setSolution(pausedState.solution);
+      setDifficulty(pausedState.difficulty);
+      setGameTime(pausedState.gameTime);
+      setHintsRemaining(pausedState.hintsRemaining);
+      setErrorsRemaining(pausedState.errorsRemaining);
+      setAutoNotesUsed(pausedState.autoNotesUsed);
+
+      // Reset other states
+      setSelectedCell(null);
+      setIsGameComplete(false);
+      setIsGameLost(false);
+      setIsUserQuit(false);
+      setIsGameRunning(true);
+      setNoteModeActive(false);
+      setIsLoading(false);
+
+      triggerHaptic("success");
+      return true;
+    } catch (error) {
+      console.error("Error resuming game:", error);
+      return false;
+    }
+  };
+
   return [
     {
       board,
@@ -415,6 +474,8 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       handleError,
       updateUsedNumbers,
       handleQuitGame,
+      pauseGame,
+      resumeGame,
     },
   ];
 };

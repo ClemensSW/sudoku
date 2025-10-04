@@ -189,27 +189,33 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
     transform: [{ scale: heartScale.value }],
   }));
 
-  const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: headerOpacity.value,
-    transform: [
-      {
-        translateY: withTiming(headerOpacity.value === 0 ? -50 : 0, {
-          duration: 300,
-        }),
-      },
-    ],
-  }));
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const isHidden = headerOpacity.value === 0;
+    return {
+      opacity: headerOpacity.value,
+      transform: [
+        {
+          translateY: withTiming(isHidden ? -50 : 0, {
+            duration: 300,
+          }),
+        },
+      ],
+    };
+  });
 
-  const footerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: footerOpacity.value,
-    transform: [
-      {
-        translateY: withTiming(footerOpacity.value === 0 ? 50 : 0, {
-          duration: 300,
-        }),
-      },
-    ],
-  }));
+  const footerAnimatedStyle = useAnimatedStyle(() => {
+    const isHidden = footerOpacity.value === 0;
+    return {
+      opacity: footerOpacity.value,
+      transform: [
+        {
+          translateY: withTiming(isHidden ? 50 : 0, {
+            duration: 300,
+          }),
+        },
+      ],
+    };
+  });
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: imageScale.value }],

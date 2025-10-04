@@ -8,6 +8,7 @@ interface GameSettingsPanelProps {
   visible: boolean;
   onClose: () => void;
   onQuitGame: () => void;
+  onPauseGame: () => void;
   onAutoNotes: () => void;
   onSettingsChanged: (key: keyof GameSettings, value: boolean | string) => void;
 }
@@ -16,6 +17,7 @@ const GameSettingsPanel: React.FC<GameSettingsPanelProps> = ({
   visible,
   onClose,
   onQuitGame,
+  onPauseGame,
   onAutoNotes,
   onSettingsChanged,
 }) => {
@@ -26,6 +28,7 @@ const GameSettingsPanel: React.FC<GameSettingsPanelProps> = ({
       <SettingsScreen
         onBackToGame={onClose}
         onQuitGame={onQuitGame}
+        onPauseGame={onPauseGame}
         onAutoNotes={onAutoNotes}
         onSettingsChanged={onSettingsChanged}
         fromGame={true}

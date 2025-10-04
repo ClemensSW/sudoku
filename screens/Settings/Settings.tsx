@@ -43,6 +43,7 @@ import styles from "./Settings.styles";
 interface SettingsScreenProps {
   onBackToGame?: () => void;
   onQuitGame?: () => void;
+  onPauseGame?: () => void;
   onAutoNotes?: () => void;
   onSettingsChanged?: (
     key: keyof GameSettingsType,
@@ -55,6 +56,7 @@ interface SettingsScreenProps {
 const Settings: React.FC<SettingsScreenProps> = ({
   onBackToGame,
   onQuitGame,
+  onPauseGame,
   onAutoNotes,
   onSettingsChanged,
   fromGame = false,
@@ -281,12 +283,13 @@ const Settings: React.FC<SettingsScreenProps> = ({
             <RNText
               style={[styles.sectionTitle, { color: colors.textPrimary }]}
             >
-              Aktion
+              Aktionen
             </RNText>
 
             <ActionsSection
               showGameFeatures={showGameFeatures}
               onQuitGame={onQuitGame}
+              onPauseGame={onPauseGame}
               isDuoMode={isDuoMode} // Pass isDuoMode flag to ActionsSection
             />
           </Animated.View>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -10,6 +10,7 @@ import { Difficulty } from "@/utils/sudoku";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import { triggerHaptic } from "@/utils/haptics";
+import { loadPausedGame, PausedGameState } from "@/utils/storage";
 
 import { useBackgroundRotation } from "./hooks/useBackgroundRotation";
 import { useButtonAnimation } from "./hooks/useButtonAnimation";
@@ -32,8 +33,29 @@ const Start: React.FC = () => {
   // State for modals and game options
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  const [pausedGame, setPausedGame] = useState<PausedGameState | null>(null);
 
   const backgroundHeight = getBackgroundHeight();
+
+  // Check for paused game on mount
+  useEffect(() => {
+    const checkPausedGame = async () => {
+      const paused = await loadPausedGame();
+      setPausedGame(paused);
+    };
+    checkPausedGame();
+  }, []);
+
+  // Refresh paused game state when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const checkPausedGame = async () => {
+        const paused = await loadPausedGame();
+        setPausedGame(paused);
+      };
+      checkPausedGame();
+    }, [])
+  );
 
   // Game action handlers
   const handleStartGame = () => {
@@ -50,6 +72,14 @@ const Start: React.FC = () => {
     setShowDifficultyModal(false);
     hideBottomNav();
     router.push({ pathname: "/(game)", params: { difficulty: selectedDifficulty } });
+  };
+
+  const handleResumeGame = () => {
+    triggerHaptic("medium");
+    hideBottomNav();
+    // Clear paused game from state after resume
+    setPausedGame(null);
+    router.push({ pathname: "/(game)", params: { resume: "true" } });
   };
 
   const handleHowToPlayPress = () => {
@@ -82,6 +112,8 @@ const Start: React.FC = () => {
         buttonAnimatedStyle={buttonAnimatedStyle}
         onHowToPlayPress={handleHowToPlayPress}
         onStartGamePress={handleStartGame}
+        onResumeGamePress={pausedGame ? handleResumeGame : undefined}
+        pausedGame={pausedGame}
         onButtonPressIn={handleButtonPressIn}
         onButtonPressOut={handleButtonPressOut}
       />

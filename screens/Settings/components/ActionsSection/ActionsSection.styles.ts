@@ -31,4 +31,7 @@ export default StyleSheet.create({
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },
+  separator: {
+    height: 1,
+  },
 });

@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
 import { Theme } from "@/utils/theme/ThemeProvider";
+import { PausedGameState } from "@/utils/storage";
 import { styles } from "../Start.styles";
 
 interface BottomButtonContainerProps {
@@ -11,6 +13,8 @@ interface BottomButtonContainerProps {
   buttonAnimatedStyle: any;
   onHowToPlayPress: () => void;
   onStartGamePress: () => void;
+  onResumeGamePress?: () => void;
+  pausedGame?: PausedGameState | null;
   onButtonPressIn: () => void;
   onButtonPressOut: () => void;
 }
@@ -21,10 +25,30 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
   buttonAnimatedStyle,
   onHowToPlayPress,
   onStartGamePress,
+  onResumeGamePress,
+  pausedGame,
   onButtonPressIn,
   onButtonPressOut,
 }) => {
   const { colors, isDark } = theme;
+
+  // Helper to format time for display
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Helper to get difficulty label
+  const getDifficultyLabel = (difficulty: string): string => {
+    const labels: Record<string, string> = {
+      easy: "Leicht",
+      medium: "Mittel",
+      hard: "Schwer",
+      expert: "Experte"
+    };
+    return labels[difficulty] || difficulty;
+  };
 
   return (
     <View
@@ -59,6 +83,47 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
           </Text>
         </TouchableOpacity>
 
+        {/* Resume Game Button - nur wenn pausiertes Spiel vorhanden */}
+        {pausedGame && onResumeGamePress && (
+          <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle, { marginBottom: 12 }]}>
+            <TouchableOpacity
+              style={[styles.startButton, { backgroundColor: colors.primary }]}
+              onPress={onResumeGamePress}
+              activeOpacity={0.9}
+              onPressIn={onButtonPressIn}
+              onPressOut={onButtonPressOut}
+            >
+              <View style={{ alignItems: 'center', width: '100%' }}>
+                <Text style={styles.startButtonText}>Spiel fortsetzen</Text>
+                <View style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 4,
+                  opacity: 0.9
+                }}>
+                  <Feather name="pause-circle" size={14} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={{
+                    fontSize: 13,
+                    color: '#FFFFFF',
+                    fontWeight: '500',
+                    marginRight: 8
+                  }}>
+                    {formatTime(pausedGame.gameTime)}
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    color: '#FFFFFF',
+                    fontWeight: '500'
+                  }}>
+                    {getDifficultyLabel(pausedGame.difficulty)}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+
+        {/* New Game Button */}
         <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle]}>
           <TouchableOpacity
             style={[styles.startButton, { backgroundColor: colors.primary }]}

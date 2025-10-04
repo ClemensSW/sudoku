@@ -164,7 +164,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             colors={{
               icon: colors.primary,
               circle: iconCircleBg,
-              value: valueColor,
+              valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
             }}
@@ -178,7 +178,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             colors={{
               icon: colors.primary,
               circle: iconCircleBg,
-              value: valueColor,
+              valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
             }}
@@ -192,7 +192,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             colors={{
               icon: colors.primary,
               circle: iconCircleBg,
-              value: valueColor,
+              valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
             }}
@@ -226,7 +226,7 @@ const StatTile = ({
   value: string | number;
   label: string;
   description: string;
-  colors: { icon: string; circle: string; value: string; label: string; desc: string };
+  colors: { icon: string; circle: string; valueColor: string; label: string; desc: string };
 }) => {
   const scale = useSharedValue(1);
   const rStyle = useAnimatedStyle(() => ({
@@ -246,7 +246,7 @@ const StatTile = ({
           <Feather name={icon} size={18} color={colors.icon} />
         </View>
         <Text
-          style={[styles.statValue, { color: colors.value }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
+          style={[styles.statValue, { color: colors.valueColor }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
         >
           {value}
         </Text>

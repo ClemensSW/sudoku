@@ -115,9 +115,11 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
 
   // Handle back button
   useEffect(() => {
-    const backAction = () => {
+    const backAction = async () => {
       if (gameState.isGameRunning && !gameState.isGameComplete) {
-        handleBackPress();
+        // Directly call pauseGame and navigate
+        await gameActions.pauseGame();
+        router.navigate("../");
         return true;
       }
       return false;
@@ -129,7 +131,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     );
 
     return () => backHandler.remove();
-  }, [gameState.isGameRunning, gameState.isGameComplete]);
+  }, [gameState.isGameRunning, gameState.isGameComplete, gameActions, router]);
 
   // Function to handle complete game restart - for both game over and game completion
   const handleCompleteGameRestart = () => {

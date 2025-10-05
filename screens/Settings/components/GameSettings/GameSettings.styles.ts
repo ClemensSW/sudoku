@@ -18,6 +18,14 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderBottomWidth: 1,
   },
+  settingIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
   settingTextContainer: {
     flex: 1,
     paddingRight: spacing.md,

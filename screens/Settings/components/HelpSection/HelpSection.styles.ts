@@ -16,8 +16,8 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   actionIconContainer: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",

@@ -6,6 +6,8 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewManager";
+import FeedbackIcon from "@/assets/svg/feedback.svg";
+import LatteArtIcon from "@/assets/svg/latte-art.svg";
 
 // Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
 const customStyles = StyleSheet.create({
@@ -22,8 +24,8 @@ const customStyles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   actionIconContainer: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -96,10 +98,10 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         <View
           style={[
             customStyles.actionIconContainer,
-            { backgroundColor: "#FFDD00" },
+            { backgroundColor: `${colors.info}20` },
           ]}
         >
-          <Text style={{ fontSize: 20 }}>☕</Text>
+          <LatteArtIcon width={24} height={24} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -136,7 +138,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
             { backgroundColor: `${colors.info}20` },
           ]}
         >
-          <Feather name="message-circle" size={20} color={colors.info} />
+          <FeedbackIcon width={24} height={24} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -174,7 +176,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
             { backgroundColor: `${colors.success}20` },
           ]}
         >
-          <Feather name="share-2" size={20} color={colors.success} />
+          <Feather name="share-2" size={24} color={colors.success} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -204,10 +206,10 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
     { backgroundColor: theme.isDark ? "rgba(138, 120, 180, 0.15)" : "rgba(110, 90, 160, 0.12)" },
   ]}
 >
-  <Feather 
-    name="info" 
-    size={20} 
-    color={theme.isDark ? "#8A78B4" : "#6E5AA0"} 
+  <Feather
+    name="info"
+    size={24}
+    color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
   />
 </View>
         <View style={customStyles.actionTextContainer}>

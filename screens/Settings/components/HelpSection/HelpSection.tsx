@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import QuestionIcon from "@/assets/svg/question.svg";
 import styles from "./HelpSection.styles";
 
 interface HelpSectionProps {
@@ -35,10 +36,10 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           <View
             style={[
               styles.actionIconContainer,
-              { backgroundColor: `${colors.primary}15` },
+              { backgroundColor: `${colors.primary}20` },
             ]}
           >
-            <Feather name="edit-3" size={20} color={colors.primary} />
+            <Feather name="edit-3" size={24} color={colors.primary} />
           </View>
           <View style={styles.actionTextContainer}>
             <Text
@@ -77,10 +78,10 @@ const HelpSection: React.FC<HelpSectionProps> = ({
         <View
           style={[
             styles.actionIconContainer,
-            { backgroundColor: `${colors.info}15` },
+            { backgroundColor: `${colors.info}20` },
           ]}
         >
-          <Feather name="help-circle" size={20} color={colors.info} />
+          <QuestionIcon width={24} height={24} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text

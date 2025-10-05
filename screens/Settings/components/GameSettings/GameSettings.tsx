@@ -1,8 +1,11 @@
 // screens/SettingsScreen/components/GameSettings/GameSettings.tsx
 import React from "react";
 import { View, Text, Switch } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
+import VibrationIcon from "@/assets/svg/vibration.svg";
+import CrossIcon from "@/assets/svg/cross.svg";
 import styles from "./GameSettings.styles";
 
 interface GameSettingsProps {
@@ -105,14 +108,17 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
       {/* Show Errors - Keep in both modes */}
       <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+        <View
+          style={[
+            styles.settingIconContainer,
+            { backgroundColor: `${colors.error}20` },
+          ]}
+        >
+          <CrossIcon width={24} height={24} />
+        </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
             Fehler anzeigen
-          </Text>
-          <Text
-            style={[styles.settingDescription, { color: colors.textSecondary }]}
-          >
-            Falsche Zahlen hervorheben
           </Text>
         </View>
         <Switch
@@ -130,17 +136,20 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       <View
         style={[
           styles.settingRow,
-          { borderBottomColor: colors.border }, // Diese Zeile verursacht den Strich
+          { borderBottomColor: colors.border },
         ]}
       >
+        <View
+          style={[
+            styles.settingIconContainer,
+            { backgroundColor: `${colors.primary}20` },
+          ]}
+        >
+          <VibrationIcon width={24} height={24} />
+        </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
             Vibration
-          </Text>
-          <Text
-            style={[styles.settingDescription, { color: colors.textSecondary }]}
-          >
-            Haptisches Feedback beim Tippen
           </Text>
         </View>
         <Switch

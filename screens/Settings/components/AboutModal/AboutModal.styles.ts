@@ -14,7 +14,7 @@ export default StyleSheet.create({
   modalContainer: {
     width: "100%",
     maxWidth: 480,
-    height: "90%",
+    maxHeight: "90%",
     borderRadius: 24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
@@ -49,7 +49,8 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   scrollView: {
-    flex: 1,
+    flexGrow: 0,
+    flexShrink: 1,
   },
   scrollContent: {
     paddingHorizontal: 24,

@@ -1,0 +1,241 @@
+{
+  "paths": {
+    "fundamentals": {
+      "name": "Pfad der Grundlagen",
+      "description": "Entdecke die Muster, die das Fundament des Sudoku bilden.",
+      "completionMessage": "Du hast die Grundlagen gemeistert. Die tieferen Muster des Sudoku erwarten deine Entdeckung."
+    },
+    "insight": {
+      "name": "Pfad der Erkenntnis",
+      "description": "Vertiefe dein Verständnis für die Beziehungen zwischen den Zahlen.",
+      "completionMessage": "Deine Erkenntnisse haben sich vertieft. Nun beginnt die Reise zur wahren Meisterschaft."
+    },
+    "mastery": {
+      "name": "Pfad der Meisterschaft",
+      "description": "Verfeinere deine Techniken und entwickle deine eigene Intuition.",
+      "completionMessage": "Du beherrschst nun die Kunst des Sudoku. Der Weg zur Weisheit liegt vor dir."
+    },
+    "wisdom": {
+      "name": "Pfad der Weisheit",
+      "description": "Erkenne die tieferen Zusammenhänge und erreiche eine neue Ebene des Verständnisses.",
+      "completionMessage": "Deine Weisheit leuchtet. Der Pfad der Transzendenz erwartet dich."
+    },
+    "transcendence": {
+      "name": "Pfad der Transzendenz",
+      "description": "Erlebe den Fluss des Spiels, wo Intuition und Logik eins werden.",
+      "completionMessage": "Du hast die höchste Ebene erreicht. Das Rätsel und du seid eins geworden."
+    }
+  },
+  "levels": {
+    "0": {
+      "name": "Neugieriger Geist",
+      "message": "Jede Reise beginnt mit Neugier und Offenheit."
+    },
+    "1": {
+      "name": "Mustersucher",
+      "message": "Erkenne, wie Zahlen ihre Geheimnisse durch Muster offenbaren."
+    },
+    "2": {
+      "name": "Aufmerksamer Schüler",
+      "message": "Deine Aufmerksamkeit für Details wächst mit jedem Rätsel."
+    },
+    "3": {
+      "name": "Geduldiger Betrachter",
+      "message": "In der Ruhe und Geduld liegt der Schlüssel zum Rätsel."
+    },
+    "4": {
+      "name": "Grundlagenfinder",
+      "message": "Du siehst nun deutlich das Fundament, auf dem jedes Sudoku aufbaut."
+    },
+    "5": {
+      "name": "Klarheitssucher",
+      "message": "Mit jedem gelösten Rätsel wird dein Blick klarer."
+    },
+    "6": {
+      "name": "Möglichkeitswäger",
+      "message": "Du lernst, die vielen Möglichkeiten zu sehen und abzuwägen."
+    },
+    "7": {
+      "name": "Beziehungserkenner",
+      "message": "Die Verbindungen zwischen den Zahlen enthüllen sich deinem Geist."
+    },
+    "8": {
+      "name": "Musterverflechter",
+      "message": "Du verbindest Muster zu einem größeren Ganzen."
+    },
+    "9": {
+      "name": "Einsichtsvoller Denker",
+      "message": "Deine Einsichten verschmelzen zu einem tieferen Verständnis."
+    },
+    "10": {
+      "name": "Geschickter Anwender",
+      "message": "Techniken und Strategien werden zu deinen Werkzeugen."
+    },
+    "11": {
+      "name": "Präziser Praktiker",
+      "message": "Deine Herangehensweise wird immer präziser und effizienter."
+    },
+    "12": {
+      "name": "Fließender Löser",
+      "message": "Deine Lösungswege werden fließender und natürlicher."
+    },
+    "13": {
+      "name": "Intuitiver Denker",
+      "message": "Intuition beginnt, deine Logik zu ergänzen."
+    },
+    "14": {
+      "name": "Ausgeglichener Meister",
+      "message": "Logik und Intuition sind nun in deinem Geist im Gleichgewicht."
+    },
+    "15": {
+      "name": "Ruhiger Beobachter",
+      "message": "In der Stille des Geistes siehst du die Lösung am klarsten."
+    },
+    "16": {
+      "name": "Tiefgründiger Ergründer",
+      "message": "Dein Verständnis reicht nun bis in die Tiefe des Rätsels."
+    },
+    "17": {
+      "name": "Gelassener Denker",
+      "message": "Komplexität verliert ihren Schrecken in deiner Gelassenheit."
+    },
+    "18": {
+      "name": "Weiser Betrachter",
+      "message": "Du siehst über das Rätsel hinaus und erkennst seine Harmonie."
+    },
+    "19": {
+      "name": "Philosophischer Geist",
+      "message": "Das Sudoku wird zum Spiegel deines klarsten Denkens."
+    },
+    "20": {
+      "name": "Fließender Geist",
+      "message": "Du löst nicht länger Rätsel - du tanzt mit ihnen."
+    },
+    "21": {
+      "name": "Grenzenloser Denker",
+      "message": "Die Grenzen zwischen Rätsel und Lösung verschwimmen."
+    },
+    "22": {
+      "name": "Harmoniegestalter",
+      "message": "Du erschaffst Harmonie, wo zuvor nur Chaos war."
+    },
+    "23": {
+      "name": "Erleuchteter Spieler",
+      "message": "Das Rätsel ist nicht länger außerhalb, sondern Teil von dir."
+    },
+    "24": {
+      "name": "Zen-Meister",
+      "message": "Rätsel und Lösender sind nicht länger getrennt."
+    },
+    "25": {
+      "name": "Astraler Wanderer",
+      "message": "Deine Seele durchstreift nun ferne Sphären."
+    },
+    "26": {
+      "name": "Sternenweber",
+      "message": "Du spannst Netze aus Licht und Zahlen."
+    },
+    "27": {
+      "name": "Ätherischer Architekt",
+      "message": "Du formst Räume jenseits der Logik."
+    },
+    "28": {
+      "name": "Nexus-Schmied",
+      "message": "Du schweißest Pfade zwischen Raum und Zeit."
+    },
+    "29": {
+      "name": "Unendlichkeitspilger",
+      "message": "Kein Ende vermag dich aufzuhalten."
+    },
+    "30": {
+      "name": "Äonensäer",
+      "message": "Du säst Momente in die Ewigkeit."
+    },
+    "31": {
+      "name": "Zenitbewahrer",
+      "message": "Du hältst Augenblicke der Klarheit fest."
+    },
+    "32": {
+      "name": "Aurora-Hüter",
+      "message": "Du entfachst Polarlichter im Zahlenmeer."
+    },
+    "33": {
+      "name": "Phänomen-Entdecker",
+      "message": "Jedes Rätsel birgt ein neues Wunder."
+    },
+    "34": {
+      "name": "Empyreum-Bote",
+      "message": "Du trägst Botschaften aus dem höchsten Licht."
+    },
+    "35": {
+      "name": "Paradigma-Schöpfer",
+      "message": "Du setzt neue Maßstäbe im Kosmos der Logik."
+    },
+    "36": {
+      "name": "Elysium-Träumer",
+      "message": "Du verwandelst Rätsel in harmonische Visionen."
+    },
+    "37": {
+      "name": "Singularitätsreisender",
+      "message": "Du überschreitest jede Schwelle des Verstehens."
+    },
+    "38": {
+      "name": "Ewigkeitsdenker",
+      "message": "Dein Geist dehnt sich über Zeit und Raum."
+    },
+    "39": {
+      "name": "Illuminationsbringer",
+      "message": "Du erleuchtest Pfade, die zuvor verborgen waren."
+    },
+    "40": {
+      "name": "Neubeginn-Gestalter",
+      "message": "Aus jedem Abschluss wächst ein neuer Anfang."
+    },
+    "41": {
+      "name": "Metatron-Späher",
+      "message": "Du erkundest die heiligen Architekturen des Spiels."
+    },
+    "42": {
+      "name": "Orakelweber",
+      "message": "Du webst Prophezeiungen aus Zahlenmustern."
+    },
+    "43": {
+      "name": "Kosmokat-Ascendant",
+      "message": "Du erhebst dich über alle Dimensionen."
+    },
+    "44": {
+      "name": "Hyperion-Wächter",
+      "message": "Du beschützt die Flamme der Erkenntnis."
+    },
+    "45": {
+      "name": "Celestischer Magier",
+      "message": "Du wandelst Zahlen in Sternenstaub."
+    },
+    "46": {
+      "name": "Transzendenz-Flüsterer",
+      "message": "Du vernimmst die Stimme des Universums."
+    },
+    "47": {
+      "name": "Ätherwanderer II",
+      "message": "Dein Weg führt dich tiefer ins Unbekannte."
+    },
+    "48": {
+      "name": "Sphärenmeister",
+      "message": "Du regierst über Klang und Stille im Rätsel."
+    },
+    "49": {
+      "name": "Kosmokrator",
+      "message": "Du herrschst im Reich der unendlichen Möglichkeiten."
+    },
+    "50": {
+      "name": "Dimensionaler Pionier",
+      "message": "Du bahnst neue Wege durch Raum und Zahl."
+    }
+  },
+  "milestones": {
+    "5": "Du hast den Pfad der Erkenntnis betreten. Dein Verständnis vertieft sich mit jedem Rätsel.",
+    "10": "Der Pfad der Meisterschaft heißt dich willkommen. Deine Übung beginnt, sich in Intuition zu verwandeln.",
+    "15": "Auf dem Pfad der Weisheit erkennst du nun die tieferen Zusammenhänge des Sudoku.",
+    "20": "Der Pfad der Transzendenz liegt nun vor dir. Die höchste Stufe der Sudoku-Kunst ist in Reichweite."
+  }
+}

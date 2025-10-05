@@ -8,6 +8,7 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewManager";
 import FeedbackIcon from "@/assets/svg/feedback.svg";
 import LatteArtIcon from "@/assets/svg/latte-art.svg";
+import ShareIcon from "@/assets/svg/share.svg";
 
 // Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
 const customStyles = StyleSheet.create({
@@ -20,15 +21,13 @@ const customStyles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    height: 64,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
-  actionIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
+  actionIcon: {
+    width: 40,
+    height: 40,
     marginRight: 16,
   },
   actionTextContainer: {
@@ -95,13 +94,8 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         style={customStyles.actionButton}
         onPress={onSupportPress}
       >
-        <View
-          style={[
-            customStyles.actionIconContainer,
-            { backgroundColor: `${colors.info}20` },
-          ]}
-        >
-          <LatteArtIcon width={24} height={24} />
+        <View style={customStyles.actionIcon}>
+          <LatteArtIcon width={40} height={40} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -132,27 +126,14 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         ]}
         onPress={handleFeedbackPress}
       >
-        <View
-          style={[
-            customStyles.actionIconContainer,
-            { backgroundColor: `${colors.info}20` },
-          ]}
-        >
-          <FeedbackIcon width={24} height={24} />
+        <View style={customStyles.actionIcon}>
+          <FeedbackIcon width={40} height={40} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             Feedback senden
-          </Text>
-          <Text
-            style={[
-              customStyles.actionDescription,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Hilf mir, die App zu verbessern
           </Text>
         </View>
         <Feather
@@ -170,13 +151,8 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         ]}
         onPress={onSharePress}
       >
-        <View
-          style={[
-            customStyles.actionIconContainer,
-            { backgroundColor: `${colors.success}20` },
-          ]}
-        >
-          <Feather name="share-2" size={24} color={colors.success} />
+        <View style={customStyles.actionIcon}>
+          <ShareIcon width={40} height={40} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -200,18 +176,13 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         ]}
         onPress={onAboutPress}
       >
-        <View
-  style={[
-    customStyles.actionIconContainer,
-    { backgroundColor: theme.isDark ? "rgba(138, 120, 180, 0.15)" : "rgba(110, 90, 160, 0.12)" },
-  ]}
->
-  <Feather
-    name="info"
-    size={24}
-    color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
-  />
-</View>
+        <View style={customStyles.actionIcon}>
+          <Feather
+            name="info"
+            size={40}
+            color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
+          />
+        </View>
         <View style={customStyles.actionTextContainer}>
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}

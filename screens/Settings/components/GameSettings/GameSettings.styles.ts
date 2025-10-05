@@ -12,19 +12,16 @@ export default StyleSheet.create({
   },
   settingRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
+    height: 64,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
     borderBottomWidth: 1,
   },
-  settingIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
+  settingIcon: {
+    width: 40,
+    height: 40,
+    marginRight: spacing.md,
   },
   settingTextContainer: {
     flex: 1,

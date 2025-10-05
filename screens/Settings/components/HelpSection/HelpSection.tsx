@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import QuestionIcon from "@/assets/svg/question.svg";
+import PencilIcon from "@/assets/svg/pencil.svg";
 import styles from "./HelpSection.styles";
 
 interface HelpSectionProps {
@@ -33,13 +34,8 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           style={styles.actionButton}
           onPress={onAutoNotes}
         >
-          <View
-            style={[
-              styles.actionIconContainer,
-              { backgroundColor: `${colors.primary}20` },
-            ]}
-          >
-            <Feather name="edit-3" size={24} color={colors.primary} />
+          <View style={styles.actionIcon}>
+            <PencilIcon width={40} height={40} />
           </View>
           <View style={styles.actionTextContainer}>
             <Text
@@ -75,13 +71,8 @@ const HelpSection: React.FC<HelpSectionProps> = ({
         ]}
         onPress={onHowToPlay}
       >
-        <View
-          style={[
-            styles.actionIconContainer,
-            { backgroundColor: `${colors.info}20` },
-          ]}
-        >
-          <QuestionIcon width={24} height={24} />
+        <View style={styles.actionIcon}>
+          <QuestionIcon width={40} height={40} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text

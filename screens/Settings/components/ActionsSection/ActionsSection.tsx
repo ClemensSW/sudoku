@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import CoffeeBreakIcon from "@/assets/svg/coffeeBreak.svg";
 import styles from "./ActionsSection.styles";
 
 interface ActionsSectionProps {
@@ -43,16 +44,11 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
             style={styles.actionButton}
             onPress={onPauseGame}
           >
-            <View
-              style={[
-                styles.actionIconContainer,
-                { backgroundColor: `${pauseColor}20` },
-              ]}
-            >
-              <Feather name="pause-circle" size={20} color={pauseColor} />
+            <View style={styles.actionIcon}>
+              <CoffeeBreakIcon width={40} height={40} />
             </View>
             <View style={styles.actionTextContainer}>
-              <Text style={[styles.actionTitle, { color: pauseColor }]}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
                 Spiel pausieren
               </Text>
             </View>
@@ -73,16 +69,11 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
         style={styles.actionButton}
         onPress={onQuitGame}
       >
-        <View
-          style={[
-            styles.actionIconContainer,
-            { backgroundColor: `${buttonColor}20` },
-          ]}
-        >
-          <Feather name="x-circle" size={20} color={buttonColor} />
+        <View style={styles.actionIcon}>
+          <Feather name="x-circle" size={40} color={buttonColor} />
         </View>
         <View style={styles.actionTextContainer}>
-          <Text style={[styles.actionTitle, { color: buttonColor }]}>
+          <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
             Spiel beenden
           </Text>
         </View>

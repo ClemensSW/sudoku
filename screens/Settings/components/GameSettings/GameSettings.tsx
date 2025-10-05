@@ -108,13 +108,8 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
       {/* Show Errors - Keep in both modes */}
       <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
-        <View
-          style={[
-            styles.settingIconContainer,
-            { backgroundColor: `${colors.error}20` },
-          ]}
-        >
-          <CrossIcon width={24} height={24} />
+        <View style={styles.settingIcon}>
+          <CrossIcon width={40} height={40} />
         </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
@@ -139,13 +134,8 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           { borderBottomColor: colors.border },
         ]}
       >
-        <View
-          style={[
-            styles.settingIconContainer,
-            { backgroundColor: `${colors.primary}20` },
-          ]}
-        >
-          <VibrationIcon width={24} height={24} />
+        <View style={styles.settingIcon}>
+          <VibrationIcon width={40} height={40} />
         </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>

@@ -17,6 +17,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Google Play Store Description](#google-play-store-description)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
@@ -42,6 +43,49 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 
 <br>
 
+## 📱 Google Play Store Description
+
+Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads. It combines the classic puzzle game with an innovative two-player mode – unique on Google Play.
+
+🧠 **Single Player Mode**
+Solve classic Sudokus in four difficulty levels (Easy, Medium, Hard, Expert) – with intelligent helpers like notes, error display, hints and customizable game settings. All Sudokus are automatically generated and guaranteed solvable.
+
+🧑‍🤝‍🧑 **Duo Mode – The Sudoku Experience for Two**
+Discover Sudoku in a whole new way: Two players, one board – who solves their area first?
+Numbers rotate, perspectives change – and suddenly the classic logic game becomes an exciting duel or cooperative adventure.
+Quick thinking, logic and strategy are required – but also teamwork and intuition.
+⚡ Experience a Sudoku dynamic like no other Sudoku app.
+
+🏆 **Title System & Motivation**
+Collect 25 unique titles on your Sudoku journey – from "Curious Mind" to "Enlightened Master". Choose your favorite title and show your Sudoku personality.
+
+🧘 **Zen Level System**
+Level up! Win games, rise in the Zen-inspired level system and experience real progress – inspiring at your pace.
+
+🖼️ **Rewards & Personalization**
+Unlock stunning images by winning games and personalize your background. Use filters and favorites to organize your collection. Choose from a collection of avatars or use your own image. Your Sudoku – your style.
+
+🌍 **Multilingual**
+Play in Deutsch, English or हिन्दी (Hindi) – the app automatically adapts to your language.
+
+📊 **Track Your Performance**
+Keep track of your winning streak, best times and game strength as a percentage. Develop yourself playfully – without pressure.
+
+⚙️ **Smart Settings & Features**
+- Pause function – resume anytime
+- Automatic notes
+- Light & Dark Mode
+- Highlight cells and numbers
+- Error display & vibration
+- Undo / End game
+- Clear tutorial with animation
+- Share with friends & send feedback
+
+💚 **100% free. 0% ads.**
+Sudoku Duo is a hobby project with heart and attention to detail – developed to rethink Sudoku – playful, motivating and unique.
+
+<br>
+
 ## ✨ Features
 
 ### 🧠 Single Player Mode
@@ -59,7 +103,8 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 
 ### 🎨 Customization & Rewards
 - Zen-inspired level system with XP progression
-- Unlockable landscape backgrounds
+- 25 unique titles to collect and display
+- Unlockable landscape backgrounds with filters & favorites
 - Custom avatar support (gallery or camera)
 - Multiple theme options (Light/Dark mode)
 
@@ -70,9 +115,11 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 - Achievement milestones
 
 ### ⚙️ Smart Features
+- Pause & resume functionality
 - Automatic game state saving
 - Configurable haptic feedback
 - Multiple highlighting options
+- Multilingual support (German, English, Hindi)
 - Accessibility-focused design
 
 <br>
@@ -87,16 +134,18 @@ Sudoku Duo is a lovingly crafted, completely free Sudoku game without ads that r
 - **Storage**: AsyncStorage
 
 ### Key Libraries
-- **Animations**: React Native Reanimated 3.17.4
-- **UI Components**: 
+- **Animations**: React Native Reanimated 3.17.4, Lottie React Native
+- **UI Components**:
   - React Native Gesture Handler
   - React Native Safe Area Context
+  - React Native SVG (with SVG Transformer)
   - Expo Vector Icons
+- **Internationalization**: react-i18next, expo-localization
 - **Monetization**: React Native Purchases (RevenueCat) for optional support
-- **Visual Effects**: 
+- **Visual Effects**:
   - Expo Blur
   - Expo Linear Gradient
-  - React Native Confetti Cannon
+  - Lottie Animations
 - **Utilities**:
   - Expo Haptics
   - Expo Image Picker

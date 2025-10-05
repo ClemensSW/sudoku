@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
   withSequence,
   withDelay,
-  SlideInDown,
   interpolate,
   Easing,
   cancelAnimation,
@@ -29,14 +28,16 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const theme = useTheme();
   const { colors } = theme;
 
-  const [isVisible, setIsVisible] = useState(false);
   const [purchaseType, setPurchaseType] = useState<PurchaseType>('none');
+  const [isLoading, setIsLoading] = useState(true);
 
   // Animation values
   const scale = useSharedValue(1);
   const shimmer = useSharedValue(0);
   const heartBeat = useSharedValue(1);
   const closeButtonScale = useSharedValue(1);
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(0);
 
   // Interval-Refs (sauberes Cleanup!)
   const purchaseIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -80,19 +81,25 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
       clearInterval(heartbeatIntervalRef.current);
       heartbeatIntervalRef.current = null;
     }
-    
+
     // Alle Animationen canceln
     cancelAnimation(scale);
     cancelAnimation(shimmer);
     cancelAnimation(heartBeat);
     cancelAnimation(closeButtonScale);
-    
+
     // Werte zurücksetzen
     scale.value = 1;
     shimmer.value = 0;
     heartBeat.value = 1;
     closeButtonScale.value = 1;
   }, [scale, shimmer, heartBeat, closeButtonScale]);
+
+  // Cleanup-Funktion für Opacity und TranslateY
+  const resetOpacity = useCallback(() => {
+    opacity.value = 0;
+    translateY.value = 0;
+  }, [opacity, translateY]);
 
   // Verwende useFocusEffect statt useEffect für bessere Performance mit React Navigation
   useFocusEffect(
@@ -103,14 +110,20 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
         const type = await getPurchaseType();
         if (!mounted) return;
         setPurchaseType(type);
-        // Banner ist immer sichtbar
-        setIsVisible(true);
+        setIsLoading(false);
 
-        // Animationen nur starten, wenn noch nichts gekauft wurde
+        // Animationen basierend auf Purchase-Status
         if (type === 'none') {
+          // Neue Nutzer: SlideIn + Fade + Heartbeat
+          translateY.value = 50;
+          opacity.value = 0;
+          translateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.ease) });
+          opacity.value = withTiming(1, { duration: 400 });
           startAnimations();
         } else {
-          // Bei bestehenden Käufen: Keine Animationen
+          // Bestehende Supporter: Nur Fade in, kein Slide
+          translateY.value = 0;
+          opacity.value = withTiming(1, { duration: 300 });
           stopAnimations();
         }
       };
@@ -129,8 +142,9 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
           purchaseIntervalRef.current = null;
         }
         stopAnimations();
+        resetOpacity();
       };
-    }, [startAnimations, stopAnimations])
+    }, [startAnimations, stopAnimations, resetOpacity])
   );
 
   // Handle banner press
@@ -166,7 +180,8 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
 
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [{ scale: scale.value }, { translateY: translateY.value }],
+    opacity: opacity.value,
   }));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
@@ -177,11 +192,6 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const heartAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: heartBeat.value }],
   }));
-
-  // Don't render if not visible
-  if (!isVisible) {
-    return null;
-  }
 
   // Dynamischer Text basierend auf Purchase-Typ
   const getBannerText = () => {
@@ -207,10 +217,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const bannerText = getBannerText();
 
   return (
-    <Animated.View
-      entering={purchaseType === 'none' ? SlideInDown.delay(300).duration(400).easing(Easing.out(Easing.ease)) : undefined}
-      style={[containerAnimatedStyle]}
-    >
+    <Animated.View style={[containerAnimatedStyle]}>
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={handlePress}

@@ -4,9 +4,9 @@
 
 ## 📈 Summary
 - **Total Files:** 11
-- **Completed:** 3 (27%)
+- **Completed:** 4 (36%)
 - **In Progress:** 0
-- **Pending:** 8 (73%)
+- **Pending:** 7 (64%)
 
 ---
 
@@ -14,11 +14,11 @@
 - [x] `common.json` - Buttons, time, difficulty
 - [x] `settings.json` - Settings screen (all components)
 - [x] `leistung.json` - Performance/Stats (ProfileHeader)
+- [x] `start.json` - Start screen (BottomButtonContainer, DifficultyModal)
 
 ---
 
 ## 🔲 Pending - Priority 1 (HIGH)
-- [ ] `start.json` - Start/Home screen
 - [ ] `game.json` - Game screen, controls, pause modal
 - [ ] `alerts.json` - All alert/confirmation messages
 
@@ -41,13 +41,16 @@
 ## 📝 Notes
 
 ### Current Session Focus:
-_Update this when starting a new translation_
+**Phase 1 - Core Screens (Priority HIGH)**
+
+Next: `game.json` - Game screen & controls
 
 ### Last Completed:
-- `leistung.json` - ProfileHeader component (2025-10-05)
+- ✅ `start.json` - DifficultyModal & BottomButtonContainer (2025-10-05)
+- ✅ `leistung.json` - ProfileHeader component (2025-10-05)
 
 ### Known Issues:
-_List any translation challenges or decisions needed_
+_None currently_
 
 ---
 

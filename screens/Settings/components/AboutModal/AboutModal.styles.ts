@@ -22,6 +22,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 12,
+    zIndex: 1,
   },
   header: {
     alignItems: "center",

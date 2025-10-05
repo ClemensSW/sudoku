@@ -32,26 +32,22 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
 
   return (
     <Modal visible={visible} transparent animationType="none">
-      <View style={styles.overlay}>
+      <Animated.View entering={FadeIn.duration(300)} style={styles.overlay}>
         {/* Backdrop with Blur */}
         <BlurView
           intensity={theme.isDark ? 30 : 20}
           tint={theme.isDark ? "dark" : "light"}
           style={styles.backdrop}
-        >
-          <Pressable style={styles.backdrop} onPress={onClose} />
-        </BlurView>
+        />
+        <Pressable style={styles.backdrop} onPress={onClose} />
 
         {/* Modal Container */}
         <Animated.View
-          entering={FadeIn.duration(300)}
+          entering={FadeInDown.duration(400).delay(100)}
           style={[styles.modalContainer, { backgroundColor: colors.surface }]}
         >
           {/* Header with Icon */}
-          <Animated.View
-            entering={FadeInDown.delay(100).duration(400)}
-            style={styles.header}
-          >
+          <View style={styles.header}>
             <View style={styles.iconContainer}>
               <InfoIcon
                 width={64}
@@ -84,7 +80,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                 Version {version}
               </Text>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Scrollable Content */}
           <ScrollView
@@ -92,7 +88,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+            <View>
               {/* Greeting */}
               <Text style={[styles.greeting, { color: colors.textPrimary }]}>
                 {t("about.greeting")}
@@ -128,11 +124,11 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                   {t("about.signature")}
                 </Text>
               </View>
-            </Animated.View>
+            </View>
           </ScrollView>
 
           {/* Close Button */}
-          <Animated.View entering={FadeInDown.delay(300).duration(400)}>
+          <View>
             <TouchableOpacity
               style={[
                 styles.closeButton,
@@ -145,9 +141,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                 {t("about.closeButton")}
               </Text>
             </TouchableOpacity>
-          </Animated.View>
+          </View>
         </Animated.View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };

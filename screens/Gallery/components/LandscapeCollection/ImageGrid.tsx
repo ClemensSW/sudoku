@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
-import { getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
+import { getCategoryName, getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
@@ -243,7 +243,7 @@ const LandscapeCard = React.memo(
             {/* Infobereich für Titel und Kategorie */}
             <View style={styles.infoContainer}>
               <Text style={styles.title} numberOfLines={1}>
-                {item.name}
+                {getLandscapeName(item.id)}
               </Text>
               <Text style={styles.category}>
                 {getCategoryName(item.category)}

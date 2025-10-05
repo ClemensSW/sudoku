@@ -1,0 +1,111 @@
+{
+  "controls": {
+    "note": "Notizen",
+    "erase": "Löschen",
+    "hint": "Hinweis",
+    "hintsRemaining": "{{count}} übrig"
+  },
+  "pause": {
+    "title": "Pause",
+    "resume": "Weiter spielen",
+    "tipTitle": "Nützlicher Tipp",
+    "gameSpecificTips": {
+      "gallery": {
+        "title": "Galerie-Freischaltungen",
+        "description": "In der Galerie kannst du selbst entscheiden, welches Bild du als Nächstes freischaltest."
+      },
+      "favorites": {
+        "title": "Favoriten",
+        "description": "Alle als Favorit markierten Bilder werden dir direkt auf der Startseite angezeigt."
+      },
+      "titles": {
+        "title": "Titel auswählen",
+        "description": "Wähle deinen Titel aus den bereits erworbenen Auszeichnungen und zeige deinen Fortschritt."
+      },
+      "notes": {
+        "title": "Notizmodus",
+        "description": "Nutze den Notizmodus, um Kandidaten in Zellen zu markieren und Fehler zu vermeiden."
+      },
+      "levelPath": {
+        "title": "Level-Pfad",
+        "description": "Verfolge deinen Fortschritt über den Level-Pfad und schalte neue Herausforderungen frei."
+      },
+      "difficulty": {
+        "title": "Schwierigkeitsgrad steigern",
+        "description": "Fordere dich heraus und steigere dein Niveau – jede Stufe bringt mehr Punkte!"
+      },
+      "streak": {
+        "title": "Tägliche Streak",
+        "description": "Spiele täglich, um deine Streak zu halten und Bonuspunkte zu sammeln."
+      }
+    },
+    "sudokuTips": {
+      "nakedSingles": {
+        "title": "Naked Singles zuerst",
+        "description": "Suche nach Zellen, in denen nur eine Zahl möglich ist – der einfachste Anfang."
+      },
+      "hiddenSingles": {
+        "title": "Hidden Singles finden",
+        "description": "Prüfe Zeilen, Spalten und Boxen: Wo kann eine Zahl nur einmal hin?"
+      },
+      "boxLine": {
+        "title": "Box-Line Reduction",
+        "description": "Wenn eine Zahl in einer Box nur in einer Zeile/Spalte möglich ist, eliminiere sie außerhalb."
+      },
+      "nakedPairs": {
+        "title": "Naked Pairs nutzen",
+        "description": "Zwei Zellen mit denselben 2 Kandidaten? Eliminiere diese Zahlen in der Zeile/Spalte/Box."
+      },
+      "scanning": {
+        "title": "Scanning-Technik",
+        "description": "Gehe systematisch durch jede Zahl 1-9 und prüfe, wo sie noch fehlt."
+      },
+      "xWing": {
+        "title": "X-Wing Strategie",
+        "description": "Fortgeschritten: Finde Muster über mehrere Zeilen/Spalten, um Kandidaten zu eliminieren."
+      },
+      "breaks": {
+        "title": "Pausen helfen",
+        "description": "Kurze Pausen steigern die Konzentration – du siehst oft neue Muster danach."
+      },
+      "skip": {
+        "title": "Nicht festbeißen",
+        "description": "Hängst du fest? Überspringe die Zelle und komme später zurück – oft wird's dann klarer."
+      }
+    },
+    "brainTips": {
+      "focus": {
+        "title": "Fokus & Konzentration",
+        "description": "Sudoku trainiert deine Aufmerksamkeit und fördert tiefe Konzentration."
+      },
+      "mentalEndurance": {
+        "title": "Mentale Ausdauer",
+        "description": "Regelmäßiges Üben stärkt Geduld und verbessert deine Problemlösefähigkeit."
+      },
+      "memory": {
+        "title": "Gedächtnis stärken",
+        "description": "Sudoku aktiviert dein Arbeitsgedächtnis und hält dein Gehirn fit."
+      },
+      "neuroplasticity": {
+        "title": "Neuroplastizität fördern",
+        "description": "Neue Denkmuster beim Rätseln bilden neue neuronale Verbindungen."
+      },
+      "cognitiveReserve": {
+        "title": "Kognitive Reserven aufbauen",
+        "description": "Regelmäßiges Gehirntraining kann altersbedingten kognitiven Abbau verlangsamen."
+      },
+      "stressRelief": {
+        "title": "Stressabbau & Entspannung",
+        "description": "Sudoku wirkt meditativ und hilft beim Abschalten vom Alltag."
+      },
+      "achievement": {
+        "title": "Erfolgserlebnisse",
+        "description": "Jedes gelöste Rätsel gibt dir ein positives Erfolgserlebnis und motiviert dich weiterzumachen."
+      },
+      "flexibleThinking": {
+        "title": "Flexibles Denken",
+        "description": "Sudoku trainiert dein Gehirn, verschiedene Lösungsansätze auszuprobieren."
+      }
+    }
+  }
+}

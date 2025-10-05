@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\ni18n: DifficultyModal vollständig übersetzt\n\nDifficultyModal komplett auf i18next migriert:\n- Alle hardcoded Strings durch Übersetzungen ersetzt\n- Schwierigkeitsgrade dynamisch aus start.json geladen\n- Progress-Nachrichten mit Interpolation ({{count}})\n- getProgressMessage als lokale Funktion im Modal\n- Title, Subtitle, ConfirmText als optionale Props mit Übersetzungs-Fallback\n- Unterstützt beide Sprachen (DE/EN)\n\nStart-Screen jetzt 100% übersetzt:\n- BottomButtonContainer ✅\n- DifficultyModal ✅\n\nPhase 1 Start-Screen: KOMPLETT ✅\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,111 @@
+{
+  "controls": {
+    "note": "Notes",
+    "erase": "Erase",
+    "hint": "Hint",
+    "hintsRemaining": "{{count}} remaining"
+  },
+  "pause": {
+    "title": "Pause",
+    "resume": "Continue Playing",
+    "tipTitle": "Useful Tip",
+    "gameSpecificTips": {
+      "gallery": {
+        "title": "Gallery Unlocks",
+        "description": "In the gallery, you can decide which image to unlock next."
+      },
+      "favorites": {
+        "title": "Favorites",
+        "description": "All favorited images are displayed directly on your home screen."
+      },
+      "titles": {
+        "title": "Select Title",
+        "description": "Choose your title from your earned achievements and show your progress."
+      },
+      "notes": {
+        "title": "Note Mode",
+        "description": "Use note mode to mark candidates in cells and avoid mistakes."
+      },
+      "levelPath": {
+        "title": "Level Path",
+        "description": "Track your progress on the level path and unlock new challenges."
+      },
+      "difficulty": {
+        "title": "Increase Difficulty",
+        "description": "Challenge yourself and level up – each level brings more points!"
+      },
+      "streak": {
+        "title": "Daily Streak",
+        "description": "Play daily to maintain your streak and collect bonus points."
+      }
+    },
+    "sudokuTips": {
+      "nakedSingles": {
+        "title": "Naked Singles First",
+        "description": "Look for cells where only one number is possible – the easiest start."
+      },
+      "hiddenSingles": {
+        "title": "Find Hidden Singles",
+        "description": "Check rows, columns, and boxes: Where can a number only go once?"
+      },
+      "boxLine": {
+        "title": "Box-Line Reduction",
+        "description": "If a number in a box can only go in one row/column, eliminate it elsewhere."
+      },
+      "nakedPairs": {
+        "title": "Use Naked Pairs",
+        "description": "Two cells with the same 2 candidates? Eliminate those numbers in the row/column/box."
+      },
+      "scanning": {
+        "title": "Scanning Technique",
+        "description": "Go systematically through each number 1-9 and check where it's still missing."
+      },
+      "xWing": {
+        "title": "X-Wing Strategy",
+        "description": "Advanced: Find patterns across multiple rows/columns to eliminate candidates."
+      },
+      "breaks": {
+        "title": "Breaks Help",
+        "description": "Short breaks increase concentration – you often see new patterns afterward."
+      },
+      "skip": {
+        "title": "Don't Get Stuck",
+        "description": "Stuck? Skip the cell and come back later – it often becomes clearer."
+      }
+    },
+    "brainTips": {
+      "focus": {
+        "title": "Focus & Concentration",
+        "description": "Sudoku trains your attention and promotes deep concentration."
+      },
+      "mentalEndurance": {
+        "title": "Mental Endurance",
+        "description": "Regular practice strengthens patience and improves problem-solving skills."
+      },
+      "memory": {
+        "title": "Strengthen Memory",
+        "description": "Sudoku activates your working memory and keeps your brain fit."
+      },
+      "neuroplasticity": {
+        "title": "Promote Neuroplasticity",
+        "description": "New thought patterns while puzzling create new neural connections."
+      },
+      "cognitiveReserve": {
+        "title": "Build Cognitive Reserve",
+        "description": "Regular brain training can slow age-related cognitive decline."
+      },
+      "stressRelief": {
+        "title": "Stress Relief & Relaxation",
+        "description": "Sudoku has a meditative effect and helps you unwind from daily life."
+      },
+      "achievement": {
+        "title": "Sense of Achievement",
+        "description": "Each solved puzzle gives you a positive sense of accomplishment and motivates you to continue."
+      },
+      "flexibleThinking": {
+        "title": "Flexible Thinking",
+        "description": "Sudoku trains your brain to try different approaches."
+      }
+    }
+  }
+}

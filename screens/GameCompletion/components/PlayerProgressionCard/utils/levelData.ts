@@ -43,11 +43,8 @@ export const getPaths = (): PathInfo[] => {
   }));
 };
 
-// Reactive property that always returns fresh translations
-Object.defineProperty(exports, 'paths', {
-  get: getPaths,
-  enumerable: true
-});
+// Export as getter - components should access via getPaths()
+export const paths = getPaths();
 
 // Base level data without translations
 const levelsBase: Array<{xp: number; path: string; pathIndex: number}> = [
@@ -144,11 +141,8 @@ export const getLevels = (): LevelThreshold[] => {
   }));
 };
 
-// Reactive property that always returns fresh translations
-Object.defineProperty(exports, 'levels', {
-  get: getLevels,
-  enumerable: true
-});
+// Export as getter - components should access via getLevels()
+export const levels = getLevels();
 
 // Getter for milestones with current translations
 export const getMilestones = (): Record<number, string> => ({
@@ -158,11 +152,8 @@ export const getMilestones = (): Record<number, string> => ({
   20: i18next.t('levels:milestones.20')
 });
 
-// Reactive property that always returns fresh translations
-Object.defineProperty(exports, 'milestones', {
-  get: getMilestones,
-  enumerable: true
-});
+// Export as getter - components should access via getMilestones()
+export const milestones = getMilestones();
 
 /**
  * Findet das Level für eine bestimmte Anzahl an XP

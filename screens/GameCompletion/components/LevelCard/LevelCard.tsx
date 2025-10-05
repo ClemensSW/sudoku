@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
-import { levels as LEVELS } from "../PlayerProgressionCard/utils/levelData";
+import { getLevels } from "../PlayerProgressionCard/utils/levelData";
 import { GameStats } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
 import { hexToRGBA } from "@/screens/GameCompletion/shared/utils/colorUtils";
@@ -74,8 +74,8 @@ const LevelCard: React.FC<LevelCardProps> = ({
   // Progress color
   const progressColor = levelInfo.currentPath.color;
 
-  // Unlocked titles
-  const unlockedTitles = LEVELS.slice(0, levelInfo.currentLevel + 1)
+  // Unlocked titles - call getLevels() to get fresh translations
+  const unlockedTitles = getLevels().slice(0, levelInfo.currentLevel + 1)
     .map((l) => l.name)
     .reverse();
 

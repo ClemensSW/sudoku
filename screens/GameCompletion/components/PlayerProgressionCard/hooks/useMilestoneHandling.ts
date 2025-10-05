@@ -1,7 +1,7 @@
 // components/GameCompletionModal/components/PlayerProgressionCard/hooks/useMilestoneHandling.ts
 import { useState, useCallback, useEffect } from "react";
 import { useSharedValue, withSequence, withTiming } from "react-native-reanimated";
-import { milestones as milestoneMessages } from "../utils/levelData";
+import { getMilestones } from "../utils/levelData";
 import { GameStats, markMilestoneReached } from "@/utils/storage";
 import { LevelInfo } from "../utils/types";
 import { triggerHaptic } from "@/utils/haptics";
@@ -26,6 +26,8 @@ export function useMilestoneHandling({
 
   const checkAndShowMilestone = useCallback(async () => {
     if (!showMilestones) return;
+    // Get fresh milestone translations
+    const milestoneMessages = getMilestones();
     const reached = stats?.reachedMilestones || [];
     for (const lvl of Object.keys(milestoneMessages).map(Number)) {
       if (levelInfo.currentLevel >= lvl && !reached.includes(lvl)) {

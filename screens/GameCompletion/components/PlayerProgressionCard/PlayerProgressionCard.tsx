@@ -4,7 +4,6 @@ import { View, Pressable } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useLevelInfo } from "./utils/useLevelInfo";
-import { levels as LEVELS } from "./utils/levelData";
 import { LevelProgressOptions } from "./utils/types";
 import { GameStats } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";

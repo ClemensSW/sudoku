@@ -9,7 +9,7 @@ import LevelBadge from "./LevelBadge";
 import TitleSelect from "./TitleSelect";
 import { LevelInfo } from "../utils/types";
 import styles from "../PlayerProgressionCard.styles";
-import { levels as LEVELS } from "../utils/levelData";
+import { getLevels } from "../utils/levelData";
 
 type LevelSectionProps = {
   levelInfo: LevelInfo;
@@ -63,7 +63,8 @@ const LevelSection: React.FC<LevelSectionProps> = ({
     triggerHaptic("light");
   }, []);
 
-  const unlockedTitles = LEVELS.slice(0, levelInfo.currentLevel + 1).map((l) => l.name).reverse();
+  // Call getLevels() to get fresh translations
+  const unlockedTitles = getLevels().slice(0, levelInfo.currentLevel + 1).map((l) => l.name).reverse();
 
   return (
     <View

@@ -1,13 +1,13 @@
 // components/LevelProgress/utils/useLevelInfo.ts
 import { useMemo } from 'react';
 import { LevelInfo } from './types';
-import { 
-  levels, 
-  paths, 
-  getLevel, 
-  getPathForLevel, 
+import {
+  getLevels,
+  getPaths,
+  getLevel,
+  getPathForLevel,
   getNextLevelThreshold,
-  milestones 
+  getMilestones
 } from './levelData';
 
 /**
@@ -17,10 +17,14 @@ import {
  */
 export function useLevelInfo(xp: number): LevelInfo {
   return useMemo(() => {
+    // Get fresh translations
+    const levels = getLevels();
+    const milestones = getMilestones();
+
     // Aktuelles Level ermitteln
     const currentLevel = getLevel(xp);
     const levelData = levels[currentLevel];
-    
+
     // Nächstes Level ermitteln (wenn nicht bereits maximales Level erreicht)
     const nextLevelData = currentLevel < levels.length - 1 ? levels[currentLevel + 1] : null;
     

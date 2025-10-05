@@ -49,7 +49,8 @@ export default StyleSheet.create({
     lineHeight: 18,
     textAlign: "center",
     marginBottom: 8,
-    minHeight: 0, // Mehr Platz für Text
+    minHeight: 36, // Feste Höhe für 2 Zeilen (18 * 2)
+    height: 36, // Feste Höhe für konsistente Card-Größe
     flexShrink: 1,
   },
   priceContainer: {

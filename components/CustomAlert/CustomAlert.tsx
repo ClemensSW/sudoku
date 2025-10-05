@@ -31,7 +31,8 @@ export type ButtonType =
   | "success"
   | "danger"
   | "cancel"
-  | "duoButton";
+  | "duoButton"
+  | "info";
 
 // Define alert types with different visual styles
 export type AlertType =
@@ -62,6 +63,7 @@ export interface CustomAlertProps {
   dismissTimeout?: number;
   icon?: string;
   customIcon?: React.ReactNode;
+  hideIconBackground?: boolean;
   testID?: string;
 }
 
@@ -78,6 +80,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   dismissTimeout = 3000,
   icon,
   customIcon,
+  hideIconBackground = false,
   testID,
 }) => {
   const theme = useTheme();
@@ -255,6 +258,11 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           ...baseStyle,
           backgroundColor: "#4A7D78",
         };
+      case "info":
+        return {
+          ...baseStyle,
+          backgroundColor: theme.isDark ? "#8A78B4" : "#6E5AA0",
+        };
       case "cancel":
         // Ghost button - no background, no border
         return {
@@ -286,6 +294,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "success":
       case "danger":
       case "duoButton":
+      case "info":
         return {
           ...baseStyle,
           color: "#FFFFFF",
@@ -345,7 +354,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
             style={[
               styles.iconContainer,
               {
-                backgroundColor: `${getIconColor()}10`, // Very subtle background
+                backgroundColor: hideIconBackground ? "transparent" : `${getIconColor()}10`, // Very subtle background
               },
               iconAnimatedStyle,
             ]}

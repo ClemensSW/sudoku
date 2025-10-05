@@ -1,5 +1,6 @@
 // utils.ts
 import { Linking, Platform } from 'react-native';
+import i18next from 'i18next';
 import { FeedbackData } from './types';
 import { EMAIL_CONFIG } from './constants';
 
@@ -51,17 +52,20 @@ export const sendFeedbackViaEmail = async (
     
     // Hinzufügen der Kategorie, falls vorhanden
     if (data.category) {
-      body += `Kategorie: ${data.category}\n\n`;
+      body += i18next.t('feedback:email.bodyCategory', { category: data.category }) + '\n\n';
     }
     
     // Hinzufügen der Details, falls vorhanden
     if (data.details) {
-      body += `Feedback:\n${data.details}\n\n`;
+      body += i18next.t('feedback:email.bodyFeedback', { details: data.details }) + '\n\n';
     }
     
     // Hinzufügen zusätzlicher Informationen
-    body += `Bewertung: ${data.rating} Sterne\n`;
-    body += `Platform: ${Platform.OS} ${Platform.Version}\n`;
+    body += i18next.t('feedback:email.bodyRating', { rating: data.rating }) + '\n';
+    body += i18next.t('feedback:email.bodyPlatform', {
+      platform: Platform.OS,
+      version: Platform.Version
+    }) + '\n';
     
     // E-Mail URI codieren
     const encodedSubject = encodeURIComponent(subject);

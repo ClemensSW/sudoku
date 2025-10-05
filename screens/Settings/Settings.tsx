@@ -183,7 +183,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
       title: t("about.title"),
       message: message,
       type: "info",
-      buttons: [{ text: "OK", style: "primary" }],
+      buttons: [{ text: "OK", style: "info" }],
       customIcon: (
         <InfoIcon
           width={48}
@@ -191,6 +191,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
         />
       ),
+      hideIconBackground: true,
     });
   };
 

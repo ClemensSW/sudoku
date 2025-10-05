@@ -1,6 +1,7 @@
 // screens/SettingsScreen/components/ReviewSystem/ReviewManager.tsx
 import React, { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import RatingModal from './RatingModal';
 import FeedbackCategoryModal from './FeedbackCategoryModal';
 import FeedbackDetailModal from './FeedbackDetailModal';
@@ -38,15 +39,17 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   onPlayStoreRedirect,
   onFeedbackSent
 }) => {
+  const { t } = useTranslation('feedback');
+
   // State for the different modals
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  
+
   // Rating data
   const [rating, setRating] = useState<Rating | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
-  
+
   // Custom Alert for success/error messages
   const { showAlert } = useAlert();
 
@@ -157,12 +160,12 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       } else {
         // If no email app is available
         showAlert({
-          title: 'Feedback konnte nicht gesendet werden',
-          message: `Bitte sende dein Feedback direkt an: ${feedbackEmail}`,
+          title: t('errors.sendFailed.title'),
+          message: t('errors.sendFailed.message', { email: feedbackEmail }),
           type: 'warning',
           buttons: [
             {
-              text: 'OK',
+              text: t('errors.sendFailed.button'),
               onPress: handleClose,
               style: 'primary'
             }
@@ -171,15 +174,15 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       }
     } catch (error) {
       console.error('Error sending feedback:', error);
-      
+
       // Show error message
       showAlert({
-        title: 'Ein Fehler ist aufgetreten',
-        message: 'Dein Feedback konnte leider nicht gesendet werden. Bitte versuche es später noch einmal.',
+        title: t('errors.generic.title'),
+        message: t('errors.generic.message'),
         type: 'error',
         buttons: [
           {
-            text: 'OK',
+            text: t('errors.generic.button'),
             onPress: handleClose,
             style: 'primary'
           }

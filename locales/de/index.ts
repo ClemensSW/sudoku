@@ -11,6 +11,7 @@ import gallery from './gallery.json';
 import tutorial from './tutorial.json';
 import supportShop from './supportShop.json';
 import validation from './validation.json';
+import feedback from './feedback.json';
 
 export default {
   common,
@@ -25,4 +26,5 @@ export default {
   tutorial,
   supportShop,
   validation,
+  feedback,
 };

@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   StatusBar
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles } from './styles';
 import { FeedbackData, FeedbackCategory, Rating } from './types';
@@ -34,6 +35,7 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
   onClose,
   onSubmit
 }) => {
+  const { t } = useTranslation('feedback');
   const [details, setDetails] = useState('');
   const [email, setEmail] = useState('');
   const detailsInputRef = useRef<TextInput>(null);
@@ -91,11 +93,11 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
           <TouchableOpacity onPress={onClose} hitSlop={{ top: 15, right: 15, bottom: 15, left: 15 }}>
             <Feather name="arrow-left" size={24} color={themeStyles.text} />
           </TouchableOpacity>
-          
+
           <Text style={[styles.headerTitle, { color: themeStyles.text }]}>
-          Wie kann ich dir helfen?
+            {t('category.title')}
           </Text>
-          
+
           <View style={{ width: 24 }} />
         </View>
         
@@ -116,7 +118,7 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
                   borderWidth: 1
                 }
               ]}
-              placeholder="Erzähl mir weitere Einzelheiten..."
+              placeholder={t('detail.placeholder')}
               placeholderTextColor={themeStyles.secondaryText}
               multiline
               textAlignVertical="top"
@@ -131,8 +133,8 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
                 style={[
                   styles.buttonContainer,
                   {
-                    backgroundColor: details.trim().length > 0 
-                      ? themeStyles.buttonBackground 
+                    backgroundColor: details.trim().length > 0
+                      ? themeStyles.buttonBackground
                       : themeStyles.borderColor,
                     opacity: details.trim().length > 0 ? 1 : 0.5
                   }
@@ -140,7 +142,7 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
                 onPress={handleSubmit}
                 disabled={details.trim().length === 0}
               >
-                <Text style={styles.buttonText}>Senden</Text>
+                <Text style={styles.buttonText}>{t('detail.button')}</Text>
               </TouchableOpacity>
             </View>
           </View>

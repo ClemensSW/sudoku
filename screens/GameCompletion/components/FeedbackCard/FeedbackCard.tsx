@@ -273,7 +273,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({
           <Text
             style={[styles.warningText, { color: colors.textSecondary }]}
           >
-            Bei der Verwendung von Auto-Notizen wird dieses Spiel nicht für Statistiken oder Level-Fortschritt gezählt.
+            {t('autoNotesWarning')}
           </Text>
         </View>
       )}

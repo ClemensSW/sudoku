@@ -1,0 +1,59 @@
+{
+  "rating": {
+    "title": "Rate my App",
+    "subtitle": "Your feedback helps me improve the app",
+    "button": "Rate"
+  },
+  "positive": {
+    "title": "I like you too!",
+    "subtitle": "Thank you for your support",
+    "buttonPlayStore": "Rate on Play Store"
+  },
+  "negative": {
+    "title": "Thanks for your honesty!",
+    "subtitle": "Help me improve the app by describing your feedback"
+  },
+  "category": {
+    "title": "How can I help you?",
+    "button": "Continue",
+    "options": {
+      "problem": "A problem occurred",
+      "idea": "I have an idea for the app",
+      "missing": "Features I need are missing",
+      "complicated": "Complicated to use",
+      "other": "Other"
+    }
+  },
+  "detail": {
+    "title": "Your Feedback",
+    "placeholder": "Tell me more details...",
+    "placeholderExperience": "Tell me more about your experience...",
+    "emailPlaceholder": "Your email (optional)",
+    "button": "Send"
+  },
+  "sent": {
+    "title": "Thank you!",
+    "subtitle": "Your feedback helps me a lot to improve the app.",
+    "button": "Close"
+  },
+  "errors": {
+    "sendFailed": {
+      "title": "Feedback could not be sent",
+      "message": "Please send your feedback directly to: {{email}}",
+      "button": "OK"
+    },
+    "generic": {
+      "title": "An error occurred",
+      "message": "Your feedback could not be sent. Please try again later.",
+      "button": "OK"
+    }
+  },
+  "email": {
+    "subjectPrefix": "Sudoku Duo Feedback: ",
+    "bodyCategory": "Category: {{category}}",
+    "bodyFeedback": "Feedback:\n{{details}}",
+    "bodyRating": "Rating: {{rating}} stars",
+    "bodyPlatform": "Platform: {{platform}} {{version}}"
+  },
+  "autoNotesWarning": "When using auto-notes, this game will not count towards statistics or level progress."
+}

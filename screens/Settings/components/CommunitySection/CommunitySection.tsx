@@ -10,6 +10,7 @@ import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewMana
 import FeedbackIcon from "@/assets/svg/feedback.svg";
 import LatteArtIcon from "@/assets/svg/latte-art.svg";
 import ShareIcon from "@/assets/svg/share.svg";
+import InfoIcon from "@/assets/svg/info.svg";
 
 // Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
 const customStyles = StyleSheet.create({
@@ -179,9 +180,9 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         onPress={onAboutPress}
       >
         <View style={customStyles.actionIcon}>
-          <Feather
-            name="info"
-            size={48}
+          <InfoIcon
+            width={48}
+            height={48}
             color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
           />
         </View>

@@ -29,6 +29,8 @@ import SupportShopScreen from "@/screens/SupportShop";
 import { loadSettings, saveSettings } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
+import InfoIcon from "@/assets/svg/info.svg";
+import appConfig from "@/app.json";
 
 // Import components
 import {
@@ -174,11 +176,21 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
   const handleAboutPress = () => {
     triggerHaptic("light");
+    const version = appConfig.expo.version;
+    const message = t("about.message").replace("Version 1.0.0", `Version ${version}`);
+
     showAlert({
       title: t("about.title"),
-      message: t("about.message"),
+      message: message,
       type: "info",
       buttons: [{ text: "OK", style: "primary" }],
+      customIcon: (
+        <InfoIcon
+          width={48}
+          height={48}
+          color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
+        />
+      ),
     });
   };
 

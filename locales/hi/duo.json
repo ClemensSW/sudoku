@@ -1,0 +1,75 @@
+{
+  "header": {
+    "subtitle": "दो खिलाड़ी मोड",
+    "title": "सुडोकू डुओ"
+  },
+  "startSection": {
+    "title": "नया खेल",
+    "subtitle": "मिलकर कठिनाई स्तर चुनें"
+  },
+  "features": {
+    "title": "यह कैसे काम करता है",
+    "items": {
+      "playTogether": {
+        "title": "एक साथ खेलें",
+        "description": "एक सुडोकू, दो खिलाड़ी - कौन अपना क्षेत्र पहले हल करता है?"
+      },
+      "challengingLayout": {
+        "title": "चुनौतीपूर्ण लेआउट",
+        "description": "खिलाड़ी 2 के लिए संख्याएं स्वचालित रूप से घुमाई जाती हैं"
+      },
+      "strategyTeamwork": {
+        "title": "रणनीति और टीमवर्क",
+        "description": "प्रतियोगिता या सहयोग - आप तय करें!"
+      }
+    },
+    "startButton": "खेल शुरू करें"
+  },
+  "scrollIndicator": {
+    "label": "अधिक जानें"
+  },
+  "players": {
+    "green": "हरा",
+    "yellow": "पीला"
+  },
+  "completion": {
+    "tie": "बराबरी!",
+    "winner": "विजेता",
+    "winnerTitle": "{{color}} जीता!",
+    "bothCompleted": "दोनों खिलाड़ियों ने पूरा किया!",
+    "reasonFaster": "क्षेत्र तेजी से हल किया",
+    "reasonErrors": "प्रतिद्वंद्वी ने बहुत सारी गलतियां कीं",
+    "stats": {
+      "time": "समय",
+      "errors": "गलतियां",
+      "hints": "संकेत",
+      "completion": "प्रगति"
+    },
+    "buttons": {
+      "rematch": "फिर से मुकाबला",
+      "newGame": "नया खेल",
+      "backToMenu": "मेनू पर वापस"
+    }
+  },
+  "controls": {
+    "hint": "संकेत",
+    "hintUpsideDown": "sıǝʍuıH",
+    "delete": "मिटाएं",
+    "deleteUpsideDown": "uǝɥɔsö˥",
+    "note": "नोट",
+    "noteUpsideDown": "zıʇoN"
+  },
+  "gameModeModal": {
+    "title": "खेल मोड चुनें",
+    "subtitle": "आप एक साथ कैसे खेलना चाहेंगे?",
+    "local": {
+      "title": "स्थानीय रूप से खेलें",
+      "description": "एक डिवाइस साझा करें"
+    },
+    "online": {
+      "title": "ऑनलाइन खेलें",
+      "description": "दो डिवाइस पर लचीला",
+      "comingSoon": "योजनाबद्ध"
+    }
+  }
+}

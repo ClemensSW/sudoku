@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import translation files
 import de from './de';
 import en from './en';
+import hi from './hi';
 
 const LANGUAGE_STORAGE_KEY = '@sudoku/language';
 
@@ -27,8 +28,9 @@ const languageDetector = {
       // Fall back to device language
       const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'de';
 
-      // Only support 'de' and 'en', default to 'de'
-      const supportedLanguage = deviceLanguage === 'en' ? 'en' : 'de';
+      // Support 'de', 'en', and 'hi', default to 'de'
+      const supportedLanguages = ['de', 'en', 'hi'];
+      const supportedLanguage = supportedLanguages.includes(deviceLanguage) ? deviceLanguage : 'de';
       callback(supportedLanguage);
     } catch (error) {
       console.error('Error detecting language:', error);
@@ -53,9 +55,10 @@ i18n
     resources: {
       de,
       en,
+      hi,
     },
     fallbackLng: 'de',
-    supportedLngs: ['de', 'en'],
+    supportedLngs: ['de', 'en', 'hi'],
     interpolation: {
       escapeValue: false, // React already escapes values
     },

@@ -13,7 +13,7 @@ import { spacing } from "@/utils/theme";
 import { getSortedLanguages, getLanguageLabel } from "@/locales/languages";
 
 interface LanguageSelectorProps {
-  onLanguageChange: (language: "de" | "en") => void;
+  onLanguageChange: (language: "de" | "en" | "hi") => void;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
@@ -45,8 +45,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     // Change language in i18next
     await i18n.changeLanguage(language);
 
-    // Notify parent component (type assertion since we know it's "de" | "en")
-    onLanguageChange(language as "de" | "en");
+    // Notify parent component (type assertion since we know it's "de" | "en" | "hi")
+    onLanguageChange(language as "de" | "en" | "hi");
 
     // Close modal
     setShowModal(false);

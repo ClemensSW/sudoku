@@ -1,0 +1,27 @@
+{
+  "buttons": {
+    "ok": "ठीक है",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "confirm": "पुष्टि करें",
+    "back": "वापस",
+    "yes": "हाँ",
+    "no": "नहीं"
+  },
+  "time": {
+    "seconds": "सेकंड",
+    "minutes": "मिनट",
+    "hours": "घंटे"
+  },
+  "difficulty": {
+    "easy": "आसान",
+    "medium": "मध्यम",
+    "hard": "कठिन",
+    "expert": "विशेषज्ञ"
+  },
+  "navigation": {
+    "sudoku": "सुडोकू",
+    "duo": "डुओ",
+    "performance": "प्रदर्शन"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "title": "प्रदर्शन",
+  "headerTitle": "मेरा प्रदर्शन",
+  "loading": "आंकड़े लोड हो रहे हैं...",
+  "profile": {
+    "namePlaceholder": "आपका नाम",
+    "xp": "EP",
+    "xpDescription": "आपकी यात्रा",
+    "streak": "सीरीज में",
+    "streakDescription": "आपका रिकॉर्ड",
+    "pictures": "तस्वीरें",
+    "picture": "तस्वीर",
+    "picturesDescription": "सुंदर गैलरी"
+  },
+  "tabs": {
+    "level": "स्तर",
+    "time": "समय",
+    "streak": "सीरीज",
+    "gallery": "गैलरी",
+    "collection": "संग्रह",
+    "times": "समय"
+  },
+  "errors": {
+    "avatarSave": {
+      "title": "त्रुटि",
+      "message": "प्रोफ़ाइल चित्र सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।"
+    }
+  },
+  "bestTimes": {
+    "title": "सर्वश्रेष्ठ समय",
+    "difficulties": {
+      "easy": "आसान",
+      "medium": "मध्यम",
+      "hard": "कठिन",
+      "expert": "विशेषज्ञ"
+    }
+  },
+  "avatarPicker": {
+    "title": "प्रोफ़ाइल चित्र बदलें",
+    "tabs": {
+      "avatars": "अवतार",
+      "gallery": "गैलरी",
+      "camera": "कैमरा"
+    },
+    "options": {
+      "chooseFromGallery": "गैलरी से चुनें",
+      "takePhoto": "फोटो लें"
+    },
+    "alerts": {
+      "galleryPermission": {
+        "title": "पहुंच की आवश्यकता है",
+        "message": "प्रोफ़ाइल चित्र चुनने के लिए, ऐप को आपकी फोटो लाइब्रेरी तक पहुंच की आवश्यकता है।"
+      },
+      "cameraPermission": {
+        "title": "पहुंच की आवश्यकता है",
+        "message": "फोटो लेने के लिए, ऐप को आपके कैमरे तक पहुंच की आवश्यकता है।"
+      },
+      "imageSelectError": {
+        "title": "त्रुटि",
+        "message": "चित्र नहीं चुना जा सका। कृपया फिर से प्रयास करें।"
+      },
+      "photoError": {
+        "title": "त्रुटि",
+        "message": "फोटो नहीं ली जा सकी। कृपया फिर से प्रयास करें।"
+      },
+      "removeAvatar": {
+        "title": "प्रोफ़ाइल चित्र हटाएं",
+        "message": "क्या आप वाकई अपना वर्तमान प्रोफ़ाइल चित्र हटाना चाहते हैं?",
+        "cancel": "रद्द करें",
+        "remove": "हटाएं"
+      },
+      "removeError": {
+        "title": "त्रुटि",
+        "message": "प्रोफ़ाइल चित्र नहीं हटाया जा सका।"
+      }
+    }
+  },
+  "supportBanner": {
+    "subscription": {
+      "title": "आपकी सदस्यता के लिए बहुत धन्यवाद!",
+      "subtitle": "आप निरंतर विकास को सक्षम करते हैं"
+    },
+    "oneTimePurchase": {
+      "title": "आपके समर्थन के लिए धन्यवाद!",
+      "subtitle": "कोई भी अतिरिक्त मदद नई सुविधाओं को सक्षम करती है"
+    },
+    "noSupport": {
+      "title": "विकास का समर्थन करें",
+      "subtitle": "खेल को विज्ञापन-मुक्त रखने में मेरी मदद करें"
+    }
+  }
+}

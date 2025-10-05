@@ -8,6 +8,7 @@ export interface Language {
 export const AVAILABLE_LANGUAGES: Language[] = [
   { code: "de", name: "Deutsch", flag: "🇩🇪" },
   { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
   // Zukünftige Sprachen können hier einfach hinzugefügt werden:
   // { code: "es", name: "Español", flag: "🇪🇸" },
   // { code: "fr", name: "Français", flag: "🇫🇷" },

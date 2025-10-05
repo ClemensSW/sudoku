@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
   container: {
     width: SWITCH_WIDTH,
     alignSelf: "center",
+    marginBottom: 16, // spacing.md
   },
   track: {
     width: SWITCH_WIDTH,

@@ -1,10 +1,10 @@
 // screens/Settings/components/LanguageSelector/LanguageSelector.tsx
 import React, { useState } from "react";
-import { View, Text, Pressable, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import LanguageIcon from "@/assets/svg/language.svg";
 import { triggerHaptic } from "@/utils/haptics";
@@ -44,44 +44,35 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     return currentLanguage === "de" ? "Deutsch" : "English";
   };
 
+  const modalBg = theme.isDark ? "#1C1C1E" : "#FFFFFF";
   const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : "#FFFFFF";
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
-  const modalBg = theme.isDark ? "#1C1C1E" : "#FFFFFF";
   const selectedBg = theme.isDark ? "rgba(76, 175, 80, 0.15)" : "rgba(76, 175, 80, 0.10)";
   const selectedBorder = theme.isDark ? "rgba(76, 175, 80, 0.4)" : "rgba(76, 175, 80, 0.3)";
 
   return (
     <>
-      <Pressable
+      {/* Language Button - same design as other settings buttons */}
+      <TouchableOpacity
+        style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
         onPress={() => {
           triggerHaptic("light");
           setShowModal(true);
         }}
-        style={({ pressed }) => [
-          styles.settingCard,
-          {
-            backgroundColor: cardBg,
-            borderColor: cardBorder,
-            opacity: pressed ? 0.7 : 1,
-          },
-        ]}
       >
-        <View style={styles.settingLeft}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)" }]}>
-            <LanguageIcon width={22} height={22} />
-          </View>
-          <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>
+        <View style={styles.actionIcon}>
+          <LanguageIcon width={48} height={48} />
+        </View>
+        <View style={styles.actionTextContainer}>
+          <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
             {t("appearance.language")}
           </Text>
-        </View>
-
-        <View style={styles.settingRight}>
-          <Text style={[styles.settingValue, { color: colors.textSecondary }]}>
+          <Text style={[styles.actionDescription, { color: colors.textSecondary }]}>
             {getLanguageLabel()}
           </Text>
-          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </View>
-      </Pressable>
+        <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+      </TouchableOpacity>
 
       {/* Language Selection Modal */}
       <Modal
@@ -90,11 +81,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
         animationType="fade"
         onRequestClose={() => setShowModal(false)}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setShowModal(false)}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowModal(false)}
+        >
           <BlurView intensity={80} style={StyleSheet.absoluteFill} tint={theme.isDark ? "dark" : "light"} />
-        </Pressable>
+        </TouchableOpacity>
 
-        <View style={styles.modalContainer}>
+        <View style={styles.modalContainer} pointerEvents="box-none">
           <Animated.View
             entering={FadeInDown.duration(300).springify()}
             style={[
@@ -109,34 +104,32 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
                 {t("languageModal.title")}
               </Text>
-              <Pressable
+              <TouchableOpacity
                 onPress={() => {
                   triggerHaptic("light");
                   setShowModal(false);
                 }}
-                style={({ pressed }) => [
+                style={[
                   styles.closeButton,
                   {
                     backgroundColor: theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
-                    opacity: pressed ? 0.6 : 1,
                   },
                 ]}
               >
                 <Feather name="x" size={20} color={colors.textPrimary} />
-              </Pressable>
+              </TouchableOpacity>
             </View>
 
             {/* Language Options */}
             <View style={styles.languageOptions}>
               {/* German */}
-              <Pressable
+              <TouchableOpacity
                 onPress={() => handleLanguageSelect("de")}
-                style={({ pressed }) => [
+                style={[
                   styles.languageOption,
                   {
                     backgroundColor: currentLanguage === "de" ? selectedBg : cardBg,
                     borderColor: currentLanguage === "de" ? selectedBorder : cardBorder,
-                    opacity: pressed ? 0.7 : 1,
                   },
                 ]}
               >
@@ -149,17 +142,16 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
                 {currentLanguage === "de" && (
                   <Feather name="check" size={22} color={colors.primary} />
                 )}
-              </Pressable>
+              </TouchableOpacity>
 
               {/* English */}
-              <Pressable
+              <TouchableOpacity
                 onPress={() => handleLanguageSelect("en")}
-                style={({ pressed }) => [
+                style={[
                   styles.languageOption,
                   {
                     backgroundColor: currentLanguage === "en" ? selectedBg : cardBg,
                     borderColor: currentLanguage === "en" ? selectedBorder : cardBorder,
-                    opacity: pressed ? 0.7 : 1,
                   },
                 ]}
               >
@@ -172,7 +164,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
                 {currentLanguage === "en" && (
                   <Feather name="check" size={22} color={colors.primary} />
                 )}
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </Animated.View>
         </View>
@@ -182,42 +174,33 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
 };
 
 const styles = StyleSheet.create({
-  // Setting Card Styles
-  settingCard: {
+  // Button styles matching HelpSection/ActionsSection design
+  actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    height: 72,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
     borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: spacing.sm,
+    borderWidth: 1,
+    marginBottom: spacing.md,
   },
-  settingLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+  actionIcon: {
+    width: 48,
+    height: 48,
+    marginRight: spacing.md,
+  },
+  actionTextContainer: {
     flex: 1,
   },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  settingLabel: {
+  actionTitle: {
     fontSize: 16,
     fontWeight: "600",
+    marginBottom: spacing.xxs,
   },
-  settingRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  settingValue: {
-    fontSize: 15,
-    fontWeight: "500",
+  actionDescription: {
+    fontSize: 14,
+    opacity: 0.8,
   },
 
   // Modal Styles

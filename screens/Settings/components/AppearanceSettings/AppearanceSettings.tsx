@@ -49,10 +49,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
   };
 
   return (
-    <Animated.View
-      entering={FadeIn.duration(300)}
-      style={{ marginBottom: spacing.md }}
-    >
+    <Animated.View entering={FadeIn.duration(300)}>
       <ThemeToggleSwitch
         value={currentTheme}
         onValueChange={handleThemeChange}

@@ -245,12 +245,14 @@ const Leistung: React.FC = () => {
           />
         </View>
 
-        {/* Support */}
-        <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
-
         {/* Tabs */}
         <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
           <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+        </View>
+
+        {/* Support Banner - unterhalb der Tabs */}
+        <View style={styles.bannerContainer}>
+          <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
         </View>
 
         <View style={styles.tabContentContainer}>
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
   scrollContent: {},
   profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
   tabSection: { width: "100%" },
+  bannerContainer: { paddingHorizontal: 16, marginTop: 20, marginBottom: 16 },
   tabContentContainer: {paddingBottom: 64 },
 });
 

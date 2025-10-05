@@ -4,8 +4,7 @@ import { spacing, radius } from "@/utils/theme";
 
 const styles = StyleSheet.create({
   touchableContainer: {
-    marginHorizontal: spacing.md,
-    marginBottom: 30,
+    marginBottom: 0,
   },
 
   // NEU: Der Wrapper erlaubt overflow: "visible", damit der Close-Button
@@ -17,12 +16,12 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: radius.lg,
     borderWidth: 1,
-    overflow: "hidden", // Card bleibt sauber gecropped
+    overflow: "hidden",
     position: "relative",
-    elevation: 4,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
 
   shimmerOverlay: {

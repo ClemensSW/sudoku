@@ -19,6 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { checkHasPurchased, trackBannerInteraction } from "@/screens/SupportShop/utils/purchaseTracking";
 import styles from "./SupportBanner.styles";
+import HeartIcon from "@/assets/svg/heart.svg";
 
 interface SupportBannerProps {
   onOpenSupportShop: () => void; // Callback to open SupportShop from parent
@@ -191,33 +192,28 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
       >
         {/* Wrapper erlaubt, dass Close-Button halb außerhalb sitzen kann */}
         <View style={styles.cardWrapper}>
-          <LinearGradient
-            colors={
-              theme.isDark
-                ? ["#1a1a2e", "#16213e", "#1a1a2e"]
-                : ["#fff5f0", "#ffeaa7", "#fff5f0"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <View
             style={[
               styles.container,
               {
+                backgroundColor: theme.isDark
+                  ? "#2A2A2E"
+                  : "#FAFAFA",
                 borderColor: theme.isDark
-                  ? "rgba(255, 215, 0, 0.2)"
-                  : "rgba(255, 165, 0, 0.3)",
-                shadowColor: theme.isDark ? "#FFD700" : "#FFA500",
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(0, 0, 0, 0.06)",
               },
             ]}
           >
-            {/* Shimmer effect overlay */}
+            {/* Shimmer effect overlay - dezenter */}
             <Animated.View
               style={[
                 styles.shimmerOverlay,
                 shimmerAnimatedStyle,
                 {
                   backgroundColor: theme.isDark
-                    ? "rgba(255, 215, 0, 0.1)"
-                    : "rgba(255, 165, 0, 0.1)",
+                    ? "rgba(255, 255, 255, 0.03)"
+                    : "rgba(0, 0, 0, 0.02)",
                 },
               ]}
               pointerEvents="none"
@@ -227,14 +223,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
             <View style={styles.contentContainer}>
               {/* Heart icon with animation */}
               <Animated.View style={[styles.iconContainer, heartAnimatedStyle]}>
-                <LinearGradient
-                  colors={["#FF6B6B", "#FF8E53"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.iconGradient}
-                >
-                  <Feather name="heart" size={20} color="white" />
-                </LinearGradient>
+                <HeartIcon width={36} height={36} />
               </Animated.View>
 
               {/* Text content */}
@@ -255,33 +244,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
                 style={styles.arrowIcon}
               />
             </View>
-
-            {/* Premium badge */}
-            <View
-              style={[
-                styles.premiumBadge,
-                {
-                  backgroundColor: theme.isDark
-                    ? "rgba(255, 215, 0, 0.15)"
-                    : "rgba(255, 165, 0, 0.15)",
-                },
-              ]}
-            >
-              <Feather
-                name="zap"
-                size={12}
-                color={theme.isDark ? "#FFD700" : "#FFA500"}
-              />
-              <Text
-                style={[
-                  styles.premiumBadgeText,
-                  { color: theme.isDark ? "#FFD700" : "#FFA500" },
-                ]}
-              >
-                PREMIUM
-              </Text>
-            </View>
-          </LinearGradient>
+          </View>
 
         </View>
       </TouchableOpacity>

@@ -29,9 +29,6 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
   const { colors } = theme;
   const version = appConfig.expo.version;
 
-  // Debug logs
-  console.log("AboutModal - greeting:", t("about.greeting"));
-  console.log("AboutModal - intro:", t("about.intro"));
 
   if (!visible) return null;
 
@@ -66,7 +63,6 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             styles.modalContainer,
             { backgroundColor: colors.surface },
           ]}
-          onLayout={(e) => console.log("Modal container layout:", e.nativeEvent.layout)}
         >
           <View style={{ flex: 1 }}>
             {/* Header with Icon */}
@@ -110,9 +106,8 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
-            onLayout={(e) => console.log("ScrollView layout:", e.nativeEvent.layout)}
           >
-            <View style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}>
+            <View>
               {/* Greeting */}
               <Text style={[styles.greeting, { color: colors.textPrimary }]}>
                 {t("about.greeting") || "Hi! Ich bin Clemens 👋"}

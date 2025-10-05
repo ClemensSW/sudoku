@@ -53,16 +53,17 @@ export default StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 8,
+    paddingTop: 8,
+    paddingBottom: 20,
   },
   greeting: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 20,
+    marginBottom: 16,
     lineHeight: 26,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   bodyText: {
     fontSize: 16,
@@ -70,17 +71,17 @@ export default StyleSheet.create({
     letterSpacing: 0.2,
   },
   closingSection: {
-    marginBottom: 8,
+    marginBottom: 0,
   },
   signature: {
     fontSize: 16,
     fontWeight: "600",
-    marginTop: 12,
+    marginTop: 8,
     lineHeight: 24,
   },
   closeButton: {
-    margin: 20,
-    marginTop: 12,
+    marginHorizontal: 20,
+    marginVertical: 16,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",

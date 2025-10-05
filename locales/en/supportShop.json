@@ -101,5 +101,10 @@
   "thanks": {
     "message": "Great to have you here. If you want to support me, I'd be thrilled – thank you!",
     "emoji": "❤️"
+  },
+  "subscription": {
+    "badge": "Best Support",
+    "button": "Subscribe",
+    "savings": "Save {{percent}}%"
   }
 }

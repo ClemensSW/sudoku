@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { Product } from "../utils/billing/BillingManager";
 import styles from "./SubscriptionCard.styles";
 
@@ -29,6 +30,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   isBestValue = false,
   disabled = false,
 }) => {
+  const { t } = useTranslation('supportShop');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -148,7 +150,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               { backgroundColor: subscription.color },
             ]}
           >
-            <Text style={styles.bestValueText}>Stärkste Hilfe</Text>
+            <Text style={styles.bestValueText}>{t('subscription.badge')}</Text>
           </View>
         )}
 
@@ -231,7 +233,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               <Text
                 style={{ color: theme.isDark ? "white" : subscription.color }}
               >
-                Spare 17%
+                {t('subscription.savings', { percent: 17 })}
               </Text>
             </View>
           )}
@@ -242,7 +244,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               { backgroundColor: subscription.color },
             ]}
           >
-            <Text style={styles.subscribeText}>Abonnieren</Text>
+            <Text style={styles.subscribeText}>{t('subscription.button')}</Text>
             <Feather name="arrow-right" size={14} color="white" />
           </View>
         </View>

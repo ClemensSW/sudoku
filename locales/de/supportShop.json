@@ -101,5 +101,10 @@
   "thanks": {
     "message": "Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!",
     "emoji": "❤️"
+  },
+  "subscription": {
+    "badge": "Stärkste Hilfe",
+    "button": "Abonnieren",
+    "savings": "Spare {{percent}}%"
   }
 }

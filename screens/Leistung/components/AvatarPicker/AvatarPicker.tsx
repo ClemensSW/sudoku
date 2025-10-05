@@ -18,6 +18,7 @@ import { saveAvatar, deleteAvatar, getAvatarUri } from "../../utils/avatarStorag
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
+import { useTranslation } from "react-i18next";
 import {
   isDefaultAvatarPath,
   getAvatarIdFromPath,
@@ -49,6 +50,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   onImageSelected,
   currentAvatarUri,
 }) => {
+  const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
@@ -117,8 +119,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
 
       if (status !== "granted") {
         Alert.alert(
-          "Zugriff benötigt",
-          "Um ein Profilbild auszuwählen, benötigt die App Zugriff auf deine Fotobibliothek.",
+          t('avatarPicker.alerts.galleryPermission.title'),
+          t('avatarPicker.alerts.galleryPermission.message'),
           [{ text: "OK" }]
         );
         return;
@@ -141,8 +143,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     } catch (error) {
       console.error("Fehler beim Auswählen des Bildes:", error);
       Alert.alert(
-        "Fehler",
-        "Das Bild konnte nicht ausgewählt werden. Bitte versuche es erneut."
+        t('avatarPicker.alerts.imageSelectError.title'),
+        t('avatarPicker.alerts.imageSelectError.message')
       );
     } finally {
       setIsLoading(false);
@@ -156,8 +158,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
 
       if (status !== "granted") {
         Alert.alert(
-          "Zugriff benötigt",
-          "Um ein Foto aufzunehmen, benötigt die App Zugriff auf deine Kamera.",
+          t('avatarPicker.alerts.cameraPermission.title'),
+          t('avatarPicker.alerts.cameraPermission.message'),
           [{ text: "OK" }]
         );
         return;
@@ -179,8 +181,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     } catch (error) {
       console.error("Fehler beim Aufnehmen des Fotos:", error);
       Alert.alert(
-        "Fehler",
-        "Das Foto konnte nicht aufgenommen werden. Bitte versuche es erneut."
+        t('avatarPicker.alerts.photoError.title'),
+        t('avatarPicker.alerts.photoError.message')
       );
     } finally {
       setIsLoading(false);
@@ -213,12 +215,12 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
 
       // Bestätigungsdialog anzeigen
       Alert.alert(
-        "Profilbild entfernen",
-        "Möchtest du dein aktuelles Profilbild wirklich entfernen?",
+        t('avatarPicker.alerts.removeAvatar.title'),
+        t('avatarPicker.alerts.removeAvatar.message'),
         [
-          { text: "Abbrechen", style: "cancel" },
+          { text: t('avatarPicker.alerts.removeAvatar.cancel'), style: "cancel" },
           {
-            text: "Entfernen",
+            text: t('avatarPicker.alerts.removeAvatar.remove'),
             style: "destructive",
             onPress: async () => {
               try {
@@ -228,8 +230,8 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
               } catch (error) {
                 console.error("Fehler beim Entfernen des Avatars:", error);
                 Alert.alert(
-                  "Fehler",
-                  "Das Profilbild konnte nicht entfernt werden."
+                  t('avatarPicker.alerts.removeError.title'),
+                  t('avatarPicker.alerts.removeError.message')
                 );
               } finally {
                 setIsLoading(false);
@@ -289,7 +291,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                 <Feather name="image" size={24} color={colors.primary} />
               </View>
               <Text style={[styles.optionText, { color: colors.textPrimary }]}>
-                Aus Galerie wählen
+                {t('avatarPicker.options.chooseFromGallery')}
               </Text>
             </Pressable>
           </View>
@@ -327,7 +329,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                 <Feather name="camera" size={24} color={colors.primary} />
               </View>
               <Text style={[styles.optionText, { color: colors.textPrimary }]}>
-                Foto aufnehmen
+                {t('avatarPicker.options.takePhoto')}
               </Text>
             </Pressable>
           </View>
@@ -367,7 +369,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             {/* Header */}
             <View style={styles.header}>
               <Text style={[styles.title, { color: colors.textPrimary }]}>
-                Profilbild ändern
+                {t('avatarPicker.title')}
               </Text>
               <Pressable
                 onPress={onClose}
@@ -410,7 +412,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                     style={{ marginRight: 6 }}
                   />
                   <Text style={{ color: "#F44336", fontWeight: "600" }}>
-                    Entfernen
+                    {t('avatarPicker.alerts.removeAvatar.remove')}
                   </Text>
                 </Pressable>
               </View>
@@ -460,7 +462,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                     },
                   ]}
                 >
-                  Avatare
+                  {t('avatarPicker.tabs.avatars')}
                 </Text>
               </Pressable>
 
@@ -497,7 +499,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                     },
                   ]}
                 >
-                  Galerie
+                  {t('avatarPicker.tabs.gallery')}
                 </Text>
               </Pressable>
 
@@ -534,7 +536,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                     },
                   ]}
                 >
-                  Kamera
+                  {t('avatarPicker.tabs.camera')}
                 </Text>
               </Pressable>
 

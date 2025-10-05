@@ -7,18 +7,20 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
+import { useTranslation } from "react-i18next";
 
 const BottomNavigation: React.FC = () => {
+  const { t } = useTranslation('common');
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
 
-  // Function to get the active tab color based on tab name
-  const getActiveTabColor = (tabName: string): string => {
-    // Use teal color specifically for "Duo" tab
-    if (tabName === "Duo") {
+  // Function to get the active tab color based on tab translation key
+  const getActiveTabColor = (translationKey: string): string => {
+    // Use teal color specifically for "duo" tab
+    if (translationKey === "duo") {
       return "#4A7D78";
     }
     // Default primary color for other tabs
@@ -27,17 +29,20 @@ const BottomNavigation: React.FC = () => {
 
   const tabs = [
     {
-      name: "Sudoku",
+      name: t('navigation.sudoku'),
+      translationKey: "sudoku",
       path: "/",
       icon: "grid",
     },
     {
-      name: "Duo",
+      name: t('navigation.duo'),
+      translationKey: "duo",
       path: "/duo",
       icon: "users",
     },
     {
-      name: "Leistung",
+      name: t('navigation.performance'),
+      translationKey: "performance",
       path: "/leistung",
       icon: "award",
     },
@@ -72,7 +77,7 @@ const BottomNavigation: React.FC = () => {
             : pathname === tab.path;
         
         // Get the appropriate color for this tab when active
-        const activeColor = getActiveTabColor(tab.name);
+        const activeColor = getActiveTabColor(tab.translationKey);
 
         return (
           <TouchableOpacity

@@ -20,6 +20,7 @@ import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { spacing } from "@/utils/theme";
 import {
   LANDSCAPE_CATEGORIES,
@@ -48,6 +49,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   filteredCount,
   allLandscapes = [],
 }) => {
+  const { t } = useTranslation('gallery');
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
@@ -202,7 +204,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             </View>
 
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-              Filter
+              {t('filterModal.title')}
             </Text>
 
             <View style={styles.headerRight}>
@@ -212,7 +214,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   onPress={handleReset}
                 >
                   <Text style={[styles.resetText, { color: colors.primary }]}>
-                    Zurücksetzen
+                    {t('filterModal.reset')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -273,7 +275,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     },
                   ]}
                 >
-                  Alle Kategorien
+                  {t('filterModal.allCategories')}
                 </Text>
               </TouchableOpacity>
 
@@ -307,7 +309,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               style={[styles.applyButton, { backgroundColor: colors.primary }]}
               onPress={handleApply}
             >
-              <Text style={styles.applyButtonText}>Filter anwenden</Text>
+              <Text style={styles.applyButtonText}>{t('filterModal.applyFilter')}</Text>
             </TouchableOpacity>
           </View>
         </View>

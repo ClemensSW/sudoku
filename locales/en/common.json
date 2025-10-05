@@ -18,5 +18,10 @@
     "medium": "Medium",
     "hard": "Hard",
     "expert": "Expert"
+  },
+  "navigation": {
+    "sudoku": "Sudoku",
+    "duo": "Duo",
+    "performance": "Performance"
   }
 }

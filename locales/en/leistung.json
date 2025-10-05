@@ -1,5 +1,6 @@
 {
   "title": "Performance",
+  "headerTitle": "My Performance",
   "profile": {
     "namePlaceholder": "Your Name",
     "xp": "XP",
@@ -14,6 +15,77 @@
     "level": "Level",
     "time": "Time",
     "streak": "Streak",
-    "gallery": "Gallery"
+    "gallery": "Gallery",
+    "collection": "Collection",
+    "times": "Times"
+  },
+  "errors": {
+    "avatarSave": {
+      "title": "Error",
+      "message": "The profile picture could not be saved. Please try again."
+    }
+  },
+  "bestTimes": {
+    "title": "Best Times",
+    "difficulties": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "expert": "Expert"
+    }
+  },
+  "avatarPicker": {
+    "title": "Change Profile Picture",
+    "tabs": {
+      "avatars": "Avatars",
+      "gallery": "Gallery",
+      "camera": "Camera"
+    },
+    "options": {
+      "chooseFromGallery": "Choose from Gallery",
+      "takePhoto": "Take Photo"
+    },
+    "alerts": {
+      "galleryPermission": {
+        "title": "Access Required",
+        "message": "To select a profile picture, the app needs access to your photo library."
+      },
+      "cameraPermission": {
+        "title": "Access Required",
+        "message": "To take a photo, the app needs access to your camera."
+      },
+      "imageSelectError": {
+        "title": "Error",
+        "message": "The image could not be selected. Please try again."
+      },
+      "photoError": {
+        "title": "Error",
+        "message": "The photo could not be taken. Please try again."
+      },
+      "removeAvatar": {
+        "title": "Remove Profile Picture",
+        "message": "Do you really want to remove your current profile picture?",
+        "cancel": "Cancel",
+        "remove": "Remove"
+      },
+      "removeError": {
+        "title": "Error",
+        "message": "The profile picture could not be removed."
+      }
+    }
+  },
+  "supportBanner": {
+    "subscription": {
+      "title": "Thank you for your subscription!",
+      "subtitle": "You enable continuous development"
+    },
+    "oneTimePurchase": {
+      "title": "Thanks for your support!",
+      "subtitle": "Every contribution enables new features"
+    },
+    "noSupport": {
+      "title": "Support Development",
+      "subtitle": "Help me keep the game ad-free"
+    }
   }
 }

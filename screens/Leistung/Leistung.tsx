@@ -19,6 +19,7 @@ import EmptyState from "./components/EmptyState";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 // Components
 import ProfileHeader from "./components/ProfileHeader";
@@ -36,6 +37,7 @@ import SupportShopScreen from "@/screens/SupportShop";
 type TabId = "level" | "gallery" | "streak" | "times";
 
 const Leistung: React.FC = () => {
+  const { t } = useTranslation('leistung');
   const router = useRouter();
   const theme = useTheme();
   const colors = theme.colors;
@@ -205,7 +207,7 @@ const Leistung: React.FC = () => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
         <LoadingState />
       </View>
     );
@@ -215,7 +217,7 @@ const Leistung: React.FC = () => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
         <EmptyState />
       </View>
     );

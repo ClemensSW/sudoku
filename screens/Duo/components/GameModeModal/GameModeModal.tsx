@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { ZoomIn, FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import styles from "./GameModeModal.styles";
 
 export type GameMode = "local" | "online";
@@ -24,6 +25,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
   onSelectMode,
   noBackdrop = false,
 }) => {
+  const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
   
@@ -60,11 +62,11 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
         onTouchEnd={(e) => e.stopPropagation()}
       >
         <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-          Spielmodus wählen
+          {t('gameModeModal.title')}
         </Text>
 
         <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-          Wie möchtet ihr gemeinsam spielen?
+          {t('gameModeModal.subtitle')}
         </Text>
 
         <View style={styles.modeContainer}>
@@ -88,10 +90,10 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
             </View>
             <View style={styles.modeTextContainer}>
               <Text style={[styles.modeTitle, { color: colors.textPrimary }]}>
-                Lokal spielen
+                {t('gameModeModal.local.title')}
               </Text>
               <Text style={[styles.modeDescription, { color: colors.textSecondary }]}>
-                Teilt euch ein Gerät
+                {t('gameModeModal.local.description')}
               </Text>
             </View>
             <Feather 
@@ -119,17 +121,17 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
             <View style={styles.modeTextContainer}>
               <View style={styles.onlineTitleContainer}>
                 <Text style={[styles.modeTitle, { color: colors.textSecondary }]}>
-                  Online spielen
+                  {t('gameModeModal.online.title')}
                 </Text>
-                <Animated.View 
+                <Animated.View
                   style={[styles.comingSoonBadge, { backgroundColor: colors.warning }]}
                   entering={FadeIn.delay(400).duration(300)}
                 >
-                  <Text style={styles.comingSoonText}>In Planung</Text>
+                  <Text style={styles.comingSoonText}>{t('gameModeModal.online.comingSoon')}</Text>
                 </Animated.View>
               </View>
               <Text style={[styles.modeDescription, { color: colors.textSecondary }]}>
-                Flexibel auf zwei Geräten
+                {t('gameModeModal.online.description')}
               </Text>
             </View>
           </View>

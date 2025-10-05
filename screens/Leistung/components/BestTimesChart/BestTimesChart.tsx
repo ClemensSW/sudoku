@@ -9,6 +9,7 @@ import Animated, {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
+import { useTranslation } from "react-i18next";
 import styles from "./BestTimesChart.styles";
 
 interface BestTimesChartProps {
@@ -30,6 +31,7 @@ const getBestTime = (time: number): string => {
 };
 
 const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
+  const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -76,28 +78,28 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   }[] = [
     {
       key: "easy",
-      name: "Leicht",
+      name: t('bestTimes.difficulties.easy'),
       color: colors.success,
       time: stats.bestTimeEasy,
       percentage: getBarPercentage(stats.bestTimeEasy),
     },
     {
       key: "medium",
-      name: "Mittel",
+      name: t('bestTimes.difficulties.medium'),
       color: colors.warning,
       time: stats.bestTimeMedium,
       percentage: getBarPercentage(stats.bestTimeMedium),
     },
     {
       key: "hard",
-      name: "Schwer",
+      name: t('bestTimes.difficulties.hard'),
       color: colors.error,
       time: stats.bestTimeHard,
       percentage: getBarPercentage(stats.bestTimeHard),
     },
     {
       key: "expert",
-      name: "Experte",
+      name: t('bestTimes.difficulties.expert'),
       color: colors.info,
       time: stats.bestTimeExpert,
       percentage: getBarPercentage(stats.bestTimeExpert),
@@ -119,7 +121,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
       entering={FadeInUp.delay(300).duration(500)}
     >
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-        Bestzeiten
+        {t('bestTimes.title')}
       </Text>
 
       <View style={styles.chartContainer}>

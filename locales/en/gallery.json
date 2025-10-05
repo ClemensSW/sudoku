@@ -1,4 +1,45 @@
 {
+  "header": {
+    "title": "Your Collection"
+  },
+  "tabs": {
+    "all": "All",
+    "inProgress": "In Progress",
+    "inProgressShort": "Open",
+    "completed": "Complete",
+    "completedShort": "OK",
+    "favorites": "Favorites",
+    "favoritesShort": "Favs"
+  },
+  "filterBadge": {
+    "active": "{{count}} filter active"
+  },
+  "alerts": {
+    "imageSelected": {
+      "title": "Image Selected"
+    }
+  },
+  "filterModal": {
+    "title": "Filter",
+    "reset": "Reset",
+    "allCategories": "All Categories",
+    "applyFilter": "Apply Filter",
+    "infoSection": {
+      "title": "How your gallery works",
+      "collect": {
+        "title": "Collect",
+        "description": "Solve Sudokus to unlock images."
+      },
+      "selectGoal": {
+        "title": "Set Goals",
+        "description": "Define which images you want to unlock next."
+      },
+      "favorites": {
+        "title": "Mark Favorites",
+        "description": "Save your favorite images for later."
+      }
+    }
+  },
   "emptyState": {
     "all": {
       "title": "No images yet",

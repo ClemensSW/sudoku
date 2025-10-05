@@ -102,6 +102,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 };
 
 const Gallery: React.FC = () => {
+  const { t } = useTranslation('gallery');
   const theme = useTheme();
   const { colors } = theme;
   const router = useRouter();
@@ -195,26 +196,26 @@ const Gallery: React.FC = () => {
       return [
         {
           id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
+          label: t('tabs.all'),
+          shortLabel: t('tabs.all'),
           icon: "grid",
         },
         {
           id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "Offen",
+          label: t('tabs.inProgress'),
+          shortLabel: t('tabs.inProgressShort'),
           icon: "clock",
         },
         {
           id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "OK",
+          label: t('tabs.completed'),
+          shortLabel: t('tabs.completedShort'),
           icon: "check-circle",
         },
         {
           id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favs",
+          label: t('tabs.favorites'),
+          shortLabel: t('tabs.favoritesShort'),
           icon: "heart",
         },
       ];
@@ -222,26 +223,26 @@ const Gallery: React.FC = () => {
       return [
         {
           id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
+          label: t('tabs.all'),
+          shortLabel: t('tabs.all'),
           icon: "grid",
         },
         {
           id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "Offen",
+          label: t('tabs.inProgress'),
+          shortLabel: t('tabs.inProgressShort'),
           icon: "clock",
         },
         {
           id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "Komplett",
+          label: t('tabs.completed'),
+          shortLabel: t('tabs.completed'),
           icon: "check-circle",
         },
         {
           id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favoriten",
+          label: t('tabs.favorites'),
+          shortLabel: t('tabs.favorites'),
           icon: "heart",
         },
       ];
@@ -249,31 +250,31 @@ const Gallery: React.FC = () => {
       return [
         {
           id: "all" as LandscapeFilter,
-          label: "Alle",
-          shortLabel: "Alle",
+          label: t('tabs.all'),
+          shortLabel: t('tabs.all'),
           icon: "grid",
         },
         {
           id: "inProgress" as LandscapeFilter,
-          label: "In Arbeit",
-          shortLabel: "Offen",
+          label: t('tabs.inProgress'),
+          shortLabel: t('tabs.inProgressShort'),
           icon: "clock",
         },
         {
           id: "completed" as LandscapeFilter,
-          label: "Komplett",
-          shortLabel: "Komplett",
+          label: t('tabs.completed'),
+          shortLabel: t('tabs.completed'),
           icon: "check-circle",
         },
         {
           id: "favorites" as LandscapeFilter,
-          label: "Favoriten",
-          shortLabel: "Favoriten",
+          label: t('tabs.favorites'),
+          shortLabel: t('tabs.favorites'),
           icon: "heart",
         },
       ];
     }
-  }, [isCompactMode, isSmallMode]);
+  }, [isCompactMode, isSmallMode, t]);
 
   // Aktuelle Bild-ID für das Freischalten
   const currentImageId = collection?.currentImageId || "";
@@ -381,7 +382,7 @@ const Gallery: React.FC = () => {
     const success = await setCurrentProject(landscape.id);
     if (success) {
       showAlert({
-        title: "Bild ausgewählt",
+        title: t('alerts.imageSelected.title'),
         message: `„${getLandscapeName(landscape.id)}" wird nun durch Lösen von Sudokus freigeschaltet.`,
         type: "success",
         buttons: [{ text: "OK", style: "primary" }],
@@ -540,7 +541,7 @@ const Gallery: React.FC = () => {
 
       {/* Header */}
       <Header
-        title="Deine Sammlung"
+        title={t('header.title')}
         onBackPress={handleBack}
         rightAction={{ icon: "filter", onPress: showFilterModal }}
       />
@@ -550,7 +551,7 @@ const Gallery: React.FC = () => {
         <View style={[styles.filterBadge, { backgroundColor: colors.surface }]}>
           <Feather name="filter" size={14} color={colors.primary} />
           <Text style={[styles.filterBadgeText, { color: colors.textPrimary }]}>
-            {selectedCategories.length} Filter aktiv
+            {t('filterBadge.active', { count: selectedCategories.length })}
           </Text>
           <TouchableOpacity
             onPress={() => setSelectedCategories([])}

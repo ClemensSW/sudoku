@@ -50,5 +50,26 @@
       "newGame": "Neues Spiel",
       "backToMenu": "Zurück zum Menü"
     }
+  },
+  "controls": {
+    "hint": "Hinweis",
+    "hintUpsideDown": "sıǝʍuıH",
+    "delete": "Löschen",
+    "deleteUpsideDown": "uǝɥɔsö˥",
+    "note": "Notiz",
+    "noteUpsideDown": "zıʇoN"
+  },
+  "gameModeModal": {
+    "title": "Spielmodus wählen",
+    "subtitle": "Wie möchtet ihr gemeinsam spielen?",
+    "local": {
+      "title": "Lokal spielen",
+      "description": "Teilt euch ein Gerät"
+    },
+    "online": {
+      "title": "Online spielen",
+      "description": "Flexibel auf zwei Geräten",
+      "comingSoon": "In Planung"
+    }
   }
 }

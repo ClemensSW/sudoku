@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing, radius } from "@/utils/theme";
+import { useTranslation } from "react-i18next";
 
 interface InfoItemProps {
   icon: string;
@@ -41,35 +42,36 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor
 };
 
 const InfoSection: React.FC = () => {
+  const { t } = useTranslation('gallery');
   const theme = useTheme();
   const { colors } = theme;
-  
+
   return (
     <View>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-        So funktioniert deine Galerie
+        {t('filterModal.infoSection.title')}
       </Text>
-      
+
       <View style={styles.infoContainer}>
         <InfoItem
           icon="grid"
           iconColor={colors.primary}
-          title="Sammeln"
-          description="Löse Sudokus, um Bilder freizuschalten."
+          title={t('filterModal.infoSection.collect.title')}
+          description={t('filterModal.infoSection.collect.description')}
         />
-        
+
         <InfoItem
           icon="target"
           iconColor={colors.info}
-          title="Ziel wählen"
-          description="Tippe auf „Dieses Bild freischalten“, um ein Zielbild auszuwählen."
+          title={t('filterModal.infoSection.selectGoal.title')}
+          description={t('filterModal.infoSection.selectGoal.description')}
         />
-        
+
         <InfoItem
           icon="heart"
           iconColor={colors.error}
-          title="Favoriten"
-          description="Markiere Bilder als Favoriten – sie landen auf deinem Startbildschirm."
+          title={t('filterModal.infoSection.favorites.title')}
+          description={t('filterModal.infoSection.favorites.description')}
         />
       </View>
     </View>

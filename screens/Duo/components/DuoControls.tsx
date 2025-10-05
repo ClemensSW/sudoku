@@ -10,6 +10,7 @@ import {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -36,6 +37,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   disabled = false,
   hintsRemaining = 3,
 }) => {
+  const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -80,7 +82,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             )}
           </TouchableOpacity>
           <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
-            {position === "top" ? "sıǝʍuıH" : "Hinweis"}
+            {position === "top" ? t('controls.hintUpsideDown') : t('controls.hint')}
           </Text>
         </View>
 
@@ -98,7 +100,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             />
           </TouchableOpacity>
           <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
-            {position === "top" ? "uǝɥɔsö˥" : "Löschen"}
+            {position === "top" ? t('controls.deleteUpsideDown') : t('controls.delete')}
           </Text>
         </View>
 
@@ -120,7 +122,7 @@ const DuoControls: React.FC<DuoControlsProps> = ({
             />
           </TouchableOpacity>
           <Text style={[styles.actionLabel, { color: colors.textSecondary }]}>
-            {position === "top" ? "zıʇoN" : "Notiz"}
+            {position === "top" ? t('controls.noteUpsideDown') : t('controls.note')}
           </Text>
         </View>
       </View>

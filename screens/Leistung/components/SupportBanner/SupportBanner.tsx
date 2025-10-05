@@ -15,6 +15,7 @@ import Animated, {
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { checkHasPurchased, trackBannerInteraction, getPurchaseType, PurchaseType } from "@/screens/SupportShop/utils/purchaseTracking";
 import styles from "./SupportBanner.styles";
@@ -25,6 +26,7 @@ interface SupportBannerProps {
 }
 
 const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
+  const { t } = useTranslation('leistung');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -192,18 +194,18 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
     switch (purchaseType) {
       case 'subscription':
         return {
-          title: "Vielen Dank für dein Abo!",
-          subtitle: "Du ermöglichst kontinuierliche Entwicklung"
+          title: t('supportBanner.subscription.title'),
+          subtitle: t('supportBanner.subscription.subtitle')
         };
       case 'one-time':
         return {
-          title: "Danke für deine Unterstützung!",
-          subtitle: "Jede weitere Hilfe ermöglicht neue Features"
+          title: t('supportBanner.oneTimePurchase.title'),
+          subtitle: t('supportBanner.oneTimePurchase.subtitle')
         };
       default:
         return {
-          title: "Unterstütze die Entwicklung",
-          subtitle: "Hilf mir, das Spiel werbefrei zu halten"
+          title: t('supportBanner.noSupport.title'),
+          subtitle: t('supportBanner.noSupport.subtitle')
         };
     }
   };

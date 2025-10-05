@@ -1,4 +1,24 @@
 {
+  "header": {
+    "title": "Deine Sammlung"
+  },
+  "tabs": {
+    "all": "Alle",
+    "inProgress": "In Arbeit",
+    "inProgressShort": "Offen",
+    "completed": "Komplett",
+    "completedShort": "OK",
+    "favorites": "Favoriten",
+    "favoritesShort": "Favs"
+  },
+  "filterBadge": {
+    "active": "{{count}} Filter aktiv"
+  },
+  "alerts": {
+    "imageSelected": {
+      "title": "Bild ausgewählt"
+    }
+  },
   "emptyState": {
     "all": {
       "message": "Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten."
@@ -7,6 +27,27 @@
       "message": "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol."
     },
     "unlockButton": "Neues Sudoku spielen"
+  },
+  "filterModal": {
+    "title": "Filter",
+    "reset": "Zurücksetzen",
+    "allCategories": "Alle Kategorien",
+    "applyFilter": "Filter anwenden",
+    "infoSection": {
+      "title": "So funktioniert deine Galerie",
+      "collect": {
+        "title": "Sammeln",
+        "description": "Löse Sudokus, um Bilder freizuschalten."
+      },
+      "selectGoal": {
+        "title": "Ziel wählen",
+        "description": "Tippe auf „Dieses Bild freischalten", um ein Zielbild auszuwählen."
+      },
+      "favorites": {
+        "title": "Favoriten",
+        "description": "Markiere Bilder als Favoriten – sie landen auf deinem Startbildschirm."
+      }
+    }
   },
   "categories": {
     "cities": "Städte",

@@ -1,5 +1,6 @@
 {
   "title": "Leistung",
+  "headerTitle": "Meine Leistung",
   "profile": {
     "namePlaceholder": "Dein Name",
     "xp": "EP",
@@ -14,6 +15,77 @@
     "level": "Level",
     "time": "Zeit",
     "streak": "Serie",
-    "gallery": "Galerie"
+    "gallery": "Galerie",
+    "collection": "Sammlung",
+    "times": "Zeiten"
+  },
+  "errors": {
+    "avatarSave": {
+      "title": "Fehler",
+      "message": "Das Profilbild konnte nicht gespeichert werden. Bitte versuche es erneut."
+    }
+  },
+  "bestTimes": {
+    "title": "Bestzeiten",
+    "difficulties": {
+      "easy": "Leicht",
+      "medium": "Mittel",
+      "hard": "Schwer",
+      "expert": "Experte"
+    }
+  },
+  "avatarPicker": {
+    "title": "Profilbild ändern",
+    "tabs": {
+      "avatars": "Avatare",
+      "gallery": "Galerie",
+      "camera": "Kamera"
+    },
+    "options": {
+      "chooseFromGallery": "Aus Galerie wählen",
+      "takePhoto": "Foto aufnehmen"
+    },
+    "alerts": {
+      "galleryPermission": {
+        "title": "Zugriff benötigt",
+        "message": "Um ein Profilbild auszuwählen, benötigt die App Zugriff auf deine Fotobibliothek."
+      },
+      "cameraPermission": {
+        "title": "Zugriff benötigt",
+        "message": "Um ein Foto aufzunehmen, benötigt die App Zugriff auf deine Kamera."
+      },
+      "imageSelectError": {
+        "title": "Fehler",
+        "message": "Das Bild konnte nicht ausgewählt werden. Bitte versuche es erneut."
+      },
+      "photoError": {
+        "title": "Fehler",
+        "message": "Das Foto konnte nicht aufgenommen werden. Bitte versuche es erneut."
+      },
+      "removeAvatar": {
+        "title": "Profilbild entfernen",
+        "message": "Möchtest du dein aktuelles Profilbild wirklich entfernen?",
+        "cancel": "Abbrechen",
+        "remove": "Entfernen"
+      },
+      "removeError": {
+        "title": "Fehler",
+        "message": "Das Profilbild konnte nicht entfernt werden."
+      }
+    }
+  },
+  "supportBanner": {
+    "subscription": {
+      "title": "Vielen Dank für dein Abo!",
+      "subtitle": "Du ermöglichst kontinuierliche Entwicklung"
+    },
+    "oneTimePurchase": {
+      "title": "Danke für deine Unterstützung!",
+      "subtitle": "Jede weitere Hilfe ermöglicht neue Features"
+    },
+    "noSupport": {
+      "title": "Unterstütze die Entwicklung",
+      "subtitle": "Hilf mir, das Spiel werbefrei zu halten"
+    }
   }
 }

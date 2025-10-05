@@ -36,7 +36,6 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const shimmer = useSharedValue(0);
   const heartBeat = useSharedValue(1);
   const closeButtonScale = useSharedValue(1);
-  const opacity = useSharedValue(0);
   const translateY = useSharedValue(0);
 
   // Interval-Refs (sauberes Cleanup!)
@@ -95,11 +94,10 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
     closeButtonScale.value = 1;
   }, [scale, shimmer, heartBeat, closeButtonScale]);
 
-  // Cleanup-Funktion für Opacity und TranslateY
-  const resetOpacity = useCallback(() => {
-    opacity.value = 0;
+  // Cleanup-Funktion für TranslateY
+  const resetPosition = useCallback(() => {
     translateY.value = 0;
-  }, [opacity, translateY]);
+  }, [translateY]);
 
   // Verwende useFocusEffect statt useEffect für bessere Performance mit React Navigation
   useFocusEffect(
@@ -114,16 +112,13 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
 
         // Animationen basierend auf Purchase-Status
         if (type === 'none') {
-          // Neue Nutzer: SlideIn + Fade + Heartbeat
+          // Neue Nutzer: SlideIn + Heartbeat (kein Fade wegen Elevation)
           translateY.value = 50;
-          opacity.value = 0;
           translateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.ease) });
-          opacity.value = withTiming(1, { duration: 400 });
           startAnimations();
         } else {
-          // Bestehende Supporter: Nur Fade in, kein Slide
+          // Bestehende Supporter: Sofort sichtbar, kein Slide
           translateY.value = 0;
-          opacity.value = withTiming(1, { duration: 300 });
           stopAnimations();
         }
       };
@@ -142,9 +137,9 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
           purchaseIntervalRef.current = null;
         }
         stopAnimations();
-        resetOpacity();
+        resetPosition();
       };
-    }, [startAnimations, stopAnimations, resetOpacity])
+    }, [startAnimations, stopAnimations, resetPosition])
   );
 
   // Handle banner press
@@ -181,7 +176,6 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }, { translateY: translateY.value }],
-    opacity: opacity.value,
   }));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({

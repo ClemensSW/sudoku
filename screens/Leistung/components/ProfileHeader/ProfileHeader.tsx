@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Platform } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
-import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "../AvatarPicker";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "../../utils/defaultAvatars";
@@ -69,7 +69,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const formatNumber = (n: number) => new Intl.NumberFormat("de-DE").format(n);
 
   return (
-    <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
+    <View style={styles.container}>
       {/* Avatar */}
       <Pressable
         onPress={openAvatarPicker}
@@ -206,7 +206,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         onImageSelected={handleAvatarChange}
         currentAvatarUri={avatarUri ?? null}
       />
-    </Animated.View>
+    </View>
   );
 };
 

@@ -116,10 +116,10 @@ const Leistung: React.FC = () => {
   );
 
   const tabs: TabItem[] = [
-    { id: "level", label: "Level" },
-    { id: "gallery", label: "Sammlung" },
-    { id: "streak", label: "Serie" },
-    { id: "times", label: "Zeiten" },
+    { id: "level", label: t('tabs.level') },
+    { id: "gallery", label: t('tabs.collection') },
+    { id: "streak", label: t('tabs.streak') },
+    { id: "times", label: t('tabs.times') },
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -226,7 +226,7 @@ const Leistung: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
-      <Header title="Meine Leistung" rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+      <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
 
       <ScrollView
         ref={scrollViewRef}

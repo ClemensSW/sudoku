@@ -1,5 +1,7 @@
 // components/CustomAlert/AlertHelpers.ts
+import React from 'react';
 import { AlertButton, AlertType, ButtonType } from './CustomAlert';
+import InkIcon from '@/assets/svg/ink.svg';
 
 /**
  * Helper functions to quickly create different types of alerts
@@ -243,6 +245,7 @@ export const autoNotesAlert = (onPress?: () => void) => ({
   title: "Automatische Notizen",
   message: "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
   type: "info" as AlertType,
+  customIcon: React.createElement(InkIcon, { width: 32, height: 32 }),
   buttons: [
     {
       text: "OK",

@@ -61,6 +61,7 @@ export interface CustomAlertProps {
   autoDismiss?: boolean;
   dismissTimeout?: number;
   icon?: string;
+  customIcon?: React.ReactNode;
   testID?: string;
 }
 
@@ -76,6 +77,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   autoDismiss = false,
   dismissTimeout = 3000,
   icon,
+  customIcon,
   testID,
 }) => {
   const theme = useTheme();
@@ -348,12 +350,14 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
               iconAnimatedStyle,
             ]}
           >
-            <Feather
-              name={getIcon() as any}
-              size={24} // Smaller icon
-              color={getIconColor()}
-              style={{ opacity: 0.9 }} // Slightly transparent
-            />
+            {customIcon || (
+              <Feather
+                name={getIcon() as any}
+                size={32}
+                color={getIconColor()}
+                style={{ opacity: 0.9 }}
+              />
+            )}
           </Animated.View>
         </View>
 

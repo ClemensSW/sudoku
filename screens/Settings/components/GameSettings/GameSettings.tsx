@@ -50,14 +50,6 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               >
                 Zellen hervorheben
               </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                Zeile, Spalte und Box hervorheben
-              </Text>
             </View>
             <Switch
               value={settings.highlightRelatedCells}
@@ -81,14 +73,6 @@ const GameSettings: React.FC<GameSettingsProps> = ({
                 style={[styles.settingTitle, { color: colors.textPrimary }]}
               >
                 Gleiche Zahlen hervorheben
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                Alle Zellen mit gleichen Werten markieren
               </Text>
             </View>
             <Switch

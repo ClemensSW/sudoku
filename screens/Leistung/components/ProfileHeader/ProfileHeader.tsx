@@ -7,6 +7,8 @@ import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withTiming, Easing 
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "../AvatarPicker";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "../../utils/defaultAvatars";
+import HikingIcon from "@/assets/svg/hiking.svg";
+import LightningIcon from "@/assets/svg/lightning.svg";
 
 interface ProfileHeaderProps {
   stats: GameStats;
@@ -54,7 +56,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const cardBg = theme.isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF";
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
   const iconCircleBg = theme.isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
-  const dividerColor = theme.isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
+  const dividerColor = theme.isDark ? "rgba(255,255,255,0.20)" : "rgba(0,0,0,0.15)";
   const valueColor = theme.isDark ? "#FFFFFF" : colors.textPrimary;
   const labelColor = theme.isDark ? "rgba(255,255,255,0.85)" : colors.textSecondary;
   const descriptionColor = theme.isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
@@ -157,13 +159,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
         <View style={styles.statsRow}>
           <StatTile
-            icon="flag"
+            customIcon={<HikingIcon width={40} height={40} />}
             value={formatNumber(stats.totalXP)}
             label="EP"
             description="Deine Reise"
             colors={{
               icon: colors.primary,
-              circle: iconCircleBg,
               valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
@@ -171,13 +172,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           />
           <HairlineDivider color={dividerColor} />
           <StatTile
-            icon="zap"
+            customIcon={<LightningIcon width={40} height={40} />}
             value={formatNumber(stats.longestStreak)}
             label="In Serie"
             description="Dein Rekord"
             colors={{
               icon: colors.primary,
-              circle: iconCircleBg,
               valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
@@ -185,13 +185,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           />
           <HairlineDivider color={dividerColor} />
           <StatTile
-            icon="image"
+            customIcon={<Image source={require("@/assets/png/picture.png")} style={{ width: 40, height: 40 }} />}
             value={formatNumber(completedLandscapesCount)}
             label={completedLandscapesCount === 1 ? "Bild" : "Bilder"}
             description="Schöne Galerie"
             colors={{
               icon: colors.primary,
-              circle: iconCircleBg,
               valueColor: valueColor,
               label: labelColor,
               desc: descriptionColor,
@@ -216,17 +215,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 const HairlineDivider = ({ color }: { color: string }) => <View style={[styles.divider, { backgroundColor: color }]} />;
 
 const StatTile = ({
-  icon,
+  customIcon,
   value,
   label,
   description,
   colors,
 }: {
-  icon: keyof typeof Feather.glyphMap;
+  customIcon: React.ReactNode;
   value: string | number;
   label: string;
   description: string;
-  colors: { icon: string; circle: string; valueColor: string; label: string; desc: string };
+  colors: { icon: string; valueColor: string; label: string; desc: string };
 }) => {
   const scale = useSharedValue(1);
   const rStyle = useAnimatedStyle(() => ({
@@ -237,13 +236,12 @@ const StatTile = ({
     <Pressable
       onPressIn={() => (scale.value = 0.985)}
       onPressOut={() => (scale.value = 1)}
-      android_ripple={{ color: colors.circle, borderless: false }}
       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
       style={styles.statPressable}
     >
       <Animated.View style={[styles.statItem, rStyle]}>
-        <View style={[styles.iconCircle, { backgroundColor: colors.circle }]}>
-          <Feather name={icon} size={18} color={colors.icon} />
+        <View style={styles.iconContainer}>
+          {customIcon}
         </View>
         <Text
           style={[styles.statValue, { color: colors.valueColor }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
@@ -348,10 +346,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-  iconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  iconContainer: {
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,

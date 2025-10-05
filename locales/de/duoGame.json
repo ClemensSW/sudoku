@@ -1,0 +1,8 @@
+{
+  "loading": "Spiel wird geladen...",
+  "controls": {
+    "notes": "Notizen",
+    "clear": "Löschen",
+    "hint": "Hinweis"
+  }
+}

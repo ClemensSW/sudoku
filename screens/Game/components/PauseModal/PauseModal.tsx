@@ -261,7 +261,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             <View style={styles.tipsContainer}>
               <View style={styles.tipsSection}>
                 <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                  {t('game:pause.tipSection')}
+                  {t('pause.tipSection')}
                 </Text>
                 {renderTipItem(selectedTip, 0)}
               </View>
@@ -270,7 +270,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             {/* Resume button */}
             <View style={styles.buttonContainer}>
               <Button
-                title={t('game:pause.resumeButton')}
+                title={t('pause.resumeButton')}
                 onPress={onResume}
                 variant="primary"
                 icon={<Feather name="play" size={20} color="#FFFFFF" />}

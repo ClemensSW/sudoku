@@ -1,0 +1,8 @@
+{
+  "loading": "Loading game...",
+  "controls": {
+    "notes": "Notes",
+    "clear": "Clear",
+    "hint": "Hint"
+  }
+}

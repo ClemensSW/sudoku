@@ -7,6 +7,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { duoQuitGameAlert } from "@/components/CustomAlert/AlertHelpers";
+import { useTranslation } from "react-i18next";
 import { Difficulty } from "@/utils/sudoku";
 import { GameSettings } from "@/utils/storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -39,6 +40,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
+  const { t } = useTranslation('duoGame');
 
   // States for game initialization
   const [isLoading, setIsLoading] = useState(true);
@@ -187,7 +189,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
         <StatusBar hidden={true} />
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: colors.textPrimary }]}>
-            Spiel wird geladen...
+            {t('loading')}
           </Text>
         </View>
       </View>

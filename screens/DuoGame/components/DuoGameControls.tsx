@@ -17,6 +17,7 @@ import Animated, {
 import { triggerHaptic } from "@/utils/haptics";
 import DuoErrorIndicator from "./DuoErrorIndicator";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -114,6 +115,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   const player = position === "top" ? 2 : 1;
   const theme = PLAYER_THEMES[player].controls;
   const { isDark } = useTheme(); // Get dark mode state
+  const { t } = useTranslation('duoGame');
 
   // Animation values for buttons
   const noteScale = useSharedValue(1);
@@ -277,7 +279,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 },
               ]}
             >
-              Notizen
+              {t('controls.notes')}
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -339,7 +341,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   },
                 ]}
               >
-                Löschen
+                {t('controls.clear')}
               </Text>
             </TouchableOpacity>
           </Animated.View>
@@ -390,7 +392,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 },
               ]}
             >
-              Hinweis {hintsRemaining > 0 ? `(${hintsRemaining})` : ""}
+              {t('controls.hint')} {hintsRemaining > 0 ? `(${hintsRemaining})` : ""}
             </Text>
           </TouchableOpacity>
         </Animated.View>

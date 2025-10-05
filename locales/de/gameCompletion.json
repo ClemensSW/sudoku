@@ -79,5 +79,6 @@
       "Beeindruckende Konstanz! {{count}} Spiele ohne Unterbrechung!",
       "Du bist im Flow! {{count}} erfolgreiche Spiele in Serie!"
     ]
-  }
+  },
+  "autoNotesWarning": "Bei der Verwendung von Auto-Notizen wird dieses Spiel nicht für Statistiken oder Level-Fortschritt gezählt."
 }

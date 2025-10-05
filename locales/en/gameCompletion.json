@@ -79,5 +79,6 @@
       "Impressive consistency! {{count}} games without interruption!",
       "You're in the zone! {{count}} successful games in a row!"
     ]
-  }
+  },
+  "autoNotesWarning": "When using auto-notes, this game will not count towards statistics or level progress."
 }

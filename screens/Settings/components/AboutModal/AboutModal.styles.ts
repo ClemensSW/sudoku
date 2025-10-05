@@ -48,7 +48,7 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   scrollView: {
-    maxHeight: 400,
+    // maxHeight wird dynamisch im Component gesetzt
   },
   scrollContent: {
     paddingHorizontal: 24,

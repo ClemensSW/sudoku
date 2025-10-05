@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Pressable,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
@@ -28,6 +29,12 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
   const theme = useTheme();
   const { colors } = theme;
   const version = appConfig.expo.version;
+  const { height: screenHeight } = useWindowDimensions();
+
+  // Berechne maxHeight für ScrollView basierend auf Bildschirmhöhe
+  // Header (~200px) + Button (~70px) + Padding (~40px) = ~310px
+  // ScrollView bekommt den Rest, max 400px
+  const scrollViewMaxHeight = Math.min(400, screenHeight * 0.9 - 310);
 
 
   if (!visible) return null;
@@ -102,7 +109,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
 
             {/* Scrollable Content */}
             <ScrollView
-            style={styles.scrollView}
+            style={[styles.scrollView, { maxHeight: scrollViewMaxHeight }]}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >

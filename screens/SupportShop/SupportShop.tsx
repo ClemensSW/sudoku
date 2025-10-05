@@ -107,7 +107,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         Alert.alert(
           t('errors.connection.title'),
           t('errors.connection.message'),
-          [{ text: "OK", onPress: onClose }]
+          [{ text: t('common.ok'), onPress: onClose }]
         );
       }
     };
@@ -151,7 +151,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
       Alert.alert(
         t('errors.purchase.title'),
         t('errors.purchase.message'),
-        [{ text: "OK" }]
+        [{ text: t('common.ok') }]
       );
     }
   };
@@ -231,7 +231,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     Alert.alert(
       t('errors.generic.title'),
       t('errors.generic.message'),
-      [{ text: "OK" }]
+      [{ text: t('common.ok') }]
     );
   };
 

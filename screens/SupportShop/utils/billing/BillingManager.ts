@@ -6,6 +6,7 @@ import Purchases, {
   CustomerInfo,
   PURCHASES_ERROR_CODE,
 } from 'react-native-purchases';
+import i18next from 'i18next';
 import { BILLING_CONFIG } from './config';
 
 // Product interface matching SupportShop expectations
@@ -55,8 +56,8 @@ class BillingManager {
     this.products = [
       {
         productId: 'sudoku_coffee',
-        title: 'Kaffee',
-        description: 'Spendiere mir einen Kaffee',
+        title: i18next.t('supportShop:billingProducts.coffee.title'),
+        description: i18next.t('supportShop:billingProducts.coffee.description'),
         price: '€1,99',
         color: '#8B4513',
         icon: '☕',
@@ -64,8 +65,8 @@ class BillingManager {
       },
       {
         productId: 'sudoku_breakfast',
-        title: 'Frühstück',
-        description: 'Ein leckeres Frühstück',
+        title: i18next.t('supportShop:billingProducts.breakfast.title'),
+        description: i18next.t('supportShop:billingProducts.breakfast.description'),
         price: '€4,99',
         color: '#FF6B6B',
         icon: '🥐',
@@ -73,8 +74,8 @@ class BillingManager {
       },
       {
         productId: 'sudoku_lunch',
-        title: 'Mittagessen',
-        description: 'Ein nahrhaftes Mittagessen',
+        title: i18next.t('supportShop:billingProducts.lunch.title'),
+        description: i18next.t('supportShop:billingProducts.lunch.description'),
         price: '€9,99',
         color: '#4ECDC4',
         icon: '🍱',
@@ -82,8 +83,8 @@ class BillingManager {
       },
       {
         productId: 'sudoku_feast',
-        title: 'Festmahl',
-        description: 'Ein königliches Festmahl',
+        title: i18next.t('supportShop:billingProducts.feast.title'),
+        description: i18next.t('supportShop:billingProducts.feast.description'),
         price: '€19,99',
         color: '#9B59B6',
         icon: '👑',
@@ -94,18 +95,18 @@ class BillingManager {
     this.subscriptions = [
       {
         productId: 'monthly_support',
-        title: 'Monatlicher Support',
-        description: 'Unterstütze die App-Entwicklung jeden Monat',
-        price: '€2,99/Monat',
+        title: i18next.t('supportShop:billingSubscriptions.monthly.title'),
+        description: i18next.t('supportShop:billingSubscriptions.monthly.description'),
+        price: i18next.t('supportShop:billingSubscriptions.monthly.price'),
         color: '#3498DB',
         icon: '📅',
         revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.MONTHLY_SUB
       },
       {
         productId: 'yearly_support',
-        title: 'Jährlicher Support',
-        description: 'Spare 17% mit jährlicher Unterstützung',
-        price: '€29,99/Jahr',
+        title: i18next.t('supportShop:billingSubscriptions.yearly.title'),
+        description: i18next.t('supportShop:billingSubscriptions.yearly.description'),
+        price: i18next.t('supportShop:billingSubscriptions.yearly.price'),
         color: '#27AE60',
         icon: '🎯',
         revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.YEARLY_SUB

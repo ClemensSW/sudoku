@@ -116,5 +116,35 @@
   },
   "common": {
     "ok": "OK"
+  },
+  "billingProducts": {
+    "coffee": {
+      "title": "Coffee",
+      "description": "Buy me a coffee"
+    },
+    "breakfast": {
+      "title": "Breakfast",
+      "description": "A delicious breakfast"
+    },
+    "lunch": {
+      "title": "Lunch",
+      "description": "A nutritious lunch"
+    },
+    "feast": {
+      "title": "Feast",
+      "description": "A royal feast"
+    }
+  },
+  "billingSubscriptions": {
+    "monthly": {
+      "title": "Monthly Support",
+      "description": "Support the app development every month",
+      "price": "€2.99/month"
+    },
+    "yearly": {
+      "title": "Yearly Support",
+      "description": "Save 17% with annual support",
+      "price": "€29.99/year"
+    }
   }
 }

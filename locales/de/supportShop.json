@@ -116,5 +116,35 @@
   },
   "common": {
     "ok": "OK"
+  },
+  "billingProducts": {
+    "coffee": {
+      "title": "Kaffee",
+      "description": "Spendiere mir einen Kaffee"
+    },
+    "breakfast": {
+      "title": "Frühstück",
+      "description": "Ein leckeres Frühstück"
+    },
+    "lunch": {
+      "title": "Mittagessen",
+      "description": "Ein nahrhaftes Mittagessen"
+    },
+    "feast": {
+      "title": "Festmahl",
+      "description": "Ein königliches Festmahl"
+    }
+  },
+  "billingSubscriptions": {
+    "monthly": {
+      "title": "Monatlicher Support",
+      "description": "Unterstütze die App-Entwicklung jeden Monat",
+      "price": "€2,99/Monat"
+    },
+    "yearly": {
+      "title": "Jährlicher Support",
+      "description": "Spare 17% mit jährlicher Unterstützung",
+      "price": "€29,99/Jahr"
+    }
   }
 }

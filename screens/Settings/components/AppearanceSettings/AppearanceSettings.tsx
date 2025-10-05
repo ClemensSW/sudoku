@@ -49,13 +49,15 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
   };
 
   return (
-    <Animated.View entering={FadeIn.duration(300)}>
+    <Animated.View style={{ marginTop: spacing.md}} entering={FadeIn.duration(300)}>
       <ThemeToggleSwitch
         value={currentTheme}
         onValueChange={handleThemeChange}
         disabled={isChanging}
       />
-      <LanguageSelector onLanguageChange={handleLanguageChange} />
+      <View style={{ marginTop: spacing.lg}}>
+        <LanguageSelector onLanguageChange={handleLanguageChange} />
+      </View>
     </Animated.View>
   );
 };

@@ -1,0 +1,24 @@
+{
+  "buttons": {
+    "newGame": "Neues Spiel",
+    "resumeGame": "Spiel fortsetzen",
+    "howToPlay": "Wie spielt man?"
+  },
+  "difficultyModal": {
+    "title": "Schwierigkeit",
+    "subtitle": "Wie fordernd soll dein Sudoku sein?",
+    "confirm": "Los geht's",
+    "difficulties": {
+      "easy": "Leicht",
+      "medium": "Mittel",
+      "hard": "Schwer",
+      "expert": "Experte"
+    },
+    "progress": {
+      "unlockMedium": "Löse noch {{count}} Sudoku auf Leicht, um Mittel freizuschalten.",
+      "unlockHard": "Löse noch {{count}} Sudoku auf Mittel, um Schwer freizuschalten.",
+      "unlockExpert": "Löse noch {{count}} Sudoku auf Schwer, um Experte freizuschalten.",
+      "allUnlocked": "Alle Schwierigkeitsgrade sind freigeschaltet!"
+    }
+  }
+}

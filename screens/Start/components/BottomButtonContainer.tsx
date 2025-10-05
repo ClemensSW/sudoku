@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { Theme } from "@/utils/theme/ThemeProvider";
 import { PausedGameState } from "@/utils/storage";
 import { styles } from "../Start.styles";
@@ -30,6 +31,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
   onButtonPressIn,
   onButtonPressOut,
 }) => {
+  const { t } = useTranslation('start');
   const { colors, isDark } = theme;
 
   // Helper to format time for display
@@ -41,13 +43,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
 
   // Helper to get difficulty label
   const getDifficultyLabel = (difficulty: string): string => {
-    const labels: Record<string, string> = {
-      easy: "Leicht",
-      medium: "Mittel",
-      hard: "Schwer",
-      expert: "Experte"
-    };
-    return labels[difficulty] || difficulty;
+    return t(`difficultyModal.difficulties.${difficulty}`, difficulty);
   };
 
   return (
@@ -81,7 +77,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
                 { color: isDark ? "#FFFFFF" : "#1A2C42" },
               ]}
             >
-              Wie spielt man?
+              {t('buttons.howToPlay')}
             </Text>
           </TouchableOpacity>
         )}
@@ -104,7 +100,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
                   styles.resumeButtonText,
                   { color: isDark ? '#E2E8F0' : '#334155' }
                 ]}>
-                  Spiel fortsetzen
+                  {t('buttons.resumeGame')}
                 </Text>
                 <View style={{
                   flexDirection: 'row',
@@ -148,7 +144,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
             onPressIn={onButtonPressIn}
             onPressOut={onButtonPressOut}
           >
-            <Text style={styles.startButtonText}>Neues Spiel</Text>
+            <Text style={styles.startButtonText}>{t('buttons.newGame')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

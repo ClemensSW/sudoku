@@ -1,0 +1,24 @@
+{
+  "buttons": {
+    "newGame": "New Game",
+    "resumeGame": "Resume Game",
+    "howToPlay": "How to Play"
+  },
+  "difficultyModal": {
+    "title": "Difficulty",
+    "subtitle": "How challenging should your Sudoku be?",
+    "confirm": "Let's Go",
+    "difficulties": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "expert": "Expert"
+    },
+    "progress": {
+      "unlockMedium": "Solve {{count}} more Sudoku on Easy to unlock Medium.",
+      "unlockHard": "Solve {{count}} more Sudoku on Medium to unlock Hard.",
+      "unlockExpert": "Solve {{count}} more Sudoku on Hard to unlock Expert.",
+      "allUnlocked": "All difficulty levels are unlocked!"
+    }
+  }
+}

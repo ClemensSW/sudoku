@@ -12,7 +12,9 @@
   "pause": {
     "title": "Pause",
     "resume": "Continue Playing",
+    "resumeButton": "Continue Playing",
     "tipTitle": "Useful Tip",
+    "tipSection": "Useful Tip",
     "gameSpecificTips": {
       "gallery": {
         "title": "Gallery Unlocks",

@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import CoffeeBreakIcon from "@/assets/svg/coffeeBreak.svg";
+import CloseIcon from "@/assets/svg/close.svg";
 import styles from "./ActionsSection.styles";
 
 interface ActionsSectionProps {
@@ -70,7 +71,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
         onPress={onQuitGame}
       >
         <View style={styles.actionIcon}>
-          <Feather name="x-circle" size={48} color={buttonColor} />
+          <CloseIcon width={48} height={48} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>

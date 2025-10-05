@@ -3,8 +3,8 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import QuestionIcon from "@/assets/svg/question.svg";
-import PencilIcon from "@/assets/svg/pencil.svg";
+import RequestIcon from "@/assets/svg/request.svg";
+import InkIcon from "@/assets/svg/ink.svg";
 import styles from "./HelpSection.styles";
 
 interface HelpSectionProps {
@@ -35,7 +35,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           onPress={onAutoNotes}
         >
           <View style={styles.actionIcon}>
-            <PencilIcon width={48} height={48} />
+            <InkIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
             <Text
@@ -72,7 +72,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
         onPress={onHowToPlay}
       >
         <View style={styles.actionIcon}>
-          <QuestionIcon width={48} height={48} />
+          <RequestIcon width={48} height={48} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text

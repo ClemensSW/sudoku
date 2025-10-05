@@ -5,7 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import VibrationIcon from "@/assets/svg/vibration.svg";
-import CrossIcon from "@/assets/svg/cross.svg";
+import SelectionIcon from "@/assets/svg/selection.svg";
 import styles from "./GameSettings.styles";
 
 interface GameSettingsProps {
@@ -109,7 +109,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       {/* Show Errors - Keep in both modes */}
       <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
         <View style={styles.settingIcon}>
-          <CrossIcon width={48} height={48} />
+          <SelectionIcon width={48} height={48} />
         </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>

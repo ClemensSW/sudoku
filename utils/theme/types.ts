@@ -76,6 +76,13 @@ export interface ThemeColors {
   numberPadButtonText: string;
   numberPadButtonSelected: string;
   numberPadButtonTextSelected: string;
+
+  // Theme Toggle
+  themeToggleTrack: string;
+  themeToggleGradientStart: string;
+  themeToggleGradientEnd: string;
+  themeToggleThumb: string;
+  themeToggleInactiveIcon: string;
 }
 
 // Spacing

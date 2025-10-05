@@ -74,7 +74,14 @@ const lightColors = {
   numberPadButton: "#F1F3F4",
   numberPadButtonText: "#202124",
   numberPadButtonSelected: "#4285F4",
-  numberPadButtonTextSelected: "#FFFFFF"
+  numberPadButtonTextSelected: "#FFFFFF",
+
+  // Theme Toggle (warme Farben für Light Mode)
+  themeToggleTrack: "rgba(0, 0, 0, 0.06)",
+  themeToggleGradientStart: "#FF8C42",
+  themeToggleGradientEnd: "#FFD93D",
+  themeToggleThumb: "#FFFFFF",
+  themeToggleInactiveIcon: "rgba(0, 0, 0, 0.3)"
 };
 
 // Dark Theme
@@ -150,7 +157,14 @@ const darkColors = {
   numberPadButton: "#35363A",
   numberPadButtonText: "#E8EAED",
   numberPadButtonSelected: "#8AB4F8",
-  numberPadButtonTextSelected: "#202124"
+  numberPadButtonTextSelected: "#202124",
+
+  // Theme Toggle (kühle Farben für Dark Mode)
+  themeToggleTrack: "rgba(255, 255, 255, 0.08)",
+  themeToggleGradientStart: "#2D3561",
+  themeToggleGradientEnd: "#8A78B4",
+  themeToggleThumb: "#FFFFFF",
+  themeToggleInactiveIcon: "rgba(255, 255, 255, 0.4)"
 };
 
 // Export theme based on system preference or user selection

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
@@ -55,6 +56,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   onSharePress,
   onAboutPress,
 }) => {
+  const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
   const { showAlert } = useAlert();
@@ -101,7 +103,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
-            Kostenlos spielen
+            {t("community.supportTitle")}
           </Text>
           <Text
             style={[
@@ -109,7 +111,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
               { color: colors.textSecondary },
             ]}
           >
-            Entwicklung freiwillig unterstützen
+            {t("community.supportDescription")}
           </Text>
         </View>
         <Feather
@@ -133,7 +135,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
-            Feedback senden
+            {t("community.feedback")}
           </Text>
         </View>
         <Feather
@@ -158,7 +160,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
-            Mit Freunden teilen
+            {t("community.share")}
           </Text>
         </View>
         <Feather
@@ -187,7 +189,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           <Text
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
-            Über Sudoku Duo
+            {t("community.about")}
           </Text>
         </View>
         <Feather

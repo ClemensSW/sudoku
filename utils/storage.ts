@@ -67,6 +67,7 @@ export type GameSettings = {
   darkMode: "light" | "dark";
   vibration: boolean;
   soundEffects: boolean;
+  language: "de" | "en";
 };
 
 // Standard-Statistiken
@@ -97,6 +98,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   darkMode: "dark",
   vibration: true,
   soundEffects: true,
+  language: "de",
 };
 
 // Speichere den aktuellen Spielstand
@@ -330,7 +332,15 @@ export const saveSettings = async (settings: GameSettings): Promise<void> => {
 export const loadSettings = async (): Promise<GameSettings> => {
   try {
     const savedSettings = await AsyncStorage.getItem(KEYS.SETTINGS);
-    return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+    if (savedSettings) {
+      const parsedSettings = JSON.parse(savedSettings);
+      // Kompatibilität mit älteren Versionen
+      if (parsedSettings.language === undefined) {
+        parsedSettings.language = "de";
+      }
+      return parsedSettings;
+    }
+    return DEFAULT_SETTINGS;
   } catch (error) {
     console.error("Error loading settings:", error);
     return DEFAULT_SETTINGS;

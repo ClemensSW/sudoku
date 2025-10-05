@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import RequestIcon from "@/assets/svg/request.svg";
 import InkIcon from "@/assets/svg/ink.svg";
@@ -18,6 +19,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
   onAutoNotes,
   onHowToPlay,
 }) => {
+  const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -41,15 +43,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
             <Text
               style={[styles.actionTitle, { color: colors.textPrimary }]}
             >
-              Automatische Notizen
-            </Text>
-            <Text
-              style={[
-                styles.actionDescription,
-                { color: colors.textSecondary },
-              ]}
-            >
-              Mögliche Zahlen als Notizen eintragen
+              {t("help.autoNotes")}
             </Text>
           </View>
           <Feather
@@ -78,7 +72,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           <Text
             style={[styles.actionTitle, { color: colors.textPrimary }]}
           >
-            Wie spielt man?
+            {t("help.howToPlay")}
           </Text>
         </View>
         <Feather

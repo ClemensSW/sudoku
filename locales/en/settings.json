@@ -1,0 +1,54 @@
+{
+  "title": "Settings",
+  "sections": {
+    "help": "Help",
+    "helpAndTools": "Help & Tools",
+    "design": "Design",
+    "game": "Game",
+    "actions": "Actions",
+    "action": "Action",
+    "community": "Community"
+  },
+  "help": {
+    "howToPlay": "How to Play",
+    "autoNotes": "Auto Notes"
+  },
+  "appearance": {
+    "theme": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "language": "Language"
+  },
+  "gameSettings": {
+    "highlightRelated": "Highlight related cells",
+    "showMistakes": "Show mistakes",
+    "highlightSameValues": "Highlight same values",
+    "autoNotes": "Auto notes",
+    "vibration": "Vibration",
+    "soundEffects": "Sound effects"
+  },
+  "actions": {
+    "pauseGame": "Pause game",
+    "quitGame": "Quit game"
+  },
+  "community": {
+    "support": "Support development",
+    "supportTitle": "Play for free",
+    "supportDescription": "Support development voluntarily",
+    "feedback": "Send feedback",
+    "share": "Share with friends",
+    "about": "About Sudoku Duo"
+  },
+  "about": {
+    "title": "About Sudoku Duo",
+    "message": "Version 1.0.0\n\nHi! I'm Clemens – and Sudoku Duo is my first self-developed app.\n\nI love brain teasers and wanted to create a Sudoku app that not only relaxes and challenges, but also connects: With the unique 2-player mode, Sudoku becomes a shared experience – perfect for friends, couples or friendly competitions.\n\nIf you like the app, I would really appreciate your support. Your rating in the Play Store helps me to further develop Sudoku Duo and new projects.\n\nThank you for being part of it.\nHappy Puzzling! 🧩"
+  },
+  "share": {
+    "message": "Play Sudoku Duo with me! A great Sudoku app with a unique 2-player mode. Challenge me! https://play.google.com/store/apps/details?id=de.playfusiongate.sudokuduo"
+  },
+  "languageModal": {
+    "title": "Choose Language",
+    "german": "Deutsch",
+    "english": "English"
+  }
+}

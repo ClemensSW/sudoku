@@ -1,0 +1,19 @@
+{
+  "title": "Leistung",
+  "profile": {
+    "namePlaceholder": "Dein Name",
+    "xp": "EP",
+    "xpDescription": "Deine Reise",
+    "streak": "In Serie",
+    "streakDescription": "Dein Rekord",
+    "pictures": "Bilder",
+    "picture": "Bild",
+    "picturesDescription": "Schöne Galerie"
+  },
+  "tabs": {
+    "level": "Level",
+    "time": "Zeit",
+    "streak": "Serie",
+    "gallery": "Galerie"
+  }
+}

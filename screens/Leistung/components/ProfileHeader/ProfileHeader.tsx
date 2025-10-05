@@ -1,6 +1,7 @@
 // screens/LeistungScreen/components/ProfileHeader/ProfileHeader.tsx
 import React, { useState, useRef } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Platform } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
@@ -31,6 +32,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   completedLandscapesCount,
   title = null,
 }) => {
+  const { t } = useTranslation("leistung");
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -95,7 +97,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               onChangeText={setEditedName}
               onBlur={handleNameEdit}
               onSubmitEditing={handleNameEdit}
-              placeholder="Dein Name"
+              placeholder={t("profile.namePlaceholder")}
               placeholderTextColor={colors.textSecondary}
               returnKeyType="done"
             />
@@ -161,8 +163,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <StatTile
             customIcon={<HikingIcon width={40} height={40} />}
             value={formatNumber(stats.totalXP)}
-            label="EP"
-            description="Deine Reise"
+            label={t("profile.xp")}
+            description={t("profile.xpDescription")}
             colors={{
               icon: colors.primary,
               valueColor: valueColor,
@@ -174,8 +176,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <StatTile
             customIcon={<LightningIcon width={40} height={40} />}
             value={formatNumber(stats.longestStreak)}
-            label="In Serie"
-            description="Dein Rekord"
+            label={t("profile.streak")}
+            description={t("profile.streakDescription")}
             colors={{
               icon: colors.primary,
               valueColor: valueColor,
@@ -187,8 +189,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <StatTile
             customIcon={<Image source={require("@/assets/png/picture.png")} style={{ width: 40, height: 40 }} />}
             value={formatNumber(completedLandscapesCount)}
-            label={completedLandscapesCount === 1 ? "Bild" : "Bilder"}
-            description="Schöne Galerie"
+            label={completedLandscapesCount === 1 ? t("profile.picture") : t("profile.pictures")}
+            description={t("profile.picturesDescription")}
             colors={{
               icon: colors.primary,
               valueColor: valueColor,

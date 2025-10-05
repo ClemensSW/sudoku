@@ -1,0 +1,22 @@
+{
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "back": "Zurück",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "time": {
+    "seconds": "Sekunden",
+    "minutes": "Minuten",
+    "hours": "Stunden"
+  },
+  "difficulty": {
+    "easy": "Leicht",
+    "medium": "Mittel",
+    "hard": "Schwer",
+    "expert": "Experte"
+  }
+}

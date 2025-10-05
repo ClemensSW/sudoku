@@ -1,0 +1,19 @@
+{
+  "title": "Performance",
+  "profile": {
+    "namePlaceholder": "Your Name",
+    "xp": "XP",
+    "xpDescription": "Your Journey",
+    "streak": "Streak",
+    "streakDescription": "Your Record",
+    "pictures": "Pictures",
+    "picture": "Picture",
+    "picturesDescription": "Beautiful Gallery"
+  },
+  "tabs": {
+    "level": "Level",
+    "time": "Time",
+    "streak": "Streak",
+    "gallery": "Gallery"
+  }
+}

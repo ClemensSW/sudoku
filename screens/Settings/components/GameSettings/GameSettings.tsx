@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, Switch } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import VibrationIcon from "@/assets/svg/vibration.svg";
@@ -22,6 +23,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
   onSettingChange,
   isDuoMode = false, // Default to false
 }) => {
+  const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -48,7 +50,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               <Text
                 style={[styles.settingTitle, { color: colors.textPrimary }]}
               >
-                Zellen hervorheben
+                {t("gameSettings.highlightRelated")}
               </Text>
             </View>
             <Switch
@@ -72,7 +74,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               <Text
                 style={[styles.settingTitle, { color: colors.textPrimary }]}
               >
-                Gleiche Zahlen hervorheben
+                {t("gameSettings.highlightSameValues")}
               </Text>
             </View>
             <Switch
@@ -97,7 +99,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
-            Fehler anzeigen
+            {t("gameSettings.showMistakes")}
           </Text>
         </View>
         <Switch
@@ -123,7 +125,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         </View>
         <View style={styles.settingTextContainer}>
           <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
-            Vibration
+            {t("gameSettings.vibration")}
           </Text>
         </View>
         <Switch

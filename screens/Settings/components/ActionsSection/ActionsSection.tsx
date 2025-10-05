@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import CoffeeBreakIcon from "@/assets/svg/coffeeBreak.svg";
 import CloseIcon from "@/assets/svg/close.svg";
@@ -20,6 +21,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
   onPauseGame,
   isDuoMode = false, // Default to false
 }) => {
+  const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -50,7 +52,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
             </View>
             <View style={styles.actionTextContainer}>
               <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
-                Spiel pausieren
+                {t("actions.pauseGame")}
               </Text>
             </View>
             <Feather
@@ -75,7 +77,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
         </View>
         <View style={styles.actionTextContainer}>
           <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
-            Spiel beenden
+            {t("actions.quitGame")}
           </Text>
         </View>
         <Feather

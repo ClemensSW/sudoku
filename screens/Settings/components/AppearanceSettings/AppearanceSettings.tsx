@@ -6,6 +6,7 @@ import { GameSettings as GameSettingsType } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { spacing } from "@/utils/theme";
 import ThemeToggleSwitch from "../ThemeToggleSwitch/ThemeToggleSwitch";
+import LanguageSelector from "../LanguageSelector";
 
 interface AppearanceSettingsProps {
   settings: GameSettingsType | null;
@@ -43,6 +44,10 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
     }, 300);
   };
 
+  const handleLanguageChange = (language: "de" | "en") => {
+    onSettingChange("language", language);
+  };
+
   return (
     <Animated.View
       entering={FadeIn.duration(300)}
@@ -53,6 +58,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
         onValueChange={handleThemeChange}
         disabled={isChanging}
       />
+      <LanguageSelector onLanguageChange={handleLanguageChange} />
     </Animated.View>
   );
 };

@@ -18,6 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
@@ -62,6 +63,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   fromGame = false,
   isDuoMode = false, // Default to false
 }) => {
+  const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
@@ -163,8 +165,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
     triggerHaptic("light");
     try {
       await Share.share({
-        message:
-          "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=de.playfusiongate.sudokuduo",
+        message: t("share.message"),
       });
     } catch (error) {
       console.error("Error sharing:", error);
@@ -174,10 +175,9 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const handleAboutPress = () => {
     triggerHaptic("light");
     showAlert({
-      title: "Über Sudoku Duo",
-      message:
-        "Version 1.0.0\n\nHi! Ich bin Clemens – und Sudoku Duo ist meine erste selbst entwickelte App.\n\nIch liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.\n\nWenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln.\n\nDanke, dass du dabei bist.\nHappy Puzzling! 🧩",
-      type: "info", // Behalte "info"
+      title: t("about.title"),
+      message: t("about.message"),
+      type: "info",
       buttons: [{ text: "OK", style: "primary" }],
     });
   };
@@ -193,7 +193,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
         entering={SlideInUp.duration(300)}
       >
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header title="Einstellungen" onBackPress={handleBack} />
+        <Header title={t("title")} onBackPress={handleBack} />
         <View style={styles.loadingContainer}>
           <Feather name="loader" size={24} color={colors.primary} />
         </View>
@@ -212,7 +212,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
-      <Header title="Einstellungen" onBackPress={handleBack} />
+      <Header title={t("title")} onBackPress={handleBack} />
 
       <ScrollView
         style={styles.scrollView}
@@ -227,7 +227,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           entering={FadeInDown.delay(100).duration(500)}
         >
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {showGameFeatures ? "Hilfe und Tools" : "Hilfe"}
+            {showGameFeatures ? t("sections.helpAndTools") : t("sections.help")}
           </RNText>
 
           <HelpSection
@@ -245,7 +245,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           entering={FadeInDown.delay(200).duration(500)}
         >
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Design
+            {t("sections.design")}
           </RNText>
 
           {settings && (
@@ -262,7 +262,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           entering={FadeInDown.delay(300).duration(500)}
         >
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Spiel
+            {t("sections.game")}
           </RNText>
 
           {settings && (
@@ -283,7 +283,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             <RNText
               style={[styles.sectionTitle, { color: colors.textPrimary }]}
             >
-              {isDuoMode || !onPauseGame ? "Aktion" : "Aktionen"}
+              {isDuoMode || !onPauseGame ? t("sections.action") : t("sections.actions")}
             </RNText>
 
             <ActionsSection
@@ -301,7 +301,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           entering={FadeInDown.delay(400).duration(500)}
         >
           <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Community
+            {t("sections.community")}
           </RNText>
 
           <CommunitySection

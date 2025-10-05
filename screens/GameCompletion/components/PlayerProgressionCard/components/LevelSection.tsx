@@ -5,6 +5,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
+import { useTranslation } from "react-i18next";
 import LevelBadge from "./LevelBadge";
 import TitleSelect from "./TitleSelect";
 import { LevelInfo } from "../utils/types";
@@ -56,6 +57,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('gameCompletion');
   const [levelDescExpanded, setLevelDescExpanded] = useState(false);
 
   const toggleLevelDescription = useCallback(() => {
@@ -114,7 +116,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
         >
           <Feather name="plus" size={14} color="#FFFFFF" />
           <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
-            {xpGain} Erfahrungspunkte
+            {t('level.xpGain', { count: xpGain })}
           </Text>
         </Animated.View>
       )}
@@ -123,11 +125,11 @@ const LevelSection: React.FC<LevelSectionProps> = ({
       <View style={styles.progressSection}>
         <View style={[styles.xpInfoRow, { marginBottom: 8 }]}>
           <Text style={[styles.xpText, { color: colors.textPrimary }]}>
-            Level {levelInfo.currentLevel + 1}
+            {t('level.title')} {levelInfo.currentLevel + 1}
           </Text>
           {levelInfo.nextLevelData && (
             <Text style={[styles.xpToGo, { color: colors.textSecondary }]}>
-              Noch {levelInfo.xpForNextLevel} EP
+              {t('level.xpRemaining', { count: levelInfo.xpForNextLevel })}
             </Text>
           )}
         </View>
@@ -241,7 +243,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
                 { color: colors.textPrimary },
               ]}
             >
-              Dein Titel
+              {t('level.yourTitle')}
             </Text>
           </View>
           <Feather
@@ -284,7 +286,7 @@ const LevelSection: React.FC<LevelSectionProps> = ({
                     { color: colors.textPrimary },
                   ]}
                 >
-                  Aktueller Titel:
+                  {t('level.currentTitle')}
                 </Text>
               </View>
 

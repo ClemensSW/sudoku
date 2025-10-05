@@ -28,6 +28,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur"; // You may need to install this package
 import styles, { tagColors } from "./ImageDetailModal.styles";
 import { getLandscapeName, getLandscapeDescription, getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
+import { useTranslation } from "react-i18next";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -72,6 +73,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const theme = useTheme();
   const { colors: themeColors } = theme;
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation('gallery');
 
   // States
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -268,8 +270,10 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       {/* Progress text below grid */}
       <Text style={styles.progressText}>
         {isSpecialPreunlockedImage
-          ? "Fast fertig! Nur noch 1 Segment"
-          : `${Math.floor((landscape.progress / 9) * 100)}% enthüllt`}
+          ? t('detailModal.almostDoneSegment')
+          : t('placeholder.revealed', {
+              percent: Math.floor((landscape.progress / 9) * 100)
+            })}
       </Text>
 
       {/* Progress bar */}
@@ -387,7 +391,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         <View style={styles.tagsContainer}>
           {/* Favorite tag */}
           {landscape.isFavorite && (
-            <Tag icon="heart" text="Favorit" type="favorite" />
+            <Tag icon="heart" text={t('detailModal.favoriteTag')} type="favorite" />
           )}
 
           {/* Date tag */}
@@ -403,7 +407,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           {isCurrentProject && (
             <Tag
               icon="target"
-              text="Wird gerade freigeschaltet"
+              text={t('detailModal.currentProjectTag')}
               type="currentProject"
             />
           )}
@@ -427,7 +431,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                 style={{ marginRight: 8 }}
               />
               <Text style={styles.selectButtonText}>
-                Dieses Bild freischalten
+                {t('detailModal.unlockButton')}
               </Text>
             </TouchableOpacity>
           </View>

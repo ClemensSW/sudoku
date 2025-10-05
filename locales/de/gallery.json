@@ -23,6 +23,12 @@
     "almostDone": "Fast fertig!",
     "revealed": "{{percent}}% enthüllt"
   },
+  "detailModal": {
+    "almostDoneSegment": "Fast fertig! Nur noch 1 Segment",
+    "unlockButton": "Dieses Bild freischalten",
+    "currentProjectTag": "Wird gerade freigeschaltet",
+    "favoriteTag": "Favorit"
+  },
   "alerts": {
     "imageSelected": {
       "title": "Bild ausgewählt"

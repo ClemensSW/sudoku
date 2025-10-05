@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Pressable,
+  Platform,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
@@ -28,17 +29,34 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
   const { colors } = theme;
   const version = appConfig.expo.version;
 
+  // Debug logs
+  console.log("AboutModal - greeting:", t("about.greeting"));
+  console.log("AboutModal - intro:", t("about.intro"));
+
   if (!visible) return null;
 
   return (
     <Modal visible={visible} transparent animationType="none">
       <Animated.View entering={FadeIn.duration(300)} style={styles.overlay}>
-        {/* Backdrop with Blur */}
-        <BlurView
-          intensity={theme.isDark ? 30 : 20}
-          tint={theme.isDark ? "dark" : "light"}
-          style={styles.backdrop}
-        />
+        {/* Backdrop with Blur (iOS) or solid overlay (Android) */}
+        {Platform.OS === 'ios' ? (
+          <BlurView
+            intensity={theme.isDark ? 30 : 20}
+            tint={theme.isDark ? "dark" : "light"}
+            style={styles.backdrop}
+          />
+        ) : (
+          <View
+            style={[
+              styles.backdrop,
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(0, 0, 0, 0.7)"
+                  : "rgba(0, 0, 0, 0.5)",
+              },
+            ]}
+          />
+        )}
         <Pressable style={styles.backdrop} onPress={onClose} />
 
         {/* Modal Container */}
@@ -91,37 +109,37 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             <View>
               {/* Greeting */}
               <Text style={[styles.greeting, { color: colors.textPrimary }]}>
-                {t("about.greeting")}
+                {t("about.greeting") || "Hi! Ich bin Clemens 👋"}
               </Text>
 
               {/* Main Content Sections */}
               <View style={styles.section}>
                 <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
-                  {t("about.intro")}
+                  {t("about.intro") || "Sudoku Duo ist meine erste selbst entwickelte App."}
                 </Text>
               </View>
 
               <View style={styles.section}>
                 <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
-                  {t("about.features")}
+                  {t("about.features") || "Ich liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe."}
                 </Text>
               </View>
 
               <View style={styles.section}>
                 <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
-                  {t("about.support")}
+                  {t("about.support") || "Wenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln."}
                 </Text>
               </View>
 
               {/* Closing */}
               <View style={[styles.section, styles.closingSection]}>
                 <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
-                  {t("about.closing")}
+                  {t("about.closing") || "Danke, dass du dabei bist."}
                 </Text>
                 <Text
                   style={[styles.signature, { color: colors.textPrimary }]}
                 >
-                  {t("about.signature")}
+                  {t("about.signature") || "Happy Puzzling! 🧩"}
                 </Text>
               </View>
             </View>
@@ -138,7 +156,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
               activeOpacity={0.8}
             >
               <Text style={styles.closeButtonText}>
-                {t("about.closeButton")}
+                {t("about.closeButton") || "Schließen"}
               </Text>
             </TouchableOpacity>
           </View>

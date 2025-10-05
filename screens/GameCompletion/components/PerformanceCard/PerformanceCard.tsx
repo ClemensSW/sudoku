@@ -280,7 +280,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               <Text
                 style={[styles.timeStatLabel, { color: colors.textSecondary }]}
               >
-                Deine Zeit
+                {t('performance.yourTime')}
               </Text>
             </View>
             <View style={styles.timeStatValueContainer}>
@@ -303,14 +303,14 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
               />
               <Text
                 style={[
-                  styles.timeStatLabel, 
-                  { 
+                  styles.timeStatLabel,
+                  {
                     color: isNewRecord ? colors.success : colors.textSecondary,
                     fontWeight: isNewRecord ? "700" : "600"
                   }
                 ]}
               >
-                Bestzeit
+                {t('performance.bestTime')}
               </Text>
             </View>
             <View style={styles.timeStatValueContainer}>
@@ -371,8 +371,7 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
           <Text
             style={[styles.autoNotesText, { color: colors.textSecondary }]}
           >
-            Da automatische Notizen verwendet wurden, wird dieses Spiel nicht in
-            den Statistiken gezählt.
+            {t('performance.autoNotesWarning')}
           </Text>
         </View>
       )}

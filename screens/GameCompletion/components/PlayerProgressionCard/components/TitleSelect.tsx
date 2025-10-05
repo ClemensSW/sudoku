@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "../PlayerProgressionCard.styles";
 
@@ -17,6 +18,7 @@ type Props = {
 const TitleSelect: React.FC<Props> = ({ titles, selected, onSelect, color, isDark }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('gameCompletion');
 
   const labelColor = colors.textSecondary; // gut lesbar in Dark & Light
   const clearColor = colors.textSecondary;
@@ -30,7 +32,7 @@ const TitleSelect: React.FC<Props> = ({ titles, selected, onSelect, color, isDar
             { color: labelColor, opacity: 1 }, // <-- explizit volle Opazität
           ]}
         >
-          Titel auswählen
+          {t('level.selectTitle')}
         </Text>
 
         <Pressable
@@ -56,7 +58,7 @@ const TitleSelect: React.FC<Props> = ({ titles, selected, onSelect, color, isDar
               { color: clearColor, opacity: 1 }, // <-- explizit volle Opazität
             ]}
           >
-            Ohne Titel
+            {t('level.noTitle')}
           </Text>
         </Pressable>
       </View>

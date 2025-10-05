@@ -58,7 +58,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         entering={FadeIn.duration(500)}
       >
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Lade Bild...
+          {t('gallery.loading')}
         </Text>
       </Animated.View>
     );
@@ -220,7 +220,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
             entering={ZoomIn.duration(300).delay(300)}
           >
             <Feather name="plus" size={12} color="white" />
-            <Text style={styles.newSegmentText}>Neues Segment</Text>
+            <Text style={styles.newSegmentText}>{t('gallery.newSegment')}</Text>
           </Animated.View>
         )}
 
@@ -233,7 +233,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
             entering={ZoomIn.duration(300).delay(300)}
           >
             <Feather name="check" size={12} color="white" />
-            <Text style={styles.newSegmentText}>Komplett</Text>
+            <Text style={styles.newSegmentText}>{t('gallery.complete')}</Text>
           </Animated.View>
         )}
       </View>
@@ -260,7 +260,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
             ]}
             entering={FadeIn.duration(500).delay(800)}
           >
-            <Text style={styles.completionText}>Bild komplett!</Text>
+            <Text style={styles.completionText}>{t('gallery.imageComplete')}</Text>
           </Animated.View>
         )}
       </View>
@@ -269,10 +269,14 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       <View style={styles.progressTextContainer}>
         <Text style={[styles.progressText, { color: colors.textSecondary }]}>
           {landscape.isComplete
-            ? "Vollständig freigeschaltet"
+            ? t('gallery.fullyUnlocked')
             : isSpecialImage
-            ? `Löse ${remainingSegments} weitere${remainingSegments === 1 ? 's' : ''} Sudoku${remainingSegments === 1 ? '' : 's'}, um das Bild freizuschalten`
-            : `${landscape.progress}/9 Segmente freigeschaltet`}
+            ? t('gallery.solveMore', {
+                count: remainingSegments,
+                plural: remainingSegments === 1 ? 's' : '',
+                plural2: remainingSegments === 1 ? '' : 's'
+              })
+            : t('gallery.segmentsUnlocked', { count: landscape.progress })}
         </Text>
 
         {/* Progress bar */}

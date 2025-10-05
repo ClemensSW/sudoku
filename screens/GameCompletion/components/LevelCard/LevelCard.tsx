@@ -3,6 +3,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
@@ -49,6 +50,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('gameCompletion');
 
   // State
   const [levelDescExpanded, setLevelDescExpanded] = useState(false);
@@ -149,7 +151,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
         >
           <Feather name="plus" size={14} color="#FFFFFF" />
           <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
-            {xpGain} Erfahrungspunkte
+            {t('level.xpGain', { count: xpGain })}
           </Text>
         </Animated.View>
       )}
@@ -158,11 +160,11 @@ const LevelCard: React.FC<LevelCardProps> = ({
       <View style={styles.progressSection}>
         <View style={[styles.xpInfoRow, { marginBottom: 8 }]}>
           <Text style={[styles.xpText, { color: colors.textPrimary }]}>
-            Level {levelInfo.currentLevel + 1}
+            {t('level.title')} {levelInfo.currentLevel + 1}
           </Text>
           {levelInfo.nextLevelData && (
             <Text style={[styles.xpToGo, { color: colors.textSecondary }]}>
-              Noch {levelInfo.xpForNextLevel} EP
+              {t('level.xpRemaining', { count: levelInfo.xpForNextLevel })}
             </Text>
           )}
         </View>
@@ -276,7 +278,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
                 { color: colors.textPrimary },
               ]}
             >
-              Dein Titel
+              {t('level.yourTitle')}
             </Text>
           </View>
           <Feather
@@ -319,7 +321,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
                     { color: colors.textPrimary },
                   ]}
                 >
-                  Aktueller Titel:
+                  {t('level.currentTitle')}
                 </Text>
               </View>
 

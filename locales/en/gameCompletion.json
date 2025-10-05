@@ -97,10 +97,29 @@
   },
   "performance": {
     "title": "Game Performance",
-    "record": "Record"
+    "record": "Record",
+    "yourTime": "Your Time",
+    "bestTime": "Best Time",
+    "autoNotesWarning": "Since auto notes were used, this game will not be counted in statistics."
   },
   "gallery": {
-    "title": "Image Collection"
+    "title": "Image Collection",
+    "newSegment": "New Segment",
+    "complete": "Complete",
+    "imageComplete": "Image complete!",
+    "fullyUnlocked": "Fully unlocked",
+    "segmentsUnlocked": "{{count}}/9 segments unlocked",
+    "solveMore": "Solve {{count}} more Sudoku{{plural}} to unlock the image",
+    "loading": "Loading image..."
+  },
+  "level": {
+    "title": "Level",
+    "xpRemaining": "{{count}} XP remaining",
+    "xpGain": "{{count}} Experience Points",
+    "yourTitle": "Your Title",
+    "currentTitle": "Current Title:",
+    "selectTitle": "Select Title",
+    "noTitle": "No Title"
   },
   "path": {
     "title": "Your Journey"

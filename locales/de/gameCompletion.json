@@ -97,10 +97,29 @@
   },
   "performance": {
     "title": "Spielleistung",
-    "record": "Rekord"
+    "record": "Rekord",
+    "yourTime": "Deine Zeit",
+    "bestTime": "Bestzeit",
+    "autoNotesWarning": "Da automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt."
   },
   "gallery": {
-    "title": "Bild-Sammlung"
+    "title": "Bild-Sammlung",
+    "newSegment": "Neues Segment",
+    "complete": "Komplett",
+    "imageComplete": "Bild komplett!",
+    "fullyUnlocked": "Vollständig freigeschaltet",
+    "segmentsUnlocked": "{{count}}/9 Segmente freigeschaltet",
+    "solveMore": "Löse {{count}} weitere{{plural}} Sudoku{{plural2}}, um das Bild freizuschalten",
+    "loading": "Lade Bild..."
+  },
+  "level": {
+    "title": "Level",
+    "xpRemaining": "Noch {{count}} EP",
+    "xpGain": "{{count}} Erfahrungspunkte",
+    "yourTitle": "Dein Titel",
+    "currentTitle": "Aktueller Titel:",
+    "selectTitle": "Titel auswählen",
+    "noTitle": "Ohne Titel"
   },
   "path": {
     "title": "Deine Reise"

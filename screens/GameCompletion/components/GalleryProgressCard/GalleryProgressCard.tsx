@@ -208,7 +208,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       {/* Header with title and badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Bild-Sammlung
+          {t('gallery.title')}
         </Text>
 
         {newlyUnlockedSegmentId !== undefined && (

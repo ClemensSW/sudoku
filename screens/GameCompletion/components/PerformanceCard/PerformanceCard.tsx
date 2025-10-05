@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { CircularProgress } from "@/components/CircularProgress/CircularProgress";
 import styles from "./PerformanceCard.styles";
+import { useTranslation } from "react-i18next";
 
 interface PerformanceCardProps {
   timeElapsed: number;
@@ -79,7 +80,8 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  
+  const { t } = useTranslation('gameCompletion');
+
   // Animation values
   const containerScale = useSharedValue(0.95);
   const progressValue = useSharedValue(0);
@@ -202,20 +204,20 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
       {/* Header with title and record badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Spielleistung
+          {t('performance.title')}
         </Text>
-        
+
         {/* Always show the badge when it's a new record */}
         {showRecordBadge && (
           <Animated.View
             style={[
-              styles.recordBadge, 
+              styles.recordBadge,
               { backgroundColor: colors.success },
               pulseAnimatedStyle
             ]}
           >
             <Feather name="award" size={12} color="white" />
-            <Text style={styles.recordText}>Rekord</Text>
+            <Text style={styles.recordText}>{t('performance.record')}</Text>
           </Animated.View>
         )}
       </View>

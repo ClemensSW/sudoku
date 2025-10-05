@@ -10,6 +10,7 @@ import Animated, {
   ZoomIn,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import {
   Landscape,
@@ -31,6 +32,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
   isComplete = false,
   onViewGallery,
 }) => {
+  const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -207,7 +209,7 @@ const PuzzleProgress: React.FC<PuzzleProgressProps> = ({
       {/* Header with title and badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Bild-Sammlung
+          {t('gallery.title')}
         </Text>
 
         {newlyUnlockedSegmentId !== undefined && (

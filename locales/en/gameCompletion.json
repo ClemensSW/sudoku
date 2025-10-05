@@ -94,5 +94,15 @@
     "winsInRow_other": "Wins in a row",
     "nextGoal": "Next Goal",
     "bestStreak": "Best Streak!"
+  },
+  "performance": {
+    "title": "Game Performance",
+    "record": "Record"
+  },
+  "gallery": {
+    "title": "Image Collection"
+  },
+  "path": {
+    "title": "Your Journey"
   }
 }

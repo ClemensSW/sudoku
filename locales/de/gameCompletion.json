@@ -94,5 +94,15 @@
     "winsInRow_other": "Siege in Folge",
     "nextGoal": "Nächstes Ziel",
     "bestStreak": "Beste Serie!"
+  },
+  "performance": {
+    "title": "Spielleistung",
+    "record": "Rekord"
+  },
+  "gallery": {
+    "title": "Bild-Sammlung"
+  },
+  "path": {
+    "title": "Deine Reise"
   }
 }

@@ -3,6 +3,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
@@ -42,6 +43,7 @@ const PathCard: React.FC<PathCardProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('gameCompletion');
 
   // State
   const [pathDescExpanded, setPathDescExpanded] = useState(false);
@@ -119,7 +121,7 @@ const PathCard: React.FC<PathCardProps> = ({
             <Feather name="map" size={14} color={progressColor} />
           </View>
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-            Deine Reise
+            {t('path.title')}
           </Text>
         </View>
       </View>

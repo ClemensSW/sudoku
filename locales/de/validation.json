@@ -1,0 +1,8 @@
+{
+  "errors": {
+    "required": "Dieses Feld ist erforderlich",
+    "invalid": "Ungültige Eingabe",
+    "tooShort": "Eingabe ist zu kurz",
+    "tooLong": "Eingabe ist zu lang"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "navigation": {
+    "next": "Next",
+    "back": "Back",
+    "understood": "Got it"
+  },
+  "pages": {
+    "basicRules": {
+      "title": "How to Play",
+      "explanation": {
+        "part1": "The goal of a Sudoku puzzle is to fill the 9 x 9 grid so that each",
+        "row": "row",
+        "column": "column",
+        "block": "block",
+        "part2": ", each",
+        "part3": "and each",
+        "part4": "contains all numbers from 1 to 9 without repetition."
+      }
+    },
+    "gameplay": {
+      "title": "Gameplay",
+      "instructions": {
+        "step1": "You select an empty cell",
+        "step2": "Which number fits in the cell?",
+        "step3": "The number 5 fits perfectly in the cell"
+      }
+    },
+    "notes": {
+      "title": "Using Notes",
+      "buttonLabel": "Notes Mode",
+      "explanation": "Notes visualize possibilities and transform complex Sudokus into solvable strategy tasks."
+    }
+  }
+}

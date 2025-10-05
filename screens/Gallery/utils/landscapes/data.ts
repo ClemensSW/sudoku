@@ -1,34 +1,44 @@
 // screens/GalleryScreen/utils/landscapes/data.ts
 import { Landscape, LandscapeSegment } from "./types";
+import i18n from "@/locales/i18n";
 
 // Aktuelle Version der Landschaftssammlung
 // WICHTIG: Erhöhen, wenn neue Bilder hinzugefügt werden!
 export const CURRENT_COLLECTION_VERSION = 2;
 
 /**
- * KATEGORIEN DEFINITION UND ÜBERSETZUNG
+ * KATEGORIEN DEFINITION
  * Hier neue Kategorien hinzufügen - automatisch überall verfügbar!
  */
 export const LANDSCAPE_CATEGORIES = {
-  cities: "Städte",
-  architecture: "Architektur",
-  animals: "Tiere",
-  plants: "Pflanzen",
-  landscapes: "Landschaften",
-  water: "Wasser",
-  sky: "Himmel",
-  path: "Deine Reise",
+  cities: "cities",
+  architecture: "architecture",
+  animals: "animals",
+  plants: "plants",
+  landscapes: "landscapes",
+  water: "water",
+  sky: "sky",
+  path: "path",
   // Neue Kategorien einfach hier hinzufügen:
-  // deserts: "Wüsten",
-  // cities: "Städte",
+  // deserts: "deserts",
 } as const;
 
 // Typ für Kategorien (wird automatisch aus dem Objekt generiert)
 export type LandscapeCategory = keyof typeof LANDSCAPE_CATEGORIES;
 
-// Helper-Funktion für Kategorie-Namen
+// Helper-Funktion für Kategorie-Namen (mit i18n)
 export const getCategoryName = (category: string): string => {
-  return LANDSCAPE_CATEGORIES[category as LandscapeCategory] || category;
+  return i18n.t(`gallery:categories.${category}`, { defaultValue: category });
+};
+
+// Helper-Funktion für Landschafts-Name (mit i18n)
+export const getLandscapeName = (landscapeId: string): string => {
+  return i18n.t(`gallery:landscapes.${landscapeId}.name`, { defaultValue: landscapeId });
+};
+
+// Helper-Funktion für Landschafts-Beschreibung (mit i18n)
+export const getLandscapeDescription = (landscapeId: string): string => {
+  return i18n.t(`gallery:landscapes.${landscapeId}.description`, { defaultValue: '' });
 };
 
 /**

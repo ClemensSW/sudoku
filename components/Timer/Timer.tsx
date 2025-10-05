@@ -8,6 +8,7 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./Timer.styles";
 
@@ -26,6 +27,7 @@ const Timer: React.FC<TimerProps> = ({
   onPausePress,
   disabled = false,
 }) => {
+  const { t } = useTranslation('game');
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -114,7 +116,7 @@ const Timer: React.FC<TimerProps> = ({
         style={styles.timerRow}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel="Spiel pausieren"
+        accessibilityLabel={t('controls.pauseGame')}
         accessibilityState={{ disabled: disabled || !onPausePress }}
       >
         <Feather

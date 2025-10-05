@@ -10,6 +10,7 @@ import Animated, {
   ZoomIn,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import {
   Landscape,
@@ -31,6 +32,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   isComplete = false,
   onViewGallery,
 }) => {
+  const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -297,7 +299,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       {/* Gallery button */}
       <View style={styles.buttonContainer}>
         <Button
-          title="Zur Galerie"
+          title={t('buttons.viewGallery')}
           variant="outline"
           icon={<Feather name="image" size={18} color={colors.primary} />}
           onPress={onViewGallery}

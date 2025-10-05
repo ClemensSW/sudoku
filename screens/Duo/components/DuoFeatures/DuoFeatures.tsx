@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./DuoFeatures.styles";
 
@@ -18,30 +19,31 @@ interface DuoFeaturesProps {
   noAnimation?: boolean;
 }
 
-const DuoFeatures: React.FC<DuoFeaturesProps> = ({ 
+const DuoFeatures: React.FC<DuoFeaturesProps> = ({
   onStartGame,
   noAnimation = false
 }) => {
+  const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
 
   const features: Feature[] = [
     {
       icon: "users",
-      title: "Gemeinsam spielen",
-      description: "Ein Sudoku, zwei Spieler - wer löst sein Gebiet zuerst?",
+      title: t('features.items.playTogether.title'),
+      description: t('features.items.playTogether.description'),
       color: "#4A7D78",
     },
     {
       icon: "rotate-ccw",
-      title: "Herausforderndes Layout",
-      description: "Zahlen für Spieler 2 werden automatisch gedreht",
+      title: t('features.items.challengingLayout.title'),
+      description: t('features.items.challengingLayout.description'),
       color: colors.warning,
     },
     {
       icon: "target",
-      title: "Strategie & Teamwork",
-      description: "Wettbewerb oder Zusammenarbeit - ihr entscheidet!",
+      title: t('features.items.strategyTeamwork.title'),
+      description: t('features.items.strategyTeamwork.description'),
       color: colors.error,
     },
   ];
@@ -49,7 +51,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
   return (
     <View style={styles.featuresContainer}>
       <Text style={[styles.featuresTitle, { color: colors.textPrimary }]}>
-        So funktioniert's
+        {t('features.title')}
       </Text>
 
       {features.map((feature, index) => (
@@ -86,7 +88,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
           onPress={onStartGame}
           activeOpacity={0.8}
         >
-          <Text style={styles.startButtonText}>Spiel starten</Text>
+          <Text style={styles.startButtonText}>{t('features.startButton')}</Text>
         </TouchableOpacity>
       </View>
     </View>

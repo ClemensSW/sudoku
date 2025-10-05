@@ -1,0 +1,47 @@
+{
+  "buttons": {
+    "ok": "OK",
+    "yes": "Ja",
+    "cancel": "Abbrechen",
+    "newGame": "Neues Spiel",
+    "toMenu": "Zum Menü"
+  },
+  "game": {
+    "completion": {
+      "title": "Glückwunsch!",
+      "message": "Du hast das Sudoku in {{time}} gelöst!",
+      "autoNotesNote": "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt."
+    },
+    "gameOver": {
+      "title": "Spiel beendet!",
+      "message": "Du hast zu viele Fehler gemacht. Versuche es erneut!",
+      "autoNotesNote": "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt."
+    },
+    "hint": {
+      "cellSelected": {
+        "title": "Hinweis",
+        "message": "Diese Zelle solltest du als nächstes ausfüllen. Drücke erneut auf den Hinweis-Button, um die richtige Zahl zu sehen."
+      },
+      "initialCell": {
+        "title": "Hinweis",
+        "message": "Diese Zelle ist bereits korrekt ausgefüllt."
+      },
+      "noHintsRemaining": {
+        "title": "Keine Hinweise mehr",
+        "message": "Du hast deine 3 Hinweise bereits aufgebraucht."
+      }
+    },
+    "noErrors": {
+      "title": "Gut gemacht!",
+      "message": "Dein Sudoku sieht gut aus! Fahre so fort."
+    },
+    "autoNotes": {
+      "title": "Automatische Notizen",
+      "message": "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt."
+    },
+    "quit": {
+      "title": "Zurück zum Hauptmenü?",
+      "message": "Dein aktueller Spielfortschritt geht verloren."
+    }
+  }
+}

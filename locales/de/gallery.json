@@ -1,0 +1,307 @@
+{
+  "emptyState": {
+    "all": {
+      "message": "Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten."
+    },
+    "favorites": {
+      "message": "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol."
+    },
+    "unlockButton": "Neues Sudoku spielen"
+  },
+  "categories": {
+    "cities": "Städte",
+    "architecture": "Architektur",
+    "animals": "Tiere",
+    "plants": "Pflanzen",
+    "landscapes": "Landschaften",
+    "water": "Wasser",
+    "sky": "Himmel",
+    "path": "Deine Reise"
+  },
+  "landscapes": {
+    "mountains-fuji": {
+      "name": "Sudoku Duo",
+      "description": "Ein Sudoku-Heft mit Bleistift auf der Fensterbank. Eine Einladung für deine Rätselreise."
+    },
+    "gardens-japanese": {
+      "name": "Teegarten",
+      "description": "Traditionelles japanisches Teehaus unter leuchtend roten Ahornbäumen"
+    },
+    "night-skies-1": {
+      "name": "Milchstraße",
+      "description": "Spektakulärer Blick auf die funkelnde Milchstraße über dunklen Hügeln"
+    },
+    "rainforest-toucan": {
+      "name": "Regenbogentukan",
+      "description": "Ein farbenprächtiger Regenbogentukan sitzt im Regen auf einem Ast mitten im üppigen Regenwald"
+    },
+    "waterfalls-1": {
+      "name": "Wasserfall",
+      "description": "Sanft herabstürzender Wasserfall inmitten eines üppigen Waldes"
+    },
+    "lakes-1": {
+      "name": "Waldsee",
+      "description": "Ruhiger See umgeben von dicht bewaldeten Bergen und einem kleinen Bootssteg"
+    },
+    "forests-1": {
+      "name": "Bambuswald",
+      "description": "Dichter Bambuswald mit hoch aufragenden, grünen Halmen"
+    },
+    "beaches-1": {
+      "name": "Tropenstrand",
+      "description": "Schneeweißer Sandstrand mit türkisblauem Wasser und schattenspendenden Palmen"
+    },
+    "valley-mist-sunrise": {
+      "name": "Nebel im Tal",
+      "description": "Morgennebel, der sanft ein grünes Tal umhüllt, mit pastellfarbenem Sonnenaufgangshimmel"
+    },
+    "cities-kyoto-temple": {
+      "name": "Pagode",
+      "description": "Eine stille Gasse führt dich zu einer leuchtenden Pagode im Abendlicht – ein Tor zu neuen Rätseln."
+    },
+    "cities-tokyo-alley": {
+      "name": "Tokio",
+      "description": "Enge Gassen voller Laternen und Kirschblüten – ein lebendiges Labyrinth, das neue Geheimnisse birgt."
+    },
+    "cities-shanghai-skyline": {
+      "name": "Shanghai",
+      "description": "Glitzernde Wolkenkratzer im Mondlicht – eine Metropole, die niemals schläft und voller Rätsel steckt."
+    },
+    "cities-dubai-burj": {
+      "name": "Dubai",
+      "description": "Zwischen endlosen Straßen und funkelnden Türmen ragt ein Bauwerk bis in den Himmel – ein Rätsel der Superlative."
+    },
+    "cities-venice-gondola": {
+      "name": "Venedig",
+      "description": "Ein stilles Café mit Blick auf Gondeln im Wasser – ein Ort, an dem Geschichten und Rätsel beginnen."
+    },
+    "architecture-rome-colosseum": {
+      "name": "Kolosseum",
+      "description": "Mächtige Mauern voller Geschichte – ein Monument, das seine Geheimnisse wie ein uraltes Rätsel bewahrt."
+    },
+    "architecture-singapore-green": {
+      "name": "Vertikale Gärten",
+      "description": "Moderne Glasfassaden verschmelzen mit üppigem Grün – ein Bauwerk, das wie ein lebendes Rätsel wirkt."
+    },
+    "architecture-singapore-jewel": {
+      "name": "Jewel Wasserfall",
+      "description": "Ein Wasserfall stürzt mitten in eine gläserne Kuppel – futurale Architektur, die wie ein Tor zu neuen Welten wirkt."
+    },
+    "architecture-germany-castle": {
+      "name": "Burg im Nebel",
+      "description": "Eine geheimnisvolle Burg erhebt sich aus dem Morgennebel – ein Tor in die Vergangenheit voller ungelöster Rätsel."
+    },
+    "architecture-abu-dhabi-mosque": {
+      "name": "Weiße Moschee",
+      "description": "Strahlend weiße Kuppeln und goldene Verzierungen – ein Ort der Stille, der wie ein heiliges Rätsel wirkt."
+    },
+    "architecture-hobbiton-house": {
+      "name": "Hobbithaus",
+      "description": "Versteckt im grünen Hügel liegt eine runde Tür – ein märchenhaftes Rätsel, das dich in eine andere Welt einlädt."
+    },
+    "architecture-dubai-burj-night": {
+      "name": "Burj Khalifa",
+      "description": "Ein Turm aus Glas und Licht ragt in die Wolken – wie ein endloses Rätsel, das den Himmel herausfordert."
+    },
+    "architecture-egypt-pyramid": {
+      "name": "Pyramide von Gizeh",
+      "description": "Ein uraltes Bauwerk erhebt sich aus der Wüste – ein Rätsel der Menschheit, das bis heute ungelöst scheint."
+    },
+    "architecture-mexico-chichenitza": {
+      "name": "Chichén Itzá",
+      "description": "Eine gewaltige Stufenpyramide erhebt sich majestätisch – ein Relikt der Maya, das noch immer Rätsel birgt."
+    },
+    "animals-sea-turtle": {
+      "name": "Meeresschildkröte",
+      "description": "Lautlos zieht sie ihre Bahnen im endlosen Blau – ein Symbol für Freiheit und die Geheimnisse des Ozeans."
+    },
+    "animals-hummingbird": {
+      "name": "Kolibri",
+      "description": "Mit schillernden Flügeln schwebt er in der Luft – ein winziger Akrobat, der die Schönheit der Natur sichtbar macht."
+    },
+    "animals-wolf": {
+      "name": "Wolf",
+      "description": "Mit wachsamen Augen streift er durch den verschneiten Wald – Sinnbild für Stärke, Freiheit und das Wilde in der Natur."
+    },
+    "animals-giraffe": {
+      "name": "Giraffe",
+      "description": "Anmutig ragt sie über die Bäume hinaus – ein sanfter Riese, der die Welt aus einer einzigartigen Perspektive sieht."
+    },
+    "animals-polar-bear": {
+      "name": "Eisbär",
+      "description": "Auf den schimmernden Eisschollen ruht er majestätisch – ein Wächter der Arktis, stark und zugleich verletzlich."
+    },
+    "animals-kitten": {
+      "name": "Kätzchen",
+      "description": "Mit neugierig geneigtem Kopf erkundet es die Welt – klein, verspielt und voller stiller Magie."
+    },
+    "animals-toucan": {
+      "name": "Tukan",
+      "description": "Mit seinem leuchtenden Schnabel sitzt er stolz im Grünen – ein exotischer Bote voller Farben und Energie."
+    },
+    "animals-sea-lion": {
+      "name": "Seelöwe",
+      "description": "Am Strand sonnt er sich gelassen mit erhobenem Kopf – ein verspielter Bewohner der Meere, voller Lebensfreude."
+    },
+    "animals-fox": {
+      "name": "Fuchs",
+      "description": "Sein Blick ist wachsam und klug – ein stiller Wanderer der Wälder, voller List und geheimnisvoller Eleganz."
+    },
+    "animals-koala": {
+      "name": "Koala",
+      "description": "Mit geschlossenen Augen lehnt er sich zurück – ein sanfter Träumer, der Ruhe und Gelassenheit verkörpert."
+    },
+    "animals-puffin": {
+      "name": "Papageitaucher",
+      "description": "Mit seinem farbenfrohen Schnabel und dem stolzen Auftreten wirkt er wie ein kleiner Clown der Meere, charmant und unverwechselbar."
+    },
+    "animals-camels": {
+      "name": "Kamele",
+      "description": "Die beiden Wüstenschiffe stehen Seite an Seite am Meer, als würden sie vertraulich plaudern, bereit ihre nächste Reise zu beginnen."
+    },
+    "animals-meerkat": {
+      "name": "Erdmännchen",
+      "description": "Wachsam und stolz steht das kleine Erdmännchen aufrecht auf seinem Posten und überblickt die Umgebung wie ein aufmerksamer Wächter der Savanne."
+    },
+    "animals-elephants": {
+      "name": "Elefanten",
+      "description": "Seite an Seite durchstreifen die mächtigen Elefanten die endlose Savanne, ihre Präsenz strahlt Ruhe, Stärke und Zusammenhalt aus."
+    },
+    "animals-penguins": {
+      "name": "Pinguine",
+      "description": "Zwischen Felsen ruhen und wandern die Pinguine, ihre schwarz-weißen Körper kontrastieren lebendig mit dem hellen Gestein und dem weiten Himmel."
+    },
+    "animals-panda": {
+      "name": "Panda",
+      "description": "Zwischen dichten Bäumen sitzt der Panda entspannt auf einer hölzernen Plattform, sein schwarz-weißes Fell leuchtet im satten Grün des Waldes."
+    },
+    "animals-parrot": {
+      "name": "Papagei",
+      "description": "Mit leuchtend roten Federn und blau-grünen Flügeln sitzt der Papagei auf einem Ast, während er neugierig seine Kralle zum Schnabel führt."
+    },
+    "plants-orchid": {
+      "name": "Orchidee",
+      "description": "Auf einem Holztisch inmitten üppiger Pflanzenpracht erblüht eine elegante weiße Orchidee, deren Blüten im warmen Licht besonders strahlend wirken."
+    },
+    "plants-treeoflife": {
+      "name": "Baum des Lebens",
+      "description": "Ein monumentaler Baum mit kräftigem Stamm und weit ausladender Krone erhebt sich majestätisch über einem Teich voller Seerosen und spiegelt sich im Wasser."
+    },
+    "plants-orange-tree": {
+      "name": "Orangenbaum",
+      "description": "Leuchtend orangefarbene Früchte hängen zwischen glänzenden grünen Blättern eines Orangenbaums und strahlen unter dem klaren Himmel."
+    },
+    "plants-dandelion": {
+      "name": "Löwenzahn",
+      "description": "Drei filigrane Pusteblumen stehen inmitten einer grünen Wiese, sanft beleuchtet vom warmen Licht der untergehenden Sonne."
+    },
+    "plants-poppy": {
+      "name": "Mohnblume",
+      "description": "Ein Feld voller leuchtend roter Mohnblumen, die sich anmutig im Sonnenlicht wiegen und den Sommer in seiner ganzen Fülle einfangen."
+    },
+    "plants-cherryblossom": {
+      "name": "Kirschblüte",
+      "description": "Zarte Kirschblüten in violettem Schimmer, die in der Abenddämmerung leuchten und eine ruhige, fast magische Atmosphäre schaffen."
+    },
+    "plants-sunflower": {
+      "name": "Sonnenblume",
+      "description": "Strahlende Sonnenblume mit goldgelben Blütenblättern, die sich der Sonne entgegenstreckt und Lebensfreude ausstrahlt."
+    },
+    "plants-water-lily": {
+      "name": "Seerose",
+      "description": "Zarte Seerose mit leuchtend rosa Blütenblättern, die anmutig auf der Wasseroberfläche schwimmt und Ruhe ausstrahlt."
+    },
+    "plants-lavender": {
+      "name": "Lavendel",
+      "description": "Zarte Lavendelblüten in kräftigem Violett, die mit ihrem Duft Ruhe und Gelassenheit ausstrahlen und an Sommerabende in der Provence erinnern."
+    },
+    "landscapes-misty-forest": {
+      "name": "Nebliger Waldpfad",
+      "description": "Ein schmaler Weg schlängelt sich durch einen stillen Wald, während dichter Nebel zwischen den hohen Bäumen hängt und eine geheimnisvolle Stimmung schafft."
+    },
+    "landscapes-sand-dunes": {
+      "name": "Unendliche Dünen",
+      "description": "Sanft geschwungene Sanddünen breiten sich bis zum Horizont aus, während ein einzelner Wanderer seine Spuren im goldenen Licht der Sonne hinterlässt."
+    },
+    "landscapes-yosemite-valley": {
+      "name": "Majestätisches Yosemite",
+      "description": "Vor der Kulisse des ikonischen Half Dome breiten sich dichte Wälder und weite Wiesen aus, auf denen Hirsche friedlich grasen – eine stille Szene voller Erhabenheit."
+    },
+    "landscapes-dolomites-ridge": {
+      "name": "Dolomitenkamm im Blütenmeer",
+      "description": "Ein schmaler Grat zieht sich majestätisch durch die Dolomiten, während bunte Bergblumen im Vordergrund leuchten und die Szenerie in ein lebendiges Spiel von Farben und Formen tauchen."
+    },
+    "landscapes-sunset-meadow": {
+      "name": "Sonnenuntergang über der Wiese",
+      "description": "Sanfte Grashalme wiegen sich im Abendwind, während die Sonne am Horizont in warmen Orangetönen versinkt und die Landschaft in ein leuchtendes Farbspiel taucht."
+    },
+    "landscapes-misty-mountains": {
+      "name": "Neblige Berge",
+      "description": "Sanfte Bergketten verschwinden im Dunst, Schicht für Schicht. Eine stille Landschaft in Blau, die Ruhe und Unendlichkeit ausstrahlt."
+    },
+    "landscapes-desert-monoliths": {
+      "name": "Wüstenmonolithen",
+      "description": "Majestätische Felstürme ragen aus der endlosen Wüste, vom warmen Licht der Sonne umhüllt. Ein einzelner Wanderer wirkt winzig inmitten dieser uralten Giganten."
+    },
+    "water-mountain-lake": {
+      "name": "Bergsee",
+      "description": "Ein kristallklarer Bergsee spiegelt die umliegenden Wälder und Gipfel wider. Am Ufer wachsen wilde Blumen und Gräser, die die Ruhe des Wassers unterstreichen."
+    },
+    "water-ocean-sunset": {
+      "name": "Ozean bei Sonnenuntergang",
+      "description": "Am Horizont verschmilzt das dunkle Blau des Ozeans mit dem glühenden Orange der untergehenden Sonne. Dramatische Wolken verstärken die Stimmung, während im Vordergrund Pflanzen am Klippenrand sichtbar sind."
+    },
+    "water-sunset-coast": {
+      "name": "Sonnenuntergang an der Küste",
+      "description": "Die untergehende Sonne taucht den Himmel und das Meer in warmes Gold. Sanfte Wellen rollen an den Strand, während die Felsen im Abendlicht als dunkle Silhouetten erscheinen."
+    },
+    "water-beach-path": {
+      "name": "Pfad zum Strand",
+      "description": "Ein hölzerner Steg führt durch die sandigen Dünen direkt zum türkisfarbenen Meer. Sanfte Wellen glitzern in der Sonne, während der Himmel klar und blau erstrahlt – ein perfekter Moment am Ozean."
+    },
+    "water-waterfall-forest": {
+      "name": "Waldwasserfall",
+      "description": "Ein idyllischer Wasserfall stürzt in mehreren Kaskaden über moosbewachsene Felsen in ein klares Becken. Umrahmt von dichten Bäumen entsteht eine ruhige, fast magische Atmosphäre mitten in der Natur."
+    },
+    "water-river-forest": {
+      "name": "Waldfluss",
+      "description": "Ein klarer Fluss fließt ruhig durch einen dichten Wald. Zwischen moosbewachsenen Felsen spiegelt sich das Sonnenlicht im Wasser und verleiht der Szenerie eine friedliche Stimmung."
+    },
+    "water-ocean-waves": {
+      "name": "Meereswellen",
+      "description": "Von oben betrachtet treffen die Wellen mit weißem Schaum auf den Sandstrand und zeichnen klare Linien zwischen tiefem Blau und hellem Beige."
+    },
+    "water-wave-sunset": {
+      "name": "Welle im Abendlicht",
+      "description": "Eine kleine Welle bricht nah am Ufer, die Tropfen glitzern im goldenen Licht der untergehenden Sonne und verleihen der Szene Ruhe und Lebendigkeit zugleich."
+    },
+    "water-beach-sunset": {
+      "name": "Strand im Sonnenuntergang",
+      "description": "Die untergehende Sonne färbt den Himmel in warmen Rosa- und Orangetönen, während die Wellen sanft an den goldglänzenden Sandstrand rollen."
+    },
+    "water-palm-beach": {
+      "name": "Palmenstrand",
+      "description": "Sanfte Wellen treffen auf weißen Sand, während schlanke Palmen ihre Schatten auf das türkisfarbene Meer werfen und tropisches Urlaubsfeeling verbreiten."
+    },
+    "water-palm-shadows": {
+      "name": "Palmschatten am Strand",
+      "description": "Von oben fällt der Blick auf türkisfarbenes Wasser und den Sandstrand, wo die Schatten der Palmen geheimnisvolle Muster zeichnen und tropische Ruhe ausstrahlen."
+    },
+    "sky-northern-lights": {
+      "name": "Polarlichter über den Bergen",
+      "description": "Grün leuchtende Polarlichter tanzen über schneebedeckten Gipfeln und einem ruhigen Fjord, während ein Dorf unten in bunten Lichtern erstrahlt."
+    },
+    "sky-sunset-clouds": {
+      "name": "Sonnenstrahlen durch Wolken",
+      "description": "Dramatische Sonnenstrahlen brechen durch dichte Wolken und tauchen den Himmel in ein Spiel aus Gold und Dunkelblau."
+    },
+    "sky-starry-mountain": {
+      "name": "Sternenhimmel über dem Berg",
+      "description": "Ein klarer Nachthimmel voller Sterne wölbt sich über einem majestätischen Berg, dessen Spiegelbild im stillen See leuchtet."
+    },
+    "sky-cloudscape-bright": {
+      "name": "Weite Wolkenlandschaft",
+      "description": "Eine endlose Wolkenformation breitet sich unter einem hellen Himmel aus – sanfte Schichten, die wie ein Meer aus Weiß und Blau wirken."
+    }
+  }
+}

@@ -23,6 +23,7 @@ import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 import { useNavigation } from "@/contexts/navigation";
 
@@ -34,7 +35,6 @@ import PurchaseOverlay from "./components/PurchaseOverlay";
 
 // Utils
 import BillingManager, { Product } from "./utils/billing/BillingManager";
-import { getRandomConfirmMessage } from "./utils/supportMessages";
 import { markAsPurchased } from "./utils/purchaseTracking";
 import styles from "./SupportShop.styles";
 
@@ -44,10 +44,11 @@ interface SupportShopScreenProps {
 }
 
 const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose = false }) => {
+  const { t } = useTranslation('supportShop');
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  
+
   const { hideBottomNav, resetBottomNav } = useNavigation();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -104,8 +105,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         console.error("Error initializing billing:", error);
         setLoading(false);
         Alert.alert(
-          "Verbindungsfehler",
-          "Es konnte keine Verbindung zum Store hergestellt werden.",
+          t('errors.connection.title'),
+          t('errors.connection.message'),
           [{ text: "OK", onPress: onClose }]
         );
       }
@@ -148,8 +149,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
       // Show error alert
       Alert.alert(
-        "Fehler beim Kauf",
-        "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+        t('errors.purchase.title'),
+        t('errors.purchase.message'),
         [{ text: "OK" }]
       );
     }
@@ -187,7 +188,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     }
 
     // Get random thank you message
-    const { title, message } = getRandomConfirmMessage();
+    const messages = t('purchase.confirmMessages', { returnObjects: true }) as Array<{title: string, message: string}>;
+    const { title, message } = messages[Math.floor(Math.random() * messages.length)];
 
     // Show success message
     setSuccessMessage({
@@ -227,33 +229,10 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
     // Show error alert for other errors
     Alert.alert(
-      "Fehler beim Kauf",
-      "Es gab ein Problem beim Kaufvorgang. Bitte versuche es später erneut.",
+      t('errors.generic.title'),
+      t('errors.generic.message'),
       [{ text: "OK" }]
     );
-  };
-
-  // Get random confirmation message
-  const getRandomConfirmMessage = () => {
-    const messages = [
-      {
-        title: "Vielen Dank für deine Unterstützung!",
-        message: "Dein Beitrag hilft dabei, die App kontinuierlich zu verbessern. Du bist super! 🎉"
-      },
-      {
-        title: "Wow, du bist großartig!",
-        message: "Mit deiner Unterstützung kann ich weiterhin an coolen Features arbeiten. Danke! 🙏"
-      },
-      {
-        title: "High Five! ✋",
-        message: "Danke für deine Unterstützung! Jetzt habe ich noch mehr Motivation, die App zu verbessern."
-      },
-      {
-        title: "Jubel, Trubel, Heiterkeit! 🎊",
-        message: "Deine Unterstützung sorgt für gute Laune und neue Sudoku-Features!"
-      }
-    ];
-    return messages[Math.floor(Math.random() * messages.length)];
   };
 
   // Loading state
@@ -264,7 +243,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Lade Produkte...
+            {t('loading.text')}
           </Text>
         </View>
       </View>
@@ -290,7 +269,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           <Feather name="x" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Unterstützung
+          {t('header.title')}
         </Text>
         <View style={{ width: 40 }} />
       </Animated.View>
@@ -315,7 +294,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         {/* One-time support section */}
         <Animated.View entering={SlideInUp.delay(200).duration(500)}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Einmalige Unterstützung
+            {t('sections.oneTime')}
           </Text>
 
           <View style={styles.productsGrid}>
@@ -338,7 +317,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           entering={SlideInUp.delay(400).duration(500)}
         >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Regelmäßige Unterstützung
+            {t('sections.subscription')}
           </Text>
 
           {subscriptions.map((subscription, index) => (
@@ -362,9 +341,9 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           entering={SlideInUp.delay(600).duration(500)}
         >
           <Text style={[styles.thanksText, { color: colors.textPrimary }]}>
-            Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!
+            {t('thanks.message')}
           </Text>
-          <Text style={styles.thanksEmoji}>❤️</Text>
+          <Text style={styles.thanksEmoji}>{t('thanks.emoji')}</Text>
         </Animated.View>
       </ScrollView>
 
@@ -373,11 +352,11 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         <PurchaseOverlay
           visible={purchasing}
           isSuccess={purchaseSuccess}
-          title={purchaseSuccess ? "Vielen Dank!" : "Verarbeite Kauf..."}
+          title={purchaseSuccess ? t('purchase.overlay.success.title') : t('purchase.overlay.processing.title')}
           message={
             purchaseSuccess
-              ? "Deine Unterstützung bedeutet mir sehr viel!"
-              : "Bitte warte einen Moment"
+              ? t('purchase.overlay.success.message')
+              : t('purchase.overlay.processing.message')
           }
           primaryColor={currentPurchase?.color || colors.primary}
         />

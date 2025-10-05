@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./NumberPad.styles";
@@ -37,6 +38,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
   showHint = true,
   hintsRemaining = 0,
 }) => {
+  const { t } = useTranslation('game');
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -115,7 +117,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
           <Text
             style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
           >
-            Notiz
+            {t('controls.note')}
           </Text>
         </Animated.View>
 
@@ -149,7 +151,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
           <Text
             style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
           >
-            Löschen
+            {t('controls.erase')}
           </Text>
         </Animated.View>
 
@@ -211,7 +213,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 },
               ]}
             >
-              Hinweis
+              {t('controls.hint')}
             </Text>
           </Animated.View>
         )}

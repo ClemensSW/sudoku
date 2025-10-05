@@ -1,0 +1,317 @@
+{
+  "emptyState": {
+    "all": {
+      "title": "No images yet",
+      "message": "Solve Sudokus to unlock beautiful landscape images"
+    },
+    "favorites": {
+      "title": "No favorites yet",
+      "message": "Mark images as favorites to see them here"
+    },
+    "category": {
+      "title": "No images in this category",
+      "message": "Solve more Sudokus to unlock images in this category"
+    },
+    "search": {
+      "title": "No results",
+      "message": "No images found matching your search"
+    },
+    "unlockButton": "Solve Sudoku"
+  },
+  "categories": {
+    "cities": "Cities",
+    "architecture": "Architecture",
+    "animals": "Animals",
+    "plants": "Plants",
+    "landscapes": "Landscapes",
+    "water": "Water",
+    "sky": "Sky",
+    "path": "Your Journey"
+  },
+  "landscapes": {
+    "mountains-fuji": {
+      "name": "Sudoku Duo",
+      "description": "A Sudoku booklet with pencil on the windowsill. An invitation to your puzzle journey."
+    },
+    "gardens-japanese": {
+      "name": "Tea Garden",
+      "description": "Traditional Japanese tea house under brightly red maple trees"
+    },
+    "night-skies-1": {
+      "name": "Milky Way",
+      "description": "Spectacular view of the sparkling Milky Way over dark hills"
+    },
+    "rainforest-toucan": {
+      "name": "Rainbow Toucan",
+      "description": "A colorful rainbow toucan sits in the rain on a branch in the middle of the lush rainforest"
+    },
+    "waterfalls-1": {
+      "name": "Waterfall",
+      "description": "Gently cascading waterfall amidst a lush forest"
+    },
+    "lakes-1": {
+      "name": "Forest Lake",
+      "description": "Quiet lake surrounded by densely forested mountains and a small boat dock"
+    },
+    "forests-1": {
+      "name": "Bamboo Forest",
+      "description": "Dense bamboo forest with towering green stalks"
+    },
+    "beaches-1": {
+      "name": "Tropical Beach",
+      "description": "Snow-white sandy beach with turquoise blue water and shady palms"
+    },
+    "valley-mist-sunrise": {
+      "name": "Mist in the Valley",
+      "description": "Morning mist gently enveloping a green valley, with pastel-colored sunrise sky"
+    },
+    "cities-kyoto-temple": {
+      "name": "Pagoda",
+      "description": "A quiet alley leads you to a glowing pagoda in the evening light – a gateway to new puzzles."
+    },
+    "cities-tokyo-alley": {
+      "name": "Tokyo",
+      "description": "Narrow alleys full of lanterns and cherry blossoms – a vibrant labyrinth that holds new secrets."
+    },
+    "cities-shanghai-skyline": {
+      "name": "Shanghai",
+      "description": "Glittering skyscrapers in moonlight – a metropolis that never sleeps and is full of mysteries."
+    },
+    "cities-dubai-burj": {
+      "name": "Dubai",
+      "description": "Between endless streets and sparkling towers, a structure rises to the sky – a puzzle of superlatives."
+    },
+    "cities-venice-gondola": {
+      "name": "Venice",
+      "description": "A quiet café overlooking gondolas on the water – a place where stories and puzzles begin."
+    },
+    "architecture-rome-colosseum": {
+      "name": "Colosseum",
+      "description": "Mighty walls full of history – a monument that guards its secrets like an ancient puzzle."
+    },
+    "architecture-singapore-green": {
+      "name": "Vertical Gardens",
+      "description": "Modern glass facades merge with lush greenery – a structure that seems like a living puzzle."
+    },
+    "architecture-singapore-jewel": {
+      "name": "Jewel Waterfall",
+      "description": "A waterfall plunges into a glass dome – futuristic architecture that seems like a gateway to new worlds."
+    },
+    "architecture-germany-castle": {
+      "name": "Castle in the Mist",
+      "description": "A mysterious castle rises from the morning mist – a gateway to the past full of unsolved puzzles."
+    },
+    "architecture-abu-dhabi-mosque": {
+      "name": "White Mosque",
+      "description": "Brilliant white domes and golden ornaments – a place of silence that seems like a sacred puzzle."
+    },
+    "architecture-hobbiton-house": {
+      "name": "Hobbit House",
+      "description": "Hidden in the green hill lies a round door – a fairy-tale puzzle that invites you into another world."
+    },
+    "architecture-dubai-burj-night": {
+      "name": "Burj Khalifa",
+      "description": "A tower of glass and light rises into the clouds – like an endless puzzle that challenges the sky."
+    },
+    "architecture-egypt-pyramid": {
+      "name": "Pyramid of Giza",
+      "description": "An ancient structure rises from the desert – a puzzle of humanity that still seems unsolved today."
+    },
+    "architecture-mexico-chichenitza": {
+      "name": "Chichén Itzá",
+      "description": "A massive step pyramid rises majestically – a relic of the Maya that still holds puzzles."
+    },
+    "animals-sea-turtle": {
+      "name": "Sea Turtle",
+      "description": "Silently it glides through the endless blue – a symbol of freedom and the secrets of the ocean."
+    },
+    "animals-hummingbird": {
+      "name": "Hummingbird",
+      "description": "With iridescent wings it hovers in the air – a tiny acrobat that makes the beauty of nature visible."
+    },
+    "animals-wolf": {
+      "name": "Wolf",
+      "description": "With watchful eyes it roams through the snowy forest – symbol of strength, freedom and the wild in nature."
+    },
+    "animals-giraffe": {
+      "name": "Giraffe",
+      "description": "Gracefully it towers above the trees – a gentle giant that sees the world from a unique perspective."
+    },
+    "animals-polar-bear": {
+      "name": "Polar Bear",
+      "description": "On the shimmering ice floes it rests majestically – a guardian of the Arctic, strong yet vulnerable."
+    },
+    "animals-kitten": {
+      "name": "Kitten",
+      "description": "With curiously tilted head it explores the world – small, playful and full of quiet magic."
+    },
+    "animals-toucan": {
+      "name": "Toucan",
+      "description": "With its bright beak it sits proudly in the green – an exotic messenger full of colors and energy."
+    },
+    "animals-sea-lion": {
+      "name": "Sea Lion",
+      "description": "On the beach it basks calmly with raised head – a playful inhabitant of the seas, full of joie de vivre."
+    },
+    "animals-fox": {
+      "name": "Fox",
+      "description": "Its gaze is watchful and clever – a silent wanderer of the forests, full of cunning and mysterious elegance."
+    },
+    "animals-koala": {
+      "name": "Koala",
+      "description": "With closed eyes it leans back – a gentle dreamer embodying peace and serenity."
+    },
+    "animals-puffin": {
+      "name": "Puffin",
+      "description": "With its colorful beak and proud demeanor it seems like a little clown of the seas, charming and unmistakable."
+    },
+    "animals-camels": {
+      "name": "Camels",
+      "description": "The two ships of the desert stand side by side at the sea, as if chatting confidentially, ready to begin their next journey."
+    },
+    "animals-meerkat": {
+      "name": "Meerkat",
+      "description": "Alert and proud, the little meerkat stands upright at its post, surveying the surroundings like an attentive guardian of the savanna."
+    },
+    "animals-elephants": {
+      "name": "Elephants",
+      "description": "Side by side, the mighty elephants roam the endless savanna, their presence radiating calm, strength and unity."
+    },
+    "animals-penguins": {
+      "name": "Penguins",
+      "description": "Among rocks the penguins rest and wander, their black and white bodies contrasting vividly with the bright stone and wide sky."
+    },
+    "animals-panda": {
+      "name": "Panda",
+      "description": "Between dense trees the panda sits relaxed on a wooden platform, its black and white fur glowing in the lush green of the forest."
+    },
+    "animals-parrot": {
+      "name": "Parrot",
+      "description": "With bright red feathers and blue-green wings the parrot sits on a branch, curiously bringing its claw to its beak."
+    },
+    "plants-orchid": {
+      "name": "Orchid",
+      "description": "On a wooden table amidst lush plant splendor blooms an elegant white orchid, whose blossoms shine particularly bright in the warm light."
+    },
+    "plants-treeoflife": {
+      "name": "Tree of Life",
+      "description": "A monumental tree with strong trunk and wide-spreading crown rises majestically over a pond full of water lilies and reflects in the water."
+    },
+    "plants-orange-tree": {
+      "name": "Orange Tree",
+      "description": "Bright orange fruits hang between shiny green leaves of an orange tree and radiate under the clear sky."
+    },
+    "plants-dandelion": {
+      "name": "Dandelion",
+      "description": "Three delicate dandelion clocks stand in the middle of a green meadow, gently illuminated by the warm light of the setting sun."
+    },
+    "plants-poppy": {
+      "name": "Poppy",
+      "description": "A field full of bright red poppies that sway gracefully in the sunlight and capture summer in all its fullness."
+    },
+    "plants-cherryblossom": {
+      "name": "Cherry Blossom",
+      "description": "Delicate cherry blossoms in violet shimmer, glowing in the twilight and creating a calm, almost magical atmosphere."
+    },
+    "plants-sunflower": {
+      "name": "Sunflower",
+      "description": "Radiant sunflower with golden yellow petals that stretches toward the sun and radiates joy of life."
+    },
+    "plants-water-lily": {
+      "name": "Water Lily",
+      "description": "Delicate water lily with bright pink petals that floats gracefully on the water surface and radiates tranquility."
+    },
+    "plants-lavender": {
+      "name": "Lavender",
+      "description": "Delicate lavender blossoms in strong violet that radiate peace and serenity with their scent and remind of summer evenings in Provence."
+    },
+    "landscapes-misty-forest": {
+      "name": "Misty Forest Path",
+      "description": "A narrow path winds through a silent forest, while dense fog hangs between the tall trees and creates a mysterious atmosphere."
+    },
+    "landscapes-sand-dunes": {
+      "name": "Endless Dunes",
+      "description": "Gently curved sand dunes spread to the horizon, while a single wanderer leaves his tracks in the golden light of the sun."
+    },
+    "landscapes-yosemite-valley": {
+      "name": "Majestic Yosemite",
+      "description": "Against the backdrop of the iconic Half Dome, dense forests and wide meadows spread out where deer graze peacefully – a quiet scene full of grandeur."
+    },
+    "landscapes-dolomites-ridge": {
+      "name": "Dolomite Ridge in Sea of Flowers",
+      "description": "A narrow ridge stretches majestically through the Dolomites, while colorful mountain flowers glow in the foreground and immerse the scenery in a vivid play of colors and shapes."
+    },
+    "landscapes-sunset-meadow": {
+      "name": "Sunset over the Meadow",
+      "description": "Gentle grass stalks sway in the evening wind, while the sun sinks on the horizon in warm orange tones and immerses the landscape in a glowing play of colors."
+    },
+    "landscapes-misty-mountains": {
+      "name": "Misty Mountains",
+      "description": "Gentle mountain ranges disappear in the haze, layer by layer. A quiet landscape in blue that radiates peace and infinity."
+    },
+    "landscapes-desert-monoliths": {
+      "name": "Desert Monoliths",
+      "description": "Majestic rock towers rise from the endless desert, bathed in the warm light of the sun. A single wanderer appears tiny among these ancient giants."
+    },
+    "water-mountain-lake": {
+      "name": "Mountain Lake",
+      "description": "A crystal-clear mountain lake reflects the surrounding forests and peaks. Wild flowers and grasses grow on the shore, emphasizing the tranquility of the water."
+    },
+    "water-ocean-sunset": {
+      "name": "Ocean at Sunset",
+      "description": "On the horizon the dark blue of the ocean merges with the glowing orange of the setting sun. Dramatic clouds intensify the mood, while plants on the cliff edge are visible in the foreground."
+    },
+    "water-sunset-coast": {
+      "name": "Sunset at the Coast",
+      "description": "The setting sun bathes the sky and sea in warm gold. Gentle waves roll onto the beach, while the rocks appear as dark silhouettes in the evening light."
+    },
+    "water-beach-path": {
+      "name": "Path to the Beach",
+      "description": "A wooden boardwalk leads through the sandy dunes directly to the turquoise sea. Gentle waves glitter in the sun, while the sky shines clear and blue – a perfect moment at the ocean."
+    },
+    "water-waterfall-forest": {
+      "name": "Forest Waterfall",
+      "description": "An idyllic waterfall plunges in several cascades over moss-covered rocks into a clear pool. Framed by dense trees, a calm, almost magical atmosphere is created in the middle of nature."
+    },
+    "water-river-forest": {
+      "name": "Forest River",
+      "description": "A clear river flows quietly through a dense forest. Between moss-covered rocks, sunlight reflects in the water and gives the scenery a peaceful mood."
+    },
+    "water-ocean-waves": {
+      "name": "Ocean Waves",
+      "description": "Viewed from above, the waves with white foam meet the sandy beach and draw clear lines between deep blue and light beige."
+    },
+    "water-wave-sunset": {
+      "name": "Wave in Evening Light",
+      "description": "A small wave breaks near the shore, the drops glitter in the golden light of the setting sun and give the scene both peace and vitality."
+    },
+    "water-beach-sunset": {
+      "name": "Beach at Sunset",
+      "description": "The setting sun colors the sky in warm pink and orange tones, while the waves gently roll onto the golden glowing sandy beach."
+    },
+    "water-palm-beach": {
+      "name": "Palm Beach",
+      "description": "Gentle waves meet white sand, while slender palms cast their shadows on the turquoise sea and spread tropical vacation feeling."
+    },
+    "water-palm-shadows": {
+      "name": "Palm Shadows on the Beach",
+      "description": "From above, the view falls on turquoise water and the sandy beach, where the shadows of the palms draw mysterious patterns and radiate tropical tranquility."
+    },
+    "sky-northern-lights": {
+      "name": "Northern Lights over the Mountains",
+      "description": "Green glowing northern lights dance over snow-covered peaks and a calm fjord, while a village below shines in colorful lights."
+    },
+    "sky-sunset-clouds": {
+      "name": "Sun Rays through Clouds",
+      "description": "Dramatic sun rays break through dense clouds and immerse the sky in a play of gold and dark blue."
+    },
+    "sky-starry-mountain": {
+      "name": "Starry Sky over the Mountain",
+      "description": "A clear night sky full of stars arches over a majestic mountain, whose reflection shines in the quiet lake."
+    },
+    "sky-cloudscape-bright": {
+      "name": "Wide Cloudscape",
+      "description": "An endless cloud formation spreads under a bright sky – gentle layers that seem like a sea of white and blue."
+    }
+  }
+}

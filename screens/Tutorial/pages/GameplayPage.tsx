@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import { spacing } from "@/utils/theme";
+import { useTranslation } from "react-i18next";
 
 // Manuell implementiertes SudokuBoard für die Tutorial-Animation
 import SudokuBoardDemo from "./SudokuBoardDemo";
@@ -32,6 +33,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   isFirstPage = false,
   isLastPage = false,
 }) => {
+  const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -136,11 +138,11 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const getInstructionText = () => {
     switch (stepNumber) {
       case 1:
-        return "Du wählst eine leere Zelle aus";
+        return t('pages.gameplay.instructions.step1');
       case 2:
-        return "Welche Zahl passt in die Zelle?";
+        return t('pages.gameplay.instructions.step2');
       case 3:
-        return "Die Zahl 5 passt perfekt in die Zelle";
+        return t('pages.gameplay.instructions.step3');
       default:
         return "";
     }
@@ -208,7 +210,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
 
   return (
     <TutorialPage
-      title="Spielablauf"
+      title={t('pages.gameplay.title')}
       onNext={onNext}
       onBack={onBack}
       onClose={onClose}

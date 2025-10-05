@@ -1,0 +1,83 @@
+{
+  "header": {
+    "title": "Great Job!",
+    "subtitle": "Your performance overview",
+    "newRecord": "New Record!"
+  },
+  "buttons": {
+    "nextGame": "Next Game",
+    "backToMenu": "Back to Menu",
+    "viewGallery": "View Gallery"
+  },
+  "feedback": {
+    "autoNotes": [
+      "You completed the game with Auto Notes. Try without them next time to improve your stats!",
+      "Good work with Auto Notes! For a real challenge, try without next time.",
+      "Auto Notes are a good start! Try creating your own next time to improve your skills.",
+      "You won with Auto Notes! It's like Sudoku with training wheels - soon you'll be ready for the real challenge!",
+      "Completed with Auto Notes! Playing without them next time will take your Sudoku journey to the next level."
+    ],
+    "excellent": [
+      "Excellent performance! Your precision and speed are impressive!",
+      "Brilliant work! You mastered the Sudoku perfectly!",
+      "World class! Your Sudoku skills are exceptional!",
+      "Fantastic! Your performance is nearly perfect!",
+      "Outstanding! You're playing at top level!",
+      "Masterful! Your Sudoku technique is impressive!",
+      "Magnificent performance! You solved the puzzle brilliantly!",
+      "Spectacular! Your logical thinking is remarkable!",
+      "Exceptional! You master Sudoku at the highest level!",
+      "First-rate! Your problem-solving skills are extraordinary!"
+    ],
+    "veryGood": [
+      "Very good! Your Sudoku skills keep improving!",
+      "Great performance! You have a good sense for number patterns!",
+      "Excellent! You master challenges with ease!",
+      "Great! Your concentration paid off!",
+      "Great work! You're becoming a Sudoku pro!",
+      "Impressive! Your strategy works perfectly!",
+      "Strong performance! Your solution path was efficient!",
+      "Top! You find the right numbers faster and faster!",
+      "Excellent! Your progress is clearly visible!",
+      "Very nice! You have real talent for logic puzzles!"
+    ],
+    "good": [
+      "Well done! With some practice you'll be even faster!",
+      "Solid performance! You get better with each game!",
+      "Nicely solved! Your Sudoku technique is developing well!",
+      "Well played! You mastered the challenge!",
+      "Good! Your perseverance led to success!",
+      "Good work! You can be proud of your solution!",
+      "Nice! You're developing good solving instincts!",
+      "Well done! Your logical thinking is improving!",
+      "Success! You're finding the right strategies!",
+      "Good perseverance! You get better with each solve!"
+    ],
+    "average": [
+      "Done! With more practice you'll get even better!",
+      "Well persevered! Each solved Sudoku improves your skills!",
+      "Puzzle solved! Practice makes perfect!",
+      "Done! You'll be even faster next time!",
+      "Puzzle mastered! Regular play helps internalize the strategies!",
+      "Sudoku solved! You'll play more fluently over time!",
+      "Completed! Your persistence paid off!",
+      "Persevered! Continuous practice will take you further!",
+      "Solved! You're on the right track!",
+      "Mastered! Your patience is paying off!"
+    ],
+    "newRecord": [
+      "New record! You're in absolute top form!",
+      "Record time! You outdid yourself!",
+      "Best time! You're playing better than ever!",
+      "Incredible! A new personal record!",
+      "Phenomenal! You've reached a new milestone!"
+    ],
+    "streak": [
+      "Fantastic streak! {{count}} games mastered in a row!",
+      "Incredible run! Your {{count}}-game streak shows true mastery!",
+      "Wow! {{count}} wins in a row - you're on fire!",
+      "Impressive consistency! {{count}} games without interruption!",
+      "You're in the zone! {{count}} successful games in a row!"
+    ]
+  }
+}

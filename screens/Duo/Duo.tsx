@@ -15,6 +15,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { Difficulty } from "@/utils/sudoku";
@@ -31,6 +32,7 @@ import styles from "./Duo.styles";
 const { height, width } = Dimensions.get("window");
 
 const SimpleDuoHeader = ({ paddingTop = 0 }) => {
+  const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
 
@@ -38,10 +40,10 @@ const SimpleDuoHeader = ({ paddingTop = 0 }) => {
     <View style={[headerStyles.header, { paddingTop }]}>
       <View style={headerStyles.titleContainer}>
         <Text style={[headerStyles.subTitle, { color: colors.textSecondary }]}>
-          ZWEI SPIELER MODUS
+          {t('header.subtitle')}
         </Text>
         <Text style={[headerStyles.title, { color: colors.textPrimary }]}>
-          Sudoku Duo
+          {t('header.title')}
         </Text>
       </View>
     </View>
@@ -68,6 +70,7 @@ const headerStyles = StyleSheet.create({
 });
 
 const Duo: React.FC = () => {
+  const { t } = useTranslation('duo');
   const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
@@ -288,8 +291,8 @@ const Duo: React.FC = () => {
         noBackdrop
         isTransition
         isDuoMode
-        title="Neues Spiel"
-        subtitle="Wählt gemeinsam den Schwierigkeitsgrad"
+        title={t('duo:startSection.title')}
+        subtitle={t('duo:startSection.subtitle')}
       />
 
       <GameModeModal

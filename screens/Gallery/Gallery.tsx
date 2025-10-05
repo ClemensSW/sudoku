@@ -38,6 +38,8 @@ import { ThemeColors } from "@/utils/theme/types";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -52,16 +54,23 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   router,
   colors,
 }) => {
-  // Texts for different filter states
-  const emptyStateTexts: Record<LandscapeFilter, string> = {
-    all: "Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten.",
-    inProgress:
-      "Du hast noch kein Bild, an den du arbeitest. Löse ein Sudoku, um zu beginnen!",
-    completed:
-      "Du hast noch kein Bild vollständig freigeschaltet. Löse Sudokus, um dein erstes Bild freizuschalten!",
-    favorites:
-      "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol.",
+  const { t } = useTranslation('gallery');
+
+  // Determine empty state key based on active tab
+  const getEmptyStateKey = (): string => {
+    switch (activeTab) {
+      case 'all':
+        return 'all';
+      case 'favorites':
+        return 'favorites';
+      case 'inProgress':
+      case 'completed':
+      default:
+        return 'all';
+    }
   };
+
+  const emptyStateKey = getEmptyStateKey();
 
   return (
     <View style={styles.emptyContainer}>
@@ -72,7 +81,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         style={{ opacity: 0.5 }}
       />
       <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-        {emptyStateTexts[activeTab]}
+        {t(`emptyState.${emptyStateKey}.message`)}
       </Text>
 
       {(activeTab === "completed" || activeTab === "favorites") && (
@@ -84,7 +93,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           onPress={() => router.push("/game")}
         >
           <Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
-            Neues Sudoku spielen
+            {t('emptyState.unlockButton')}
           </Text>
         </TouchableOpacity>
       )}
@@ -373,7 +382,7 @@ const Gallery: React.FC = () => {
     if (success) {
       showAlert({
         title: "Bild ausgewählt",
-        message: `„${landscape.name}" wird nun durch Lösen von Sudokus freigeschaltet.`,
+        message: `„${getLandscapeName(landscape.id)}" wird nun durch Lösen von Sudokus freigeschaltet.`,
         type: "success",
         buttons: [{ text: "OK", style: "primary" }],
       });

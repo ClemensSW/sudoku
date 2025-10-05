@@ -27,6 +27,7 @@ import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur"; // You may need to install this package
 import styles, { tagColors } from "./ImageDetailModal.styles";
+import { getLandscapeName, getLandscapeDescription, getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -325,7 +326,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         {/* Title */}
         <View style={styles.titleContainer}>
           <Text style={styles.headerTitle} numberOfLines={1}>
-            {landscape.name}
+            {getLandscapeName(landscape.id)}
           </Text>
         </View>
 
@@ -380,7 +381,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       {/* Footer content */}
       <View style={styles.footerContent}>
         {/* description */}
-        <Text style={styles.description}>{landscape.description}</Text>
+        <Text style={styles.description}>{getLandscapeDescription(landscape.id)}</Text>
 
         {/* Tags */}
         <View style={styles.tagsContainer}>

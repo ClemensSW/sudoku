@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import Button from "@/components/Button/Button";
@@ -37,6 +38,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
   maxErrors,
   difficulty,
 }) => {
+  const { t } = useTranslation(['game', 'start']);
   const theme = useTheme();
   const colors = theme.colors;
   const isDarkMode = theme.isDark;
@@ -52,140 +54,42 @@ const PauseModal: React.FC<PauseModalProps> = ({
     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  // Get difficulty label
+  // Get difficulty label from translations
   const getDifficultyLabel = (diff: Difficulty): string => {
-    const labels: Record<Difficulty, string> = {
-      easy: "Leicht",
-      medium: "Mittel",
-      hard: "Schwer",
-      expert: "Experte",
-    };
-    return labels[diff];
+    return t(`start:difficultyModal.difficulties.${diff}`);
   };
 
-  // Tips data - organized by category (erweitert für mehr Abwechslung)
+  // Tips data - loaded from translations
   const gameSpecificTips: TipItem[] = [
-    {
-      icon: "image",
-      title: "Galerie-Freischaltungen",
-      description: "In der Galerie kannst du selbst entscheiden, welches Bild du als Nächstes freischaltest.",
-    },
-    {
-      icon: "star",
-      title: "Favoriten",
-      description: "Alle als Favorit markierten Bilder werden dir direkt auf der Startseite angezeigt.",
-    },
-    {
-      icon: "award",
-      title: "Titel auswählen",
-      description: "Wähle deinen Titel aus den bereits erworbenen Auszeichnungen und zeige deinen Fortschritt.",
-    },
-    {
-      icon: "edit-3",
-      title: "Notizmodus",
-      description: "Nutze den Notizmodus, um Kandidaten in Zellen zu markieren und Fehler zu vermeiden.",
-    },
-    {
-      icon: "map",
-      title: "Level-Pfad",
-      description: "Verfolge deinen Fortschritt über den Level-Pfad und schalte neue Herausforderungen frei.",
-    },
-    {
-      icon: "trending-up",
-      title: "Schwierigkeitsgrad steigern",
-      description: "Fordere dich heraus und steigere dein Niveau – jede Stufe bringt mehr Punkte!",
-    },
-    {
-      icon: "zap",
-      title: "Tägliche Streak",
-      description: "Spiele täglich, um deine Streak zu halten und Bonuspunkte zu sammeln.",
-    },
+    { icon: "image", title: t('game:pause.gameSpecificTips.gallery.title'), description: t('game:pause.gameSpecificTips.gallery.description') },
+    { icon: "star", title: t('game:pause.gameSpecificTips.favorites.title'), description: t('game:pause.gameSpecificTips.favorites.description') },
+    { icon: "award", title: t('game:pause.gameSpecificTips.titles.title'), description: t('game:pause.gameSpecificTips.titles.description') },
+    { icon: "edit-3", title: t('game:pause.gameSpecificTips.notes.title'), description: t('game:pause.gameSpecificTips.notes.description') },
+    { icon: "map", title: t('game:pause.gameSpecificTips.levelPath.title'), description: t('game:pause.gameSpecificTips.levelPath.description') },
+    { icon: "trending-up", title: t('game:pause.gameSpecificTips.difficulty.title'), description: t('game:pause.gameSpecificTips.difficulty.description') },
+    { icon: "zap", title: t('game:pause.gameSpecificTips.streak.title'), description: t('game:pause.gameSpecificTips.streak.description') },
   ];
 
   const sudokuTips: TipItem[] = [
-    {
-      icon: "search",
-      title: "Naked Singles zuerst",
-      description: "Suche nach Zellen, in denen nur eine Zahl möglich ist – der einfachste Anfang.",
-    },
-    {
-      icon: "grid",
-      title: "Hidden Singles finden",
-      description: "Prüfe Zeilen, Spalten und Boxen: Wo kann eine Zahl nur einmal hin?",
-    },
-    {
-      icon: "columns",
-      title: "Box-Line Reduction",
-      description: "Wenn eine Zahl in einer Box nur in einer Zeile/Spalte möglich ist, eliminiere sie außerhalb.",
-    },
-    {
-      icon: "square",
-      title: "Naked Pairs nutzen",
-      description: "Zwei Zellen mit denselben 2 Kandidaten? Eliminiere diese Zahlen in der Zeile/Spalte/Box.",
-    },
-    {
-      icon: "eye",
-      title: "Scanning-Technik",
-      description: "Gehe systematisch durch jede Zahl 1-9 und prüfe, wo sie noch fehlt.",
-    },
-    {
-      icon: "maximize-2",
-      title: "X-Wing Strategie",
-      description: "Fortgeschritten: Finde Muster über mehrere Zeilen/Spalten, um Kandidaten zu eliminieren.",
-    },
-    {
-      icon: "clock",
-      title: "Pausen helfen",
-      description: "Kurze Pausen steigern die Konzentration – du siehst oft neue Muster danach.",
-    },
-    {
-      icon: "skip-forward",
-      title: "Nicht festbeißen",
-      description: "Hängst du fest? Überspringe die Zelle und komme später zurück – oft wird's dann klarer.",
-    },
+    { icon: "search", title: t('game:pause.sudokuTips.nakedSingles.title'), description: t('game:pause.sudokuTips.nakedSingles.description') },
+    { icon: "grid", title: t('game:pause.sudokuTips.hiddenSingles.title'), description: t('game:pause.sudokuTips.hiddenSingles.description') },
+    { icon: "columns", title: t('game:pause.sudokuTips.boxLine.title'), description: t('game:pause.sudokuTips.boxLine.description') },
+    { icon: "square", title: t('game:pause.sudokuTips.nakedPairs.title'), description: t('game:pause.sudokuTips.nakedPairs.description') },
+    { icon: "eye", title: t('game:pause.sudokuTips.scanning.title'), description: t('game:pause.sudokuTips.scanning.description') },
+    { icon: "maximize-2", title: t('game:pause.sudokuTips.xWing.title'), description: t('game:pause.sudokuTips.xWing.description') },
+    { icon: "clock", title: t('game:pause.sudokuTips.breaks.title'), description: t('game:pause.sudokuTips.breaks.description') },
+    { icon: "skip-forward", title: t('game:pause.sudokuTips.skip.title'), description: t('game:pause.sudokuTips.skip.description') },
   ];
 
   const brainTips: TipItem[] = [
-    {
-      icon: "target",
-      title: "Fokus & Konzentration",
-      description: "Sudoku trainiert deine Aufmerksamkeit und fördert tiefe Konzentration.",
-    },
-    {
-      icon: "zap",
-      title: "Mentale Ausdauer",
-      description: "Regelmäßiges Üben stärkt Geduld und verbessert deine Problemlösefähigkeit.",
-    },
-    {
-      icon: "cpu",
-      title: "Gedächtnis stärken",
-      description: "Sudoku aktiviert dein Arbeitsgedächtnis und hält dein Gehirn fit.",
-    },
-    {
-      icon: "activity",
-      title: "Neuroplastizität fördern",
-      description: "Neue Denkmuster beim Rätseln bilden neue neuronale Verbindungen.",
-    },
-    {
-      icon: "trending-up",
-      title: "Kognitive Reserven aufbauen",
-      description: "Regelmäßiges Gehirntraining kann altersbedingten kognitiven Abbau verlangsamen.",
-    },
-    {
-      icon: "smile",
-      title: "Stressabbau & Entspannung",
-      description: "Sudoku wirkt meditativ und hilft beim Abschalten vom Alltag.",
-    },
-    {
-      icon: "award",
-      title: "Erfolgserlebnisse",
-      description: "Jedes gelöste Rätsel gibt dir ein positives Erfolgserlebnis und motiviert dich weiterzumachen.",
-    },
-    {
-      icon: "repeat",
-      title: "Flexibles Denken",
-      description: "Sudoku trainiert dein Gehirn, verschiedene Lösungsansätze auszuprobieren.",
-    },
+    { icon: "target", title: t('game:pause.brainTips.focus.title'), description: t('game:pause.brainTips.focus.description') },
+    { icon: "zap", title: t('game:pause.brainTips.mentalEndurance.title'), description: t('game:pause.brainTips.mentalEndurance.description') },
+    { icon: "cpu", title: t('game:pause.brainTips.memory.title'), description: t('game:pause.brainTips.memory.description') },
+    { icon: "activity", title: t('game:pause.brainTips.neuroplasticity.title'), description: t('game:pause.brainTips.neuroplasticity.description') },
+    { icon: "trending-up", title: t('game:pause.brainTips.cognitiveReserve.title'), description: t('game:pause.brainTips.cognitiveReserve.description') },
+    { icon: "smile", title: t('game:pause.brainTips.stress.title'), description: t('game:pause.brainTips.stress.description') },
+    { icon: "award", title: t('game:pause.brainTips.achievement.title'), description: t('game:pause.brainTips.achievement.description') },
+    { icon: "repeat", title: t('game:pause.brainTips.flexibility.title'), description: t('game:pause.brainTips.flexibility.description') },
   ];
 
   // Get random tip from all categories combined
@@ -314,7 +218,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             {/* Header */}
             <View style={styles.header}>
               <Text style={[styles.title, { color: colors.textPrimary }]}>
-                Pause
+                {t('game:pause.title')}
               </Text>
             </View>
 
@@ -357,7 +261,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             <View style={styles.tipsContainer}>
               <View style={styles.tipsSection}>
                 <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                  Nützlicher Tipp
+                  {t('game:pause.tipSection')}
                 </Text>
                 {renderTipItem(selectedTip, 0)}
               </View>
@@ -366,7 +270,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             {/* Resume button */}
             <View style={styles.buttonContainer}>
               <Button
-                title="Weiter spielen"
+                title={t('game:pause.resumeButton')}
                 onPress={onResume}
                 variant="primary"
                 icon={<Feather name="play" size={20} color="#FFFFFF" />}

@@ -1,0 +1,105 @@
+{
+  "header": {
+    "title": "Unterstützung"
+  },
+  "loading": {
+    "text": "Lade Produkte..."
+  },
+  "sections": {
+    "oneTime": "Einmalige Unterstützung",
+    "subscription": "Regelmäßige Unterstützung"
+  },
+  "banner": {
+    "messages": [
+      {
+        "title": "Kostenlos gespielt, freiwillig unterstützt",
+        "subtitle": "Dein Beitrag hält die App werbefrei und mich bei Laune 😄"
+      },
+      {
+        "title": "Sudoku ohne nervige Werbung",
+        "subtitle": "Mit deiner Unterstützung bleibt das auch so! 🙌"
+      },
+      {
+        "title": "Kein Abo-Zwang, aber viel Freude",
+        "subtitle": "Freiwillige Unterstützung für mehr Sudoku-Spaß"
+      }
+    ]
+  },
+  "products": {
+    "sudoku_coffee": [
+      "Ein Kaffee für neue Rätsel-Ideen",
+      "Espresso gleich mehr kreative Energie",
+      "Koffein für besseren Code"
+    ],
+    "sudoku_breakfast": [
+      "Gehirnnahrung für neue Features",
+      "Kein Hunger gleich weniger Bugs",
+      "Gutes Frühstück, guter Code!"
+    ],
+    "sudoku_lunch": [
+      "Power für die grauen Zellen",
+      "Mittagspause gleich neue Ideen",
+      "Eine Mahlzeit für neue Features"
+    ],
+    "sudoku_feast": [
+      "Ein Fest für die ganze Familie",
+      "Großzügigkeit gleich viele Updates",
+      "Königliche Unterstützung!"
+    ]
+  },
+  "purchase": {
+    "overlay": {
+      "processing": {
+        "title": "Verarbeite Kauf...",
+        "message": "Bitte warte einen Moment"
+      },
+      "success": {
+        "title": "Vielen Dank!",
+        "message": "Deine Unterstützung bedeutet mir sehr viel!"
+      }
+    },
+    "confirmMessages": [
+      {
+        "title": "Vielen Dank für deine Unterstützung!",
+        "message": "Dein Beitrag hilft dabei, die App kontinuierlich zu verbessern. Du bist super! 🎉"
+      },
+      {
+        "title": "Wow, du bist großartig!",
+        "message": "Mit deiner Unterstützung kann ich weiterhin an coolen Features arbeiten. Danke! 🙏"
+      },
+      {
+        "title": "High Five! ✋",
+        "message": "Danke für deine Unterstützung! Jetzt habe ich noch mehr Motivation, die App zu verbessern."
+      },
+      {
+        "title": "Jubel, Trubel, Heiterkeit! 🎊",
+        "message": "Deine Unterstützung sorgt für gute Laune und neue Sudoku-Features!"
+      }
+    ],
+    "funFacts": [
+      "Wusstest du? Die Entwicklung dieser App kostet ungefähr 178 Tassen Kaffee pro Jahr!",
+      "Für jede Stunde Coding werden durchschnittlich 2,4 Snacks verspeist.",
+      "Die Anzahl der Bugfixes ist direkt proportional zum Kaffeekonsum des Entwicklers.",
+      "Diese App wurde mit Liebe, etwas Magie und viel zu viel Koffein programmiert.",
+      "Studien zeigen: Glückliche Entwickler erstellen bessere Apps. Du machst mich gerade sehr glücklich!"
+    ]
+  },
+  "errors": {
+    "connection": {
+      "title": "Verbindungsfehler",
+      "message": "Es konnte keine Verbindung zum Store hergestellt werden."
+    },
+    "purchase": {
+      "title": "Fehler beim Kauf",
+      "message": "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+    },
+    "generic": {
+      "title": "Fehler beim Kauf",
+      "message": "Es gab ein Problem beim Kaufvorgang. Bitte versuche es später erneut."
+    }
+  },
+  "thanks": {
+    "message": "Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!",
+    "emoji": "❤️"
+  }
+}

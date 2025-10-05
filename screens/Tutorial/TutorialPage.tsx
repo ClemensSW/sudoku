@@ -6,6 +6,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing, radius } from "@/utils/theme";
+import { useTranslation } from "react-i18next";
 
 interface TutorialPageProps {
   title: string;
@@ -27,12 +28,16 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
   onClose,
   isFirstPage = false,
   isLastPage = false,
-  nextText = "Weiter",
-  backText = "Zurück",
+  nextText,
+  backText,
 }) => {
+  const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+
+  const defaultNextText = nextText || t('navigation.next');
+  const defaultBackText = backText || t('navigation.back');
 
   return (
     <Animated.View style={[styles.container]} entering={FadeIn.duration(300)}>
@@ -77,7 +82,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
             onPress={onBack}
           >
             <Text style={[styles.buttonText, { color: colors.textPrimary }]}>
-              {backText}
+              {defaultBackText}
             </Text>
           </TouchableOpacity>
         )}
@@ -91,7 +96,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
           onPress={onNext}
         >
           <Text style={[styles.buttonText, { color: colors.buttonText }]}>
-            {isLastPage ? "Verstanden" : nextText}
+            {isLastPage ? t('navigation.understood') : defaultNextText}
           </Text>
           {!isLastPage && (
             <Feather name="chevron-right" size={20} color={colors.buttonText} />

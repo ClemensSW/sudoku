@@ -7,6 +7,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
+import { useTranslation } from "react-i18next";
 
 interface NotesPageProps {
   onNext: () => void;
@@ -23,6 +24,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
   isFirstPage = false,
   isLastPage = false,
 }) => {
+  const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -102,7 +104,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
 
   return (
     <TutorialPage
-      title="Notizen verwenden"
+      title={t('pages.notes.title')}
       onNext={onNext}
       onBack={onBack}
       onClose={onClose}
@@ -131,7 +133,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
             <Feather name="edit-3" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={[styles.buttonLabel, { color: colors.textPrimary }]}>
-            Notizen-Modus
+            {t('pages.notes.buttonLabel')}
           </Text>
         </View>
 
@@ -140,8 +142,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
           entering={FadeIn.delay(300).duration(500)}
         >
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
-          Notizen visualisieren Möglichkeiten und verwandeln komplexe Sudokus
-          in lösbare Strategieaufgaben.
+            {t('pages.notes.explanation')}
           </Text>
         </Animated.View>
       </View>

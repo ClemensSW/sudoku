@@ -34,6 +34,23 @@ locales/
 - Keep formatting (newlines, punctuation)
 - Use placeholders for dynamic content: `{{variable}}`
 
+### ⚠️ WICHTIGE REGEL: Vollständigkeit der Übersetzungen
+
+**NIEMALS Inhalte kürzen oder entfernen!**
+
+Wenn Dateien viele Texteinträge oder lange Texte enthalten (z.B. FeedbackCard mit 50+ verschiedenen Nachrichten, Tutorial mit vielen Seiten, etc.):
+- ✅ **ALLE Texte müssen vollständig übersetzt werden**
+- ✅ Keine Einträge weglassen
+- ✅ Keine Texte zusammenfassen oder vereinfachen
+- ✅ Arrays mit vielen Einträgen müssen komplett übersetzt werden
+- ✅ Lange Beschreibungen/Anleitungen müssen vollständig übersetzt werden
+
+**Beispiel:**
+- ❌ FALSCH: FeedbackCard mit 10 statt 50 Nachrichten
+- ✅ RICHTIG: FeedbackCard mit allen 50 Original-Nachrichten übersetzt
+
+**Grund:** Varianz und Abwechslung sind wichtig für die User Experience!
+
 ---
 
 ## 🎯 Translation Phases

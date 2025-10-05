@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useNavigation } from "@/contexts/navigation";
 import { Difficulty } from "@/utils/sudoku";
@@ -78,6 +79,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   autoNotesUsed,
   stats,
 }) => {
+  const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
@@ -303,12 +305,12 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
 
                 {/* Main Title */}
                 <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
-                  Großartig gelöst!
+                  {t('header.title')}
                 </Text>
 
                 {/* Subtitle */}
                 <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
-                  Deine Leistung im Überblick
+                  {t('header.subtitle')}
                 </Text>
 
                 {/* Record Badge - Floating */}
@@ -321,7 +323,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
                       style={styles.recordGradient}
                     >
                       <Feather name="award" size={20} color={theme.isDark ? '#202124' : 'white'} style={{ marginRight: 8 }} />
-                      <Text style={[styles.recordFloatingText, { color: theme.isDark ? '#202124' : 'white' }]}>Neuer Rekord!</Text>
+                      <Text style={[styles.recordFloatingText, { color: theme.isDark ? '#202124' : 'white' }]}>{t('header.newRecord')}</Text>
                     </LinearGradient>
                   </View>
                 )}
@@ -426,7 +428,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           ]}
         >
           <Button
-            title="Nächstes Spiel"
+            title={t('buttons.nextGame')}
             onPress={handleNewGame}
             variant="primary"
             style={styles.primaryButton}
@@ -435,7 +437,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           />
 
           <Button
-            title="Zurück zum Menü"
+            title={t('buttons.backToMenu')}
             onPress={onContinue}
             variant="outline"
             style={styles.secondaryButton}

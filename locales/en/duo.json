@@ -1,0 +1,54 @@
+{
+  "header": {
+    "subtitle": "TWO PLAYER MODE",
+    "title": "Sudoku Duo"
+  },
+  "startSection": {
+    "title": "New Game",
+    "subtitle": "Choose difficulty together"
+  },
+  "features": {
+    "title": "How it works",
+    "items": {
+      "playTogether": {
+        "title": "Play together",
+        "description": "One Sudoku, two players - who solves their area first?"
+      },
+      "challengingLayout": {
+        "title": "Challenging layout",
+        "description": "Numbers for Player 2 are automatically rotated"
+      },
+      "strategyTeamwork": {
+        "title": "Strategy & Teamwork",
+        "description": "Competition or collaboration - you decide!"
+      }
+    },
+    "startButton": "Start Game"
+  },
+  "scrollIndicator": {
+    "label": "Learn more"
+  },
+  "players": {
+    "green": "Green",
+    "yellow": "Yellow"
+  },
+  "completion": {
+    "tie": "It's a tie!",
+    "winner": "WINNER",
+    "winnerTitle": "{{color}} wins!",
+    "bothCompleted": "Both players made it!",
+    "reasonFaster": "Solved area faster",
+    "reasonErrors": "Opponent made too many mistakes",
+    "stats": {
+      "time": "Time",
+      "errors": "Errors",
+      "hints": "Hints",
+      "completion": "Progress"
+    },
+    "buttons": {
+      "rematch": "Rematch",
+      "newGame": "New Game",
+      "backToMenu": "Back to Menu"
+    }
+  }
+}

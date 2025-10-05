@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import ConfettiEffect from "@/screens/GameCompletion/components/ConfettiEffect/ConfettiEffect";
@@ -23,16 +24,16 @@ import DuoCircularProgress from "./DuoCircularProgress";
 const GREEN_COLOR = "#4A7D78";
 const YELLOW_COLOR = "#8A7B46";
 
-// Player colors
+// Player colors - names will be translated via i18n
 const PLAYER_COLORS = {
   1: {
-    name: "Grün",
+    colorKey: "green",
     primary: GREEN_COLOR,
     secondary: "#6CACA6",
     background: "rgba(74, 125, 120, 0.1)",
   },
   2: {
-    name: "Gelb",
+    colorKey: "yellow",
     primary: YELLOW_COLOR,
     secondary: "#D5C178",
     background: "rgba(138, 123, 70, 0.1)",
@@ -85,6 +86,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   player2InitialEmptyCells,
   player2SolvedCells,
 }) => {
+  const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
   const isDarkMode = theme.isDark;
@@ -118,18 +120,19 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   
   // Helper functions to determine display text
   const getResultText = (): string => {
-    if (winner === 0) return "Unentschieden!";
-    return `${PLAYER_COLORS[winner].name} siegt!`;
+    if (winner === 0) return t('completion.tie');
+    const colorName = t(`players.${PLAYER_COLORS[winner].colorKey}`);
+    return t('completion.winnerTitle', { color: colorName });
   };
-  
+
   const getResultSubtext = (): string => {
     if (winner === 0) {
-      return "Beide Spieler haben es geschafft!";
+      return t('completion.bothCompleted');
     }
     if (winReason === "completion") {
-      return `Bereich schneller gelöst`;
+      return t('completion.reasonFaster');
     }
-    return `Gegner hat zu viele Fehler gemacht`;
+    return t('completion.reasonErrors');
   };
   
   // Calculate cell completion percentage
@@ -312,17 +315,17 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 <Text style={[
                   styles.winnerText,
                   { backgroundColor: winnerColor }
-                ]}>SIEGER</Text>
+                ]}>{t('completion.winner')}</Text>
               </View>
             )}
-            
+
             {/* Player name with trophy for winner */}
             <View style={styles.playerHeader}>
               <Text style={[
                 styles.playerName,
                 { color: isDarkMode ? '#FFFFFF' : '#202124' }
               ]}>
-                {PLAYER_COLORS[1].name}
+                {t(`players.${PLAYER_COLORS[1].colorKey}`)}
               </Text>
               
               {/* Trophy for winner or tie */}
@@ -429,17 +432,17 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
                 <Text style={[
                   styles.winnerText,
                   { backgroundColor: winnerColor }
-                ]}>SIEGER</Text>
+                ]}>{t('completion.winner')}</Text>
               </View>
             )}
-            
+
             {/* Player name with trophy for winner */}
             <View style={styles.playerHeader}>
               <Text style={[
                 styles.playerName,
                 { color: isDarkMode ? '#FFFFFF' : '#202124' }
               ]}>
-                {PLAYER_COLORS[2].name}
+                {t(`players.${PLAYER_COLORS[2].colorKey}`)}
               </Text>
               
               {/* Trophy for winner or tie */}
@@ -515,7 +518,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         <Animated.View style={[styles.buttonsContainer, buttonsStyle]}>
           {/* Revanche Button */}
           <Button
-            title="Revanche!"
+            title={t('completion.buttons.rematch')}
             onPress={onRevanche}
             variant="primary"
             style={{
@@ -528,10 +531,10 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             icon={<Feather name="refresh-cw" size={20} color="#FFFFFF" />}
             iconPosition="left"
           />
-          
+
           {/* Zum Menü Button */}
           <Button
-            title="Zum Menü"
+            title={t('completion.buttons.backToMenu')}
             onPress={onClose}
             variant="outline"
             style={{

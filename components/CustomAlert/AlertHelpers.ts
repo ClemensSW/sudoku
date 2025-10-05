@@ -1,5 +1,6 @@
 // components/CustomAlert/AlertHelpers.ts
 import React from 'react';
+import i18n from '@/locales/i18n';
 import { AlertButton, AlertType, ButtonType } from './CustomAlert';
 import InkIcon from '@/assets/svg/ink.svg';
 
@@ -14,14 +15,14 @@ export const successAlert = (
   title: string,
   message: string,
   onPress?: () => void,
-  buttonText = "OK"
+  buttonText?: string
 ) => ({
   title,
   message,
   type: "success" as AlertType,
   buttons: [
     {
-      text: buttonText,
+      text: buttonText || i18n.t('alerts:buttons.ok'),
       style: "success" as ButtonType,
       onPress
     }
@@ -35,14 +36,14 @@ export const errorAlert = (
   title: string,
   message: string,
   onPress?: () => void,
-  buttonText = "OK"
+  buttonText?: string
 ) => ({
   title,
   message,
   type: "error" as AlertType,
   buttons: [
     {
-      text: buttonText,
+      text: buttonText || i18n.t('alerts:buttons.ok'),
       style: "danger" as ButtonType,
       onPress
     }
@@ -56,14 +57,14 @@ export const warningAlert = (
   title: string,
   message: string,
   onPress?: () => void,
-  buttonText = "OK"
+  buttonText?: string
 ) => ({
   title,
   message,
   type: "warning" as AlertType,
   buttons: [
     {
-      text: buttonText,
+      text: buttonText || i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -77,14 +78,14 @@ export const infoAlert = (
   title: string,
   message: string,
   onPress?: () => void,
-  buttonText = "OK"
+  buttonText?: string
 ) => ({
   title,
   message,
   type: "info" as AlertType,
   buttons: [
     {
-      text: buttonText,
+      text: buttonText || i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -99,20 +100,20 @@ export const confirmationAlert = (
   message: string,
   onConfirm: () => void,
   onCancel?: () => void,
-  confirmText = "Ja",
-  cancelText = "Abbrechen"
+  confirmText?: string,
+  cancelText?: string
 ) => ({
   title,
   message,
   type: "confirmation" as AlertType,
   buttons: [
     {
-      text: cancelText,
+      text: cancelText || i18n.t('alerts:buttons.cancel'),
       style: "cancel" as ButtonType,
       onPress: onCancel
     },
     {
-      text: confirmText,
+      text: confirmText || i18n.t('alerts:buttons.yes'),
       style: "primary" as ButtonType,
       onPress: onConfirm
     }
@@ -127,19 +128,19 @@ export const gameCompletionAlert = (
   autoNotesUsed: boolean,
   onNewGame: () => void
 ) => {
-  let message = `Du hast das Sudoku in ${time} gelöst!`;
-  
+  let message = i18n.t('alerts:game.completion.message', { time });
+
   if (autoNotesUsed) {
-    message += "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
+    message += i18n.t('alerts:game.completion.autoNotesNote');
   }
-  
+
   return {
-    title: "Glückwunsch!",
+    title: i18n.t('alerts:game.completion.title'),
     message,
     type: "success" as AlertType,
     buttons: [
       {
-        text: "Neues Spiel",
+        text: i18n.t('alerts:buttons.newGame'),
         style: "primary" as ButtonType,
         onPress: onNewGame
       }
@@ -154,19 +155,19 @@ export const gameOverAlert = (
   autoNotesUsed: boolean,
   onNewGame: () => void
 ) => {
-  let message = "Du hast zu viele Fehler gemacht. Versuche es erneut!";
-  
+  let message = i18n.t('alerts:game.gameOver.message');
+
   if (autoNotesUsed) {
-    message += "\n\nDa automatische Notizen verwendet wurden, wird dieses Spiel nicht in den Statistiken gezählt.";
+    message += i18n.t('alerts:game.gameOver.autoNotesNote');
   }
-  
+
   return {
-    title: "Spiel beendet!",
+    title: i18n.t('alerts:game.gameOver.title'),
     message,
     type: "error" as AlertType,
     buttons: [
       {
-        text: "Neues Spiel",
+        text: i18n.t('alerts:buttons.newGame'),
         style: "primary" as ButtonType,
         onPress: onNewGame
       }
@@ -178,12 +179,12 @@ export const gameOverAlert = (
  * Create hint cell selection alert configuration
  */
 export const hintCellAlert = (onPress?: () => void) => ({
-  title: "Hinweis",
-  message: "Diese Zelle solltest du als nächstes ausfüllen. Drücke erneut auf den Hinweis-Button, um die richtige Zahl zu sehen.",
+  title: i18n.t('alerts:game.hint.cellSelected.title'),
+  message: i18n.t('alerts:game.hint.cellSelected.message'),
   type: "info" as AlertType,
   buttons: [
     {
-      text: "OK",
+      text: i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -194,12 +195,12 @@ export const hintCellAlert = (onPress?: () => void) => ({
  * Create no errors found alert configuration
  */
 export const noErrorsAlert = (onPress?: () => void) => ({
-  title: "Gut gemacht!",
-  message: "Dein Sudoku sieht gut aus! Fahre so fort.",
+  title: i18n.t('alerts:game.noErrors.title'),
+  message: i18n.t('alerts:game.noErrors.message'),
   type: "success" as AlertType,
   buttons: [
     {
-      text: "OK",
+      text: i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -210,12 +211,12 @@ export const noErrorsAlert = (onPress?: () => void) => ({
  * Create initial cell hint alert configuration
  */
 export const initialCellAlert = (onPress?: () => void) => ({
-  title: "Hinweis",
-  message: "Diese Zelle ist bereits korrekt ausgefüllt.",
+  title: i18n.t('alerts:game.hint.initialCell.title'),
+  message: i18n.t('alerts:game.hint.initialCell.message'),
   type: "info" as AlertType,
   buttons: [
     {
-      text: "OK",
+      text: i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -226,12 +227,12 @@ export const initialCellAlert = (onPress?: () => void) => ({
  * Create no hints remaining alert configuration
  */
 export const noHintsAlert = (onPress?: () => void) => ({
-  title: "Keine Hinweise mehr",
-  message: "Du hast deine 3 Hinweise bereits aufgebraucht.",
+  title: i18n.t('alerts:game.hint.noHintsRemaining.title'),
+  message: i18n.t('alerts:game.hint.noHintsRemaining.message'),
   type: "warning" as AlertType,
   buttons: [
     {
-      text: "OK",
+      text: i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -242,13 +243,13 @@ export const noHintsAlert = (onPress?: () => void) => ({
  * Create auto notes alert configuration
  */
 export const autoNotesAlert = (onPress?: () => void) => ({
-  title: "Automatische Notizen",
-  message: "Alle möglichen Notizen wurden in die leeren Zellen eingetragen.\nDieses Spiel wird nicht in den Statistiken gezählt.",
+  title: i18n.t('alerts:game.autoNotes.title'),
+  message: i18n.t('alerts:game.autoNotes.message'),
   type: "info" as AlertType,
   customIcon: React.createElement(InkIcon, { width: 32, height: 32 }),
   buttons: [
     {
-      text: "OK",
+      text: i18n.t('alerts:buttons.ok'),
       style: "primary" as ButtonType,
       onPress
     }
@@ -259,17 +260,17 @@ export const autoNotesAlert = (onPress?: () => void) => ({
  * Create quit game confirmation alert configuration
  */
 export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
-  title: "Zurück zum Hauptmenü?",
-  message: "Dein aktueller Spielfortschritt geht verloren.",
+  title: i18n.t('alerts:game.quit.title'),
+  message: i18n.t('alerts:game.quit.message'),
   type: "confirmation" as AlertType,
   buttons: [
     {
-      text: "Abbrechen",
+      text: i18n.t('alerts:buttons.cancel'),
       style: "cancel" as ButtonType,
       onPress: onCancel || (() => {})
     },
     {
-      text: "Zum Menü",
+      text: i18n.t('alerts:buttons.toMenu'),
       style: "primary" as ButtonType,
       onPress: onConfirm
     }
@@ -281,17 +282,17 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
  * Uses teal color (#4A7D78) for the icon and confirm button
  */
 export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
-  title: "Zurück zum Hauptmenü?",
-  message: "Dein aktueller Spielfortschritt geht verloren.",
+  title: i18n.t('alerts:game.quit.title'),
+  message: i18n.t('alerts:game.quit.message'),
   type: "duoMode" as AlertType, // Custom type for Duo Mode
   buttons: [
     {
-      text: "Abbrechen",
+      text: i18n.t('alerts:buttons.cancel'),
       style: "cancel" as ButtonType,
       onPress: onCancel || (() => {})
     },
     {
-      text: "Zum Menü",
+      text: i18n.t('alerts:buttons.toMenu'),
       style: "duoButton" as ButtonType, // Custom style for Duo Mode
       onPress: onConfirm
     }

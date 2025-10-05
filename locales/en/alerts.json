@@ -1,0 +1,47 @@
+{
+  "buttons": {
+    "ok": "OK",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "newGame": "New Game",
+    "toMenu": "To Menu"
+  },
+  "game": {
+    "completion": {
+      "title": "Congratulations!",
+      "message": "You solved the Sudoku in {{time}}!",
+      "autoNotesNote": "\n\nSince auto notes were used, this game will not count towards your statistics."
+    },
+    "gameOver": {
+      "title": "Game Over!",
+      "message": "You made too many mistakes. Try again!",
+      "autoNotesNote": "\n\nSince auto notes were used, this game will not count towards your statistics."
+    },
+    "hint": {
+      "cellSelected": {
+        "title": "Hint",
+        "message": "You should fill this cell next. Press the hint button again to see the correct number."
+      },
+      "initialCell": {
+        "title": "Hint",
+        "message": "This cell is already correctly filled."
+      },
+      "noHintsRemaining": {
+        "title": "No Hints Left",
+        "message": "You've already used your 3 hints."
+      }
+    },
+    "noErrors": {
+      "title": "Well done!",
+      "message": "Your Sudoku looks good! Keep going."
+    },
+    "autoNotes": {
+      "title": "Auto Notes",
+      "message": "All possible notes have been filled in the empty cells.\nThis game will not count towards your statistics."
+    },
+    "quit": {
+      "title": "Return to Main Menu?",
+      "message": "Your current game progress will be lost."
+    }
+  }
+}

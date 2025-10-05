@@ -1,0 +1,83 @@
+{
+  "header": {
+    "title": "Großartig gelöst!",
+    "subtitle": "Deine Leistung im Überblick",
+    "newRecord": "Neuer Rekord!"
+  },
+  "buttons": {
+    "nextGame": "Nächstes Spiel",
+    "backToMenu": "Zurück zum Menü",
+    "viewGallery": "Zur Galerie"
+  },
+  "feedback": {
+    "autoNotes": [
+      "Mit Auto-Notizen hast du das Spiel gemeistert. Versuche es beim nächsten Mal ohne, um deine Statistik zu verbessern!",
+      "Gute Arbeit mit Hilfe der Auto-Notizen! Für eine echte Herausforderung, versuch's beim nächsten Mal ohne.",
+      "Auto-Notizen sind ein guter Einstieg! Versuche beim nächsten Mal, deine eigenen zu erstellen, um deine Fähigkeiten zu verbessern.",
+      "Du hast mit Hilfe der Auto-Notizen gewonnen! Das ist wie Sudoku mit Stützrädern - bald bist du bereit für die echte Herausforderung!",
+      "Mit Auto-Notizen geschafft! Beim nächsten Mal ohne zu spielen, bringt dich auf das nächste Level deiner Sudoku-Reise."
+    ],
+    "excellent": [
+      "Hervorragende Leistung! Deine Präzision und Geschwindigkeit sind beeindruckend!",
+      "Brillante Arbeit! Du hast das Sudoku perfekt gemeistert!",
+      "Weltklasse! Deine Sudoku-Fähigkeiten sind außergewöhnlich!",
+      "Fantastisch! Deine Leistung ist nahezu perfekt!",
+      "Ausgezeichnet! Du spielst auf Top-Niveau!",
+      "Meisterhaft! Deine Sudoku-Technik ist beeindruckend!",
+      "Grandiose Leistung! Du hast das Rätsel mit Bravour gemeistert!",
+      "Spektakulär! Dein logisches Denken ist bemerkenswert!",
+      "Herausragend! Du beherrschst Sudoku auf höchstem Niveau!",
+      "Erstklassig! Deine Problemlösungsfähigkeiten sind außergewöhnlich!"
+    ],
+    "veryGood": [
+      "Sehr gut! Deine Sudoku-Fähigkeiten werden immer besser!",
+      "Tolle Leistung! Du hast ein gutes Gespür für Zahlenmuster!",
+      "Prima! Du meisterst die Herausforderungen mit Leichtigkeit!",
+      "Großartig! Deine Konzentration hat sich ausgezahlt!",
+      "Klasse Arbeit! Du entwickelst dich zu einem Sudoku-Profi!",
+      "Beeindruckend! Deine Strategie funktioniert hervorragend!",
+      "Starke Leistung! Dein Lösungsweg war effizient!",
+      "Top! Du findest immer schneller die richtigen Zahlen!",
+      "Ausgezeichnet! Deine Fortschritte sind deutlich zu sehen!",
+      "Sehr schön! Du hast ein echtes Talent für Logikrätsel!"
+    ],
+    "good": [
+      "Gut gemacht! Mit etwas Übung wirst du noch schneller!",
+      "Solide Leistung! Du wirst mit jedem Spiel besser!",
+      "Schön gelöst! Deine Sudoku-Technik entwickelt sich gut!",
+      "Gut gespielt! Du hast die Herausforderung gemeistert!",
+      "Prima! Deine Ausdauer hat zum Erfolg geführt!",
+      "Gute Arbeit! Du kannst stolz auf deine Lösung sein!",
+      "Schön! Du entwickelst einen guten Lösungsinstinkt!",
+      "Gut gemacht! Dein logisches Denken verbessert sich!",
+      "Erfolgreich! Du findest die richtigen Strategien!",
+      "Gut durchgehalten! Mit jeder Lösung wirst du besser!"
+    ],
+    "average": [
+      "Geschafft! Mit mehr Übung wirst du noch besser werden!",
+      "Gut durchgehalten! Jedes gelöste Sudoku verbessert deine Fähigkeiten!",
+      "Puzzle gelöst! Die Übung macht den Meister!",
+      "Geschafft! Beim nächsten Mal wirst du noch schneller sein!",
+      "Puzzle gemeistert! Regelmäßiges Spielen hilft, die Strategien zu verinnerlichen!",
+      "Sudoku gelöst! Mit der Zeit wirst du immer flüssiger spielen!",
+      "Erledigt! Deine Ausdauer hat sich ausgezahlt!",
+      "Durchgehalten! Kontinuierliches Üben bringt dich weiter!",
+      "Gelöst! Du bist auf dem richtigen Weg!",
+      "Gemeistert! Deine Geduld zahlt sich aus!"
+    ],
+    "newRecord": [
+      "Neuer Rekord! Du bist in absoluter Topform!",
+      "Rekordzeit! Du hast dich selbst übertroffen!",
+      "Bestzeit! Du spielst besser denn je!",
+      "Unglaublich! Ein neuer persönlicher Rekord!",
+      "Phänomenal! Du hast einen neuen Meilenstein erreicht!"
+    ],
+    "streak": [
+      "Fantastische Serie! {{count}} Spiele in Folge gemeistert!",
+      "Unglaublicher Lauf! Deine {{count}}er-Serie zeigt echte Meisterschaft!",
+      "Wow! {{count}} Siege hintereinander - du bist auf Feuer!",
+      "Beeindruckende Konstanz! {{count}} Spiele ohne Unterbrechung!",
+      "Du bist im Flow! {{count}} erfolgreiche Spiele in Serie!"
+    ]
+  }
+}

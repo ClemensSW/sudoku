@@ -13,6 +13,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
+import { useTranslation } from "react-i18next";
 
 interface BasicRulesPageProps {
   onNext: () => void;
@@ -29,6 +30,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
   isFirstPage = false,
   isLastPage = false,
 }) => {
+  const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -192,7 +194,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 
   return (
     <TutorialPage
-      title="Wie man spielt"
+      title={t('pages.basicRules.title')}
       onNext={onNext}
       onBack={onBack}
       onClose={onClose}
@@ -218,52 +220,51 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
           entering={FadeIn.delay(300).duration(500)}
         >
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
-            Das Ziel eines Sudoku-Puzzles ist es, das 9 x 9 Raster so zu füllen,
-            dass jede
+            {t('pages.basicRules.explanation.part1')}
           </Text>
 
           <View style={styles.highlightRow}>
-            <Text 
+            <Text
               style={[
-                styles.highlightText, 
+                styles.highlightText,
                 // Gleiche Farbe wie die Reihenhervorhebung, aber intensiver
                 { color: theme.isDark ? "#8AB4F8" : "#4285F4" }
               ]}
             >
-              Reihe
+              {t('pages.basicRules.explanation.row')}
             </Text>
             <Text
               style={[styles.explanationText, { color: colors.textPrimary }]}
             >
-              , jede
+              {t('pages.basicRules.explanation.part2')}
             </Text>
-            <Text 
+            <Text
               style={[
-                styles.highlightText, 
+                styles.highlightText,
                 // Gleiche Farbe wie die Spaltenhervorhebung, aber intensiver
                 { color: theme.isDark ? "#F28B82" : "#EA4335" }
               ]}
             >
-              Spalte
+              {t('pages.basicRules.explanation.column')}
             </Text>
             <Text
               style={[styles.explanationText, { color: colors.textPrimary }]}
             >
-              und jeder
+              {t('pages.basicRules.explanation.part3')}
             </Text>
-            <Text 
+            <Text
               style={[
-                styles.highlightText, 
+                styles.highlightText,
                 // Gleiche Farbe wie die Blockhervorhebung, aber intensiver
                 { color: theme.isDark ? "#81C995" : "#34A853" }
               ]}
             >
-              Block
+              {t('pages.basicRules.explanation.block')}
             </Text>
           </View>
 
           <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
-            alle Zahlen von 1 bis 9 ohne Wiederholung enthält.
+            {t('pages.basicRules.explanation.part4')}
           </Text>
         </Animated.View>
       </Animated.View>

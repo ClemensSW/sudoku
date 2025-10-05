@@ -1,0 +1,34 @@
+{
+  "navigation": {
+    "next": "Weiter",
+    "back": "Zurück",
+    "understood": "Verstanden"
+  },
+  "pages": {
+    "basicRules": {
+      "title": "Wie man spielt",
+      "explanation": {
+        "part1": "Das Ziel eines Sudoku-Puzzles ist es, das 9 x 9 Raster so zu füllen, dass jede",
+        "row": "Reihe",
+        "column": "Spalte",
+        "block": "Block",
+        "part2": ", jede",
+        "part3": "und jeder",
+        "part4": "alle Zahlen von 1 bis 9 ohne Wiederholung enthält."
+      }
+    },
+    "gameplay": {
+      "title": "Spielablauf",
+      "instructions": {
+        "step1": "Du wählst eine leere Zelle aus",
+        "step2": "Welche Zahl passt in die Zelle?",
+        "step3": "Die Zahl 5 passt perfekt in die Zelle"
+      }
+    },
+    "notes": {
+      "title": "Notizen verwenden",
+      "buttonLabel": "Notizen-Modus",
+      "explanation": "Notizen visualisieren Möglichkeiten und verwandeln komplexe Sudokus in lösbare Strategieaufgaben."
+    }
+  }
+}

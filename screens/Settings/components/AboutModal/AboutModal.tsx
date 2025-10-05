@@ -68,8 +68,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
           ]}
           onLayout={(e) => console.log("Modal container layout:", e.nativeEvent.layout)}
         >
-          {/* Header with Icon */}
-          <View style={styles.header}>
+          <View style={{ flex: 1 }}>
+            {/* Header with Icon */}
+            <View style={styles.header}>
             <View style={styles.iconContainer}>
               <InfoIcon
                 width={64}
@@ -102,10 +103,10 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                 Version {version}
               </Text>
             </View>
-          </View>
+            </View>
 
-          {/* Scrollable Content */}
-          <ScrollView
+            {/* Scrollable Content */}
+            <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
@@ -148,10 +149,10 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                 </Text>
               </View>
             </View>
-          </ScrollView>
+            </ScrollView>
 
-          {/* Close Button */}
-          <View>
+            {/* Close Button */}
+            <View>
             <TouchableOpacity
               style={[
                 styles.closeButton,
@@ -164,6 +165,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
                 {t("about.closeButton") || "Schließen"}
               </Text>
             </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       </Animated.View>

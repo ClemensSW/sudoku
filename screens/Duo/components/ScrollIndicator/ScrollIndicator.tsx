@@ -11,6 +11,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import styles from "./ScrollIndicator.styles";
 
 interface ScrollIndicatorProps {
@@ -21,11 +22,12 @@ interface ScrollIndicatorProps {
 
 const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
   onPress,
-  label = "Mehr erfahren",
+  label,
   noAnimation = false
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('duo');
   const scrollHintOpacity = useSharedValue(1);
 
   // Start animations when component mounts
@@ -56,7 +58,7 @@ const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
     >
       <TouchableOpacity onPress={onPress} style={styles.scrollButton}>
         <Text style={[styles.scrollText, { color: colors.textSecondary }]}>
-          {label}
+          {label || t('scrollIndicator.label')}
         </Text>
         <Feather name="chevron-down" size={24} color={colors.textSecondary} />
       </TouchableOpacity>

@@ -1,4 +1,8 @@
 {
+  "loading": {
+    "generate": "Sudoku generieren...",
+    "resume": "Sudoku laden..."
+  },
   "controls": {
     "note": "Notizen",
     "erase": "Löschen",

@@ -1,6 +1,7 @@
 {
   "title": "Performance",
   "headerTitle": "My Performance",
+  "loading": "Loading statistics...",
   "profile": {
     "namePlaceholder": "Your Name",
     "xp": "XP",

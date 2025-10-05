@@ -4,10 +4,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 const LoadingState: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('leistung');
 
   return (
     <Animated.View 
@@ -18,7 +20,7 @@ const LoadingState: React.FC = () => {
       <Text
         style={[styles.loadingText, { color: colors.textSecondary }]}
       >
-        Statistiken werden geladen...
+        {t('loading')}
       </Text>
     </Animated.View>
   );

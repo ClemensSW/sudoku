@@ -16,6 +16,7 @@ import Animated, {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { useNavigation } from "@/contexts/navigation";
+import { useTranslation } from "react-i18next";
 import {
   hintCellAlert,
   noErrorsAlert,
@@ -56,6 +57,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
   const router = useRouter();
   const { showAlert } = useAlert();
   const { hideBottomNav, resetBottomNav } = useNavigation();
+  const { t } = useTranslation('game');
 
   // Get game state and actions from custom hook
   const [gameState, gameActions] = useGameState(initialDifficulty);
@@ -322,7 +324,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
                 marginBottom: 16,
               }}
             >
-              {shouldResume ? "Sudoku laden..." : "Sudoku generieren..."}
+              {shouldResume ? t('loading.resume') : t('loading.generate')}
             </Text>
             <Animated.View entering={FadeIn.delay(300).duration(500)}>
               <Feather name="loader" size={32} color={colors.primary} />

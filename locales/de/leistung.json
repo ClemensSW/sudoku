@@ -1,6 +1,7 @@
 {
   "title": "Leistung",
   "headerTitle": "Meine Leistung",
+  "loading": "Statistiken werden geladen...",
   "profile": {
     "namePlaceholder": "Dein Name",
     "xp": "EP",

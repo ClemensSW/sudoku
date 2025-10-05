@@ -7,6 +7,8 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import VibrationIcon from "@/assets/svg/vibration.svg";
 import SelectionIcon from "@/assets/svg/selection.svg";
+import LinkIcon from "@/assets/svg/link.svg";
+import NumbersIcon from "@/assets/svg/numbers.svg";
 import styles from "./GameSettings.styles";
 
 interface GameSettingsProps {
@@ -46,6 +48,9 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           <View
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
           >
+            <View style={styles.settingIcon}>
+              <LinkIcon width={48} height={48} />
+            </View>
             <View style={styles.settingTextContainer}>
               <Text
                 style={[styles.settingTitle, { color: colors.textPrimary }]}
@@ -70,6 +75,9 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           <View
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
           >
+            <View style={styles.settingIcon}>
+              <NumbersIcon width={48} height={48} />
+            </View>
             <View style={styles.settingTextContainer}>
               <Text
                 style={[styles.settingTitle, { color: colors.textPrimary }]}

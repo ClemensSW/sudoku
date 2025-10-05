@@ -45,10 +45,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
   };
 
   const modalBg = theme.isDark ? "#1C1C1E" : "#FFFFFF";
-  const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : "#FFFFFF";
-  const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
-  const selectedBg = theme.isDark ? "rgba(76, 175, 80, 0.15)" : "rgba(76, 175, 80, 0.10)";
-  const selectedBorder = theme.isDark ? "rgba(76, 175, 80, 0.4)" : "rgba(76, 175, 80, 0.3)";
+  const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
+  const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
+  const selectedBg = theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)";
+  const selectedBorder = theme.isDark ? "rgba(138, 180, 248, 0.4)" : "rgba(66, 133, 244, 0.3)";
 
   return (
     <>

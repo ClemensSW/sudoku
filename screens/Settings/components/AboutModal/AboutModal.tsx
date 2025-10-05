@@ -62,7 +62,11 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
         {/* Modal Container */}
         <Animated.View
           entering={FadeInDown.duration(400).delay(100)}
-          style={[styles.modalContainer, { backgroundColor: colors.surface }]}
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colors.surface },
+          ]}
+          onLayout={(e) => console.log("Modal container layout:", e.nativeEvent.layout)}
         >
           {/* Header with Icon */}
           <View style={styles.header}>
@@ -105,8 +109,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
+            onLayout={(e) => console.log("ScrollView layout:", e.nativeEvent.layout)}
           >
-            <View>
+            <View style={{ backgroundColor: 'rgba(255,0,0,0.1)' }}>
               {/* Greeting */}
               <Text style={[styles.greeting, { color: colors.textPrimary }]}>
                 {t("about.greeting") || "Hi! Ich bin Clemens 👋"}

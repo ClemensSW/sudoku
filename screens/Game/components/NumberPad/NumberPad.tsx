@@ -10,6 +10,9 @@ import Animated, {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./NumberPad.styles";
+import PencilIcon from "@/assets/svg/pencil.svg";
+import EraserIcon from "@/assets/svg/eraser.svg";
+import LightBulbIcon from "@/assets/svg/light-bulb.svg";
 
 interface NumberPadProps {
   onNumberPress: (number: number) => void;
@@ -101,9 +104,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               handleButtonPress(noteScale, onNoteToggle);
             }}
           >
-            <MaterialCommunityIcons
-              name="pencil-outline"
-              size={24}
+            <PencilIcon
+              width={32}
+              height={32}
               color={
                 noteModeActive ? colors.primary : colors.numberPadButtonText
               }
@@ -137,9 +140,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               handleButtonPress(eraseScale, onErasePress);
             }}
           >
-            <MaterialCommunityIcons
-              name="eraser"
-              size={24}
+            <EraserIcon
+              width={32}
+              height={32}
               color={colors.numberPadButtonText}
             />
           </AnimatedPressable>
@@ -177,9 +180,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               }}
               disabled={hintDisabled}
             >
-              <MaterialCommunityIcons
-                name="lightbulb-outline"
-                size={24}
+              <LightBulbIcon
+                width={32}
+                height={32}
                 color={
                   hintDisabled
                     ? colors.buttonTextDisabled

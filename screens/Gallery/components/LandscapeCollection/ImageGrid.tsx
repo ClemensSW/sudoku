@@ -18,6 +18,7 @@ import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 import { getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
 
@@ -43,6 +44,7 @@ const LandscapeCard = React.memo(
     const cardKey = `${item.id}-${item.progress}-${item.isComplete}`;
     const theme = useTheme();
     const { colors } = theme;
+    const { t } = useTranslation('gallery');
 
     // Prüfen, ob dieses Bild aktuell freigeschaltet wird
     const isCurrentProject = currentImageId === item.id && !item.isComplete;
@@ -119,7 +121,9 @@ const LandscapeCard = React.memo(
       if (item.isComplete || item.isFavorite) {
         return ""; // No text for complete items or favorites
       }
-      return isSpecialPreunlockedImage ? "1 übrig" : `${item.progress}/9`;
+      return isSpecialPreunlockedImage
+        ? t('badges.remaining', { count: 1 })
+        : t('badges.progress', { current: item.progress, total: 9 });
     };
 
     // Nur die ersten 8 Kacheln animieren (die sichtbar sind beim Öffnen)
@@ -183,8 +187,10 @@ const LandscapeCard = React.memo(
                       ]}
                     >
                       {isSpecialPreunlockedImage
-                        ? "Fast fertig!"
-                        : `${Math.floor((item.progress / 9) * 100)}% enthüllt`}
+                        ? t('placeholder.almostDone')
+                        : t('placeholder.revealed', {
+                            percent: Math.floor((item.progress / 9) * 100)
+                          })}
                     </Text>
                   )}
                 </View>
@@ -211,7 +217,7 @@ const LandscapeCard = React.memo(
                   color="#FFFFFF"
                   style={{ marginRight: 4 }}
                 />
-                <Text style={styles.badgeText}>Aktiv</Text>
+                <Text style={styles.badgeText}>{t('badges.active')}</Text>
               </View>
             )}
 
@@ -271,6 +277,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
 }, ref) => {
   const theme = useTheme();
   const { colors } = theme;
+  const { t } = useTranslation('gallery');
 
   // WICHTIG: getItemLayout ist bei numColumns schwierig korrekt zu implementieren
   // Wir verzichten darauf, da es zu Scroll-Problemen führt
@@ -287,8 +294,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
           style={{ opacity: 0.5 }}
         />
         <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-          Noch keine Landschaften verfügbar. Löse Sudokus, um wunderschöne
-          Landschaftsbilder freizuschalten!
+          {t('emptyState.all.message')}
         </Text>
       </View>
     );

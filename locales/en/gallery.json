@@ -14,6 +14,15 @@
   "filterBadge": {
     "active": "{{count}} filter active"
   },
+  "badges": {
+    "active": "Active",
+    "remaining": "{{count}} left",
+    "progress": "{{current}}/{{total}}"
+  },
+  "placeholder": {
+    "almostDone": "Almost done!",
+    "revealed": "{{percent}}% revealed"
+  },
   "alerts": {
     "imageSelected": {
       "title": "Image Selected"

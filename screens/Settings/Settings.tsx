@@ -29,8 +29,7 @@ import SupportShopScreen from "@/screens/SupportShop";
 import { loadSettings, saveSettings } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
-import InfoIcon from "@/assets/svg/info.svg";
-import appConfig from "@/app.json";
+import AboutModal from "./components/AboutModal";
 
 // Import components
 import {
@@ -75,6 +74,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showSupportShop, setShowSupportShop] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
@@ -176,23 +176,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
   const handleAboutPress = () => {
     triggerHaptic("light");
-    const version = appConfig.expo.version;
-    const message = t("about.message").replace("Version 1.0.0", `Version ${version}`);
-
-    showAlert({
-      title: t("about.title"),
-      message: message,
-      type: "info",
-      buttons: [{ text: "OK", style: "info" }],
-      customIcon: (
-        <InfoIcon
-          width={48}
-          height={48}
-          color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
-        />
-      ),
-      hideIconBackground: true,
-    });
+    setShowAboutModal(true);
   };
 
   if (isLoading) {
@@ -340,6 +324,12 @@ const Settings: React.FC<SettingsScreenProps> = ({
           hideNavOnClose={true} // ← Navigation bleibt versteckt
         />
       )}
+
+      {/* About Modal */}
+      <AboutModal
+        visible={showAboutModal}
+        onClose={() => setShowAboutModal(false)}
+      />
     </Animated.View>
   );
 };

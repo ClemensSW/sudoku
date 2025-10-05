@@ -14,6 +14,15 @@
   "filterBadge": {
     "active": "{{count}} Filter aktiv"
   },
+  "badges": {
+    "active": "Aktiv",
+    "remaining": "{{count}} übrig",
+    "progress": "{{current}}/{{total}}"
+  },
+  "placeholder": {
+    "almostDone": "Fast fertig!",
+    "revealed": "{{percent}}% enthüllt"
+  },
   "alerts": {
     "imageSelected": {
       "title": "Bild ausgewählt"
@@ -21,7 +30,7 @@
   },
   "emptyState": {
     "all": {
-      "message": "Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten."
+      "message": "Noch keine Landschaften verfügbar. Löse Sudokus, um wunderschöne Landschaftsbilder freizuschalten!"
     },
     "favorites": {
       "message": "Du hast noch kein Bild als Favoriten markiert. Markiere freigeschaltete Bilder mit dem Herz-Symbol."

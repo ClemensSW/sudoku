@@ -41,7 +41,13 @@
   },
   "about": {
     "title": "Über Sudoku Duo",
-    "message": "Version 1.0.0\n\nHi! Ich bin Clemens – und Sudoku Duo ist meine erste selbst entwickelte App.\n\nIch liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.\n\nWenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln.\n\nDanke, dass du dabei bist.\nHappy Puzzling! 🧩"
+    "greeting": "Hi! Ich bin Clemens 👋",
+    "intro": "Sudoku Duo ist meine erste selbst entwickelte App.",
+    "features": "Ich liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe.",
+    "support": "Wenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln.",
+    "closing": "Danke, dass du dabei bist.",
+    "signature": "Happy Puzzling! 🧩",
+    "closeButton": "Schließen"
   },
   "share": {
     "message": "Spiele mit mir Sudoku Duo! Eine tolle Sudoku-App mit einem einzigartigen 2-Spieler-Modus. Fordere mich heraus! https://play.google.com/store/apps/details?id=de.playfusiongate.sudokuduo"

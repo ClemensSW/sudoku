@@ -103,9 +103,16 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
         const type = await getPurchaseType();
         if (!mounted) return;
         setPurchaseType(type);
-        // Banner ist immer sichtbar, nur der Text ändert sich
+        // Banner ist immer sichtbar
         setIsVisible(true);
-        startAnimations();
+
+        // Animationen nur starten, wenn noch nichts gekauft wurde
+        if (type === 'none') {
+          startAnimations();
+        } else {
+          // Bei bestehenden Käufen: Keine Animationen
+          stopAnimations();
+        }
       };
 
       // Initial check
@@ -201,7 +208,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
 
   return (
     <Animated.View
-      entering={SlideInDown.delay(300).duration(400).easing(Easing.out(Easing.ease))}
+      entering={purchaseType === 'none' ? SlideInDown.delay(300).duration(400).easing(Easing.out(Easing.ease)) : undefined}
       style={[containerAnimatedStyle]}
     >
       <TouchableOpacity

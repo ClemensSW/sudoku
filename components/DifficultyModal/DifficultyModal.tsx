@@ -1,21 +1,21 @@
 // components/DifficultyModal/DifficultyModal.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import Animated, { 
-  ZoomIn, 
+import Animated, {
+  ZoomIn,
   FadeIn,
   FadeInRight,
   SlideInRight
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
-import { 
-  loadStats, 
-  GameStats, 
-  getUnlockedDifficulties, 
-  getProgressMessage, 
-  getProgressValue 
+import {
+  loadStats,
+  GameStats,
+  getUnlockedDifficulties,
+  getProgressValue
 } from "@/utils/storage";
 import styles from "./DifficultyModal.styles";
 
@@ -42,21 +42,43 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   onSelectDifficulty,
   onClose,
   onConfirm,
-  title = "Schwierigkeit",
-  subtitle = "Wie fordernd soll dein Sudoku sein?",
-  confirmText = "Los geht's",
-  isTransition = false, // Default to false
-  noBackdrop = false, // Default to false
-  isDuoMode = false, // Default zu false
+  title,
+  subtitle,
+  confirmText,
+  isTransition = false,
+  noBackdrop = false,
+  isDuoMode = false,
 }) => {
+  const { t } = useTranslation('start');
   const theme = useTheme();
   const colors = theme.colors;
   const [stats, setStats] = useState<GameStats | null>(null);
   const [unlockedDifficulties, setUnlockedDifficulties] = useState<Difficulty[]>(["easy"]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Use translations as defaults if not provided
+  const modalTitle = title || t('difficultyModal.title');
+  const modalSubtitle = subtitle || t('difficultyModal.subtitle');
+  const modalConfirmText = confirmText || t('difficultyModal.confirm');
+
   // Wähle die Primärfarbe basierend auf dem Modus
   const primaryColor = isDuoMode ? DUO_PRIMARY_COLOR : colors.primary;
+
+  // Helper function to get progress message with i18next
+  const getProgressMessage = (stats: GameStats): string => {
+    if ((stats.completedHard || 0) >= 9) {
+      return t('difficultyModal.progress.allUnlocked');
+    } else if ((stats.completedMedium || 0) >= 3) {
+      const remaining = 9 - (stats.completedHard || 0);
+      return t('difficultyModal.progress.unlockExpert', { count: remaining });
+    } else if ((stats.completedEasy || 0) >= 1) {
+      const remaining = 3 - (stats.completedMedium || 0);
+      return t('difficultyModal.progress.unlockHard', { count: remaining });
+    } else {
+      const remaining = 1 - (stats.completedEasy || 0);
+      return t('difficultyModal.progress.unlockMedium', { count: remaining });
+    }
+  };
 
   // Lade die Statistiken, wenn das Modal sichtbar wird
   useEffect(() => {
@@ -96,14 +118,6 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
 
   if (!visible) return null;
 
-  // Schwierigkeitsgrade mit deutschen Namen
-  const difficultyLabels: Record<Difficulty, string> = {
-    easy: "Leicht",
-    medium: "Mittel",
-    hard: "Schwer",
-    expert: "Experte",
-  };
-
   // Fortschrittsbalken und -nachricht - nur wenn nicht im Duo-Modus
   const progressPercentage = stats && !isDuoMode ? getProgressValue(stats) : 0;
   const progressMessage = stats && !isDuoMode ? getProgressMessage(stats) : "";
@@ -142,11 +156,11 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
         onTouchEnd={(e) => e.stopPropagation()}
       >
         <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-          {title}
+          {modalTitle}
         </Text>
 
         <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-          {subtitle}
+          {modalSubtitle}
         </Text>
 
         <View style={styles.difficultyContainer}>
@@ -185,7 +199,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                       },
                     ]}
                   >
-                    {difficultyLabels[diff]}
+                    {t(`difficultyModal.difficulties.${diff}`)}
                   </Text>
 
                   {isSelected && (
@@ -221,7 +235,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                     { color: colors.buttonDisabled },
                   ]}
                 >
-                  {difficultyLabels[diff]}
+                  {t(`difficultyModal.difficulties.${diff}`)}
                 </Text>
                 <Feather name="lock" size={16} color={colors.buttonDisabled} />
               </View>
@@ -257,7 +271,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
           style={[styles.modalButton, { backgroundColor: primaryColor }]}
           onPress={onConfirm}
         >
-          <Text style={styles.modalButtonText}>{confirmText}</Text>
+          <Text style={styles.modalButtonText}>{modalConfirmText}</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>

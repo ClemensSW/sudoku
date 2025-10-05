@@ -5,6 +5,7 @@ const PURCHASE_KEY = "@user_has_purchased";
 const BANNER_INTERACTIONS_KEY = "@banner_interactions";
 const PURCHASE_DATE_KEY = "@purchase_date";
 const PURCHASE_ITEM_KEY = "@purchased_items";
+const PURCHASE_TYPE_KEY = "@purchase_type";
 
 interface BannerInteraction {
   type: 'banner_click' | 'close_click' | 'dismiss';
@@ -17,6 +18,8 @@ interface PurchaseItem {
   price: number;
   timestamp: string;
 }
+
+export type PurchaseType = 'one-time' | 'subscription' | 'none';
 
 /**
  * Check if user has made any purchase
@@ -34,21 +37,24 @@ export const checkHasPurchased = async (): Promise<boolean> => {
 /**
  * Mark user as having purchased
  */
-export const markAsPurchased = async (item?: PurchaseItem): Promise<boolean> => {
+export const markAsPurchased = async (item?: PurchaseItem, purchaseType: PurchaseType = 'one-time'): Promise<boolean> => {
   try {
     // Set purchase flag
     await AsyncStorage.setItem(PURCHASE_KEY, "true");
-    
+
     // Save purchase date
     await AsyncStorage.setItem(PURCHASE_DATE_KEY, new Date().toISOString());
-    
+
+    // Save purchase type
+    await AsyncStorage.setItem(PURCHASE_TYPE_KEY, purchaseType);
+
     // Save purchased item details if provided
     if (item) {
       const existingItems = await getPurchasedItems();
       existingItems.push(item);
       await AsyncStorage.setItem(PURCHASE_ITEM_KEY, JSON.stringify(existingItems));
     }
-    
+
     return true;
   } catch (error) {
     console.error("Error marking as purchased:", error);
@@ -122,6 +128,35 @@ export const getPurchaseDate = async (): Promise<string | null> => {
 };
 
 /**
+ * Get the type of purchase (one-time or subscription)
+ */
+export const getPurchaseType = async (): Promise<PurchaseType> => {
+  try {
+    const hasPurchased = await checkHasPurchased();
+    if (!hasPurchased) return 'none';
+
+    const purchaseType = await AsyncStorage.getItem(PURCHASE_TYPE_KEY);
+    return (purchaseType as PurchaseType) || 'one-time'; // Default to one-time for legacy purchases
+  } catch (error) {
+    console.error("Error getting purchase type:", error);
+    return 'none';
+  }
+};
+
+/**
+ * Check if user has an active subscription
+ */
+export const isSubscriptionActive = async (): Promise<boolean> => {
+  try {
+    const purchaseType = await getPurchaseType();
+    return purchaseType === 'subscription';
+  } catch (error) {
+    console.error("Error checking subscription status:", error);
+    return false;
+  }
+};
+
+/**
  * Reset purchase status (for testing)
  */
 export const resetPurchaseStatus = async (): Promise<void> => {
@@ -130,6 +165,7 @@ export const resetPurchaseStatus = async (): Promise<void> => {
       PURCHASE_KEY,
       PURCHASE_DATE_KEY,
       PURCHASE_ITEM_KEY,
+      PURCHASE_TYPE_KEY,
       BANNER_INTERACTIONS_KEY,
     ]);
   } catch (error) {

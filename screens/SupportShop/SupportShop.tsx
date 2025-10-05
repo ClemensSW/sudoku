@@ -167,14 +167,19 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     // Registriere den Kauf für den Support-Banner
     try {
       if (currentPurchase) {
+        // Bestimme Purchase-Typ basierend auf Product-ID
+        const isSubscription = currentPurchase.productId.includes('monthly_support') ||
+                              currentPurchase.productId.includes('yearly_support');
+        const purchaseType = isSubscription ? 'subscription' : 'one-time';
+
         await markAsPurchased({
           id: currentPurchase.productId,
           name: currentPurchase.title,
           price: parseFloat(currentPurchase.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
           timestamp: new Date().toISOString(),
-        });
-        
-        console.log("Kauf wurde registriert - Support-Banner wird entfernt");
+        }, purchaseType);
+
+        console.log(`Kauf wurde registriert - Type: ${purchaseType}`);
       }
     } catch (error) {
       console.error("Fehler beim Registrieren des Kaufs:", error);
@@ -183,15 +188,12 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
     // Get random thank you message
     const { title, message } = getRandomConfirmMessage();
-    
-    // Erweitere die Nachricht um Banner-Info
-    const enhancedMessage = message + " Der Support-Banner wurde entfernt.";
 
     // Show success message
     setSuccessMessage({
       visible: true,
       title,
-      message: enhancedMessage,
+      message,
     });
 
     // Reset purchase states after delay

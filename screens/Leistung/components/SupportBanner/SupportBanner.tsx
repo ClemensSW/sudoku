@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { checkHasPurchased, trackBannerInteraction } from "@/screens/SupportShop/utils/purchaseTracking";
+import { checkHasPurchased, trackBannerInteraction, getPurchaseType, PurchaseType } from "@/screens/SupportShop/utils/purchaseTracking";
 import styles from "./SupportBanner.styles";
 import HeartIcon from "@/assets/svg/heart.svg";
 
@@ -30,7 +30,7 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const { colors } = theme;
 
   const [isVisible, setIsVisible] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState(false);
+  const [purchaseType, setPurchaseType] = useState<PurchaseType>('none');
 
   // Animation values
   const scale = useSharedValue(1);
@@ -100,16 +100,12 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
       let mounted = true;
 
       const checkPurchaseStatus = async () => {
-        const purchased = await checkHasPurchased();
+        const type = await getPurchaseType();
         if (!mounted) return;
-        setHasPurchased(purchased);
-        if (!purchased) {
-          setIsVisible(true);
-          startAnimations();
-        } else {
-          stopAnimations();
-          setIsVisible(false);
-        }
+        setPurchaseType(type);
+        // Banner ist immer sichtbar, nur der Text ändert sich
+        setIsVisible(true);
+        startAnimations();
       };
 
       // Initial check
@@ -175,10 +171,33 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
     transform: [{ scale: heartBeat.value }],
   }));
 
-  // Don't render if user has purchased
-  if (hasPurchased || !isVisible) {
+  // Don't render if not visible
+  if (!isVisible) {
     return null;
   }
+
+  // Dynamischer Text basierend auf Purchase-Typ
+  const getBannerText = () => {
+    switch (purchaseType) {
+      case 'subscription':
+        return {
+          title: "Vielen Dank für dein Abo!",
+          subtitle: "Du ermöglichst kontinuierliche Entwicklung"
+        };
+      case 'one-time':
+        return {
+          title: "Danke für deine Unterstützung!",
+          subtitle: "Jede weitere Hilfe ermöglicht neue Features"
+        };
+      default:
+        return {
+          title: "Unterstütze die Entwicklung",
+          subtitle: "Hilf mir, das Spiel werbefrei zu halten"
+        };
+    }
+  };
+
+  const bannerText = getBannerText();
 
   return (
     <Animated.View
@@ -229,10 +248,10 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
               {/* Text content */}
               <View style={styles.textContainer}>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>
-                  Unterstütze die Entwicklung
+                  {bannerText.title}
                 </Text>
                 <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                  Hilf mir, das Spiel werbefrei zu halten
+                  {bannerText.subtitle}
                 </Text>
               </View>
 

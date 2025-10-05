@@ -13,6 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { getRandomFunFact } from "../utils/supportMessages";
 import styles from "./PurchaseOverlay.styles";
 
@@ -27,12 +28,17 @@ interface PurchaseOverlayProps {
 const PurchaseOverlay: React.FC<PurchaseOverlayProps> = ({
   visible,
   isSuccess = false,
-  title = "Verarbeite Kauf...",
-  message = "Bitte warte einen Moment",
+  title,
+  message,
   primaryColor,
 }) => {
+  const { t } = useTranslation('supportShop');
   const theme = useTheme();
   const { colors } = theme;
+
+  // Use translations as fallback if title/message not provided
+  const displayTitle = title || t('overlay.defaultTitle');
+  const displayMessage = message || t('overlay.defaultMessage');
 
   const [funFact, setFunFact] = useState<string>("");
   const [showFunFact, setShowFunFact] = useState<boolean>(false);
@@ -110,10 +116,10 @@ const PurchaseOverlay: React.FC<PurchaseOverlayProps> = ({
               <Feather name="check-circle" size={60} color={primaryColor} />
             </Animated.View>
 
-            <Text style={[styles.title, { color: primaryColor }]}>{title}</Text>
+            <Text style={[styles.title, { color: primaryColor }]}>{displayTitle}</Text>
 
             <Text style={[styles.message, { color: colors.textSecondary }]}>
-              {message}
+              {displayMessage}
             </Text>
           </>
         ) : (
@@ -124,7 +130,7 @@ const PurchaseOverlay: React.FC<PurchaseOverlayProps> = ({
               <Text
                 style={[styles.purchasingText, { color: colors.textPrimary }]}
               >
-                {title}
+                {displayTitle}
               </Text>
             </View>
 

@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
+import PencilIcon from "@/assets/svg/pencil.svg";
 
 interface NotesPageProps {
   onNext: () => void;
@@ -127,10 +127,10 @@ const NotesPage: React.FC<NotesPageProps> = ({
         {/* Notes Button */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.notesButton, { backgroundColor: colors.primary }]}
+            style={[styles.notesButton, { backgroundColor: theme.isDark ? colors.surface : colors.numberPadButton, borderWidth: 2, borderColor: colors.primary }]}
             onPress={() => {}}
           >
-            <Feather name="edit-3" size={24} color="#fff" />
+            <PencilIcon width={32} height={32} color={colors.primary} />
           </TouchableOpacity>
           <Text style={[styles.buttonLabel, { color: colors.textPrimary }]}>
             {t('pages.notes.buttonLabel')}

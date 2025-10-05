@@ -106,5 +106,15 @@
     "badge": "Best Support",
     "button": "Subscribe",
     "savings": "Save {{percent}}%"
+  },
+  "product": {
+    "badge": "Popular"
+  },
+  "overlay": {
+    "defaultTitle": "Processing purchase...",
+    "defaultMessage": "Please wait a moment"
+  },
+  "common": {
+    "ok": "OK"
   }
 }

@@ -106,5 +106,15 @@
     "badge": "Stärkste Hilfe",
     "button": "Abonnieren",
     "savings": "Spare {{percent}}%"
+  },
+  "product": {
+    "badge": "Beliebt"
+  },
+  "overlay": {
+    "defaultTitle": "Verarbeite Kauf...",
+    "defaultMessage": "Bitte warte einen Moment"
+  },
+  "common": {
+    "ok": "OK"
   }
 }

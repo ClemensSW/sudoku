@@ -10,6 +10,7 @@ import Animated, {
   FadeInRight,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { Product } from "../utils/billing/BillingManager";
 import { getRandomProductDescription } from "../utils/supportMessages";
 import styles from "./ProductCard.styles";
@@ -29,6 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isPopular = false,
   disabled = false,
 }) => {
+  const { t } = useTranslation('supportShop');
   const theme = useTheme();
   const { colors } = theme;
 
@@ -238,7 +240,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               backgroundColor: theme.isDark ? "#FF6B6B" : "#EA4335", // Professionelleres Rot im Light Mode
             }
           ]}>
-            <Text style={styles.popularText}>Beliebt</Text>
+            <Text style={styles.popularText}>{t('product.badge')}</Text>
           </View>
         )}
       </TouchableOpacity>

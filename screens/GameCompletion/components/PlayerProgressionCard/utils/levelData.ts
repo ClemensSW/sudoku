@@ -2,47 +2,48 @@
 import { GameStats } from '@/utils/storage';
 import { Difficulty } from '@/utils/sudoku';
 import { LevelInfo, PathInfo, LevelThreshold } from './types';
+import i18next from '@/locales/i18n';
 
 export const paths: PathInfo[] = [
   {
     id: "fundamentals",
-    name: "Pfad der Grundlagen",
-    description: "Entdecke die Muster, die das Fundament des Sudoku bilden.",
+    name: i18next.t('levels:paths.fundamentals.name'),
+    description: i18next.t('levels:paths.fundamentals.description'),
     levelRange: [0, 4],
     color: "#4285F4", // Google-Blau - Basis und Vertrauen
-    completionMessage: "Du hast die Grundlagen gemeistert. Die tieferen Muster des Sudoku erwarten deine Entdeckung."
+    completionMessage: i18next.t('levels:paths.fundamentals.completionMessage')
   },
   {
     id: "insight",
-    name: "Pfad der Erkenntnis",
-    description: "Vertiefe dein Verständnis für die Beziehungen zwischen den Zahlen.",
+    name: i18next.t('levels:paths.insight.name'),
+    description: i18next.t('levels:paths.insight.description'),
     levelRange: [5, 9],
     color: "#34A853", // Google-Grün - Wachstum und Erkenntnis
-    completionMessage: "Deine Erkenntnisse haben sich vertieft. Nun beginnt die Reise zur wahren Meisterschaft."
+    completionMessage: i18next.t('levels:paths.insight.completionMessage')
   },
   {
     id: "mastery",
-    name: "Pfad der Meisterschaft",
-    description: "Verfeinere deine Techniken und entwickle deine eigene Intuition.",
+    name: i18next.t('levels:paths.mastery.name'),
+    description: i18next.t('levels:paths.mastery.description'),
     levelRange: [10, 14],
     color: "#FBBC05", // Google-Gelb - Optimismus und Meisterschaft
-    completionMessage: "Du beherrschst nun die Kunst des Sudoku. Der Weg zur Weisheit liegt vor dir."
+    completionMessage: i18next.t('levels:paths.mastery.completionMessage')
   },
   {
     id: "wisdom",
-    name: "Pfad der Weisheit",
-    description: "Erkenne die tieferen Zusammenhänge und erreiche eine neue Ebene des Verständnisses.",
+    name: i18next.t('levels:paths.wisdom.name'),
+    description: i18next.t('levels:paths.wisdom.description'),
     levelRange: [15, 19],
     color: "#EA4335", // Google-Rot - Kraft und Weisheit
-    completionMessage: "Deine Weisheit leuchtet. Der Pfad der Transzendenz erwartet dich."
+    completionMessage: i18next.t('levels:paths.wisdom.completionMessage')
   },
   {
     id: "transcendence",
-    name: "Pfad der Transzendenz",
-    description: "Erlebe den Fluss des Spiels, wo Intuition und Logik eins werden.",
+    name: i18next.t('levels:paths.transcendence.name'),
+    description: i18next.t('levels:paths.transcendence.description'),
     levelRange: [20, 50],
     color: "#673AB7", // Tiefes Violett - Spiritualität und Transzendenz
-    completionMessage: "Du hast die höchste Ebene erreicht. Das Rätsel und du seid eins geworden."
+    completionMessage: i18next.t('levels:paths.transcendence.completionMessage')
   }
 ];
 
@@ -51,520 +52,520 @@ export const levels: LevelThreshold[] = [
   // Pfad der Grundlagen
   {
     xp: 0,
-    name: "Neugieriger Geist",
-    message: "Jede Reise beginnt mit Neugier und Offenheit.",
+    name: i18next.t('levels:levels.0.name'),
+    message: i18next.t('levels:levels.0.message'),
     path: "fundamentals",
     pathIndex: 0
   },
   {
     xp: 5,
-    name: "Mustersucher",
-    message: "Erkenne, wie Zahlen ihre Geheimnisse durch Muster offenbaren.",
+    name: i18next.t('levels:levels.1.name'),
+    message: i18next.t('levels:levels.1.message'),
     path: "fundamentals",
     pathIndex: 0
   },
   {
     xp: 15,
-    name: "Aufmerksamer Schüler",
-    message: "Deine Aufmerksamkeit für Details wächst mit jedem Rätsel.",
+    name: i18next.t('levels:levels.2.name'),
+    message: i18next.t('levels:levels.2.message'),
     path: "fundamentals",
     pathIndex: 0
   },
   {
     xp: 30,
-    name: "Geduldiger Betrachter",
-    message: "In der Ruhe und Geduld liegt der Schlüssel zum Rätsel.",
+    name: i18next.t('levels:levels.3.name'),
+    message: i18next.t('levels:levels.3.message'),
     path: "fundamentals",
     pathIndex: 0
   },
   {
     xp: 50,
-    name: "Grundlagenfinder",
-    message: "Du siehst nun deutlich das Fundament, auf dem jedes Sudoku aufbaut.",
+    name: i18next.t('levels:levels.4.name'),
+    message: i18next.t('levels:levels.4.message'),
     path: "fundamentals",
     pathIndex: 0
   },
-  
+
   // Pfad der Erkenntnis
   {
     xp: 75,
-    name: "Klarheitssucher",
-    message: "Mit jedem gelösten Rätsel wird dein Blick klarer.",
+    name: i18next.t('levels:levels.5.name'),
+    message: i18next.t('levels:levels.5.message'),
     path: "insight",
     pathIndex: 1
   },
   {
     xp: 105,
-    name: "Möglichkeitswäger",
-    message: "Du lernst, die vielen Möglichkeiten zu sehen und abzuwägen.",
+    name: i18next.t('levels:levels.6.name'),
+    message: i18next.t('levels:levels.6.message'),
     path: "insight",
     pathIndex: 1
   },
   {
     xp: 140,
-    name: "Beziehungserkenner",
-    message: "Die Verbindungen zwischen den Zahlen enthüllen sich deinem Geist.",
+    name: i18next.t('levels:levels.7.name'),
+    message: i18next.t('levels:levels.7.message'),
     path: "insight",
     pathIndex: 1
   },
   {
     xp: 180,
-    name: "Musterverflechter",
-    message: "Du verbindest Muster zu einem größeren Ganzen.",
+    name: i18next.t('levels:levels.8.name'),
+    message: i18next.t('levels:levels.8.message'),
     path: "insight",
     pathIndex: 1
   },
   {
     xp: 225,
-    name: "Einsichtsvoller Denker",
-    message: "Deine Einsichten verschmelzen zu einem tieferen Verständnis.",
+    name: i18next.t('levels:levels.9.name'),
+    message: i18next.t('levels:levels.9.message'),
     path: "insight",
     pathIndex: 1
   },
-  
+
   // Pfad der Meisterschaft
   {
     xp: 275,
-    name: "Geschickter Anwender",
-    message: "Techniken und Strategien werden zu deinen Werkzeugen.",
+    name: i18next.t('levels:levels.10.name'),
+    message: i18next.t('levels:levels.10.message'),
     path: "mastery",
     pathIndex: 2
   },
   {
     xp: 330,
-    name: "Präziser Praktiker",
-    message: "Deine Herangehensweise wird immer präziser und effizienter.",
+    name: i18next.t('levels:levels.11.name'),
+    message: i18next.t('levels:levels.11.message'),
     path: "mastery",
     pathIndex: 2
   },
   {
     xp: 390,
-    name: "Fließender Löser",
-    message: "Deine Lösungswege werden fließender und natürlicher.",
+    name: i18next.t('levels:levels.12.name'),
+    message: i18next.t('levels:levels.12.message'),
     path: "mastery",
     pathIndex: 2
   },
   {
     xp: 455,
-    name: "Intuitiver Denker",
-    message: "Intuition beginnt, deine Logik zu ergänzen.",
+    name: i18next.t('levels:levels.13.name'),
+    message: i18next.t('levels:levels.13.message'),
     path: "mastery",
     pathIndex: 2
   },
   {
     xp: 525,
-    name: "Ausgeglichener Meister",
-    message: "Logik und Intuition sind nun in deinem Geist im Gleichgewicht.",
+    name: i18next.t('levels:levels.14.name'),
+    message: i18next.t('levels:levels.14.message'),
     path: "mastery",
     pathIndex: 2
   },
-  
+
   // Pfad der Weisheit
   {
     xp: 600,
-    name: "Ruhiger Beobachter",
-    message: "In der Stille des Geistes siehst du die Lösung am klarsten.",
+    name: i18next.t('levels:levels.15.name'),
+    message: i18next.t('levels:levels.15.message'),
     path: "wisdom",
     pathIndex: 3
   },
   {
     xp: 680,
-    name: "Tiefgründiger Ergründer",
-    message: "Dein Verständnis reicht nun bis in die Tiefe des Rätsels.",
+    name: i18next.t('levels:levels.16.name'),
+    message: i18next.t('levels:levels.16.message'),
     path: "wisdom",
     pathIndex: 3
   },
   {
     xp: 765,
-    name: "Gelassener Denker",
-    message: "Komplexität verliert ihren Schrecken in deiner Gelassenheit.",
+    name: i18next.t('levels:levels.17.name'),
+    message: i18next.t('levels:levels.17.message'),
     path: "wisdom",
     pathIndex: 3
   },
   {
     xp: 855,
-    name: "Weiser Betrachter",
-    message: "Du siehst über das Rätsel hinaus und erkennst seine Harmonie.",
+    name: i18next.t('levels:levels.18.name'),
+    message: i18next.t('levels:levels.18.message'),
     path: "wisdom",
     pathIndex: 3
   },
   {
     xp: 950,
-    name: "Philosophischer Geist",
-    message: "Das Sudoku wird zum Spiegel deines klarsten Denkens.",
+    name: i18next.t('levels:levels.19.name'),
+    message: i18next.t('levels:levels.19.message'),
     path: "wisdom",
     pathIndex: 3
   },
-  
+
   // Pfad der Transzendenz
   {
     xp: 1050,
-    name: "Fließender Geist",
-    message: "Du löst nicht länger Rätsel - du tanzt mit ihnen.",
+    name: i18next.t('levels:levels.20.name'),
+    message: i18next.t('levels:levels.20.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 1200,
-    name: "Grenzenloser Denker",
-    message: "Die Grenzen zwischen Rätsel und Lösung verschwimmen.",
+    name: i18next.t('levels:levels.21.name'),
+    message: i18next.t('levels:levels.21.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 1350,
-    name: "Harmoniegestalter",
-    message: "Du erschaffst Harmonie, wo zuvor nur Chaos war.",
+    name: i18next.t('levels:levels.22.name'),
+    message: i18next.t('levels:levels.22.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 1500,
-    name: "Erleuchteter Spieler",
-    message: "Das Rätsel ist nicht länger außerhalb, sondern Teil von dir.",
+    name: i18next.t('levels:levels.23.name'),
+    message: i18next.t('levels:levels.23.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 1750,
-    name: "Zen-Meister",
-    message: "Rätsel und Lösender sind nicht länger getrennt.",
+    name: i18next.t('levels:levels.24.name'),
+    message: i18next.t('levels:levels.24.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 1925,
-    name: "Astraler Wanderer",
-    message: "Deine Seele durchstreift nun ferne Sphären.",
+    name: i18next.t('levels:levels.25.name'),
+    message: i18next.t('levels:levels.25.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 2118,
-    name: "Sternenweber",
-    message: "Du spannst Netze aus Licht und Zahlen.",
+    name: i18next.t('levels:levels.26.name'),
+    message: i18next.t('levels:levels.26.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 2329,
-    name: "Ätherischer Architekt",
-    message: "Du formst Räume jenseits der Logik.",
+    name: i18next.t('levels:levels.27.name'),
+    message: i18next.t('levels:levels.27.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 2562,
-    name: "Nexus-Schmied",
-    message: "Du schweißest Pfade zwischen Raum und Zeit.",
+    name: i18next.t('levels:levels.28.name'),
+    message: i18next.t('levels:levels.28.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 2818,
-    name: "Unendlichkeitspilger",
-    message: "Kein Ende vermag dich aufzuhalten.",
+    name: i18next.t('levels:levels.29.name'),
+    message: i18next.t('levels:levels.29.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 3100,
-    name: "Äonensäer",
-    message: "Du säst Momente in die Ewigkeit.",
+    name: i18next.t('levels:levels.30.name'),
+    message: i18next.t('levels:levels.30.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 3410,
-    name: "Zenitbewahrer",
-    message: "Du hältst Augenblicke der Klarheit fest.",
+    name: i18next.t('levels:levels.31.name'),
+    message: i18next.t('levels:levels.31.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 3751,
-    name: "Aurora-Hüter",
-    message: "Du entfachst Polarlichter im Zahlenmeer.",
+    name: i18next.t('levels:levels.32.name'),
+    message: i18next.t('levels:levels.32.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 4126,
-    name: "Phänomen-Entdecker",
-    message: "Jedes Rätsel birgt ein neues Wunder.",
+    name: i18next.t('levels:levels.33.name'),
+    message: i18next.t('levels:levels.33.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 4538,
-    name: "Empyreum-Bote",
-    message: "Du trägst Botschaften aus dem höchsten Licht.",
+    name: i18next.t('levels:levels.34.name'),
+    message: i18next.t('levels:levels.34.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 4992,
-    name: "Paradigma-Schöpfer",
-    message: "Du setzt neue Maßstäbe im Kosmos der Logik.",
+    name: i18next.t('levels:levels.35.name'),
+    message: i18next.t('levels:levels.35.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 5491,
-    name: "Elysium-Träumer",
-    message: "Du verwandelst Rätsel in harmonische Visionen.",
+    name: i18next.t('levels:levels.36.name'),
+    message: i18next.t('levels:levels.36.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 6039,
-    name: "Singularitätsreisender",
-    message: "Du überschreitest jede Schwelle des Verstehens.",
+    name: i18next.t('levels:levels.37.name'),
+    message: i18next.t('levels:levels.37.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 6643,
-    name: "Ewigkeitsdenker",
-    message: "Dein Geist dehnt sich über Zeit und Raum.",
+    name: i18next.t('levels:levels.38.name'),
+    message: i18next.t('levels:levels.38.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 7307,
-    name: "Illuminationsbringer",
-    message: "Du erleuchtest Pfade, die zuvor verborgen waren.",
+    name: i18next.t('levels:levels.39.name'),
+    message: i18next.t('levels:levels.39.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 8038,
-    name: "Neubeginn-Gestalter",
-    message: "Aus jedem Abschluss wächst ein neuer Anfang.",
+    name: i18next.t('levels:levels.40.name'),
+    message: i18next.t('levels:levels.40.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 8842,
-    name: "Metatron-Späher",
-    message: "Du erkundest die heiligen Architekturen des Spiels.",
+    name: i18next.t('levels:levels.41.name'),
+    message: i18next.t('levels:levels.41.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 9726,
-    name: "Orakelweber",
-    message: "Du webst Prophezeiungen aus Zahlenmustern.",
+    name: i18next.t('levels:levels.42.name'),
+    message: i18next.t('levels:levels.42.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 10698,
-    name: "Kosmokat-Ascendant",
-    message: "Du erhebst dich über alle Dimensionen.",
+    name: i18next.t('levels:levels.43.name'),
+    message: i18next.t('levels:levels.43.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 11768,
-    name: "Hyperion-Wächter",
-    message: "Du beschützt die Flamme der Erkenntnis.",
+    name: i18next.t('levels:levels.44.name'),
+    message: i18next.t('levels:levels.44.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 12945,
-    name: "Celestischer Magier",
-    message: "Du wandelst Zahlen in Sternenstaub.",
+    name: i18next.t('levels:levels.45.name'),
+    message: i18next.t('levels:levels.45.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 14239,
-    name: "Transzendenz-Flüsterer",
-    message: "Du vernimmst die Stimme des Universums.",
+    name: i18next.t('levels:levels.46.name'),
+    message: i18next.t('levels:levels.46.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 15663,
-    name: "Ätherwanderer II",
-    message: "Dein Weg führt dich tiefer ins Unbekannte.",
+    name: i18next.t('levels:levels.47.name'),
+    message: i18next.t('levels:levels.47.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 17229,
-    name: "Sphärenmeister",
-    message: "Du regierst über Klang und Stille im Rätsel.",
+    name: i18next.t('levels:levels.48.name'),
+    message: i18next.t('levels:levels.48.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 18952,
-    name: "Kosmokrator",
-    message: "Du herrschst im Reich der unendlichen Möglichkeiten.",
+    name: i18next.t('levels:levels.49.name'),
+    message: i18next.t('levels:levels.49.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 20847,
-    name: "Dimensionaler Pionier",
-    message: "Du bahnst neue Wege durch Raum und Zahl.",
+    name: i18next.t('levels:levels.50.name'),
+    message: i18next.t('levels:levels.50.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 22932,
-    name: "Sternenchronist",
-    message: "Du zeichnest Geschichten im Zahlenhimmel.",
+    name: i18next.t('levels:levels.51.name'),
+    message: i18next.t('levels:levels.51.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 25225,
-    name: "Galaktischer Schreiber",
-    message: "Du schreibst dein Vermächtnis in die Weiten.",
+    name: i18next.t('levels:levels.52.name'),
+    message: i18next.t('levels:levels.52.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 27748,
-    name: "Auroraleuchter",
-    message: "Du entzündest Polarlichter der Weisheit.",
+    name: i18next.t('levels:levels.53.name'),
+    message: i18next.t('levels:levels.53.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 30522,
-    name: "Ewiger Funke",
-    message: "Ein Funke deiner Klarheit erhellt alles.",
+    name: i18next.t('levels:levels.54.name'),
+    message: i18next.t('levels:levels.54.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 33574,
-    name: "Kosmisches Echo",
-    message: "Dein Verständnis hallt durch Äonen.",
+    name: i18next.t('levels:levels.55.name'),
+    message: i18next.t('levels:levels.55.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 36932,
-    name: "Quantensinger",
-    message: "Du singst Lieder aus Zahlen und Licht.",
+    name: i18next.t('levels:levels.56.name'),
+    message: i18next.t('levels:levels.56.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 40625,
-    name: "Transzendentalgeiger",
-    message: "Du spielst Melodien jenseits der Ratio.",
+    name: i18next.t('levels:levels.57.name'),
+    message: i18next.t('levels:levels.57.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 44687,
-    name: "Mythischer Lotse",
-    message: "Du findest Pfade in sagenhaften Sphären.",
+    name: i18next.t('levels:levels.58.name'),
+    message: i18next.t('levels:levels.58.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 49155,
-    name: "Empyrealer Träumer",
-    message: "Du träumst die Strukturen des Unendlichen.",
+    name: i18next.t('levels:levels.59.name'),
+    message: i18next.t('levels:levels.59.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 54070,
-    name: "Zeitreisender",
-    message: "Deine Schritte setzen Wellen in der Zeit.",
+    name: i18next.t('levels:levels.60.name'),
+    message: i18next.t('levels:levels.60.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 59477,
-    name: "Kosmischer Tanzer",
-    message: "Du bewegst dich im Reigen der Rätsel.",
+    name: i18next.t('levels:levels.61.name'),
+    message: i18next.t('levels:levels.61.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 65425,
-    name: "Lichtweber",
-    message: "Du spannst Netze aus Strahlen und Zahlen.",
+    name: i18next.t('levels:levels.62.name'),
+    message: i18next.t('levels:levels.62.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 71967,
-    name: "Ätherischer Melder",
-    message: "Du überbringst Botschaften aus höheren Welten.",
+    name: i18next.t('levels:levels.63.name'),
+    message: i18next.t('levels:levels.63.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 79163,
-    name: "Unendlicher Pilger II",
-    message: "Dein Pfad endet niemals.",
+    name: i18next.t('levels:levels.64.name'),
+    message: i18next.t('levels:levels.64.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 87079,
-    name: "Seelenarchäologe",
-    message: "Du gräbst nach den Ursprüngen der Logik.",
+    name: i18next.t('levels:levels.65.name'),
+    message: i18next.t('levels:levels.65.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 95787,
-    name: "Kosmoskorrespondent",
-    message: "Du berichtest aus fernen Galaxien.",
+    name: i18next.t('levels:levels.66.name'),
+    message: i18next.t('levels:levels.66.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 105366,
-    name: "Dimensionenweber",
-    message: "Du knüpfst Brücken zwischen allen Welten.",
+    name: i18next.t('levels:levels.67.name'),
+    message: i18next.t('levels:levels.67.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 115902,
-    name: "Transzendenz-Orchester",
-    message: "Du leitest Symphonien im Universum der Zahlen.",
+    name: i18next.t('levels:levels.68.name'),
+    message: i18next.t('levels:levels.68.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 127492,
-    name: "Universalpoet",
-    message: "Du verfasst Verse aus Formeln und Sternen.",
+    name: i18next.t('levels:levels.69.name'),
+    message: i18next.t('levels:levels.69.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 140241,
-    name: "Äonenchronist",
-    message: "Du verewigst Zeit in jedem gelösten Rätsel.",
+    name: i18next.t('levels:levels.70.name'),
+    message: i18next.t('levels:levels.70.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 154346,
-    name: "Ewigkeitserzähler",
-    message: "Du erzählst Geschichten, die kein Ende kennen.",
+    name: i18next.t('levels:levels.71.name'),
+    message: i18next.t('levels:levels.71.message'),
     path: "transcendence",
     pathIndex: 4
   },
   {
     xp: 169780,
-    name: "Kosmischer Zen-Meister",
-    message: "In dir ist alles still und doch erfüllt.",
+    name: i18next.t('levels:levels.72.name'),
+    message: i18next.t('levels:levels.72.message'),
     path: "transcendence",
     pathIndex: 4
   },
@@ -573,10 +574,10 @@ export const levels: LevelThreshold[] = [
 
 // Meilenstein-Nachrichten bei Erreichen bedeutender Level
 export const milestones: Record<number, string> = {
-  5: "Du hast den Pfad der Erkenntnis betreten. Dein Verständnis vertieft sich mit jedem Rätsel.",
-  10: "Der Pfad der Meisterschaft heißt dich willkommen. Deine Übung beginnt, sich in Intuition zu verwandeln.",
-  15: "Auf dem Pfad der Weisheit erkennst du nun die tieferen Zusammenhänge des Sudoku.",
-  20: "Der Pfad der Transzendenz liegt nun vor dir. Die höchste Stufe der Sudoku-Kunst ist in Reichweite."
+  5: i18next.t('levels:milestones.5'),
+  10: i18next.t('levels:milestones.10'),
+  15: i18next.t('levels:milestones.15'),
+  20: i18next.t('levels:milestones.20')
 };
 
 /**

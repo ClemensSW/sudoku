@@ -13,6 +13,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./StreakCard.styles";
 
@@ -31,6 +32,7 @@ const StreakCard: React.FC<StreakCardProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const { t } = useTranslation('gameCompletion');
   
   // Animation values
   const progressWidth = useSharedValue(0);
@@ -46,12 +48,12 @@ const StreakCard: React.FC<StreakCardProps> = ({
   
   // Get motivational message based on streak
   const getMotivationalText = () => {
-    if (isRecord) return "Neuer Rekord erreicht!";
-    if (currentStreak >= 10) return "Beeindruckende Serie!";
-    if (currentStreak >= 5) return "Starke Leistung!";
-    if (currentStreak >= 3) return "Gute Serie!";
-    if (currentStreak === 0) return "Bereit für dein nächsten Rekord!";
-    return "Weiter so!";
+    if (isRecord) return t('streak.record');
+    if (currentStreak >= 10) return t('streak.impressive');
+    if (currentStreak >= 5) return t('streak.strong');
+    if (currentStreak >= 3) return t('streak.good');
+    if (currentStreak === 0) return t('streak.readyForRecord');
+    return t('streak.keepGoing');
   };
   
   // Start animations when component mounts
@@ -193,7 +195,7 @@ const StreakCard: React.FC<StreakCardProps> = ({
       {/* Header with title and record badge */}
       <View style={styles.headerContainer}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-          Siegesserie
+          {t('streak.title')}
         </Text>
         
         {isRecord && (
@@ -201,7 +203,7 @@ const StreakCard: React.FC<StreakCardProps> = ({
             style={[styles.recordBadge, { backgroundColor: colors.success }]}
           >
             <Feather name="award" size={12} color="white" />
-            <Text style={styles.recordText}>Rekord</Text>
+            <Text style={styles.recordText}>{t('streak.recordLabel')}</Text>
           </View>
         )}
       </View>
@@ -220,7 +222,7 @@ const StreakCard: React.FC<StreakCardProps> = ({
           {currentStreak}
         </Text>
         <Text style={[styles.currentStreakLabel, { color: colors.textSecondary }]}>
-          {currentStreak === 1 ? "Sieg in Folge" : "Siege in Folge"}
+          {t('streak.winsInRow', { count: currentStreak })}
         </Text>
       </View>
       
@@ -250,8 +252,8 @@ const StreakCard: React.FC<StreakCardProps> = ({
             style={[styles.progressLabel, { color: colors.textSecondary }]}
           >
             {progressPercentage < 100
-              ? "Nächstes Ziel"
-              : "Beste Serie!"}
+              ? t('streak.nextGoal')
+              : t('streak.bestStreak')}
           </Text>
           
           <Text style={[styles.streakValue, { color: colors.textPrimary }]}>

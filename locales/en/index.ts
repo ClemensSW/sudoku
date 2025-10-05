@@ -12,6 +12,7 @@ import tutorial from './tutorial.json';
 import supportShop from './supportShop.json';
 import validation from './validation.json';
 import feedback from './feedback.json';
+import levels from './levels.json';
 
 export default {
   common,
@@ -27,4 +28,5 @@ export default {
   supportShop,
   validation,
   feedback,
+  levels,
 };

@@ -80,5 +80,19 @@
       "You're in the zone! {{count}} successful games in a row!"
     ]
   },
-  "autoNotesWarning": "When using auto-notes, this game will not count towards statistics or level progress."
+  "autoNotesWarning": "When using auto-notes, this game will not count towards statistics or level progress.",
+  "streak": {
+    "title": "Win Streak",
+    "record": "New record achieved!",
+    "impressive": "Impressive streak!",
+    "strong": "Strong performance!",
+    "good": "Good streak!",
+    "readyForRecord": "Ready for your next record!",
+    "keepGoing": "Keep it up!",
+    "recordLabel": "Record",
+    "winsInRow_one": "Win in a row",
+    "winsInRow_other": "Wins in a row",
+    "nextGoal": "Next Goal",
+    "bestStreak": "Best Streak!"
+  }
 }

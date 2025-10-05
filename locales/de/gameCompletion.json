@@ -80,5 +80,19 @@
       "Du bist im Flow! {{count}} erfolgreiche Spiele in Serie!"
     ]
   },
-  "autoNotesWarning": "Bei der Verwendung von Auto-Notizen wird dieses Spiel nicht für Statistiken oder Level-Fortschritt gezählt."
+  "autoNotesWarning": "Bei der Verwendung von Auto-Notizen wird dieses Spiel nicht für Statistiken oder Level-Fortschritt gezählt.",
+  "streak": {
+    "title": "Siegesserie",
+    "record": "Neuer Rekord erreicht!",
+    "impressive": "Beeindruckende Serie!",
+    "strong": "Starke Leistung!",
+    "good": "Gute Serie!",
+    "readyForRecord": "Bereit für dein nächsten Rekord!",
+    "keepGoing": "Weiter so!",
+    "recordLabel": "Rekord",
+    "winsInRow_one": "Sieg in Folge",
+    "winsInRow_other": "Siege in Folge",
+    "nextGoal": "Nächstes Ziel",
+    "bestStreak": "Beste Serie!"
+  }
 }

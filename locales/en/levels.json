@@ -1,0 +1,329 @@
+{
+  "paths": {
+    "fundamentals": {
+      "name": "Path of Foundations",
+      "description": "Discover the patterns that form the foundation of Sudoku.",
+      "completionMessage": "You have mastered the fundamentals. The deeper patterns of Sudoku await your discovery."
+    },
+    "insight": {
+      "name": "Path of Insight",
+      "description": "Deepen your understanding of the relationships between numbers.",
+      "completionMessage": "Your insights have deepened. Now begins the journey to true mastery."
+    },
+    "mastery": {
+      "name": "Path of Mastery",
+      "description": "Refine your techniques and develop your own intuition.",
+      "completionMessage": "You now command the art of Sudoku. The way to wisdom lies before you."
+    },
+    "wisdom": {
+      "name": "Path of Wisdom",
+      "description": "Recognize the deeper connections and reach a new level of understanding.",
+      "completionMessage": "Your wisdom shines bright. The path of transcendence awaits you."
+    },
+    "transcendence": {
+      "name": "Path of Transcendence",
+      "description": "Experience the flow of the game, where intuition and logic become one.",
+      "completionMessage": "You have reached the highest plane. The puzzle and you have become one."
+    }
+  },
+  "levels": {
+    "0": {
+      "name": "Curious Mind",
+      "message": "Every journey begins with curiosity and openness."
+    },
+    "1": {
+      "name": "Pattern Seeker",
+      "message": "Recognize how numbers reveal their secrets through patterns."
+    },
+    "2": {
+      "name": "Attentive Student",
+      "message": "Your attention to detail grows with each puzzle."
+    },
+    "3": {
+      "name": "Patient Observer",
+      "message": "In stillness and patience lies the key to the puzzle."
+    },
+    "4": {
+      "name": "Foundation Finder",
+      "message": "You now clearly see the foundation upon which every Sudoku is built."
+    },
+    "5": {
+      "name": "Clarity Seeker",
+      "message": "With each solved puzzle, your vision becomes clearer."
+    },
+    "6": {
+      "name": "Possibility Weigher",
+      "message": "You learn to see and weigh the many possibilities."
+    },
+    "7": {
+      "name": "Connection Recognizer",
+      "message": "The connections between numbers reveal themselves to your mind."
+    },
+    "8": {
+      "name": "Pattern Weaver",
+      "message": "You connect patterns into a greater whole."
+    },
+    "9": {
+      "name": "Insightful Thinker",
+      "message": "Your insights merge into a deeper understanding."
+    },
+    "10": {
+      "name": "Skillful Practitioner",
+      "message": "Techniques and strategies become your tools."
+    },
+    "11": {
+      "name": "Precise Practitioner",
+      "message": "Your approach becomes ever more precise and efficient."
+    },
+    "12": {
+      "name": "Flowing Solver",
+      "message": "Your solutions flow more smoothly and naturally."
+    },
+    "13": {
+      "name": "Intuitive Thinker",
+      "message": "Intuition begins to complement your logic."
+    },
+    "14": {
+      "name": "Balanced Master",
+      "message": "Logic and intuition are now in balance within your mind."
+    },
+    "15": {
+      "name": "Quiet Observer",
+      "message": "In the stillness of mind, you see the solution most clearly."
+    },
+    "16": {
+      "name": "Profound Delver",
+      "message": "Your understanding now reaches into the depths of the puzzle."
+    },
+    "17": {
+      "name": "Serene Thinker",
+      "message": "Complexity loses its terror in your serenity."
+    },
+    "18": {
+      "name": "Wise Beholder",
+      "message": "You see beyond the puzzle and recognize its harmony."
+    },
+    "19": {
+      "name": "Philosophical Mind",
+      "message": "Sudoku becomes a mirror of your clearest thinking."
+    },
+    "20": {
+      "name": "Flowing Spirit",
+      "message": "You no longer solve puzzles - you dance with them."
+    },
+    "21": {
+      "name": "Boundless Thinker",
+      "message": "The boundaries between puzzle and solution blur."
+    },
+    "22": {
+      "name": "Harmony Shaper",
+      "message": "You create harmony where once there was only chaos."
+    },
+    "23": {
+      "name": "Enlightened Player",
+      "message": "The puzzle is no longer outside, but part of you."
+    },
+    "24": {
+      "name": "Zen Master",
+      "message": "Puzzle and solver are no longer separate."
+    },
+    "25": {
+      "name": "Astral Wanderer",
+      "message": "Your soul now roams distant spheres."
+    },
+    "26": {
+      "name": "Starweaver",
+      "message": "You weave nets from light and numbers."
+    },
+    "27": {
+      "name": "Ethereal Architect",
+      "message": "You shape spaces beyond logic."
+    },
+    "28": {
+      "name": "Nexus Forger",
+      "message": "You forge paths between space and time."
+    },
+    "29": {
+      "name": "Infinity Pilgrim",
+      "message": "No end can hold you back."
+    },
+    "30": {
+      "name": "Aeon Sower",
+      "message": "You sow moments into eternity."
+    },
+    "31": {
+      "name": "Zenith Keeper",
+      "message": "You capture moments of clarity."
+    },
+    "32": {
+      "name": "Aurora Guardian",
+      "message": "You kindle northern lights in the sea of numbers."
+    },
+    "33": {
+      "name": "Phenomenon Discoverer",
+      "message": "Every puzzle holds a new wonder."
+    },
+    "34": {
+      "name": "Empyrean Messenger",
+      "message": "You carry messages from the highest light."
+    },
+    "35": {
+      "name": "Paradigm Creator",
+      "message": "You set new standards in the cosmos of logic."
+    },
+    "36": {
+      "name": "Elysium Dreamer",
+      "message": "You transform puzzles into harmonious visions."
+    },
+    "37": {
+      "name": "Singularity Traveler",
+      "message": "You transcend every threshold of understanding."
+    },
+    "38": {
+      "name": "Eternity Thinker",
+      "message": "Your mind expands across time and space."
+    },
+    "39": {
+      "name": "Illumination Bringer",
+      "message": "You illuminate paths that were hidden before."
+    },
+    "40": {
+      "name": "New Beginning Shaper",
+      "message": "From every ending grows a new beginning."
+    },
+    "41": {
+      "name": "Metatron Scout",
+      "message": "You explore the sacred architectures of the game."
+    },
+    "42": {
+      "name": "Oracle Weaver",
+      "message": "You weave prophecies from number patterns."
+    },
+    "43": {
+      "name": "Cosmocrat Ascendant",
+      "message": "You rise above all dimensions."
+    },
+    "44": {
+      "name": "Hyperion Warden",
+      "message": "You protect the flame of knowledge."
+    },
+    "45": {
+      "name": "Celestial Mage",
+      "message": "You transform numbers into stardust."
+    },
+    "46": {
+      "name": "Transcendence Whisperer",
+      "message": "You hear the voice of the universe."
+    },
+    "47": {
+      "name": "Aether Wanderer II",
+      "message": "Your path leads you deeper into the unknown."
+    },
+    "48": {
+      "name": "Sphere Master",
+      "message": "You reign over sound and silence in the puzzle."
+    },
+    "49": {
+      "name": "Cosmocrator",
+      "message": "You rule in the realm of infinite possibilities."
+    },
+    "50": {
+      "name": "Dimensional Pioneer",
+      "message": "You blaze new trails through space and number."
+    },
+    "51": {
+      "name": "Star Chronicler",
+      "message": "You draw stories in the numerical sky."
+    },
+    "52": {
+      "name": "Galactic Scribe",
+      "message": "You write your legacy into the vastness."
+    },
+    "53": {
+      "name": "Aurora Lighter",
+      "message": "You ignite polar lights of wisdom."
+    },
+    "54": {
+      "name": "Eternal Spark",
+      "message": "A spark of your clarity illuminates all."
+    },
+    "55": {
+      "name": "Cosmic Echo",
+      "message": "Your understanding resonates through aeons."
+    },
+    "56": {
+      "name": "Quantum Singer",
+      "message": "You sing songs from numbers and light."
+    },
+    "57": {
+      "name": "Transcendental Violinist",
+      "message": "You play melodies beyond reason."
+    },
+    "58": {
+      "name": "Mythical Navigator",
+      "message": "You find paths in legendary spheres."
+    },
+    "59": {
+      "name": "Empyreal Dreamer",
+      "message": "You dream the structures of the infinite."
+    },
+    "60": {
+      "name": "Time Traveler",
+      "message": "Your steps set ripples through time."
+    },
+    "61": {
+      "name": "Cosmic Dancer",
+      "message": "You move in the dance of puzzles."
+    },
+    "62": {
+      "name": "Light Weaver",
+      "message": "You weave nets from rays and numbers."
+    },
+    "63": {
+      "name": "Ethereal Herald",
+      "message": "You deliver messages from higher worlds."
+    },
+    "64": {
+      "name": "Infinite Pilgrim II",
+      "message": "Your path never ends."
+    },
+    "65": {
+      "name": "Soul Archaeologist",
+      "message": "You dig for the origins of logic."
+    },
+    "66": {
+      "name": "Cosmos Correspondent",
+      "message": "You report from distant galaxies."
+    },
+    "67": {
+      "name": "Dimension Weaver",
+      "message": "You tie bridges between all worlds."
+    },
+    "68": {
+      "name": "Transcendence Orchestra",
+      "message": "You conduct symphonies in the universe of numbers."
+    },
+    "69": {
+      "name": "Universal Poet",
+      "message": "You compose verses from formulas and stars."
+    },
+    "70": {
+      "name": "Aeon Chronicler",
+      "message": "You immortalize time in every solved puzzle."
+    },
+    "71": {
+      "name": "Eternity Narrator",
+      "message": "You tell stories that know no end."
+    },
+    "72": {
+      "name": "Cosmic Zen Master",
+      "message": "Within you, all is still yet complete."
+    }
+  },
+  "milestones": {
+    "5": "You have entered the Path of Insight. Your understanding deepens with each puzzle.",
+    "10": "The Path of Mastery welcomes you. Your practice begins to transform into intuition.",
+    "15": "On the Path of Wisdom, you now recognize the deeper connections of Sudoku.",
+    "20": "The Path of Transcendence now lies before you. The highest level of Sudoku art is within reach."
+  }
+}

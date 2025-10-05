@@ -12,13 +12,13 @@ export default StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 64,
+    height: 72,
     paddingLeft: spacing.md,
     paddingRight: spacing.md,
   },
   actionIcon: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     marginRight: spacing.md,
   },
   actionTextContainer: {

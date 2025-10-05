@@ -35,7 +35,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           onPress={onAutoNotes}
         >
           <View style={styles.actionIcon}>
-            <PencilIcon width={40} height={40} />
+            <PencilIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
             <Text
@@ -72,7 +72,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
         onPress={onHowToPlay}
       >
         <View style={styles.actionIcon}>
-          <QuestionIcon width={40} height={40} />
+          <QuestionIcon width={48} height={48} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text

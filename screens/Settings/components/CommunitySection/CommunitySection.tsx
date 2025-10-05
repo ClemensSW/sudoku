@@ -21,13 +21,13 @@ const customStyles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 64,
+    height: 72,
     paddingLeft: 16,
     paddingRight: 16,
   },
   actionIcon: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     marginRight: 16,
   },
   actionTextContainer: {
@@ -95,7 +95,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         onPress={onSupportPress}
       >
         <View style={customStyles.actionIcon}>
-          <LatteArtIcon width={40} height={40} />
+          <LatteArtIcon width={48} height={48} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -127,7 +127,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         onPress={handleFeedbackPress}
       >
         <View style={customStyles.actionIcon}>
-          <FeedbackIcon width={40} height={40} />
+          <FeedbackIcon width={48} height={48} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -152,7 +152,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         onPress={onSharePress}
       >
         <View style={customStyles.actionIcon}>
-          <ShareIcon width={40} height={40} />
+          <ShareIcon width={48} height={48} />
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
@@ -179,7 +179,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         <View style={customStyles.actionIcon}>
           <Feather
             name="info"
-            size={40}
+            size={48}
             color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
           />
         </View>

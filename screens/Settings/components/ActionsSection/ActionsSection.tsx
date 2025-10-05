@@ -45,7 +45,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
             onPress={onPauseGame}
           >
             <View style={styles.actionIcon}>
-              <CoffeeBreakIcon width={40} height={40} />
+              <CoffeeBreakIcon width={48} height={48} />
             </View>
             <View style={styles.actionTextContainer}>
               <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
@@ -70,7 +70,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
         onPress={onQuitGame}
       >
         <View style={styles.actionIcon}>
-          <Feather name="x-circle" size={40} color={buttonColor} />
+          <Feather name="x-circle" size={48} color={buttonColor} />
         </View>
         <View style={styles.actionTextContainer}>
           <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>

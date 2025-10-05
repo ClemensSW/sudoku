@@ -64,8 +64,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
             { backgroundColor: colors.surface },
           ]}
         >
-          <View style={{ flex: 1 }}>
-            {/* Header with Icon */}
+          {/* Header with Icon */}
             <View style={styles.header}>
             <View style={styles.iconContainer}>
               <InfoIcon
@@ -161,7 +160,6 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
               </Text>
             </TouchableOpacity>
             </View>
-          </View>
         </Animated.View>
       </Animated.View>
     </Modal>

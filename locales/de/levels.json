@@ -230,6 +230,94 @@
     "50": {
       "name": "Dimensionaler Pionier",
       "message": "Du bahnst neue Wege durch Raum und Zahl."
+    },
+    "51": {
+      "name": "Sternenchronist",
+      "message": "Du zeichnest Geschichten im Zahlenhimmel."
+    },
+    "52": {
+      "name": "Galaktischer Schreiber",
+      "message": "Du schreibst dein Vermächtnis in die Weiten."
+    },
+    "53": {
+      "name": "Auroraleuchter",
+      "message": "Du entzündest Polarlichter der Weisheit."
+    },
+    "54": {
+      "name": "Ewiger Funke",
+      "message": "Ein Funke deiner Klarheit erhellt alles."
+    },
+    "55": {
+      "name": "Kosmisches Echo",
+      "message": "Dein Verständnis hallt durch Äonen."
+    },
+    "56": {
+      "name": "Quantensinger",
+      "message": "Du singst Lieder aus Zahlen und Licht."
+    },
+    "57": {
+      "name": "Transzendentalgeiger",
+      "message": "Du spielst Melodien jenseits der Ratio."
+    },
+    "58": {
+      "name": "Mythischer Lotse",
+      "message": "Du findest Pfade in sagenhaften Sphären."
+    },
+    "59": {
+      "name": "Empyrealer Träumer",
+      "message": "Du träumst die Strukturen des Unendlichen."
+    },
+    "60": {
+      "name": "Zeitreisender",
+      "message": "Deine Schritte setzen Wellen in der Zeit."
+    },
+    "61": {
+      "name": "Kosmischer Tanzer",
+      "message": "Du bewegst dich im Reigen der Rätsel."
+    },
+    "62": {
+      "name": "Lichtweber",
+      "message": "Du spannst Netze aus Strahlen und Zahlen."
+    },
+    "63": {
+      "name": "Ätherischer Melder",
+      "message": "Du überbringst Botschaften aus höheren Welten."
+    },
+    "64": {
+      "name": "Unendlicher Pilger II",
+      "message": "Dein Pfad endet niemals."
+    },
+    "65": {
+      "name": "Seelenarchäologe",
+      "message": "Du gräbst nach den Ursprüngen der Logik."
+    },
+    "66": {
+      "name": "Kosmoskorrespondent",
+      "message": "Du berichtest aus fernen Galaxien."
+    },
+    "67": {
+      "name": "Dimensionenweber",
+      "message": "Du knüpfst Brücken zwischen allen Welten."
+    },
+    "68": {
+      "name": "Transzendenz-Orchester",
+      "message": "Du leitest Symphonien im Universum der Zahlen."
+    },
+    "69": {
+      "name": "Universalpoet",
+      "message": "Du verfasst Verse aus Formeln und Sternen."
+    },
+    "70": {
+      "name": "Äonenchronist",
+      "message": "Du verewigst Zeit in jedem gelösten Rätsel."
+    },
+    "71": {
+      "name": "Ewigkeitserzähler",
+      "message": "Du erzählst Geschichten, die kein Ende kennen."
+    },
+    "72": {
+      "name": "Kosmischer Zen-Meister",
+      "message": "In dir ist alles still und doch erfüllt."
     }
   },
   "milestones": {

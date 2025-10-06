@@ -38,9 +38,11 @@ const GallerySegment: React.FC<GallerySegmentProps> = ({
             styles.lockedSegment,
             {
               backgroundColor: isDark
-                ? "rgba(0, 0, 0, 0.7)"
-                : "rgba(255, 255, 255, 0.85)",
-              borderColor: `${progressColor}30`,
+                ? "rgba(26, 26, 26, 0.98)"
+                : "rgba(245, 245, 245, 0.98)",
+              borderColor: isDark
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.1)",
             },
           ]}
         >
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
     height: "33.33%",
     justifyContent: "center",
     alignItems: "center",
-    padding: 2,
+    padding: 0.5,
   },
 
   segmentInner: {

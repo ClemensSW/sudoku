@@ -187,7 +187,7 @@ const Leistung: React.FC = () => {
           />
         );
       case "gallery":
-        return <GalleryTab />;
+        return <GalleryTab stats={stats} />;
       case "streak":
         return <StreakTab stats={stats} />;
       case "times":
@@ -259,7 +259,7 @@ const Leistung: React.FC = () => {
 
         <View style={styles.tabContentContainer}>
           {activeTab === "gallery" ? (
-            <GalleryTab />
+            <GalleryTab stats={stats} />
           ) : activeTab === "times" ? (
             <TimeTab stats={stats} />
           ) : (

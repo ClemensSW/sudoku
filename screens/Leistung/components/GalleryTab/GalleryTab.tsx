@@ -6,11 +6,16 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { PuzzleProgress } from "@/screens/Gallery/components/LandscapeCollection";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 import { spacing } from "@/utils/theme";
+import GalleryProgressCard from "@/screens/GameCompletion/components/GalleryProgressCard";
+import { GameStats } from "@/utils/storage";
 
-const GalleryTab: React.FC = () => {
+interface GalleryTabProps {
+  stats: GameStats;
+}
+
+const GalleryTab: React.FC<GalleryTabProps> = ({ stats }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
@@ -32,7 +37,7 @@ const GalleryTab: React.FC = () => {
   };
 
   return (
-    <Animated.View 
+    <Animated.View
       style={styles.container}
       entering={FadeIn.duration(300)}
     >
@@ -42,11 +47,12 @@ const GalleryTab: React.FC = () => {
         </View>
       ) : (
         <View style={styles.contentContainer}>
-          {/* Current landscape progress - PuzzleProgress already has navigation capability */}
+          {/* Current landscape progress with new GalleryProgressCard */}
           {currentLandscape && (
-            <PuzzleProgress
+            <GalleryProgressCard
               landscape={currentLandscape}
               onViewGallery={handleViewGallery}
+              stats={stats}
             />
           )}
         </View>

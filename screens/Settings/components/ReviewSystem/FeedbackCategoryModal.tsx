@@ -12,9 +12,10 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles } from './styles';
 import { FeedbackCategory } from './types';
-import { TEXTS, FEEDBACK_CATEGORIES, CATEGORY_ICONS } from './constants';
+import { CATEGORY_ICONS } from './constants';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { triggerHaptic } from '@/utils/haptics';
+import { useTranslation } from 'react-i18next';
 
 interface FeedbackCategoryModalProps {
   visible: boolean;
@@ -30,6 +31,15 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<FeedbackCategory | null>(null);
   const theme = useTheme();
   const themeStyles = getThemeStyles(theme.isDark);
+  const { t } = useTranslation('feedback');
+
+  const FEEDBACK_CATEGORIES: Array<{id: FeedbackCategory, label: string}> = [
+    { id: 'problem', label: t('category.options.problem') },
+    { id: 'idea', label: t('category.options.idea') },
+    { id: 'missing', label: t('category.options.missing') },
+    { id: 'complicated', label: t('category.options.complicated') },
+    { id: 'other', label: t('category.options.other') }
+  ];
 
   // Reset selection when modal opens
   useEffect(() => {
@@ -76,7 +86,7 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
           </TouchableOpacity>
           
           <Text style={[styles.headerTitle, { color: themeStyles.text }]}>
-            {TEXTS.FEEDBACK_CATEGORY_TITLE}
+            {t('category.title')}
           </Text>
           
           <View style={{ width: 24 }} />
@@ -94,8 +104,8 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
                 style={[
                   styles.categoryItem,
                   {
-                    backgroundColor: selectedCategory === cat.id 
-                      ? `${theme.colors.primary}15`
+                    backgroundColor: selectedCategory === cat.id
+                      ? 'rgba(255, 203, 43, 0.15)'
                       : 'transparent'
                   }
                 ]}
@@ -105,16 +115,16 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
                 {/* Radio Button */}
                 <View style={[
                   styles.categoryRadio,
-                  { 
+                  {
                     borderColor: selectedCategory === cat.id
-                      ? theme.colors.primary 
+                      ? '#FFCB2B'
                       : themeStyles.secondaryText
                   }
                 ]}>
                   {selectedCategory === cat.id && (
                     <View style={[
                       styles.categoryRadioSelected,
-                      { backgroundColor: theme.colors.primary }
+                      { backgroundColor: '#FFCB2B' }
                     ]} />
                   )}
                 </View>
@@ -122,14 +132,14 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
                 {/* Icon */}
                 <View style={[
                   styles.categoryIconContainer,
-                  { 
-                    backgroundColor: `${theme.colors.primary}15`
+                  {
+                    backgroundColor: 'rgba(255, 203, 43, 0.15)'
                   }
                 ]}>
                   <Feather
                     name={CATEGORY_ICONS[cat.id]}
                     size={20}
-                    color={theme.colors.primary}
+                    color="#FFCB2B"
                   />
                 </View>
 
@@ -145,22 +155,26 @@ const FeedbackCategoryModal: React.FC<FeedbackCategoryModalProps> = ({
           </ScrollView>
 
           {/* Continue Button */}
-          <View style={{ marginTop: 'auto' }}>
+          <View style={{ marginTop: 'auto', width: '100%' }}>
             <TouchableOpacity
               style={[
                 styles.buttonContainer,
                 {
-                  backgroundColor: selectedCategory
-                    ? themeStyles.buttonBackground
-                    : themeStyles.borderColor,
-                  opacity: selectedCategory ? 1 : 0.5
+                  backgroundColor: selectedCategory ? '#FFCB2B' : themeStyles.borderColor,
                 }
               ]}
               onPress={handleConfirm}
               disabled={!selectedCategory}
+              activeOpacity={0.8}
             >
-              <Text style={styles.buttonText}>
-                {TEXTS.FEEDBACK_CATEGORY_BUTTON}
+              <Text style={[
+                styles.buttonText,
+                {
+                  color: theme.isDark ? '#1A1A1A' : '#FFFFFF',
+                  opacity: selectedCategory ? 1 : 0.5
+                }
+              ]}>
+                {t('category.button')}
               </Text>
             </TouchableOpacity>
           </View>

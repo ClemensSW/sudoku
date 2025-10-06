@@ -13,12 +13,12 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { styles, getThemeStyles, getEmojiBackgroundColor, getEmojiColor } from './styles';
 import { Rating } from './types';
-import { TEXTS, RATING_EMOJIS } from './constants';
+import { RATING_EMOJIS } from './constants';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { triggerHaptic } from '@/utils/haptics';
 import { FeatherIconName } from './feather-icons';
 import { SvgXml } from 'react-native-svg';
-import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 // SVG Imports
 import StarSvg from '@/assets/svg/star.svg';
@@ -50,6 +50,7 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
 
   const theme = useTheme();
   const themeStyles = getThemeStyles(theme.isDark);
+  const { t } = useTranslation('feedback');
 
   // PanResponder for dragging the bottom sheet
   const panResponder = useRef(
@@ -279,30 +280,30 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
             <View style={styles.textContainer}>
               <Text style={[styles.titleText, { color: themeStyles.text }]}>
                 {selectedRating === 5
-                  ? i18next.t('feedback:fiveStars.title')
+                  ? t('fiveStars.title')
                   : selectedRating === 4
-                    ? i18next.t('feedback:fourStars.title')
+                    ? t('fourStars.title')
                     : selectedRating === 3
-                      ? i18next.t('feedback:threeStars.title')
+                      ? t('threeStars.title')
                       : selectedRating === 2
-                        ? i18next.t('feedback:twoStars.title')
+                        ? t('twoStars.title')
                         : selectedRating === 1
-                          ? i18next.t('feedback:oneStar.title')
-                          : TEXTS.RATING_TITLE}
+                          ? t('oneStar.title')
+                          : t('rating.title')}
               </Text>
 
               <Text style={[styles.subtitleText, { color: themeStyles.secondaryText }]}>
                 {selectedRating === 5
-                  ? i18next.t('feedback:fiveStars.subtitle')
+                  ? t('fiveStars.subtitle')
                   : selectedRating === 4
-                    ? i18next.t('feedback:fourStars.subtitle')
+                    ? t('fourStars.subtitle')
                     : selectedRating === 3
-                      ? i18next.t('feedback:threeStars.subtitle')
+                      ? t('threeStars.subtitle')
                       : selectedRating === 2
-                        ? i18next.t('feedback:twoStars.subtitle')
+                        ? t('twoStars.subtitle')
                         : selectedRating === 1
-                          ? i18next.t('feedback:oneStar.subtitle')
-                          : TEXTS.RATING_SUBTITLE}
+                          ? t('oneStar.subtitle')
+                          : t('rating.subtitle')}
               </Text>
             </View>
 
@@ -332,8 +333,8 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
                   }
                 ]}>
                   {selectedRating && selectedRating === 5
-                    ? i18next.t('feedback:fiveStars.buttonPlayStore')
-                    : TEXTS.RATING_BUTTON}
+                    ? t('fiveStars.buttonPlayStore')
+                    : t('rating.button')}
                 </Text>
               </TouchableOpacity>
             </View>

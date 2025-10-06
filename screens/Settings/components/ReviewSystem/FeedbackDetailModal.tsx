@@ -102,8 +102,9 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
         </View>
         
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
           <View style={styles.fullscreenContent}>
             {/* Main Feedback Input */}
@@ -126,23 +127,29 @@ const FeedbackDetailModal: React.FC<FeedbackDetailModalProps> = ({
               onChangeText={setDetails}
               autoFocus={false}
             />
-            
+
             {/* Submit Button - Fixed at bottom */}
-            <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+            <View style={{ marginTop: 'auto', paddingBottom: Platform.OS === 'android' ? 16 : 0, width: '100%' }}>
               <TouchableOpacity
                 style={[
                   styles.buttonContainer,
                   {
-                    backgroundColor: details.trim().length > 0
-                      ? themeStyles.buttonBackground
-                      : themeStyles.borderColor,
-                    opacity: details.trim().length > 0 ? 1 : 0.5
+                    backgroundColor: details.trim().length > 0 ? '#FFCB2B' : themeStyles.borderColor,
                   }
                 ]}
                 onPress={handleSubmit}
                 disabled={details.trim().length === 0}
+                activeOpacity={0.8}
               >
-                <Text style={styles.buttonText}>{t('detail.button')}</Text>
+                <Text style={[
+                  styles.buttonText,
+                  {
+                    color: theme.isDark ? '#1A1A1A' : '#FFFFFF',
+                    opacity: details.trim().length > 0 ? 1 : 0.5
+                  }
+                ]}>
+                  {t('detail.button')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

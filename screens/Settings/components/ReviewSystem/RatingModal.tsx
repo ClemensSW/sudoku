@@ -312,23 +312,31 @@ const RatingModal: React.FC<RatingModalProps> = ({ visible, onClose, onRate }) =
             </View>
 
             {/* Action Button */}
-            <TouchableOpacity
-              style={[
-                styles.buttonContainer,
-                { 
-                  backgroundColor: selectedRating ? themeStyles.buttonBackground : themeStyles.borderColor,
-                  opacity: selectedRating ? 1 : 0.7
-                }
-              ]}
-              onPress={handleSubmit}
-              disabled={!selectedRating}
-            >
-              <Text style={styles.buttonText}>
-                {selectedRating && selectedRating === 5
-                  ? i18next.t('feedback:fiveStars.buttonPlayStore')
-                  : TEXTS.RATING_BUTTON}
-              </Text>
-            </TouchableOpacity>
+            <View style={{ width: '100%' }}>
+              <TouchableOpacity
+                style={[
+                  styles.buttonContainer,
+                  {
+                    backgroundColor: selectedRating ? '#FFCB2B' : themeStyles.borderColor,
+                  }
+                ]}
+                onPress={handleSubmit}
+                disabled={!selectedRating}
+                activeOpacity={0.8}
+              >
+                <Text style={[
+                  styles.buttonText,
+                  {
+                    color: theme.isDark ? '#1A1A1A' : '#FFFFFF',
+                    opacity: selectedRating ? 1 : 0.5
+                  }
+                ]}>
+                  {selectedRating && selectedRating === 5
+                    ? i18next.t('feedback:fiveStars.buttonPlayStore')
+                    : TEXTS.RATING_BUTTON}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>

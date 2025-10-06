@@ -27,18 +27,23 @@ export const styles = StyleSheet.create({
   // Bottom Sheet Modal Styles
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'flex-end', // Changed to align at bottom
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   modalContainer: {
-    width: '100%', // Full width
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 24,
-    paddingBottom: 32,
+    width: '100%',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 32,
+    paddingBottom: 40,
     paddingHorizontal: 24,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
   },
   closeButton: {
     position: 'absolute',
@@ -102,23 +107,27 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 26,
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
     minHeight: 32,
+    letterSpacing: -0.5,
   },
   subtitleText: {
     fontSize: 16,
     textAlign: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     minHeight: 48,
+    lineHeight: 22,
+    opacity: 0.85,
   },
   
   // Star Rating Styles
   starsContainer: {
     flexDirection: 'row',
-    marginVertical: 32,
+    marginTop: 8,
+    marginBottom: 24,
   },
   starButton: {
     padding: 8,
@@ -181,19 +190,24 @@ export const styles = StyleSheet.create({
     marginBottom: 24,
   },
   
-  // Button Styles - Updated to match the screenshots
+  // Button Styles - Modern design
   buttonContainer: {
     width: '100%',
     height: 56,
-    borderRadius: 12,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    color: 'white',
+    letterSpacing: 0.5,
   },
   
   // Animation handle for bottom sheet

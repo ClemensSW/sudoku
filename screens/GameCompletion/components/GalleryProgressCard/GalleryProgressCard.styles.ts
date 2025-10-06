@@ -2,67 +2,74 @@ import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
+  // Main Card - konsistent mit LevelCard/PathCard
   container: {
     width: "100%",
     borderRadius: radius.xl,
-    padding: spacing.lg,
-    elevation: 2,
+    padding: 0, // Sections handle their own padding
+    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
   },
-  
-  // Header-Bereich
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  
-  newSegmentBadge: {
+
+  // Header Section - minimalistisch
+  headerSection: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: radius.md,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    gap: 8,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
   },
-  
-  newSegmentText: {
-    color: "#FFF",
+
+  headerLabel: {
     fontSize: 12,
     fontWeight: "700",
-    marginLeft: 4,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    opacity: 0.7,
   },
-  
-  // Bildvorschau und Raster
+
+  badge: {
+    marginLeft: "auto",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  // Puzzle Section - luftig
+  puzzleSection: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+  },
+
   puzzleContainer: {
     width: "100%",
-    aspectRatio: 1, // Quadratisches Format für das Puzzle
-    marginBottom: spacing.md,
-    borderRadius: radius.md,
+    aspectRatio: 1,
+    borderRadius: 16,
     overflow: "hidden",
     position: "relative",
   },
-  
+
   puzzleImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
   },
-  
-  // Raster-Overlay
+
+  // Grid Overlay
   gridOverlay: {
     position: "absolute",
     top: 0,
@@ -71,62 +78,100 @@ export default StyleSheet.create({
     bottom: 0,
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 2,
+    padding: 3,
   },
-  
+
   segment: {
     width: "33.33%",
     height: "33.33%",
     justifyContent: "center",
     alignItems: "center",
+    padding: 2,
+  },
+
+  segmentInner: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 8,
   },
-  
+
   unlockedSegment: {
-    // Keine zusätzlichen Styles für freigeschaltete Segmente
+    // Transparent - shows image
   },
-  
+
   lockedSegment: {
-    borderWidth: 2,
-    // Note: backgroundColor and borderColor are now set dynamically based on theme
+    borderWidth: 1.5,
   },
-  
-  // Highlight für das neueste Segment 
+
   newlyUnlockedSegment: {
-    borderWidth: 0.5,
-    // Note: backgroundColor and borderColor are now set dynamically based on theme
+    borderWidth: 2.5,
   },
-  
-  // Fortschrittsanzeige
-  progressTextContainer: {
-    alignItems: "center",
-    marginVertical: spacing.sm,
+
+  // Completion Glow
+  completionGlow: {
+    position: "absolute",
+    top: -4,
+    left: -4,
+    right: -4,
+    bottom: -4,
+    borderRadius: 20,
+    borderWidth: 3,
   },
-  
+
+  // Progress Section
+  progressSection: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    borderBottomWidth: 1,
+  },
+
   progressText: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: spacing.md,
   },
-  
-  progressBar: {
+
+  progressBarContainer: {
     width: "100%",
-    height: 6,
-    borderRadius: 3,
-    marginTop: spacing.sm,
+    height: 16,
+    borderRadius: 8,
     overflow: "hidden",
   },
-  
+
   progressFill: {
     height: "100%",
-    borderRadius: 3,
+    borderRadius: 8,
   },
-  
-  // Button-Bereich
-  buttonContainer: {
-    marginTop: spacing.md,
+
+  // Action Section
+  actionSection: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
-  
-  // Celebration Overlay für abgeschlossene Bilder
+
+  galleryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+
+  buttonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  // Celebration Overlay
   celebrationOverlay: {
     position: "absolute",
     top: 0,
@@ -135,15 +180,15 @@ export default StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: radius.md,
+    borderRadius: 16,
   },
-  
+
   completionText: {
     color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "700",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    fontSize: 22,
+    fontWeight: "800",
+    textShadowColor: "rgba(0, 0, 0, 0.6)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
 });

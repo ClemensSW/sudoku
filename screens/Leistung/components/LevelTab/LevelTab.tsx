@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
-import PlayerProgressionCard from "@/screens/GameCompletion/components/PlayerProgressionCard";
-import { useTheme } from "@/utils/theme/ThemeProvider";
+import LevelCard from "@/screens/GameCompletion/components/LevelCard";
+import PathCard from "@/screens/GameCompletion/components/PathCard";
 import { spacing } from "@/utils/theme";
 
 interface LevelTabProps {
@@ -17,28 +17,34 @@ const LevelTab: React.FC<LevelTabProps> = ({
   selectedTitle = null,
   onTitleSelect,
 }) => {
-  // Theme ggf. später verwenden
-  const theme = useTheme();
-
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <PlayerProgressionCard
+        {/* Level Card - shows XP, progress, title selection */}
+        <LevelCard
           stats={stats}
           xp={stats.totalXP}
           previousXp={stats.totalXP}
           xpGain={0}
           justCompleted={false}
-          options={{
-            showPathDescription: true,
-            showMilestones: true,
-            textVisibility: "always",
-          }}
           selectedTitle={selectedTitle}
           onTitleSelect={onTitleSelect}
+        />
+
+        {/* Spacer */}
+        <View style={{ height: spacing.lg }} />
+
+        {/* Path Card - shows path trail, milestones */}
+        <PathCard
+          stats={stats}
+          xp={stats.totalXP}
+          previousXp={stats.totalXP}
+          justCompleted={false}
+          xpGain={0}
+          showPathDescription={true}
         />
       </ScrollView>
     </Animated.View>

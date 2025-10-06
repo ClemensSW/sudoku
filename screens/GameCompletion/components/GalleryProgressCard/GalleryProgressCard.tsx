@@ -1,25 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-  withSequence,
-  withDelay,
-  withSpring,
-  FadeIn,
-  ZoomIn,
-} from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
+import { View, Text } from "react-native";
+import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
 import { GameStats } from "@/utils/storage";
-import {
-  Landscape,
-  LandscapeSegment,
-} from "@/screens/Gallery/utils/landscapes/types";
+import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
+
+// Components
+import GallerySegment from "./components/GallerySegment";
+import GalleryProgress from "./components/GalleryProgress";
+import GalleryAction from "./components/GalleryAction";
+
+// Hooks
+import { useGalleryAnimations } from "./hooks/useGalleryAnimations";
+
+// Styles
 import styles from "./GalleryProgressCard.styles";
 
 export interface GalleryProgressCardProps {
@@ -47,21 +44,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
 
   // Track visibility for animation
   const [isVisible, setIsVisible] = useState(false);
-
-  // Animation values
-  const containerScale = useSharedValue(1);
-  const segmentOpacities = useRef(
-    Array(9)
-      .fill(0)
-      .map(() => useSharedValue(0))
-  ).current;
-  const segmentScales = useRef(
-    Array(9)
-      .fill(0)
-      .map(() => useSharedValue(0.8))
-  ).current;
-  const progressWidth = useSharedValue(0);
-  const glowOpacity = useSharedValue(0);
 
   // If no landscape image is available, show a placeholder
   if (!landscape) {
@@ -92,14 +74,20 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   // Get progress color from level info (path color)
   const progressColor = levelInfo.currentPath.color;
 
-  // Helper function to darken color
-  const darkenColor = (color: string, amount: number): string => {
-    const hex = color.replace('#', '');
-    const r = Math.max(0, parseInt(hex.substring(0, 2), 16) - amount);
-    const g = Math.max(0, parseInt(hex.substring(2, 4), 16) - amount);
-    const b = Math.max(0, parseInt(hex.substring(4, 6), 16) - amount);
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-  };
+  // Animation hook
+  const {
+    containerAnimatedStyle,
+    progressAnimatedStyle,
+    glowAnimatedStyle,
+    segmentOpacities,
+    segmentScales,
+  } = useGalleryAnimations({
+    landscape,
+    newlyUnlockedSegmentId,
+    isComplete,
+    isVisible,
+    progressPercentage,
+  });
 
   // Handler for when card becomes visible
   const handleLayout = () => {
@@ -107,152 +95,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       setIsVisible(true);
     }
   };
-
-  // Start animation effect - only when visible
-  useEffect(() => {
-    if (!isVisible) return;
-
-    // Container light scaling
-    containerScale.value = withSequence(
-      withTiming(1.02, { duration: 300 }),
-      withTiming(1, { duration: 200 })
-    );
-
-    // Animate progress bar
-    progressWidth.value = withTiming(progressPercentage, { duration: 1000 });
-
-    // Animate segments
-    landscape.segments.forEach((segment, index) => {
-      if (segment.isUnlocked) {
-        const delay = index * 50;
-
-        // Opacity animation
-        segmentOpacities[index].value = withDelay(
-          delay,
-          withTiming(1, { duration: 500 })
-        );
-
-        // Scale animation (bounce effect)
-        segmentScales[index].value = withDelay(
-          delay,
-          withSpring(1, {
-            damping: 10,
-            stiffness: 80,
-          })
-        );
-      } else {
-        segmentOpacities[index].value = withTiming(0);
-        segmentScales[index].value = withTiming(0.8);
-      }
-    });
-
-    // Special animation for newly unlocked segment
-    if (newlyUnlockedSegmentId !== undefined) {
-      const segmentIndex = newlyUnlockedSegmentId;
-      const delayAmount = 800;
-
-      segmentOpacities[segmentIndex].value = withSequence(
-        withTiming(0, { duration: 0 }),
-        withDelay(delayAmount, withTiming(1, { duration: 600 }))
-      );
-
-      segmentScales[segmentIndex].value = withSequence(
-        withTiming(0.5, { duration: 0 }),
-        withDelay(
-          delayAmount,
-          withSpring(1, {
-            damping: 8,
-            stiffness: 100,
-          })
-        )
-      );
-    }
-
-    // Completion glow animation
-    if (isComplete) {
-      glowOpacity.value = withSequence(
-        withDelay(1000, withTiming(1, { duration: 600 })),
-        withTiming(0.5, { duration: 800 })
-      );
-    }
-  }, [isVisible, landscape, newlyUnlockedSegmentId, progressPercentage, isComplete]);
-
-  // Animated styles
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: containerScale.value }],
-  }));
-
-  const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value}%`,
-  }));
-
-  const glowAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
-
-  // Render a single segment
-  const renderSegment = (segment: LandscapeSegment, index: number) => {
-    const isUnlocked = segment.isUnlocked;
-    const isNewlyUnlocked = index === newlyUnlockedSegmentId;
-
-    const segmentAnimatedStyle = useAnimatedStyle(() => ({
-      opacity: segmentOpacities[index].value,
-      transform: [{ scale: segmentScales[index].value }],
-    }));
-
-    return (
-      <View key={`segment-${index}`} style={styles.segment}>
-        {!isUnlocked ? (
-          // Locked segment
-          <View
-            style={[
-              styles.segmentInner,
-              styles.lockedSegment,
-              {
-                backgroundColor: theme.isDark
-                  ? "rgba(0, 0, 0, 0.7)"
-                  : "rgba(255, 255, 255, 0.85)",
-                borderColor: `${progressColor}30`,
-              },
-            ]}
-          >
-            <Feather
-              name="lock"
-              size={18}
-              color={progressColor}
-              style={{ opacity: 0.6 }}
-            />
-          </View>
-        ) : isNewlyUnlocked ? (
-          // Newly unlocked segment - Glasscheiben-Effekt
-          <Animated.View
-            style={[
-              styles.segmentInner,
-              styles.newlyUnlockedSegment,
-              {
-                backgroundColor: `${progressColor}30`, // Glasscheiben-Effekt mit Path-Farbe
-                borderColor: progressColor,
-              },
-              segmentAnimatedStyle,
-            ]}
-          />
-        ) : (
-          // Unlocked segment (transparent, shows image)
-          <Animated.View
-            style={[
-              styles.segmentInner,
-              styles.unlockedSegment,
-              segmentAnimatedStyle,
-            ]}
-          />
-        )}
-      </View>
-    );
-  };
-
-  // Calculate remaining segments
-  const remainingSegments = 9 - landscape.progress;
-  const isSpecialImage = landscape.progress === 8 || landscape.progress === 6 || landscape.progress === 3;
 
   return (
     <Animated.View
@@ -322,7 +164,18 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
 
           {/* Grid Overlay with segments */}
           <View style={styles.gridOverlay}>
-            {landscape.segments.map(renderSegment)}
+            {landscape.segments.map((segment, index) => (
+              <GallerySegment
+                key={`segment-${index}`}
+                segment={segment}
+                index={index}
+                isNewlyUnlocked={index === newlyUnlockedSegmentId}
+                progressColor={progressColor}
+                isDark={theme.isDark}
+                opacity={segmentOpacities[index]}
+                scale={segmentScales[index]}
+              />
+            ))}
           </View>
 
           {/* Completion Glow */}
@@ -360,80 +213,17 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       </View>
 
       {/* Progress Section */}
-      <View
-        style={[
-          styles.progressSection,
-          {
-            borderBottomColor: theme.isDark
-              ? "rgba(255,255,255,0.08)"
-              : "rgba(0,0,0,0.06)",
-          },
-        ]}
-      >
-        <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-          {landscape.isComplete
-            ? t('gallery.fullyUnlocked')
-            : isSpecialImage
-            ? t('gallery.solveMore', {
-                count: remainingSegments,
-                plural: remainingSegments === 1 ? 's' : '',
-                plural2: remainingSegments === 1 ? '' : 's',
-              })
-            : t('gallery.segmentsUnlocked', { count: landscape.progress })}
-        </Text>
-
-        {/* Progress Bar with Gradient */}
-        <View
-          style={[
-            styles.progressBarContainer,
-            {
-              backgroundColor: theme.isDark
-                ? "rgba(255,255,255,0.10)"
-                : "rgba(0,0,0,0.06)",
-            },
-          ]}
-        >
-          <Animated.View
-            style={[
-              {
-                position: "absolute",
-                height: "100%",
-                left: 0,
-                borderRadius: 8,
-                overflow: "hidden",
-              },
-              progressAnimatedStyle,
-            ]}
-          >
-            <LinearGradient
-              colors={[progressColor, darkenColor(progressColor, 40)]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.progressFill}
-            />
-          </Animated.View>
-        </View>
-      </View>
+      <GalleryProgress
+        landscape={landscape}
+        progressColor={progressColor}
+        progressAnimatedStyle={progressAnimatedStyle}
+      />
 
       {/* Action Section */}
-      <View style={styles.actionSection}>
-        <Pressable
-          onPress={onViewGallery}
-          style={({ pressed }) => [
-            styles.galleryButton,
-            {
-              backgroundColor: pressed
-                ? darkenColor(progressColor, 20)
-                : progressColor,
-              shadowColor: progressColor,
-            },
-          ]}
-        >
-          <Feather name="image" size={18} color="#FFFFFF" />
-          <Text style={styles.buttonText}>{t('buttons.viewGallery')}</Text>
-          <Feather name="arrow-right" size={18} color="#FFFFFF" />
-        </Pressable>
-      </View>
+      <GalleryAction
+        progressColor={progressColor}
+        onPress={onViewGallery}
+      />
     </Animated.View>
   );
 };

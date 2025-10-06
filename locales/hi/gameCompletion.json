@@ -127,6 +127,8 @@
     "levelUp": "स्तर {{level}} प्राप्त किया!"
   },
   "path": {
-    "title": "आपकी यात्रा"
+    "title": "आपकी यात्रा",
+    "currentPath": "वर्तमान पथ",
+    "rewardsComingSoon": "पुरस्कार (जल्द आ रहा है)"
   }
 }

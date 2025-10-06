@@ -3,100 +3,117 @@ import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  // Main Card
+  // Main Card - identisch zu LevelCard
   card: {
     width: "100%",
     borderRadius: radius.xl,
-    padding: spacing.lg,
-    elevation: 2,
+    padding: 0, // Content sections handle their own padding
+    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
   },
 
-  // Header
-  headerContainer: {
+  // Header Section - minimalistisch
+  headerSection: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
+    gap: 8,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
   },
 
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  headerIconWrap: {
-    width: 72,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 8,
-  },
-
-  headerTitle: {
-    fontSize: 18,
+  headerLabel: {
+    fontSize: 12,
     fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    opacity: 0.7,
   },
 
-  // Trail
-  trailContainer: {
-    width: "100%",
-    height: 120,
-    marginTop: 2,
-    marginBottom: spacing.lg,
+  // Trail Section - luftig
+  trailSection: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    borderBottomWidth: 1,
   },
 
-  // Path Details Card
-  pathDetailsCard: {
+  // Path Details Section
+  pathSection: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+  },
+
+  pathPressable: {
     borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    padding: spacing.md,
   },
 
-  pathDetailsHeader: {
+  pathHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: spacing.xs,
   },
 
-  pathDetailsHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-
-  pathDetailsHeaderRight: {
+  pathHeaderLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
 
-  pathColorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  pathLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    opacity: 0.7,
   },
 
-  descriptionTitle: {
-    fontSize: 15.5,
+  pathName: {
+    fontSize: 17,
     fontWeight: "800",
+    letterSpacing: 0.3,
+    marginBottom: spacing.xs,
   },
 
-  descriptionBody: {
+  // Description Wrapper (mit Fade-Gradient)
+  pathDescriptionWrapper: {
+    position: "relative",
     marginTop: spacing.md,
-    padding: spacing.md,
-    borderRadius: 10,
-    borderLeftWidth: 3,
   },
 
-  descriptionText: {
-    fontSize: 14.5,
-    lineHeight: 21,
+  pathDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    opacity: 0.8,
+    fontWeight: "500",
+  },
+
+  descriptionFade: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 20,
+  },
+
+  // Rewards Placeholder (für Zukunft)
+  rewardsPlaceholder: {
+    marginTop: spacing.lg,
+    padding: spacing.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    alignItems: "center",
+  },
+
+  comingSoonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    opacity: 0.5,
+    fontStyle: "italic",
   },
 });

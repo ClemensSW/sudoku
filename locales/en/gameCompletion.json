@@ -127,6 +127,8 @@
     "levelUp": "Level {{level}} reached!"
   },
   "path": {
-    "title": "Your Journey"
+    "title": "Your Journey",
+    "currentPath": "Current Path",
+    "rewardsComingSoon": "Rewards (Coming Soon)"
   }
 }

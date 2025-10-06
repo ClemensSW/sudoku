@@ -2,13 +2,13 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
 import { GameStats } from "@/utils/storage";
-import { hexToRGBA } from "@/screens/GameCompletion/shared/utils/colorUtils";
 
 // Components
 import PathTrail from "./components/PathTrail";
@@ -90,127 +90,139 @@ const PathCard: React.FC<PathCardProps> = ({
     triggerHaptic("light");
   }, []);
 
+  // Check if description needs fade gradient
+  const pathDescription = levelInfo.currentPath.description;
+  const needsFade = pathDescription.length > 200;
+
   return (
     <Animated.View
       style={[
         styles.card,
         {
-          backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
-          elevation: theme.isDark ? 0 : 2,
+          backgroundColor: theme.isDark ? "#1a1a1a" : "#ffffff",
+          elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? "transparent" : progressColor,
         },
         cardAnimatedStyle,
       ]}
       entering={FadeIn.duration(350)}
     >
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerLeft}>
-          <View
-            style={[
-              styles.headerIconWrap,
+      {/* Header Section - minimalistisch */}
+      <View style={styles.headerSection}>
+        <Feather name="map" size={16} color={progressColor} />
+        <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
+          {t('path.title')}
+        </Text>
+      </View>
+
+      {/* Trail Section - luftig */}
+      <View
+        style={[
+          styles.trailSection,
+          {
+            borderBottomColor: theme.isDark
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.06)",
+          },
+        ]}
+      >
+        <Animated.View style={trailAnimatedStyle}>
+          <PathTrail
+            color={progressColor}
+            isDark={theme.isDark}
+            currentLevel={levelInfo.currentLevel}
+            previousLevel={previousLevelInfo.currentLevel}
+            milestoneLevels={MILESTONE_LEVELS}
+          />
+        </Animated.View>
+      </View>
+
+      {/* Path Details Section - wie "Dein Titel" */}
+      {showPathDescription && (
+        <View style={styles.pathSection}>
+          <Pressable
+            onPress={togglePathDescription}
+            style={({ pressed }) => [
+              styles.pathPressable,
               {
-                backgroundColor: theme.isDark
-                  ? hexToRGBA(progressColor, 0.2)
-                  : hexToRGBA(progressColor, 0.12),
-                borderColor: theme.isDark
-                  ? hexToRGBA(progressColor, 0.35)
-                  : hexToRGBA(progressColor, 0.25),
+                backgroundColor: pressed
+                  ? theme.isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(0,0,0,0.04)"
+                  : "transparent",
               },
             ]}
           >
-            <Feather name="map" size={14} color={progressColor} />
-          </View>
-          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-            {t('path.title')}
-          </Text>
-        </View>
-      </View>
-
-      {/* Trail */}
-      <Animated.View style={trailAnimatedStyle}>
-        <PathTrail
-          color={progressColor}
-          isDark={theme.isDark}
-          currentLevel={levelInfo.currentLevel}
-          previousLevel={previousLevelInfo.currentLevel}
-          milestoneLevels={MILESTONE_LEVELS}
-        />
-      </Animated.View>
-
-      {/* Path Details (Expandable) */}
-      {showPathDescription && (
-        <Pressable
-          onPress={togglePathDescription}
-          accessibilityRole="button"
-          accessibilityLabel="Pfaddetails anzeigen oder verbergen"
-          style={({ pressed }) => [
-            styles.pathDetailsCard,
-            {
-              borderColor: theme.isDark
-                ? "rgba(255,255,255,0.12)"
-                : "rgba(0,0,0,0.08)",
-              backgroundColor: pressed
-                ? theme.isDark
-                  ? "rgba(255,255,255,0.06)"
-                  : "rgba(0,0,0,0.04)"
-                : theme.isDark
-                ? "rgba(255,255,255,0.03)"
-                : "rgba(0,0,0,0.02)",
-            },
-          ]}
-          hitSlop={8}
-        >
-          <View style={styles.pathDetailsHeader}>
-            <View style={styles.pathDetailsHeaderLeft}>
-              <View
-                style={[
-                  styles.pathColorDot,
-                  { backgroundColor: progressColor },
-                ]}
-              />
-              <Text
-                style={[
-                  styles.descriptionTitle,
-                  { color: colors.textPrimary },
-                ]}
-              >
-                {levelInfo.currentPath.name}
-              </Text>
+            {/* Header: Label + Chevron */}
+            <View style={styles.pathHeader}>
+              <View style={styles.pathHeaderLeft}>
+                <Feather name="compass" size={16} color={progressColor} />
+                <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
+                  {t('path.currentPath')}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={progressColor} />
             </View>
 
-            <View style={styles.pathDetailsHeaderRight}>
-              <Feather
-                name={pathDescExpanded ? "chevron-up" : "chevron-down"}
-                size={18}
-                color={colors.textSecondary}
-              />
-            </View>
-          </View>
-
-          {pathDescExpanded && (
-            <Animated.View
-              style={[
-                styles.descriptionBody,
-                {
-                  borderLeftColor: progressColor,
-                  backgroundColor: theme.isDark
-                    ? "rgba(255,255,255,0.035)"
-                    : "rgba(0,0,0,0.02)",
-                },
-              ]}
-              entering={FadeIn.duration(240)}
+            {/* Path Name */}
+            <Text
+              style={[styles.pathName, { color: colors.textPrimary }]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
-              <Text
-                style={[
-                  styles.descriptionText,
-                  { color: colors.textSecondary },
-                ]}
+              {levelInfo.currentPath.name}
+            </Text>
+
+            {/* Description - expandable with fade */}
+            {pathDescExpanded && (
+              <Animated.View
+                style={styles.pathDescriptionWrapper}
+                entering={FadeIn.duration(200)}
               >
-                {levelInfo.currentPath.description}
-              </Text>
-            </Animated.View>
-          )}
-        </Pressable>
+                <Text
+                  style={[styles.pathDescription, { color: colors.textSecondary }]}
+                  numberOfLines={5}
+                  ellipsizeMode="tail"
+                >
+                  {pathDescription}
+                </Text>
+
+                {/* Fade gradient for long texts */}
+                {needsFade && (
+                  <LinearGradient
+                    colors={[
+                      "transparent",
+                      theme.isDark ? "#1a1a1a" : "#ffffff",
+                    ]}
+                    style={styles.descriptionFade}
+                    pointerEvents="none"
+                  />
+                )}
+
+                {/* Rewards Placeholder (für Zukunft) */}
+                <View
+                  style={[
+                    styles.rewardsPlaceholder,
+                    {
+                      borderColor: theme.isDark
+                        ? "rgba(255,255,255,0.15)"
+                        : "rgba(0,0,0,0.15)",
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.comingSoonText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    {t('path.rewardsComingSoon')}
+                  </Text>
+                </View>
+              </Animated.View>
+            )}
+          </Pressable>
+        </View>
       )}
 
       {/* Milestone Notification */}

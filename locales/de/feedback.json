@@ -4,6 +4,27 @@
     "subtitle": "Dein Feedback hilft mir, die App zu verbessern",
     "button": "Bewerten"
   },
+  "oneStar": {
+    "title": "Autsch! Das tat weh...",
+    "subtitle": "Erzähl mir, was schiefgelaufen ist – ich verspreche nicht zu weinen"
+  },
+  "twoStars": {
+    "title": "Oha, noch Luft nach oben!",
+    "subtitle": "Was kann ich besser machen? Ich bin ganz Ohr!"
+  },
+  "threeStars": {
+    "title": "Geht so, oder?",
+    "subtitle": "Sag mir, wie ich dich zum Lächeln bringe"
+  },
+  "fourStars": {
+    "title": "Fast perfekt!",
+    "subtitle": "Nur ein Stern fehlt noch – was braucht's dafür?"
+  },
+  "fiveStars": {
+    "title": "WOW! Du bist der Beste!",
+    "subtitle": "Magst du mich auch im Play Store verwöhnen?",
+    "buttonPlayStore": "Im Play Store bewerten"
+  },
   "positive": {
     "title": "Ich mag dich auch!",
     "subtitle": "Danke für deine Unterstützung",

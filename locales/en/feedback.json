@@ -4,6 +4,27 @@
     "subtitle": "Your feedback helps me improve the app",
     "button": "Rate"
   },
+  "oneStar": {
+    "title": "Ouch! That hurt...",
+    "subtitle": "Tell me what went wrong – I promise not to cry"
+  },
+  "twoStars": {
+    "title": "Oops, room for improvement!",
+    "subtitle": "What can I do better? I'm all ears!"
+  },
+  "threeStars": {
+    "title": "Not bad, right?",
+    "subtitle": "Tell me how to make you smile"
+  },
+  "fourStars": {
+    "title": "Almost perfect!",
+    "subtitle": "Just one star missing – what would it take?"
+  },
+  "fiveStars": {
+    "title": "WOW! You're the best!",
+    "subtitle": "Would you spoil me on the Play Store too?",
+    "buttonPlayStore": "Rate on Play Store"
+  },
   "positive": {
     "title": "I like you too!",
     "subtitle": "Thank you for your support",

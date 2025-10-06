@@ -74,25 +74,45 @@ export const styles = StyleSheet.create({
   },
   
   // Content Styles
-  emojiContainer: {
-    width: 80,
+  iconWrapper: {
+    marginBottom: 24,
     height: 80,
-    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+  },
+  emojiCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    position: 'absolute',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  iconAbsolute: {
+    position: 'absolute',
+    top: 8,
+  },
+  textContainer: {
+    height: 120,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
   },
   titleText: {
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
     marginBottom: 8,
+    minHeight: 32,
   },
   subtitleText: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
     paddingHorizontal: 16,
+    minHeight: 48,
   },
   
   // Star Rating Styles

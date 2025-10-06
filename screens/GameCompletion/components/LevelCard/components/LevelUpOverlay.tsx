@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import LevelBadge from "./LevelBadge";
 import { LevelInfo } from "../../PlayerProgressionCard/utils/types";
 import { radius, spacing } from "@/utils/theme";
@@ -17,34 +18,26 @@ const LevelUpOverlay: React.FC<LevelUpOverlayProps> = ({
   levelInfo,
   color,
 }) => {
+  const { t } = useTranslation('gameCompletion');
+
   if (!visible) return null;
 
   return (
     <Animated.View
-      style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.75)" }]}
-      entering={FadeIn.duration(300)}
+      style={[styles.overlay]}
+      entering={FadeIn.duration(400)}
       exiting={FadeOut.duration(300)}
+      pointerEvents="none"
     >
-      <View
-        style={[
-          styles.content,
-          {
-            backgroundColor: "rgba(0,0,0,0.5)",
-            borderColor: color,
-            borderWidth: 2,
-            padding: 24,
-            borderRadius: 20,
-          },
-        ]}
+      {/* Centered Text Message */}
+      <Animated.View
+        style={styles.messageContainer}
+        entering={FadeIn.delay(200).duration(400)}
       >
-        <Text style={styles.text}>LEVEL UP!</Text>
-        <LevelBadge
-          levelInfo={levelInfo}
-          size={84}
-          showAnimation={true}
-          animationDelay={300}
-        />
-      </View>
+        <Text style={[styles.text, { color }]}>
+          🎉 {t('level.levelUp', { level: levelInfo.currentLevel + 1 })}
+        </Text>
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -58,27 +51,23 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: radius.xl,
     zIndex: 20,
   },
-  content: {
+  messageContainer: {
+    position: "absolute",
+    bottom: spacing.xl * 2,
+    left: spacing.lg,
+    right: spacing.lg,
     alignItems: "center",
-    padding: spacing.xl,
-    borderRadius: radius.xl,
-    borderWidth: 2,
-    maxWidth: "85%",
-    backgroundColor: "rgba(0,0,0,0.7)",
   },
   text: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "900",
-    color: "#FFFFFF",
-    marginBottom: spacing.md,
-    textShadowColor: "rgba(0,0,0,0.35)",
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 3,
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
+    textShadowRadius: 8,
+    letterSpacing: 0.5,
   },
 });
 

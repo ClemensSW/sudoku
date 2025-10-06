@@ -5,6 +5,8 @@ import {
   useAnimatedStyle,
   withTiming,
   withSequence,
+  withSpring,
+  Easing,
 } from "react-native-reanimated";
 import { LevelInfo } from "../../PlayerProgressionCard/utils/types";
 import { triggerHaptic } from "@/utils/haptics";
@@ -79,6 +81,21 @@ export function useLevelAnimations({
       ? 0
       : Math.min(100, ((prevXp - prevLevelStartXp) / prevLevelRange) * 100);
 
+    // Badge entrance animation with bounce (on mount)
+    setTimeout(() => {
+      badgePulse.value = withSequence(
+        withTiming(0.8, {
+          duration: 150,
+          easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        }),
+        withSpring(1, {
+          damping: 8,
+          stiffness: 100,
+          mass: 0.8,
+        })
+      );
+    }, 100);
+
     // Initial setup
     setTimeout(() => {
       previousProgressWidth.value = prevPercentage;
@@ -122,9 +139,22 @@ export function useLevelAnimations({
           withTiming(1.05, { duration: ANIMATION_CONFIGS.levelUp.duration }),
           withTiming(1, { duration: ANIMATION_CONFIGS.levelUp.duration })
         );
+
+        // Badge Scale 2.5x for dramatic effect (visible beyond card)
         badgePulse.value = withSequence(
-          withTiming(1.2, { duration: ANIMATION_CONFIGS.badgePulse.duration }),
-          withTiming(1, { duration: 300 })
+          withTiming(0.8, {
+            duration: 150,
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          }),
+          withSpring(2.5, {
+            damping: 10,
+            stiffness: 80,
+            mass: 1,
+          }),
+          withTiming(1, {
+            duration: 400,
+            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+          })
         );
       }, ANIMATION_DELAYS.levelUpOverlay);
 

@@ -115,11 +115,16 @@
   "level": {
     "title": "Level",
     "xpRemaining": "Noch {{count}} EP",
-    "xpGain": "{{count}} Erfahrungspunkte",
+    "xpGain": "{{count}} EP",
     "yourTitle": "Dein Titel",
+    "yourTitleLabel": "Dein Titel",
     "currentTitle": "Aktueller Titel:",
     "selectTitle": "Titel auswählen",
-    "noTitle": "Ohne Titel"
+    "noTitle": "Ohne Titel",
+    "nextLevel": "Nächstes Level",
+    "xpToUnlock": "{{count}} EP zum Freischalten",
+    "chooseTitle": "Wähle einen Titel",
+    "levelUp": "Level {{level}} erreicht!"
   },
   "path": {
     "title": "Deine Reise"

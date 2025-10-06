@@ -115,11 +115,16 @@
   "level": {
     "title": "स्तर",
     "xpRemaining": "अभी भी {{count}} EP",
-    "xpGain": "{{count}} अनुभव अंक",
+    "xpGain": "{{count}} EP",
     "yourTitle": "आपकी उपाधि",
+    "yourTitleLabel": "आपकी उपाधि",
     "currentTitle": "वर्तमान उपाधि:",
     "selectTitle": "उपाधि चुनें",
-    "noTitle": "बिना उपाधि"
+    "noTitle": "बिना उपाधि",
+    "nextLevel": "अगला स्तर",
+    "xpToUnlock": "अनलॉक करने के लिए {{count}} EP",
+    "chooseTitle": "एक उपाधि चुनें",
+    "levelUp": "स्तर {{level}} प्राप्त किया!"
   },
   "path": {
     "title": "आपकी यात्रा"

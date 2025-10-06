@@ -115,11 +115,16 @@
   "level": {
     "title": "Level",
     "xpRemaining": "{{count}} XP remaining",
-    "xpGain": "{{count}} Experience Points",
+    "xpGain": "{{count}} XP",
     "yourTitle": "Your Title",
+    "yourTitleLabel": "Your Title",
     "currentTitle": "Current Title:",
     "selectTitle": "Select Title",
-    "noTitle": "No Title"
+    "noTitle": "No Title",
+    "nextLevel": "Next Level",
+    "xpToUnlock": "{{count}} XP to unlock",
+    "chooseTitle": "Choose a title",
+    "levelUp": "Level {{level}} reached!"
   },
   "path": {
     "title": "Your Journey"

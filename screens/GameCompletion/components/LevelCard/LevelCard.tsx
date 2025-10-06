@@ -1,9 +1,10 @@
 // components/GameCompletion/components/LevelCard/LevelCard.tsx
 import React, { useState, useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withSequence, withTiming, withRepeat, Easing } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
@@ -104,253 +105,333 @@ const LevelCard: React.FC<LevelCardProps> = ({
     triggerHaptic("light");
   }, []);
 
+  // Get title description based on selected title
+  const getTitleDescription = (): string => {
+    if (!selectedTitle) {
+      // Fallback to current level message
+      return levelInfo.levelData.message;
+    }
+
+    // Find selected title in levels
+    const allLevels = getLevels();
+    const titleLevel = allLevels.find(l => l.name === selectedTitle);
+    return titleLevel?.message || levelInfo.levelData.message;
+  };
+
+  const titleDescription = getTitleDescription();
+  const needsFade = titleDescription.length > 120;
+
+  // Helper function to darken color
+  const darkenColor = (color: string, amount: number): string => {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, parseInt(hex.substring(0, 2), 16) - amount);
+    const g = Math.max(0, parseInt(hex.substring(2, 4), 16) - amount);
+    const b = Math.max(0, parseInt(hex.substring(4, 6), 16) - amount);
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  };
+
+  // Shimmer animation for progress bar
+  const shimmerTranslateX = useSharedValue(-100);
+
+  React.useEffect(() => {
+    if (justCompleted && (xpGain ?? 0) > 0) {
+      shimmerTranslateX.value = withRepeat(
+        withSequence(
+          withTiming(100, { duration: 1500, easing: Easing.linear }),
+          withTiming(-100, { duration: 0 })
+        ),
+        3,
+        false
+      );
+    }
+  }, [justCompleted, xpGain]);
+
+  const shimmerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shimmerTranslateX.value }],
+  }));
+
+  // Removed: XP calculations no longer needed (simplified design)
+
   return (
     <Animated.View
       style={[
         styles.card,
         {
-          backgroundColor: theme.isDark ? "rgba(255,255,255,0.03)" : "#fff",
-          elevation: theme.isDark ? 0 : 2,
+          backgroundColor: theme.isDark ? "#1a1a1a" : "#ffffff",
+          elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? "transparent" : progressColor,
         },
         containerAnimatedStyle,
       ]}
       entering={FadeIn.duration(350)}
     >
-      {/* Header (Badge + Title) */}
-      <View style={[styles.header, { alignItems: "center", marginBottom: 18 }]}>
-        <Animated.View style={badgeAnimatedStyle}>
-          <LevelBadge
-            levelInfo={levelInfo}
-            size={compact ? 44 : 56}
-            showAnimation={showLevelUpOverlay}
-          />
-        </Animated.View>
-
-        <View style={styles.levelInfoContainer}>
-          <Text style={[styles.levelName, { color: colors.textPrimary }]}>
-            {levelInfo.levelData.name}
-          </Text>
-        </View>
-      </View>
-
-      {/* Gain Chip */}
-      {(xpGain ?? 0) > 0 && justCompleted && (
-        <Animated.View
-          style={[
-            styles.gainChip,
-            {
-              backgroundColor: theme.isDark
-                ? hexToRGBA(progressColor, 0.9)
-                : hexToRGBA(progressColor, 1),
-              borderColor: theme.isDark
-                ? hexToRGBA(progressColor, 0.55)
-                : hexToRGBA(progressColor, 0.35),
-            },
-            xpGainAnimatedStyle,
-          ]}
-        >
-          <Feather name="plus" size={14} color="#FFFFFF" />
-          <Text style={[styles.gainChipText, { color: "#FFFFFF" }]}>
-            {t('level.xpGain', { count: xpGain })}
-          </Text>
-        </Animated.View>
-      )}
-
-      {/* XP Progress */}
-      <View style={styles.progressSection}>
-        <View style={[styles.xpInfoRow, { marginBottom: 8 }]}>
-          <Text style={[styles.xpText, { color: colors.textPrimary }]}>
-            {t('level.title')} {levelInfo.currentLevel + 1}
-          </Text>
-          {levelInfo.nextLevelData && (
-            <Text style={[styles.xpToGo, { color: colors.textSecondary }]}>
-              {t('level.xpRemaining', { count: levelInfo.xpForNextLevel })}
-            </Text>
-          )}
-        </View>
-
-        <View style={[styles.progressBarContainer, { height: 12, borderRadius: 6 }]}>
-          <View
-            style={[
-              styles.progressBackground,
-              {
-                backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.10)"
-                  : "rgba(0,0,0,0.06)",
-                borderRadius: 6,
-                overflow: "hidden",
-                position: "relative",
-              },
-            ]}
-          >
-            {/* Current Progress */}
-            <Animated.View
-              style={[
-                styles.progressFill,
-                {
-                  backgroundColor: progressColor,
-                  borderRadius: 6,
-                  position: "absolute",
-                  height: "100%",
-                  left: 0,
-                  zIndex: 1,
-                },
-                progressAnimatedStyle,
-              ]}
+      {/* Hero Header with Gradient Background */}
+      <LinearGradient
+        colors={
+          theme.isDark
+            ? [hexToRGBA(progressColor, 0.15), hexToRGBA(progressColor, 0.05)]
+            : [hexToRGBA(progressColor, 0.08), hexToRGBA(progressColor, 0.02)]
+        }
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.heroHeader}
+      >
+        {/* Badge (no glow - removed) */}
+        <View style={styles.badgeContainer}>
+          <Animated.View style={badgeAnimatedStyle}>
+            <LevelBadge
+              levelInfo={levelInfo}
+              size={72}
+              showAnimation={showLevelUpOverlay}
             />
-
-            {/* Previous Progress (dimmed) */}
-            {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
-              <Animated.View
-                style={[
-                  {
-                    position: "absolute",
-                    height: "100%",
-                    backgroundColor: theme.isDark
-                      ? `${progressColor}40`
-                      : `${progressColor}30`,
-                    borderRadius: 6,
-                    left: 0,
-                    zIndex: 2,
-                  },
-                  previousProgressAnimatedStyle,
-                ]}
-              />
-            )}
-
-            {/* XP Gain Highlight */}
-            {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
-              <Animated.View
-                style={[
-                  {
-                    position: "absolute",
-                    height: "100%",
-                    backgroundColor: "#ffffff80",
-                    borderRadius: 6,
-                    left: `${previousProgressWidth.value}%`,
-                    width: `${
-                      levelInfo.progressPercentage - previousProgressWidth.value
-                    }%`,
-                    zIndex: 3,
-                    opacity: 1,
-                  },
-                  gainIndicatorAnimatedStyle,
-                ]}
-              />
-            )}
-          </View>
+          </Animated.View>
         </View>
-      </View>
 
-      {/* Level Details + Title Selection (Dropdown) */}
-      <Pressable
-        onPress={toggleLevelDescription}
-        accessibilityRole="button"
-        accessibilityLabel="Levelbeschreibung und Titel-Auswahl anzeigen oder verbergen"
-        hitSlop={8}
-        style={({ pressed }) => [
-          styles.levelDetailsCard,
+        {/* Title */}
+        <Text style={[styles.levelTitle, { color: colors.textPrimary }]}>
+          {levelInfo.levelData.name}
+        </Text>
+
+        {/* Subtitle - Nur Level-Nummer */}
+        <Text style={[styles.levelSubtitle, { color: colors.textSecondary }]}>
+          {t('level.title')} {levelInfo.currentLevel + 1}
+        </Text>
+      </LinearGradient>
+
+      {/* XP Progress Section */}
+      <View
+        style={[
+          styles.progressSection,
           {
-            borderColor: theme.isDark
-              ? "rgba(255,255,255,0.12)"
-              : "rgba(0,0,0,0.08)",
-            backgroundColor: pressed
-              ? theme.isDark
-                ? "rgba(255,255,255,0.06)"
-                : "rgba(0,0,0,0.04)"
-              : theme.isDark
-              ? "rgba(255,255,255,0.03)"
-              : "rgba(0,0,0,0.02)",
+            borderBottomColor: theme.isDark
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.06)",
           },
         ]}
       >
-        <View style={styles.levelDetailsHeader}>
-          <View style={styles.levelDetailsHeaderLeft}>
-            <View
-              style={[
-                styles.levelColorDot,
-                { backgroundColor: progressColor },
-              ]}
-            />
-            <Text
-              style={[
-                styles.levelDetailsTitle,
-                { color: colors.textPrimary },
-              ]}
-            >
-              {t('level.yourTitle')}
-            </Text>
-          </View>
-          <Feather
-            name={levelDescExpanded ? "chevron-up" : "chevron-down"}
-            size={18}
-            color={colors.textSecondary}
-          />
+        {/* XP Header */}
+        <View style={styles.progressHeader}>
+          <Text style={[styles.xpValueText, { color: colors.textPrimary }]}>
+            {(currentXp - levelInfo.levelData.xp).toLocaleString()} / {((levelInfo.nextLevelData?.xp ?? levelInfo.levelData.xp) - levelInfo.levelData.xp).toLocaleString()} EP
+          </Text>
         </View>
 
+        {/* Progress Bar Row (Bar + Badge inline) */}
+        <View style={styles.progressBarRow}>
+          {/* Progress Bar with Gradient */}
+          <View style={styles.progressBarContainer}>
+            <View
+              style={[
+                styles.progressBackground,
+                {
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.10)"
+                    : "rgba(0,0,0,0.06)",
+                },
+              ]}
+            >
+              {/* Previous Progress (dimmed) */}
+              {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
+                <Animated.View
+                  style={[
+                    {
+                      position: "absolute",
+                      height: "100%",
+                      backgroundColor: theme.isDark
+                        ? `${progressColor}40`
+                        : `${progressColor}30`,
+                      borderRadius: 8,
+                      left: 0,
+                      zIndex: 2,
+                    },
+                    previousProgressAnimatedStyle,
+                  ]}
+                />
+              )}
+
+              {/* Current Progress with Gradient */}
+              <Animated.View
+                style={[
+                  {
+                    position: "absolute",
+                    height: "100%",
+                    left: 0,
+                    zIndex: 1,
+                    borderRadius: 8,
+                    overflow: "hidden",
+                  },
+                  progressAnimatedStyle,
+                ]}
+              >
+                <LinearGradient
+                  colors={[progressColor, darkenColor(progressColor, 40)]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  {/* Shimmer Effect */}
+                  {justCompleted && (xpGain ?? 0) > 0 && (
+                    <Animated.View
+                      style={[
+                        styles.progressShimmer,
+                        shimmerAnimatedStyle,
+                      ]}
+                    />
+                  )}
+                </LinearGradient>
+              </Animated.View>
+
+              {/* XP Gain Highlight */}
+              {justCompleted && (xpGain ?? 0) > 0 && !hasLevelChanged && (
+                <Animated.View
+                  style={[
+                    {
+                      position: "absolute",
+                      height: "100%",
+                      backgroundColor: "#ffffff80",
+                      borderRadius: 8,
+                      left: `${previousProgressWidth.value}%`,
+                      width: `${
+                        levelInfo.progressPercentage - previousProgressWidth.value
+                      }%`,
+                      zIndex: 3,
+                      opacity: 1,
+                    },
+                    gainIndicatorAnimatedStyle,
+                  ]}
+                />
+              )}
+            </View>
+          </View>
+
+          {/* XP Gain Badge - Inline */}
+          {(xpGain ?? 0) > 0 && justCompleted && (
+            <Animated.View
+              style={[
+                styles.xpGainBadge,
+                {
+                  backgroundColor: progressColor,
+                  shadowColor: progressColor,
+                },
+                xpGainAnimatedStyle,
+              ]}
+            >
+              <Text style={styles.xpGainNumber}>+{xpGain}</Text>
+              <Text style={styles.xpGainLabel}>EP</Text>
+            </Animated.View>
+          )}
+        </View>
+
+        {/* Next Level Preview - Neutral Design */}
+        {levelInfo.nextLevelData && (
+          <View
+            style={[
+              styles.nextLevelCard,
+              {
+                backgroundColor: theme.isDark
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(0, 0, 0, 0.03)",
+                borderColor: theme.isDark
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(0, 0, 0, 0.06)",
+                borderLeftColor: progressColor,
+              },
+            ]}
+          >
+            <View style={styles.nextLevelHeader}>
+              <Feather name="arrow-right-circle" size={16} color={progressColor} />
+              <Text style={[styles.nextLevelHeaderText, { color: colors.textSecondary }]}>
+                {t('level.nextLevel')}
+              </Text>
+            </View>
+            <Text style={[styles.nextLevelTitle, { color: colors.textPrimary }]}>
+              {t('level.title')} {levelInfo.currentLevel + 2} • {levelInfo.nextLevelData.name}
+            </Text>
+            <Text style={[styles.nextLevelXp, { color: colors.textSecondary }]}>
+              {t('level.xpToUnlock', { count: levelInfo.xpForNextLevel })}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Title Section - Fully Tappable */}
+      <View style={styles.titleSection}>
+        <Pressable
+          onPress={toggleLevelDescription}
+          style={({ pressed }) => [
+            styles.titlePressable,
+            {
+              backgroundColor: pressed
+                ? theme.isDark
+                  ? "rgba(255,255,255,0.06)"
+                  : "rgba(0,0,0,0.04)"
+                : "transparent",
+            },
+          ]}
+        >
+          {/* Header: Label + Chevron */}
+          <View style={styles.titleHeader}>
+            <View style={styles.titleHeaderLeft}>
+              <Feather name="award" size={16} color={progressColor} />
+              <Text style={[styles.titleLabel, { color: colors.textSecondary }]}>
+                {t('level.yourTitleLabel')}
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={18} color={progressColor} />
+          </View>
+
+          {/* Title Value */}
+          <Text
+            style={[styles.titleValue, { color: colors.textPrimary }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {selectedTitle || t('level.chooseTitle')}
+          </Text>
+
+          {/* Title Description - Always visible, 3 lines max with fade */}
+          <View style={styles.titleDescriptionWrapper}>
+            <Text
+              style={[styles.titleDescription, { color: colors.textSecondary }]}
+              numberOfLines={3}
+              ellipsizeMode="tail"
+            >
+              {titleDescription}
+            </Text>
+
+            {/* Fade gradient for long texts */}
+            {needsFade && (
+              <LinearGradient
+                colors={[
+                  "transparent",
+                  theme.isDark ? "#1a1a1a" : "#ffffff",
+                ]}
+                style={styles.descriptionFade}
+                pointerEvents="none"
+              />
+            )}
+          </View>
+        </Pressable>
+
+        {/* Title Selection Sheet (expandable) */}
         {levelDescExpanded && (
           <Animated.View
             entering={FadeIn.duration(200)}
             style={[
-              styles.levelDescriptionBody,
+              styles.levelDetailsCard,
               {
-                borderLeftColor: progressColor,
+                borderColor: theme.isDark
+                  ? "rgba(255,255,255,0.12)"
+                  : "rgba(0,0,0,0.08)",
                 backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.035)"
+                  ? "rgba(255,255,255,0.03)"
                   : "rgba(0,0,0,0.02)",
               },
             ]}
           >
-            {/* Description */}
-            <Text
-              style={[
-                styles.levelMessage,
-                { color: colors.textSecondary, marginBottom: 12 },
-              ]}
-            >
-              {levelInfo.levelData.message}
-            </Text>
-
-            {/* Current Title */}
-            <View style={styles.titleCurrentBlock}>
-              <View style={styles.titleCurrentHeader}>
-                <Feather name="award" size={16} color={progressColor} />
-                <Text
-                  style={[
-                    styles.titleCurrentText,
-                    { color: colors.textPrimary },
-                  ]}
-                >
-                  {t('level.currentTitle')}
-                </Text>
-              </View>
-
-              <View
-                style={[
-                  styles.titlePill,
-                  {
-                    backgroundColor: hexToRGBA(
-                      progressColor,
-                      theme.isDark ? 0.25 : 0.15
-                    ),
-                    borderColor: hexToRGBA(
-                      progressColor,
-                      theme.isDark ? 0.45 : 0.3
-                    ),
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.titlePillText,
-                    { color: colors.textPrimary },
-                  ]}
-                >
-                  {selectedTitle || "—"}
-                </Text>
-              </View>
-            </View>
-
             {/* Title Selection */}
             <TitleSelect
               titles={unlockedTitles}
@@ -361,7 +442,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
             />
           </Animated.View>
         )}
-      </Pressable>
+      </View>
 
       {/* Level Up Overlay - SCOPED TO THIS CARD ONLY ✅ */}
       <LevelUpOverlay

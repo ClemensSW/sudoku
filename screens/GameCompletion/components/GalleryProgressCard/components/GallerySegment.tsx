@@ -10,6 +10,7 @@ interface GallerySegmentProps {
   isNewlyUnlocked: boolean;
   progressColor: string;
   isDark: boolean;
+  surfaceColor: string;
   opacity: SharedValue<number>;
   scale: SharedValue<number>;
 }
@@ -20,6 +21,7 @@ const GallerySegment: React.FC<GallerySegmentProps> = ({
   isNewlyUnlocked,
   progressColor,
   isDark,
+  surfaceColor,
   opacity,
   scale,
 }) => {
@@ -37,9 +39,7 @@ const GallerySegment: React.FC<GallerySegmentProps> = ({
             styles.segmentInner,
             styles.lockedSegment,
             {
-              backgroundColor: isDark
-                ? "rgba(26, 26, 26, 0.98)"
-                : "rgba(245, 245, 245, 0.98)",
+              backgroundColor: `${surfaceColor}fa`, // 98% opacity (fa in hex)
               borderColor: isDark
                 ? "rgba(255, 255, 255, 0.1)"
                 : "rgba(0, 0, 0, 0.1)",

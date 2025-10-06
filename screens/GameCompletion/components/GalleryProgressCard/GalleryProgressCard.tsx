@@ -52,7 +52,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         style={[
           styles.container,
           {
-            backgroundColor: theme.isDark ? "#2a2a2a" : "#ffffff",
+            backgroundColor: colors.surface,
             elevation: theme.isDark ? 0 : 4,
           },
         ]}
@@ -101,7 +101,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       style={[
         styles.container,
         {
-          backgroundColor: theme.isDark ? "#2a2a2a" : "#ffffff",
+          backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
           shadowColor: theme.isDark ? "transparent" : progressColor,
         },
@@ -172,6 +172,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
                 isNewlyUnlocked={index === newlyUnlockedSegmentId}
                 progressColor={progressColor}
                 isDark={theme.isDark}
+                surfaceColor={colors.surface}
                 opacity={segmentOpacities[index]}
                 scale={segmentScales[index]}
               />

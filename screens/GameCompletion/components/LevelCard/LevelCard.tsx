@@ -157,7 +157,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
       style={[
         styles.card,
         {
-          backgroundColor: theme.isDark ? "#2a2a2a" : "#ffffff",
+          backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
           shadowColor: theme.isDark ? "transparent" : progressColor,
         },

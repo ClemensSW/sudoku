@@ -101,7 +101,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       style={[
         styles.container,
         {
-          backgroundColor: theme.isDark ? "#1a1a1a" : "#ffffff",
+          backgroundColor: theme.isDark ? "#2a2a2a" : "#ffffff",
           elevation: theme.isDark ? 0 : 4,
           shadowColor: theme.isDark ? "transparent" : progressColor,
         },

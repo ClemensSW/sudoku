@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -14,6 +14,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
+import { GameStats } from "@/utils/storage";
 import {
   Landscape,
   LandscapeSegment,
@@ -25,6 +27,7 @@ export interface GalleryProgressCardProps {
   newlyUnlockedSegmentId?: number;
   isComplete?: boolean;
   onViewGallery: () => void;
+  stats?: GameStats;
 }
 
 const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
@@ -32,10 +35,18 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   newlyUnlockedSegmentId,
   isComplete = false,
   onViewGallery,
+  stats,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const { colors } = theme;
+
+  // Get level info for path color
+  const calculatedXp = stats ? stats.totalXP : 0;
+  const levelInfo = useLevelInfo(calculatedXp);
+
+  // Track visibility for animation
+  const [isVisible, setIsVisible] = useState(false);
 
   // Animation values
   const containerScale = useSharedValue(1);
@@ -78,8 +89,8 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   // Calculate progress percentage
   const progressPercentage = (landscape.progress / 9) * 100;
 
-  // Get progress color from first path (or default)
-  const progressColor = colors.primary; // Could be dynamic based on landscape
+  // Get progress color from level info (path color)
+  const progressColor = levelInfo.currentPath.color;
 
   // Helper function to darken color
   const darkenColor = (color: string, amount: number): string => {
@@ -90,8 +101,17 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   };
 
-  // Start animation effect
+  // Handler for when card becomes visible
+  const handleLayout = () => {
+    if (!isVisible) {
+      setIsVisible(true);
+    }
+  };
+
+  // Start animation effect - only when visible
   useEffect(() => {
+    if (!isVisible) return;
+
     // Container light scaling
     containerScale.value = withSequence(
       withTiming(1.02, { duration: 300 }),
@@ -155,7 +175,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         withTiming(0.5, { duration: 800 })
       );
     }
-  }, [landscape, newlyUnlockedSegmentId, progressPercentage, isComplete]);
+  }, [isVisible, landscape, newlyUnlockedSegmentId, progressPercentage, isComplete]);
 
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
@@ -203,16 +223,25 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
               style={{ opacity: 0.6 }}
             />
           </View>
+        ) : isNewlyUnlocked ? (
+          // Newly unlocked segment - Glasscheiben-Effekt
+          <Animated.View
+            style={[
+              styles.segmentInner,
+              styles.newlyUnlockedSegment,
+              {
+                backgroundColor: `${progressColor}30`, // Glasscheiben-Effekt mit Path-Farbe
+                borderColor: progressColor,
+              },
+              segmentAnimatedStyle,
+            ]}
+          />
         ) : (
           // Unlocked segment (transparent, shows image)
           <Animated.View
             style={[
               styles.segmentInner,
               styles.unlockedSegment,
-              isNewlyUnlocked && {
-                ...styles.newlyUnlockedSegment,
-                borderColor: progressColor,
-              },
               segmentAnimatedStyle,
             ]}
           />
@@ -237,6 +266,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         containerAnimatedStyle,
       ]}
       entering={FadeIn.duration(350)}
+      onLayout={handleLayout}
     >
       {/* Header Section - minimalistisch */}
       <View style={styles.headerSection}>

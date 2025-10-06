@@ -368,6 +368,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
                   newlyUnlockedSegmentId={newlyUnlockedSegmentId}
                   isComplete={landscapeCompleted}
                   onViewGallery={handleViewGallery}
+                  stats={stats}
                 />
                 <View style={styles.sectionSpacer} />
               </>

@@ -115,16 +115,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <Pressable
             onPress={onTitlePress}
             style={({ pressed }) => [
-              styles.titlePill,
-              {
-                backgroundColor: theme.isDark ? titleBg : '#FFFFFF',
-                borderColor: titleBorder,
-                opacity: pressed ? 0.7 : 1,
-              }
+              styles.titleText,
+              { opacity: pressed ? 0.6 : 1 }
             ]}
           >
-            <Feather name="award" size={14} color={colors.primary} style={{ opacity: 0.8 }} />
-            <Text style={[styles.titlePillText, { color: theme.isDark ? "#fff" : "#111" }]} numberOfLines={1}>
+            <Text style={[styles.titleTextStyle, { color: colors.textSecondary }]} numberOfLines={1}>
               {title}
             </Text>
           </Pressable>
@@ -287,27 +282,14 @@ const styles = StyleSheet.create({
     minWidth: 140,
     textAlign: "center",
   },
-  titlePill: {
-    marginTop: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-    borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 2,
+  titleText: {
+    marginTop: 6,
   },
-  titlePillText: {
-    fontSize: 13,
-    fontWeight: "600",
+  titleTextStyle: {
+    fontSize: 15,
+    fontWeight: "500",
     maxWidth: 280,
-    letterSpacing: 0.2,
-    opacity: 0.85,
+    textAlign: "center",
   },
 
   /* Stats Card */

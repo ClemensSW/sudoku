@@ -24,6 +24,7 @@ import ColorPickerModal from "./components/ColorPickerModal";
 // Hooks
 import { usePathAnimations } from "./hooks/usePathAnimations";
 import { useMilestoneHandling } from "./hooks/useMilestoneHandling";
+import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
 
 // Styles
 import styles from "./PathCard.styles";
@@ -71,14 +72,15 @@ const PathCard: React.FC<PathCardProps> = ({
   const levelInfo = useLevelInfo(currentXp);
   const previousLevelInfo = prevXp !== currentXp ? useLevelInfo(prevXp) : levelInfo;
 
-  // Progress color
-  const progressColor = levelInfo.currentPath.color;
+  // Progress color from Context (reaktiv für alle Komponenten)
+  const displayColor = useProgressColor();
+  const updateColor = useUpdateProgressColor();
 
   // Animation Hooks
   const { cardAnimatedStyle, trailAnimatedStyle } = usePathAnimations({
     currentLevel: levelInfo.currentLevel,
     previousLevel: previousLevelInfo.currentLevel,
-    pathColor: progressColor,
+    pathColor: displayColor,
   });
 
   // Milestone Hook
@@ -122,18 +124,15 @@ const PathCard: React.FC<PathCardProps> = ({
   }, []);
 
   const handleColorSelect = useCallback(async (color: string) => {
-    await updateSelectedColor(color);
+    await updateColor(color); // Verwendet Context-Funktion für reaktive Updates
     const updatedData = await loadColorUnlock();
     setColorUnlockData(updatedData);
     triggerHaptic("success");
-  }, []);
+  }, [updateColor]);
 
   // Check if description needs fade gradient
   const pathDescription = levelInfo.currentPath.description;
   const needsFade = pathDescription.length > 200;
-
-  // Use custom color if selected, otherwise use path color
-  const displayColor = colorUnlockData?.selectedColor || progressColor;
 
   return (
     <Animated.View

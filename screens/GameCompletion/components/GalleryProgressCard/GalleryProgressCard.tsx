@@ -15,6 +15,7 @@ import GalleryAction from "./components/GalleryAction";
 
 // Hooks
 import { useGalleryAnimations } from "./hooks/useGalleryAnimations";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Styles
 import styles from "./GalleryProgressCard.styles";
@@ -38,9 +39,10 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   const theme = useTheme();
   const { colors } = theme;
 
-  // Get level info for path color
+  // Get level info and custom progress color
   const calculatedXp = stats ? stats.totalXP : 0;
   const levelInfo = useLevelInfo(calculatedXp);
+  const progressColor = useProgressColor(calculatedXp);
 
   // Track visibility for animation
   const [isVisible, setIsVisible] = useState(false);
@@ -70,9 +72,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
 
   // Calculate progress percentage
   const progressPercentage = (landscape.progress / 9) * 100;
-
-  // Get progress color from level info (path color)
-  const progressColor = levelInfo.currentPath.color;
 
   // Animation hook
   const {

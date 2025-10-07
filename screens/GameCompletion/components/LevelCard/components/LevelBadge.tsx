@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LevelInfo } from '../../PlayerProgressionCard/utils/types';
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface LevelBadgeProps {
   levelInfo: LevelInfo;
@@ -30,15 +31,15 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
 }) => {
   // Use theme for consistent visual design
   const theme = useTheme();
-  
+
   // Animation values
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
   const glow = useSharedValue(0);
   const shimmer = useSharedValue(0);
-  
-  // Get path color from level info
-  const pathColor = levelInfo.currentPath.color;
+
+  // Get custom path color (reaktiv)
+  const pathColor = useProgressColor();
 
   // Level number (1-based for display)
   const levelNumber = levelInfo.currentLevel + 1;

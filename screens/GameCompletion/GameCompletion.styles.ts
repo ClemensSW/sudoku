@@ -125,31 +125,34 @@ export default StyleSheet.create({
     paddingBottom: spacing.md, // Prevents shadow clipping on last card
   },
 
-  // Bottom fixed button container
+  // Bottom fixed button container - Modern Card Design
   buttonContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    padding: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: Math.max(spacing.lg, spacing.md + 30), // Extra padding for bottom safety
-    backgroundColor: "rgba(0,0,0,1)",
-    borderBottomLeftRadius: 0, // Removed radius for fullscreen
-    borderBottomRightRadius: 0, // Removed radius for fullscreen
-    backdropFilter: "blur(10px)",
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: Math.max(spacing.xl, spacing.md + 30), // Extra padding for bottom safety
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    // Gradient effect achieved via backgroundColor in component
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
 
   primaryButton: {
     width: "100%",
     marginBottom: spacing.md,
-    height: 56,
+    height: 60,
   },
 
   secondaryButton: {
     width: "100%",
-    height: 48,
-    borderRadius: 24,
+    height: 54,
   },
 
   sectionSpacer: {

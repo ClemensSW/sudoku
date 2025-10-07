@@ -4,18 +4,19 @@ import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   button: {
-    height: 52,
+    height: 56,
     minWidth: 120,
-    paddingHorizontal: spacing.lg,
-    borderRadius: 12,
+    paddingHorizontal: spacing.xl,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
   },
 
   buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0.3,
     textAlign: "center",
   },
 

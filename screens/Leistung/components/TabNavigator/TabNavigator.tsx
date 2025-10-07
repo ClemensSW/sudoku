@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing, radius } from "@/utils/theme";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Export the TabItem type
 export interface TabItem {
@@ -29,6 +30,7 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Animated values for tab indicator
   const indicatorPosition = useSharedValue(0);
@@ -108,8 +110,8 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
                   styles.activeTabButton,
                   {
                     backgroundColor: theme.isDark
-                      ? "rgba(138, 180, 248, 0.12)"
-                      : "rgba(66, 133, 244, 0.08)",
+                      ? `${progressColor}1F` // ~12% opacity
+                      : `${progressColor}14`, // ~8% opacity
                   },
                 ],
               ]}
@@ -119,7 +121,7 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
               <Text
                 style={[
                   styles.tabText,
-                  { color: isActive ? colors.primary : colors.textSecondary },
+                  { color: isActive ? progressColor : colors.textSecondary },
                   isActive && styles.activeTabText,
                 ]}
               >
@@ -133,7 +135,7 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
         <Animated.View
           style={[
             styles.tabIndicator,
-            { backgroundColor: colors.primary },
+            { backgroundColor: progressColor },
             indicatorStyle,
           ]}
         />

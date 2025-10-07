@@ -20,6 +20,7 @@ import LevelUpOverlay from "./components/LevelUpOverlay";
 
 // Hooks
 import { useLevelAnimations } from "./hooks/useLevelAnimations";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Styles
 import styles from "./LevelCard.styles";
@@ -72,8 +73,8 @@ const LevelCard: React.FC<LevelCardProps> = ({
 
   const hasLevelChanged = levelInfo.currentLevel > previousLevelInfo.currentLevel;
 
-  // Progress color
-  const progressColor = levelInfo.currentPath.color;
+  // Progress color - use custom selected color or default path color
+  const progressColor = useProgressColor(currentXp);
 
   // Unlocked titles - call getLevels() to get fresh translations
   const unlockedTitles = getLevels().slice(0, levelInfo.currentLevel + 1)

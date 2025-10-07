@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, BackHandler } from "react-native";
+import { View, Text, ScrollView, BackHandler, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -19,6 +19,7 @@ import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 // zentralisierte XP-Berechnung
 import { calculateXpGain } from "./components/PlayerProgressionCard/utils";
 import { useLevelInfo } from "./components/PlayerProgressionCard/utils/useLevelInfo";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Components - NEW REFACTORED STRUCTURE
 import LevelCard from "./components/LevelCard";
@@ -179,10 +180,10 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   // XP-Gewinn für dieses Spiel
   const xpGain = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
 
-  // Level Info für Pfad-Farbe
+  // Level Info für Pfad-Farbe (reaktiv)
   const currentXP = stats ? stats.totalXP : 0;
   const levelInfo = useLevelInfo(currentXP);
-  const pathColor = levelInfo.currentPath.color;
+  const pathColor = useProgressColor();
 
   // Animation values
   const modalScale = useSharedValue(0.95);
@@ -417,14 +418,18 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
           </Animated.View>
         </ScrollView>
 
-        {/* Buttons unten fixiert */}
+        {/* Buttons unten fixiert - Modern Glass Effect */}
         <View
           style={[
             styles.buttonContainer,
             {
-              backgroundColor: theme.isDark ? colors.background : colors.card,
-              borderTopWidth: 1,
-              borderTopColor: theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+              backgroundColor: theme.isDark
+                ? `${colors.background}F2` // 95% opacity for glass effect
+                : `${colors.card}F2`,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: theme.isDark
+                ? "rgba(255,255,255,0.12)"
+                : "rgba(0,0,0,0.08)",
             },
           ]}
         >
@@ -432,8 +437,9 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
             title={t('buttons.nextGame')}
             onPress={handleNewGame}
             variant="primary"
+            customColor={pathColor}
             style={styles.primaryButton}
-            icon={<Feather name="play" size={20} color="white" />}
+            icon={<Feather name="play" size={22} color="white" />}
             iconPosition="left"
           />
 
@@ -441,6 +447,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
             title={t('buttons.backToMenu')}
             onPress={onContinue}
             variant="outline"
+            customColor={pathColor}
             style={styles.secondaryButton}
           />
         </View>

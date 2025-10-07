@@ -39,6 +39,8 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   withHaptic?: boolean;
   hapticType?: "light" | "medium" | "heavy";
+  /** Custom color for primary variant (overrides theme primary) */
+  customColor?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -53,6 +55,7 @@ const Button: React.FC<ButtonProps> = ({
   iconPosition = "left",
   withHaptic = true,
   hapticType = "light",
+  customColor,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -94,16 +97,19 @@ const Button: React.FC<ButtonProps> = ({
   const getButtonStyle = () => {
     const buttonStyles: ViewStyle[] = [styles.button];
 
+    // Use custom color if provided, otherwise use theme color
+    const primaryColor = customColor || colors.primary;
+
     // Variant-specific styles
     switch (variant) {
       case "primary":
         buttonStyles.push({
-          backgroundColor: colors.primary,
-          shadowColor: colors.primary,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 5,
-          elevation: 5,
+          backgroundColor: primaryColor,
+          shadowColor: primaryColor,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8,
         });
         break;
       case "secondary":
@@ -113,7 +119,7 @@ const Button: React.FC<ButtonProps> = ({
         buttonStyles.push({
           backgroundColor: "transparent",
           borderWidth: 1.5,
-          borderColor: colors.primary,
+          borderColor: customColor || colors.primary,
         });
         break;
       case "danger":
@@ -166,10 +172,10 @@ const Button: React.FC<ButtonProps> = ({
         textStyles.push({ color: colors.textPrimary });
         break;
       case "outline":
-        textStyles.push({ color: colors.primary });
+        textStyles.push({ color: customColor || colors.primary });
         break;
       case "ghost":
-        textStyles.push({ color: colors.primary });
+        textStyles.push({ color: customColor || colors.primary });
         break;
       default:
         textStyles.push({ color: colors.buttonText });
@@ -216,7 +222,7 @@ const Button: React.FC<ButtonProps> = ({
           <ActivityIndicator
             color={
               variant === "outline" || variant === "ghost"
-                ? colors.primary
+                ? (customColor || colors.primary)
                 : colors.buttonText
             }
             size="small"

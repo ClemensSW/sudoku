@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 const BottomNavigation: React.FC = () => {
   const { t } = useTranslation('common');
@@ -16,12 +17,17 @@ const BottomNavigation: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const progressColor = useProgressColor();
 
   // Function to get the active tab color based on tab translation key
   const getActiveTabColor = (translationKey: string): string => {
     // Use teal color specifically for "duo" tab
     if (translationKey === "duo") {
       return "#4A7D78";
+    }
+    // Use custom progress color for "performance" tab
+    if (translationKey === "performance") {
+      return progressColor;
     }
     // Default primary color for other tabs
     return colors.primary;

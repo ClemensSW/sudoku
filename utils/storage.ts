@@ -15,6 +15,7 @@ const KEYS = {
   STATISTICS: "@sudoku/statistics",
   SETTINGS: "@sudoku/settings",
   PAUSED_GAME: "@sudoku/paused_game",
+  COLOR_UNLOCK: "@sudoku/color_unlock",
 };
 
 // Spielzustand Typ
@@ -68,6 +69,12 @@ export type GameSettings = {
   vibration: boolean;
   soundEffects: boolean;
   language: "de" | "en";
+};
+
+// Farbauswahl Typ
+export type ColorUnlockData = {
+  selectedColor: string; // Aktuell ausgewählte Farbe
+  unlockedColors: string[]; // Freigeschaltete Farben
 };
 
 // Standard-Statistiken
@@ -428,5 +435,98 @@ export const clearPausedGame = async (): Promise<void> => {
     await AsyncStorage.removeItem(KEYS.PAUSED_GAME);
   } catch (error) {
     console.error("Error clearing paused game:", error);
+  }
+};
+
+// ===== Farbauswahl Management =====
+
+// Standardfarbe (Blau - Fundamentals)
+const DEFAULT_COLOR = "#4285F4";
+
+// Standard-Farbauswahl (nur Blau ist initial freigeschaltet)
+const DEFAULT_COLOR_UNLOCK: ColorUnlockData = {
+  selectedColor: DEFAULT_COLOR,
+  unlockedColors: [DEFAULT_COLOR],
+};
+
+// Speichere Farbauswahl
+export const saveColorUnlock = async (colorData: ColorUnlockData): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(KEYS.COLOR_UNLOCK, JSON.stringify(colorData));
+  } catch (error) {
+    console.error("Error saving color unlock:", error);
+  }
+};
+
+// Lade Farbauswahl
+export const loadColorUnlock = async (): Promise<ColorUnlockData> => {
+  try {
+    const savedData = await AsyncStorage.getItem(KEYS.COLOR_UNLOCK);
+    return savedData ? JSON.parse(savedData) : DEFAULT_COLOR_UNLOCK;
+  } catch (error) {
+    console.error("Error loading color unlock:", error);
+    return DEFAULT_COLOR_UNLOCK;
+  }
+};
+
+// Aktualisiere ausgewählte Farbe
+export const updateSelectedColor = async (color: string): Promise<void> => {
+  try {
+    const currentData = await loadColorUnlock();
+    await saveColorUnlock({
+      ...currentData,
+      selectedColor: color,
+    });
+  } catch (error) {
+    console.error("Error updating selected color:", error);
+  }
+};
+
+// Schalte neue Farbe frei
+export const unlockColor = async (color: string): Promise<void> => {
+  try {
+    const currentData = await loadColorUnlock();
+    if (!currentData.unlockedColors.includes(color)) {
+      await saveColorUnlock({
+        ...currentData,
+        unlockedColors: [...currentData.unlockedColors, color],
+      });
+      console.log(`Color ${color} unlocked`);
+    }
+  } catch (error) {
+    console.error("Error unlocking color:", error);
+  }
+};
+
+// Ermittle freigeschaltete Farben basierend auf Level
+export const getUnlockedColorsForLevel = (level: number): string[] => {
+  const colors = ["#4285F4"]; // Blau - immer verfügbar
+
+  if (level >= 5) colors.push("#34A853"); // Grün - ab Level 5
+  if (level >= 10) colors.push("#FBBC05"); // Gelb - ab Level 10
+  if (level >= 15) colors.push("#EA4335"); // Rot - ab Level 15
+  if (level >= 20) colors.push("#673AB7"); // Violett - ab Level 20
+
+  return colors;
+};
+
+// Synchronisiere freigeschaltete Farben mit aktuellem Level
+export const syncUnlockedColors = async (currentLevel: number): Promise<void> => {
+  try {
+    const currentData = await loadColorUnlock();
+    const shouldBeUnlocked = getUnlockedColorsForLevel(currentLevel);
+
+    // Füge neue Farben hinzu, die freigeschaltet sein sollten
+    const newUnlocked = [...new Set([...currentData.unlockedColors, ...shouldBeUnlocked])];
+
+    if (newUnlocked.length !== currentData.unlockedColors.length) {
+      await saveColorUnlock({
+        ...currentData,
+        unlockedColors: newUnlocked,
+      });
+      console.log(`Colors synced for level ${currentLevel}`);
+    }
+  } catch (error) {
+    console.error("Error syncing unlocked colors:", error);
   }
 };

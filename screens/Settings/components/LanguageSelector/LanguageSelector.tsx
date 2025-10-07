@@ -1,16 +1,15 @@
 // screens/Settings/components/LanguageSelector/LanguageSelector.tsx
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
 import * as Localization from "expo-localization";
 import LanguageIcon from "@/assets/svg/language.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { getSortedLanguages, getLanguageLabel } from "@/locales/languages";
+import BaseModal from "@/components/BaseModal/BaseModal";
 
 interface LanguageSelectorProps {
   onLanguageChange: (language: "de" | "en" | "hi") => void;
@@ -20,7 +19,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
   const { i18n, t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
-  const { height } = useWindowDimensions();
   const [showModal, setShowModal] = useState(false);
 
   const currentLanguage = i18n.language;
@@ -52,7 +50,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     setShowModal(false);
   };
 
-  const modalBg = theme.isDark ? "#1C1C1E" : "#FFFFFF";
   const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
   const selectedBg = theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)";
@@ -83,84 +80,44 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
       </TouchableOpacity>
 
       {/* Language Selection Modal */}
-      <Modal
+      <BaseModal
         visible={showModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowModal(false)}
+        onClose={() => setShowModal(false)}
+        title={t("languageModal.title")}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        surfaceColor={colors.surface}
+        borderColor={cardBorder}
+        scrollable={true}
+        maxHeightRatio={0.6}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowModal(false)}
-        >
-          <BlurView intensity={80} style={StyleSheet.absoluteFill} tint={theme.isDark ? "dark" : "light"} />
-        </TouchableOpacity>
-
-        <View style={styles.modalContainer} pointerEvents="box-none">
-          <Animated.View
-            entering={FadeInDown.duration(300).springify()}
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: modalBg,
-                borderColor: cardBorder,
-              },
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                {t("languageModal.title")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  triggerHaptic("light");
-                  setShowModal(false);
-                }}
-                style={[
-                  styles.closeButton,
-                  {
-                    backgroundColor: theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
-                  },
-                ]}
-              >
-                <Feather name="x" size={20} color={colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Language Options - Scrollable */}
-            <ScrollView
-              style={[styles.languageOptionsScroll, { maxHeight: height * 0.6 }]}
-              contentContainerStyle={styles.languageOptions}
-              showsVerticalScrollIndicator={true}
+        {/* Language Options */}
+        <View style={styles.languageOptions}>
+          {sortedLanguages.map((language) => (
+            <TouchableOpacity
+              key={language.code}
+              onPress={() => handleLanguageSelect(language.code)}
+              style={[
+                styles.languageOption,
+                {
+                  backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
+                  borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
+                },
+              ]}
             >
-              {sortedLanguages.map((language) => (
-                <TouchableOpacity
-                  key={language.code}
-                  onPress={() => handleLanguageSelect(language.code)}
-                  style={[
-                    styles.languageOption,
-                    {
-                      backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
-                      borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
-                    },
-                  ]}
-                >
-                  <View style={styles.languageContent}>
-                    <Text style={styles.flagEmoji}>{language.flag}</Text>
-                    <Text style={[styles.languageName, { color: colors.textPrimary }]}>
-                      {language.name}
-                    </Text>
-                  </View>
-                  {currentLanguage === language.code && (
-                    <Feather name="check" size={22} color={colors.primary} />
-                  )}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </Animated.View>
+              <View style={styles.languageContent}>
+                <Text style={styles.flagEmoji}>{language.flag}</Text>
+                <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                  {language.name}
+                </Text>
+              </View>
+              {currentLanguage === language.code && (
+                <Feather name="check" size={22} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
-      </Modal>
+      </BaseModal>
     </>
   );
 };
@@ -195,55 +152,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  modalContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  modalContent: {
-    width: "100%",
-    maxWidth: 400,
-    borderRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
   // Language Options
-  languageOptionsScroll: {
-    width: "100%",
-  },
   languageOptions: {
     gap: 12,
   },

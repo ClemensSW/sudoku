@@ -129,6 +129,14 @@
   "path": {
     "title": "आपकी यात्रा",
     "currentPath": "वर्तमान पथ",
-    "rewardsComingSoon": "पुरस्कार (जल्द आ रहा है)"
+    "rewardsComingSoon": "पुरस्कार (जल्द आ रहा है)",
+    "moreRewards": "अधिक पुरस्कार (जल्द आ रहा है)",
+    "colorPicker": {
+      "label": "पथ रंग",
+      "title": "पथ रंग चुनें",
+      "subtitle": "अपनी प्रगति का रंग अनुकूलित करें",
+      "current": "वर्तमान रंग",
+      "unlockAt": "स्तर {{level}}"
+    }
   }
 }

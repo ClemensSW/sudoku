@@ -100,12 +100,66 @@ export default StyleSheet.create({
     height: 20,
   },
 
-  // Rewards Placeholder (für Zukunft)
-  rewardsPlaceholder: {
-    marginTop: spacing.lg,
+  // Rewards Section - eigene Section für volle Breite
+  rewardsSection: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
+  },
+
+  // Color Picker Section - wie "Nächstes Level" im LevelCard
+  colorPickerSection: {
+    marginTop: spacing.md,
     padding: spacing.md,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
+    borderLeftWidth: 3,
+  },
+
+  colorPickerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: spacing.xs,
+  },
+
+  colorPickerLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    opacity: 0.8,
+  },
+
+  selectedColorPreview: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+
+  colorPreviewSquare: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+  },
+
+  colorPreviewText: {
+    fontSize: 17,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+  },
+
+  // Rewards Placeholder (für Zukunft) - wie "Nächstes Level" im LevelCard
+  rewardsPlaceholder: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderLeftWidth: 3,
     borderStyle: "dashed",
     alignItems: "center",
   },

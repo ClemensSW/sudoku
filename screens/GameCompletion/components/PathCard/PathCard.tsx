@@ -1,6 +1,6 @@
 // components/GameCompletion/components/PathCard/PathCard.tsx
-import React, { useState, useCallback } from "react";
-import { View, Text, Pressable } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -8,11 +8,18 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
-import { GameStats } from "@/utils/storage";
+import {
+  GameStats,
+  loadColorUnlock,
+  updateSelectedColor,
+  syncUnlockedColors,
+  ColorUnlockData,
+} from "@/utils/storage";
 
 // Components
 import PathTrail from "./components/PathTrail";
 import MilestoneNotification from "./components/MilestoneNotification";
+import ColorPickerModal from "./components/ColorPickerModal";
 
 // Hooks
 import { usePathAnimations } from "./hooks/usePathAnimations";
@@ -47,6 +54,8 @@ const PathCard: React.FC<PathCardProps> = ({
 
   // State
   const [pathDescExpanded, setPathDescExpanded] = useState(false);
+  const [colorPickerVisible, setColorPickerVisible] = useState(false);
+  const [colorUnlockData, setColorUnlockData] = useState<ColorUnlockData | null>(null);
 
   // Calculate XP values
   const calculatedXp = stats ? stats.totalXP : 0;
@@ -85,14 +94,46 @@ const PathCard: React.FC<PathCardProps> = ({
     levelUpTriggered: false, // PathCard doesn't need to wait for level up
   });
 
+  // Load color unlock data on mount and sync with level
+  useEffect(() => {
+    const loadColorData = async () => {
+      const data = await loadColorUnlock();
+      setColorUnlockData(data);
+
+      // Sync unlocked colors with current level
+      await syncUnlockedColors(levelInfo.currentLevel);
+
+      // Reload to get updated data after sync
+      const updatedData = await loadColorUnlock();
+      setColorUnlockData(updatedData);
+    };
+
+    loadColorData();
+  }, [levelInfo.currentLevel]);
+
   const togglePathDescription = useCallback(() => {
     setPathDescExpanded((s) => !s);
     triggerHaptic("light");
   }, []);
 
+  const openColorPicker = useCallback(() => {
+    setColorPickerVisible(true);
+    triggerHaptic("light");
+  }, []);
+
+  const handleColorSelect = useCallback(async (color: string) => {
+    await updateSelectedColor(color);
+    const updatedData = await loadColorUnlock();
+    setColorUnlockData(updatedData);
+    triggerHaptic("success");
+  }, []);
+
   // Check if description needs fade gradient
   const pathDescription = levelInfo.currentPath.description;
   const needsFade = pathDescription.length > 200;
+
+  // Use custom color if selected, otherwise use path color
+  const displayColor = colorUnlockData?.selectedColor || progressColor;
 
   return (
     <Animated.View
@@ -101,7 +142,7 @@ const PathCard: React.FC<PathCardProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
-          shadowColor: theme.isDark ? "transparent" : progressColor,
+          shadowColor: theme.isDark ? "transparent" : displayColor,
         },
         cardAnimatedStyle,
       ]}
@@ -109,7 +150,7 @@ const PathCard: React.FC<PathCardProps> = ({
     >
       {/* Header Section - minimalistisch */}
       <View style={styles.headerSection}>
-        <Feather name="map" size={16} color={progressColor} />
+        <Feather name="map" size={16} color={displayColor} />
         <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
           {t('path.title')}
         </Text>
@@ -128,7 +169,7 @@ const PathCard: React.FC<PathCardProps> = ({
       >
         <Animated.View style={trailAnimatedStyle}>
           <PathTrail
-            color={progressColor}
+            color={displayColor}
             isDark={theme.isDark}
             currentLevel={levelInfo.currentLevel}
             previousLevel={previousLevelInfo.currentLevel}
@@ -156,12 +197,12 @@ const PathCard: React.FC<PathCardProps> = ({
             {/* Header: Label + Chevron */}
             <View style={styles.pathHeader}>
               <View style={styles.pathHeaderLeft}>
-                <Feather name="compass" size={16} color={progressColor} />
+                <Feather name="compass" size={16} color={displayColor} />
                 <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
                   {t('path.currentPath')}
                 </Text>
               </View>
-              <Feather name="chevron-right" size={18} color={progressColor} />
+              <Feather name="chevron-right" size={18} color={displayColor} />
             </View>
 
             {/* Path Name */}
@@ -198,30 +239,82 @@ const PathCard: React.FC<PathCardProps> = ({
                     pointerEvents="none"
                   />
                 )}
-
-                {/* Rewards Placeholder (für Zukunft) */}
-                <View
-                  style={[
-                    styles.rewardsPlaceholder,
-                    {
-                      borderColor: theme.isDark
-                        ? "rgba(255,255,255,0.15)"
-                        : "rgba(0,0,0,0.15)",
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.comingSoonText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    {t('path.rewardsComingSoon')}
-                  </Text>
-                </View>
               </Animated.View>
             )}
           </Pressable>
+        </View>
+      )}
+
+      {/* Rewards Section - eigene Section mit voller Breite */}
+      {showPathDescription && pathDescExpanded && (
+        <View style={styles.rewardsSection}>
+          <Animated.View entering={FadeIn.duration(200)}>
+            {/* Color Picker Section */}
+            <TouchableOpacity
+              style={[
+                styles.colorPickerSection,
+                {
+                  borderColor: theme.isDark
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(0,0,0,0.15)",
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.03)"
+                    : "rgba(0,0,0,0.02)",
+                  borderLeftColor: displayColor,
+                },
+              ]}
+              onPress={openColorPicker}
+              activeOpacity={0.7}
+            >
+              <View style={styles.colorPickerHeader}>
+                <Feather name="droplet" size={16} color={displayColor} />
+                <Text
+                  style={[
+                    styles.colorPickerLabel,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  {t('path.colorPicker.label')}
+                </Text>
+              </View>
+
+              {/* Selected Color Preview */}
+              <View style={styles.selectedColorPreview}>
+                <View
+                  style={[
+                    styles.colorPreviewSquare,
+                    { backgroundColor: displayColor },
+                  ]}
+                />
+                <Text
+                  style={[styles.colorPreviewText, { color: colors.textPrimary }]}
+                >
+                  {t('path.colorPicker.current')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Weitere Rewards Placeholder (für Zukunft) */}
+            <View
+              style={[
+                styles.rewardsPlaceholder,
+                {
+                  borderColor: theme.isDark
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(0,0,0,0.15)",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.comingSoonText,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                {t('path.moreRewards')}
+              </Text>
+            </View>
+          </Animated.View>
         </View>
       )}
 
@@ -231,11 +324,28 @@ const PathCard: React.FC<PathCardProps> = ({
           visible={showMilestone}
           message={milestoneMessage}
           milestoneLevel={milestoneLevel}
-          color={progressColor}
+          color={displayColor}
           isDark={theme.isDark}
           onClose={closeMilestone}
           textPrimaryColor={colors.textPrimary}
           textSecondaryColor={colors.textSecondary}
+        />
+      )}
+
+      {/* Color Picker Modal */}
+      {colorUnlockData && (
+        <ColorPickerModal
+          visible={colorPickerVisible}
+          onClose={() => setColorPickerVisible(false)}
+          selectedColor={colorUnlockData.selectedColor}
+          unlockedColors={colorUnlockData.unlockedColors}
+          onSelectColor={handleColorSelect}
+          currentLevel={levelInfo.currentLevel}
+          isDark={theme.isDark}
+          textPrimaryColor={colors.textPrimary}
+          textSecondaryColor={colors.textSecondary}
+          surfaceColor={colors.surface}
+          borderColor={colors.border}
         />
       )}
     </Animated.View>

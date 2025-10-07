@@ -129,6 +129,14 @@
   "path": {
     "title": "Deine Reise",
     "currentPath": "Aktueller Pfad",
-    "rewardsComingSoon": "Belohnungen (In Kürze)"
+    "rewardsComingSoon": "Belohnungen (In Kürze)",
+    "moreRewards": "Weitere Belohnungen (In Kürze)",
+    "colorPicker": {
+      "label": "Pfadfarbe",
+      "title": "Pfadfarbe wählen",
+      "subtitle": "Passe die Farbe deines Fortschritts an",
+      "current": "Aktuelle Farbe",
+      "unlockAt": "Level {{level}}"
+    }
   }
 }

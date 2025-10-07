@@ -1,9 +1,10 @@
 // components/BottomSheetModal/BottomSheetModal.tsx
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BottomSheetModal as GorhomBottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal as GorhomBottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop as GorhomBackdrop } from '@gorhom/bottom-sheet';
+import { useNavigation } from '@/contexts/navigation';
 import BottomSheetHandle from './BottomSheetHandle';
-import BottomSheetBackdrop from './BottomSheetBackdrop';
+import CustomBottomSheetBackdrop from './BottomSheetBackdrop';
 
 export interface BottomSheetModalProps {
   visible: boolean;
@@ -48,6 +49,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   enableScroll = true,
 }) => {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
+  const { currentRoute } = useNavigation();
 
   // Default snap points: 40% collapsed, 90% expanded
   const snapPoints = useMemo(
@@ -69,16 +71,23 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     }
   }, [visible]);
 
+  // Close modal when route changes
+  useEffect(() => {
+    if (visible) {
+      onClose();
+    }
+  }, [currentRoute]);
+
   // Render custom handle
   const renderHandle = useCallback(
     (props: any) => <BottomSheetHandle {...props} isDark={isDark} />,
     [isDark]
   );
 
-  // Render custom backdrop
+  // Render custom backdrop with blur
   const renderBackdrop = useCallback(
     (props: any) => (
-      <BottomSheetBackdrop
+      <CustomBottomSheetBackdrop
         {...props}
         isDark={isDark}
         pressBehavior="close"

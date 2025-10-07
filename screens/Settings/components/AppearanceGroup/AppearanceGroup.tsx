@@ -203,21 +203,19 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       </View>
 
       {/* Color Picker Modal */}
-      {showColorModal && (
-        <ColorPickerModal
-          visible={showColorModal}
-          onClose={() => setShowColorModal(false)}
-          selectedColor={colorUnlockData.selectedColor}
-          unlockedColors={colorUnlockData.unlockedColors}
-          onSelectColor={handleColorSelect}
-          currentLevel={currentLevel}
-          isDark={theme.isDark}
-          textPrimaryColor={colors.textPrimary}
-          textSecondaryColor={colors.textSecondary}
-          surfaceColor={colors.surface}
-          borderColor={colors.border}
-        />
-      )}
+      <ColorPickerModal
+        visible={showColorModal}
+        onClose={() => setShowColorModal(false)}
+        selectedColor={colorUnlockData?.selectedColor}
+        unlockedColors={colorUnlockData?.unlockedColors || []}
+        onSelectColor={handleColorSelect}
+        currentLevel={currentLevel}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        textSecondaryColor={colors.textSecondary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+      />
 
       {/* Title Picker Modal */}
       <TitlePickerModal

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -48,7 +48,7 @@ const Leistung: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
 
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<Animated.ScrollView>(null);
   const tabSectionPosition = useSharedValue(0);
   const [headerHeight, setHeaderHeight] = useState<number>(60);
   const scrollY = useSharedValue(0);
@@ -163,7 +163,7 @@ const Leistung: React.FC = () => {
     setTimeout(() => {
       if (scrollViewRef.current && tabSectionPosition.value > 0) {
         const targetPosition = tabSectionPosition.value; // Scroll exactly to tab position
-        scrollViewRef.current.scrollTo({ y: targetPosition, animated: true });
+        scrollViewRef.current.scrollTo({ x: 0, y: targetPosition, animated: true });
       }
     }, 100);
   };

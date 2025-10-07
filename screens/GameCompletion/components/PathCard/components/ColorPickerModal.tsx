@@ -97,18 +97,26 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 activeOpacity={isUnlocked ? 0.7 : 1}
                 disabled={!isUnlocked}
               >
-                {/* Color Square */}
+                {/* Color Square - Modern Design */}
                 <View
                   style={[
                     styles.colorSquare,
                     {
-                      backgroundColor: displayColor, // Theme-aware Farbe
-                      opacity: isUnlocked ? 1 : 0.3,
-                      borderWidth: isSelected ? 4 : 0,
-                      borderColor: isDark ? "#ffffff" : "#000000",
+                      backgroundColor: displayColor,
+                      borderWidth: isSelected ? 3 : 1.5,
+                      borderColor: isSelected
+                        ? (isDark ? "#ffffff" : "#000000")
+                        : (isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"),
+                      transform: [{ scale: isSelected ? 1.05 : 1 }],
                     },
+                    !isUnlocked && styles.lockedSquare,
                   ]}
                 >
+                  {/* Gradient Overlay für Tiefe */}
+                  {isUnlocked && (
+                    <View style={[styles.gradientOverlay, { backgroundColor: `${displayColor}20` }]} />
+                  )}
+
                   {/* Lock Icon für gesperrte Farben */}
                   {!isUnlocked && (
                     <View
@@ -116,26 +124,35 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                         styles.lockOverlay,
                         {
                           backgroundColor: isDark
-                            ? "rgba(0,0,0,0.6)"
-                            : "rgba(255,255,255,0.6)",
+                            ? "rgba(0,0,0,0.75)"
+                            : "rgba(255,255,255,0.75)",
                         },
                       ]}
                     >
                       <Feather
                         name="lock"
-                        size={32}
+                        size={28}
                         color={isDark ? "#ffffff" : "#000000"}
+                        style={{ opacity: 0.9 }}
                       />
                     </View>
                   )}
 
-                  {/* Check Icon für ausgewählte Farbe */}
+                  {/* Check Icon für ausgewählte Farbe - Moderner Badge-Style */}
                   {isSelected && isUnlocked && (
-                    <View style={styles.checkOverlay}>
+                    <View
+                      style={[
+                        styles.checkBadge,
+                        {
+                          backgroundColor: isDark ? "#ffffff" : "#000000",
+                        }
+                      ]}
+                    >
                       <Feather
                         name="check"
-                        size={36}
-                        color={isDark ? "#ffffff" : "#000000"}
+                        size={16}
+                        color={displayColor}
+                        strokeWidth={3}
                       />
                     </View>
                   )}
@@ -179,18 +196,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 24,
     lineHeight: 20,
+    opacity: 0.8,
   },
   colorGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 16,
+    gap: 20,
   },
   colorItemWrapper: {
-    // Feste Breite für 2 Spalten: (100% - gap) / 2
-    // Bei maxWidth 400px und padding 24px: (400 - 48 - 16) / 2 = 168px
     width: 168,
-    maxWidth: "47%", // Fallback für kleinere Bildschirme
+    maxWidth: "47%",
   },
   colorItem: {
     width: "100%",
@@ -198,48 +214,69 @@ const styles = StyleSheet.create({
   },
   colorSquare: {
     width: "100%",
-    maxWidth: 168, // Maximale Breite begrenzen
+    maxWidth: 168,
     aspectRatio: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
     marginBottom: 12,
+    overflow: "hidden",
+    // Modern shadow without elevation (no transparency issues)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    // Android: Soft elevation
+    elevation: 6,
+  },
+  lockedSquare: {
+    opacity: 0.4,
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 24,
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 20,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
+    // Backdrop blur effect simulation
   },
-  checkOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 20,
+  checkBadge: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.2)",
+    // Modern drop shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   colorInfo: {
     width: "100%",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
   },
   colorName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "700",
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 20,
+    letterSpacing: 0.2,
   },
   unlockInfo: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
     textAlign: "center",
-    fontStyle: "italic",
-    opacity: 0.7,
+    opacity: 0.6,
+    marginTop: 2,
   },
 });
 

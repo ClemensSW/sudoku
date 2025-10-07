@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+import Animated, { useAnimatedScrollHandler, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -49,6 +50,7 @@ const Leistung: React.FC = () => {
 
   const scrollViewRef = useRef<ScrollView>(null);
   const tabSectionPosition = useRef<number>(0);
+  const scrollY = useSharedValue(0);
 
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,6 +159,35 @@ const Leistung: React.FC = () => {
     setActiveTab(tabId as TabId);
   };
 
+  const handleTabSectionLayout = (event: any) => {
+    const { y } = event.nativeEvent.layout;
+    tabSectionPosition.current = y;
+  };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  // Animated style for sticky tab overlay
+  const stickyTabAnimatedStyle = useAnimatedStyle(() => {
+    const shouldBeVisible = scrollY.value >= tabSectionPosition.current - 10;
+    return {
+      transform: [
+        {
+          translateY: withTiming(shouldBeVisible ? 0 : -100, {
+            duration: 200,
+            easing: Easing.out(Easing.ease),
+          }),
+        },
+      ],
+      opacity: withTiming(shouldBeVisible ? 1 : 0, {
+        duration: 200,
+      }),
+    };
+  });
+
   // Profiländerungen
   const handleNameChange = async (name: string) => {
     try {
@@ -264,16 +295,13 @@ const Leistung: React.FC = () => {
       <StatusBar style={theme.isDark ? "light" : "dark"} />
       <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
 
-      {/* Sticky Tab Navigation */}
-      <View style={[styles.stickyTabSection, { backgroundColor: colors.background }]}>
-        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
-      </View>
-
-      <ScrollView
+      <Animated.ScrollView
         ref={scrollViewRef}
         style={styles.scrollContainer}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         {/* Profile Header */}
         <View style={styles.profileContainer}>
@@ -287,6 +315,11 @@ const Leistung: React.FC = () => {
             title={getTitleString()}
             onTitlePress={handleTitlePress}
           />
+        </View>
+
+        {/* Tab Navigation - normal position */}
+        <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
+          <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
         </View>
 
         {/* Support Banner - unterhalb der Tabs */}
@@ -303,7 +336,18 @@ const Leistung: React.FC = () => {
             renderTabContent()
           )}
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
+
+      {/* Sticky Tab Navigation Overlay */}
+      <Animated.View
+        style={[
+          styles.stickyTabOverlay,
+          { backgroundColor: colors.background },
+          stickyTabAnimatedStyle,
+        ]}
+      >
+        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+      </Animated.View>
 
       {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}
 
@@ -330,8 +374,14 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1 },
   scrollContent: {},
   profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
-  stickyTabSection: {
+  tabSection: {
     width: "100%",
+  },
+  stickyTabOverlay: {
+    position: "absolute",
+    top: 60, // Height of Header
+    left: 0,
+    right: 0,
     zIndex: 10,
     elevation: 4,
     shadowColor: "#000",

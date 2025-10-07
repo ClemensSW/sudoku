@@ -79,18 +79,33 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
         {t("path.colorPicker.subtitle")}
       </Text>
 
-      {/* Color Grid - 2 Spalten Layout mit fester Breite */}
-      <View style={styles.colorGrid}>
-        {COLOR_OPTIONS.map((option) => {
+      {/* Vertical Path Layout - Kreatives Pfad-Design */}
+      <View style={styles.pathContainer}>
+        {COLOR_OPTIONS.map((option, index) => {
           const isUnlocked = unlockedColors.includes(option.color);
           const isSelected = selectedColor === option.color;
           const pathName = t(`levels:paths.${option.pathId}.name`);
+          const isLast = index === COLOR_OPTIONS.length - 1;
 
           // Theme-aware Farbe: Zeigt Light oder Dark Variante je nach Theme
           const displayColor = getColorFromHex(option.color, isDark);
 
           return (
-            <View key={option.color} style={styles.colorItemWrapper}>
+            <View key={option.color} style={styles.pathNode}>
+              {/* Path Connection Line - verbindet zum nächsten */}
+              {!isLast && (
+                <View
+                  style={[
+                    styles.pathLine,
+                    {
+                      backgroundColor: isUnlocked
+                        ? (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)")
+                        : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"),
+                    },
+                  ]}
+                />
+              )}
+
               <TouchableOpacity
                 style={styles.colorItem}
                 onPress={() => handleColorSelect(option.color, isUnlocked)}
@@ -197,45 +212,50 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
-    marginBottom: 24,
+    marginBottom: 32,
     lineHeight: 20,
     opacity: 0.8,
+    textAlign: "center",
   },
-  colorGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: 16,
+  pathContainer: {
+    alignItems: "center",
+    paddingVertical: 8,
   },
-  colorItemWrapper: {
-    width: "48%", // Prozentual für 2 Spalten
-    minWidth: 150,
-    maxWidth: 168,
+  pathNode: {
+    alignItems: "center",
+    position: "relative",
+    marginBottom: 8,
+  },
+  pathLine: {
+    position: "absolute",
+    bottom: -20,
+    width: 3,
+    height: 32,
+    borderRadius: 1.5,
+    zIndex: -1,
   },
   colorItem: {
-    width: "100%",
     alignItems: "center",
+    width: 200,
   },
   colorSquareContainer: {
-    width: "100%",
-    aspectRatio: 1,
+    width: 140,
+    height: 140,
     marginBottom: 12,
-    padding: 4, // Platz für Border & Scale-Animation
+    padding: 4,
   },
   colorSquare: {
     width: "100%",
     height: "100%",
-    borderRadius: 20,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    // Modern shadow without elevation (no transparency issues)
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    // Android: Soft elevation
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
   lockedSquare: {
     opacity: 0.4,
@@ -271,20 +291,21 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     gap: 6,
+    marginBottom: 16,
   },
   colorName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "700",
     textAlign: "center",
-    lineHeight: 20,
-    letterSpacing: 0.2,
+    lineHeight: 22,
+    letterSpacing: 0.3,
   },
   unlockInfo: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
     textAlign: "center",
-    opacity: 0.6,
-    marginTop: 2,
+    opacity: 0.5,
+    marginTop: 4,
   },
 });
 

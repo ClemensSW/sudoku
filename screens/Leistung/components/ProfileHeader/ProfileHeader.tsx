@@ -123,7 +123,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               }
             ]}
           >
-            <Feather name="award" size={16} color={colors.primary} />
+            <Feather name="award" size={14} color={colors.primary} style={{ opacity: 0.8 }} />
             <Text style={[styles.titlePillText, { color: theme.isDark ? "#fff" : "#111" }]} numberOfLines={1}>
               {title}
             </Text>
@@ -138,39 +138,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           {
             backgroundColor: cardBg,
             borderColor: cardBorder,
-            shadowOpacity: theme.isDark ? 0.18 : 0.08, // iOS shadow
-            elevation: androidElevation, // Android: Light=3, Dark=0
           },
-          Platform.OS === "android" && theme.isDark ? { borderWidth: StyleSheet.hairlineWidth } : null,
         ]}
       >
-        {/* pseudo-3D Hairlines nur für Android Dark */}
-        {Platform.OS === "android" && theme.isDark && (
-          <>
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 8,
-                right: 8,
-                height: 1,
-                backgroundColor: "rgba(255,255,255,0.06)",
-                borderRadius: 1,
-              }}
-            />
-            <View
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 8,
-                right: 8,
-                height: 1,
-                backgroundColor: "rgba(0,0,0,0.22)",
-                borderRadius: 1,
-              }}
-            />
-          </>
-        )}
 
         <View style={styles.statsRow}>
           <StatTile
@@ -318,37 +288,40 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   titlePill: {
-    marginTop: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 14,
-    borderWidth: 1.5,
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 2,
   },
   titlePillText: {
-    fontSize: 15,
-    fontWeight: "700",
+    fontSize: 13,
+    fontWeight: "600",
     maxWidth: 280,
-    letterSpacing: 0.4,
+    letterSpacing: 0.2,
+    opacity: 0.85,
   },
 
   /* Stats Card */
   statsCard: {
     width: "100%",
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 14,
+    borderWidth: 1.5,
     paddingVertical: 20,
     paddingHorizontal: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
   },
   statsRow: {
     flexDirection: "row",

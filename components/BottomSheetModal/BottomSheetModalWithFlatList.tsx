@@ -1,11 +1,12 @@
 // components/BottomSheetModal/BottomSheetModalWithFlatList.tsx
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import {
   BottomSheetModal as GorhomBottomSheetModal,
   BottomSheetFlatList,
   BottomSheetBackdrop as GorhomBackdrop
 } from '@gorhom/bottom-sheet';
+import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@/contexts/navigation';
 import BottomSheetHandle from './BottomSheetHandle';
 import CustomBottomSheetBackdrop from './BottomSheetBackdrop';
@@ -140,7 +141,22 @@ function BottomSheetModalWithFlatList<T>({
       }}
     >
       <View style={[styles.stickyHeader, { backgroundColor: surfaceColor, borderColor: borderColor }]}>
-        <Text style={[styles.title, { color: textPrimaryColor }]}>{title}</Text>
+        <View style={styles.headerRow}>
+          <Text style={[styles.title, { color: textPrimaryColor }]}>{title}</Text>
+          <Pressable
+            onPress={onClose}
+            style={({ pressed }) => [
+              styles.closeButton,
+              {
+                backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                opacity: pressed ? 0.6 : 1,
+              }
+            ]}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="x" size={20} color={textPrimaryColor} />
+          </Pressable>
+        </View>
         {ListHeaderComponent && (
           typeof ListHeaderComponent === 'function'
             ? <ListHeaderComponent />
@@ -172,11 +188,24 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     borderBottomWidth: 0,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 16,
+    flex: 1,
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
   },
   stickyFooter: {
     paddingHorizontal: 20,

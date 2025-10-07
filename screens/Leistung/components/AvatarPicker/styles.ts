@@ -112,7 +112,7 @@ export default StyleSheet.create({
   // Avatar Grid Styles
   gridContainer: {
     paddingHorizontal: GRID_SPACING / 2,
-    paddingBottom: 24,
+    paddingBottom: 80, // Space for bottom sticky tabs (60px height + 20px margin)
   },
   categoryTitle: {
     fontSize: 16,

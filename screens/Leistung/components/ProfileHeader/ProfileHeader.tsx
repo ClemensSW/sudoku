@@ -119,6 +119,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               { opacity: pressed ? 0.6 : 1 }
             ]}
           >
+            <Feather name="award" size={14} color={colors.textSecondary} style={{ marginRight: 6 }} />
             <Text style={[styles.titleTextStyle, { color: colors.textSecondary }]} numberOfLines={1}>
               {title}
             </Text>
@@ -284,6 +285,8 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginTop: 6,
+    flexDirection: "row",
+    alignItems: "center",
   },
   titleTextStyle: {
     fontSize: 15,

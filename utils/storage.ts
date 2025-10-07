@@ -498,25 +498,30 @@ export const unlockColor = async (color: string): Promise<void> => {
   }
 };
 
+// 🔧 DEV MODE: Setze auf true um alle Farben für Testing freizuschalten
+const DEV_UNLOCK_ALL_COLORS = false;
+
 // Ermittle freigeschaltete Farben basierend auf Level
 // Verwendet aktualisierte Farbwerte (Light Mode Varianten für Storage)
 export const getUnlockedColorsForLevel = (level: number): string[] => {
-  // TEMPORÄR: Alle Farben zum Testen freigeschaltet
-  return [
-    "#4285F4", // Blau - Fundamentals
-    "#34A853", // Grün - Insight
-    "#F9AB00", // Gelb - Mastery (aktualisiert von #FBBC05)
-    "#EA4335", // Rot - Wisdom
-    "#7C4DFF", // Violett - Transcendence (aktualisiert von #673AB7)
-  ];
+  // DEV MODE: Alle Farben zum Testen freigeschaltet
+  if (DEV_UNLOCK_ALL_COLORS) {
+    return [
+      "#4285F4", // Blau - Fundamentals
+      "#34A853", // Grün - Insight
+      "#F9AB00", // Gelb - Mastery
+      "#EA4335", // Rot - Wisdom
+      "#7C4DFF", // Violett - Transcendence
+    ];
+  }
 
-  // ORIGINAL (auskommentiert):
-  // const colors = ["#4285F4"]; // Blau - immer verfügbar
-  // if (level >= 5) colors.push("#34A853"); // Grün - ab Level 5
-  // if (level >= 10) colors.push("#F9AB00"); // Gelb - ab Level 10
-  // if (level >= 15) colors.push("#EA4335"); // Rot - ab Level 15
-  // if (level >= 20) colors.push("#7C4DFF"); // Violett - ab Level 20
-  // return colors;
+  // PRODUCTION: Level-basiertes Freischalten
+  const colors = ["#4285F4"]; // Blau - immer verfügbar
+  if (level >= 5) colors.push("#34A853"); // Grün - ab Level 5
+  if (level >= 10) colors.push("#F9AB00"); // Gelb - ab Level 10
+  if (level >= 15) colors.push("#EA4335"); // Rot - ab Level 15
+  if (level >= 20) colors.push("#7C4DFF"); // Violett - ab Level 20
+  return colors;
 };
 
 // Synchronisiere freigeschaltete Farben mit aktuellem Level

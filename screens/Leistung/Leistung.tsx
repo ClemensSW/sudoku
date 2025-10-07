@@ -49,7 +49,7 @@ const Leistung: React.FC = () => {
   const { showAlert } = useAlert();
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const tabSectionPosition = useRef<number>(0);
+  const tabSectionPosition = useSharedValue(0);
   const [headerHeight, setHeaderHeight] = useState<number>(60);
   const scrollY = useSharedValue(0);
 
@@ -162,7 +162,7 @@ const Leistung: React.FC = () => {
 
   const handleTabSectionLayout = (event: any) => {
     const { y } = event.nativeEvent.layout;
-    tabSectionPosition.current = y;
+    tabSectionPosition.value = y;
   };
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -173,8 +173,8 @@ const Leistung: React.FC = () => {
 
   // Animated style for sticky tab overlay
   const stickyTabAnimatedStyle = useAnimatedStyle(() => {
-    const threshold = tabSectionPosition.current - 10;
-    const shouldBeVisible = scrollY.value >= threshold && tabSectionPosition.current > 0;
+    const threshold = tabSectionPosition.value - 10;
+    const shouldBeVisible = scrollY.value >= threshold && tabSectionPosition.value > 0;
     return {
       transform: [
         {
@@ -344,7 +344,7 @@ const Leistung: React.FC = () => {
           { backgroundColor: colors.background, top: headerHeight },
           stickyTabAnimatedStyle,
         ]}
-        pointerEvents={scrollY.value >= tabSectionPosition.current - 10 && tabSectionPosition.current > 0 ? 'auto' : 'none'}
+        pointerEvents="box-none"
       >
         <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
       </Animated.View>

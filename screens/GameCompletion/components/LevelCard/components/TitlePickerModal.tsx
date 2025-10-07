@@ -5,7 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { triggerHaptic } from "@/utils/haptics";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
-import BaseModal from "@/components/BaseModal/BaseModal";
+import BottomSheetModal from "@/components/BottomSheetModal";
 
 interface TitleOption {
   name: string;
@@ -78,7 +78,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
   const lockedTitles = titles.filter(t => !t.isUnlocked);
 
   return (
-    <BaseModal
+    <BottomSheetModal
       visible={visible}
       onClose={onClose}
       title={t("titlePicker.title")}
@@ -86,8 +86,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
       textPrimaryColor={textPrimaryColor}
       surfaceColor={surfaceColor}
       borderColor={borderColor}
-      scrollable={true}
-      maxHeightRatio={0.7}
+      snapPoints={['40%', '90%']}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
         {t("titlePicker.subtitle")}
@@ -365,7 +364,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
           </>
         )}
       </View>
-    </BaseModal>
+    </BottomSheetModal>
   );
 };
 

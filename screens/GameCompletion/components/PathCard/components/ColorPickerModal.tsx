@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { triggerHaptic } from "@/utils/haptics";
-import BaseModal from "@/components/BaseModal/BaseModal";
+import BottomSheetModal from "@/components/BottomSheetModal";
 import { getColorFromHex } from "@/utils/pathColors";
 
 interface ColorOption {
@@ -64,7 +64,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   };
 
   return (
-    <BaseModal
+    <BottomSheetModal
       visible={visible}
       onClose={onClose}
       title={t("path.colorPicker.title")}
@@ -72,8 +72,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
       textPrimaryColor={textPrimaryColor}
       surfaceColor={surfaceColor}
       borderColor={borderColor}
-      scrollable={true}
-      maxHeightRatio={0.6}
+      snapPoints={['45%', '75%']}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
         {t("path.colorPicker.subtitle")}
@@ -205,7 +204,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
           );
         })}
       </View>
-    </BaseModal>
+    </BottomSheetModal>
   );
 };
 

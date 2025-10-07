@@ -16,7 +16,7 @@ import { getLevels } from "@/screens/GameCompletion/components/PlayerProgression
 import { getSortedLanguages, getLanguageLabel } from "@/locales/languages";
 import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/components/ColorPickerModal";
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
-import BaseModal from "@/components/BaseModal/BaseModal";
+import BottomSheetModal from "@/components/BottomSheetModal";
 import { useEffect } from "react";
 import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
 
@@ -235,7 +235,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       />
 
       {/* Language Selection Modal */}
-      <BaseModal
+      <BottomSheetModal
         visible={showLanguageModal}
         onClose={() => setShowLanguageModal(false)}
         title={t("languageModal.title")}
@@ -243,8 +243,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         textPrimaryColor={colors.textPrimary}
         surfaceColor={colors.surface}
         borderColor={cardBorder}
-        scrollable={true}
-        maxHeightRatio={0.6}
+        snapPoints={['30%', '50%']}
       >
         <View style={styles.languageOptions}>
           {sortedLanguages.map((language) => (
@@ -271,7 +270,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
             </TouchableOpacity>
           ))}
         </View>
-      </BaseModal>
+      </BottomSheetModal>
     </>
   );
 };

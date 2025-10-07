@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { Theme } from "@/utils/theme/ThemeProvider";
 import { PausedGameState } from "@/utils/storage";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { styles } from "../Start.styles";
 
 interface BottomButtonContainerProps {
@@ -33,6 +34,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
 }) => {
   const { t } = useTranslation('start');
   const { colors, isDark } = theme;
+  const progressColor = useProgressColor();
 
   // Helper to format time for display
   const formatTime = (seconds: number): string => {
@@ -138,7 +140,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
         {/* New Game Button */}
         <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle]}>
           <TouchableOpacity
-            style={[styles.startButton, { backgroundColor: colors.primary }]}
+            style={[styles.startButton, { backgroundColor: progressColor }]}
             onPress={onStartGamePress}
             activeOpacity={0.9}
             onPressIn={onButtonPressIn}

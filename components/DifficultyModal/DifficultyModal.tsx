@@ -17,6 +17,7 @@ import {
   getUnlockedDifficulties,
   getProgressValue
 } from "@/utils/storage";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import styles from "./DifficultyModal.styles";
 
 // Konstante für die Teal-Farbe für den Duo-Modus
@@ -52,6 +53,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const { t } = useTranslation('start');
   const theme = useTheme();
   const colors = theme.colors;
+  const dynamicProgressColor = useProgressColor();
   const [stats, setStats] = useState<GameStats | null>(null);
   const [unlockedDifficulties, setUnlockedDifficulties] = useState<Difficulty[]>(["easy"]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +64,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const modalConfirmText = confirmText || t('difficultyModal.confirm');
 
   // Wähle die Primärfarbe basierend auf dem Modus
-  const primaryColor = isDuoMode ? DUO_PRIMARY_COLOR : colors.primary;
+  const primaryColor = isDuoMode ? DUO_PRIMARY_COLOR : dynamicProgressColor;
 
   // Helper function to get progress message with i18next
   const getProgressMessage = (stats: GameStats): string => {

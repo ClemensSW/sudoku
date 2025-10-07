@@ -84,9 +84,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         ]}
       >
         <Image source={getAvatarSource()} style={styles.avatar} />
-        <View style={styles.avatarOverlay}>
-          <Feather name="camera" size={20} color="#fff" />
-        </View>
       </Pressable>
 
       {/* Name + (optional) Titel als Pill darunter */}
@@ -257,19 +254,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   avatar: { width: 180, height: 180, borderRadius: 60, backgroundColor: "#F8E4D9" },
-  avatarOverlay: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(0,0,0,0.55)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
 
   /* Name + Titel */
   nameContainer: { marginBottom: 40, alignItems: "center" },

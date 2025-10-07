@@ -6,8 +6,7 @@ import { GameSettings as GameSettingsType } from "@/utils/storage";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { spacing } from "@/utils/theme";
 import ThemeToggleSwitch from "../ThemeToggleSwitch/ThemeToggleSwitch";
-import LanguageSelector from "../LanguageSelector";
-import PathColorSelector from "../PathColorSelector";
+import AppearanceGroup from "../AppearanceGroup";
 
 interface AppearanceSettingsProps {
   settings: GameSettingsType | null;
@@ -57,10 +56,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
         disabled={isChanging}
       />
       <View style={{ marginTop: spacing.lg}}>
-        <PathColorSelector />
-      </View>
-      <View style={{ marginTop: spacing.md}}>
-        <LanguageSelector onLanguageChange={handleLanguageChange} />
+        <AppearanceGroup onLanguageChange={handleLanguageChange} />
       </View>
     </Animated.View>
   );

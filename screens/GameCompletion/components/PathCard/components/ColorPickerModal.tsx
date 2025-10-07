@@ -27,12 +27,13 @@ interface ColorPickerModalProps {
 }
 
 // Definiere alle verfügbaren Farben mit ihren Unlock-Levels
+// Verwendet aktualisierte Light Mode Varianten
 const COLOR_OPTIONS: ColorOption[] = [
   { color: "#4285F4", pathId: "fundamentals", unlockLevel: 0 },
   { color: "#34A853", pathId: "insight", unlockLevel: 5 },
-  { color: "#FBBC05", pathId: "mastery", unlockLevel: 10 },
+  { color: "#F9AB00", pathId: "mastery", unlockLevel: 10 },
   { color: "#EA4335", pathId: "wisdom", unlockLevel: 15 },
-  { color: "#673AB7", pathId: "transcendence", unlockLevel: 20 },
+  { color: "#7C4DFF", pathId: "transcendence", unlockLevel: 20 },
 ];
 
 const ColorPickerModal: React.FC<ColorPickerModalProps> = ({

@@ -5,6 +5,8 @@ import { LevelInfo, PathInfo, LevelThreshold } from './types';
 import i18next from '@/locales/i18n';
 
 // Base path data without translations
+// Farben: Light Mode Varianten (Storage-Werte)
+// Die tatsächliche Anzeige erfolgt über ColorContext (Theme-aware)
 const pathsBase = [
   {
     id: "fundamentals",
@@ -19,7 +21,7 @@ const pathsBase = [
   {
     id: "mastery",
     levelRange: [10, 14] as [number, number],
-    color: "#FBBC05", // Google-Gelb - Optimismus und Meisterschaft
+    color: "#F9AB00", // Warmes Gold - Optimismus und Meisterschaft (aktualisiert)
   },
   {
     id: "wisdom",
@@ -29,7 +31,7 @@ const pathsBase = [
   {
     id: "transcendence",
     levelRange: [20, 50] as [number, number],
-    color: "#673AB7", // Tiefes Violett - Spiritualität und Transzendenz
+    color: "#7C4DFF", // Lebendigeres Lila - Spiritualität und Transzendenz (aktualisiert)
   }
 ];
 

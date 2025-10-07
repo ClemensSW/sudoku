@@ -1,24 +1,29 @@
 // contexts/color/ColorContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { loadColorUnlock, updateSelectedColor as updateStoredColor } from '@/utils/storage';
+import { getColorFromHex } from '@/utils/pathColors';
+import { useTheme } from '@/utils/theme/ThemeProvider';
 
 interface ColorContextType {
+  /** The actual display color (theme-aware: light or dark variant) */
   progressColor: string;
+  /** The stored color hex value (theme-agnostic) */
+  storedColorHex: string;
   updateSelectedColor: (color: string) => Promise<void>;
 }
 
 const ColorContext = createContext<ColorContextType | undefined>(undefined);
 
 export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [progressColor, setProgressColor] = useState<string>('#4285F4'); // Default: Blau
+  const theme = useTheme();
+  const [storedColorHex, setStoredColorHex] = useState<string>('#4285F4'); // Default: Blau
 
-  // Load initial color
+  // Load initial color from storage
   useEffect(() => {
     const loadColor = async () => {
       try {
-        // Load selected color from storage
         const colorData = await loadColorUnlock();
-        setProgressColor(colorData.selectedColor);
+        setStoredColorHex(colorData.selectedColor);
       } catch (error) {
         console.error('Error loading progress color:', error);
       }
@@ -27,18 +32,21 @@ export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     loadColor();
   }, []);
 
+  // Compute display color based on theme (light/dark) and stored hex
+  const progressColor = getColorFromHex(storedColorHex, theme.isDark);
+
   // Function to update color and notify all consumers
   const updateSelectedColor = async (color: string) => {
     try {
       await updateStoredColor(color);
-      setProgressColor(color);
+      setStoredColorHex(color); // This triggers re-computation of progressColor
     } catch (error) {
       console.error('Error updating progress color:', error);
     }
   };
 
   return (
-    <ColorContext.Provider value={{ progressColor, updateSelectedColor }}>
+    <ColorContext.Provider value={{ progressColor, storedColorHex, updateSelectedColor }}>
       {children}
     </ColorContext.Provider>
   );

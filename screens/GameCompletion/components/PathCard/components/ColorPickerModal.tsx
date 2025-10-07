@@ -97,21 +97,23 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                 activeOpacity={isUnlocked ? 0.7 : 1}
                 disabled={!isUnlocked}
               >
-                {/* Color Square - Modern Design */}
-                <View
-                  style={[
-                    styles.colorSquare,
-                    {
-                      backgroundColor: displayColor,
-                      borderWidth: isSelected ? 3 : 1.5,
-                      borderColor: isSelected
-                        ? (isDark ? "#ffffff" : "#000000")
-                        : (isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"),
-                      transform: [{ scale: isSelected ? 1.05 : 1 }],
-                    },
-                    !isUnlocked && styles.lockedSquare,
-                  ]}
-                >
+                {/* Color Square Container - verhindert Border-Overflow */}
+                <View style={styles.colorSquareContainer}>
+                  {/* Color Square - Modern Design */}
+                  <View
+                    style={[
+                      styles.colorSquare,
+                      {
+                        backgroundColor: displayColor,
+                        borderWidth: isSelected ? 3 : 1.5,
+                        borderColor: isSelected
+                          ? (isDark ? "#ffffff" : "#000000")
+                          : (isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"),
+                        transform: [{ scale: isSelected ? 1.02 : 1 }],
+                      },
+                      !isUnlocked && styles.lockedSquare,
+                    ]}
+                  >
                   {/* Gradient Overlay für Tiefe */}
                   {isUnlocked && (
                     <View style={[styles.gradientOverlay, { backgroundColor: `${displayColor}20` }]} />
@@ -156,6 +158,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                       />
                     </View>
                   )}
+                  </View>
                 </View>
 
                 {/* Color Info unterhalb des Quadrats */}
@@ -202,24 +205,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 20,
+    gap: 16,
   },
   colorItemWrapper: {
-    width: 168,
-    maxWidth: "47%",
+    width: "48%", // Prozentual für 2 Spalten
+    minWidth: 150,
+    maxWidth: 168,
   },
   colorItem: {
     width: "100%",
     alignItems: "center",
   },
+  colorSquareContainer: {
+    width: "100%",
+    aspectRatio: 1,
+    marginBottom: 12,
+    padding: 4, // Platz für Border & Scale-Animation
+  },
   colorSquare: {
     width: "100%",
-    maxWidth: 168,
-    aspectRatio: 1,
-    borderRadius: 24,
+    height: "100%",
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
     overflow: "hidden",
     // Modern shadow without elevation (no transparency issues)
     shadowColor: "#000",
@@ -234,11 +242,11 @@ const styles = StyleSheet.create({
   },
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 24,
+    borderRadius: 20,
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 24,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     // Backdrop blur effect simulation

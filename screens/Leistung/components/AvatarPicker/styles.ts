@@ -59,23 +59,27 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
 
-  // Tab Navigation (Bottom Sticky)
+  // Tab Navigation (Bottom Sticky - Gallery Style)
   tabContainer: {
     flexDirection: "row",
-    borderRadius: 0,
-    height: 60,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
     position: "relative",
-    overflow: "hidden",
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    marginHorizontal: 2,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 12,
+    minHeight: 44,
   },
   tabButtonText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
+    textAlign: 'center',
   },
   activeTabIndicator: {
     position: "absolute",

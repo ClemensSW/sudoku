@@ -137,28 +137,20 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   // Key extractor
   const keyExtractor = useCallback((item: DefaultAvatar) => item.id, []);
 
-  // Tab Navigation Header
+  // Tab Navigation Header (Gallery Style)
   const TabNavigationHeader = useCallback(() => (
-    <View
-      style={[
-        styles.tabContainer,
-        {
-          backgroundColor: theme.isDark
-            ? "rgba(255,255,255,0.03)"
-            : "rgba(0,0,0,0.03)",
-        },
-      ]}
-    >
+    <View style={styles.tabContainer}>
       {tabs.map((tab) => (
         <Pressable
           key={tab.id}
-          style={[
+          style={({ pressed }) => [
             styles.tabButton,
             activeCategory === tab.id && {
               backgroundColor: theme.isDark
-                ? "rgba(255,255,255,0.05)"
-                : "rgba(0,0,0,0.05)",
+                ? "rgba(138, 180, 248, 0.12)"
+                : "rgba(66, 133, 244, 0.08)",
             },
+            pressed && { opacity: 0.7 },
           ]}
           onPress={() => setActiveCategory(tab.id)}
           onLayout={(event) => measureTab(tab.id, event)}
@@ -171,7 +163,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                   activeCategory === tab.id
                     ? colors.primary
                     : colors.textSecondary,
-                fontWeight: activeCategory === tab.id ? '600' : '400',
+                fontWeight: activeCategory === tab.id ? '600' : '500',
               },
             ]}
           >

@@ -991,9 +991,307 @@ export const defaultAvatars: DefaultAvatar[] = [
     category: 'Anime'
   },
 
-  // Tiere (Animals) - Coming soon
-  // Note: SVG avatars need to be converted to WebP/PNG format first
-  // React Native doesn't support SVG imports via require()
+  // Tiere (Animals)
+  {
+    id: 'animal1',
+    source: require('@/assets/images/avatars/animals/001-elephant.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal2',
+    source: require('@/assets/images/avatars/animals/002-snake.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal3',
+    source: require('@/assets/images/avatars/animals/003-hippo.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal4',
+    source: require('@/assets/images/avatars/animals/004-turtle.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal5',
+    source: require('@/assets/images/avatars/animals/005-parrot.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal6',
+    source: require('@/assets/images/avatars/animals/006-panda.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal7',
+    source: require('@/assets/images/avatars/animals/007-boar.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal8',
+    source: require('@/assets/images/avatars/animals/008-giraffe.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal9',
+    source: require('@/assets/images/avatars/animals/009-squid.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal10',
+    source: require('@/assets/images/avatars/animals/010-rhino.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal11',
+    source: require('@/assets/images/avatars/animals/011-deer.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal12',
+    source: require('@/assets/images/avatars/animals/012-stingray.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal13',
+    source: require('@/assets/images/avatars/animals/013-beetle.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal14',
+    source: require('@/assets/images/avatars/animals/014-shark.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal15',
+    source: require('@/assets/images/avatars/animals/015-walrus.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal16',
+    source: require('@/assets/images/avatars/animals/016-bat.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal17',
+    source: require('@/assets/images/avatars/animals/017-hedgehog.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal18',
+    source: require('@/assets/images/avatars/animals/018-spider.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal19',
+    source: require('@/assets/images/avatars/animals/019-ladybug.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal20',
+    source: require('@/assets/images/avatars/animals/020-dog.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal21',
+    source: require('@/assets/images/avatars/animals/021-sloth.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal22',
+    source: require('@/assets/images/avatars/animals/022-rabbit.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal23',
+    source: require('@/assets/images/avatars/animals/023-crab.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal24',
+    source: require('@/assets/images/avatars/animals/024-camel.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal25',
+    source: require('@/assets/images/avatars/animals/025-zebra.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal26',
+    source: require('@/assets/images/avatars/animals/026-beaver.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal27',
+    source: require('@/assets/images/avatars/animals/027-horse.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal28',
+    source: require('@/assets/images/avatars/animals/028-chicken.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal29',
+    source: require('@/assets/images/avatars/animals/029-fox.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal30',
+    source: require('@/assets/images/avatars/animals/030-frog.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal31',
+    source: require('@/assets/images/avatars/animals/031-platypus.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal32',
+    source: require('@/assets/images/avatars/animals/032-whale.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal33',
+    source: require('@/assets/images/avatars/animals/033-cow.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal34',
+    source: require('@/assets/images/avatars/animals/034-bullfinch.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal35',
+    source: require('@/assets/images/avatars/animals/035-butterfly.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal36',
+    source: require('@/assets/images/avatars/animals/036-clown fish.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal37',
+    source: require('@/assets/images/avatars/animals/037-penguin.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal38',
+    source: require('@/assets/images/avatars/animals/038-owl.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal39',
+    source: require('@/assets/images/avatars/animals/039-crocodile.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal40',
+    source: require('@/assets/images/avatars/animals/040-lama.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal41',
+    source: require('@/assets/images/avatars/animals/041-bee.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal42',
+    source: require('@/assets/images/avatars/animals/042-chameleon.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal43',
+    source: require('@/assets/images/avatars/animals/043-buffalo.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal44',
+    source: require('@/assets/images/avatars/animals/044-pig.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal45',
+    source: require('@/assets/images/avatars/animals/045-cat.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal46',
+    source: require('@/assets/images/avatars/animals/046-sheep.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal47',
+    source: require('@/assets/images/avatars/animals/047-flamingo.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal48',
+    source: require('@/assets/images/avatars/animals/048-lion.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal49',
+    source: require('@/assets/images/avatars/animals/049-gorilla.png'),
+    name: '',
+    category: 'Tiere'
+  },
+  {
+    id: 'animal50',
+    source: require('@/assets/images/avatars/animals/050-mouse.png'),
+    name: '',
+    category: 'Tiere'
+  },
 
 ];
 

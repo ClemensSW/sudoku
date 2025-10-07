@@ -85,6 +85,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     () => [
       { id: 'Cartoon', label: 'Cartoon' },
       { id: 'Anime', label: 'Anime' },
+      { id: 'Tiere', label: 'Tiere' },
     ],
     []
   );

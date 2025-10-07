@@ -1,13 +1,13 @@
 // components/AvatarPicker/DefaultAvatars.tsx
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ScrollView } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, FlatList } from 'react-native';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import AvatarOption from './AvatarOption';
-import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath, defaultAvatars } from '../../utils/defaultAvatars';
+import { DefaultAvatar, defaultAvatars } from '../../utils/defaultAvatars';
 import { saveDefaultAvatar } from '../../utils/avatarStorage';
 import styles from './styles';
 
-export type AvatarCategory = 'Cartoon' | 'Anime';
+export type AvatarCategory = 'Cartoon' | 'Anime' | 'Tiere';
 
 interface DefaultAvatarsProps {
   currentAvatarUri: string | null;
@@ -29,10 +29,10 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Filter avatars by active category (default avatar already included in category list)
-  const avatarsToShow = defaultAvatars.filter(avatar => {
-    return avatar.category === activeCategory;
-  });
+  // Filter avatars by active category - memoized for performance
+  const avatarsToShow = useMemo(() => {
+    return defaultAvatars.filter(avatar => avatar.category === activeCategory);
+  }, [activeCategory]);
 
   // Set initial selected avatar if it matches a default avatar
   useEffect(() => {
@@ -67,6 +67,21 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
     }
   };
 
+  // Render item for FlatList
+  const renderItem = ({ item }: { item: DefaultAvatar }) => (
+    <View style={styles.avatarWrapper}>
+      <AvatarOption
+        avatar={item}
+        isSelected={selectedAvatar === item.id}
+        onSelect={handleSelectAvatar}
+        isNew={false}
+      />
+    </View>
+  );
+
+  // Key extractor
+  const keyExtractor = (item: DefaultAvatar) => item.id;
+
   if (avatarsToShow.length === 0) {
     return (
       <View style={styles.emptyState}>
@@ -77,27 +92,25 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
     );
   }
 
-  // Directly using ScrollView with windowing optimization
+  // Using FlatList for optimal performance with large lists
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      showsVerticalScrollIndicator={true}
+    <FlatList
+      data={avatarsToShow}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      numColumns={3}
       contentContainerStyle={styles.gridContainer}
-      removeClippedSubviews={true} // Optimization
-    >
-      <View style={styles.gridRow}>
-        {avatarsToShow.map((avatar) => (
-          <View key={avatar.id} style={styles.avatarWrapper}>
-            <AvatarOption
-              avatar={avatar}
-              isSelected={selectedAvatar === avatar.id}
-              onSelect={handleSelectAvatar}
-              isNew={false}
-            />
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+      showsVerticalScrollIndicator={true}
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={15}
+      initialNumToRender={15}
+      windowSize={10}
+      getItemLayout={(data, index) => ({
+        length: 120, // Approximate item height
+        offset: 120 * Math.floor(index / 3),
+        index,
+      })}
+    />
   );
 };
 

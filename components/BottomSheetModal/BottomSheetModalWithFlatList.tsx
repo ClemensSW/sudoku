@@ -107,20 +107,6 @@ function BottomSheetModalWithFlatList<T>({
     [isDark]
   );
 
-  // Header with title
-  const ListHeader = useCallback(() => (
-    <>
-      <View style={styles.headerContainer}>
-        <Text style={[styles.title, { color: textPrimaryColor }]}>{title}</Text>
-      </View>
-      {ListHeaderComponent && (
-        typeof ListHeaderComponent === 'function'
-          ? <ListHeaderComponent />
-          : ListHeaderComponent
-      )}
-    </>
-  ), [title, textPrimaryColor, ListHeaderComponent]);
-
   return (
     <GorhomBottomSheetModal
       ref={bottomSheetRef}
@@ -138,6 +124,14 @@ function BottomSheetModalWithFlatList<T>({
         borderTopRightRadius: 24,
       }}
     >
+      <View style={[styles.stickyHeader, { backgroundColor: surfaceColor, borderColor: borderColor }]}>
+        <Text style={[styles.title, { color: textPrimaryColor }]}>{title}</Text>
+        {ListHeaderComponent && (
+          typeof ListHeaderComponent === 'function'
+            ? <ListHeaderComponent />
+            : ListHeaderComponent
+        )}
+      </View>
       <BottomSheetFlatList
         data={data}
         renderItem={renderItem}
@@ -149,7 +143,6 @@ function BottomSheetModalWithFlatList<T>({
         maxToRenderPerBatch={15}
         initialNumToRender={15}
         windowSize={10}
-        ListHeaderComponent={ListHeader}
         ListEmptyComponent={ListEmptyComponent}
       />
     </GorhomBottomSheetModal>
@@ -157,15 +150,17 @@ function BottomSheetModalWithFlatList<T>({
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
+  stickyHeader: {
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 16,
-    alignItems: 'center',
+    paddingBottom: 0,
+    borderBottomWidth: 0,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 16,
   },
 });
 

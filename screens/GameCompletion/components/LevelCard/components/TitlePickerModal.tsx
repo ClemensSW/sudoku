@@ -1,5 +1,5 @@
 // components/LevelCard/components/TitlePickerModal.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -59,23 +59,27 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
     // Modal bleibt offen
   };
 
-  // Get level data for descriptions
-  const allLevels = getLevels();
+  // Get level data for descriptions - memoized
+  const allLevels = useMemo(() => getLevels(), []);
 
-  // Get selected title data with description based on level index
-  const selectedTitleData = selectedTitleIndex !== null
-    ? titles.find(t => t.level === selectedTitleIndex)
-    : null;
+  // Get selected title data with description - memoized
+  const selectedTitleData = useMemo(() => {
+    return selectedTitleIndex !== null
+      ? titles.find(t => t.level === selectedTitleIndex)
+      : null;
+  }, [selectedTitleIndex, titles]);
+
   const selectedTitle = selectedTitleData?.name || null;
   const selectedTitleDescription = selectedTitleData
     ? allLevels[selectedTitleData.level]?.message || ""
     : "";
 
-  // Sortiere Titel: Freigeschaltete (neueste zuerst), dann gesperrte (aufsteigend)
-  const unlockedTitles = titles
-    .filter(t => t.isUnlocked)
-    .reverse();
-  const lockedTitles = titles.filter(t => !t.isUnlocked);
+  // Sortiere Titel: Freigeschaltete (neueste zuerst), dann gesperrte (aufsteigend) - memoized
+  const { unlockedTitles, lockedTitles } = useMemo(() => {
+    const unlocked = titles.filter(t => t.isUnlocked).reverse();
+    const locked = titles.filter(t => !t.isUnlocked);
+    return { unlockedTitles: unlocked, lockedTitles: locked };
+  }, [titles]);
 
   return (
     <BottomSheetModal

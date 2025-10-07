@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -62,6 +62,30 @@ const Leistung: React.FC = () => {
 
   // Progress color for title modal
   const progressColor = useProgressColor(stats?.totalXP || 0);
+
+  // Calculate title options - memoized for performance
+  const titleOptions = useMemo(() => {
+    if (!stats) return [];
+
+    const allLevels = getLevels();
+    const currentXp = stats.totalXP;
+
+    // Calculate current level
+    let currentLevel = 0;
+    for (let i = 0; i < allLevels.length; i++) {
+      if (currentXp >= allLevels[i].xp) {
+        currentLevel = i;
+      } else {
+        break;
+      }
+    }
+
+    return allLevels.map((level, index) => ({
+      name: level.name,
+      level: index,
+      isUnlocked: index <= currentLevel,
+    }));
+  }, [stats?.totalXP]);
 
   // Initial-Load
   useEffect(() => {
@@ -293,39 +317,20 @@ const Leistung: React.FC = () => {
 
       {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}
 
-      {/* Title Picker Modal - direkt gerendert für Performance */}
-      {stats && (
-        <TitlePickerModal
-          visible={showTitleModal}
-          onClose={() => setShowTitleModal(false)}
-          titles={(() => {
-            const allLevels = getLevels();
-            const currentXp = stats.totalXP;
-            // Calculate current level
-            let currentLevel = 0;
-            for (let i = 0; i < allLevels.length; i++) {
-              if (currentXp >= allLevels[i].xp) {
-                currentLevel = i;
-              } else {
-                break;
-              }
-            }
-            return allLevels.map((level, index) => ({
-              name: level.name,
-              level: index,
-              isUnlocked: index <= currentLevel,
-            }));
-          })()}
-          selectedTitleIndex={profile.titleLevelIndex ?? null}
-          onSelectTitle={handleTitleChange}
-          isDark={theme.isDark}
-          textPrimaryColor={colors.textPrimary}
-          textSecondaryColor={colors.textSecondary}
-          surfaceColor={colors.surface}
-          borderColor={colors.border}
-          progressColor={progressColor}
-        />
-      )}
+      {/* Title Picker Modal - optimized with useMemo */}
+      <TitlePickerModal
+        visible={showTitleModal}
+        onClose={() => setShowTitleModal(false)}
+        titles={titleOptions}
+        selectedTitleIndex={profile.titleLevelIndex ?? null}
+        onSelectTitle={handleTitleChange}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        textSecondaryColor={colors.textSecondary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+        progressColor={progressColor}
+      />
     </View>
   );
 };

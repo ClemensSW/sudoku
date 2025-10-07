@@ -248,10 +248,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 70,
     padding: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 5,
   },
   avatar: { width: 180, height: 180, borderRadius: 60, backgroundColor: "#F8E4D9" },
 

@@ -17,7 +17,8 @@
     "theme": "थीम",
     "light": "हल्का",
     "dark": "गहरा",
-    "language": "भाषा"
+    "language": "भाषा",
+    "pathColor": "पथ रंग"
   },
   "gameSettings": {
     "highlightRelated": "संबंधित सेल हाइलाइट करें",
@@ -56,5 +57,14 @@
     "title": "भाषा चुनें",
     "german": "Deutsch",
     "english": "English"
+  },
+  "pathColor": {
+    "colors": {
+      "blue": "नीला",
+      "green": "हरा",
+      "yellow": "पीला",
+      "red": "लाल",
+      "purple": "बैंगनी"
+    }
   }
 }

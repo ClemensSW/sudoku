@@ -17,7 +17,8 @@
     "theme": "Erscheinungsbild",
     "light": "Hell",
     "dark": "Dunkel",
-    "language": "Sprache"
+    "language": "Sprache",
+    "pathColor": "Pfadfarbe"
   },
   "gameSettings": {
     "highlightRelated": "Verbundene Zellen hervorheben",
@@ -56,5 +57,14 @@
     "title": "Sprache wählen",
     "german": "Deutsch",
     "english": "English"
+  },
+  "pathColor": {
+    "colors": {
+      "blue": "Blau",
+      "green": "Grün",
+      "yellow": "Gelb",
+      "red": "Rot",
+      "purple": "Lila"
+    }
   }
 }

@@ -17,7 +17,8 @@
     "theme": "Appearance",
     "light": "Light",
     "dark": "Dark",
-    "language": "Language"
+    "language": "Language",
+    "pathColor": "Path Color"
   },
   "gameSettings": {
     "highlightRelated": "Highlight related cells",
@@ -56,5 +57,14 @@
     "title": "Choose Language",
     "german": "Deutsch",
     "english": "English"
+  },
+  "pathColor": {
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow",
+      "red": "Red",
+      "purple": "Purple"
+    }
   }
 }

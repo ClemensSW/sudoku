@@ -208,7 +208,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         snapPoints={['70%', '90%']}
         initialSnapIndex={0}
         contentContainerStyle={styles.gridContainer}
-        ListHeaderComponent={TabNavigationHeader}
+        ListFooterComponent={TabNavigationHeader}
       />
 
       {/* Loading Indicator */}

@@ -26,6 +26,7 @@ export interface BottomSheetModalWithFlatListProps<T> {
   initialSnapIndex?: number;
   contentContainerStyle?: any;
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+  ListFooterComponent?: React.ComponentType<any> | React.ReactElement | null;
   ListEmptyComponent?: React.ComponentType<any> | React.ReactElement | null;
 }
 
@@ -53,6 +54,7 @@ function BottomSheetModalWithFlatList<T>({
   initialSnapIndex = 0,
   contentContainerStyle,
   ListHeaderComponent,
+  ListFooterComponent,
   ListEmptyComponent,
 }: BottomSheetModalWithFlatListProps<T>) {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
@@ -107,6 +109,19 @@ function BottomSheetModalWithFlatList<T>({
     [isDark]
   );
 
+  // Sticky Footer with ListFooterComponent
+  const StickyFooter = useCallback(() => {
+    if (!ListFooterComponent) return null;
+    return (
+      <View style={[styles.stickyFooter, { backgroundColor: surfaceColor, borderColor: borderColor }]}>
+        {typeof ListFooterComponent === 'function'
+          ? <ListFooterComponent />
+          : ListFooterComponent
+        }
+      </View>
+    );
+  }, [ListFooterComponent, surfaceColor, borderColor]);
+
   return (
     <GorhomBottomSheetModal
       ref={bottomSheetRef}
@@ -145,6 +160,7 @@ function BottomSheetModalWithFlatList<T>({
         windowSize={10}
         ListEmptyComponent={ListEmptyComponent}
       />
+      <StickyFooter />
     </GorhomBottomSheetModal>
   );
 }
@@ -161,6 +177,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 16,
+  },
+  stickyFooter: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.05)',
   },
 });
 

@@ -15,7 +15,7 @@ import { hexToRGBA } from "@/screens/GameCompletion/shared/utils/colorUtils";
 
 // Components
 import LevelBadge from "./components/LevelBadge";
-import TitleSelect from "./components/TitleSelect";
+import TitlePickerModal from "./components/TitlePickerModal";
 import LevelUpOverlay from "./components/LevelUpOverlay";
 
 // Hooks
@@ -34,8 +34,8 @@ interface LevelCardProps {
   xpGain?: number;
   compact?: boolean;
   onLevelUp?: (oldLevel: number, newLevel: number) => void;
-  selectedTitle?: string | null;
-  onTitleSelect?: (title: string | null) => void;
+  selectedTitleIndex?: number | null;
+  onTitleSelect?: (levelIndex: number | null) => void;
 }
 
 const LevelCard: React.FC<LevelCardProps> = ({
@@ -47,7 +47,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
   xpGain,
   compact = false,
   onLevelUp,
-  selectedTitle = null,
+  selectedTitleIndex = null,
   onTitleSelect,
 }) => {
   const theme = useTheme();
@@ -55,7 +55,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
   const { t } = useTranslation('gameCompletion');
 
   // State
-  const [levelDescExpanded, setLevelDescExpanded] = useState(false);
+  const [showTitlePicker, setShowTitlePicker] = useState(false);
 
   // Calculate XP values
   const calculatedXp = stats ? stats.totalXP : 0;
@@ -76,10 +76,13 @@ const LevelCard: React.FC<LevelCardProps> = ({
   // Progress color - use custom selected color or default path color
   const progressColor = useProgressColor(currentXp);
 
-  // Unlocked titles - call getLevels() to get fresh translations
-  const unlockedTitles = getLevels().slice(0, levelInfo.currentLevel + 1)
-    .map((l) => l.name)
-    .reverse();
+  // Prepare title options for modal
+  const allLevels = getLevels();
+  const titleOptions = allLevels.map((level, index) => ({
+    name: level.name,
+    level: index,
+    isUnlocked: index <= levelInfo.currentLevel,
+  }));
 
   // Animation Hook
   const {
@@ -101,22 +104,31 @@ const LevelCard: React.FC<LevelCardProps> = ({
     onLevelUp,
   });
 
-  const toggleLevelDescription = useCallback(() => {
-    setLevelDescExpanded((s) => !s);
-    triggerHaptic("light");
+  const handleTitlePickerOpen = useCallback(() => {
+    setShowTitlePicker(true);
+    triggerHaptic("medium");
   }, []);
 
-  // Get title description based on selected title
+  const handleTitleSelect = useCallback((levelIndex: number | null) => {
+    if (onTitleSelect) {
+      onTitleSelect(levelIndex);
+      triggerHaptic("success");
+    }
+  }, [onTitleSelect]);
+
+  // Get selected title name and description based on level index
+  const selectedTitle = selectedTitleIndex !== null
+    ? allLevels[selectedTitleIndex]?.name || null
+    : null;
+
   const getTitleDescription = (): string => {
-    if (!selectedTitle) {
+    if (selectedTitleIndex === null) {
       // Fallback to current level message
       return levelInfo.levelData.message;
     }
 
-    // Find selected title in levels
-    const allLevels = getLevels();
-    const titleLevel = allLevels.find(l => l.name === selectedTitle);
-    return titleLevel?.message || levelInfo.levelData.message;
+    // Get description from level index
+    return allLevels[selectedTitleIndex]?.message || levelInfo.levelData.message;
   };
 
   const titleDescription = getTitleDescription();
@@ -358,10 +370,10 @@ const LevelCard: React.FC<LevelCardProps> = ({
         )}
       </View>
 
-      {/* Title Section - Fully Tappable */}
+      {/* Title Section - Button to open modal */}
       <View style={styles.titleSection}>
         <Pressable
-          onPress={toggleLevelDescription}
+          onPress={handleTitlePickerOpen}
           style={({ pressed }) => [
             styles.titlePressable,
             {
@@ -416,33 +428,6 @@ const LevelCard: React.FC<LevelCardProps> = ({
             )}
           </View>
         </Pressable>
-
-        {/* Title Selection Sheet (expandable) */}
-        {levelDescExpanded && (
-          <Animated.View
-            entering={FadeIn.duration(200)}
-            style={[
-              styles.levelDetailsCard,
-              {
-                borderColor: theme.isDark
-                  ? "rgba(255,255,255,0.12)"
-                  : "rgba(0,0,0,0.08)",
-                backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.03)"
-                  : "rgba(0,0,0,0.02)",
-              },
-            ]}
-          >
-            {/* Title Selection */}
-            <TitleSelect
-              titles={unlockedTitles}
-              selected={selectedTitle}
-              onSelect={onTitleSelect || (() => {})}
-              color={progressColor}
-              isDark={theme.isDark}
-            />
-          </Animated.View>
-        )}
       </View>
 
       {/* Level Up Overlay - SCOPED TO THIS CARD ONLY ✅ */}
@@ -450,6 +435,21 @@ const LevelCard: React.FC<LevelCardProps> = ({
         visible={showLevelUpOverlay}
         levelInfo={levelInfo}
         color={progressColor}
+      />
+
+      {/* Title Picker Modal */}
+      <TitlePickerModal
+        visible={showTitlePicker}
+        onClose={() => setShowTitlePicker(false)}
+        titles={titleOptions}
+        selectedTitleIndex={selectedTitleIndex}
+        onSelectTitle={handleTitleSelect}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        textSecondaryColor={colors.textSecondary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+        progressColor={progressColor}
       />
     </Animated.View>
   );

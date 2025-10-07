@@ -8,13 +8,13 @@ import { spacing } from "@/utils/theme";
 
 interface LevelTabProps {
   stats: GameStats;
-  selectedTitle?: string | null;
-  onTitleSelect?: (title: string | null) => void;
+  selectedTitleIndex?: number | null;
+  onTitleSelect?: (levelIndex: number | null) => void;
 }
 
 const LevelTab: React.FC<LevelTabProps> = ({
   stats,
-  selectedTitle = null,
+  selectedTitleIndex = null,
   onTitleSelect,
 }) => {
   return (
@@ -30,7 +30,7 @@ const LevelTab: React.FC<LevelTabProps> = ({
           previousXp={stats.totalXP}
           xpGain={0}
           justCompleted={false}
-          selectedTitle={selectedTitle}
+          selectedTitleIndex={selectedTitleIndex}
           onTitleSelect={onTitleSelect}
         />
 

@@ -162,9 +162,9 @@ const Leistung: React.FC = () => {
     }
   };
 
-  const handleTitleChange = async (title: string | null) => {
+  const handleTitleChange = async (levelIndex: number | null) => {
     try {
-      const updated = await updateUserTitle(title);
+      const updated = await updateUserTitle(levelIndex);
       setProfile(updated);
     } catch (error) {
       console.error("Error updating title:", error);
@@ -182,7 +182,7 @@ const Leistung: React.FC = () => {
         return (
           <LevelTab
             stats={stats}
-            selectedTitle={profile.title ?? null}
+            selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
           />
         );
@@ -196,7 +196,7 @@ const Leistung: React.FC = () => {
         return (
           <LevelTab
             stats={stats}
-            selectedTitle={profile.title ?? null}
+            selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
           />
         );

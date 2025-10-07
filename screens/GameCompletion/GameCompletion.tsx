@@ -93,8 +93,8 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
     getLastUnlockEvent,
   } = useLandscapes();
 
-  // NEU: Titel-State fürs Modal
-  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+  // NEU: Titel-State fürs Modal (Level-Index, sprachunabhängig)
+  const [selectedTitleIndex, setSelectedTitleIndex] = useState<number | null>(null);
 
   // State für Unlock-UI
   const [newlyUnlockedSegmentId, setNewlyUnlockedSegmentId] = useState<number | undefined>(undefined);
@@ -144,7 +144,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
 
         // Wait for profile (immediately)
         const p = await profilePromise;
-        if (mounted) setSelectedTitle(p.title ?? null);
+        if (mounted) setSelectedTitleIndex(p.titleLevelIndex ?? null);
 
         // Unlock event will resolve on its own schedule
         await unlockEventPromise;
@@ -167,11 +167,11 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
     }
   }, [visible, clearUnlockEvent]);
 
-  // Titel speichern (persist)
-  const handleTitleSelect = async (title: string | null) => {
+  // Titel speichern (persist) - verwendet Level-Index
+  const handleTitleSelect = async (levelIndex: number | null) => {
     try {
-      await updateUserTitle(title);
-      setSelectedTitle(title);
+      await updateUserTitle(levelIndex);
+      setSelectedTitleIndex(levelIndex);
     } catch (e) {
       console.error("updateUserTitle failed", e);
     }
@@ -341,7 +341,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
                   difficulty={difficulty}
                   justCompleted={true}
                   xpGain={xpGain}
-                  selectedTitle={selectedTitle}
+                  selectedTitleIndex={selectedTitleIndex}
                   onTitleSelect={handleTitleSelect}
                 />
                 <View style={styles.sectionSpacer} />

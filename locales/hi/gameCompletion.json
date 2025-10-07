@@ -138,5 +138,12 @@
       "current": "वर्तमान रंग",
       "unlockAt": "स्तर {{level}}"
     }
+  },
+  "titlePicker": {
+    "title": "उपाधि चुनें",
+    "subtitle": "अपनी प्रगति दिखाएं",
+    "unlocked": "अनलॉक",
+    "locked": "अभी भी लॉक",
+    "unlockAt": "स्तर {{level}} से"
   }
 }

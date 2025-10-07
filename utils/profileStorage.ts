@@ -7,13 +7,15 @@ const OLD_KEY = "@sudoku/user_profile"; // Migration von alt -> neu
 export type UserProfile = {
   name: string;
   avatarUri?: string | null;
-  title?: string | null;          // ⬅️ NEU
+  title?: string | null;          // ⬅️ DEPRECATED: Alter String-basierter Titel
+  titleLevelIndex?: number | null; // ⬅️ NEU: Level-Index (0-basiert, sprachunabhängig)
 };
 
 const DEFAULT_PROFILE: UserProfile = {
   name: "User",
   avatarUri: null,
   title: null,
+  titleLevelIndex: null,
 };
 
 /**
@@ -77,11 +79,14 @@ export async function updateUserAvatar(uri: string | null): Promise<UserProfile>
 }
 
 /**
- * ⬅️ NEU: Titel setzen/entfernen
+ * ⬅️ NEU: Titel setzen/entfernen (sprachunabhängig via Level-Index)
+ * @param levelIndex Level-Index (0-basiert) oder null für "Ohne Titel"
  */
-export async function updateUserTitle(title: string | null): Promise<UserProfile> {
+export async function updateUserTitle(levelIndex: number | null): Promise<UserProfile> {
   const profile = await loadUserProfile();
-  profile.title = title;
+  profile.titleLevelIndex = levelIndex;
+  // Alte title-Property auf null setzen (Migration)
+  profile.title = null;
   return saveProfile(profile);
 }
 

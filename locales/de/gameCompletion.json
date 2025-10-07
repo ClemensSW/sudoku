@@ -138,5 +138,12 @@
       "current": "Aktuelle Farbe",
       "unlockAt": "Level {{level}}"
     }
+  },
+  "titlePicker": {
+    "title": "Titel wählen",
+    "subtitle": "Zeige deinen Fortschritt",
+    "unlocked": "Freigeschaltet",
+    "locked": "Noch gesperrt",
+    "unlockAt": "Ab Level {{level}}"
   }
 }

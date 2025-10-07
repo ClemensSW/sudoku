@@ -110,6 +110,8 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
         backgroundColor: surfaceColor,
         borderWidth: 1,
         borderColor: borderColor,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
       }}
       style={styles.bottomSheet}
     >

@@ -27,22 +27,29 @@ const BottomSheetBackdrop: React.FC<CustomBackdropProps> = (props) => {
     ),
   }));
 
-  // Combine styles
+  // Combine styles - theme-aware background color
   const containerStyle = useMemo(
     () => [
       style,
       {
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.2)',
       },
       containerAnimatedStyle,
     ],
-    [style, containerAnimatedStyle]
+    [style, containerAnimatedStyle, isDark]
   );
 
   return (
     <>
       {/* Render the base backdrop for touch handling */}
-      <GorhomBackdrop {...props} />
+      <GorhomBackdrop
+        {...props}
+        opacity={isDark ? 0.5 : 0.1}
+        style={[
+          props.style,
+          { backgroundColor: isDark ? '#000000' : '#FFFFFF' }
+        ]}
+      />
       {/* Render blur overlay on top */}
       <Animated.View style={containerStyle} pointerEvents="none">
         <BlurView

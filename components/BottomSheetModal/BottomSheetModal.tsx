@@ -49,7 +49,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   enableScroll = true,
 }) => {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
-  const { currentRoute } = useNavigation();
+  const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
 
   // Default snap points: 40% collapsed, 90% expanded
   const snapPoints = useMemo(
@@ -70,6 +70,16 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       bottomSheetRef.current?.dismiss();
     }
   }, [visible]);
+
+  // Hide BottomNav when modal is visible
+  useEffect(() => {
+    if (visible) {
+      hideBottomNav();
+    }
+    return () => {
+      resetBottomNav();
+    };
+  }, [visible, hideBottomNav, resetBottomNav]);
 
   // Close modal when route changes
   useEffect(() => {

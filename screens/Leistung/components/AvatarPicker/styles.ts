@@ -167,6 +167,17 @@ export default StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
   },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
 
   // New avatar badge
   newBadge: {

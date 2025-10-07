@@ -1,5 +1,5 @@
 // components/AvatarPicker/AvatarPicker.tsx
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -14,8 +14,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
-import BottomSheetModal from "@/components/BottomSheetModal/BottomSheetModal";
-import DefaultAvatars, { AvatarCategory } from "./DefaultAvatars";
+import BottomSheetModalWithFlatList from "@/components/BottomSheetModal/BottomSheetModalWithFlatList";
+import { AvatarCategory } from "./DefaultAvatars";
+import { DefaultAvatar, defaultAvatars } from "../../utils/defaultAvatars";
+import { saveDefaultAvatar } from "../../utils/avatarStorage";
+import AvatarOption from "./AvatarOption";
 import styles from "./styles";
 
 interface AvatarPickerProps {
@@ -36,6 +39,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const colors = theme.colors;
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<AvatarCategory>('Cartoon');
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
 
   // Tab measurements for animated indicator
   const tabMeasurements = useRef<{
@@ -43,6 +47,13 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   }>({});
   const tabIndicatorWidth = useSharedValue(0);
   const tabIndicatorPosition = useSharedValue(0);
+
+  // Set initial selected avatar
+  useEffect(() => {
+    if (currentAvatarUri?.startsWith('default://')) {
+      setSelectedAvatar(currentAvatarUri.replace('default://', ''));
+    }
+  }, [currentAvatarUri]);
 
   // Update indicator when active category changes
   useEffect(() => {
@@ -65,8 +76,6 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     const { x, width } = event.nativeEvent.layout;
     tabMeasurements.current[category] = { x, width };
 
-    // If this is the active tab and it's being measured for the first time,
-    // update the indicator position and width immediately
     if (category === activeCategory && tabIndicatorWidth.value === 0) {
       tabIndicatorPosition.value = x;
       tabIndicatorWidth.value = width;
@@ -90,86 +99,125 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
     []
   );
 
-  return (
-    <BottomSheetModal
-      visible={visible}
-      onClose={onClose}
-      title={t('avatarPicker.title')}
-      isDark={theme.isDark}
-      textPrimaryColor={colors.textPrimary}
-      surfaceColor={colors.surface}
-      borderColor={colors.border}
-      snapPoints={['70%', '90%']}
-      initialSnapIndex={0}
+  // Filter avatars by active category - memoized for performance
+  const avatarsToShow = useMemo(() => {
+    return defaultAvatars.filter(avatar => avatar.category === activeCategory);
+  }, [activeCategory]);
+
+  const handleSelectAvatar = useCallback(async (avatar: DefaultAvatar) => {
+    try {
+      setIsLoading(true);
+
+      const avatarPath = await saveDefaultAvatar(avatar.id);
+      setSelectedAvatar(avatar.id);
+      onImageSelected(avatarPath);
+
+      setTimeout(() => {
+        onClose();
+      }, 300);
+    } catch (error) {
+      console.error('Error selecting default avatar:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onImageSelected, onClose]);
+
+  // Render item for BottomSheetFlatList
+  const renderItem = useCallback(({ item }: { item: DefaultAvatar }) => (
+    <View style={styles.avatarWrapper}>
+      <AvatarOption
+        avatar={item}
+        isSelected={selectedAvatar === item.id}
+        onSelect={handleSelectAvatar}
+        isNew={false}
+      />
+    </View>
+  ), [selectedAvatar, handleSelectAvatar]);
+
+  // Key extractor
+  const keyExtractor = useCallback((item: DefaultAvatar) => item.id, []);
+
+  // Tab Navigation Header
+  const TabNavigationHeader = useCallback(() => (
+    <View
+      style={[
+        styles.tabContainer,
+        {
+          backgroundColor: theme.isDark
+            ? "rgba(255,255,255,0.03)"
+            : "rgba(0,0,0,0.03)",
+        },
+      ]}
     >
-      {/* Tab Navigation */}
-      <View
-        style={[
-          styles.tabContainer,
-          {
-            backgroundColor: theme.isDark
-              ? "rgba(255,255,255,0.03)"
-              : "rgba(0,0,0,0.03)",
-          },
-        ]}
-      >
-        {tabs.map((tab) => (
-          <Pressable
-            key={tab.id}
+      {tabs.map((tab) => (
+        <Pressable
+          key={tab.id}
+          style={[
+            styles.tabButton,
+            activeCategory === tab.id && {
+              backgroundColor: theme.isDark
+                ? "rgba(255,255,255,0.05)"
+                : "rgba(0,0,0,0.05)",
+            },
+          ]}
+          onPress={() => setActiveCategory(tab.id)}
+          onLayout={(event) => measureTab(tab.id, event)}
+        >
+          <Text
             style={[
-              styles.tabButton,
-              activeCategory === tab.id && {
-                backgroundColor: theme.isDark
-                  ? "rgba(255,255,255,0.05)"
-                  : "rgba(0,0,0,0.05)",
+              styles.tabButtonText,
+              {
+                color:
+                  activeCategory === tab.id
+                    ? colors.primary
+                    : colors.textSecondary,
+                fontWeight: activeCategory === tab.id ? '600' : '400',
               },
             ]}
-            onPress={() => setActiveCategory(tab.id)}
-            onLayout={(event) => measureTab(tab.id, event)}
           >
-            <Text
-              style={[
-                styles.tabButtonText,
-                {
-                  color:
-                    activeCategory === tab.id
-                      ? colors.primary
-                      : colors.textSecondary,
-                  fontWeight: activeCategory === tab.id ? '600' : '400',
-                },
-              ]}
-            >
-              {tab.label}
-            </Text>
-          </Pressable>
-        ))}
+            {tab.label}
+          </Text>
+        </Pressable>
+      ))}
 
-        {/* Active Tab Indicator */}
-        <Animated.View
-          style={[
-            styles.activeTabIndicator,
-            { backgroundColor: colors.primary },
-            tabIndicatorStyle,
-          ]}
-        />
-      </View>
+      {/* Active Tab Indicator */}
+      <Animated.View
+        style={[
+          styles.activeTabIndicator,
+          { backgroundColor: colors.primary },
+          tabIndicatorStyle,
+        ]}
+      />
+    </View>
+  ), [tabs, activeCategory, theme.isDark, colors.primary, colors.textSecondary, tabIndicatorStyle]);
 
-      {/* Tab Content */}
-      <DefaultAvatars
-        currentAvatarUri={currentAvatarUri}
-        onImageSelected={onImageSelected}
-        onLoading={setIsLoading}
+  return (
+    <>
+      <BottomSheetModalWithFlatList
+        visible={visible}
         onClose={onClose}
-        activeCategory={activeCategory}
+        title={t('avatarPicker.title')}
+        data={avatarsToShow}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        numColumns={3}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+        snapPoints={['70%', '90%']}
+        initialSnapIndex={0}
+        contentContainerStyle={styles.gridContainer}
+        ListHeaderComponent={TabNavigationHeader}
       />
 
       {/* Loading Indicator */}
       {isLoading && (
-        <View style={styles.loadingContainer}>
+        <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       )}
-    </BottomSheetModal>
+    </>
   );
 };
 

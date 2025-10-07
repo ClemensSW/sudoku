@@ -1,6 +1,6 @@
 // screens/Settings/components/AppearanceGroup/AppearanceGroup.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -18,7 +18,10 @@ import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/compo
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { useEffect } from "react";
-import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
+import { loadUserProfile, updateUserTitle, updateUserAvatar } from "@/utils/profileStorage";
+import AvatarPicker from "@/screens/Leistung/components/AvatarPicker";
+import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
+import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
 
 interface AppearanceGroupProps {
   onLanguageChange: (language: "de" | "en" | "hi") => void;
@@ -35,6 +38,10 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
   const [showColorModal, setShowColorModal] = useState(false);
   const [colorUnlockData, setColorUnlockData] = useState<ColorUnlockData | null>(null);
   const [currentLevel, setCurrentLevel] = useState(0);
+
+  // State for AvatarPicker
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
 
   // State for TitleSelector
   const [showTitleModal, setShowTitleModal] = useState(false);
@@ -70,9 +77,16 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       const data = await loadColorUnlock();
       setColorUnlockData(data);
 
-      // Load user title
+      // Load user title and avatar
       const profile = await loadUserProfile();
       setSelectedTitleIndex(profile.titleLevelIndex ?? null);
+
+      const uri = await getAvatarUri();
+      if (profile.avatarUri) {
+        setAvatarUri(profile.avatarUri);
+      } else if (uri) {
+        setAvatarUri(uri);
+      }
     };
     loadData();
   }, []);
@@ -97,6 +111,15 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     };
     return colorMap[hex] || t("pathColor.colors.blue");
   };
+
+  // Avatar handler
+  const handleAvatarChange = async (uri: string | null) => {
+    await updateUserAvatar(uri);
+    setAvatarUri(uri);
+    triggerHaptic("success");
+  };
+
+  const getAvatarSource = () => getAvatarSourceFromUri(avatarUri, DEFAULT_AVATAR);
 
   // Title handlers
   const handleTitleSelect = async (levelIndex: number | null) => {
@@ -144,9 +167,28 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
   return (
     <>
       <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        {/* Title Button */}
+        {/* Avatar Button */}
         <TouchableOpacity
           style={styles.actionButton}
+          onPress={() => {
+            triggerHaptic("light");
+            setShowAvatarPicker(true);
+          }}
+        >
+          <View style={styles.avatarIconContainer}>
+            <Image source={getAvatarSource()} style={styles.avatarIcon} />
+          </View>
+          <View style={styles.actionTextContainer}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              {t("appearance.avatar")}
+            </Text>
+          </View>
+          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Title Button */}
+        <TouchableOpacity
+          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
           onPress={() => {
             triggerHaptic("light");
             setShowTitleModal(true);
@@ -232,6 +274,14 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         progressColor={progressColor}
       />
 
+      {/* Avatar Picker Modal */}
+      <AvatarPicker
+        visible={showAvatarPicker}
+        onClose={() => setShowAvatarPicker(false)}
+        onImageSelected={handleAvatarChange}
+        currentAvatarUri={avatarUri}
+      />
+
       {/* Language Selection Modal */}
       <BottomSheetModal
         visible={showLanguageModal}
@@ -291,6 +341,18 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     marginRight: spacing.md,
+  },
+  avatarIconContainer: {
+    width: 48,
+    height: 48,
+    marginRight: spacing.md,
+    borderRadius: 24,
+    overflow: "hidden",
+  },
+  avatarIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
   },
   actionTextContainer: {
     flex: 1,

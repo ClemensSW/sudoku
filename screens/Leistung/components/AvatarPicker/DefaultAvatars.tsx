@@ -3,28 +3,40 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ScrollView } from 'react-native';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import AvatarOption from './AvatarOption';
-import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath } from '../../utils/defaultAvatars';
+import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath, defaultAvatars } from '../../utils/defaultAvatars';
 import { saveDefaultAvatar } from '../../utils/avatarStorage';
 import styles from './styles';
+
+export type AvatarCategory = 'Cartoon' | 'Anime' | 'Tiere';
 
 interface DefaultAvatarsProps {
   currentAvatarUri: string | null;
   onImageSelected: (uri: string) => void;
   onLoading: (isLoading: boolean) => void;
   onClose: () => void;
+  activeCategory: AvatarCategory;
 }
 
 const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
   currentAvatarUri,
   onImageSelected,
   onLoading,
-  onClose
+  onClose,
+  activeCategory
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const avatarsByCategory = getAvatarsByCategory();
+
+  // Get default avatar (always shown)
+  const defaultAvatar = defaultAvatars.find(a => a.id === 'default');
+
+  // Filter avatars by active category
+  const filteredAvatars = defaultAvatars.filter(avatar => {
+    if (avatar.id === 'default') return false; // Exclude default, will be shown separately
+    return avatar.category === activeCategory;
+  });
   
   // Set initial selected avatar if it matches a default avatar
   useEffect(() => {
@@ -59,10 +71,10 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
     }
   };
 
-  // Check if we have any avatars
-  const hasAvatars = Object.values(avatarsByCategory).some(category => category.length > 0);
-  
-  if (!hasAvatars) {
+  // Combine default avatar with filtered avatars
+  const avatarsToShow = defaultAvatar ? [defaultAvatar, ...filteredAvatars] : filteredAvatars;
+
+  if (avatarsToShow.length === 0) {
     return (
       <View style={styles.emptyState}>
         <Text style={{ color: colors.textSecondary }}>
@@ -72,32 +84,25 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
     );
   }
 
-  // Directly using ScrollView with windowing optimization to maintain original layout
+  // Directly using ScrollView with windowing optimization
   return (
-    <ScrollView 
+    <ScrollView
       style={{ maxHeight: 400 }}
       showsVerticalScrollIndicator={true}
       contentContainerStyle={styles.gridContainer}
       removeClippedSubviews={true} // Optimization
     >
-      {Object.entries(avatarsByCategory).map(([category, avatars]) => (
-        <View key={category}>
-          <Text style={[styles.categoryTitle, { color: colors.textPrimary }]}>
-            {category}
-          </Text>
-          <View style={styles.gridRow}>
-            {avatars.map((avatar) => (
-              <AvatarOption
-                key={avatar.id}
-                avatar={avatar}
-                isSelected={selectedAvatar === avatar.id}
-                onSelect={handleSelectAvatar}
-                isNew={avatar.id === 'avatar8'} // Example
-              />
-            ))}
-          </View>
-        </View>
-      ))}
+      <View style={styles.gridRow}>
+        {avatarsToShow.map((avatar) => (
+          <AvatarOption
+            key={avatar.id}
+            avatar={avatar}
+            isSelected={selectedAvatar === avatar.id}
+            onSelect={handleSelectAvatar}
+            isNew={false}
+          />
+        ))}
+      </View>
     </ScrollView>
   );
 };

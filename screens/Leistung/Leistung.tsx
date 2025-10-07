@@ -162,7 +162,7 @@ const Leistung: React.FC = () => {
     // Scroll to tab navigation if it's below the header
     setTimeout(() => {
       if (scrollViewRef.current && tabSectionPosition.value > 0) {
-        const targetPosition = tabSectionPosition.value - 80; // Offset to hide original tabs completely
+        const targetPosition = tabSectionPosition.value; // Scroll exactly to tab position
         scrollViewRef.current.scrollTo({ y: targetPosition, animated: true });
       }
     }, 100);

@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Localization from "expo-localization";
 import PinselIcon from "@/assets/svg/pinsel.svg";
 import LanguageIcon from "@/assets/svg/language.svg";
+import GraduateIcon from "@/assets/svg/GraduateIcon";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
@@ -14,8 +15,10 @@ import { loadColorUnlock, syncUnlockedColors, ColorUnlockData, loadStats } from 
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { getSortedLanguages, getLanguageLabel } from "@/locales/languages";
 import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/components/ColorPickerModal";
+import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
 import BaseModal from "@/components/BaseModal/BaseModal";
 import { useEffect } from "react";
+import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
 
 interface AppearanceGroupProps {
   onLanguageChange: (language: "de" | "en" | "hi") => void;
@@ -33,6 +36,10 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
   const [colorUnlockData, setColorUnlockData] = useState<ColorUnlockData | null>(null);
   const [currentLevel, setCurrentLevel] = useState(0);
 
+  // State for TitleSelector
+  const [showTitleModal, setShowTitleModal] = useState(false);
+  const [selectedTitleIndex, setSelectedTitleIndex] = useState<number | null>(null);
+
   // State for LanguageSelector
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const currentLanguage = i18n.language;
@@ -42,7 +49,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     [deviceLanguageCode]
   );
 
-  // Load color data on mount
+  // Load color data and title on mount
   useEffect(() => {
     const loadData = async () => {
       const stats = await loadStats();
@@ -62,6 +69,10 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       await syncUnlockedColors(level);
       const data = await loadColorUnlock();
       setColorUnlockData(data);
+
+      // Load user title
+      const profile = await loadUserProfile();
+      setSelectedTitleIndex(profile.titleLevelIndex ?? null);
     };
     loadData();
   }, []);
@@ -87,6 +98,21 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     return colorMap[hex] || t("pathColor.colors.blue");
   };
 
+  // Title handlers
+  const handleTitleSelect = async (levelIndex: number | null) => {
+    await updateUserTitle(levelIndex);
+    setSelectedTitleIndex(levelIndex);
+    triggerHaptic("success");
+  };
+
+  const getTitleName = (): string => {
+    if (selectedTitleIndex === null) {
+      return t("appearance.noTitle");
+    }
+    const allLevels = getLevels();
+    return allLevels[selectedTitleIndex]?.name || t("appearance.noTitle");
+  };
+
   // Language handlers
   const handleLanguageSelect = async (language: string) => {
     if (language === currentLanguage) {
@@ -99,6 +125,14 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     onLanguageChange(language as "de" | "en" | "hi");
     setShowLanguageModal(false);
   };
+
+  // Prepare title options for modal
+  const allLevels = getLevels();
+  const titleOptions = allLevels.map((level, index) => ({
+    name: level.name,
+    level: index,
+    isUnlocked: index <= currentLevel,
+  }));
 
   const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
@@ -131,6 +165,28 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
                 {getColorName(colorUnlockData.selectedColor)}
               </Text>
             </View>
+          </View>
+          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Title Button */}
+        <TouchableOpacity
+          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
+          onPress={() => {
+            triggerHaptic("light");
+            setShowTitleModal(true);
+          }}
+        >
+          <View style={styles.actionIcon}>
+            <GraduateIcon width={48} height={48} color={colors.textSecondary} />
+          </View>
+          <View style={styles.actionTextContainer}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              {t("appearance.title")}
+            </Text>
+            <Text style={[styles.actionDescription, { color: colors.textSecondary }]}>
+              {getTitleName()}
+            </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -174,6 +230,21 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           borderColor={colors.border}
         />
       )}
+
+      {/* Title Picker Modal */}
+      <TitlePickerModal
+        visible={showTitleModal}
+        onClose={() => setShowTitleModal(false)}
+        titles={titleOptions}
+        selectedTitleIndex={selectedTitleIndex}
+        onSelectTitle={handleTitleSelect}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        textSecondaryColor={colors.textSecondary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+        progressColor={progressColor}
+      />
 
       {/* Language Selection Modal */}
       <BaseModal

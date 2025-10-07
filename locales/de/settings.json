@@ -18,7 +18,9 @@
     "light": "Hell",
     "dark": "Dunkel",
     "language": "Sprache",
-    "pathColor": "Pfadfarbe"
+    "pathColor": "Pfadfarbe",
+    "title": "Titel",
+    "noTitle": "Ohne Titel"
   },
   "gameSettings": {
     "highlightRelated": "Verbundene Zellen hervorheben",

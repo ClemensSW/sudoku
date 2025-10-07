@@ -18,7 +18,9 @@
     "light": "हल्का",
     "dark": "गहरा",
     "language": "भाषा",
-    "pathColor": "पथ रंग"
+    "pathColor": "पथ रंग",
+    "title": "उपाधि",
+    "noTitle": "बिना उपाधि"
   },
   "gameSettings": {
     "highlightRelated": "संबंधित सेल हाइलाइट करें",

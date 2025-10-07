@@ -18,7 +18,9 @@
     "light": "Light",
     "dark": "Dark",
     "language": "Language",
-    "pathColor": "Path Color"
+    "pathColor": "Path Color",
+    "title": "Title",
+    "noTitle": "No Title"
   },
   "gameSettings": {
     "highlightRelated": "Highlight related cells",

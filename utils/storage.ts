@@ -294,7 +294,7 @@ export const updateStatsAfterGame = async (
         // Dies passiert asynchron im Hintergrund, aber wir warten nicht auf das Ergebnis
         const unlockResult = await unlockNextSegment();
         if (unlockResult) {
-          console.log("Unlocked new landscape segment:", unlockResult.type);
+          console.log("Unlocked new landscape segment:", unlockResult.landscapeId, "segment", unlockResult.segmentIndex);
         }
       } catch (err) {
         console.error("Error unlocking landscape segment:", err);

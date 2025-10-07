@@ -98,7 +98,7 @@ const markAsUnlocked = async (): Promise<void> => {
 };
 
 /** Speichert das letzte Unlock-Event */
-const saveUnlockEvent = async (event: UnlockEvent): Promise<void> => {
+export const saveUnlockEvent = async (event: UnlockEvent): Promise<void> => {
   try {
     await AsyncStorage.setItem(LAST_UNLOCK_EVENT_KEY, JSON.stringify(event));
   } catch (error) {

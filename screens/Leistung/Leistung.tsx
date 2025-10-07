@@ -298,7 +298,10 @@ const Leistung: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
-      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+      <View onLayout={(e) => {
+        const height = e.nativeEvent.layout.height;
+        setHeaderHeight(height);
+      }}>
         <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
       </View>
 

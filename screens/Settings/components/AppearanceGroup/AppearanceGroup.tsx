@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: spacing.md,
+    height: 72,
     paddingLeft: spacing.md,
     paddingRight: spacing.md,
   },

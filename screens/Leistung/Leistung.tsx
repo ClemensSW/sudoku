@@ -13,6 +13,7 @@ import {
   UserProfile,
 } from "@/utils/profileStorage";
 import { getAvatarUri } from "./utils/avatarStorage";
+import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import Header from "@/components/Header/Header";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
@@ -175,6 +176,15 @@ const Leistung: React.FC = () => {
   const handleOpenSupportShop = () => setShowSupportShop(true);
   const handleCloseSupportShop = () => setShowSupportShop(false);
 
+  // Get title string from titleLevelIndex
+  const getTitleString = (): string | null => {
+    if (profile.titleLevelIndex === null || profile.titleLevelIndex === undefined) {
+      return null;
+    }
+    const allLevels = getLevels();
+    return allLevels[profile.titleLevelIndex]?.name || null;
+  };
+
   const renderTabContent = () => {
     if (!stats) return null;
     switch (activeTab) {
@@ -243,7 +253,7 @@ const Leistung: React.FC = () => {
             onChangeName={handleNameChange}
             onChangeAvatar={handleAvatarChange}
             completedLandscapesCount={landscapes.length}
-            title={profile.title ?? null}
+            title={getTitleString()}
           />
         </View>
 

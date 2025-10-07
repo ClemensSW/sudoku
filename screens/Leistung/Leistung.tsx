@@ -50,6 +50,7 @@ const Leistung: React.FC = () => {
 
   const scrollViewRef = useRef<ScrollView>(null);
   const tabSectionPosition = useRef<number>(0);
+  const [headerHeight, setHeaderHeight] = useState<number>(60);
   const scrollY = useSharedValue(0);
 
   const [stats, setStats] = useState<GameStats | null>(null);
@@ -172,19 +173,15 @@ const Leistung: React.FC = () => {
 
   // Animated style for sticky tab overlay
   const stickyTabAnimatedStyle = useAnimatedStyle(() => {
-    const shouldBeVisible = scrollY.value >= tabSectionPosition.current - 10;
+    const threshold = tabSectionPosition.current - 10;
+    const shouldBeVisible = scrollY.value >= threshold && tabSectionPosition.current > 0;
     return {
       transform: [
         {
-          translateY: withTiming(shouldBeVisible ? 0 : -100, {
-            duration: 200,
-            easing: Easing.out(Easing.ease),
-          }),
+          translateY: shouldBeVisible ? 0 : -200,
         },
       ],
-      opacity: withTiming(shouldBeVisible ? 1 : 0, {
-        duration: 200,
-      }),
+      opacity: shouldBeVisible ? 1 : 0,
     };
   });
 
@@ -293,7 +290,9 @@ const Leistung: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
-      <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+      <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+      </View>
 
       <Animated.ScrollView
         ref={scrollViewRef}
@@ -342,9 +341,10 @@ const Leistung: React.FC = () => {
       <Animated.View
         style={[
           styles.stickyTabOverlay,
-          { backgroundColor: colors.background },
+          { backgroundColor: colors.background, top: headerHeight },
           stickyTabAnimatedStyle,
         ]}
+        pointerEvents={scrollY.value >= tabSectionPosition.current - 10 && tabSectionPosition.current > 0 ? 'auto' : 'none'}
       >
         <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
       </Animated.View>
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   },
   stickyTabOverlay: {
     position: "absolute",
-    top: 60, // Height of Header
+    // top is set dynamically based on headerHeight
     left: 0,
     right: 0,
     zIndex: 10,

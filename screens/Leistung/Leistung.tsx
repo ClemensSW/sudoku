@@ -14,6 +14,8 @@ import {
 } from "@/utils/profileStorage";
 import { getAvatarUri } from "./utils/avatarStorage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
+import { useProgressColor } from "@/hooks/useProgressColor";
+import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
 import Header from "@/components/Header/Header";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
@@ -57,6 +59,9 @@ const Leistung: React.FC = () => {
 
   const [showSupportShop, setShowSupportShop] = useState(false);
   const { landscapes } = useLandscapes("completed");
+
+  // Progress color for title modal
+  const progressColor = useProgressColor(stats?.totalXP || 0);
 
   // Initial-Load
   useEffect(() => {
@@ -175,11 +180,7 @@ const Leistung: React.FC = () => {
   };
 
   const handleTitlePress = () => {
-    // Direkt zum Level Tab wechseln falls nicht schon dort
-    if (activeTab !== "level") {
-      setActiveTab("level");
-    }
-    // Modal sofort öffnen
+    // Modal sofort öffnen - kein Tab-Wechsel mehr nötig
     setShowTitleModal(true);
   };
 
@@ -205,7 +206,6 @@ const Leistung: React.FC = () => {
             stats={stats}
             selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
-            forceShowTitleModal={showTitleModal}
           />
         );
       case "gallery":
@@ -220,7 +220,6 @@ const Leistung: React.FC = () => {
             stats={stats}
             selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
-            forceShowTitleModal={showTitleModal}
           />
         );
     }
@@ -293,6 +292,40 @@ const Leistung: React.FC = () => {
       </ScrollView>
 
       {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}
+
+      {/* Title Picker Modal - direkt gerendert für Performance */}
+      {stats && (
+        <TitlePickerModal
+          visible={showTitleModal}
+          onClose={() => setShowTitleModal(false)}
+          titles={(() => {
+            const allLevels = getLevels();
+            const currentXp = stats.totalXP;
+            // Calculate current level
+            let currentLevel = 0;
+            for (let i = 0; i < allLevels.length; i++) {
+              if (currentXp >= allLevels[i].xp) {
+                currentLevel = i;
+              } else {
+                break;
+              }
+            }
+            return allLevels.map((level, index) => ({
+              name: level.name,
+              level: index,
+              isUnlocked: index <= currentLevel,
+            }));
+          })()}
+          selectedTitleIndex={profile.titleLevelIndex ?? null}
+          onSelectTitle={handleTitleChange}
+          isDark={theme.isDark}
+          textPrimaryColor={colors.textPrimary}
+          textSecondaryColor={colors.textSecondary}
+          surfaceColor={colors.surface}
+          borderColor={colors.border}
+          progressColor={progressColor}
+        />
+      )}
     </View>
   );
 };

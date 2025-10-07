@@ -10,14 +10,12 @@ interface LevelTabProps {
   stats: GameStats;
   selectedTitleIndex?: number | null;
   onTitleSelect?: (levelIndex: number | null) => void;
-  forceShowTitleModal?: boolean;
 }
 
 const LevelTab: React.FC<LevelTabProps> = ({
   stats,
   selectedTitleIndex = null,
   onTitleSelect,
-  forceShowTitleModal = false,
 }) => {
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
@@ -34,7 +32,6 @@ const LevelTab: React.FC<LevelTabProps> = ({
           justCompleted={false}
           selectedTitleIndex={selectedTitleIndex}
           onTitleSelect={onTitleSelect}
-          forceShowTitleModal={forceShowTitleModal}
         />
 
         {/* Spacer */}

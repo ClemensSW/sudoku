@@ -7,7 +7,7 @@ import { DefaultAvatar, getAvatarsByCategory, getDefaultAvatarPath, defaultAvata
 import { saveDefaultAvatar } from '../../utils/avatarStorage';
 import styles from './styles';
 
-export type AvatarCategory = 'Cartoon' | 'Anime' | 'Tiere';
+export type AvatarCategory = 'Cartoon' | 'Anime';
 
 interface DefaultAvatarsProps {
   currentAvatarUri: string | null;
@@ -29,36 +29,32 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get default avatar (always shown)
-  const defaultAvatar = defaultAvatars.find(a => a.id === 'default');
-
-  // Filter avatars by active category
-  const filteredAvatars = defaultAvatars.filter(avatar => {
-    if (avatar.id === 'default') return false; // Exclude default, will be shown separately
+  // Filter avatars by active category (default avatar already included in category list)
+  const avatarsToShow = defaultAvatars.filter(avatar => {
     return avatar.category === activeCategory;
   });
-  
+
   // Set initial selected avatar if it matches a default avatar
   useEffect(() => {
     if (currentAvatarUri?.startsWith('default://')) {
       setSelectedAvatar(currentAvatarUri.replace('default://', ''));
     }
   }, [currentAvatarUri]);
-  
+
   const handleSelectAvatar = async (avatar: DefaultAvatar) => {
     try {
       setIsLoading(true);
       onLoading(true);
-      
+
       // Save the default avatar reference
       const avatarPath = await saveDefaultAvatar(avatar.id);
-      
+
       // Update selection
       setSelectedAvatar(avatar.id);
-      
+
       // Notify parent component
       onImageSelected(avatarPath);
-      
+
       // Short delay to let the user see the selection
       setTimeout(() => {
         onClose();
@@ -70,9 +66,6 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
       onLoading(false);
     }
   };
-
-  // Combine default avatar with filtered avatars
-  const avatarsToShow = defaultAvatar ? [defaultAvatar, ...filteredAvatars] : filteredAvatars;
 
   if (avatarsToShow.length === 0) {
     return (
@@ -87,20 +80,21 @@ const DefaultAvatars: React.FC<DefaultAvatarsProps> = ({
   // Directly using ScrollView with windowing optimization
   return (
     <ScrollView
-      style={{ maxHeight: 400 }}
+      style={{ flex: 1 }}
       showsVerticalScrollIndicator={true}
       contentContainerStyle={styles.gridContainer}
       removeClippedSubviews={true} // Optimization
     >
       <View style={styles.gridRow}>
         {avatarsToShow.map((avatar) => (
-          <AvatarOption
-            key={avatar.id}
-            avatar={avatar}
-            isSelected={selectedAvatar === avatar.id}
-            onSelect={handleSelectAvatar}
-            isNew={false}
-          />
+          <View key={avatar.id} style={styles.avatarWrapper}>
+            <AvatarOption
+              avatar={avatar}
+              isSelected={selectedAvatar === avatar.id}
+              onSelect={handleSelectAvatar}
+              isNew={false}
+            />
+          </View>
         ))}
       </View>
     </ScrollView>

@@ -22,7 +22,7 @@ const AvatarOption: React.FC<AvatarOptionProps> = ({
   const colors = theme.colors;
   
   return (
-    <View>
+    <>
       <Pressable
         style={({ pressed }) => [
           styles.avatarOption,
@@ -42,23 +42,23 @@ const AvatarOption: React.FC<AvatarOptionProps> = ({
           style={styles.avatarImage}
           resizeMode="cover"
         />
-        
+
         {isNew && (
           <View style={styles.newBadge}>
             <Text style={styles.newBadgeText}>!</Text>
           </View>
         )}
       </Pressable>
-      <Text 
+      <Text
         style={[
-          styles.avatarName, 
+          styles.avatarName,
           { color: colors.textSecondary }
         ]}
         numberOfLines={1}
       >
         {avatar.name || ' '}
       </Text>
-    </View>
+    </>
   );
 };
 

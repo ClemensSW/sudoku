@@ -9,7 +9,7 @@ import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
 import { loadColorUnlock, syncUnlockedColors, ColorUnlockData, loadStats } from "@/utils/storage";
-import { getLevelThresholds } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
+import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/components/ColorPickerModal";
 
 interface PathColorSelectorProps {}
@@ -31,11 +31,11 @@ const PathColorSelector: React.FC<PathColorSelectorProps> = () => {
       const currentXp = stats?.totalXP || 0;
 
       // Calculate level directly without using hook
-      const thresholds = getLevelThresholds();
+      const levelThresholds = getLevels();
       let level = 0;
-      for (let i = 0; i < thresholds.length; i++) {
-        if (currentXp >= thresholds[i].xp) {
-          level = thresholds[i].level;
+      for (let i = 0; i < levelThresholds.length; i++) {
+        if (currentXp >= levelThresholds[i].xp) {
+          level = levelThresholds[i].level;
         } else {
           break;
         }

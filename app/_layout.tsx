@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Platform, View, StyleSheet } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import BottomNavigation from "@/components/BottomNavigation/BottomNavigation";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 /**
  * App Container - Main Layout Component
@@ -81,9 +82,11 @@ export default function AppLayout() {
           <ThemeProvider>
             <ColorProvider>
               <NavigationProvider>
-                <AlertProvider>
-                  <AppContainer />
-                </AlertProvider>
+                <BottomSheetModalProvider>
+                  <AlertProvider>
+                    <AppContainer />
+                  </AlertProvider>
+                </BottomSheetModalProvider>
               </NavigationProvider>
             </ColorProvider>
           </ThemeProvider>

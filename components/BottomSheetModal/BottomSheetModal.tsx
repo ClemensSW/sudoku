@@ -1,9 +1,7 @@
 // components/BottomSheetModal/BottomSheetModal.tsx
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { triggerHaptic } from '@/utils/haptics';
+import { View, Text, StyleSheet } from 'react-native';
+import { BottomSheetModal as GorhomBottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import BottomSheetHandle from './BottomSheetHandle';
 import BottomSheetBackdrop from './BottomSheetBackdrop';
 
@@ -49,7 +47,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   initialSnapIndex = 0,
   enableScroll = true,
 }) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
 
   // Default snap points: 40% collapsed, 90% expanded
   const snapPoints = useMemo(
@@ -57,33 +55,19 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     [customSnapPoints]
   );
 
-  // Handle sheet changes
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      // Sheet is closed
-      onClose();
-    }
+  // Handle dismiss
+  const handleDismiss = useCallback(() => {
+    onClose();
   }, [onClose]);
 
-  // Handle close with haptic
-  const handleClose = useCallback(() => {
-    triggerHaptic('light');
-    bottomSheetRef.current?.close();
-  }, []);
-
-  // Handle backdrop press
-  const handleBackdropPress = useCallback(() => {
-    handleClose();
-  }, [handleClose]);
-
-  // Open/close sheet based on visible prop
+  // Open/close modal based on visible prop
   useEffect(() => {
     if (visible) {
-      bottomSheetRef.current?.snapToIndex(initialSnapIndex);
+      bottomSheetRef.current?.present();
     } else {
-      bottomSheetRef.current?.close();
+      bottomSheetRef.current?.dismiss();
     }
-  }, [visible, initialSnapIndex]);
+  }, [visible]);
 
   // Render custom handle
   const renderHandle = useCallback(
@@ -105,14 +89,11 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     [isDark]
   );
 
-  if (!visible) return null;
-
   return (
-    <BottomSheet
+    <GorhomBottomSheetModal
       ref={bottomSheetRef}
-      index={-1}
       snapPoints={snapPoints}
-      onChange={handleSheetChanges}
+      onDismiss={handleDismiss}
       enablePanDownToClose
       handleComponent={renderHandle}
       backdropComponent={renderBackdrop}
@@ -123,24 +104,11 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       }}
       style={styles.bottomSheet}
     >
-      {/* Header: Title + Close Button */}
+      {/* Header: Title (centered) */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: textPrimaryColor }]}>
           {title}
         </Text>
-        <TouchableOpacity
-          onPress={handleClose}
-          style={[
-            styles.closeButton,
-            {
-              backgroundColor: isDark
-                ? 'rgba(255,255,255,0.08)'
-                : 'rgba(0,0,0,0.04)',
-            },
-          ]}
-        >
-          <Feather name="x" size={20} color={textPrimaryColor} />
-        </TouchableOpacity>
       </View>
 
       {/* Scrollable Content */}
@@ -155,7 +123,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       ) : (
         <View style={styles.content}>{children}</View>
       )}
-    </BottomSheet>
+    </GorhomBottomSheetModal>
   );
 };
 
@@ -168,8 +136,6 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 8,
@@ -178,15 +144,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    flex: 1,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 12,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,

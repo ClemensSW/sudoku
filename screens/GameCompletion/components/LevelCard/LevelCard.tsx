@@ -1,5 +1,5 @@
 // components/GameCompletion/components/LevelCard/LevelCard.tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import Animated, { FadeIn, useSharedValue, useAnimatedStyle, withSequence, withTiming, withRepeat, Easing } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
@@ -36,6 +36,7 @@ interface LevelCardProps {
   onLevelUp?: (oldLevel: number, newLevel: number) => void;
   selectedTitleIndex?: number | null;
   onTitleSelect?: (levelIndex: number | null) => void;
+  forceShowTitleModal?: boolean;
 }
 
 const LevelCard: React.FC<LevelCardProps> = ({
@@ -49,13 +50,21 @@ const LevelCard: React.FC<LevelCardProps> = ({
   onLevelUp,
   selectedTitleIndex = null,
   onTitleSelect,
+  forceShowTitleModal = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const { t } = useTranslation('gameCompletion');
 
   // State
-  const [showTitlePicker, setShowTitlePicker] = useState(false);
+  const [showTitlePicker, setShowTitlePicker] = useState(forceShowTitleModal);
+
+  // Open modal when forceShowTitleModal changes
+  useEffect(() => {
+    if (forceShowTitleModal) {
+      setShowTitlePicker(true);
+    }
+  }, [forceShowTitleModal]);
 
   // Calculate XP values
   const calculatedXp = stats ? stats.totalXP : 0;

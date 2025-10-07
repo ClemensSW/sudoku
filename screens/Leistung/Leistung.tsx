@@ -53,6 +53,7 @@ const Leistung: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>("level");
   const [profile, setProfile] = useState<UserProfile>({ name: "User", title: null });
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
+  const [showTitleModal, setShowTitleModal] = useState(false);
 
   const [showSupportShop, setShowSupportShop] = useState(false);
   const { landscapes } = useLandscapes("completed");
@@ -167,9 +168,19 @@ const Leistung: React.FC = () => {
     try {
       const updated = await updateUserTitle(levelIndex);
       setProfile(updated);
+      setShowTitleModal(false);
     } catch (error) {
       console.error("Error updating title:", error);
     }
+  };
+
+  const handleTitlePress = () => {
+    // Direkt zum Level Tab wechseln falls nicht schon dort
+    if (activeTab !== "level") {
+      setActiveTab("level");
+    }
+    // Modal sofort öffnen
+    setShowTitleModal(true);
   };
 
   const handleOpenSettings = () => router.push("/settings");
@@ -194,6 +205,7 @@ const Leistung: React.FC = () => {
             stats={stats}
             selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
+            forceShowTitleModal={showTitleModal}
           />
         );
       case "gallery":
@@ -208,6 +220,7 @@ const Leistung: React.FC = () => {
             stats={stats}
             selectedTitleIndex={profile.titleLevelIndex ?? null}
             onTitleSelect={handleTitleChange}
+            forceShowTitleModal={showTitleModal}
           />
         );
     }
@@ -254,6 +267,7 @@ const Leistung: React.FC = () => {
             onChangeAvatar={handleAvatarChange}
             completedLandscapesCount={landscapes.length}
             title={getTitleString()}
+            onTitlePress={handleTitlePress}
           />
         </View>
 

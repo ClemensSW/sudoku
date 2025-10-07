@@ -21,6 +21,8 @@ interface ProfileHeaderProps {
 
   /** NEU: Ausgewählter Titel (optional) */
   title?: string | null;
+  /** Callback wenn auf Titel geklickt wird */
+  onTitlePress?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -31,6 +33,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onChangeAvatar,
   completedLandscapesCount,
   title = null,
+  onTitlePress,
 }) => {
   const { t } = useTranslation("leistung");
   const theme = useTheme();
@@ -109,12 +112,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         )}
 
         {title && (
-          <View style={[styles.titlePill, { backgroundColor: titleBg, borderColor: titleBorder }]}>
-            <Feather name="award" size={14} color={theme.isDark ? "#fff" : "#333"} />
+          <Pressable
+            onPress={onTitlePress}
+            style={({ pressed }) => [
+              styles.titlePill,
+              {
+                backgroundColor: theme.isDark ? titleBg : '#FFFFFF',
+                borderColor: titleBorder,
+                opacity: pressed ? 0.7 : 1,
+              }
+            ]}
+          >
+            <Feather name="award" size={16} color={colors.primary} />
             <Text style={[styles.titlePillText, { color: theme.isDark ? "#fff" : "#111" }]} numberOfLines={1}>
               {title}
             </Text>
-          </View>
+          </Pressable>
         )}
       </View>
 
@@ -305,19 +318,25 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   titlePill: {
-    marginTop: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-    borderWidth: StyleSheet.hairlineWidth,
+    marginTop: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1.5,
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
   },
   titlePillText: {
-    fontSize: 13,
-    fontWeight: "800",
+    fontSize: 15,
+    fontWeight: "700",
     maxWidth: 280,
+    letterSpacing: 0.4,
   },
 
   /* Stats Card */

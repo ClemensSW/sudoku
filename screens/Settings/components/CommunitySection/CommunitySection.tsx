@@ -23,7 +23,7 @@ const customStyles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 72,
+    paddingVertical: 16,
     paddingLeft: 16,
     paddingRight: 16,
   },

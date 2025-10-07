@@ -155,16 +155,6 @@ const Leistung: React.FC = () => {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
-    setTimeout(() => {
-      if (scrollViewRef.current && tabSectionPosition.current > 0) {
-        scrollViewRef.current.scrollTo({ y: tabSectionPosition.current - 20, animated: true });
-      }
-    }, 100);
-  };
-
-  const handleTabSectionLayout = (event: any) => {
-    const { y } = event.nativeEvent.layout;
-    tabSectionPosition.current = y;
   };
 
   // Profiländerungen
@@ -274,6 +264,11 @@ const Leistung: React.FC = () => {
       <StatusBar style={theme.isDark ? "light" : "dark"} />
       <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
 
+      {/* Sticky Tab Navigation */}
+      <View style={[styles.stickyTabSection, { backgroundColor: colors.background }]}>
+        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+      </View>
+
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollContainer}
@@ -292,11 +287,6 @@ const Leistung: React.FC = () => {
             title={getTitleString()}
             onTitlePress={handleTitlePress}
           />
-        </View>
-
-        {/* Tabs */}
-        <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
-          <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
         </View>
 
         {/* Support Banner - unterhalb der Tabs */}
@@ -340,7 +330,15 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1 },
   scrollContent: {},
   profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
-  tabSection: { width: "100%" },
+  stickyTabSection: {
+    width: "100%",
+    zIndex: 10,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
   bannerContainer: { paddingHorizontal: 16, marginTop: 20, marginBottom: 16 },
   tabContentContainer: {paddingBottom: 64 },
 });

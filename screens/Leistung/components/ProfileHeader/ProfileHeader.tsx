@@ -58,7 +58,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const handleAvatarChange = (uri: string | null) => onChangeAvatar?.(uri);
 
   // Ruhige Farben aus Theme
-  const cardBg = theme.isDark ? "rgba(255,255,255,0.04)" : "#FFFFFF";
+  const cardBg = theme.isDark ? colors.surface : "#FFFFFF";
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
   const iconCircleBg = theme.isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
   const dividerColor = theme.isDark ? "rgba(255,255,255,0.20)" : "rgba(0,0,0,0.15)";

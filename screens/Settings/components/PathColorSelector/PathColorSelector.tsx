@@ -8,9 +8,8 @@ import PinselIcon from "@/assets/svg/pinsel.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
-import { loadColorUnlock, syncUnlockedColors, ColorUnlockData } from "@/utils/storage";
-import { useLevelInfo } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/useLevelInfo";
-import { loadStats } from "@/utils/storage";
+import { loadColorUnlock, syncUnlockedColors, ColorUnlockData, loadStats } from "@/utils/storage";
+import { getLevelThresholds } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/components/ColorPickerModal";
 
 interface PathColorSelectorProps {}
@@ -30,11 +29,21 @@ const PathColorSelector: React.FC<PathColorSelectorProps> = () => {
     const loadData = async () => {
       const stats = await loadStats();
       const currentXp = stats?.totalXP || 0;
-      const levelInfo = useLevelInfo(currentXp);
-      setCurrentLevel(levelInfo.currentLevel);
+
+      // Calculate level directly without using hook
+      const thresholds = getLevelThresholds();
+      let level = 0;
+      for (let i = 0; i < thresholds.length; i++) {
+        if (currentXp >= thresholds[i].xp) {
+          level = thresholds[i].level;
+        } else {
+          break;
+        }
+      }
+      setCurrentLevel(level);
 
       // Sync unlocked colors based on level
-      await syncUnlockedColors(levelInfo.currentLevel);
+      await syncUnlockedColors(level);
 
       // Load current color unlock data
       const data = await loadColorUnlock();

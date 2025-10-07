@@ -158,6 +158,14 @@ const Leistung: React.FC = () => {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
+
+    // Scroll to tab navigation if it's below the header
+    setTimeout(() => {
+      if (scrollViewRef.current && tabSectionPosition.value > 0) {
+        const targetPosition = tabSectionPosition.value - 10; // Small offset
+        scrollViewRef.current.scrollTo({ y: targetPosition, animated: true });
+      }
+    }, 100);
   };
 
   const handleTabSectionLayout = (event: any) => {

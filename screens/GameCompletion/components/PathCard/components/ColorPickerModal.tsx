@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { triggerHaptic } from "@/utils/haptics";
 import BaseModal from "@/components/BaseModal/BaseModal";
+import { getColorFromHex } from "@/utils/pathColors";
 
 interface ColorOption {
   color: string;
@@ -85,6 +86,9 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
           const isSelected = selectedColor === option.color;
           const pathName = t(`levels:paths.${option.pathId}.name`);
 
+          // Theme-aware Farbe: Zeigt Light oder Dark Variante je nach Theme
+          const displayColor = getColorFromHex(option.color, isDark);
+
           return (
             <View key={option.color} style={styles.colorItemWrapper}>
               <TouchableOpacity
@@ -98,7 +102,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                   style={[
                     styles.colorSquare,
                     {
-                      backgroundColor: option.color,
+                      backgroundColor: displayColor, // Theme-aware Farbe
                       opacity: isUnlocked ? 1 : 0.3,
                       borderWidth: isSelected ? 4 : 0,
                       borderColor: isDark ? "#ffffff" : "#000000",

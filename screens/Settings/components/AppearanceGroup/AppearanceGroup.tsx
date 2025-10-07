@@ -59,7 +59,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       let level = 0;
       for (let i = 0; i < levelThresholds.length; i++) {
         if (currentXp >= levelThresholds[i].xp) {
-          level = levelThresholds[i].level;
+          level = i; // Index ist das Level (0-basiert)
         } else {
           break;
         }

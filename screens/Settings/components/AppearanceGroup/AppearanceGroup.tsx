@@ -126,14 +126,6 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     setShowLanguageModal(false);
   };
 
-  // Prepare title options for modal
-  const allLevels = getLevels();
-  const titleOptions = allLevels.map((level, index) => ({
-    name: level.name,
-    level: index,
-    isUnlocked: index <= currentLevel,
-  }));
-
   const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
   const selectedBg = theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)";
@@ -141,37 +133,20 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
 
   if (!colorUnlockData) return null;
 
+  // Prepare title options for modal (after early return check)
+  const allLevels = getLevels();
+  const titleOptions = allLevels.map((level, index) => ({
+    name: level.name,
+    level: index,
+    isUnlocked: index <= currentLevel,
+  }));
+
   return (
     <>
       <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        {/* Path Color Button */}
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => {
-            triggerHaptic("light");
-            setShowColorModal(true);
-          }}
-        >
-          <View style={styles.actionIcon}>
-            <PinselIcon width={48} height={48} />
-          </View>
-          <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
-              {t("appearance.pathColor")}
-            </Text>
-            <View style={styles.colorPreview}>
-              <View style={[styles.colorDot, { backgroundColor: progressColor }]} />
-              <Text style={[styles.actionDescription, { color: colors.textSecondary }]}>
-                {getColorName(colorUnlockData.selectedColor)}
-              </Text>
-            </View>
-          </View>
-          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
-        </TouchableOpacity>
-
         {/* Title Button */}
         <TouchableOpacity
-          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
+          style={styles.actionButton}
           onPress={() => {
             triggerHaptic("light");
             setShowTitleModal(true);
@@ -184,8 +159,24 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
             <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
               {t("appearance.title")}
             </Text>
-            <Text style={[styles.actionDescription, { color: colors.textSecondary }]}>
-              {getTitleName()}
+          </View>
+          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Path Color Button */}
+        <TouchableOpacity
+          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
+          onPress={() => {
+            triggerHaptic("light");
+            setShowColorModal(true);
+          }}
+        >
+          <View style={styles.actionIcon}>
+            <PinselIcon width={48} height={48} />
+          </View>
+          <View style={styles.actionTextContainer}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              {t("appearance.pathColor")}
             </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -205,9 +196,6 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           <View style={styles.actionTextContainer}>
             <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
               {t("appearance.language")}
-            </Text>
-            <Text style={[styles.actionDescription, { color: colors.textSecondary }]}>
-              {getLanguageLabel(currentLanguage)}
             </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -298,7 +286,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 72,
+    paddingVertical: spacing.md,
     paddingLeft: spacing.md,
     paddingRight: spacing.md,
   },
@@ -313,21 +301,6 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: spacing.xxs,
-  },
-  actionDescription: {
-    fontSize: 14,
-    opacity: 0.8,
-  },
-  colorPreview: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  colorDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
   },
   // Language Options
   languageOptions: {

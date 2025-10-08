@@ -43,6 +43,20 @@
     "premium": "प्रीमियम",
     "remaining": "{{count}} शेष"
   },
+  "fullscreenBanner": {
+    "nonSupporter": {
+      "title": "समर्थक बनें",
+      "subtitle": "तुरंत चित्र अनलॉक करें"
+    },
+    "oneTimeNoQuota": {
+      "title": "सदस्यता में अपग्रेड करें",
+      "subtitle": "हर महीने 1 चित्र अनलॉक करें"
+    },
+    "subscriptionNoQuota": {
+      "title": "अतिरिक्त चित्र अनलॉक करें",
+      "subtitle": "एकमुश्त समर्थन उपलब्ध"
+    }
+  },
   "alerts": {
     "imageSelected": {
       "title": "चित्र चुना गया"

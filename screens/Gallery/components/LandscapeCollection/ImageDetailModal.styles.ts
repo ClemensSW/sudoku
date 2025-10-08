@@ -3,7 +3,7 @@ import { spacing, radius } from "@/utils/theme";
 
 const { width, height } = Dimensions.get("window");
 
-// Tag colors - vibrant, modern palette
+// Tag colors - vibrant, modern palette with premium gold
 export const tagColors = {
   favorite: {
     background: "rgba(245, 54, 92, 0.85)",
@@ -16,7 +16,7 @@ export const tagColors = {
     icon: "#FFFFFF"
   },
   currentProject: {
-    background: "rgba(66, 153, 225, 0.85)",
+    background: "rgba(212, 175, 55, 0.9)",
     text: "#FFFFFF",
     icon: "#FFFFFF"
   }

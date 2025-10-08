@@ -43,6 +43,20 @@
     "premium": "Premium",
     "remaining": "Noch {{count}} verfügbar"
   },
+  "fullscreenBanner": {
+    "nonSupporter": {
+      "title": "Werde Supporter",
+      "subtitle": "Schalte Bilder sofort frei"
+    },
+    "oneTimeNoQuota": {
+      "title": "Upgrade zum Abo",
+      "subtitle": "Jeden Monat 1 Bild freischalten"
+    },
+    "subscriptionNoQuota": {
+      "title": "Zusätzliches Bild freischalten",
+      "subtitle": "Einmalige Unterstützung verfügbar"
+    }
+  },
   "alerts": {
     "imageSelected": {
       "title": "Bild ausgewählt"

@@ -35,6 +35,7 @@ import { unlockImageAsSupporter } from "@/modules/gallery/supporterUnlocks";
 import UnlockConfirmationDialog from "../UnlockConfirmationDialog";
 import SupporterBadge from "../SupporterBadge";
 import * as Haptics from "expo-haptics";
+import { useNavigation as useReactNavigation } from "@react-navigation/native";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -44,6 +45,7 @@ interface ImageDetailModalProps {
   onSelectAsProject?: (landscape: Landscape) => void;
   currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
   onImageUnlocked?: () => void; // Callback nach erfolgreichem Unlock
+  onOpenSupportShop?: () => void; // Callback to open Support Shop
 }
 
 // Tag component for reusability
@@ -77,20 +79,23 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   onSelectAsProject,
   currentImageId,
   onImageUnlocked,
+  onOpenSupportShop,
 }) => {
   const theme = useTheme();
   const { colors: themeColors } = theme;
   const insets = useSafeAreaInsets();
   const { t } = useTranslation('gallery');
+  const navigation = useReactNavigation();
 
   // States
   const [controlsVisible, setControlsVisible] = useState(true);
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
+  const [fullscreenBannerDismissed, setFullscreenBannerDismissed] = useState(false);
 
   // Supporter hooks
-  const { isSupporter } = useSupporter();
+  const { isSupporter, supporterStatus } = useSupporter();
   const { canUnlock, remainingUnlocks, refresh: refreshQuota } = useImageUnlock();
 
   // Animation values
@@ -197,6 +202,13 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   // Check if supporter can unlock this specific image
   const canUnlockThisImage = isSupporter && canUnlock && landscape && !landscape.isComplete;
 
+  // Determine if fullscreen banner should be shown
+  const shouldShowFullscreenBanner =
+    landscape &&
+    !landscape.isComplete &&
+    !fullscreenBannerDismissed &&
+    (!isSupporter || !canUnlock);
+
   // Toggle controls visibility on image tap
   const toggleControls = () => {
     const newVisibility = !controlsVisible;
@@ -228,6 +240,9 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       setControlsVisible(true);
       headerOpacity.value = 1;
       footerOpacity.value = 1;
+
+      // Reset banner dismissed state when opening modal
+      setFullscreenBannerDismissed(false);
     }
   }, [visible]);
 
@@ -289,6 +304,94 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   // Check if it's the special pre-unlocked image
   const isSpecialPreunlockedImage = landscape.progress === 8;
 
+  // Get banner content based on supporter status
+  const getFullscreenBannerContent = () => {
+    if (!isSupporter) {
+      // Non-supporter
+      return {
+        title: t('fullscreenBanner.nonSupporter.title'),
+        subtitle: t('fullscreenBanner.nonSupporter.subtitle'),
+      };
+    } else if (supporterStatus?.supportType === 'one-time') {
+      // One-time supporter without quota
+      return {
+        title: t('fullscreenBanner.oneTimeNoQuota.title'),
+        subtitle: t('fullscreenBanner.oneTimeNoQuota.subtitle'),
+      };
+    } else {
+      // Subscription supporter without quota
+      return {
+        title: t('fullscreenBanner.subscriptionNoQuota.title'),
+        subtitle: t('fullscreenBanner.subscriptionNoQuota.subtitle'),
+      };
+    }
+  };
+
+  // Render fullscreen banner
+  const renderFullscreenBanner = () => {
+    const bannerContent = getFullscreenBannerContent();
+
+    // Premium gold color
+    const premiumColor = '#D4AF37';
+
+    return (
+      <TouchableOpacity
+        style={{
+          marginTop: 12,
+          backgroundColor: theme.isDark
+            ? "rgba(212, 175, 55, 0.12)"
+            : "rgba(212, 175, 55, 0.08)",
+          borderColor: theme.isDark
+            ? "rgba(212, 175, 55, 0.3)"
+            : "rgba(212, 175, 55, 0.25)",
+          borderWidth: 1,
+          borderRadius: 12,
+          padding: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          if (onOpenSupportShop) {
+            onClose();
+            setTimeout(() => {
+              onOpenSupportShop();
+            }, 300);
+          }
+        }}
+        activeOpacity={0.8}
+      >
+        {/* Icon */}
+        <View style={{ marginRight: 12 }}>
+          <Feather name="award" size={20} color={premiumColor} />
+        </View>
+
+        {/* Text content */}
+        <View style={{ flex: 1 }}>
+          <Text style={{ color: premiumColor, fontSize: 15, fontWeight: '600' }}>
+            {bannerContent.title}
+          </Text>
+          <Text style={{ color: themeColors.textSecondary, fontSize: 13, marginTop: 2 }}>
+            {bannerContent.subtitle}
+          </Text>
+        </View>
+
+        {/* Dismiss button */}
+        <TouchableOpacity
+          onPress={(e) => {
+            e.stopPropagation();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setFullscreenBannerDismissed(true);
+          }}
+          style={{ padding: 4, marginLeft: 8 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Feather name="x" size={18} color={themeColors.textSecondary} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };
+
   // Render complete image view
   const renderCompleteImage = () => (
     <Animated.View style={[styles.imageContainer, imageAnimatedStyle]}>
@@ -324,28 +427,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
             )}
           </View>
         ))}
-      </View>
-
-      {/* Progress text below grid */}
-      <Text style={styles.progressText}>
-        {isSpecialPreunlockedImage
-          ? t('detailModal.almostDoneSegment')
-          : t('placeholder.revealed', {
-              percent: Math.floor((landscape.progress / 9) * 100)
-            })}
-      </Text>
-
-      {/* Progress bar */}
-      <View style={styles.progressBarContainer}>
-        <View
-          style={[
-            styles.progressBar,
-            {
-              width: `${(landscape.progress / 9) * 100}%`,
-              backgroundColor: themeColors.primary,
-            },
-          ]}
-        />
       </View>
     </View>
   );
@@ -472,8 +553,11 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           )}
         </View>
 
+        {/* Fullscreen Banner - show for non-supporters or supporters without quota */}
+        {shouldShowFullscreenBanner && renderFullscreenBanner()}
+
         {/* Supporter Badge - show if supporter with remaining unlocks */}
-        {isSupporter && !landscape.isComplete && (
+        {isSupporter && !landscape.isComplete && canUnlock && (
           <View style={{ marginTop: 12 }}>
             <SupporterBadge remainingUnlocks={remainingUnlocks} />
           </View>
@@ -484,42 +568,96 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           <View style={styles.footerActionButton}>
             {/* Supporter Unlock Button - priority if available */}
             {canUnlockThisImage && (
-              <TouchableOpacity
-                style={[
-                  styles.selectProjectButton,
-                  {
-                    backgroundColor: '#9333EA',
-                    marginBottom: 8,
-                  },
-                ]}
-                onPress={handleSupporterUnlock}
-                activeOpacity={0.8}
+              <View
+                style={{
+                  marginBottom: 8,
+                  shadowColor: '#D4AF37',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}
               >
-                <Text style={styles.selectButtonText}>
-                  {t('detailModal.supporterUnlockButton')}
-                </Text>
-              </TouchableOpacity>
+                <LinearGradient
+                  colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.selectProjectButton,
+                      {
+                        backgroundColor: 'transparent',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      },
+                    ]}
+                    onPress={handleSupporterUnlock}
+                    activeOpacity={0.8}
+                  >
+                    <Feather
+                      name="gift"
+                      size={18}
+                      color="#FFFFFF"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={[styles.selectButtonText, { fontWeight: '700' }]}>
+                      {t('detailModal.supporterUnlockButton')}
+                    </Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              </View>
             )}
 
             {/* Regular segment-based unlock button */}
-            <TouchableOpacity
-              style={[
-                styles.selectProjectButton,
-                { backgroundColor: themeColors.primary },
-              ]}
-              onPress={handleSelectAsProject}
-              activeOpacity={0.8}
+            <View
+              style={{
+                shadowColor: '#D4AF37',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 6,
+                elevation: 6,
+              }}
             >
-              <Feather
-                name="target"
-                size={16}
-                color="#FFFFFF"
-                style={{ marginRight: 8 }}
-              />
-              <Text style={styles.selectButtonText}>
-                {t('detailModal.unlockButton')}
-              </Text>
-            </TouchableOpacity>
+              <LinearGradient
+                colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                }}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.selectProjectButton,
+                    {
+                      backgroundColor: 'transparent',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                  ]}
+                  onPress={handleSelectAsProject}
+                  activeOpacity={0.8}
+                >
+                  <Feather
+                    name="target"
+                    size={16}
+                    color="#FFFFFF"
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={[styles.selectButtonText, { fontWeight: '600' }]}>
+                    {t('detailModal.unlockButton')}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </View>
           </View>
         )}
       </View>

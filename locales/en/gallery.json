@@ -43,6 +43,20 @@
     "premium": "Premium",
     "remaining": "{{count}} remaining"
   },
+  "fullscreenBanner": {
+    "nonSupporter": {
+      "title": "Become a Supporter",
+      "subtitle": "Unlock images instantly"
+    },
+    "oneTimeNoQuota": {
+      "title": "Upgrade to Subscription",
+      "subtitle": "Unlock 1 image every month"
+    },
+    "subscriptionNoQuota": {
+      "title": "Unlock additional image",
+      "subtitle": "One-time support available"
+    }
+  },
   "alerts": {
     "imageSelected": {
       "title": "Image Selected"

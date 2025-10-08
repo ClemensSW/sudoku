@@ -18,6 +18,9 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
   const { colors } = theme;
   const { t } = useTranslation('gallery');
 
+  // Premium gold color
+  const premiumColor = '#D4AF37';
+
   if (compact) {
     // Compact version for list items
     return (
@@ -26,13 +29,13 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
           styles.compactBadge,
           {
             backgroundColor: theme.isDark
-              ? "rgba(147, 51, 234, 0.2)"
-              : "rgba(147, 51, 234, 0.1)",
+              ? "rgba(212, 175, 55, 0.15)"
+              : "rgba(212, 175, 55, 0.1)",
           },
         ]}
       >
-        <Feather name="star" size={12} color="#9333EA" />
-        <Text style={[styles.compactText, { color: "#9333EA" }]}>
+        <Feather name="award" size={12} color={premiumColor} />
+        <Text style={[styles.compactText, { color: premiumColor }]}>
           {t('supporterBadge.premium')}
         </Text>
       </View>
@@ -46,19 +49,19 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
         styles.badge,
         {
           backgroundColor: theme.isDark
-            ? "rgba(147, 51, 234, 0.15)"
-            : "rgba(147, 51, 234, 0.1)",
+            ? "rgba(212, 175, 55, 0.12)"
+            : "rgba(212, 175, 55, 0.08)",
           borderColor: theme.isDark
-            ? "rgba(147, 51, 234, 0.3)"
-            : "rgba(147, 51, 234, 0.2)",
+            ? "rgba(212, 175, 55, 0.3)"
+            : "rgba(212, 175, 55, 0.25)",
         },
       ]}
     >
       <View style={styles.iconContainer}>
-        <Feather name="star" size={16} color="#9333EA" />
+        <Feather name="award" size={16} color={premiumColor} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: "#9333EA" }]}>
+        <Text style={[styles.title, { color: premiumColor }]}>
           {t('supporterBadge.supporter')}
         </Text>
         {remainingUnlocks !== undefined && (

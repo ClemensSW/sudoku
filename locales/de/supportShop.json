@@ -23,7 +23,25 @@
         "title": "Kein Abo-Zwang, aber viel Freude",
         "subtitle": "Freiwillige Unterstützung für mehr Sudoku-Spaß"
       }
-    ]
+    ],
+    "variants": {
+      "ep": {
+        "title": "2× EP Boost",
+        "subtitle": "Doppelte Erfahrungspunkte mit Support"
+      },
+      "images": {
+        "title": "Bilder freischalten",
+        "subtitle": "1 Bild pro Monat sofort freischalten"
+      },
+      "support": {
+        "title": "Unterstütze mich",
+        "subtitle": "Halte die App werbefrei & aktuell"
+      }
+    },
+    "supporter": {
+      "title": "Vielen Dank!",
+      "subtitle": "Du unterstützt diese App ❤️"
+    }
   },
   "products": {
     "sudoku_coffee": [

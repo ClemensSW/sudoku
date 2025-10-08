@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@/contexts/navigation";
 
 // Components
-import BenefitsCard from "./components/BenefitsCard";
+import BenefitsBanner from "./components/BenefitsBanner";
 import ThankYouModal from "./components/ThankYouModal";
 import ProductCard from "./components/ProductCard";
 import SubscriptionCard from "./components/SubscriptionCard";
@@ -258,9 +258,12 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Benefits Card - Compact */}
+        {/* Benefits Banner - Visual with rotating variants */}
         <Animated.View entering={FadeIn.duration(400)}>
-          <BenefitsCard />
+          <BenefitsBanner
+            primaryColor={colors.primary}
+            secondaryColor={colors.primaryDark}
+          />
         </Animated.View>
 
         {/* One-time support section */}

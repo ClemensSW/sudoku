@@ -23,7 +23,25 @@
         "title": "No forced subscription, just joy",
         "subtitle": "Voluntary support for more Sudoku fun"
       }
-    ]
+    ],
+    "variants": {
+      "ep": {
+        "title": "2× EP Boost",
+        "subtitle": "Double experience points with support"
+      },
+      "images": {
+        "title": "Unlock images",
+        "subtitle": "Unlock 1 image per month instantly"
+      },
+      "support": {
+        "title": "Support me",
+        "subtitle": "Keep the app ad-free & updated"
+      }
+    },
+    "supporter": {
+      "title": "Thank you!",
+      "subtitle": "You're supporting this app ❤️"
+    }
   },
   "products": {
     "sudoku_coffee": [

@@ -371,7 +371,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       >
         {/* Icon */}
         <View style={{ marginRight: 12 }}>
-          <GiftIcon width={24} height={24} />
+          <GiftIcon width={36} height={36} />
         </View>
 
         {/* Text content */}

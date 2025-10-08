@@ -27,7 +27,21 @@
     "almostDoneSegment": "Almost done! Only 1 segment left",
     "unlockButton": "Unlock this image",
     "currentProjectTag": "Currently unlocking",
-    "favoriteTag": "Favorite"
+    "favoriteTag": "Favorite",
+    "supporterUnlockButton": "🎁 Unlock instantly"
+  },
+  "unlockDialog": {
+    "title": "Unlock \"{{name}}\"?",
+    "message": "You can unlock {{count}} more image this month.",
+    "message_other": "You can unlock {{count}} more images this month.",
+    "cancel": "Cancel",
+    "confirm": "Unlock",
+    "unlocking": "Unlocking..."
+  },
+  "supporterBadge": {
+    "supporter": "Supporter",
+    "premium": "Premium",
+    "remaining": "{{count}} remaining"
   },
   "alerts": {
     "imageSelected": {

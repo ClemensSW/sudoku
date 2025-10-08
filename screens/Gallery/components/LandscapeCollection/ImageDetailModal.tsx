@@ -29,6 +29,12 @@ import { BlurView } from "expo-blur"; // You may need to install this package
 import styles, { tagColors } from "./ImageDetailModal.styles";
 import { getLandscapeName, getLandscapeDescription, getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTranslation } from "react-i18next";
+import { useSupporter } from "@/modules/subscriptions/hooks/useSupporter";
+import { useImageUnlock } from "@/modules/subscriptions/hooks/useImageUnlock";
+import { unlockImageAsSupporter } from "@/modules/gallery/supporterUnlocks";
+import UnlockConfirmationDialog from "../UnlockConfirmationDialog";
+import SupporterBadge from "../SupporterBadge";
+import * as Haptics from "expo-haptics";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -78,6 +84,12 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   // States
   const [controlsVisible, setControlsVisible] = useState(true);
   const [statusBarHidden, setStatusBarHidden] = useState(false);
+  const [showUnlockDialog, setShowUnlockDialog] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
+
+  // Supporter hooks
+  const { isSupporter } = useSupporter();
+  const { canUnlock, remainingUnlocks, refresh: refreshQuota } = useImageUnlock();
 
   // Animation values
   const heartScale = useSharedValue(1);
@@ -137,6 +149,44 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       onSelectAsProject(landscape);
     }
   };
+
+  // Handle supporter unlock
+  const handleSupporterUnlock = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowUnlockDialog(true);
+  };
+
+  const confirmSupporterUnlock = async () => {
+    if (!landscape || !canUnlock) return;
+
+    setUnlocking(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      const result = await unlockImageAsSupporter(landscape.id);
+
+      if (result.success) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setShowUnlockDialog(false);
+        await refreshQuota();
+
+        // Trigger landscape refresh via onClose and reopen
+        onClose();
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        alert(result.error || 'Failed to unlock image');
+      }
+    } catch (error) {
+      console.error('Error unlocking image:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      alert('Failed to unlock image');
+    } finally {
+      setUnlocking(false);
+    }
+  };
+
+  // Check if supporter can unlock this specific image
+  const canUnlockThisImage = isSupporter && canUnlock && landscape && !landscape.isComplete;
 
   // Toggle controls visibility on image tap
   const toggleControls = () => {
@@ -413,9 +463,36 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           )}
         </View>
 
-        {/* Action Button für die Bildauswahl - nur für unvollständige Bilder, die NICHT bereits ausgewählt sind */}
+        {/* Supporter Badge - show if supporter with remaining unlocks */}
+        {isSupporter && !landscape.isComplete && (
+          <View style={{ marginTop: 12 }}>
+            <SupporterBadge remainingUnlocks={remainingUnlocks} />
+          </View>
+        )}
+
+        {/* Action Buttons for incomplete images */}
         {landscape && !landscape.isComplete && !isCurrentProject && (
           <View style={styles.footerActionButton}>
+            {/* Supporter Unlock Button - priority if available */}
+            {canUnlockThisImage && (
+              <TouchableOpacity
+                style={[
+                  styles.selectProjectButton,
+                  {
+                    backgroundColor: '#9333EA',
+                    marginBottom: 8,
+                  },
+                ]}
+                onPress={handleSupporterUnlock}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.selectButtonText}>
+                  {t('detailModal.supporterUnlockButton')}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Regular segment-based unlock button */}
             <TouchableOpacity
               style={[
                 styles.selectProjectButton,
@@ -468,6 +545,18 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         {/* Footer with metadata */}
         {renderFooter()}
       </View>
+
+      {/* Unlock Confirmation Dialog */}
+      {landscape && (
+        <UnlockConfirmationDialog
+          visible={showUnlockDialog}
+          imageName={getLandscapeName(landscape.id)}
+          remainingUnlocks={remainingUnlocks}
+          onConfirm={confirmSupporterUnlock}
+          onCancel={() => setShowUnlockDialog(false)}
+          loading={unlocking}
+        />
+      )}
     </Animated.View>
   );
 };

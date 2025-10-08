@@ -1,0 +1,129 @@
+import React from "react";
+import { View, Text, Modal, TouchableOpacity } from "react-native";
+import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
+import { BlurView } from "expo-blur";
+import styles from "./UnlockConfirmationDialog.styles";
+
+interface UnlockConfirmationDialogProps {
+  visible: boolean;
+  imageName: string;
+  remainingUnlocks: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading?: boolean;
+}
+
+const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
+  visible,
+  imageName,
+  remainingUnlocks,
+  onConfirm,
+  onCancel,
+  loading = false,
+}) => {
+  const theme = useTheme();
+  const { colors } = theme;
+  const { t } = useTranslation('gallery');
+
+  if (!visible) return null;
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
+      <View style={styles.overlay}>
+        {/* Blur backdrop */}
+        <BlurView
+          intensity={20}
+          tint={theme.isDark ? "dark" : "light"}
+          style={styles.blurView}
+        />
+
+        {/* Dialog */}
+        <Animated.View
+          entering={SlideInDown.duration(300)}
+          style={[
+            styles.dialogContainer,
+            {
+              backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
+            },
+          ]}
+        >
+          {/* Icon */}
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: colors.primary + "20" },
+            ]}
+          >
+            <Feather name="unlock" size={32} color={colors.primary} />
+          </View>
+
+          {/* Title */}
+          <Text style={[styles.title, { color: colors.textPrimary }]}>
+            {t('unlockDialog.title', { name: imageName })}
+          </Text>
+
+          {/* Message */}
+          <Text style={[styles.message, { color: colors.textSecondary }]}>
+            {t('unlockDialog.message', { count: remainingUnlocks })}
+          </Text>
+
+          {/* Buttons */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.cancelButton,
+                {
+                  backgroundColor: theme.isDark
+                    ? "rgba(255,255,255,0.1)"
+                    : "rgba(0,0,0,0.05)",
+                },
+              ]}
+              onPress={onCancel}
+              disabled={loading}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>
+                {t('unlockDialog.cancel')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.confirmButton,
+                { backgroundColor: colors.primary },
+              ]}
+              onPress={onConfirm}
+              disabled={loading}
+              activeOpacity={0.7}
+            >
+              {loading ? (
+                <Text style={styles.confirmButtonText}>
+                  {t('unlockDialog.unlocking')}
+                </Text>
+              ) : (
+                <>
+                  <Text style={styles.confirmButtonText}>
+                    {t('unlockDialog.confirm')}
+                  </Text>
+                  <Feather name="check" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+};
+
+export default UnlockConfirmationDialog;

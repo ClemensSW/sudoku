@@ -27,7 +27,21 @@
     "almostDoneSegment": "Fast fertig! Nur noch 1 Segment",
     "unlockButton": "Dieses Bild freischalten",
     "currentProjectTag": "Wird gerade freigeschaltet",
-    "favoriteTag": "Favorit"
+    "favoriteTag": "Favorit",
+    "supporterUnlockButton": "🎁 Sofort freischalten"
+  },
+  "unlockDialog": {
+    "title": "\"{{name}}\" freischalten?",
+    "message": "Du kannst noch {{count}} Bild diesen Monat freischalten.",
+    "message_other": "Du kannst noch {{count}} Bilder diesen Monat freischalten.",
+    "cancel": "Abbrechen",
+    "confirm": "Freischalten",
+    "unlocking": "Wird freigeschaltet..."
+  },
+  "supporterBadge": {
+    "supporter": "Supporter",
+    "premium": "Premium",
+    "remaining": "Noch {{count}} verfügbar"
   },
   "alerts": {
     "imageSelected": {

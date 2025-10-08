@@ -15,6 +15,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { useSupporter } from '@/modules/subscriptions/hooks/useSupporter';
 import styles from './BenefitsBanner.styles';
+import GiftIcon from '@/assets/svg/gift.svg';
 
 // Versuche zunächst den LinearGradient zu importieren
 let LinearGradient: any;
@@ -55,7 +56,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
 
   // Supporter thank you variant
   const supporterVariant: BannerVariant = {
-    icon: 'star',
+    icon: 'gift', // Will be replaced by SVG
     titleKey: 'banner.supporter.title',
     subtitleKey: 'banner.supporter.subtitle',
   };
@@ -112,10 +113,10 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
       style={styles.container}
       entering={FadeIn.duration(800)}
     >
-      {/* Background with gradient */}
+      {/* Background with gradient - Premium Gold for Supporters */}
       <View style={styles.background}>
         <LinearGradient
-          colors={isSupporter ? ['#9333EA', '#7C3AED'] : [primaryColor, secondaryColor]}
+          colors={isSupporter ? ['#E5C158', '#D4AF37', '#C19A2E'] : [primaryColor, secondaryColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -123,6 +124,19 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
 
         {/* Pattern overlay for texture */}
         <View style={styles.pattern} />
+
+        {/* Premium shimmer effect for supporters */}
+        {isSupporter && (
+          <View style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            opacity: 0.5,
+          }} />
+        )}
       </View>
 
       {/* Content */}
@@ -145,18 +159,22 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
         </Animated.Text>
       </View>
 
-      {/* Animated icon */}
+      {/* Animated icon - Gift SVG for Supporters */}
       <Animated.View
         key={`icon-${currentVariant.icon}`}
         style={[styles.iconContainer, iconAnimatedStyle]}
         entering={FadeIn.duration(400)}
         exiting={FadeOut.duration(400)}
       >
-        <Feather
-          name={currentVariant.icon}
-          size={32}
-          color="#FFFFFF"
-        />
+        {isSupporter ? (
+          <GiftIcon width={36} height={36} />
+        ) : (
+          <Feather
+            name={currentVariant.icon}
+            size={32}
+            color="#FFFFFF"
+          />
+        )}
       </Animated.View>
     </Animated.View>
   );

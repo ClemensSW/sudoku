@@ -104,6 +104,7 @@ export async function getEpMultiplier(
 
 /**
  * Gibt die aktuelle Image-Unlock-Quota zurück
+ * Unterscheidet zwischen One-time (1 lifetime) und Subscription (1/Monat)
  * @returns ImageUnlockQuota mit allen Details
  */
 export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
@@ -112,13 +113,18 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     const quotaJson = await AsyncStorage.getItem(KEYS.IMAGE_UNLOCK_QUOTA);
     const storedQuota = quotaJson ? JSON.parse(quotaJson) : null;
 
+    // Get supporter status to determine purchase type
+    const supporterStatus = await getSupporterStatus();
+    const isSubscription = supporterStatus.isPremiumSubscriber;
+
     // Get current month/year
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
-    // Check if quota needs reset (new month)
+    // Initialize counters
     let usedThisMonth = 0;
+    let lifetimeUnlocks = storedQuota?.lifetimeUnlocks || 0;
     let lastUnlockDate: string | null = null;
 
     if (storedQuota && storedQuota.lastUnlockDate) {
@@ -126,29 +132,52 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
       const lastMonth = lastUnlock.getMonth();
       const lastYear = lastUnlock.getFullYear();
 
-      // Same month? Keep counter
-      if (lastMonth === currentMonth && lastYear === currentYear) {
+      // For subscriptions: Check if quota needs reset (new month)
+      if (isSubscription) {
+        // Same month? Keep counter
+        if (lastMonth === currentMonth && lastYear === currentYear) {
+          usedThisMonth = storedQuota.usedThisMonth || 0;
+        }
+        // New month? Reset counter (usedThisMonth stays 0)
+      } else {
+        // For one-time purchases: Keep lifetime counter
         usedThisMonth = storedQuota.usedThisMonth || 0;
-        lastUnlockDate = storedQuota.lastUnlockDate;
       }
-      // New month? Reset counter
+
+      lastUnlockDate = storedQuota.lastUnlockDate;
     }
 
     // Check if user can unlock
-    const supporterStatus = await getSupporterStatus();
-    const canUnlock =
-      supporterStatus.isSupporter && usedThisMonth < 1;
+    let canUnlock = false;
+    if (supporterStatus.isSupporter) {
+      if (isSubscription) {
+        // Subscription: Can unlock if less than 1 this month
+        canUnlock = usedThisMonth < 1;
+      } else {
+        // One-time: Can unlock if less than 1 lifetime
+        canUnlock = lifetimeUnlocks < 1;
+      }
+    }
 
-    // Calculate next reset date (1st of next month)
-    const nextResetDate = new Date(currentYear, currentMonth + 1, 1);
+    // Calculate next reset date (null for one-time, 1st of next month for subscription)
+    const nextResetDate = isSubscription
+      ? new Date(currentYear, currentMonth + 1, 1)
+      : null;
+
+    // Calculate remaining unlocks
+    const remainingUnlocks = isSubscription
+      ? Math.max(0, 1 - usedThisMonth)
+      : Math.max(0, 1 - lifetimeUnlocks);
 
     const quota: ImageUnlockQuota = {
       monthlyLimit: 1,
       usedThisMonth,
+      lifetimeUnlocks,
       lastUnlockDate,
       canUnlock,
-      remainingUnlocks: Math.max(0, 1 - usedThisMonth),
+      remainingUnlocks,
       nextResetDate,
+      isSubscription,
     };
 
     return quota;
@@ -158,10 +187,12 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     return {
       monthlyLimit: 1,
       usedThisMonth: 1,
+      lifetimeUnlocks: 1,
       lastUnlockDate: null,
       canUnlock: false,
       remainingUnlocks: 0,
-      nextResetDate: new Date(),
+      nextResetDate: null,
+      isSubscription: false,
     };
   }
 }
@@ -177,15 +208,17 @@ export async function canUnlockImage(): Promise<boolean> {
 
 /**
  * Aktualisiert die Unlock-Quota nach erfolgreichem Unlock
+ * Unterscheidet zwischen Subscription (usedThisMonth) und One-time (lifetimeUnlocks)
  * @param imageId Die ID des freigeschalteten Bildes
  */
 export async function recordImageUnlock(imageId: string): Promise<void> {
   try {
     const quota = await getImageUnlockQuota();
 
-    // Update quota
+    // Update quota based on purchase type
     const updatedQuota = {
-      usedThisMonth: quota.usedThisMonth + 1,
+      usedThisMonth: quota.isSubscription ? quota.usedThisMonth + 1 : quota.usedThisMonth,
+      lifetimeUnlocks: quota.isSubscription ? quota.lifetimeUnlocks : quota.lifetimeUnlocks + 1,
       lastUnlockDate: new Date().toISOString(),
     };
 
@@ -194,7 +227,7 @@ export async function recordImageUnlock(imageId: string): Promise<void> {
       JSON.stringify(updatedQuota)
     );
 
-    console.log(`[Entitlements] Image unlock recorded: ${imageId}`);
+    console.log(`[Entitlements] Image unlock recorded: ${imageId} (${quota.isSubscription ? 'subscription' : 'one-time'})`);
   } catch (error) {
     console.error('[Entitlements] Error recording image unlock:', error);
     throw error;
@@ -203,6 +236,7 @@ export async function recordImageUnlock(imageId: string): Promise<void> {
 
 /**
  * Validiert einen Image-Unlock-Versuch
+ * Unterscheidet Fehlermeldungen für One-time vs. Subscription
  * @param imageId Die ID des Bildes
  * @returns ImageUnlockResult mit Erfolg oder Fehler
  */
@@ -223,11 +257,20 @@ export async function validateImageUnlock(
     // Check quota
     const quota = await getImageUnlockQuota();
     if (!quota.canUnlock) {
-      return {
-        success: false,
-        error: 'QUOTA_EXCEEDED',
-        errorMessage: `Du kannst nur 1 Bild pro Monat freischalten. Nächster Unlock am ${quota.nextResetDate.toLocaleDateString('de-DE')}.`,
-      };
+      // Different error messages for subscription vs. one-time
+      if (quota.isSubscription) {
+        return {
+          success: false,
+          error: 'QUOTA_EXCEEDED',
+          errorMessage: `Du kannst nur 1 Bild pro Monat freischalten. Nächster Unlock am ${quota.nextResetDate?.toLocaleDateString('de-DE')}.`,
+        };
+      } else {
+        return {
+          success: false,
+          error: 'QUOTA_EXCEEDED_LIFETIME',
+          errorMessage: 'Du hast dein Bild bereits freigeschaltet. Schließe ein Abo ab, um jeden Monat 1 Bild freizuschalten.',
+        };
+      }
     }
 
     // Check if image is already unlocked

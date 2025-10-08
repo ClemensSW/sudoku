@@ -45,7 +45,7 @@ export interface SupporterStatus {
 
 /**
  * Image-Unlock Quota
- * Monatliches Limit für Bildfreischaltung (nur für Supporter)
+ * Unterscheidet zwischen One-time (1 lifetime) und Subscription (1/Monat)
  */
 export interface ImageUnlockQuota {
   /**
@@ -54,9 +54,14 @@ export interface ImageUnlockQuota {
   monthlyLimit: 1;
 
   /**
-   * Anzahl der bereits genutzten Unlocks diesen Monat
+   * Anzahl der bereits genutzten Unlocks diesen Monat (nur für Subscriptions)
    */
   usedThisMonth: number;
+
+  /**
+   * Anzahl der genutzten Unlocks insgesamt (nur für One-time purchases)
+   */
+  lifetimeUnlocks: number;
 
   /**
    * Datum des letzten Unlocks (ISO string)
@@ -69,14 +74,19 @@ export interface ImageUnlockQuota {
   canUnlock: boolean;
 
   /**
-   * Verbleibende Unlocks diesen Monat
+   * Verbleibende Unlocks (abhängig vom Purchase-Typ)
    */
   remainingUnlocks: number;
 
   /**
-   * Nächstes Reset-Datum (1. des nächsten Monats)
+   * Nächstes Reset-Datum (1. des nächsten Monats, null bei one-time)
    */
-  nextResetDate: Date;
+  nextResetDate: Date | null;
+
+  /**
+   * True wenn Nutzer aktives Abo hat (vs. one-time purchase)
+   */
+  isSubscription: boolean;
 }
 
 /**
@@ -109,11 +119,12 @@ export interface ImageUnlockResult {
  * Image-Unlock Error Codes
  */
 export type ImageUnlockError =
-  | 'NOT_SUPPORTER'           // Nutzer ist kein Supporter
-  | 'QUOTA_EXCEEDED'          // Monatliches Limit erreicht
-  | 'ALREADY_UNLOCKED'        // Bild ist bereits freigeschaltet
-  | 'IMAGE_NOT_FOUND'         // Bild existiert nicht
-  | 'STORAGE_ERROR';          // AsyncStorage Fehler
+  | 'NOT_SUPPORTER'                 // Nutzer ist kein Supporter
+  | 'QUOTA_EXCEEDED'                // Monatliches Limit erreicht (Subscription)
+  | 'QUOTA_EXCEEDED_LIFETIME'       // Lifetime Limit erreicht (One-time)
+  | 'ALREADY_UNLOCKED'              // Bild ist bereits freigeschaltet
+  | 'IMAGE_NOT_FOUND'               // Bild existiert nicht
+  | 'STORAGE_ERROR';                // AsyncStorage Fehler
 
 /**
  * Subscriber Event Types

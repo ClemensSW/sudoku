@@ -22,11 +22,16 @@ const DevTestingMenu: React.FC = () => {
     const supporterStatus = await getSupporterStatus();
     const quota = await getImageUnlockQuota();
 
+    const unlockType = quota.isSubscription ? 'Monat' : 'Gesamt';
+    const unlockInfo = quota.isSubscription
+      ? `${quota.remainingUnlocks}/${quota.monthlyLimit} (monatlich)`
+      : `${quota.remainingUnlocks}/${quota.monthlyLimit} (lifetime)`;
+
     setStatus(`
 Status: ${hasPurchased ? '✅ Supporter' : '❌ Kein Supporter'}
 Typ: ${purchaseType}
 EP Multiplikator: ${supporterStatus.isSupporter ? '2x' : '1x'}
-Bilder übrig: ${quota.remainingUnlocks}/${quota.monthlyLimit}
+Bilder übrig: ${unlockInfo}
     `.trim());
   };
 
@@ -41,7 +46,7 @@ Bilder übrig: ${quota.remainingUnlocks}/${quota.monthlyLimit}
       'one-time'
     );
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Einmalkauf simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar');
+    Alert.alert('✅ Erfolg', 'Einmalkauf simuliert!\n\n• 2× EP aktiv\n• 1 Bild (lifetime) freischaltbar');
   };
 
   const simulateSubscription = async () => {

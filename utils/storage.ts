@@ -8,6 +8,8 @@ import {
   unlockNextSegment,
   saveUnlockEvent,
 } from "@/screens/Gallery/utils/landscapes/storage";
+// Supporter EP-Multiplikator
+import { calculateEpWithBonus } from "@/modules/game/epCalculator";
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -204,13 +206,15 @@ export const updateStatsAfterGame = async (
 
     const currentStats = await loadStats();
 
-    // NEU: XP-Gewinn berechnen
-    const xpGain = won
-      ? calculateXpGain(difficulty, timeElapsed, autoNotesUsed)
-      : 0;
-    console.log(
-      `XP gained: ${xpGain} (won: ${won}, difficulty: ${difficulty})`
-    );
+    // NEU: XP-Gewinn berechnen MIT Supporter-Bonus
+    let xpGain = 0;
+    if (won) {
+      const baseXp = calculateXpGain(difficulty, timeElapsed, autoNotesUsed);
+      xpGain = await calculateEpWithBonus(baseXp);
+      console.log(
+        `XP gained: ${xpGain} (base: ${baseXp}, won: ${won}, difficulty: ${difficulty})`
+      );
+    }
 
     // NEU: Inkrementiere den passenden Zähler für gelöste Sudokus, wenn gewonnen
     let updatedCompletedEasy = currentStats.completedEasy || 0;

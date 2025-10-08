@@ -48,7 +48,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const insets = useSafeAreaInsets();
 
   const { hideBottomNav, resetBottomNav } = useNavigation();
-  const { supportType } = useSupporter();
+  const { status } = useSupporter();
+  const supportType = status?.supportType || 'none';
 
   const [products, setProducts] = useState<Product[]>([]);
   const [subscriptions, setSubscriptions] = useState<Product[]>([]);

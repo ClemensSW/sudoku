@@ -110,6 +110,14 @@ export default StyleSheet.create({
     textTransform: "uppercase",
   },
 
+  xpMultiplier: {
+    fontSize: 12,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    marginLeft: 4,
+    letterSpacing: 0.3,
+  },
+
   // Progress Section
   progressSection: {
     paddingHorizontal: spacing.lg,

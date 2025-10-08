@@ -24,6 +24,7 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Styles
 import styles from "./LevelCard.styles";
+import GiftIcon from "@/assets/svg/gift.svg";
 
 interface LevelCardProps {
   xp?: number;
@@ -32,6 +33,7 @@ interface LevelCardProps {
   difficulty?: Difficulty | string;
   justCompleted?: boolean;
   xpGain?: number;
+  epMultiplier?: 1 | 2;
   compact?: boolean;
   onLevelUp?: (oldLevel: number, newLevel: number) => void;
   selectedTitleIndex?: number | null;
@@ -45,6 +47,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
   difficulty,
   justCompleted = false,
   xpGain,
+  epMultiplier = 1,
   compact = false,
   onLevelUp,
   selectedTitleIndex = null,
@@ -163,7 +166,9 @@ const LevelCard: React.FC<LevelCardProps> = ({
     transform: [{ translateX: shimmerTranslateX.value }],
   }));
 
-  // Removed: XP calculations no longer needed (simplified design)
+  // Calculate base XP (before multiplier) for display
+  const baseXp = xpGain && epMultiplier > 1 ? Math.round(xpGain / epMultiplier) : xpGain;
+  const isPremiumSupporter = epMultiplier === 2;
 
   return (
     <Animated.View
@@ -320,7 +325,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
             </View>
           </View>
 
-          {/* XP Gain Badge - Inline */}
+          {/* XP Gain Badge - Inline with optional Premium Icon */}
           {(xpGain ?? 0) > 0 && justCompleted && (
             <Animated.View
               style={[
@@ -332,8 +337,14 @@ const LevelCard: React.FC<LevelCardProps> = ({
                 xpGainAnimatedStyle,
               ]}
             >
-              <Text style={styles.xpGainNumber}>+{xpGain}</Text>
+              {isPremiumSupporter && (
+                <GiftIcon width={14} height={14} style={{ marginRight: 6 }} />
+              )}
+              <Text style={styles.xpGainNumber}>+{baseXp}</Text>
               <Text style={styles.xpGainLabel}>EP</Text>
+              {isPremiumSupporter && (
+                <Text style={styles.xpMultiplier}>×2</Text>
+              )}
             </Animated.View>
           )}
         </View>

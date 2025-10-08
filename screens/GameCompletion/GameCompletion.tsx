@@ -15,6 +15,7 @@ import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useRouter } from "expo-router";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
+import { useSupporter } from "@/modules/subscriptions/hooks/useSupporter";
 
 // zentralisierte XP-Berechnung
 import { calculateXpGain } from "./components/PlayerProgressionCard/utils";
@@ -85,6 +86,9 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
   const colors = theme.colors;
   const router = useRouter();
   const { hideBottomNav, resetBottomNav } = useNavigation();
+
+  // Supporter Hook für EP-Multiplikator
+  const { epMultiplier } = useSupporter();
 
   // Landscape Integration
   const {
@@ -341,6 +345,7 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
                   difficulty={difficulty}
                   justCompleted={true}
                   xpGain={xpGain}
+                  epMultiplier={epMultiplier}
                   selectedTitleIndex={selectedTitleIndex}
                   onTitleSelect={handleTitleSelect}
                 />

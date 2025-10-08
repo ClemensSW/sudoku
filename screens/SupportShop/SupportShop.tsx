@@ -26,7 +26,7 @@ import { useNavigation } from "@/contexts/navigation";
 import BenefitsBanner from "./components/BenefitsBanner";
 import ThankYouModal from "./components/ThankYouModal";
 import ProductCard from "./components/ProductCard";
-import SubscriptionCard from "./components/SubscriptionCard";
+import SubscriptionCardSimple from "./components/SubscriptionCardSimple";
 import PurchaseOverlay from "./components/PurchaseOverlay";
 
 // Utils
@@ -268,9 +268,14 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
         {/* One-time support section */}
         <Animated.View entering={SlideInUp.delay(200).duration(500)}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t('sections.oneTime')}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {t('sections.oneTime')}
+            </Text>
+            <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+              {t('sections.oneTimeSubtitle')}
+            </Text>
+          </View>
 
           <View style={styles.productsGrid}>
             {products.map((product, index) => (
@@ -291,20 +296,27 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           style={styles.subscriptionsContainer}
           entering={SlideInUp.delay(400).duration(500)}
         >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t('sections.subscription')}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {t('sections.subscription')}
+            </Text>
+            <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+              {t('sections.subscriptionSubtitle')}
+            </Text>
+          </View>
 
-          {subscriptions.map((subscription, index) => (
-            <SubscriptionCard
-              key={subscription.productId}
-              subscription={subscription}
-              index={index}
-              onPress={handlePurchase}
-              isBestValue={subscription.productId === "yearly_support"}
-              disabled={purchasing}
-            />
-          ))}
+          <View style={styles.productsGrid}>
+            {subscriptions.map((subscription, index) => (
+              <SubscriptionCardSimple
+                key={subscription.productId}
+                subscription={subscription}
+                index={index}
+                onPress={handlePurchase}
+                isBestValue={subscription.productId === "yearly_support"}
+                disabled={purchasing}
+              />
+            ))}
+          </View>
         </Animated.View>
 
         {/* Thank you message */}

@@ -7,7 +7,9 @@
   },
   "sections": {
     "oneTime": "Einmalige Unterstützung",
-    "subscription": "Regelmäßige Unterstützung"
+    "oneTimeSubtitle": "Schalte sofort 1 Bild frei + erhalte dauerhaft 2× EP",
+    "subscription": "Regelmäßige Unterstützung",
+    "subscriptionSubtitle": "Jeden Monat 1 Bild freischalten + dauerhaft 2× EP"
   },
   "banner": {
     "messages": [
@@ -27,20 +29,20 @@
     "variants": {
       "ep": {
         "title": "2× EP Boost",
-        "subtitle": "Doppelte Erfahrungspunkte mit Support"
+        "subtitle": "Doppelte Erfahrungspunkte beim Spielen"
       },
       "images": {
         "title": "Bilder freischalten",
-        "subtitle": "1 Bild pro Monat sofort freischalten"
+        "subtitle": "Jeden Monat 1 Bild sofort freischalten"
       },
       "support": {
-        "title": "Unterstütze mich",
-        "subtitle": "Halte die App werbefrei & aktuell"
+        "title": "Hilf mir, werbefrei zu bleiben",
+        "subtitle": "Dies ist ein Hobbyprojekt – deine Hilfe zählt!"
       }
     },
     "supporter": {
       "title": "Vielen Dank!",
-      "subtitle": "Du unterstützt diese App ❤️"
+      "subtitle": "Du hilfst mir, die App werbefrei zu halten ❤️"
     }
   },
   "products": {
@@ -175,5 +177,8 @@
       "description": "Spare 17% mit jährlicher Unterstützung",
       "price": "€29,99/Jahr"
     }
+  },
+  "subscriptions": {
+    "subscribe": "Abonnieren"
   }
 }

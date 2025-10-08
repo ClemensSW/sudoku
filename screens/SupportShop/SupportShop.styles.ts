@@ -44,11 +44,20 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: height * 0.1, // Extra padding at bottom
   },
+  sectionHeader: {
+    marginTop: 24,
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    marginTop: 24,
-    marginBottom: 12,
+    marginBottom: 6,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    fontWeight: "500",
+    opacity: 0.7,
+    lineHeight: 20,
   },
   productsGrid: {
     flexDirection: "row",

@@ -7,7 +7,9 @@
   },
   "sections": {
     "oneTime": "One-Time Support",
-    "subscription": "Recurring Support"
+    "oneTimeSubtitle": "Unlock 1 image instantly + get permanent 2× EP",
+    "subscription": "Recurring Support",
+    "subscriptionSubtitle": "Unlock 1 image every month + permanent 2× EP"
   },
   "banner": {
     "messages": [
@@ -27,20 +29,20 @@
     "variants": {
       "ep": {
         "title": "2× EP Boost",
-        "subtitle": "Double experience points with support"
+        "subtitle": "Double experience points while playing"
       },
       "images": {
         "title": "Unlock images",
-        "subtitle": "Unlock 1 image per month instantly"
+        "subtitle": "Unlock 1 image instantly every month"
       },
       "support": {
-        "title": "Support me",
-        "subtitle": "Keep the app ad-free & updated"
+        "title": "Help me stay ad-free",
+        "subtitle": "This is a hobby project – your help matters!"
       }
     },
     "supporter": {
       "title": "Thank you!",
-      "subtitle": "You're supporting this app ❤️"
+      "subtitle": "You help me keep the app ad-free ❤️"
     }
   },
   "products": {
@@ -175,5 +177,8 @@
       "description": "Save 17% with annual support",
       "price": "€29.99/year"
     }
+  },
+  "subscriptions": {
+    "subscribe": "Subscribe"
   }
 }

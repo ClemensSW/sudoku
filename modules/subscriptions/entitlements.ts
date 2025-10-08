@@ -60,8 +60,12 @@ export async function getSupporterStatus(): Promise<SupporterStatus> {
       activeEntitlement?.willRenew === false;
 
     // Determine support type
+    // Prioritize purchaseType from dev testing (allows testing both types)
     let supportType: 'none' | 'one-time' | 'subscription' = 'none';
     if (hasActiveSubscription) {
+      supportType = 'subscription';
+    } else if (purchaseType === 'subscription') {
+      // Dev testing: subscription simulated even without RevenueCat
       supportType = 'subscription';
     } else if (hasAnyPurchase) {
       supportType = 'one-time';
@@ -115,7 +119,7 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
 
     // Get supporter status to determine purchase type
     const supporterStatus = await getSupporterStatus();
-    const isSubscription = supporterStatus.isPremiumSubscriber;
+    const isSubscription = supporterStatus.supportType === 'subscription';
 
     // Get current month/year
     const now = new Date();

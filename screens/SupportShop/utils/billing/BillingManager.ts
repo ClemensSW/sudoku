@@ -107,7 +107,7 @@ class BillingManager {
         title: i18next.t('supportShop:billingSubscriptions.yearly.title'),
         description: i18next.t('supportShop:billingSubscriptions.yearly.description'),
         price: i18next.t('supportShop:billingSubscriptions.yearly.price'),
-        color: '#27AE60',
+        color: '#E85A5A',
         icon: '🎯',
         revenueCatId: BILLING_CONFIG.GOOGLE_PLAY_PRODUCTS.YEARLY_SUB
       }

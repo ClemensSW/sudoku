@@ -179,6 +179,9 @@
     }
   },
   "subscriptions": {
-    "subscribe": "सदस्यता लें"
+    "subscribe": "सदस्यता लें",
+    "bestValue": "सर्वोत्तम मूल्य",
+    "month": "महीना",
+    "year": "वर्ष"
   }
 }

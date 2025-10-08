@@ -179,6 +179,9 @@
     }
   },
   "subscriptions": {
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "bestValue": "Best Value",
+    "month": "month",
+    "year": "year"
   }
 }

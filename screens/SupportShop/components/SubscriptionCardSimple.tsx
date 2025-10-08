@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useSharedValue,
@@ -9,10 +9,13 @@ import Animated, {
   FadeInUp,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { SvgXml } from "react-native-svg";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { Product } from "../utils/billing/BillingManager";
 import styles from "./SubscriptionCardSimple.styles";
+import CalendarIcon from "@/assets/svg/calendar.svg";
+import HeartIcon from "@/assets/svg/heart.svg";
 
 interface SubscriptionCardSimpleProps {
   subscription: Product;
@@ -36,8 +39,34 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
+  const heartBeat = useSharedValue(1);
 
   const isYearly = subscription.productId.includes("yearly");
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Heart beat animation (nur für yearly)
+  useEffect(() => {
+    if (!isYearly) return;
+
+    const heartBeatAnimation = () => {
+      heartBeat.value = withSequence(
+        withTiming(1.08, { duration: 220 }),
+        withTiming(0.98, { duration: 160 }),
+        withTiming(1.04, { duration: 160 }),
+        withTiming(1, { duration: 240 })
+      );
+    };
+
+    heartBeatAnimation();
+    heartbeatIntervalRef.current = setInterval(heartBeatAnimation, 1500);
+
+    return () => {
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+        heartbeatIntervalRef.current = null;
+      }
+    };
+  }, [isYearly, heartBeat]);
 
   // Handle press animation
   const handlePressIn = () => {
@@ -71,6 +100,10 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
     opacity: opacity.value,
   }));
 
+  const heartAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartBeat.value }],
+  }));
+
   return (
     <Animated.View
       style={animatedStyle}
@@ -97,7 +130,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           {isBestValue && (
             <View style={[styles.badge, { backgroundColor: colors.primary }]}>
               <Feather name="star" size={12} color="#FFFFFF" />
-              <Text style={styles.badgeText}>Best Value</Text>
+              <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
             </View>
           )}
 
@@ -110,7 +143,13 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               },
             ]}
           >
-            <Text style={styles.icon}>{subscription.icon}</Text>
+            {isYearly ? (
+              <Animated.View style={heartAnimatedStyle}>
+                <HeartIcon width={32} height={32} />
+              </Animated.View>
+            ) : (
+              <CalendarIcon width={32} height={32} />
+            )}
           </View>
 
           {/* Title */}
@@ -140,10 +179,10 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           {/* Price */}
           <View style={styles.priceRow}>
             <Text style={[styles.price, { color: colors.textPrimary }]}>
-              {subscription.price}
+              {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
             </Text>
             <Text style={[styles.period, { color: colors.textSecondary }]}>
-              {isYearly ? "/Jahr" : "/Monat"}
+              /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
             </Text>
           </View>
 

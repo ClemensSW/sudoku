@@ -30,6 +30,8 @@ import { loadSettings, saveSettings } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 import AboutModal from "./components/AboutModal";
+import DevTestingMenu from "./DevTestingMenu";
+import Constants from 'expo-constants';
 
 // Import components
 import {
@@ -307,6 +309,16 @@ const Settings: React.FC<SettingsScreenProps> = ({
             onAboutPress={handleAboutPress}
           />
         </Animated.View>
+
+        {/* Dev Testing Menu - Only in Expo Go */}
+        {__DEV__ && Constants.appOwnership === 'expo' && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(500).duration(500)}
+          >
+            <DevTestingMenu />
+          </Animated.View>
+        )}
       </ScrollView>
 
       {/* How to Play Modal */}

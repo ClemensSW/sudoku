@@ -95,7 +95,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const [fullscreenBannerDismissed, setFullscreenBannerDismissed] = useState(false);
 
   // Supporter hooks
-  const { isSupporter, supporterStatus } = useSupporter();
+  const { isSupporter, status: supporterStatus } = useSupporter();
   const { canUnlock, remainingUnlocks, refresh: refreshQuota } = useImageUnlock();
 
   // Animation values
@@ -306,6 +306,13 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
   // Get banner content based on supporter status
   const getFullscreenBannerContent = () => {
+    console.log('[ImageDetailModal] Banner Content Debug:', {
+      isSupporter,
+      supportType: supporterStatus?.supportType,
+      isPremiumSubscriber: supporterStatus?.isPremiumSubscriber,
+      fullStatus: supporterStatus,
+    });
+
     if (!isSupporter) {
       // Non-supporter
       return {

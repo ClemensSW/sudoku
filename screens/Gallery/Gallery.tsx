@@ -40,6 +40,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
+import SupportShopScreen from "@/screens/SupportShop";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -124,6 +125,7 @@ const Gallery: React.FC = () => {
   );
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [showSupportShop, setShowSupportShop] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<
     LandscapeCategory[]
   >([]);
@@ -612,7 +614,13 @@ const Gallery: React.FC = () => {
         onSelectAsProject={handleSelectAsProject}
         currentImageId={currentImageId}
         onImageUnlocked={reload}
+        onOpenSupportShop={() => setShowSupportShop(true)}
       />
+
+      {/* Support Shop Modal */}
+      {showSupportShop && (
+        <SupportShopScreen onClose={() => setShowSupportShop(false)} />
+      )}
     </View>
   );
 };

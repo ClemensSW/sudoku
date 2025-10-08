@@ -611,6 +611,7 @@ const Gallery: React.FC = () => {
         onToggleFavorite={handleToggleFavorite}
         onSelectAsProject={handleSelectAsProject}
         currentImageId={currentImageId}
+        onImageUnlocked={reload}
       />
     </View>
   );

@@ -43,6 +43,7 @@ interface ImageDetailModalProps {
   onToggleFavorite?: (landscape: Landscape) => void;
   onSelectAsProject?: (landscape: Landscape) => void;
   currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
+  onImageUnlocked?: () => void; // Callback nach erfolgreichem Unlock
 }
 
 // Tag component for reusability
@@ -75,6 +76,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   onToggleFavorite,
   onSelectAsProject,
   currentImageId,
+  onImageUnlocked,
 }) => {
   const theme = useTheme();
   const { colors: themeColors } = theme;
@@ -170,8 +172,13 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         setShowUnlockDialog(false);
         await refreshQuota();
 
-        // Trigger landscape refresh via onClose and reopen
-        onClose();
+        // Trigger landscape refresh
+        if (onImageUnlocked) {
+          await onImageUnlocked();
+        }
+
+        // Keep modal open to show unlocked image
+        // onClose();
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         alert(result.error || 'Failed to unlock image');

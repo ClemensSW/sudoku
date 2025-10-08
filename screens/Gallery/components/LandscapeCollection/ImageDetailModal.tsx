@@ -177,8 +177,10 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           await onImageUnlocked();
         }
 
-        // Keep modal open to show unlocked image
-        // onClose();
+        // Close modal after short delay to show unlocked image
+        setTimeout(() => {
+          onClose();
+        }, 1500);
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         alert(result.error || 'Failed to unlock image');

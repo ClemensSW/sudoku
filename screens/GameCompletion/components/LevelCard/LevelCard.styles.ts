@@ -81,18 +81,22 @@ export default StyleSheet.create({
     lineHeight: 24,
   },
 
-  // XP Gain Badge - Vertical Stack (kein Icon)
+  // XP Gain Badge - Premium Design with Gold Gradient
   xpGainBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 16,
+    flexDirection: "row",
     alignItems: "center",
-    gap: 2,
-    elevation: 6,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    minWidth: 70,
+    justifyContent: "center",
+    gap: 6,
+    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    minWidth: 90,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
 
   xpGainNumber: {
@@ -111,11 +115,11 @@ export default StyleSheet.create({
   },
 
   xpMultiplier: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "900",
     color: "#FFFFFF",
-    marginLeft: 4,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
+    opacity: 0.95,
   },
 
   // Progress Section
@@ -150,8 +154,8 @@ export default StyleSheet.create({
 
   progressBarContainer: {
     flex: 1,
-    height: 16,
-    borderRadius: 8,
+    height: 12,
+    borderRadius: 6,
     overflow: "hidden",
   },
 

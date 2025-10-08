@@ -166,8 +166,9 @@ const LevelCard: React.FC<LevelCardProps> = ({
     transform: [{ translateX: shimmerTranslateX.value }],
   }));
 
-  // Calculate base XP (before multiplier) for display
-  const baseXp = xpGain && epMultiplier > 1 ? Math.round(xpGain / epMultiplier) : xpGain;
+  // xpGain from GameCompletion is BASE XP (not multiplied yet)
+  // Display final XP (base × multiplier) for total earned
+  const finalXp = xpGain ? Math.round(xpGain * epMultiplier) : 0;
   const isPremiumSupporter = epMultiplier === 2;
 
   return (
@@ -325,7 +326,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
             </View>
           </View>
 
-          {/* XP Gain Badge - Inline with optional Premium Icon */}
+          {/* XP Gain Badge - Premium Design with Icon & Multiplier */}
           {(xpGain ?? 0) > 0 && justCompleted && (
             <Animated.View
               style={[
@@ -338,12 +339,22 @@ const LevelCard: React.FC<LevelCardProps> = ({
               ]}
             >
               {isPremiumSupporter && (
-                <GiftIcon width={14} height={14} style={{ marginRight: 6 }} />
+                <GiftIcon width={16} height={16} />
               )}
-              <Text style={styles.xpGainNumber}>+{baseXp}</Text>
-              <Text style={styles.xpGainLabel}>EP</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
+                <Text style={styles.xpGainNumber}>+{finalXp}</Text>
+                <Text style={styles.xpGainLabel}>EP</Text>
+              </View>
               {isPremiumSupporter && (
-                <Text style={styles.xpMultiplier}>×2</Text>
+                <View style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                  borderRadius: 8,
+                  marginLeft: 2
+                }}>
+                  <Text style={styles.xpMultiplier}>×2</Text>
+                </View>
               )}
             </Animated.View>
           )}

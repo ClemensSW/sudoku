@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import styles from "./SupporterBadge.styles";
+import GiftIcon from "@/assets/svg/gift.svg";
 
 interface SupporterBadgeProps {
   remainingUnlocks?: number;
@@ -58,7 +59,7 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
       ]}
     >
       <View style={styles.iconContainer}>
-        <Feather name="award" size={16} color={premiumColor} />
+        <GiftIcon width={20} height={20} />
       </View>
       <View style={styles.textContainer}>
         <Text style={[styles.title, { color: premiumColor }]}>

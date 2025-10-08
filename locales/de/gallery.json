@@ -28,7 +28,7 @@
     "unlockButton": "Dieses Bild freischalten",
     "currentProjectTag": "Wird gerade freigeschaltet",
     "favoriteTag": "Favorit",
-    "supporterUnlockButton": "🎁 Sofort freischalten"
+    "supporterUnlockButton": "Sofort freischalten"
   },
   "unlockDialog": {
     "title": "\"{{name}}\" freischalten?",

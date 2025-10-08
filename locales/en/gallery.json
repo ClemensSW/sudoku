@@ -28,7 +28,7 @@
     "unlockButton": "Unlock this image",
     "currentProjectTag": "Currently unlocking",
     "favoriteTag": "Favorite",
-    "supporterUnlockButton": "🎁 Unlock instantly"
+    "supporterUnlockButton": "Unlock instantly"
   },
   "unlockDialog": {
     "title": "Unlock \"{{name}}\"?",

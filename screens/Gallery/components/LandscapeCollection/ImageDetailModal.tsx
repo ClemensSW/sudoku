@@ -36,6 +36,7 @@ import UnlockConfirmationDialog from "../UnlockConfirmationDialog";
 import SupporterBadge from "../SupporterBadge";
 import * as Haptics from "expo-haptics";
 import { useNavigation as useReactNavigation } from "@react-navigation/native";
+import GiftIcon from "@/assets/svg/gift.svg";
 
 interface ImageDetailModalProps {
   visible: boolean;
@@ -370,7 +371,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       >
         {/* Icon */}
         <View style={{ marginRight: 12 }}>
-          <Feather name="award" size={20} color={premiumColor} />
+          <GiftIcon width={24} height={24} />
         </View>
 
         {/* Text content */}

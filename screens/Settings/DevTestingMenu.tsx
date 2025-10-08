@@ -49,18 +49,32 @@ Bilder übrig: ${unlockInfo}
     Alert.alert('✅ Erfolg', 'Einmalkauf simuliert!\n\n• 2× EP aktiv\n• 1 Bild (lifetime) freischaltbar');
   };
 
-  const simulateSubscription = async () => {
+  const simulateMonthlySubscription = async () => {
     await markAsPurchased(
       {
-        id: 'test_monthly',
-        name: 'Test Monatlich',
+        id: 'monthly_support',
+        name: 'Monatliches Abo',
         price: 2.99,
         timestamp: new Date().toISOString(),
       },
       'subscription'
     );
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar');
+    Alert.alert('✅ Erfolg', 'Monatliches Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar\n• Aktiv im Support Shop');
+  };
+
+  const simulateYearlySubscription = async () => {
+    await markAsPurchased(
+      {
+        id: 'yearly_support',
+        name: 'Jährliches Abo',
+        price: 29.99,
+        timestamp: new Date().toISOString(),
+      },
+      'subscription'
+    );
+    await updateStatus();
+    Alert.alert('✅ Erfolg', 'Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 12 Bilder pro Jahr freischaltbar\n• Aktiv im Support Shop');
   };
 
   const resetAll = async () => {
@@ -118,16 +132,24 @@ Bilder übrig: ${unlockInfo}
       <TestButton
         icon="coffee"
         label="Einmalkauf simulieren"
-        description="2× EP + 1 Bild/Monat"
+        description="2× EP + 1 Bild (lifetime)"
         onPress={simulateOneTimePurchase}
         colors={colors}
       />
 
       <TestButton
         icon="calendar"
-        label="Abo simulieren"
+        label="Monatliches Abo simulieren"
         description="2× EP + 1 Bild/Monat"
-        onPress={simulateSubscription}
+        onPress={simulateMonthlySubscription}
+        colors={colors}
+      />
+
+      <TestButton
+        icon="heart"
+        label="Jährliches Abo simulieren"
+        description="2× EP + 12 Bilder/Jahr"
+        onPress={simulateYearlySubscription}
         colors={colors}
       />
 

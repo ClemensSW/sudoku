@@ -42,7 +42,7 @@
     },
     "supporter": {
       "title": "Vielen Dank!",
-      "subtitle": "Du hilfst mir, die App werbefrei zu halten ❤️"
+      "subtitle": "Du hilfst mir, die App werbefrei zu halten"
     }
   },
   "products": {
@@ -104,20 +104,6 @@
       "Studien zeigen: Glückliche Entwickler erstellen bessere Apps. Du machst mich gerade sehr glücklich!"
     ]
   },
-  "errors": {
-    "connection": {
-      "title": "Verbindungsfehler",
-      "message": "Es konnte keine Verbindung zum Store hergestellt werden."
-    },
-    "purchase": {
-      "title": "Fehler beim Kauf",
-      "message": "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut."
-    },
-    "generic": {
-      "title": "Fehler beim Kauf",
-      "message": "Es gab ein Problem beim Kaufvorgang. Bitte versuche es später erneut."
-    }
-  },
   "thanks": {
     "message": "Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!",
     "emoji": "❤️"
@@ -125,7 +111,8 @@
   "benefits": {
     "title": "Unterstütze mich und erhalte:",
     "doubleEp": "2× EP",
-    "imagePerMonth": "1 Bild/Monat"
+    "imagePerMonth": "1 Bild/Monat",
+    "imagePerYear": "{{count}} Bilder/Jahr"
   },
   "thankYou": {
     "title": "Vielen Dank!",
@@ -180,8 +167,28 @@
   },
   "subscriptions": {
     "subscribe": "Abonnieren",
+    "manage": "Bearbeiten",
+    "active": "AKTIV",
     "bestValue": "Bester Wert",
     "month": "Monat",
     "year": "Jahr"
+  },
+  "errors": {
+    "connection": {
+      "title": "Verbindungsfehler",
+      "message": "Es konnte keine Verbindung zum Store hergestellt werden."
+    },
+    "purchase": {
+      "title": "Fehler beim Kauf",
+      "message": "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+    },
+    "generic": {
+      "title": "Fehler beim Kauf",
+      "message": "Es gab ein Problem beim Kaufvorgang. Bitte versuche es später erneut."
+    },
+    "playStore": {
+      "title": "Play Store nicht verfügbar",
+      "message": "Der Play Store konnte nicht geöffnet werden. Bitte versuche es später erneut."
+    }
   }
 }

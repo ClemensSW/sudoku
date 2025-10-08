@@ -6,6 +6,7 @@ const BANNER_INTERACTIONS_KEY = "@banner_interactions";
 const PURCHASE_DATE_KEY = "@purchase_date";
 const PURCHASE_ITEM_KEY = "@purchased_items";
 const PURCHASE_TYPE_KEY = "@purchase_type";
+const ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY = "@active_subscription_product_id";
 
 interface BannerInteraction {
   type: 'banner_click' | 'close_click' | 'dismiss';
@@ -53,6 +54,11 @@ export const markAsPurchased = async (item?: PurchaseItem, purchaseType: Purchas
       const existingItems = await getPurchasedItems();
       existingItems.push(item);
       await AsyncStorage.setItem(PURCHASE_ITEM_KEY, JSON.stringify(existingItems));
+
+      // If this is a subscription, save the product ID as active
+      if (purchaseType === 'subscription') {
+        await AsyncStorage.setItem(ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY, item.id);
+      }
     }
 
     return true;
@@ -157,6 +163,21 @@ export const isSubscriptionActive = async (): Promise<boolean> => {
 };
 
 /**
+ * Get the active subscription product ID
+ */
+export const getActiveSubscriptionProductId = async (): Promise<string | null> => {
+  try {
+    const isActive = await isSubscriptionActive();
+    if (!isActive) return null;
+
+    return await AsyncStorage.getItem(ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY);
+  } catch (error) {
+    console.error("Error getting active subscription product ID:", error);
+    return null;
+  }
+};
+
+/**
  * Reset purchase status (for testing)
  */
 export const resetPurchaseStatus = async (): Promise<void> => {
@@ -167,6 +188,7 @@ export const resetPurchaseStatus = async (): Promise<void> => {
       PURCHASE_ITEM_KEY,
       PURCHASE_TYPE_KEY,
       BANNER_INTERACTIONS_KEY,
+      ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY,
     ]);
   } catch (error) {
     console.error("Error resetting purchase status:", error);

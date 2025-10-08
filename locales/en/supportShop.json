@@ -42,7 +42,7 @@
     },
     "supporter": {
       "title": "Thank you!",
-      "subtitle": "You help me keep the app ad-free ❤️"
+      "subtitle": "You help me keep the app ad-free"
     }
   },
   "products": {
@@ -104,20 +104,6 @@
       "Studies show: Happy developers create better apps. You're making me very happy right now!"
     ]
   },
-  "errors": {
-    "connection": {
-      "title": "Connection Error",
-      "message": "Could not connect to the store."
-    },
-    "purchase": {
-      "title": "Purchase Error",
-      "message": "An error occurred during the purchase. Please try again later."
-    },
-    "generic": {
-      "title": "Purchase Error",
-      "message": "There was a problem with the purchase. Please try again later."
-    }
-  },
   "thanks": {
     "message": "Great to have you here. If you want to support me, I'd be thrilled – thank you!",
     "emoji": "❤️"
@@ -125,7 +111,8 @@
   "benefits": {
     "title": "Support me and get:",
     "doubleEp": "2× EP",
-    "imagePerMonth": "1 Image/Month"
+    "imagePerMonth": "1 Image/Month",
+    "imagePerYear": "{{count}} Images/Year"
   },
   "thankYou": {
     "title": "Thank You!",
@@ -180,8 +167,28 @@
   },
   "subscriptions": {
     "subscribe": "Subscribe",
+    "manage": "Manage",
+    "active": "ACTIVE",
     "bestValue": "Best Value",
     "month": "month",
     "year": "year"
+  },
+  "errors": {
+    "connection": {
+      "title": "Connection Error",
+      "message": "Could not connect to the store."
+    },
+    "purchase": {
+      "title": "Purchase Error",
+      "message": "An error occurred during the purchase. Please try again later."
+    },
+    "generic": {
+      "title": "Purchase Error",
+      "message": "There was a problem with the purchase. Please try again later."
+    },
+    "playStore": {
+      "title": "Play Store Unavailable",
+      "message": "Could not open the Play Store. Please try again later."
+    }
   }
 }

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import Animated, {
   FadeIn,
@@ -21,6 +22,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
 import { useNavigation } from "@/contexts/navigation";
+import { useSupporter } from "@/modules/subscriptions/hooks/useSupporter";
 
 // Components
 import BenefitsBanner from "./components/BenefitsBanner";
@@ -31,7 +33,7 @@ import PurchaseOverlay from "./components/PurchaseOverlay";
 
 // Utils
 import BillingManager, { Product } from "./utils/billing/BillingManager";
-import { markAsPurchased } from "./utils/purchaseTracking";
+import { markAsPurchased, getActiveSubscriptionProductId } from "./utils/purchaseTracking";
 import styles from "./SupportShop.styles";
 
 interface SupportShopScreenProps {
@@ -46,6 +48,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const insets = useSafeAreaInsets();
 
   const { hideBottomNav, resetBottomNav } = useNavigation();
+  const { supportType } = useSupporter();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [subscriptions, setSubscriptions] = useState<Product[]>([]);
@@ -55,11 +58,26 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const [billingManager, setBillingManager] = useState<BillingManager | null>(null);
   const [currentPurchase, setCurrentPurchase] = useState<Product | null>(null);
   const [showThankYouModal, setShowThankYouModal] = useState(false);
+  const [activeSubscriptionProductId, setActiveSubscriptionProductId] = useState<string | null>(null);
 
   // Decide which product to mark as popular (typically mid-tier)
   const getPopularProductId = () => {
     return "sudoku_lunch";
   };
+
+  // Load active subscription product ID
+  useEffect(() => {
+    const loadActiveSubscription = async () => {
+      if (supportType === 'subscription') {
+        const productId = await getActiveSubscriptionProductId();
+        setActiveSubscriptionProductId(productId);
+      } else {
+        setActiveSubscriptionProductId(null);
+      }
+    };
+
+    loadActiveSubscription();
+  }, [supportType]);
 
   // Navigation beim Öffnen und Schließen kontrollieren
   useEffect(() => {
@@ -117,6 +135,34 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
       }
     };
   }, []);
+
+  // Handle subscription management (open Play Store)
+  const handleManageSubscription = async () => {
+    try {
+      // Haptic feedback
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      const playStoreUrl = 'https://play.google.com/store/account/subscriptions';
+      const canOpen = await Linking.canOpenURL(playStoreUrl);
+
+      if (canOpen) {
+        await Linking.openURL(playStoreUrl);
+      } else {
+        Alert.alert(
+          t('errors.playStore.title'),
+          t('errors.playStore.message'),
+          [{ text: t('common.ok') }]
+        );
+      }
+    } catch (error) {
+      console.error("Error opening Play Store:", error);
+      Alert.alert(
+        t('errors.playStore.title'),
+        t('errors.playStore.message'),
+        [{ text: t('common.ok') }]
+      );
+    }
+  };
 
   // Start a purchase
   const handlePurchase = async (product: Product) => {
@@ -306,16 +352,20 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           </View>
 
           <View style={styles.productsGrid}>
-            {subscriptions.map((subscription, index) => (
-              <SubscriptionCardSimple
-                key={subscription.productId}
-                subscription={subscription}
-                index={index}
-                onPress={handlePurchase}
-                isBestValue={subscription.productId === "yearly_support"}
-                disabled={purchasing}
-              />
-            ))}
+            {subscriptions.map((subscription, index) => {
+              const isActive = activeSubscriptionProductId === subscription.productId;
+              return (
+                <SubscriptionCardSimple
+                  key={subscription.productId}
+                  subscription={subscription}
+                  index={index}
+                  onPress={isActive ? handleManageSubscription : handlePurchase}
+                  isBestValue={subscription.productId === "yearly_support"}
+                  disabled={purchasing}
+                  isActive={isActive}
+                />
+              );
+            })}
           </View>
         </Animated.View>
 

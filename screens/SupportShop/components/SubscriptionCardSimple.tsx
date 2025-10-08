@@ -16,6 +16,8 @@ import { Product } from "../utils/billing/BillingManager";
 import styles from "./SubscriptionCardSimple.styles";
 import CalendarIcon from "@/assets/svg/calendar.svg";
 import HeartIcon from "@/assets/svg/heart.svg";
+import GiftIcon from "@/assets/svg/gift.svg";
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface SubscriptionCardSimpleProps {
   subscription: Product;
@@ -23,6 +25,7 @@ interface SubscriptionCardSimpleProps {
   onPress: (subscription: Product) => void;
   isBestValue?: boolean;
   disabled?: boolean;
+  isActive?: boolean;
 }
 
 const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
@@ -31,6 +34,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
   onPress,
   isBestValue = false,
   disabled = false,
+  isActive = false,
 }) => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
@@ -120,14 +124,39 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           style={[
             styles.container,
             {
-              backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
-              borderColor: isBestValue ? colors.primary : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"),
-              borderWidth: isBestValue ? 2 : 1,
+              backgroundColor: isActive ? 'transparent' : (theme.isDark ? colors.card : "#FFFFFF"),
+              borderColor: isActive ? "#D4AF37" : (isBestValue ? colors.primary : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)")),
+              borderWidth: isActive ? 2 : (isBestValue ? 2 : 1),
+              overflow: 'hidden',
             },
           ]}
         >
+          {/* Gold Gradient Background for Active Subscription */}
+          {isActive && (
+            <LinearGradient
+              colors={['#E5C158', '#D4AF37', '#C19A2E']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            />
+          )}
+
+          {/* Active Badge */}
+          {isActive && (
+            <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.25)' }]}>
+              <GiftIcon width={12} height={12} />
+              <Text style={styles.badgeText}>{t('subscriptions.active')}</Text>
+            </View>
+          )}
+
           {/* Best Value Badge */}
-          {isBestValue && (
+          {!isActive && isBestValue && (
             <View style={[styles.badge, { backgroundColor: colors.primary }]}>
               <Feather name="star" size={12} color="#FFFFFF" />
               <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
@@ -154,7 +183,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
           {/* Title */}
           <Text
-            style={[styles.title, { color: colors.textPrimary }]}
+            style={[styles.title, { color: isActive ? '#FFFFFF' : colors.textPrimary }]}
             numberOfLines={1}
           >
             {subscription.title}
@@ -163,35 +192,38 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           {/* Benefits - Compact */}
           <View style={styles.benefitsRow}>
             <View style={styles.benefit}>
-              <Feather name="zap" size={14} color={colors.primary} />
-              <Text style={[styles.benefitText, { color: colors.textSecondary }]}>
+              <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+              <Text style={[styles.benefitText, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
                 2× EP
               </Text>
             </View>
             <View style={styles.benefit}>
-              <Feather name="image" size={14} color={colors.primary} />
-              <Text style={[styles.benefitText, { color: colors.textSecondary }]}>
-                {isYearly ? "12" : "1"} {t('benefits.imagePerMonth')}
+              <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+              <Text style={[styles.benefitText, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
+                {isYearly
+                  ? t('benefits.imagePerYear', { count: 12 })
+                  : t('benefits.imagePerMonth')
+                }
               </Text>
             </View>
           </View>
 
           {/* Price */}
           <View style={styles.priceRow}>
-            <Text style={[styles.price, { color: colors.textPrimary }]}>
+            <Text style={[styles.price, { color: isActive ? '#FFFFFF' : colors.textPrimary }]}>
               {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
             </Text>
-            <Text style={[styles.period, { color: colors.textSecondary }]}>
+            <Text style={[styles.period, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
               /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
             </Text>
           </View>
 
           {/* CTA Button */}
-          <View style={[styles.button, { backgroundColor: colors.primary }]}>
+          <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary }]}>
             <Text style={styles.buttonText}>
-              {t('subscriptions.subscribe')}
+              {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
             </Text>
-            <Feather name="arrow-right" size={16} color="#FFFFFF" />
+            <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
           </View>
         </View>
       </TouchableOpacity>

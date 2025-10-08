@@ -12,11 +12,6 @@ import {
 import Animated, {
   FadeIn,
   SlideInUp,
-  SlideInDown,
-  SlideOutDown,
-  useSharedValue,
-  withTiming,
-  withDelay,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
@@ -28,7 +23,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@/contexts/navigation";
 
 // Components
-import Banner from "./components/Banner";
+import BenefitsCard from "./components/BenefitsCard";
+import ThankYouModal from "./components/ThankYouModal";
 import ProductCard from "./components/ProductCard";
 import SubscriptionCard from "./components/SubscriptionCard";
 import PurchaseOverlay from "./components/PurchaseOverlay";
@@ -58,11 +54,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [billingManager, setBillingManager] = useState<BillingManager | null>(null);
   const [currentPurchase, setCurrentPurchase] = useState<Product | null>(null);
-  const [successMessage, setSuccessMessage] = useState({
-    visible: false,
-    title: "",
-    message: "",
-  });
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
 
   // Decide which product to mark as popular (typically mid-tier)
   const getPopularProductId = () => {
@@ -187,32 +179,15 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
       // Fehler beim Registrieren sollte den Kauf-Flow nicht unterbrechen
     }
 
-    // Get random thank you message
-    const messages = t('purchase.confirmMessages', { returnObjects: true }) as Array<{title: string, message: string}>;
-    const { title, message } = messages[Math.floor(Math.random() * messages.length)];
-
-    // Show success message
-    setSuccessMessage({
-      visible: true,
-      title,
-      message,
-    });
-
-    // Reset purchase states after delay
+    // Reset purchase states after short delay
     setTimeout(() => {
       setPurchasing(false);
       setPurchaseSuccess(false);
       setCurrentPurchase(null);
 
-      // Hide success message after another delay
-      setTimeout(() => {
-        setSuccessMessage({ visible: false, title: "", message: "" });
-      }, 3000);
-
-      // Close the shop if appropriate
-      // You might want to keep it open so users can make additional purchases
-      // onClose();
-    }, 2000);
+      // Show ThankYouModal
+      setShowThankYouModal(true);
+    }, 1500);
   };
 
   // Handle purchase error
@@ -283,12 +258,9 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Banner */}
+        {/* Benefits Card - Compact */}
         <Animated.View entering={FadeIn.duration(400)}>
-          <Banner
-            primaryColor={colors.primary}
-            secondaryColor={colors.primaryDark}
-          />
+          <BenefitsCard />
         </Animated.View>
 
         {/* One-time support section */}
@@ -362,31 +334,12 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         />
       )}
 
-      {/* Success toast message */}
-      {successMessage.visible && (
-        <Animated.View
-          style={[
-            styles.successMessage,
-            { backgroundColor: theme.isDark ? colors.card : "white" },
-          ]}
-          entering={SlideInUp.duration(300)}
-          exiting={SlideOutDown.duration(300)}
-        >
-          <View style={styles.successIcon}>
-            <Feather name="check-circle" size={24} color={colors.success} />
-          </View>
-          <View style={styles.successTextContainer}>
-            <Text style={[styles.successTitle, { color: colors.textPrimary }]}>
-              {successMessage.title}
-            </Text>
-            <Text
-              style={[styles.successSubtitle, { color: colors.textSecondary }]}
-            >
-              {successMessage.message}
-            </Text>
-          </View>
-        </Animated.View>
-      )}
+      {/* Thank You Modal */}
+      <ThankYouModal
+        visible={showThankYouModal}
+        onClose={() => setShowThankYouModal(false)}
+        isSupporter={true}
+      />
     </View>
   );
 };

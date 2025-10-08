@@ -106,4 +106,14 @@ export default StyleSheet.create({
     transform: [{ rotate: "25deg" }, { translateX: -150 }],
     top: -300, // Positionierung angepasst
   },
+  benefitsBadge: {
+    marginTop: 6,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  benefitsText: {
+    fontSize: 12,
+    fontWeight: "600",
+    opacity: 0.7,
+  },
 });

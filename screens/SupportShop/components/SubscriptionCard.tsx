@@ -195,6 +195,13 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               >
                 {subscription.description}
               </Text>
+
+              {/* Benefits Badge - Subtle */}
+              <View style={styles.benefitsBadge}>
+                <Text style={[styles.benefitsText, { color: colors.textSecondary }]}>
+                  🚀 {t('benefits.doubleEp')} + 🖼️ {t('benefits.imagePerMonth')}
+                </Text>
+              </View>
             </View>
           </View>
         </View>

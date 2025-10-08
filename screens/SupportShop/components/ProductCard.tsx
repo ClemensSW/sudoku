@@ -15,6 +15,12 @@ import { Product } from "../utils/billing/BillingManager";
 import { getRandomProductDescription } from "../utils/supportMessages";
 import styles from "./ProductCard.styles";
 
+// SVG Icons
+import LatteArtIcon from "@/assets/svg/latte-art.svg";
+import CroissantIcon from "@/assets/svg/croissant.svg";
+import FriedRiceIcon from "@/assets/svg/fried-rice.svg";
+import CrownIcon from "@/assets/svg/crown.svg";
+
 interface ProductCardProps {
   product: Product;
   index: number;
@@ -42,6 +48,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Use random description if available
   const description =
     getRandomProductDescription(product.productId) || product.description;
+
+  // Get SVG Icon based on product ID
+  const getProductIcon = () => {
+    const iconSize = 48;
+    switch (product.productId) {
+      case 'sudoku_coffee':
+        return <LatteArtIcon width={iconSize} height={iconSize} />;
+      case 'sudoku_breakfast':
+        return <CroissantIcon width={iconSize} height={iconSize} />;
+      case 'sudoku_lunch':
+        return <FriedRiceIcon width={iconSize} height={iconSize} />;
+      case 'sudoku_feast':
+        return <CrownIcon width={iconSize} height={iconSize} />;
+      default:
+        // Fallback to emoji if no SVG found
+        return <Text style={styles.icon}>{product.icon}</Text>;
+    }
+  };
 
   // Setup animations
   useEffect(() => {
@@ -178,18 +202,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         <View style={styles.innerContainer}>
-          {/* Icon */}
+          {/* Icon - SVG statt Emoji */}
           <View
             style={[
               styles.iconContainer,
-              { 
-                backgroundColor: theme.isDark 
-                  ? product.color + "30" 
+              {
+                backgroundColor: theme.isDark
+                  ? product.color + "30"
                   : getPriceContainerStyle().backgroundColor // Gleiche dezente Farbe wie Preisschild
               },
             ]}
           >
-            <Text style={styles.icon}>{product.icon}</Text>
+            {getProductIcon()}
           </View>
 
           {/* Content */}

@@ -1,7 +1,6 @@
 // screens/SettingsScreen/components/GameSettings/GameSettings.tsx
 import React from "react";
-import { View, Text, Switch } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { View, Text, Switch, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
@@ -31,6 +30,12 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
   if (!settings) return null;
 
+  // iOS-style monochrome switch colors with opacity difference for better visibility
+  const switchTrackColorActive = theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
+  const switchTrackColorInactive = theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
+  const switchThumbColorActive = "#FFFFFF";
+  const switchThumbColorInactive = theme.isDark ? "#666666" : "rgba(255,255,255,0.7)";
+
   return (
     <View
       style={[
@@ -45,8 +50,12 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       {!isDuoMode && (
         <>
           {/* Highlight related cells */}
-          <View
+          <TouchableOpacity
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() =>
+              onSettingChange("highlightRelatedCells", !settings.highlightRelatedCells)
+            }
+            activeOpacity={0.7}
           >
             <View style={styles.settingIcon}>
               <LinkIcon width={48} height={48} />
@@ -63,17 +72,19 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               onValueChange={(value) =>
                 onSettingChange("highlightRelatedCells", value)
               }
-              trackColor={{
-                false: colors.buttonDisabled,
-                true: colors.primary,
-              }}
-              thumbColor="#FFFFFF"
+              trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+              thumbColor={settings.highlightRelatedCells ? switchThumbColorActive : switchThumbColorInactive}
+              ios_backgroundColor={switchTrackColorInactive}
             />
-          </View>
+          </TouchableOpacity>
 
           {/* Highlight same values */}
-          <View
+          <TouchableOpacity
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() =>
+              onSettingChange("highlightSameValues", !settings.highlightSameValues)
+            }
+            activeOpacity={0.7}
           >
             <View style={styles.settingIcon}>
               <NumbersIcon width={48} height={48} />
@@ -90,18 +101,20 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               onValueChange={(value) =>
                 onSettingChange("highlightSameValues", value)
               }
-              trackColor={{
-                false: colors.buttonDisabled,
-                true: colors.primary,
-              }}
-              thumbColor="#FFFFFF"
+              trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+              thumbColor={settings.highlightSameValues ? switchThumbColorActive : switchThumbColorInactive}
+              ios_backgroundColor={switchTrackColorInactive}
             />
-          </View>
+          </TouchableOpacity>
         </>
       )}
 
       {/* Show Errors - Keep in both modes */}
-      <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+      <TouchableOpacity
+        style={[styles.settingRow, { borderBottomColor: colors.border }]}
+        onPress={() => onSettingChange("showMistakes", !settings.showMistakes)}
+        activeOpacity={0.7}
+      >
         <View style={styles.settingIcon}>
           <SelectionIcon width={48} height={48} />
         </View>
@@ -113,20 +126,20 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         <Switch
           value={settings.showMistakes}
           onValueChange={(value) => onSettingChange("showMistakes", value)}
-          trackColor={{
-            false: colors.buttonDisabled,
-            true: colors.primary,
-          }}
-          thumbColor="#FFFFFF"
+          trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+          thumbColor={settings.showMistakes ? switchThumbColorActive : switchThumbColorInactive}
+          ios_backgroundColor={switchTrackColorInactive}
         />
-      </View>
+      </TouchableOpacity>
 
       {/* Vibration - Keep in both modes */}
-      <View
+      <TouchableOpacity
         style={[
           styles.settingRow,
           { borderBottomColor: colors.border },
         ]}
+        onPress={() => onSettingChange("vibration", !settings.vibration)}
+        activeOpacity={0.7}
       >
         <View style={styles.settingIcon}>
           <VibrationIcon width={48} height={48} />
@@ -139,13 +152,11 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         <Switch
           value={settings.vibration}
           onValueChange={(value) => onSettingChange("vibration", value)}
-          trackColor={{
-            false: colors.buttonDisabled,
-            true: colors.primary,
-          }}
-          thumbColor="#FFFFFF"
+          trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+          thumbColor={settings.vibration ? switchThumbColorActive : switchThumbColorInactive}
+          ios_backgroundColor={switchTrackColorInactive}
         />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

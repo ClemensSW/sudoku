@@ -102,6 +102,17 @@
     "message": "Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!",
     "emoji": "❤️"
   },
+  "benefits": {
+    "title": "Unterstütze mich und erhalte:",
+    "doubleEp": "2× EP",
+    "imagePerMonth": "1 Bild/Monat"
+  },
+  "thankYou": {
+    "title": "Vielen Dank!",
+    "message": "Deine Unterstützung bedeutet mir sehr viel!",
+    "exploreGallery": "Galerie erkunden",
+    "close": "Schließen"
+  },
   "subscription": {
     "badge": "Stärkste Hilfe",
     "button": "Abonnieren",

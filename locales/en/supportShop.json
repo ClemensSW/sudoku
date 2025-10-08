@@ -102,6 +102,17 @@
     "message": "Great to have you here. If you want to support me, I'd be thrilled – thank you!",
     "emoji": "❤️"
   },
+  "benefits": {
+    "title": "Support me and get:",
+    "doubleEp": "2× EP",
+    "imagePerMonth": "1 Image/Month"
+  },
+  "thankYou": {
+    "title": "Thank You!",
+    "message": "Your support means a lot to me!",
+    "exploreGallery": "Explore Gallery",
+    "close": "Close"
+  },
   "subscription": {
     "badge": "Best Support",
     "button": "Subscribe",

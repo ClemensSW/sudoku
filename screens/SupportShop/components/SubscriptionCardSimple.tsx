@@ -131,6 +131,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               borderWidth: isActive ? 2 : (isBestValue ? 2 : 1),
               overflow: 'hidden',
               width: isFullWidth ? fullCardWidth : cardWidth,
+              padding: isFullWidth ? 20 : 16,
             },
           ]}
         >
@@ -161,7 +162,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                 </View>
               )}
 
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24, paddingVertical: 4 }}>
                 {/* Left: Large Prominent Icon */}
                 <View
                   style={[
@@ -184,7 +185,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   )}
                 </View>
 
-                {/* Center: Title & Benefits */}
+                {/* Center: Title & Benefits (Vertical) */}
                 <View style={{ flex: 1 }}>
                   <Text
                     style={[
@@ -196,7 +197,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         textShadowRadius: isActive ? 2 : undefined,
                         fontSize: 18,
                         fontWeight: '700',
-                        marginBottom: 8,
+                        marginBottom: 10,
                       }
                     ]}
                     numberOfLines={1}
@@ -204,7 +205,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                     {subscription.title}
                   </Text>
 
-                  <View style={{ flexDirection: 'row', gap: 16 }}>
+                  <View style={{ flexDirection: 'column', gap: 6 }}>
                     <View style={styles.benefit}>
                       <Feather name="zap" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
                       <Text style={[
@@ -214,7 +215,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: '600',
                         }
                       ]}>
@@ -230,7 +231,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: '600',
                         }
                       ]}>
@@ -243,47 +244,16 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   </View>
                 </View>
 
-                {/* Right: Price & Button Vertical Stack */}
-                <View style={{ alignItems: 'center', gap: 10 }}>
-                  <View style={{ alignItems: 'center' }}>
-                    <Text style={[
-                      styles.price,
-                      {
-                        color: isActive ? '#FFFFFF' : colors.textPrimary,
-                        textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
-                        textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                        textShadowRadius: isActive ? 2 : undefined,
-                        fontSize: 26,
-                        fontWeight: '800',
-                      }
-                    ]}>
-                      {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
-                    </Text>
-                    <Text style={[
-                      styles.period,
-                      {
-                        color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary,
-                        textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
-                        textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                        textShadowRadius: isActive ? 1 : undefined,
-                        marginLeft: 0,
-                        marginTop: -2,
-                      }
-                    ]}>
-                      /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
-                    </Text>
-                  </View>
-
-                  <View style={[styles.button, {
-                    backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary,
-                    paddingHorizontal: 24,
-                    paddingVertical: 10,
-                  }]}>
-                    <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
-                    <Text style={[styles.buttonText, { fontSize: 13, fontWeight: '700' }]}>
-                      {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
-                    </Text>
-                  </View>
+                {/* Right: Button Only */}
+                <View style={[styles.button, {
+                  backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary,
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                }]}>
+                  <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
+                  <Text style={[styles.buttonText, { fontSize: 14, fontWeight: '700' }]}>
+                    {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
+                  </Text>
                 </View>
               </View>
             </>

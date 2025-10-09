@@ -263,6 +263,22 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         }
                       </Text>
                     </View>
+                    <View style={styles.benefit}>
+                      <Feather name="eye-off" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Text style={[
+                        styles.benefitText,
+                        {
+                          color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                          textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                          textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                          textShadowRadius: isActive ? 1 : undefined,
+                          fontSize: 14,
+                          fontWeight: '600',
+                        }
+                      ]}>
+                        {t('benefits.adFree')}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -351,6 +367,20 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       ? t('benefits.imagePerYear', { count: 12 })
                       : t('benefits.imagePerMonth')
                     }
+                  </Text>
+                </View>
+                <View style={styles.benefit}>
+                  <Feather name="eye-off" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Text style={[
+                    styles.benefitText,
+                    {
+                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 1 : undefined,
+                    }
+                  ]}>
+                    {t('benefits.adFree')}
                   </Text>
                 </View>
               </View>

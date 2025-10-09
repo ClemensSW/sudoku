@@ -9,7 +9,9 @@
     "oneTime": "One-Time Support",
     "oneTimeSubtitle": "Unlock 1 image instantly + get permanent 2× EP",
     "subscription": "Recurring Support",
-    "subscriptionSubtitle": "Unlock 1 image every month + permanent 2× EP"
+    "subscriptionSubtitle": "Unlock 1 image every month + permanent 2× EP",
+    "activeSubscription": "Your Active Subscription",
+    "activeSubscriptionSubtitle": "Thank you for your support! Manage your subscription in the Play Store"
   },
   "banner": {
     "messages": [

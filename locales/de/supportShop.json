@@ -9,7 +9,9 @@
     "oneTime": "Einmalige Unterstützung",
     "oneTimeSubtitle": "Schalte sofort 1 Bild frei + erhalte dauerhaft 2× EP",
     "subscription": "Regelmäßige Unterstützung",
-    "subscriptionSubtitle": "Jeden Monat 1 Bild freischalten + dauerhaft 2× EP"
+    "subscriptionSubtitle": "Jeden Monat 1 Bild freischalten + dauerhaft 2× EP",
+    "activeSubscription": "Dein aktives Abo",
+    "activeSubscriptionSubtitle": "Vielen Dank für deine Unterstützung! Verwalte dein Abo im Play Store"
   },
   "banner": {
     "messages": [

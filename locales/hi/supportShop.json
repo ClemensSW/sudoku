@@ -9,7 +9,9 @@
     "oneTime": "एकबारगी समर्थन",
     "oneTimeSubtitle": "तुरंत 1 चित्र अनलॉक करें + स्थायी 2× EP प्राप्त करें",
     "subscription": "नियमित समर्थन",
-    "subscriptionSubtitle": "हर महीने 1 चित्र अनलॉक करें + स्थायी 2× EP"
+    "subscriptionSubtitle": "हर महीने 1 चित्र अनलॉक करें + स्थायी 2× EP",
+    "activeSubscription": "आपकी सक्रिय सदस्यता",
+    "activeSubscriptionSubtitle": "आपके समर्थन के लिए धन्यवाद! Play Store में अपनी सदस्यता प्रबंधित करें"
   },
   "banner": {
     "messages": [

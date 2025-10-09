@@ -345,28 +345,41 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         >
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-              {t('sections.subscription')}
+              {activeSubscriptionProductId
+                ? t('sections.activeSubscription')
+                : t('sections.subscription')
+              }
             </Text>
             <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              {t('sections.subscriptionSubtitle')}
+              {activeSubscriptionProductId
+                ? t('sections.activeSubscriptionSubtitle')
+                : t('sections.subscriptionSubtitle')
+              }
             </Text>
           </View>
 
           <View style={styles.productsGrid}>
-            {subscriptions.map((subscription, index) => {
-              const isActive = activeSubscriptionProductId === subscription.productId;
-              return (
-                <SubscriptionCardSimple
-                  key={subscription.productId}
-                  subscription={subscription}
-                  index={index}
-                  onPress={isActive ? handleManageSubscription : handlePurchase}
-                  isBestValue={subscription.productId === "yearly_support"}
-                  disabled={purchasing}
-                  isActive={isActive}
-                />
-              );
-            })}
+            {subscriptions
+              .filter(sub =>
+                activeSubscriptionProductId
+                  ? sub.productId === activeSubscriptionProductId
+                  : true
+              )
+              .map((subscription, index) => {
+                const isActive = activeSubscriptionProductId === subscription.productId;
+                return (
+                  <SubscriptionCardSimple
+                    key={subscription.productId}
+                    subscription={subscription}
+                    index={index}
+                    onPress={isActive ? handleManageSubscription : handlePurchase}
+                    isBestValue={subscription.productId === "yearly_support"}
+                    disabled={purchasing}
+                    isActive={isActive}
+                  />
+                );
+              })
+            }
           </View>
         </Animated.View>
 

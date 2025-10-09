@@ -134,7 +134,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           {/* Gold Gradient Background for Active Subscription */}
           {isActive && (
             <LinearGradient
-              colors={['#E5C158', '#D4AF37', '#C19A2E']}
+              colors={['#C19A2E', '#B8941F', '#A67C1B']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
@@ -183,7 +183,15 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
           {/* Title */}
           <Text
-            style={[styles.title, { color: isActive ? '#FFFFFF' : colors.textPrimary }]}
+            style={[
+              styles.title,
+              {
+                color: isActive ? '#FFFFFF' : colors.textPrimary,
+                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                textShadowRadius: isActive ? 2 : undefined,
+              }
+            ]}
             numberOfLines={1}
           >
             {subscription.title}
@@ -193,13 +201,29 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           <View style={styles.benefitsRow}>
             <View style={styles.benefit}>
               <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
-              <Text style={[styles.benefitText, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
+              <Text style={[
+                styles.benefitText,
+                {
+                  color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                  textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                  textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                  textShadowRadius: isActive ? 1 : undefined,
+                }
+              ]}>
                 2× EP
               </Text>
             </View>
             <View style={styles.benefit}>
               <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
-              <Text style={[styles.benefitText, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
+              <Text style={[
+                styles.benefitText,
+                {
+                  color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                  textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                  textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                  textShadowRadius: isActive ? 1 : undefined,
+                }
+              ]}>
                 {isYearly
                   ? t('benefits.imagePerYear', { count: 12 })
                   : t('benefits.imagePerMonth')
@@ -210,10 +234,26 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
           {/* Price */}
           <View style={styles.priceRow}>
-            <Text style={[styles.price, { color: isActive ? '#FFFFFF' : colors.textPrimary }]}>
+            <Text style={[
+              styles.price,
+              {
+                color: isActive ? '#FFFFFF' : colors.textPrimary,
+                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                textShadowRadius: isActive ? 2 : undefined,
+              }
+            ]}>
               {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
             </Text>
-            <Text style={[styles.period, { color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary }]}>
+            <Text style={[
+              styles.period,
+              {
+                color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                textShadowRadius: isActive ? 1 : undefined,
+              }
+            ]}>
               /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
             </Text>
           </View>

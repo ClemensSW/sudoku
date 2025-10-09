@@ -401,39 +401,46 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           ]}
           entering={SlideInUp.delay(600).duration(500)}
         >
-          <View style={{ flexDirection: 'row', gap: 16, alignItems: 'flex-start' }}>
-            {/* Profile Picture */}
-            <View style={{ alignItems: 'center' }}>
-              <Image
-                source={require('@/assets/images/profile.jpg')}
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 36,
-                  borderWidth: 2,
-                  borderColor: colors.primary + '40',
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '600',
-                  color: colors.textSecondary,
-                  marginTop: 6,
-                }}
-              >
+          {/* Header with Profile */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, width: '100%' }}>
+            <Image
+              source={require('@/assets/images/profile.jpg')}
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 36,
+                borderWidth: 2,
+                borderColor: colors.primary + '40',
+                marginRight: 16,
+              }}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '600',
+                color: colors.textPrimary,
+              }}>
                 Clemens
               </Text>
-            </View>
-
-            {/* Personal Text */}
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.thanksText, { color: colors.textPrimary, textAlign: 'left' }]}>
-                {t('thanks.personalMessage')}
+              <Text style={{
+                fontSize: 14,
+                color: colors.textSecondary,
+                marginTop: 2,
+              }}>
+                {t('thanks.subtitle')}
               </Text>
-              <Text style={[styles.thanksEmoji, { marginTop: 4 }]}>{t('thanks.emoji')}</Text>
             </View>
           </View>
+
+          {/* Personal Message */}
+          <Text style={{
+            fontSize: 14,
+            lineHeight: 20,
+            color: colors.textSecondary,
+            textAlign: 'left',
+          }}>
+            {t('thanks.personalMessage')}
+          </Text>
         </Animated.View>
       </ScrollView>
 

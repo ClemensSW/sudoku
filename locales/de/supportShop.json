@@ -108,8 +108,9 @@
   },
   "thanks": {
     "message": "Schön, dass du da bist. Wenn du mich unterstützen möchtest, freut mich das riesig – danke dir!",
-    "emoji": "❤️"
-    ,"personalMessage": "Hi! 👋 Schön, dass du hier bist. Sudoku Duo ist meine erste eigene App, die ich mit viel Herzblut entwickle. Jede Unterstützung hilft mir, die App stetig zu verbessern und neue Features zu entwickeln. Wenn dir die App gefällt, würde ich mich riesig über deine Hilfe freuen – ob durch einen kleinen Beitrag oder eine Bewertung im Play Store. Danke, dass du Teil dieser Reise bist!"
+    "emoji": "❤️",
+    "subtitle": "Entwickler",
+    "personalMessage": "Hi! 👋 Schön, dass du hier bist. Sudoku Duo ist meine erste eigene App, die ich mit viel Herzblut entwickle. Jede Unterstützung hilft mir, die App stetig zu verbessern und neue Features zu entwickeln. Wenn dir die App gefällt, würde ich mich riesig über deine Hilfe freuen – ob durch einen kleinen Beitrag oder eine Bewertung im Play Store. Danke, dass du Teil dieser Reise bist!"
   },
   "benefits": {
     "title": "Unterstütze mich und erhalte:",

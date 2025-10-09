@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window");
-const cardWidth = (width - 48) / 2; // 2 cards per row with padding
+export const cardWidth = (width - 48) / 2; // 2 cards per row with padding
 
 export default StyleSheet.create({
   container: {

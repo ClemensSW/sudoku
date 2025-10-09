@@ -358,7 +358,10 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             </Text>
           </View>
 
-          <View style={styles.productsGrid}>
+          <View style={[
+            styles.productsGrid,
+            activeSubscriptionProductId && { justifyContent: 'center' }
+          ]}>
             {subscriptions
               .filter(sub =>
                 activeSubscriptionProductId
@@ -376,6 +379,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
                     isBestValue={subscription.productId === "yearly_support"}
                     disabled={purchasing}
                     isActive={isActive}
+                    isFullWidth={isActive}
                   />
                 );
               })

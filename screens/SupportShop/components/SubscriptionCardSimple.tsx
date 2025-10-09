@@ -26,6 +26,7 @@ interface SubscriptionCardSimpleProps {
   isBestValue?: boolean;
   disabled?: boolean;
   isActive?: boolean;
+  isFullWidth?: boolean;
 }
 
 const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
@@ -35,6 +36,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
   isBestValue = false,
   disabled = false,
   isActive = false,
+  isFullWidth = false,
 }) => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
@@ -128,13 +130,14 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               borderColor: isActive ? "#D4AF37" : (isBestValue ? colors.primary : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)")),
               borderWidth: isActive ? 2 : (isBestValue ? 2 : 1),
               overflow: 'hidden',
+              width: isFullWidth ? '100%' : styles.container.width,
             },
           ]}
         >
           {/* Gold Gradient Background for Active Subscription */}
           {isActive && (
             <LinearGradient
-              colors={['#C19A2E', '#B8941F', '#A67C1B']}
+              colors={['#E5C158', '#D4AF37', '#C19A2E']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{

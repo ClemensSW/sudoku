@@ -151,28 +151,40 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
           )}
 
           {isFullWidth ? (
-            // Horizontal Layout for Full Width
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              {/* Left Side: Icon + Content */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 16 }}>
+            // Professional Horizontal Layout for Full Width Active Card
+            <>
+              {/* Active Badge - Top Right */}
+              {isActive && (
+                <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.25)' }]}>
+                  <GiftIcon width={12} height={12} />
+                  <Text style={styles.badgeText}>{t('subscriptions.active')}</Text>
+                </View>
+              )}
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                {/* Left: Large Prominent Icon */}
                 <View
                   style={[
                     styles.iconCircle,
                     {
                       backgroundColor: subscription.color + (theme.isDark ? "30" : "15"),
                       marginBottom: 0,
+                      width: 64,
+                      height: 64,
+                      borderRadius: 32,
                     },
                   ]}
                 >
                   {isYearly ? (
                     <Animated.View style={heartAnimatedStyle}>
-                      <HeartIcon width={32} height={32} />
+                      <HeartIcon width={40} height={40} />
                     </Animated.View>
                   ) : (
-                    <CalendarIcon width={32} height={32} />
+                    <CalendarIcon width={40} height={40} />
                   )}
                 </View>
 
+                {/* Center: Title & Benefits */}
                 <View style={{ flex: 1 }}>
                   <Text
                     style={[
@@ -182,7 +194,9 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
                         textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                         textShadowRadius: isActive ? 2 : undefined,
-                        marginBottom: 6,
+                        fontSize: 18,
+                        fontWeight: '700',
+                        marginBottom: 8,
                       }
                     ]}
                     numberOfLines={1}
@@ -190,9 +204,9 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                     {subscription.title}
                   </Text>
 
-                  <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <View style={{ flexDirection: 'row', gap: 16 }}>
                     <View style={styles.benefit}>
-                      <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="zap" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -200,13 +214,15 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
+                          fontSize: 13,
+                          fontWeight: '600',
                         }
                       ]}>
                         2× EP
                       </Text>
                     </View>
                     <View style={styles.benefit}>
-                      <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="image" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -214,6 +230,8 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
+                          fontSize: 13,
+                          fontWeight: '600',
                         }
                       ]}>
                         {isYearly
@@ -224,44 +242,51 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                     </View>
                   </View>
                 </View>
-              </View>
 
-              {/* Right Side: Price + Button */}
-              <View style={{ alignItems: 'flex-end', gap: 12 }}>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={[
-                    styles.price,
-                    {
-                      color: isActive ? '#FFFFFF' : colors.textPrimary,
-                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
-                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                      textShadowRadius: isActive ? 2 : undefined,
-                    }
-                  ]}>
-                    {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
-                  </Text>
-                  <Text style={[
-                    styles.period,
-                    {
-                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
-                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
-                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                      textShadowRadius: isActive ? 1 : undefined,
-                      marginLeft: 0,
-                    }
-                  ]}>
-                    /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
-                  </Text>
-                </View>
+                {/* Right: Price & Button Vertical Stack */}
+                <View style={{ alignItems: 'center', gap: 10 }}>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={[
+                      styles.price,
+                      {
+                        color: isActive ? '#FFFFFF' : colors.textPrimary,
+                        textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                        textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                        textShadowRadius: isActive ? 2 : undefined,
+                        fontSize: 26,
+                        fontWeight: '800',
+                      }
+                    ]}>
+                      {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
+                    </Text>
+                    <Text style={[
+                      styles.period,
+                      {
+                        color: isActive ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary,
+                        textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                        textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                        textShadowRadius: isActive ? 1 : undefined,
+                        marginLeft: 0,
+                        marginTop: -2,
+                      }
+                    ]}>
+                      /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
+                    </Text>
+                  </View>
 
-                <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary, paddingHorizontal: 20 }]}>
-                  <Text style={styles.buttonText}>
-                    {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
-                  </Text>
-                  <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
+                  <View style={[styles.button, {
+                    backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary,
+                    paddingHorizontal: 24,
+                    paddingVertical: 10,
+                  }]}>
+                    <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
+                    <Text style={[styles.buttonText, { fontSize: 13, fontWeight: '700' }]}>
+                      {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
+            </>)
           ) : (
             // Vertical Layout for Normal Width
             <>

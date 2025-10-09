@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   Linking,
+  Image,
 } from "react-native";
 import Animated, {
   FadeIn,
@@ -387,21 +388,52 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           </View>
         </Animated.View>
 
-        {/* Thank you message */}
+        {/* Personal Thank You Message with Profile */}
         <Animated.View
           style={[
             styles.thanksContainer,
             {
               borderColor: colors.primary + "30",
+              marginVertical: 0,
               marginTop: activeSubscriptionProductId ? 16 : 28,
+              marginBottom: 28,
             },
           ]}
           entering={SlideInUp.delay(600).duration(500)}
         >
-          <Text style={[styles.thanksText, { color: colors.textPrimary }]}>
-            {t('thanks.message')}
-          </Text>
-          <Text style={styles.thanksEmoji}>{t('thanks.emoji')}</Text>
+          <View style={{ flexDirection: 'row', gap: 16, alignItems: 'flex-start' }}>
+            {/* Profile Picture */}
+            <View style={{ alignItems: 'center' }}>
+              <Image
+                source={require('@/assets/images/profile.jpg')}
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 36,
+                  borderWidth: 2,
+                  borderColor: colors.primary + '40',
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '600',
+                  color: colors.textSecondary,
+                  marginTop: 6,
+                }}
+              >
+                Clemens
+              </Text>
+            </View>
+
+            {/* Personal Text */}
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.thanksText, { color: colors.textPrimary, textAlign: 'left' }]}>
+                {t('thanks.personalMessage')}
+              </Text>
+              <Text style={[styles.thanksEmoji, { marginTop: 4 }]}>{t('thanks.emoji')}</Text>
+            </View>
+          </View>
         </Animated.View>
       </ScrollView>
 

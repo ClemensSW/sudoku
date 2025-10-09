@@ -286,7 +286,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   </View>
                 </View>
               </View>
-            </>)
+            </>
           ) : (
             // Vertical Layout for Normal Width
             <>

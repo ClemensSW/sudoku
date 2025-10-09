@@ -134,7 +134,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
             },
           ]}
         >
-          {/* Gold Gradient Background for Active Subscription */}
+          {/* Gold Gradient Background for Active Subscription - Top Left Light to Bottom Right Dark */}
           {isActive && (
             <LinearGradient
               colors={['#E5C158', '#D4AF37', '#C19A2E']}
@@ -150,124 +150,241 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
             />
           )}
 
-          {/* Active Badge */}
-          {isActive && (
-            <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.25)' }]}>
-              <GiftIcon width={12} height={12} />
-              <Text style={styles.badgeText}>{t('subscriptions.active')}</Text>
+          {isFullWidth ? (
+            // Horizontal Layout for Full Width
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              {/* Left Side: Icon + Content */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 16 }}>
+                <View
+                  style={[
+                    styles.iconCircle,
+                    {
+                      backgroundColor: subscription.color + (theme.isDark ? "30" : "15"),
+                      marginBottom: 0,
+                    },
+                  ]}
+                >
+                  {isYearly ? (
+                    <Animated.View style={heartAnimatedStyle}>
+                      <HeartIcon width={32} height={32} />
+                    </Animated.View>
+                  ) : (
+                    <CalendarIcon width={32} height={32} />
+                  )}
+                </View>
+
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[
+                      styles.title,
+                      {
+                        color: isActive ? '#FFFFFF' : colors.textPrimary,
+                        textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                        textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                        textShadowRadius: isActive ? 2 : undefined,
+                        marginBottom: 6,
+                      }
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {subscription.title}
+                  </Text>
+
+                  <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <View style={styles.benefit}>
+                      <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Text style={[
+                        styles.benefitText,
+                        {
+                          color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                          textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                          textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                          textShadowRadius: isActive ? 1 : undefined,
+                        }
+                      ]}>
+                        2× EP
+                      </Text>
+                    </View>
+                    <View style={styles.benefit}>
+                      <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Text style={[
+                        styles.benefitText,
+                        {
+                          color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                          textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                          textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                          textShadowRadius: isActive ? 1 : undefined,
+                        }
+                      ]}>
+                        {isYearly
+                          ? t('benefits.imagePerYear', { count: 12 })
+                          : t('benefits.imagePerMonth')
+                        }
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* Right Side: Price + Button */}
+              <View style={{ alignItems: 'flex-end', gap: 12 }}>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={[
+                    styles.price,
+                    {
+                      color: isActive ? '#FFFFFF' : colors.textPrimary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 2 : undefined,
+                    }
+                  ]}>
+                    {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
+                  </Text>
+                  <Text style={[
+                    styles.period,
+                    {
+                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 1 : undefined,
+                      marginLeft: 0,
+                    }
+                  ]}>
+                    /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
+                  </Text>
+                </View>
+
+                <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary, paddingHorizontal: 20 }]}>
+                  <Text style={styles.buttonText}>
+                    {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
+                  </Text>
+                  <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
+                </View>
+              </View>
             </View>
-          )}
+          ) : (
+            // Vertical Layout for Normal Width
+            <>
+              {/* Active Badge */}
+              {isActive && (
+                <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.25)' }]}>
+                  <GiftIcon width={12} height={12} />
+                  <Text style={styles.badgeText}>{t('subscriptions.active')}</Text>
+                </View>
+              )}
 
-          {/* Best Value Badge */}
-          {!isActive && isBestValue && (
-            <View style={[styles.badge, { backgroundColor: colors.primary }]}>
-              <Feather name="star" size={12} color="#FFFFFF" />
-              <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
-            </View>
-          )}
+              {/* Best Value Badge */}
+              {!isActive && isBestValue && (
+                <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+                  <Feather name="star" size={12} color="#FFFFFF" />
+                  <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
+                </View>
+              )}
 
-          {/* Icon Circle */}
-          <View
-            style={[
-              styles.iconCircle,
-              {
-                backgroundColor: subscription.color + (theme.isDark ? "30" : "15"),
-              },
-            ]}
-          >
-            {isYearly ? (
-              <Animated.View style={heartAnimatedStyle}>
-                <HeartIcon width={32} height={32} />
-              </Animated.View>
-            ) : (
-              <CalendarIcon width={32} height={32} />
-            )}
-          </View>
+              {/* Icon Circle */}
+              <View
+                style={[
+                  styles.iconCircle,
+                  {
+                    backgroundColor: subscription.color + (theme.isDark ? "30" : "15"),
+                  },
+                ]}
+              >
+                {isYearly ? (
+                  <Animated.View style={heartAnimatedStyle}>
+                    <HeartIcon width={32} height={32} />
+                  </Animated.View>
+                ) : (
+                  <CalendarIcon width={32} height={32} />
+                )}
+              </View>
 
-          {/* Title */}
-          <Text
-            style={[
-              styles.title,
-              {
-                color: isActive ? '#FFFFFF' : colors.textPrimary,
-                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
-                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                textShadowRadius: isActive ? 2 : undefined,
-              }
-            ]}
-            numberOfLines={1}
-          >
-            {subscription.title}
-          </Text>
-
-          {/* Benefits - Compact */}
-          <View style={styles.benefitsRow}>
-            <View style={styles.benefit}>
-              <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
-              <Text style={[
-                styles.benefitText,
-                {
-                  color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
-                  textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
-                  textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                  textShadowRadius: isActive ? 1 : undefined,
-                }
-              ]}>
-                2× EP
+              {/* Title */}
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: isActive ? '#FFFFFF' : colors.textPrimary,
+                    textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                    textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                    textShadowRadius: isActive ? 2 : undefined,
+                  }
+                ]}
+                numberOfLines={1}
+              >
+                {subscription.title}
               </Text>
-            </View>
-            <View style={styles.benefit}>
-              <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
-              <Text style={[
-                styles.benefitText,
-                {
-                  color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
-                  textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
-                  textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                  textShadowRadius: isActive ? 1 : undefined,
-                }
-              ]}>
-                {isYearly
-                  ? t('benefits.imagePerYear', { count: 12 })
-                  : t('benefits.imagePerMonth')
-                }
-              </Text>
-            </View>
-          </View>
 
-          {/* Price */}
-          <View style={styles.priceRow}>
-            <Text style={[
-              styles.price,
-              {
-                color: isActive ? '#FFFFFF' : colors.textPrimary,
-                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
-                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                textShadowRadius: isActive ? 2 : undefined,
-              }
-            ]}>
-              {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
-            </Text>
-            <Text style={[
-              styles.period,
-              {
-                color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
-                textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
-                textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
-                textShadowRadius: isActive ? 1 : undefined,
-              }
-            ]}>
-              /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
-            </Text>
-          </View>
+              {/* Benefits - Compact */}
+              <View style={styles.benefitsRow}>
+                <View style={styles.benefit}>
+                  <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Text style={[
+                    styles.benefitText,
+                    {
+                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 1 : undefined,
+                    }
+                  ]}>
+                    2× EP
+                  </Text>
+                </View>
+                <View style={styles.benefit}>
+                  <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Text style={[
+                    styles.benefitText,
+                    {
+                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 1 : undefined,
+                    }
+                  ]}>
+                    {isYearly
+                      ? t('benefits.imagePerYear', { count: 12 })
+                      : t('benefits.imagePerMonth')
+                    }
+                  </Text>
+                </View>
+              </View>
 
-          {/* CTA Button */}
-          <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary }]}>
-            <Text style={styles.buttonText}>
-              {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
-            </Text>
-            <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
-          </View>
+              {/* Price */}
+              <View style={styles.priceRow}>
+                <Text style={[
+                  styles.price,
+                  {
+                    color: isActive ? '#FFFFFF' : colors.textPrimary,
+                    textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
+                    textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                    textShadowRadius: isActive ? 2 : undefined,
+                  }
+                ]}>
+                  {subscription.price.replace(/\/(Monat|Jahr|month|year|महीना|वर्ष)/, '')}
+                </Text>
+                <Text style={[
+                  styles.period,
+                  {
+                    color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                    textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                    textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                    textShadowRadius: isActive ? 1 : undefined,
+                  }
+                ]}>
+                  /{isYearly ? t('subscriptions.year') : t('subscriptions.month')}
+                </Text>
+              </View>
+
+              {/* CTA Button */}
+              <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary }]}>
+                <Text style={styles.buttonText}>
+                  {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
+                </Text>
+                <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
+              </View>
+            </>
+          )}
         </View>
       </TouchableOpacity>
     </Animated.View>

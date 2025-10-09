@@ -132,6 +132,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               overflow: 'hidden',
               width: isFullWidth ? fullCardWidth : cardWidth,
               padding: isFullWidth ? 20 : 16,
+              marginBottom: isFullWidth ? 0 : 12,
             },
           ]}
         >

@@ -42,7 +42,7 @@ export default StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: height * 0.1, // Extra padding at bottom
+    paddingBottom: height * 0.15, // Extra padding at bottom (increased from 0.1 to 0.15)
   },
   sectionHeader: {
     marginTop: 24,

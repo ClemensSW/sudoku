@@ -13,7 +13,7 @@ import { SvgXml } from "react-native-svg";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { Product } from "../utils/billing/BillingManager";
-import styles, { cardWidth } from "./SubscriptionCardSimple.styles";
+import styles, { cardWidth, fullCardWidth } from "./SubscriptionCardSimple.styles";
 import CalendarIcon from "@/assets/svg/calendar.svg";
 import HeartIcon from "@/assets/svg/heart.svg";
 import GiftIcon from "@/assets/svg/gift.svg";
@@ -130,7 +130,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               borderColor: isActive ? "#D4AF37" : (isBestValue ? colors.primary : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)")),
               borderWidth: isActive ? 2 : (isBestValue ? 2 : 1),
               overflow: 'hidden',
-              width: isFullWidth ? '100%' : cardWidth,
+              width: isFullWidth ? fullCardWidth : cardWidth,
             },
           ]}
         >

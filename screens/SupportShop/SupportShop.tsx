@@ -341,7 +341,10 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
         {/* Subscription section */}
         <Animated.View
-          style={styles.subscriptionsContainer}
+          style={[
+            styles.subscriptionsContainer,
+            { marginBottom: activeSubscriptionProductId ? 0 : 20 }
+          ]}
           entering={SlideInUp.delay(400).duration(500)}
         >
           <View style={styles.sectionHeader}>
@@ -395,8 +398,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             {
               borderColor: colors.primary + "30",
               marginVertical: 0,
-              marginTop: activeSubscriptionProductId ? 16 : 28,
-              marginBottom: 28,
+              marginTop: 16,
+              marginBottom: 40,
             },
           ]}
           entering={SlideInUp.delay(600).duration(500)}

@@ -162,6 +162,28 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                 </View>
               )}
 
+              {/* Subtle Settings Button - Bottom Right */}
+              {isActive && (
+                <TouchableOpacity
+                  onPress={() => onPress(subscription)}
+                  style={{
+                    position: 'absolute',
+                    bottom: 12,
+                    right: 12,
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 10,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="settings" size={18} color="#FFFFFF" />
+                </TouchableOpacity>
+              )}
+
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24, paddingVertical: 4 }}>
                 {/* Left: Large Prominent Icon */}
                 <View
@@ -185,8 +207,8 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   )}
                 </View>
 
-                {/* Center: Title & Benefits (Vertical) */}
-                <View style={{ flex: 1 }}>
+                {/* Center: Title & Benefits (Vertical) - Now with more space */}
+                <View style={{ flex: 1, paddingRight: 40 }}>
                   <Text
                     style={[
                       styles.title,
@@ -200,7 +222,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         marginBottom: 10,
                       }
                     ]}
-                    numberOfLines={1}
+                    numberOfLines={2}
                   >
                     {subscription.title}
                   </Text>
@@ -242,18 +264,6 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       </Text>
                     </View>
                   </View>
-                </View>
-
-                {/* Right: Button Only */}
-                <View style={[styles.button, {
-                  backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary,
-                  paddingHorizontal: 24,
-                  paddingVertical: 12,
-                }]}>
-                  <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
-                  <Text style={[styles.buttonText, { fontSize: 14, fontWeight: '700' }]}>
-                    {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
-                  </Text>
                 </View>
               </View>
             </>

@@ -7,9 +7,9 @@
   },
   "sections": {
     "oneTime": "Einmalige Unterstützung",
-    "oneTimeSubtitle": "Schalte sofort 1 Bild frei + erhalte dauerhaft 2× EP",
+    "oneTimeSubtitle": "1 Bild freischalten (einmalig) + dauerhaft 2× EP",
     "subscription": "Regelmäßige Unterstützung",
-    "subscriptionSubtitle": "Jeden Monat 1 Bild freischalten + dauerhaft 2× EP",
+    "subscriptionSubtitle": "Jeden Monat Bilder freischalten + dauerhaft 2× EP",
     "activeSubscription": "Dein aktives Abo",
     "activeSubscriptionSubtitle": "Vielen Dank für deine Unterstützung! Verwalte dein Abo im Play Store"
   },
@@ -116,8 +116,11 @@
     "title": "Unterstütze mich und erhalte:",
     "doubleEp": "2× EP",
     "imagePerMonth": "1 Bild/Monat",
-    "imagePerYear": "{{count}} Bilder/Jahr"
-    ,"adFree": "Werbefrei"
+    "imagePerMonthly": "1 Bild/Monat",
+    "imagePerYearly": "2 Bilder/Monat",
+    "imagePerYear": "{{count}} Bilder/Jahr",
+    "imageLifetime": "1 Bild freischalten",
+    "adFree": "Werbefrei"
   },
   "thankYou": {
     "title": "Vielen Dank!",

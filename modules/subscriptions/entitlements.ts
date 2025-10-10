@@ -108,7 +108,7 @@ export async function getEpMultiplier(
 
 /**
  * Gibt die aktuelle Image-Unlock-Quota zurück
- * Unterscheidet zwischen One-time (1 lifetime) und Subscription (1/Monat)
+ * Unterscheidet zwischen One-time (1 lifetime), Monthly (1/Monat) und Yearly (2/Monat)
  * @returns ImageUnlockQuota mit allen Details
  */
 export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
@@ -120,6 +120,21 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     // Get supporter status to determine purchase type
     const supporterStatus = await getSupporterStatus();
     const isSubscription = supporterStatus.supportType === 'subscription';
+
+    // Determine subscription type and monthly limit
+    let subscriptionType: 'monthly' | 'yearly' | null = null;
+    let monthlyLimit: 1 | 2 = 1;
+
+    if (isSubscription && supporterStatus.productId) {
+      // Check if yearly subscription
+      if (supporterStatus.productId.includes('yearly')) {
+        subscriptionType = 'yearly';
+        monthlyLimit = 2; // Yearly gets 2 images per month
+      } else if (supporterStatus.productId.includes('monthly')) {
+        subscriptionType = 'monthly';
+        monthlyLimit = 1; // Monthly gets 1 image per month
+      }
+    }
 
     // Get current month/year
     const now = new Date();
@@ -155,8 +170,8 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     let canUnlock = false;
     if (supporterStatus.isSupporter) {
       if (isSubscription) {
-        // Subscription: Can unlock if less than 1 this month
-        canUnlock = usedThisMonth < 1;
+        // Subscription: Can unlock if less than monthly limit
+        canUnlock = usedThisMonth < monthlyLimit;
       } else {
         // One-time: Can unlock if less than 1 lifetime
         canUnlock = lifetimeUnlocks < 1;
@@ -170,11 +185,11 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
 
     // Calculate remaining unlocks
     const remainingUnlocks = isSubscription
-      ? Math.max(0, 1 - usedThisMonth)
+      ? Math.max(0, monthlyLimit - usedThisMonth)
       : Math.max(0, 1 - lifetimeUnlocks);
 
     const quota: ImageUnlockQuota = {
-      monthlyLimit: 1,
+      monthlyLimit,
       usedThisMonth,
       lifetimeUnlocks,
       lastUnlockDate,
@@ -182,6 +197,7 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
       remainingUnlocks,
       nextResetDate,
       isSubscription,
+      subscriptionType,
     };
 
     return quota;
@@ -197,6 +213,7 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
       remainingUnlocks: 0,
       nextResetDate: null,
       isSubscription: false,
+      subscriptionType: null,
     };
   }
 }

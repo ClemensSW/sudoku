@@ -259,8 +259,8 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         }
                       ]}>
                         {isYearly
-                          ? t('benefits.imagePerYear', { count: 12 })
-                          : t('benefits.imagePerMonth')
+                          ? t('benefits.imagePerYearly')
+                          : t('benefits.imagePerMonthly')
                         }
                       </Text>
                     </View>
@@ -365,8 +365,8 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                     }
                   ]}>
                     {isYearly
-                      ? t('benefits.imagePerYear', { count: 12 })
-                      : t('benefits.imagePerMonth')
+                      ? t('benefits.imagePerYearly')
+                      : t('benefits.imagePerMonthly')
                     }
                   </Text>
                 </View>

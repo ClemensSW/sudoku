@@ -45,13 +45,16 @@ export interface SupporterStatus {
 
 /**
  * Image-Unlock Quota
- * Unterscheidet zwischen One-time (1 lifetime) und Subscription (1/Monat)
+ * Unterscheidet zwischen One-time (1 lifetime), Monthly (1/Monat) und Yearly (2/Monat)
  */
 export interface ImageUnlockQuota {
   /**
-   * Monatliches Limit (fix: 1 Bild pro Monat)
+   * Monatliches Limit
+   * - One-time: 1 (lifetime)
+   * - Monthly: 1 (pro Monat)
+   * - Yearly: 2 (pro Monat)
    */
-  monthlyLimit: 1;
+  monthlyLimit: 1 | 2;
 
   /**
    * Anzahl der bereits genutzten Unlocks diesen Monat (nur für Subscriptions)
@@ -87,6 +90,11 @@ export interface ImageUnlockQuota {
    * True wenn Nutzer aktives Abo hat (vs. one-time purchase)
    */
   isSubscription: boolean;
+
+  /**
+   * Typ des Abonnements (nur bei isSubscription = true)
+   */
+  subscriptionType?: 'monthly' | 'yearly' | null;
 }
 
 /**

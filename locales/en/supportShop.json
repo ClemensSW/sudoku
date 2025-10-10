@@ -7,9 +7,9 @@
   },
   "sections": {
     "oneTime": "One-Time Support",
-    "oneTimeSubtitle": "Unlock 1 image instantly + get permanent 2× EP",
+    "oneTimeSubtitle": "Unlock 1 image (one-time) + permanent 2× EP",
     "subscription": "Recurring Support",
-    "subscriptionSubtitle": "Unlock 1 image every month + permanent 2× EP",
+    "subscriptionSubtitle": "Unlock images every month + permanent 2× EP",
     "activeSubscription": "Your Active Subscription",
     "activeSubscriptionSubtitle": "Thank you for your support! Manage your subscription in the Play Store"
   },
@@ -116,8 +116,11 @@
     "title": "Support me and get:",
     "doubleEp": "2× EP",
     "imagePerMonth": "1 Image/Month",
-    "imagePerYear": "{{count}} Images/Year"
-    ,"adFree": "Ad-Free"
+    "imagePerMonthly": "1 Image/Month",
+    "imagePerYearly": "2 Images/Month",
+    "imagePerYear": "{{count}} Images/Year",
+    "imageLifetime": "Unlock 1 Image",
+    "adFree": "Ad-Free"
   },
   "thankYou": {
     "title": "Thank You!",

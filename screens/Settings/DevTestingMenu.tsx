@@ -22,14 +22,23 @@ const DevTestingMenu: React.FC = () => {
     const supporterStatus = await getSupporterStatus();
     const quota = await getImageUnlockQuota();
 
-    const unlockType = quota.isSubscription ? 'Monat' : 'Gesamt';
+    // Determine subscription type for display
+    let subTypeLabel = '';
+    if (quota.isSubscription) {
+      if (quota.subscriptionType === 'yearly') {
+        subTypeLabel = ' (Jährlich)';
+      } else if (quota.subscriptionType === 'monthly') {
+        subTypeLabel = ' (Monatlich)';
+      }
+    }
+
     const unlockInfo = quota.isSubscription
-      ? `${quota.remainingUnlocks}/${quota.monthlyLimit} (monatlich)`
-      : `${quota.remainingUnlocks}/${quota.monthlyLimit} (lifetime)`;
+      ? `${quota.remainingUnlocks}/${quota.monthlyLimit} (monatlich${subTypeLabel})`
+      : `${quota.remainingUnlocks}/1 (lifetime)`;
 
     setStatus(`
 Status: ${hasPurchased ? '✅ Supporter' : '❌ Kein Supporter'}
-Typ: ${purchaseType}
+Typ: ${purchaseType}${subTypeLabel}
 EP Multiplikator: ${supporterStatus.isSupporter ? '2x' : '1x'}
 Bilder übrig: ${unlockInfo}
     `.trim());
@@ -74,7 +83,7 @@ Bilder übrig: ${unlockInfo}
       'subscription'
     );
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 12 Bilder pro Jahr freischaltbar\n• Aktiv im Support Shop');
+    Alert.alert('✅ Erfolg', 'Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 2 Bilder pro Monat freischaltbar\n• Aktiv im Support Shop');
   };
 
   const resetAll = async () => {
@@ -85,9 +94,11 @@ Bilder übrig: ${unlockInfo}
   };
 
   const resetMonthlyQuota = async () => {
+    const quota = await getImageUnlockQuota();
     await AsyncStorage.removeItem('@sudoku/image_unlock_quota');
     await updateStatus();
-    Alert.alert('🔄 Quota zurückgesetzt', 'Du kannst wieder 1 Bild freischalten');
+    const limitText = quota.monthlyLimit === 2 ? '2 Bilder' : '1 Bild';
+    Alert.alert('🔄 Quota zurückgesetzt', `Du kannst wieder ${limitText} freischalten`);
   };
 
   const showCurrentStatus = async () => {
@@ -148,7 +159,7 @@ Bilder übrig: ${unlockInfo}
       <TestButton
         icon="heart"
         label="Jährliches Abo simulieren"
-        description="2× EP + 12 Bilder/Jahr"
+        description="2× EP + 2 Bilder/Monat"
         onPress={simulateYearlySubscription}
         colors={colors}
       />

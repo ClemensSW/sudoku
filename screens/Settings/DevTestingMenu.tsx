@@ -122,7 +122,7 @@ Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
   const simulateMonthlySubscription = async () => {
     await markAsPurchased(
       {
-        id: 'monthly_support',
+        id: 'de.playfusiongate.sudokuduo.monthly:monthly',
         name: 'Monatliches Abo',
         price: 2.99,
         timestamp: new Date().toISOString(),
@@ -136,7 +136,7 @@ Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
   const simulateYearlySubscription = async () => {
     await markAsPurchased(
       {
-        id: 'yearly_support',
+        id: 'de.playfusiongate.sudokuduo.yearly:yearly',
         name: 'Jährliches Abo',
         price: 29.99,
         timestamp: new Date().toISOString(),

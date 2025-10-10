@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getPurchaseType,
   checkHasPurchased,
+  getActiveSubscriptionProductId,
   PurchaseType,
 } from '@/screens/SupportShop/utils/purchaseTracking';
 import Purchases from 'react-native-purchases';
@@ -72,11 +73,18 @@ export async function getSupporterStatus(): Promise<SupporterStatus> {
       supportType = 'one-time';
     }
 
+    // Get product ID - prioritize RevenueCat, fallback to dev testing
+    let productId = activeEntitlement?.productIdentifier || null;
+    if (!productId && purchaseType === 'subscription') {
+      // Dev testing mode: get product ID from purchase tracking
+      productId = await getActiveSubscriptionProductId();
+    }
+
     return {
       isSupporter: hasAnyPurchase,
       isPremiumSubscriber: hasActiveSubscription,
       expiresAt,
-      productId: activeEntitlement?.productIdentifier || null,
+      productId,
       isInGracePeriod,
       supportType,
     };
@@ -84,11 +92,15 @@ export async function getSupporterStatus(): Promise<SupporterStatus> {
     console.error('[Entitlements] Error getting supporter status:', error);
     // Fallback: Check nur Purchase-Tracking
     const purchaseType = await getPurchaseType();
+    const productId = purchaseType === 'subscription'
+      ? await getActiveSubscriptionProductId()
+      : null;
+
     return {
       isSupporter: purchaseType !== 'none',
       isPremiumSubscriber: false,
       expiresAt: null,
-      productId: null,
+      productId,
       isInGracePeriod: false,
       supportType: purchaseType === 'none' ? 'none' : 'one-time',
     };

@@ -67,6 +67,14 @@ export interface ImageUnlockQuota {
   lifetimeUnlocks: number;
 
   /**
+   * LIFETIME QUOTA: Maximale Anzahl an Unlocks basierend auf gekauften Produkten
+   * - Beispiel: 3× Coffee + 1× Breakfast = 4 Unlocks verfügbar
+   * - Berechnet durch purchaseQuota.ts
+   * - Für Subscriptions: Immer 0 (die nutzen monthlyLimit)
+   */
+  lifetimeQuota: number;
+
+  /**
    * Datum des letzten Unlocks (ISO string)
    */
   lastUnlockDate: string | null;

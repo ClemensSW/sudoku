@@ -8,6 +8,7 @@ import Purchases, {
 } from 'react-native-purchases';
 import i18next from 'i18next';
 import { BILLING_CONFIG } from './config';
+import { recordPurchase } from '@/modules/subscriptions/purchaseQuota';
 
 // Product interface matching SupportShop expectations
 export interface Product {
@@ -222,8 +223,21 @@ class BillingManager {
 
       // Make the purchase
       const purchaseResult = await Purchases.purchasePackage(rcPackage);
-      
+
       console.log('BillingManager: Purchase successful', purchaseResult);
+
+      // Record purchase in quota system (for one-time products only)
+      const isOneTimeProduct = this.products.some(p => p.productId === productId);
+      if (isOneTimeProduct && product.revenueCatId) {
+        try {
+          const purchaseCount = await recordPurchase(product.revenueCatId);
+          console.log(`BillingManager: Recorded purchase quota: ${product.revenueCatId} (count: ${purchaseCount})`);
+        } catch (quotaError) {
+          console.error('BillingManager: Failed to record purchase quota', quotaError);
+          // Don't fail the purchase if quota recording fails
+        }
+      }
+
       this.emit('purchase-completed', {
         productId,
         product,

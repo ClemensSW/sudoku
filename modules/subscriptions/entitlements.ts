@@ -19,6 +19,7 @@ import {
   ImageUnlockResult,
   ImageUnlockError,
 } from './types';
+import { calculateLifetimeQuota } from './purchaseQuota';
 
 // Storage Keys
 const KEYS = {
@@ -146,6 +147,9 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     let lifetimeUnlocks = storedQuota?.lifetimeUnlocks || 0;
     let lastUnlockDate: string | null = null;
 
+    // Calculate lifetime quota from purchases (dynamic!)
+    const lifetimeQuota = await calculateLifetimeQuota();
+
     if (storedQuota && storedQuota.lastUnlockDate) {
       const lastUnlock = new Date(storedQuota.lastUnlockDate);
       const lastMonth = lastUnlock.getMonth();
@@ -173,8 +177,10 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
         // Subscription: Can unlock if less than monthly limit
         canUnlock = usedThisMonth < monthlyLimit;
       } else {
-        // One-time: Can unlock if less than 1 lifetime
-        canUnlock = lifetimeUnlocks < 1;
+        // One-time: Can unlock if less than DYNAMIC lifetime quota
+        // BEFORE: canUnlock = lifetimeUnlocks < 1; (HARDCODED!)
+        // NOW: Uses purchase count (3× coffee = 3 unlocks available)
+        canUnlock = lifetimeUnlocks < lifetimeQuota;
       }
     }
 
@@ -186,12 +192,13 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
     // Calculate remaining unlocks
     const remainingUnlocks = isSubscription
       ? Math.max(0, monthlyLimit - usedThisMonth)
-      : Math.max(0, 1 - lifetimeUnlocks);
+      : Math.max(0, lifetimeQuota - lifetimeUnlocks);
 
     const quota: ImageUnlockQuota = {
       monthlyLimit,
       usedThisMonth,
       lifetimeUnlocks,
+      lifetimeQuota,
       lastUnlockDate,
       canUnlock,
       remainingUnlocks,
@@ -208,6 +215,7 @@ export async function getImageUnlockQuota(): Promise<ImageUnlockQuota> {
       monthlyLimit: 1,
       usedThisMonth: 1,
       lifetimeUnlocks: 1,
+      lifetimeQuota: 0,
       lastUnlockDate: null,
       canUnlock: false,
       remainingUnlocks: 0,

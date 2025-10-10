@@ -10,6 +10,13 @@ import {
   checkHasPurchased
 } from '@/screens/SupportShop/utils/purchaseTracking';
 import { getSupporterStatus, getImageUnlockQuota } from '@/modules/subscriptions/entitlements';
+import {
+  recordPurchase,
+  calculateLifetimeQuota,
+  getPurchaseCount,
+  resetPurchaseQuota,
+  debugPrintQuota
+} from '@/modules/subscriptions/purchaseQuota';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DevTestingMenu: React.FC = () => {
@@ -32,30 +39,84 @@ const DevTestingMenu: React.FC = () => {
       }
     }
 
+    const lifetimeQuota = await calculateLifetimeQuota();
     const unlockInfo = quota.isSubscription
       ? `${quota.remainingUnlocks}/${quota.monthlyLimit} (monatlich${subTypeLabel})`
-      : `${quota.remainingUnlocks}/1 (lifetime)`;
+      : `${quota.remainingUnlocks}/${lifetimeQuota} (lifetime)`;
 
     setStatus(`
 Status: ${hasPurchased ? '✅ Supporter' : '❌ Kein Supporter'}
 Typ: ${purchaseType}${subTypeLabel}
 EP Multiplikator: ${supporterStatus.isSupporter ? '2x' : '1x'}
 Bilder übrig: ${unlockInfo}
+Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
     `.trim());
   };
 
   const simulateOneTimePurchase = async () => {
     await markAsPurchased(
       {
-        id: 'test_coffee',
+        id: 'de.playfusiongate.sudokuduo.coffee',
         name: 'Test Kaffee',
         price: 2.99,
         timestamp: new Date().toISOString(),
       },
       'one-time'
     );
+    // Record in quota system
+    await recordPurchase('de.playfusiongate.sudokuduo.coffee');
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Einmalkauf simuliert!\n\n• 2× EP aktiv\n• 1 Bild (lifetime) freischaltbar');
+    const quota = await calculateLifetimeQuota();
+    Alert.alert('✅ Erfolg', `Einmalkauf simuliert!\n\n• 2× EP aktiv\n• ${quota} Bild(er) (lifetime) freischaltbar`);
+  };
+
+  const simulateMultipleCoffeePurchases = async () => {
+    Alert.prompt(
+      '☕ Kaffee kaufen',
+      'Wie viele Kaffees kaufen? (1-10)',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Kaufen',
+          onPress: async (count) => {
+            const numPurchases = parseInt(count || '1', 10);
+            if (isNaN(numPurchases) || numPurchases < 1 || numPurchases > 10) {
+              Alert.alert('Fehler', 'Bitte eine Zahl zwischen 1 und 10 eingeben');
+              return;
+            }
+
+            // Mark as purchased (one-time)
+            if (numPurchases === 1) {
+              await markAsPurchased(
+                {
+                  id: 'de.playfusiongate.sudokuduo.coffee',
+                  name: 'Test Kaffee',
+                  price: 2.99,
+                  timestamp: new Date().toISOString(),
+                },
+                'one-time'
+              );
+            }
+
+            // Record all purchases in quota system
+            for (let i = 0; i < numPurchases; i++) {
+              await recordPurchase('de.playfusiongate.sudokuduo.coffee');
+            }
+
+            await updateStatus();
+            await debugPrintQuota();
+
+            const quota = await calculateLifetimeQuota();
+            Alert.alert(
+              '✅ Erfolg',
+              `${numPurchases}× Kaffee gekauft!\n\n• 2× EP aktiv\n• ${quota} Bild(er) freischaltbar`
+            );
+          }
+        }
+      ],
+      'plain-text',
+      '3'
+    );
   };
 
   const simulateMonthlySubscription = async () => {
@@ -88,6 +149,7 @@ Bilder übrig: ${unlockInfo}
 
   const resetAll = async () => {
     await resetPurchaseStatus();
+    await resetPurchaseQuota();
     await AsyncStorage.removeItem('@sudoku/image_unlock_quota');
     await updateStatus();
     Alert.alert('🔄 Zurückgesetzt', 'Alle Käufe und Freischaltungen gelöscht');
@@ -145,6 +207,14 @@ Bilder übrig: ${unlockInfo}
         label="Einmalkauf simulieren"
         description="2× EP + 1 Bild (lifetime)"
         onPress={simulateOneTimePurchase}
+        colors={colors}
+      />
+
+      <TestButton
+        icon="layers"
+        label="Multiple Käufe simulieren"
+        description="3× Kaffee = 3 Unlocks"
+        onPress={simulateMultipleCoffeePurchases}
         colors={colors}
       />
 

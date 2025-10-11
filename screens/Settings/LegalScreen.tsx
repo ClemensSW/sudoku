@@ -35,8 +35,8 @@ const LegalScreen: React.FC<LegalScreenProps> = ({ visible, onClose }) => {
   // Get current language (fallback to en if not de/en)
   const currentLang = i18n.language.startsWith("de") ? "de" : "en";
 
-  // Snap points - 100% height for fullscreen
-  const snapPoints = useMemo(() => ['100%'], []);
+  // Snap points - Start at 70%, expandable to fullscreen
+  const snapPoints = useMemo(() => ['70%', '100%'], []);
 
   // Get document content from the markdown files
   const getDocumentContent = (docType: LegalDocType, lang: string): string => {
@@ -622,9 +622,17 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
   // Document list view
   const renderDocumentList = () => (
     <View style={styles.listContainer}>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-        {t("legal.subtitle")}
-      </Text>
+      <View style={styles.subtitleContainer}>
+        <Feather
+          name="shield"
+          size={32}
+          color={colors.textSecondary}
+          style={styles.subtitleIcon}
+        />
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          {t("legal.subtitle")}
+        </Text>
+      </View>
 
       <View style={[styles.docList, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <TouchableOpacity
@@ -658,7 +666,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.docItem}
+          style={[styles.docItem, { borderBottomWidth: 0 }]}
           onPress={() => handleDocPress("widerruf")}
         >
           <Text style={[styles.docTitle, { color: colors.textPrimary }]}>
@@ -774,10 +782,18 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingTop: 16,
   },
+  subtitleContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  subtitleIcon: {
+    marginBottom: 12,
+  },
   subtitle: {
     fontSize: 14,
-    marginBottom: 16,
     lineHeight: 20,
+    textAlign: "center",
   },
   docList: {
     borderRadius: 12,

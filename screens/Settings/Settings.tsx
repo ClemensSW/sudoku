@@ -24,6 +24,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
+import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
@@ -73,6 +74,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const router = useRouter();
   const { showAlert } = useAlert();
   const { toggleMusic } = useBackgroundMusic();
+  const { hideBottomNav, resetBottomNav } = useNavigation();
 
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -94,6 +96,18 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
     loadData();
   }, []);
+
+  // Hide bottom navigation when Settings is opened
+  useEffect(() => {
+    hideBottomNav();
+
+    // Cleanup: reset bottom nav when leaving settings (except when from game)
+    return () => {
+      if (!fromGame) {
+        resetBottomNav();
+      }
+    };
+  }, [hideBottomNav, resetBottomNav, fromGame]);
 
   // Add the BackHandler to capture the Android back button
   useEffect(() => {

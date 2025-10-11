@@ -1,12 +1,13 @@
 // screens/Settings/screens/InfoSettingsScreen.tsx
-import React, { useState } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, ScrollView, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import InfoSection from "../components/InfoSection/InfoSection";
 import AboutModal from "../components/AboutModal";
@@ -19,8 +20,26 @@ const InfoSettingsScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { hideBottomNav } = useNavigation();
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showLegalScreen, setShowLegalScreen] = useState(false);
+
+  // Hide bottom navigation when this screen is opened
+  useEffect(() => {
+    hideBottomNav();
+  }, [hideBottomNav]);
+
+  // Add Android back handler to navigate back to settings
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        router.back();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
+  }, [router]);
 
   const handleAboutPress = () => {
     triggerHaptic("light");

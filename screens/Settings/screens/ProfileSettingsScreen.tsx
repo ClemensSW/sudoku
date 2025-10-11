@@ -1,12 +1,13 @@
 // screens/Settings/screens/ProfileSettingsScreen.tsx
-import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, ScrollView, BackHandler } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import ProfileGroup from "../components/ProfileGroup";
 
@@ -16,7 +17,24 @@ const ProfileSettingsScreen: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { hideBottomNav } = useNavigation();
 
+  // Hide bottom navigation when this screen is opened
+  useEffect(() => {
+    hideBottomNav();
+  }, [hideBottomNav]);
+
+  // Add Android back handler to navigate back to settings
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        router.back();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
+  }, [router]);
 
   return (
     <Animated.View

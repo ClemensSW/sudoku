@@ -133,35 +133,12 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Vibration - Keep in both modes */}
+      {/* Background Music - Keep in both modes */}
       <TouchableOpacity
         style={[
           styles.settingRow,
           { borderBottomColor: colors.border },
         ]}
-        onPress={() => onSettingChange("vibration", !settings.vibration)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.settingIcon}>
-          <VibrationIcon width={48} height={48} />
-        </View>
-        <View style={styles.settingTextContainer}>
-          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
-            {t("gameSettings.vibration")}
-          </Text>
-        </View>
-        <Switch
-          value={settings.vibration}
-          onValueChange={(value) => onSettingChange("vibration", value)}
-          trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
-          thumbColor={settings.vibration ? switchThumbColorActive : switchThumbColorInactive}
-          ios_backgroundColor={switchTrackColorInactive}
-        />
-      </TouchableOpacity>
-
-      {/* Background Music - Keep in both modes */}
-      <TouchableOpacity
-        style={styles.settingRow}
         onPress={() => onSettingChange("backgroundMusic", !settings.backgroundMusic)}
         activeOpacity={0.7}
       >
@@ -178,6 +155,29 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           onValueChange={(value) => onSettingChange("backgroundMusic", value)}
           trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
           thumbColor={settings.backgroundMusic ? switchThumbColorActive : switchThumbColorInactive}
+          ios_backgroundColor={switchTrackColorInactive}
+        />
+      </TouchableOpacity>
+
+      {/* Vibration - Keep in both modes */}
+      <TouchableOpacity
+        style={styles.settingRow}
+        onPress={() => onSettingChange("vibration", !settings.vibration)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.settingIcon}>
+          <VibrationIcon width={48} height={48} />
+        </View>
+        <View style={styles.settingTextContainer}>
+          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
+            {t("gameSettings.vibration")}
+          </Text>
+        </View>
+        <Switch
+          value={settings.vibration}
+          onValueChange={(value) => onSettingChange("vibration", value)}
+          trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+          thumbColor={settings.vibration ? switchThumbColorActive : switchThumbColorInactive}
           ios_backgroundColor={switchTrackColorInactive}
         />
       </TouchableOpacity>

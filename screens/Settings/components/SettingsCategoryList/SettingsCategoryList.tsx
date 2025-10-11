@@ -77,15 +77,15 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   const getSortedCategories = () => {
     if (showGameFeatures) {
       // Im Spiel: Spiel > Profil > Anzeige > Community > Info
-      // (Hilfe+Actions inline above, Profil navigable)
+      // (Hilfe+Actions inline above)
       const order = ["game", "profile", "design", "community", "info"];
       return order
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);
     } else {
-      // Normal: Anzeige > Spiel > Hilfe > Community > Info
-      // (Profil inline above, Hilfe navigable)
-      const order = ["design", "game", "help", "community", "info"];
+      // Normal: Spiel > Hilfe > Community > Info
+      // (Profil+Anzeige inline above)
+      const order = ["game", "help", "community", "info"];
       return order
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);

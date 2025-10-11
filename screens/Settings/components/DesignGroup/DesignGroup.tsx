@@ -211,7 +211,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
 
 const styles = StyleSheet.create({
   themeContainer: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
   settingsGroup: {
     borderRadius: 12,

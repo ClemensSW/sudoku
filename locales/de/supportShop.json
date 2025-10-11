@@ -188,7 +188,27 @@
     },
     "purchase": {
       "title": "Fehler beim Kauf",
-      "message": "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+      "generic": "Beim Kaufvorgang ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+      "network": {
+        "title": "Keine Internetverbindung",
+        "message": "Bitte prüfe deine Verbindung und versuche es erneut."
+      },
+      "productNotAvailable": {
+        "title": "Produkt nicht verfügbar",
+        "message": "Dieses Produkt ist nicht verfügbar oder wurde bereits gekauft."
+      },
+      "notAllowed": {
+        "title": "Käufe nicht erlaubt",
+        "message": "Käufe sind auf diesem Gerät nicht erlaubt. Bitte prüfe deine Geräteeinstellungen."
+      },
+      "storeProblem": {
+        "title": "Store-Problem",
+        "message": "Es gibt ein Problem mit dem Google Play Store. Bitte versuche es später erneut."
+      },
+      "paymentPending": {
+        "title": "Zahlung wird verarbeitet",
+        "message": "Deine Zahlung wird verarbeitet. Dies kann einige Minuten dauern."
+      }
     },
     "generic": {
       "title": "Fehler beim Kauf",

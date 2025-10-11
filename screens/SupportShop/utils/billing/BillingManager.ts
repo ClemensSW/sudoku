@@ -246,18 +246,94 @@ class BillingManager {
 
     } catch (error) {
       console.error('BillingManager: Purchase error', error);
-      
+
       // Type guard for PurchasesError
       if (error && typeof error === 'object' && 'code' in error) {
-        const purchasesError = error as { code: string };
+        const purchasesError = error as { code: string; message?: string };
+
         // Handle specific RevenueCat errors
-        if (purchasesError.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
-          // User cancelled - don't emit error
-          return;
+        switch (purchasesError.code) {
+          case PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR:
+            // User cancelled - don't emit error (silent)
+            console.log('BillingManager: Purchase cancelled by user');
+            return;
+
+          case PURCHASES_ERROR_CODE.NETWORK_ERROR:
+            // Network error - user needs to know
+            console.error('BillingManager: Network error');
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'NETWORK_ERROR',
+              userMessage: 'Keine Internetverbindung. Bitte prüfe deine Verbindung und versuche es erneut.'
+            });
+            return;
+
+          case PURCHASES_ERROR_CODE.PRODUCT_NOT_AVAILABLE_FOR_PURCHASE_ERROR:
+          case PURCHASES_ERROR_CODE.PRODUCT_ALREADY_PURCHASED_ERROR:
+            // Product not available or already owned
+            console.error('BillingManager: Product not available or already owned');
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'PRODUCT_NOT_AVAILABLE',
+              userMessage: 'Dieses Produkt ist nicht verfügbar oder wurde bereits gekauft.'
+            });
+            return;
+
+          case PURCHASES_ERROR_CODE.PURCHASE_NOT_ALLOWED_ERROR:
+            // Purchase not allowed (e.g., parental controls)
+            console.error('BillingManager: Purchase not allowed');
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'PURCHASE_NOT_ALLOWED',
+              userMessage: 'Käufe sind auf diesem Gerät nicht erlaubt.'
+            });
+            return;
+
+          case PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR:
+            // Store problem (Google Play issue)
+            console.error('BillingManager: Store problem');
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'STORE_PROBLEM',
+              userMessage: 'Es gibt ein Problem mit dem Google Play Store. Bitte versuche es später erneut.'
+            });
+            return;
+
+          case PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR:
+            // Payment pending (waiting for confirmation)
+            console.log('BillingManager: Payment pending');
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'PAYMENT_PENDING',
+              userMessage: 'Zahlung wird verarbeitet. Dies kann einige Minuten dauern.'
+            });
+            return;
+
+          default:
+            // Unknown error
+            console.error('BillingManager: Unknown purchase error', purchasesError);
+            this.emit('purchase-error', {
+              error,
+              productId,
+              errorType: 'UNKNOWN',
+              userMessage: 'Ein unbekannter Fehler ist aufgetreten. Bitte versuche es erneut.'
+            });
+            return;
         }
       }
-      
-      this.emit('purchase-error', { error, productId });
+
+      // Fallback: Generic error (shouldn't reach here normally)
+      this.emit('purchase-error', {
+        error,
+        productId,
+        errorType: 'UNKNOWN',
+        userMessage: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.'
+      });
     }
   }
 

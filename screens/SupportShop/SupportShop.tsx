@@ -239,23 +239,53 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   };
 
   // Handle purchase error
-  const handlePurchaseError = (error: any) => {
-    console.error("Purchase error:", error);
+  const handlePurchaseError = (errorData: any) => {
+    console.error("Purchase error:", errorData);
     setPurchasing(false);
     setCurrentPurchase(null);
     setPurchaseSuccess(false);
 
-    // Don't show error for user cancellation
-    if (error?.error?.code === 'USER_CANCELLED') {
+    // Don't show error for user cancellation (handled silently in BillingManager)
+    if (errorData?.error?.code === 'USER_CANCELLED') {
       return;
     }
 
-    // Show error alert for other errors
-    Alert.alert(
-      t('errors.generic.title'),
-      t('errors.generic.message'),
-      [{ text: t('common.ok') }]
-    );
+    // Get error type and determine appropriate message
+    const errorType = errorData?.errorType || 'UNKNOWN';
+    let title = t('errors.purchase.title');
+    let message = t('errors.purchase.generic');
+
+    // Use specific error messages based on error type
+    switch (errorType) {
+      case 'NETWORK_ERROR':
+        title = t('errors.purchase.network.title');
+        message = t('errors.purchase.network.message');
+        break;
+      case 'PRODUCT_NOT_AVAILABLE':
+        title = t('errors.purchase.productNotAvailable.title');
+        message = t('errors.purchase.productNotAvailable.message');
+        break;
+      case 'PURCHASE_NOT_ALLOWED':
+        title = t('errors.purchase.notAllowed.title');
+        message = t('errors.purchase.notAllowed.message');
+        break;
+      case 'STORE_PROBLEM':
+        title = t('errors.purchase.storeProblem.title');
+        message = t('errors.purchase.storeProblem.message');
+        break;
+      case 'PAYMENT_PENDING':
+        title = t('errors.purchase.paymentPending.title');
+        message = t('errors.purchase.paymentPending.message');
+        break;
+      case 'UNKNOWN':
+      default:
+        title = t('errors.purchase.title');
+        message = t('errors.purchase.generic');
+        break;
+    }
+
+    // Show error alert
+    Alert.alert(title, message, [{ text: t('common.ok') }]);
   };
 
   // Loading state

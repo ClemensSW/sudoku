@@ -188,7 +188,27 @@
     },
     "purchase": {
       "title": "Purchase Error",
-      "message": "An error occurred during the purchase. Please try again later."
+      "generic": "An error occurred during the purchase. Please try again later.",
+      "network": {
+        "title": "No Internet Connection",
+        "message": "Please check your connection and try again."
+      },
+      "productNotAvailable": {
+        "title": "Product Unavailable",
+        "message": "This product is not available or has already been purchased."
+      },
+      "notAllowed": {
+        "title": "Purchases Not Allowed",
+        "message": "Purchases are not allowed on this device. Please check your device settings."
+      },
+      "storeProblem": {
+        "title": "Store Problem",
+        "message": "There is a problem with the Google Play Store. Please try again later."
+      },
+      "paymentPending": {
+        "title": "Payment Processing",
+        "message": "Your payment is being processed. This may take a few minutes."
+      }
     },
     "generic": {
       "title": "Purchase Error",

@@ -10,7 +10,6 @@ import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewMana
 import FeedbackIcon from "@/assets/svg/feedback.svg";
 import LatteArtIcon from "@/assets/svg/latte-art.svg";
 import ShareIcon from "@/assets/svg/share.svg";
-import InfoIcon from "@/assets/svg/info.svg";
 
 // Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
 const customStyles = StyleSheet.create({
@@ -49,15 +48,11 @@ const customStyles = StyleSheet.create({
 interface CommunitySectionProps {
   onSupportPress: () => void;
   onSharePress: () => void;
-  onAboutPress: () => void;
-  onLegalPress: () => void;
 }
 
 const CommunitySection: React.FC<CommunitySectionProps> = ({
   onSupportPress,
   onSharePress,
-  onAboutPress,
-  onLegalPress,
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
@@ -164,64 +159,6 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             {t("community.share")}
-          </Text>
-        </View>
-        <Feather
-          name="chevron-right"
-          size={20}
-          color={colors.textSecondary}
-        />
-      </TouchableOpacity>
-
-      {/* Legal button */}
-      <TouchableOpacity
-        style={[
-          customStyles.actionButton,
-          { borderTopWidth: 1, borderTopColor: colors.border }
-        ]}
-        onPress={onLegalPress}
-      >
-        <View style={customStyles.actionIcon}>
-          <Feather
-            name="file-text"
-            size={48}
-            color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
-          />
-        </View>
-        <View style={customStyles.actionTextContainer}>
-          <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
-          >
-            {t("community.legal")}
-          </Text>
-        </View>
-        <Feather
-          name="chevron-right"
-          size={20}
-          color={colors.textSecondary}
-        />
-      </TouchableOpacity>
-
-      {/* About button */}
-      <TouchableOpacity
-        style={[
-          customStyles.actionButton,
-          { borderTopWidth: 1, borderTopColor: colors.border }
-        ]}
-        onPress={onAboutPress}
-      >
-        <View style={customStyles.actionIcon}>
-          <InfoIcon
-            width={48}
-            height={48}
-            color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
-          />
-        </View>
-        <View style={customStyles.actionTextContainer}>
-          <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
-          >
-            {t("community.about")}
           </Text>
         </View>
         <Feather

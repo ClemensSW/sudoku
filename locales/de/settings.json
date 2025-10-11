@@ -7,7 +7,8 @@
     "game": "Spiel",
     "actions": "Aktionen",
     "action": "Aktion",
-    "community": "Community"
+    "community": "Community",
+    "info": "Info"
   },
   "help": {
     "howToPlay": "Wie spielt man?",
@@ -40,7 +41,9 @@
     "supportTitle": "Kostenlos spielen",
     "supportDescription": "Entwicklung freiwillig unterstützen",
     "feedback": "Feedback senden",
-    "share": "Mit Freunden teilen",
+    "share": "Mit Freunden teilen"
+  },
+  "info": {
     "legal": "Rechtliches",
     "about": "Über Sudoku Duo"
   },

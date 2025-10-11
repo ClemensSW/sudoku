@@ -42,6 +42,7 @@ import {
   CommunitySection,
   AppearanceSettings,
 } from "./components";
+import InfoSection from "./components/InfoSection/InfoSection";
 
 import styles from "./Settings.styles";
 
@@ -313,8 +314,21 @@ const Settings: React.FC<SettingsScreenProps> = ({
           <CommunitySection
             onSupportPress={() => setShowSupportShop(true)}
             onSharePress={handleShareApp}
-            onLegalPress={handleLegalPress}
+          />
+        </Animated.View>
+
+        {/* Info Section */}
+        <Animated.View
+          style={styles.section}
+          entering={FadeInDown.delay(500).duration(500)}
+        >
+          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            {t("sections.info")}
+          </RNText>
+
+          <InfoSection
             onAboutPress={handleAboutPress}
+            onLegalPress={handleLegalPress}
           />
         </Animated.View>
 
@@ -322,7 +336,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
         {__DEV__ && Constants.appOwnership === 'expo' && (
           <Animated.View
             style={styles.section}
-            entering={FadeInDown.delay(500).duration(500)}
+            entering={FadeInDown.delay(600).duration(500)}
           >
             <DevTestingMenu />
           </Animated.View>

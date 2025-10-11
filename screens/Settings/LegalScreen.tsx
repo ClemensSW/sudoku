@@ -516,12 +516,21 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
     onClose();
   }, [onClose]);
 
-  // Handle dismiss
+  // Handle dismiss (Android back button / swipe down)
   const handleDismiss = useCallback(() => {
-    setSelectedDoc(null);
-    setDocContent("");
-    onClose();
-  }, [onClose]);
+    // If a document is open, go back to document list
+    if (selectedDoc) {
+      setSelectedDoc(null);
+      setDocContent("");
+      // Re-open the bottom sheet to stay on the document list
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+    } else {
+      // If on document list, close completely
+      onClose();
+    }
+  }, [selectedDoc, onClose]);
 
   // Open/close modal based on visible prop
   useEffect(() => {

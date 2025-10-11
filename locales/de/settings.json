@@ -30,7 +30,8 @@
     "highlightSameValues": "Gleiche Werte hervorheben",
     "autoNotes": "Automatische Notizen",
     "vibration": "Vibration",
-    "soundEffects": "Soundeffekte"
+    "soundEffects": "Soundeffekte",
+    "backgroundMusic": "Musik"
   },
   "actions": {
     "pauseGame": "Spiel pausieren",

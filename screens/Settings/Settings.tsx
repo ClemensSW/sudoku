@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
+import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
@@ -74,6 +75,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { showAlert } = useAlert();
+  const { toggleMusic } = useBackgroundMusic();
 
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -133,6 +135,11 @@ const Settings: React.FC<SettingsScreenProps> = ({
     // If the vibration setting is changed, also update the cache
     if (key === "vibration") {
       setVibrationEnabledCache(value as boolean);
+    }
+
+    // If the background music setting is changed, toggle the music
+    if (key === "backgroundMusic") {
+      await toggleMusic(value as boolean);
     }
 
     // Notify GameScreen about the change

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import VibrationIcon from "@/assets/svg/vibration.svg";
+import RadioIcon from "@/assets/svg/radio.svg";
 import SelectionIcon from "@/assets/svg/selection.svg";
 import LinkIcon from "@/assets/svg/link.svg";
 import NumbersIcon from "@/assets/svg/numbers.svg";
@@ -154,6 +155,29 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           onValueChange={(value) => onSettingChange("vibration", value)}
           trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
           thumbColor={settings.vibration ? switchThumbColorActive : switchThumbColorInactive}
+          ios_backgroundColor={switchTrackColorInactive}
+        />
+      </TouchableOpacity>
+
+      {/* Background Music - Keep in both modes */}
+      <TouchableOpacity
+        style={styles.settingRow}
+        onPress={() => onSettingChange("backgroundMusic", !settings.backgroundMusic)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.settingIcon}>
+          <RadioIcon width={48} height={48} />
+        </View>
+        <View style={styles.settingTextContainer}>
+          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
+            {t("gameSettings.backgroundMusic")}
+          </Text>
+        </View>
+        <Switch
+          value={settings.backgroundMusic}
+          onValueChange={(value) => onSettingChange("backgroundMusic", value)}
+          trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+          thumbColor={settings.backgroundMusic ? switchThumbColorActive : switchThumbColorInactive}
           ios_backgroundColor={switchTrackColorInactive}
         />
       </TouchableOpacity>

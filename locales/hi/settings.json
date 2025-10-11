@@ -30,7 +30,8 @@
     "highlightSameValues": "समान मान हाइलाइट करें",
     "autoNotes": "स्वचालित नोट्स",
     "vibration": "कंपन",
-    "soundEffects": "ध्वनि प्रभाव"
+    "soundEffects": "ध्वनि प्रभाव",
+    "backgroundMusic": "संगीत"
   },
   "actions": {
     "pauseGame": "खेल रोकें",

@@ -8,6 +8,7 @@ import { AlertProvider } from "@/components/CustomAlert/AlertProvider";
 import { NavigationProvider, useNavigation } from "@/contexts/navigation";
 import { I18nProvider } from "@/utils/i18n/I18nProvider";
 import { ColorProvider } from "@/contexts/color/ColorContext";
+import { BackgroundMusicProvider } from "@/contexts/BackgroundMusicProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Platform, View, StyleSheet } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
@@ -81,13 +82,15 @@ export default function AppLayout() {
         <I18nProvider>
           <ThemeProvider>
             <ColorProvider>
-              <NavigationProvider>
-                <BottomSheetModalProvider>
-                  <AlertProvider>
-                    <AppContainer />
-                  </AlertProvider>
-                </BottomSheetModalProvider>
-              </NavigationProvider>
+              <BackgroundMusicProvider>
+                <NavigationProvider>
+                  <BottomSheetModalProvider>
+                    <AlertProvider>
+                      <AppContainer />
+                    </AlertProvider>
+                  </BottomSheetModalProvider>
+                </NavigationProvider>
+              </BackgroundMusicProvider>
             </ColorProvider>
           </ThemeProvider>
         </I18nProvider>

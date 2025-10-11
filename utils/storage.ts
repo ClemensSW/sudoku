@@ -70,6 +70,7 @@ export type GameSettings = {
   darkMode: "light" | "dark";
   vibration: boolean;
   soundEffects: boolean;
+  backgroundMusic: boolean;
   language: "de" | "en";
 };
 
@@ -107,6 +108,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   darkMode: "dark",
   vibration: true,
   soundEffects: true,
+  backgroundMusic: false,
   language: "de",
 };
 
@@ -348,6 +350,9 @@ export const loadSettings = async (): Promise<GameSettings> => {
       // Kompatibilität mit älteren Versionen
       if (parsedSettings.language === undefined) {
         parsedSettings.language = "de";
+      }
+      if (parsedSettings.backgroundMusic === undefined) {
+        parsedSettings.backgroundMusic = false;
       }
       return parsedSettings;
     }

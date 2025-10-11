@@ -30,7 +30,8 @@
     "highlightSameValues": "Highlight same values",
     "autoNotes": "Auto notes",
     "vibration": "Vibration",
-    "soundEffects": "Sound effects"
+    "soundEffects": "Sound effects",
+    "backgroundMusic": "Music"
   },
   "actions": {
     "pauseGame": "Pause game",

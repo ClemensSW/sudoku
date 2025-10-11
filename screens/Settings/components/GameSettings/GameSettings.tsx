@@ -135,10 +135,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
       {/* Background Music - Keep in both modes */}
       <TouchableOpacity
-        style={[
-          styles.settingRow,
-          { borderBottomColor: colors.border },
-        ]}
+        style={[styles.settingRow, { borderBottomColor: colors.border }]}
         onPress={() => onSettingChange("backgroundMusic", !settings.backgroundMusic)}
         activeOpacity={0.7}
       >
@@ -159,7 +156,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Vibration - Keep in both modes */}
+      {/* Vibration - Keep in both modes (last item, no border) */}
       <TouchableOpacity
         style={styles.settingRow}
         onPress={() => onSettingChange("vibration", !settings.vibration)}

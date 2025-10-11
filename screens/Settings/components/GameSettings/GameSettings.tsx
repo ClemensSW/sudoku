@@ -112,7 +112,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
       {/* Show Errors - Keep in both modes */}
       <TouchableOpacity
-        style={styles.settingRow}
+        style={[styles.settingRow, { borderBottomColor: colors.border }]}
         onPress={() => onSettingChange("showMistakes", !settings.showMistakes)}
         activeOpacity={0.7}
       >
@@ -135,10 +135,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 
       {/* Background Music - Keep in both modes */}
       <TouchableOpacity
-        style={[
-          styles.settingRow,
-          { borderTopWidth: 1, borderTopColor: colors.border }
-        ]}
+        style={[styles.settingRow, { borderBottomColor: colors.border }]}
         onPress={() => onSettingChange("backgroundMusic", !settings.backgroundMusic)}
         activeOpacity={0.7}
       >
@@ -159,12 +156,9 @@ const GameSettings: React.FC<GameSettingsProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Vibration - Keep in both modes */}
+      {/* Vibration - Keep in both modes (last item - override borderBottom) */}
       <TouchableOpacity
-        style={[
-          styles.settingRow,
-          { borderTopWidth: 1, borderTopColor: colors.border }
-        ]}
+        style={[styles.settingRow, { borderBottomWidth: 0 }]}
         onPress={() => onSettingChange("vibration", !settings.vibration)}
         activeOpacity={0.7}
       >

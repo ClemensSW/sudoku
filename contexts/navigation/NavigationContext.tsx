@@ -45,10 +45,22 @@ export function NavigationProvider({
   }, [pathname, manualOverride]);
 
   /**
-   * Reset manual override when route changes
+   * Reset manual override only when navigating to visible routes
+   * This keeps the manual override persistent during Settings/Game navigation
    */
   useEffect(() => {
-    setManualOverride(null);
+    // Only reset to null when navigating to a "visible" route (Home, Duo, Leistung)
+    const visibleRoutes = ['/', '/index', '/duo', '/leistung'];
+    const normalizedPath = pathname?.endsWith('/') && pathname.length > 1
+      ? pathname.slice(0, -1)
+      : pathname;
+
+    const isVisibleRoute = visibleRoutes.some(route => normalizedPath === route);
+
+    if (isVisibleRoute) {
+      setManualOverride(null);  // Reset only for visible routes
+    }
+    // Otherwise: Manual override persists during hidden route navigation
   }, [pathname]);
 
   /**

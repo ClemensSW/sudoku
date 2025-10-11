@@ -554,15 +554,16 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           // If document is open, go back to list
           setSelectedDoc(null);
           setDocContent("");
-          return true; // Prevent default behavior
+        } else {
+          // If on list, close modal
+          onClose();
         }
-        // If on list, allow default behavior (close modal)
-        return false;
+        return true; // Always prevent default behavior
       }
     );
 
     return () => backHandler.remove();
-  }, [visible, selectedDoc]);
+  }, [visible, selectedDoc, onClose]);
 
   // Render custom handle
   const renderHandle = useCallback(

@@ -36,14 +36,10 @@ import LegalScreen from "./LegalScreen";
 import Constants from 'expo-constants';
 
 // Import components
-import {
-  GameSettings,
-  HelpSection,
-  ActionsSection,
-  CommunitySection,
-  AppearanceSettings,
-} from "./components";
-import InfoSection from "./components/InfoSection/InfoSection";
+import SettingsCategoryList from "./components/SettingsCategoryList";
+import HelpSection from "./components/HelpSection/HelpSection";
+import ActionsSection from "./components/ActionsSection/ActionsSection";
+import ProfileGroup from "./components/ProfileGroup";
 
 import styles from "./Settings.styles";
 
@@ -235,109 +231,70 @@ const Settings: React.FC<SettingsScreenProps> = ({
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        {/* Help & Tools Section */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(100).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {showGameFeatures ? t("sections.helpAndTools") : t("sections.help")}
-          </RNText>
+        {/* Profil Section - Inline in Normal mode only */}
+        {!showGameFeatures && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(50).duration(500)}
+          >
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {t("categories.profile")}
+            </RNText>
+            <ProfileGroup />
+          </Animated.View>
+        )}
 
-          <HelpSection
-            showGameFeatures={showGameFeatures && !isDuoMode} // Only show game-specific features in single-player mode
-            onAutoNotes={
-              showGameFeatures && !isDuoMode ? handleAutoNotes : undefined
-            }
-            onHowToPlay={() => setShowHowToPlay(true)}
-          />
-        </Animated.View>
-
-        {/* Appearance Settings - Neue Sektion */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(200).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t("sections.design")}
-          </RNText>
-
-          {settings && (
-            <AppearanceSettings
-              settings={settings}
-              onSettingChange={handleSettingChange}
-            />
-          )}
-        </Animated.View>
-
-        {/* Game Settings */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(300).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t("sections.game")}
-          </RNText>
-
-          {settings && (
-            <GameSettings
-              settings={settings}
-              onSettingChange={handleSettingChange}
-              isDuoMode={isDuoMode} // Pass isDuoMode flag to GameSettings
-            />
-          )}
-        </Animated.View>
-
-        {/* Actions Section - Only show when in a game context */}
+        {/* Hilfe Section - Inline in game mode only */}
         {showGameFeatures && (
           <Animated.View
             style={styles.section}
-            entering={FadeInDown.delay(400).duration(500)}
+            entering={FadeInDown.delay(50).duration(500)}
           >
-            <RNText
-              style={[styles.sectionTitle, { color: colors.textPrimary }]}
-            >
-              {isDuoMode || !onPauseGame ? t("sections.action") : t("sections.actions")}
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {t("categories.help")}
             </RNText>
-
-            <ActionsSection
-              showGameFeatures={showGameFeatures}
-              onQuitGame={onQuitGame}
-              onPauseGame={onPauseGame}
-              isDuoMode={isDuoMode} // Pass isDuoMode flag to ActionsSection
+            <HelpSection
+              showGameFeatures={showGameFeatures && !isDuoMode}
+              onAutoNotes={showGameFeatures && !isDuoMode ? handleAutoNotes : undefined}
+              onHowToPlay={() => setShowHowToPlay(true)}
             />
           </Animated.View>
         )}
 
-        {/* Community & App Section (formerly Support) */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(400).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t("sections.community")}
-          </RNText>
+        {/* Actions Section - Inline when in game */}
+        {showGameFeatures && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(100).duration(500)}
+          >
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              {isDuoMode || !onPauseGame ? t("sections.action") : t("categories.actions")}
+            </RNText>
+            <ActionsSection
+              showGameFeatures={showGameFeatures}
+              onQuitGame={onQuitGame}
+              onPauseGame={onPauseGame}
+              isDuoMode={isDuoMode}
+            />
+          </Animated.View>
+        )}
 
-          <CommunitySection
-            onSupportPress={() => setShowSupportShop(true)}
-            onSharePress={handleShareApp}
+        {/* Settings Category List - Navigierbare Kategorien */}
+        <Animated.View
+          entering={FadeIn.duration(500)}
+        >
+          <SettingsCategoryList
+            showGameFeatures={showGameFeatures}
           />
         </Animated.View>
 
-        {/* Info Section */}
-        <Animated.View
-          style={styles.section}
-          entering={FadeInDown.delay(500).duration(500)}
-        >
-          <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t("sections.info")}
-          </RNText>
-
-          <InfoSection
-            onAboutPress={handleAboutPress}
-            onLegalPress={handleLegalPress}
+        {/* How to Play Modal */}
+        {showHowToPlay && (
+          <TutorialContainer
+            onComplete={() => setShowHowToPlay(false)}
+            onBack={() => setShowHowToPlay(false)}
           />
-        </Animated.View>
+        )}
 
         {/* Dev Testing Menu - Only in Expo Go */}
         {__DEV__ && Constants.appOwnership === 'expo' && (
@@ -349,34 +306,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
       </ScrollView>
-
-      {/* How to Play Modal */}
-      {showHowToPlay && (
-        <TutorialContainer
-          onComplete={() => setShowHowToPlay(false)}
-          onBack={() => setShowHowToPlay(false)}
-        />
-      )}
-
-      {/* Support Shop Modal */}
-      {showSupportShop && (
-        <SupportShopScreen
-          onClose={() => setShowSupportShop(false)}
-          hideNavOnClose={true} // ← Navigation bleibt versteckt
-        />
-      )}
-
-      {/* About Modal */}
-      <AboutModal
-        visible={showAboutModal}
-        onClose={() => setShowAboutModal(false)}
-      />
-
-      {/* Legal Screen */}
-      <LegalScreen
-        visible={showLegalScreen}
-        onClose={() => setShowLegalScreen(false)}
-      />
     </Animated.View>
   );
 };

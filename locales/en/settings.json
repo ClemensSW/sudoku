@@ -1,5 +1,14 @@
 {
   "title": "Settings",
+  "categories": {
+    "profile": "Profile",
+    "design": "Display",
+    "game": "Game",
+    "help": "Help",
+    "actions": "Actions",
+    "community": "Community",
+    "info": "Info"
+  },
   "sections": {
     "help": "Help",
     "helpAndTools": "Help & Tools",
@@ -22,7 +31,11 @@
     "language": "Language",
     "pathColor": "Path Color",
     "title": "Title",
-    "noTitle": "No Title"
+    "noTitle": "No Title",
+    "languageModal": {
+      "title": "Choose Language",
+      "subtitle": "Select your preferred language"
+    }
   },
   "gameSettings": {
     "highlightRelated": "Highlight related cells",

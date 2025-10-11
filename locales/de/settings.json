@@ -1,5 +1,14 @@
 {
   "title": "Einstellungen",
+  "categories": {
+    "profile": "Profil",
+    "design": "Anzeige",
+    "game": "Spiel",
+    "help": "Hilfe",
+    "actions": "Aktionen",
+    "community": "Community",
+    "info": "Info"
+  },
   "sections": {
     "help": "Hilfe",
     "helpAndTools": "Hilfe und Tools",
@@ -22,7 +31,11 @@
     "language": "Sprache",
     "pathColor": "Pfadfarbe",
     "title": "Titel",
-    "noTitle": "Ohne Titel"
+    "noTitle": "Ohne Titel",
+    "languageModal": {
+      "title": "Sprache wählen",
+      "subtitle": "Wähle deine bevorzugte Sprache"
+    }
   },
   "gameSettings": {
     "highlightRelated": "Verbundene Zellen hervorheben",

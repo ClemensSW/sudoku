@@ -50,12 +50,14 @@ interface CommunitySectionProps {
   onSupportPress: () => void;
   onSharePress: () => void;
   onAboutPress: () => void;
+  onLegalPress: () => void;
 }
 
 const CommunitySection: React.FC<CommunitySectionProps> = ({
   onSupportPress,
   onSharePress,
   onAboutPress,
+  onLegalPress,
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
@@ -162,6 +164,35 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
             style={[customStyles.actionTitle, { color: colors.textPrimary }]}
           >
             {t("community.share")}
+          </Text>
+        </View>
+        <Feather
+          name="chevron-right"
+          size={20}
+          color={colors.textSecondary}
+        />
+      </TouchableOpacity>
+
+      {/* Legal button */}
+      <TouchableOpacity
+        style={[
+          customStyles.actionButton,
+          { borderTopWidth: 1, borderTopColor: colors.border }
+        ]}
+        onPress={onLegalPress}
+      >
+        <View style={customStyles.actionIcon}>
+          <Feather
+            name="file-text"
+            size={48}
+            color={theme.isDark ? "#8A78B4" : "#6E5AA0"}
+          />
+        </View>
+        <View style={customStyles.actionTextContainer}>
+          <Text
+            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+          >
+            {t("community.legal")}
           </Text>
         </View>
         <Feather

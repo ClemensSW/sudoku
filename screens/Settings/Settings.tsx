@@ -31,6 +31,7 @@ import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 import AboutModal from "./components/AboutModal";
 import DevTestingMenu from "./DevTestingMenu";
+import LegalScreen from "./LegalScreen";
 import Constants from 'expo-constants';
 
 // Import components
@@ -77,6 +78,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showSupportShop, setShowSupportShop] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showLegalScreen, setShowLegalScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Determine if we should show game-specific features
@@ -179,6 +181,11 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const handleAboutPress = () => {
     triggerHaptic("light");
     setShowAboutModal(true);
+  };
+
+  const handleLegalPress = () => {
+    triggerHaptic("light");
+    setShowLegalScreen(true);
   };
 
   if (isLoading) {
@@ -306,6 +313,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           <CommunitySection
             onSupportPress={() => setShowSupportShop(true)}
             onSharePress={handleShareApp}
+            onLegalPress={handleLegalPress}
             onAboutPress={handleAboutPress}
           />
         </Animated.View>
@@ -341,6 +349,12 @@ const Settings: React.FC<SettingsScreenProps> = ({
       <AboutModal
         visible={showAboutModal}
         onClose={() => setShowAboutModal(false)}
+      />
+
+      {/* Legal Screen */}
+      <LegalScreen
+        visible={showLegalScreen}
+        onClose={() => setShowLegalScreen(false)}
       />
     </Animated.View>
   );

@@ -41,7 +41,17 @@
     "supportDescription": "Support development voluntarily",
     "feedback": "Send feedback",
     "share": "Share with friends",
+    "legal": "Legal",
     "about": "About Sudoku Duo"
+  },
+  "legal": {
+    "title": "Legal",
+    "subtitle": "Legal notice, privacy policy and legal information",
+    "impressum": "Legal Notice",
+    "datenschutz": "Privacy Policy",
+    "agb": "Terms of Service",
+    "widerruf": "Right of Withdrawal",
+    "loadError": "Document could not be loaded"
   },
   "about": {
     "title": "About Sudoku Duo",

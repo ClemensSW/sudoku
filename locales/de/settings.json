@@ -41,7 +41,17 @@
     "supportDescription": "Entwicklung freiwillig unterstützen",
     "feedback": "Feedback senden",
     "share": "Mit Freunden teilen",
+    "legal": "Rechtliches",
     "about": "Über Sudoku Duo"
+  },
+  "legal": {
+    "title": "Rechtliches",
+    "subtitle": "Impressum, Datenschutz und rechtliche Informationen",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutzerklärung",
+    "agb": "Nutzungsbedingungen",
+    "widerruf": "Widerrufsbelehrung",
+    "loadError": "Dokument konnte nicht geladen werden"
   },
   "about": {
     "title": "Über Sudoku Duo",

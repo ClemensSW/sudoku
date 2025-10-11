@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  BackHandler,
 } from "react-native";
 import { BottomSheetModal as GorhomBottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Feather } from "@expo/vector-icons";
@@ -516,21 +517,12 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
     onClose();
   }, [onClose]);
 
-  // Handle dismiss (Android back button / swipe down)
+  // Handle dismiss
   const handleDismiss = useCallback(() => {
-    // If a document is open, go back to document list
-    if (selectedDoc) {
-      setSelectedDoc(null);
-      setDocContent("");
-      // Re-open the bottom sheet to stay on the document list
-      setTimeout(() => {
-        bottomSheetRef.current?.present();
-      }, 100);
-    } else {
-      // If on document list, close completely
-      onClose();
-    }
-  }, [selectedDoc, onClose]);
+    setSelectedDoc(null);
+    setDocContent("");
+    onClose();
+  }, [onClose]);
 
   // Open/close modal based on visible prop
   useEffect(() => {
@@ -550,6 +542,27 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
       resetBottomNav();
     };
   }, [visible, hideBottomNav, resetBottomNav]);
+
+  // Handle Android back button
+  useEffect(() => {
+    if (!visible) return;
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (selectedDoc) {
+          // If document is open, go back to list
+          setSelectedDoc(null);
+          setDocContent("");
+          return true; // Prevent default behavior
+        }
+        // If on list, allow default behavior (close modal)
+        return false;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [visible, selectedDoc]);
 
   // Render custom handle
   const renderHandle = useCallback(
@@ -701,7 +714,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       onDismiss={handleDismiss}
-      enablePanDownToClose
+      enablePanDownToClose={!selectedDoc}
       handleComponent={renderHandle}
       backdropComponent={renderBackdrop}
       backgroundStyle={{

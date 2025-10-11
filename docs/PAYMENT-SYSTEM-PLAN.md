@@ -4,7 +4,7 @@
 
 **Status:** In Progress (gestartet am 2025-10-10)
 
-**Gesamtaufwand geschätzt:** 15-22 Stunden über mehrere Sessions
+**Gesamtaufwand geschätzt:** 14-20 Stunden über mehrere Sessions (aktualisiert: -1.5h durch Wegfall Restore Button)
 
 ---
 
@@ -12,8 +12,8 @@
 
 | # | Aufgabe | Status | Priorität | Zeitaufwand |
 |---|---------|--------|-----------|-------------|
-| 1 | Multiple Unlocks (Quota-System) | 🔄 TODO | **CRITICAL** | 4-6h |
-| 2 | Restore Purchases Button | 🔄 TODO | **CRITICAL** | 1-2h |
+| 1 | Multiple Unlocks (Quota-System) | ✅ DONE | **CRITICAL** | 1.5h |
+| 2 | ~~Restore Purchases Button~~ | ❌ ENTFERNT | ~~CRITICAL~~ | ~~Backend-Lösung geplant~~ |
 | 3 | Error Handling erweitern | 🔄 TODO | **CRITICAL** | 2-3h |
 | 4 | Legal Requirements (Settings) | 🔄 TODO | **CRITICAL** | 3-4h |
 | 5 | Tests schreiben | 🔄 TODO | HIGH | 4-6h |
@@ -60,23 +60,16 @@
 
 ---
 
-### AUFGABE 2: Restore Purchases Button ⚡ CRITICAL
+### ~~AUFGABE 2: Restore Purchases Button~~ ❌ ENTFERNT
 
-**Dateien zu ändern:**
-- `screens/SupportShop/SupportShop.tsx`
-- `locales/de|en|hi/supportShop.json`
+**Grund:** Wird nicht benötigt. Zukünftig wird ein eigenes Backend-Account-System implementiert, das die Datensicherung übernimmt.
 
-**Schritte:**
-1. ⬜ Button in Header/Footer hinzufügen
-2. ⬜ Event-Handler `handleRestorePurchases`
-3. ⬜ Loading-State während Restore
-4. ⬜ Success-Toast: "Käufe wiederhergestellt"
-5. ⬜ Übersetzungen hinzufügen
+**Alternative Lösung (zukünftig):**
+- Eigener Account im Backend
+- Daten-Sync über Backend
+- Kein Google Play Restore notwendig
 
-**Akzeptanzkriterien:**
-- [ ] Button sichtbar im Support Shop
-- [ ] Restore funktioniert (testet mit DevTool)
-- [ ] User-Feedback bei Erfolg/Fehler
+**Status:** Aus dem Plan entfernt, da durch Backend-Lösung ersetzt wird.
 
 ---
 

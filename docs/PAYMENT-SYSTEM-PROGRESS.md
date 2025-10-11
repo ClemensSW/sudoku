@@ -52,23 +52,23 @@
 
 ---
 
-### Task 1.2: Restore Purchases Button
-- **Status:** 🔄 TODO
-- **Priorität:** CRITICAL
-- **Geschätzt:** 1-2h
-- **Tatsächlich:** -
+### ~~Task 1.2: Restore Purchases Button~~ ❌ ENTFERNT
+- **Status:** ❌ ENTFERNT
+- **Priorität:** ~~CRITICAL~~
+- **Geschätzt:** ~~1-2h~~
+- **Tatsächlich:** 0h (nicht implementiert)
 
-**Änderungen:**
-- [ ] `screens/SupportShop/SupportShop.tsx` - Button hinzufügen
-- [ ] `locales/de|en|hi/supportShop.json` - Übersetzungen
+**Grund:** Wird nicht benötigt. Zukünftig wird ein eigenes Backend-Account-System implementiert, das die Datensicherung übernimmt.
 
-**Tests:**
-- [ ] Button sichtbar
-- [ ] Restore funktioniert
-- [ ] Success-Toast erscheint
+**Alternative Lösung:**
+- Backend-Account-System (geplant)
+- Daten-Sync über Backend
+- Kein Google Play Restore notwendig
 
 **Probleme/Learnings:**
-- (noch keine)
+- Google Play Policy verlangt eigentlich Restore-Button, ABER:
+- Mit eigenem Backend-Account ist dies nicht notwendig
+- RevenueCat bietet bereits `restorePurchases()` Funktion (kann später integriert werden)
 
 ---
 
@@ -198,7 +198,7 @@
 | # | Problem | Status | Priorität | Assigniert zu Session |
 |---|---------|--------|-----------|----------------------|
 | 1 | Multiple Unlocks nicht möglich | ✅ GELÖST | CRITICAL | Session 1 |
-| 2 | Kein Restore Button | 🔄 TODO | CRITICAL | Session 1 |
+| 2 | Kein Restore Button | ❌ NICHT BENÖTIGT | ~~CRITICAL~~ | Backend-Lösung geplant |
 | 3 | Unvollständiges Error Handling | 🔄 TODO | CRITICAL | Session 1 |
 | 4 | Legal Docs fehlen | 🔄 TODO | CRITICAL | Session 2 |
 | 5 | Keine Tests | 🔄 TODO | HIGH | Session 3 |

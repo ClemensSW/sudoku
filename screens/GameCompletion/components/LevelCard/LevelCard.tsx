@@ -384,25 +384,28 @@ const LevelCard: React.FC<LevelCardProps> = ({
             },
           ]}
         >
-          {/* Header: Label + Chevron */}
-          <View style={styles.titleHeader}>
+          {/* Content Column (Label + Title) */}
+          <View style={{ flex: 1 }}>
+            {/* Header: Label + Icon */}
             <View style={styles.titleHeaderLeft}>
               <Feather name="award" size={16} color={progressColor} />
               <Text style={[styles.titleLabel, { color: colors.textSecondary }]}>
                 {t('level.yourTitleLabel')}
               </Text>
             </View>
-            <Feather name="chevron-right" size={18} color={progressColor} />
+
+            {/* Title Value */}
+            <Text
+              style={[styles.titleValue, { color: colors.textPrimary }]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {selectedTitle || t('level.chooseTitle')}
+            </Text>
           </View>
 
-          {/* Title Value */}
-          <Text
-            style={[styles.titleValue, { color: colors.textPrimary }]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {selectedTitle || t('level.chooseTitle')}
-          </Text>
+          {/* Chevron - Center Aligned */}
+          <Feather name="chevron-right" size={18} color={progressColor} style={{ alignSelf: 'center' }} />
         </Pressable>
       </View>
 

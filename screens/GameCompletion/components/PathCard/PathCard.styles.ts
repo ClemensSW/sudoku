@@ -47,6 +47,8 @@ export default StyleSheet.create({
   },
 
   pathPressable: {
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 12,
     padding: spacing.md,
   },

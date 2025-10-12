@@ -193,54 +193,59 @@ const PathCard: React.FC<PathCardProps> = ({
               },
             ]}
           >
-            {/* Header: Label + Chevron */}
-            <View style={styles.pathHeader}>
+            {/* Content Column (Label + Path Name) */}
+            <View style={{ flex: 1 }}>
+              {/* Header: Label + Icon */}
               <View style={styles.pathHeaderLeft}>
                 <Feather name="compass" size={16} color={displayColor} />
                 <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
                   {t('path.currentPath')}
                 </Text>
               </View>
-              <Feather name="chevron-right" size={18} color={displayColor} />
+
+              {/* Path Name */}
+              <Text
+                style={[styles.pathName, { color: colors.textPrimary }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {levelInfo.currentPath.name}
+              </Text>
             </View>
 
-            {/* Path Name */}
-            <Text
-              style={[styles.pathName, { color: colors.textPrimary }]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {levelInfo.currentPath.name}
-            </Text>
-
-            {/* Description - expandable with fade */}
-            {pathDescExpanded && (
-              <Animated.View
-                style={styles.pathDescriptionWrapper}
-                entering={FadeIn.duration(200)}
-              >
-                <Text
-                  style={[styles.pathDescription, { color: colors.textSecondary }]}
-                  numberOfLines={5}
-                  ellipsizeMode="tail"
-                >
-                  {pathDescription}
-                </Text>
-
-                {/* Fade gradient for long texts */}
-                {needsFade && (
-                  <LinearGradient
-                    colors={[
-                      "transparent",
-                      theme.isDark ? "#1a1a1a" : "#ffffff",
-                    ]}
-                    style={styles.descriptionFade}
-                    pointerEvents="none"
-                  />
-                )}
-              </Animated.View>
+            {/* Chevron - Center Aligned (only when collapsed) */}
+            {!pathDescExpanded && (
+              <Feather name="chevron-right" size={18} color={displayColor} style={{ alignSelf: 'center' }} />
             )}
           </Pressable>
+
+          {/* Description - expandable with fade (outside of row layout) */}
+          {pathDescExpanded && (
+            <Animated.View
+              style={[styles.pathDescriptionWrapper, { paddingHorizontal: 12 }]}
+              entering={FadeIn.duration(200)}
+            >
+              <Text
+                style={[styles.pathDescription, { color: colors.textSecondary }]}
+                numberOfLines={5}
+                ellipsizeMode="tail"
+              >
+                {pathDescription}
+              </Text>
+
+              {/* Fade gradient for long texts */}
+              {needsFade && (
+                <LinearGradient
+                  colors={[
+                    "transparent",
+                    theme.isDark ? "#1a1a1a" : "#ffffff",
+                  ]}
+                  style={styles.descriptionFade}
+                  pointerEvents="none"
+                />
+              )}
+            </Animated.View>
+          )}
         </View>
       )}
 

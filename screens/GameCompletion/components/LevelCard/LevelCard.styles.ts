@@ -226,6 +226,8 @@ export default StyleSheet.create({
   },
 
   titlePressable: {
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 12,
     padding: spacing.md,
   },

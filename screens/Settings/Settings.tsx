@@ -395,6 +395,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             setShowCommunityModal(false);
             setShowSupportShop(true);
           }}
+          showAlert={showAlert}
         />
       )}
 

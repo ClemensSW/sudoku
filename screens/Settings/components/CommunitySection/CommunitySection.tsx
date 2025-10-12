@@ -47,11 +47,13 @@ const customStyles = StyleSheet.create({
 interface CommunitySectionProps {
   onSupportPress: () => void;
   onSharePress: () => void;
+  showAlert?: (config: any) => void;
 }
 
 const CommunitySection: React.FC<CommunitySectionProps> = ({
   onSupportPress,
   onSharePress,
+  showAlert,
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
@@ -167,13 +169,14 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
       </TouchableOpacity>
 
       {/* Review Manager */}
-      <ReviewManager 
+      <ReviewManager
         isVisible={showReviewSystem}
         appPackageName="de.playfusiongate.sudokuduo"
         feedbackEmail="info@playfusion-gate.de"
         onClose={handleCloseReview}
         onPlayStoreRedirect={handlePlayStoreRedirect}
         onFeedbackSent={handleFeedbackSent}
+        showAlert={showAlert}
       />
     </View>
   );

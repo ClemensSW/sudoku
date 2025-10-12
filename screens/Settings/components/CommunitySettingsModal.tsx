@@ -10,6 +10,7 @@ interface CommunitySettingsModalProps {
   onClose: () => void;
   onShareApp: () => void;
   onSupportPress: () => void;
+  showAlert?: (config: any) => void;
 }
 
 const CommunitySettingsModal: React.FC<CommunitySettingsModalProps> = ({
@@ -17,6 +18,7 @@ const CommunitySettingsModal: React.FC<CommunitySettingsModalProps> = ({
   onClose,
   onShareApp,
   onSupportPress,
+  showAlert,
 }) => {
   const { t } = useTranslation("settings");
   const { colors, isDark } = useTheme();
@@ -35,6 +37,7 @@ const CommunitySettingsModal: React.FC<CommunitySettingsModalProps> = ({
       <CommunitySection
         onShareApp={onShareApp}
         onSupportPress={onSupportPress}
+        showAlert={showAlert}
       />
     </BottomSheetModal>
   );

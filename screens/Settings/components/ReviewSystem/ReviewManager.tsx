@@ -8,27 +8,29 @@ import FeedbackDetailModal from './FeedbackDetailModal';
 import { FeedbackData, Rating, FeedbackCategory } from './types';
 import { openPlayStoreForRating, sendFeedbackViaEmail, logFeedbackData } from './utils';
 import { TEXTS } from './constants';
-import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { triggerHaptic } from '@/utils/haptics';
 
 interface ReviewManagerProps {
   // Is the manager active/visible
   isVisible: boolean;
-  
+
   // Play Store ID of your app
   appPackageName: string;
-  
+
   // Email address for feedback
   feedbackEmail: string;
-  
+
   // Callback when the Review Manager is closed
   onClose: () => void;
-  
+
   // Callback when rating is submitted to PlayStore
   onPlayStoreRedirect?: () => void;
-  
+
   // Callback when feedback is sent
   onFeedbackSent?: (data: FeedbackData) => void;
+
+  // Alert function from parent (to avoid context issues)
+  showAlert?: (config: any) => void;
 }
 
 const ReviewManager: React.FC<ReviewManagerProps> = ({
@@ -37,7 +39,8 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   feedbackEmail,
   onClose,
   onPlayStoreRedirect,
-  onFeedbackSent
+  onFeedbackSent,
+  showAlert
 }) => {
   const { t } = useTranslation('feedback');
 
@@ -49,9 +52,6 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   // Rating data
   const [rating, setRating] = useState<Rating | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
-
-  // Custom Alert for success/error messages
-  const { showAlert } = useAlert();
 
   // Show initially when isVisible is true
   useEffect(() => {
@@ -145,49 +145,61 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       
       // Show success or error message
       if (sent) {
+        if (showAlert) {
+          showAlert({
+            title: TEXTS.FEEDBACK_SENT_TITLE,
+            message: TEXTS.FEEDBACK_SENT_SUBTITLE,
+            type: 'success',
+            buttons: [
+              {
+                text: TEXTS.FEEDBACK_SENT_BUTTON,
+                onPress: handleClose,
+                style: 'primary'
+              }
+            ],
+          });
+        } else {
+          handleClose();
+        }
+      } else {
+        // If no email app is available
+        if (showAlert) {
+          showAlert({
+            title: t('errors.sendFailed.title'),
+            message: t('errors.sendFailed.message', { email: feedbackEmail }),
+            type: 'warning',
+            buttons: [
+              {
+                text: t('errors.sendFailed.button'),
+                onPress: handleClose,
+                style: 'primary'
+              }
+            ],
+          });
+        } else {
+          handleClose();
+        }
+      }
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+
+      // Show error message
+      if (showAlert) {
         showAlert({
-          title: TEXTS.FEEDBACK_SENT_TITLE,
-          message: TEXTS.FEEDBACK_SENT_SUBTITLE,
-          type: 'success',
+          title: t('errors.generic.title'),
+          message: t('errors.generic.message'),
+          type: 'error',
           buttons: [
             {
-              text: TEXTS.FEEDBACK_SENT_BUTTON,
+              text: t('errors.generic.button'),
               onPress: handleClose,
               style: 'primary'
             }
           ],
         });
       } else {
-        // If no email app is available
-        showAlert({
-          title: t('errors.sendFailed.title'),
-          message: t('errors.sendFailed.message', { email: feedbackEmail }),
-          type: 'warning',
-          buttons: [
-            {
-              text: t('errors.sendFailed.button'),
-              onPress: handleClose,
-              style: 'primary'
-            }
-          ],
-        });
+        handleClose();
       }
-    } catch (error) {
-      console.error('Error sending feedback:', error);
-
-      // Show error message
-      showAlert({
-        title: t('errors.generic.title'),
-        message: t('errors.generic.message'),
-        type: 'error',
-        buttons: [
-          {
-            text: t('errors.generic.button'),
-            onPress: handleClose,
-            style: 'primary'
-          }
-        ],
-      });
     }
   };
 

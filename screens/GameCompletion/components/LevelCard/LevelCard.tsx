@@ -124,18 +124,6 @@ const LevelCard: React.FC<LevelCardProps> = ({
     ? allLevels[selectedTitleIndex]?.name || null
     : null;
 
-  const getTitleDescription = (): string => {
-    if (selectedTitleIndex === null) {
-      // Fallback to current level message
-      return levelInfo.levelData.message;
-    }
-
-    // Get description from level index
-    return allLevels[selectedTitleIndex]?.message || levelInfo.levelData.message;
-  };
-
-  const titleDescription = getTitleDescription();
-  const needsFade = titleDescription.length > 120;
 
   // Helper function to darken color
   const darkenColor = (color: string, amount: number): string => {
@@ -360,36 +348,25 @@ const LevelCard: React.FC<LevelCardProps> = ({
           )}
         </View>
 
-        {/* Next Level Preview - Neutral Design */}
-        {levelInfo.nextLevelData && (
-          <View
-            style={[
-              styles.nextLevelCard,
-              {
-                backgroundColor: theme.isDark
-                  ? "rgba(255, 255, 255, 0.04)"
-                  : "rgba(0, 0, 0, 0.03)",
-                borderColor: theme.isDark
-                  ? "rgba(255, 255, 255, 0.1)"
-                  : "rgba(0, 0, 0, 0.06)",
-                borderLeftColor: progressColor,
-              },
-            ]}
-          >
-            <View style={styles.nextLevelHeader}>
-              <Feather name="arrow-right-circle" size={16} color={progressColor} />
-              <Text style={[styles.nextLevelHeaderText, { color: colors.textSecondary }]}>
-                {t('level.nextLevel')}
-              </Text>
-            </View>
-            <Text style={[styles.nextLevelTitle, { color: colors.textPrimary }]}>
-              {t('level.title')} {levelInfo.currentLevel + 2} • {levelInfo.nextLevelData.name}
-            </Text>
-            <Text style={[styles.nextLevelXp, { color: colors.textSecondary }]}>
-              {t('level.xpToUnlock', { count: levelInfo.xpForNextLevel })}
-            </Text>
-          </View>
-        )}
+        {/* Current Level Description - Neutral Design */}
+        <View
+          style={[
+            styles.nextLevelCard,
+            {
+              backgroundColor: theme.isDark
+                ? "rgba(255, 255, 255, 0.04)"
+                : "rgba(0, 0, 0, 0.03)",
+              borderColor: theme.isDark
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.06)",
+              borderLeftColor: progressColor,
+            },
+          ]}
+        >
+          <Text style={[styles.nextLevelXp, { color: colors.textSecondary }]}>
+            {levelInfo.levelData.message}
+          </Text>
+        </View>
       </View>
 
       {/* Title Section - Button to open modal */}
@@ -426,29 +403,6 @@ const LevelCard: React.FC<LevelCardProps> = ({
           >
             {selectedTitle || t('level.chooseTitle')}
           </Text>
-
-          {/* Title Description - Always visible, 3 lines max with fade */}
-          <View style={styles.titleDescriptionWrapper}>
-            <Text
-              style={[styles.titleDescription, { color: colors.textSecondary }]}
-              numberOfLines={3}
-              ellipsizeMode="tail"
-            >
-              {titleDescription}
-            </Text>
-
-            {/* Fade gradient for long texts */}
-            {needsFade && (
-              <LinearGradient
-                colors={[
-                  "transparent",
-                  theme.isDark ? "#1a1a1a" : "#ffffff",
-                ]}
-                style={styles.descriptionFade}
-                pointerEvents="none"
-              />
-            )}
-          </View>
         </Pressable>
       </View>
 

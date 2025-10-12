@@ -185,7 +185,11 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
         visible={showLanguageModal}
         onClose={() => setShowLanguageModal(false)}
         title={t("appearance.languageModal.title")}
-        subtitle={t("appearance.languageModal.subtitle")}
+        isDark={theme.isDark}
+        textPrimaryColor={colors.textPrimary}
+        surfaceColor={colors.surface}
+        borderColor={colors.border}
+        snapPoints={['50%', '70%']}
       >
         <View style={styles.languageList}>
           {sortedLanguages.map((lang) => (
@@ -205,11 +209,9 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
               onPress={() => handleLanguageChange(lang.code)}
             >
               <View style={styles.languageContent}>
-                <Text style={[styles.languageNative, { color: colors.textPrimary }]}>
-                  {lang.native}
-                </Text>
-                <Text style={[styles.languageEnglish, { color: colors.textSecondary }]}>
-                  {lang.english}
+                <Text style={styles.flagEmoji}>{lang.flag}</Text>
+                <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                  {lang.name}
                 </Text>
               </View>
               {currentLanguage === lang.code && (
@@ -281,15 +283,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   languageContent: {
-    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
-  languageNative: {
-    fontSize: 18,
+  flagEmoji: {
+    fontSize: 28,
+  },
+  languageName: {
+    fontSize: 17,
     fontWeight: "600",
-  },
-  languageEnglish: {
-    fontSize: 14,
-    marginTop: 2,
   },
 });
 

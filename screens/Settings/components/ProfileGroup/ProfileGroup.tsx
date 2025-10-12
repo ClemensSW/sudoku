@@ -173,6 +173,11 @@ const ProfileGroup: React.FC = () => {
             <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
               {t("appearance.title")}
             </Text>
+            {selectedTitleIndex !== null && (
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+                {allLevels[selectedTitleIndex]?.name || ''}
+              </Text>
+            )}
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>

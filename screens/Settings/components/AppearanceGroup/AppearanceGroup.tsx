@@ -52,15 +52,9 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
   const currentLanguage = i18n.language;
   const deviceLanguageCode = Localization.getLocales()[0]?.languageCode;
   const sortedLanguages = React.useMemo(
-    () => {
-      const languages = getSortedLanguages(deviceLanguageCode ?? undefined);
-      console.log('sortedLanguages:', languages);
-      return languages;
-    },
+    () => getSortedLanguages(deviceLanguageCode ?? undefined),
     [deviceLanguageCode]
   );
-
-  console.log('AppearanceGroup render - showLanguageModal:', showLanguageModal, 'sortedLanguages count:', sortedLanguages.length);
 
   // Load color data and title on mount
   useEffect(() => {
@@ -300,38 +294,30 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           borderColor={cardBorder}
           snapPoints={['50%', '70%']}
         >
-          {console.log('BottomSheetModal children rendering, languages:', sortedLanguages)}
           <View style={styles.languageOptions}>
-            {sortedLanguages.length === 0 ? (
-              <Text style={{ color: colors.textPrimary }}>NO LANGUAGES FOUND!</Text>
-            ) : (
-              sortedLanguages.map((language) => {
-                console.log('Rendering language:', language);
-                return (
-                <TouchableOpacity
-                  key={language.code}
-                  onPress={() => handleLanguageSelect(language.code)}
-                  style={[
-                    styles.languageOption,
-                    {
-                      backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
-                      borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
-                    },
-                  ]}
-                >
-                  <View style={styles.languageContent}>
-                    <Text style={[styles.flagEmoji, { color: '#FF0000' }]}>TEST FLAG</Text>
-                    <Text style={[styles.languageName, { color: '#FF0000', backgroundColor: '#FFFF00' }]}>
-                      TEST TEXT - {language?.name || 'UNDEFINED'}
-                    </Text>
-                  </View>
-                  {currentLanguage === language.code && (
-                    <Feather name="check" size={22} color={colors.primary} />
-                  )}
-                </TouchableOpacity>
-                );
-              })
-            )}
+            {sortedLanguages.map((language) => (
+              <TouchableOpacity
+                key={language.code}
+                onPress={() => handleLanguageSelect(language.code)}
+                style={[
+                  styles.languageOption,
+                  {
+                    backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
+                    borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
+                  },
+                ]}
+              >
+                <View style={styles.languageContent}>
+                  <Text style={styles.flagEmoji}>{language.flag}</Text>
+                  <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                    {language.name}
+                  </Text>
+                </View>
+                {currentLanguage === language.code && (
+                  <Feather name="check" size={22} color={colors.primary} />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         </BottomSheetModal>
       )}

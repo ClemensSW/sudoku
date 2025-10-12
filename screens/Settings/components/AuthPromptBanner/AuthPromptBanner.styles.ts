@@ -93,20 +93,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
 
-  cloudIconOverlay: {
-    position: "absolute",
-    top: 3,
-    right: 3,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    // backgroundColor set inline
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.6)",
-  },
-
   // Bottom Row (Text + Button)
   bottomRow: {
     width: "100%",

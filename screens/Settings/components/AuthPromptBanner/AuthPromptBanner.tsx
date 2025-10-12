@@ -175,9 +175,6 @@ const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
               <Animated.View style={[styles.iconContainer, iconAnimatedStyle]}>
                 <View style={styles.iconBackground}>
                   <Feather name="shield" size={38} color="#FFFFFF" />
-                  <View style={[styles.cloudIconOverlay, { backgroundColor: progressColor + 'E6' }]}>
-                    <Feather name="cloud" size={16} color="#FFFFFF" />
-                  </View>
                 </View>
               </Animated.View>
 

@@ -28,7 +28,7 @@ const HelpSettingsModal: React.FC<HelpSettingsModalProps> = ({
       textPrimaryColor={colors.textPrimary}
       surfaceColor={colors.surface}
       borderColor={colors.border}
-      snapPoints={['70%', '90%']}
+      snapPoints={['75%', '90%']}
     >
       <HelpSection
         showGameFeatures={false}

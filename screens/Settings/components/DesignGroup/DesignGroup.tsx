@@ -9,7 +9,8 @@ import PinselIcon from "@/assets/svg/pinsel.svg";
 import LanguageIcon from "@/assets/svg/language.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
-import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
+import { useProgressColor, useUpdateProgressColor, useStoredColorHex } from "@/hooks/useProgressColor";
+import { hexToColorId } from "@/utils/pathColors";
 import { loadColorUnlock, syncUnlockedColors, ColorUnlockData, loadStats } from "@/utils/storage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { getSortedLanguages } from "@/locales/languages";
@@ -34,6 +35,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const progressColor = useProgressColor();
+  const storedColorHex = useStoredColorHex();
   const updateColor = useUpdateProgressColor();
 
   // State for PathColorSelector
@@ -94,18 +96,10 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     return languageMap[lang];
   };
 
-  // Get color name from hex value
-  const getColorNameFromHex = (hexColor: string): string => {
-    const colorMap: { [key: string]: string } = {
-      "#4A90E2": "blue",    // Blau
-      "#50C878": "green",   // Grün
-      "#F4C542": "yellow",  // Gelb
-      "#E63946": "red",     // Rot
-      "#8A78B4": "purple",  // Lila
-    };
-
-    const colorKey = colorMap[hexColor.toUpperCase()];
-    return colorKey ? t(`pathColor.colors.${colorKey}`) : "";
+  // Get color name from hex value using the path colors system
+  const getColorName = (): string => {
+    const colorId = hexToColorId(storedColorHex);
+    return t(`pathColor.colors.${colorId}`);
   };
 
   if (!colorUnlockData) return null;
@@ -141,7 +135,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
             <View style={styles.colorSubtitleContainer}>
               <View style={[styles.colorCircle, { backgroundColor: progressColor }]} />
               <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
-                {getColorNameFromHex(colorUnlockData?.selectedColor || progressColor)}
+                {getColorName()}
               </Text>
             </View>
           </View>

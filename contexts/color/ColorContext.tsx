@@ -67,3 +67,11 @@ export const useUpdateProgressColor = (): ((color: string) => Promise<void>) => 
   }
   return context.updateSelectedColor;
 };
+
+export const useStoredColorHex = (): string => {
+  const context = useContext(ColorContext);
+  if (!context) {
+    throw new Error('useStoredColorHex must be used within ColorProvider');
+  }
+  return context.storedColorHex;
+};

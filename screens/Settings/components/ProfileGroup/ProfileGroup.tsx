@@ -148,7 +148,7 @@ const ProfileGroup: React.FC = () => {
               isEditing={isEditingName}
               textPrimaryColor={colors.textPrimary}
               textSecondaryColor={colors.textSecondary}
-              primaryColor={progressColor}
+              progressColor={progressColor}
             />
           </View>
           {isEditingName ? (

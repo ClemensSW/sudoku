@@ -12,7 +12,7 @@ interface EditableNameFieldProps {
   isEditing: boolean;
   textPrimaryColor: string;
   textSecondaryColor: string;
-  primaryColor: string;
+  progressColor: string; // Pfadfarbe (nicht primaryColor!)
 }
 
 const EditableNameField: React.FC<EditableNameFieldProps> = ({
@@ -22,7 +22,7 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
   isEditing,
   textPrimaryColor,
   textSecondaryColor,
-  primaryColor,
+  progressColor,
 }) => {
   const { t } = useTranslation('settings');
 
@@ -30,20 +30,16 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
   const [editedName, setEditedName] = useState(isDefaultName ? '' : name);
   const inputRef = useRef<TextInput>(null);
 
-  // Update editedName when name prop changes
+  // FIX 1: Update editedName when name prop changes (auch im Edit-Modus!)
   useEffect(() => {
-    if (!isEditing) {
-      setEditedName(isDefaultName ? '' : name);
-    }
-  }, [name, isDefaultName, isEditing]);
+    setEditedName(isDefaultName ? '' : name);
+  }, [name, isDefaultName]);
 
-  // Auto-focus when entering edit mode
+  // FIX 2: Auto-focus when entering edit mode
   useEffect(() => {
     if (isEditing) {
-      const timer = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
+      // Sofortiger Focus ohne Delay
+      inputRef.current?.focus();
     }
   }, [isEditing]);
 
@@ -73,12 +69,13 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
           placeholderTextColor={textSecondaryColor}
           returnKeyType="done"
           maxLength={20}
+          autoFocus={true} // FIX 2: autoFocus hinzugefügt
           autoCorrect={false}
           style={[
             styles.input,
             {
               color: textPrimaryColor,
-              borderBottomColor: primaryColor,
+              borderBottomColor: progressColor, // FIX 3: progressColor (Pfadfarbe)
             },
           ]}
         />

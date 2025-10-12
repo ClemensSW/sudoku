@@ -147,16 +147,16 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.22)",
+    // backgroundColor set inline (solid color based on progressColor)
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "rgba(255, 255, 255, 0.35)",
+    borderColor: "rgba(255, 255, 255, 0.4)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 4,
+    elevation: 6,
   },
 
   ctaIcon: {

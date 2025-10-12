@@ -81,6 +81,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const { showAlert } = useAlert();
   const { toggleMusic } = useBackgroundMusic();
   const { hideBottomNav, resetBottomNav } = useNavigation();
+  const { updateTheme } = theme;
 
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -224,7 +225,11 @@ const Settings: React.FC<SettingsScreenProps> = ({
   // Modal handlers
   const handleThemeChange = async (value: "light" | "dark") => {
     setIsChangingTheme(true);
-    await handleSettingChange("darkMode", value);
+    await updateTheme(value);
+    // Also update local settings state
+    if (settings) {
+      setSettings({ ...settings, darkMode: value });
+    }
     setTimeout(() => setIsChangingTheme(false), 300);
   };
 

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    height: 150,
+    height: 185,
     borderRadius: 20,
     overflow: "hidden",
     position: "relative",
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    padding: spacing.lg,
-    gap: spacing.md,
+    padding: spacing.lg + 4,
+    gap: spacing.md + 2,
   },
 
   iconContainer: {
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "rgba(74, 144, 226, 0.85)",
+    // backgroundColor set inline based on progressColor
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1.5,
@@ -106,11 +106,11 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
     letterSpacing: 0.2,
-    marginBottom: 2,
+    marginBottom: 3,
     // Text shadow for readability on gradient
     textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 0, height: 1 },
@@ -122,14 +122,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "rgba(255, 255, 255, 0.92)",
     letterSpacing: 0.1,
-    marginBottom: spacing.xs,
+    lineHeight: 17,
+    marginBottom: spacing.xs + 2,
     textShadowColor: "rgba(0, 0, 0, 0.2)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
 
   benefitsList: {
-    gap: 4,
+    gap: 5,
   },
 
   benefitItem: {
@@ -140,6 +141,7 @@ const styles = StyleSheet.create({
 
   benefitIcon: {
     opacity: 0.9,
+    flexShrink: 0,
   },
 
   benefitText: {
@@ -147,6 +149,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "rgba(255, 255, 255, 0.88)",
     letterSpacing: 0.1,
+    lineHeight: 15,
+    flexShrink: 1,
     textShadowColor: "rgba(0, 0, 0, 0.18)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,

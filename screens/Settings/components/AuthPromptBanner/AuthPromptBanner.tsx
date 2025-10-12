@@ -16,6 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import styles from "./AuthPromptBanner.styles";
 
 interface AuthPromptBannerProps {
@@ -25,6 +26,7 @@ interface AuthPromptBannerProps {
 const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
+  const progressColor = useProgressColor();
 
   // Animation values
   const scale = useSharedValue(1);
@@ -107,10 +109,39 @@ const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
     ],
   }));
 
-  // Gradient colors based on theme
-  const gradientColors = theme.isDark
-    ? ["#3A7BC8", "#4A6FD8", "#6A58CE"]
-    : ["#4A90E2", "#5B7FE8", "#7B68EE"];
+  // Generate gradient colors based on progress color and theme
+  const getGradientColors = () => {
+    // Hex to RGB helper
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 74, g: 144, b: 226 }; // Default blue
+    };
+
+    const rgb = hexToRgb(progressColor);
+
+    // Create gradient variants based on theme
+    if (theme.isDark) {
+      // Darker variants for dark mode
+      return [
+        `rgb(${Math.max(0, rgb.r - 30)}, ${Math.max(0, rgb.g - 30)}, ${Math.max(0, rgb.b - 30)})`,
+        `rgb(${Math.max(0, rgb.r - 15)}, ${Math.max(0, rgb.g - 15)}, ${Math.max(0, rgb.b - 15)})`,
+        progressColor,
+      ];
+    } else {
+      // Lighter variants for light mode
+      return [
+        progressColor,
+        `rgb(${Math.min(255, rgb.r + 20)}, ${Math.min(255, rgb.g + 20)}, ${Math.min(255, rgb.b + 20)})`,
+        `rgb(${Math.min(255, rgb.r + 40)}, ${Math.min(255, rgb.g + 40)}, ${Math.min(255, rgb.b + 40)})`,
+      ];
+    }
+  };
+
+  const gradientColors = getGradientColors();
 
   const benefits = [
     { key: "sync", icon: "cloud" as const },
@@ -150,7 +181,7 @@ const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
               <View style={styles.iconBackground}>
                 <Feather name="shield" size={32} color="#FFFFFF" />
                 {/* Small cloud icon overlay */}
-                <View style={styles.cloudIconOverlay}>
+                <View style={[styles.cloudIconOverlay, { backgroundColor: progressColor + 'D9' }]}>
                   <Feather name="cloud" size={16} color="#FFFFFF" />
                 </View>
               </View>

@@ -28,6 +28,7 @@
     "light": "Hell",
     "dark": "Dunkel",
     "avatar": "Avatar",
+    "name": "Name",
     "language": "Sprache",
     "pathColor": "Pfadfarbe",
     "title": "Titel",
@@ -35,6 +36,15 @@
     "languageModal": {
       "title": "Sprache wählen",
       "subtitle": "Wähle deine bevorzugte Sprache"
+    },
+    "nameModal": {
+      "title": "Profilname bearbeiten",
+      "placeholder": "Dein Name",
+      "characterCount": "{{count}}/20 Zeichen",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "errorEmpty": "Name darf nicht leer sein",
+      "errorTooLong": "Name ist zu lang (max. 20 Zeichen)"
     }
   },
   "gameSettings": {

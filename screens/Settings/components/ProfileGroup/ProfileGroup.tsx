@@ -5,10 +5,12 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import GraduateIcon from "@/assets/svg/GraduateIcon";
+import IdCardIcon from "@/assets/svg/id-card.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
-import { loadUserProfile, updateUserTitle, updateUserAvatar } from "@/utils/profileStorage";
+import { loadUserProfile, updateUserTitle, updateUserAvatar, updateUserName } from "@/utils/profileStorage";
+import EditableNameField from "./components/EditableNameField";
 import AvatarPicker from "@/screens/Leistung/components/AvatarPicker";
 import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
@@ -31,6 +33,10 @@ const ProfileGroup: React.FC = () => {
   const [selectedTitleIndex, setSelectedTitleIndex] = useState<number | null>(null);
   const [currentLevel, setCurrentLevel] = useState(0);
 
+  // State for Name
+  const [userName, setUserName] = useState<string>("User");
+  const [isEditingName, setIsEditingName] = useState(false);
+
   // Load data on mount
   useEffect(() => {
     const loadData = async () => {
@@ -48,9 +54,10 @@ const ProfileGroup: React.FC = () => {
       }
       setCurrentLevel(level);
 
-      // Load user title and avatar
+      // Load user title, avatar, and name
       const profile = await loadUserProfile();
       setSelectedTitleIndex(profile.titleLevelIndex ?? null);
+      setUserName(profile.name);
 
       const uri = await getAvatarUri();
       if (profile.avatarUri) {
@@ -76,6 +83,18 @@ const ProfileGroup: React.FC = () => {
     await updateUserTitle(levelIndex);
     setSelectedTitleIndex(levelIndex);
     triggerHaptic("success");
+  };
+
+  // Name handlers
+  const handleNameChange = async (newName: string) => {
+    await updateUserName(newName);
+    setUserName(newName);
+    setIsEditingName(false);
+  };
+
+  const handleStartEditName = () => {
+    triggerHaptic('light');
+    setIsEditingName(true);
   };
 
   // Prepare title options for modal
@@ -106,6 +125,37 @@ const ProfileGroup: React.FC = () => {
             </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Name Button with Inline Edit */}
+        <TouchableOpacity
+          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
+          onPress={handleStartEditName}
+          activeOpacity={0.7}
+          disabled={isEditingName}
+        >
+          <View style={styles.actionIcon}>
+            <IdCardIcon width={48} height={48} />
+          </View>
+          <View style={styles.actionTextContainer}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              {t("appearance.name")}
+            </Text>
+            <EditableNameField
+              name={userName}
+              onNameChange={handleNameChange}
+              onStartEdit={handleStartEditName}
+              isEditing={isEditingName}
+              textPrimaryColor={colors.textPrimary}
+              textSecondaryColor={colors.textSecondary}
+              primaryColor={progressColor}
+            />
+          </View>
+          {isEditingName ? (
+            <Feather name="check" size={20} color={colors.textSecondary} />
+          ) : (
+            <Feather name="edit-2" size={20} color={colors.textSecondary} />
+          )}
         </TouchableOpacity>
 
         {/* Title Button */}
@@ -191,6 +241,10 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 16,
     fontWeight: "600",
+  },
+  actionSubtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
 });
 

@@ -1,5 +1,14 @@
 {
   "title": "सेटिंग्स",
+  "categories": {
+    "profile": "प्रोफ़ाइल",
+    "design": "प्रदर्शन",
+    "game": "खेल",
+    "help": "मदद",
+    "actions": "क्रियाएं",
+    "community": "समुदाय",
+    "info": "जानकारी"
+  },
   "sections": {
     "help": "मदद",
     "helpAndTools": "मदद और उपकरण",
@@ -19,10 +28,24 @@
     "light": "हल्का",
     "dark": "गहरा",
     "avatar": "अवतार",
+    "name": "नाम",
     "language": "भाषा",
     "pathColor": "पथ रंग",
     "title": "उपाधि",
-    "noTitle": "बिना उपाधि"
+    "noTitle": "बिना उपाधि",
+    "languageModal": {
+      "title": "भाषा चुनें",
+      "subtitle": "अपनी पसंदीदा भाषा चुनें"
+    },
+    "nameModal": {
+      "title": "प्रोफ़ाइल नाम संपादित करें",
+      "placeholder": "आपका नाम",
+      "characterCount": "{{count}}/20 वर्ण",
+      "save": "सहेजें",
+      "cancel": "रद्द करें",
+      "errorEmpty": "नाम खाली नहीं हो सकता",
+      "errorTooLong": "नाम बहुत लंबा है (अधिकतम 20 वर्ण)"
+    }
   },
   "gameSettings": {
     "highlightRelated": "संबंधित सेल हाइलाइट करें",

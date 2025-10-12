@@ -41,7 +41,6 @@ import SettingsCategoryList from "./components/SettingsCategoryList";
 import HelpSection from "./components/HelpSection/HelpSection";
 import ActionsSection from "./components/ActionsSection/ActionsSection";
 import ProfileGroup from "./components/ProfileGroup";
-import DesignGroup from "./components/DesignGroup";
 
 import styles from "./Settings.styles";
 
@@ -82,7 +81,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showLegalScreen, setShowLegalScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isChangingTheme, setIsChangingTheme] = useState(false);
 
   // Determine if we should show game-specific features
   const showGameFeatures = fromGame && !!onQuitGame;
@@ -208,30 +206,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
     setShowLegalScreen(true);
   };
 
-  const handleThemeChange = async (value: "light" | "dark") => {
-    if (isChangingTheme || !settings || value === settings.darkMode) return;
-
-    setIsChangingTheme(true);
-    await theme.updateTheme(value);
-
-    const updatedSettings = { ...settings, darkMode: value };
-    setSettings(updatedSettings);
-    await saveSettings(updatedSettings);
-
-    setTimeout(() => {
-      setIsChangingTheme(false);
-    }, 300);
-  };
-
-  const handleLanguageChange = async (language: "de" | "en" | "hi") => {
-    if (!settings) return;
-    await i18n.changeLanguage(language);
-
-    const updatedSettings = { ...settings, language };
-    setSettings(updatedSettings);
-    await saveSettings(updatedSettings);
-  };
-
   if (isLoading) {
     return (
       <Animated.View
@@ -281,24 +255,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
               {t("categories.profile")}
             </RNText>
             <ProfileGroup />
-          </Animated.View>
-        )}
-
-        {/* Anzeige Section - Inline in Normal mode only */}
-        {!showGameFeatures && settings && (
-          <Animated.View
-            style={styles.section}
-            entering={FadeInDown.delay(100).duration(500)}
-          >
-            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-              {t("categories.design")}
-            </RNText>
-            <DesignGroup
-              themeValue={settings.darkMode}
-              onThemeChange={handleThemeChange}
-              onLanguageChange={handleLanguageChange}
-              isChanging={isChangingTheme}
-            />
           </Animated.View>
         )}
 

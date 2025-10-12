@@ -28,6 +28,7 @@
     "light": "Light",
     "dark": "Dark",
     "avatar": "Avatar",
+    "name": "Name",
     "language": "Language",
     "pathColor": "Path Color",
     "title": "Title",
@@ -35,6 +36,15 @@
     "languageModal": {
       "title": "Choose Language",
       "subtitle": "Select your preferred language"
+    },
+    "nameModal": {
+      "title": "Edit Profile Name",
+      "placeholder": "Your name",
+      "characterCount": "{{count}}/20 characters",
+      "save": "Save",
+      "cancel": "Cancel",
+      "errorEmpty": "Name cannot be empty",
+      "errorTooLong": "Name is too long (max. 20 characters)"
     }
   },
   "gameSettings": {

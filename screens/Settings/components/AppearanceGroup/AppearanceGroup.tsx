@@ -52,9 +52,15 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
   const currentLanguage = i18n.language;
   const deviceLanguageCode = Localization.getLocales()[0]?.languageCode;
   const sortedLanguages = React.useMemo(
-    () => getSortedLanguages(deviceLanguageCode),
+    () => {
+      const languages = getSortedLanguages(deviceLanguageCode ?? undefined);
+      console.log('sortedLanguages:', languages);
+      return languages;
+    },
     [deviceLanguageCode]
   );
+
+  console.log('AppearanceGroup render - showLanguageModal:', showLanguageModal, 'sortedLanguages count:', sortedLanguages.length);
 
   // Load color data and title on mount
   useEffect(() => {
@@ -294,10 +300,14 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           borderColor={cardBorder}
           snapPoints={['50%', '70%']}
         >
+          {console.log('BottomSheetModal children rendering, languages:', sortedLanguages)}
           <View style={styles.languageOptions}>
-            {sortedLanguages.map((language) => {
-              console.log('Rendering language:', language);
-              return (
+            {sortedLanguages.length === 0 ? (
+              <Text style={{ color: colors.textPrimary }}>NO LANGUAGES FOUND!</Text>
+            ) : (
+              sortedLanguages.map((language) => {
+                console.log('Rendering language:', language);
+                return (
                 <TouchableOpacity
                   key={language.code}
                   onPress={() => handleLanguageSelect(language.code)}
@@ -319,8 +329,9 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
                     <Feather name="check" size={22} color={colors.primary} />
                   )}
                 </TouchableOpacity>
-              );
-            })}
+                );
+              })
+            )}
           </View>
         </BottomSheetModal>
       )}

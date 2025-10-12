@@ -94,6 +94,20 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     return languageMap[lang];
   };
 
+  // Get color name from hex value
+  const getColorNameFromHex = (hexColor: string): string => {
+    const colorMap: { [key: string]: string } = {
+      "#4A90E2": "blue",    // Blau
+      "#50C878": "green",   // Grün
+      "#F4C542": "yellow",  // Gelb
+      "#E63946": "red",     // Rot
+      "#8A78B4": "purple",  // Lila
+    };
+
+    const colorKey = colorMap[hexColor.toUpperCase()];
+    return colorKey ? t(`pathColor.colors.${colorKey}`) : "";
+  };
+
   if (!colorUnlockData) return null;
 
   return (
@@ -124,6 +138,12 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
             <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
               {t("appearance.pathColor")}
             </Text>
+            <View style={styles.colorSubtitleContainer}>
+              <View style={[styles.colorCircle, { backgroundColor: progressColor }]} />
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+                {getColorNameFromHex(colorUnlockData?.selectedColor || progressColor)}
+              </Text>
+            </View>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -241,6 +261,19 @@ const styles = StyleSheet.create({
   actionSubtitle: {
     fontSize: 14,
     marginTop: 2,
+  },
+  colorSubtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 2,
+    gap: 6,
+  },
+  colorCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
   languageList: {
     gap: 12,

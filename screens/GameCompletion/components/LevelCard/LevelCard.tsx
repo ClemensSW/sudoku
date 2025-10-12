@@ -216,17 +216,17 @@ const LevelCard: React.FC<LevelCardProps> = ({
           },
         ]}
       >
-        {/* XP Header */}
-        <View style={styles.progressHeader}>
-          <Text style={[styles.xpValueText, { color: colors.textPrimary }]}>
-            {(currentXp - levelInfo.levelData.xp).toLocaleString()} / {((levelInfo.nextLevelData?.xp ?? levelInfo.levelData.xp) - levelInfo.levelData.xp).toLocaleString()} EP
-          </Text>
-        </View>
-
-        {/* Progress Bar Row (Bar + Badge inline) */}
+        {/* Progress Bar Row (EP Info Column + Badge inline) */}
         <View style={styles.progressBarRow}>
-          {/* Progress Bar with Gradient */}
-          <View style={styles.progressBarContainer}>
+          {/* EP Info Column: Text + Progress Bar */}
+          <View style={styles.progressInfoColumn}>
+            {/* XP Text */}
+            <Text style={[styles.xpValueText, { color: colors.textPrimary }]}>
+              {(currentXp - levelInfo.levelData.xp).toLocaleString()} / {((levelInfo.nextLevelData?.xp ?? levelInfo.levelData.xp) - levelInfo.levelData.xp).toLocaleString()} EP
+            </Text>
+
+            {/* Progress Bar with Gradient */}
+            <View style={styles.progressBarContainer}>
             <View
               style={[
                 styles.progressBackground,
@@ -311,6 +311,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
                   ]}
                 />
               )}
+            </View>
             </View>
           </View>
 

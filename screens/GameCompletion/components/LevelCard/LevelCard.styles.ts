@@ -129,12 +129,19 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
   },
 
-  // Progress Header with XP values
-  progressHeader: {
+  // Progress Bar Row (EP Info Column + Badge inline)
+  progressBarRow: {
     flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.md,
+    marginBottom: spacing.sm,
+  },
+
+  // EP Info Column: Text + Progress Bar (vertical unit)
+  progressInfoColumn: {
+    flex: 1,
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.md,
+    gap: 8,
   },
 
   xpValueText: {
@@ -144,16 +151,8 @@ export default StyleSheet.create({
     letterSpacing: 0.3,
   },
 
-  // Progress Bar Row (Bar + Badge inline)
-  progressBarRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    marginBottom: spacing.sm,
-  },
-
   progressBarContainer: {
-    flex: 1,
+    width: "100%",
     height: 12,
     borderRadius: 6,
     overflow: "hidden",

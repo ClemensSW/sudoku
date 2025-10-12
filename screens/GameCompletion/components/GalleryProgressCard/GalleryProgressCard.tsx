@@ -4,13 +4,12 @@ import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useLevelInfo } from "../PlayerProgressionCard/utils/useLevelInfo";
 import { GameStats } from "@/utils/storage";
 import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 
 // Components
 import GallerySegment from "./components/GallerySegment";
-import GalleryProgress from "./components/GalleryProgress";
+import GalleryInfo from "./components/GalleryInfo";
 import GalleryAction from "./components/GalleryAction";
 
 // Hooks
@@ -39,9 +38,8 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   const theme = useTheme();
   const { colors } = theme;
 
-  // Get level info and custom progress color
+  // Get custom progress color
   const calculatedXp = stats ? stats.totalXP : 0;
-  const levelInfo = useLevelInfo(calculatedXp);
   const progressColor = useProgressColor(calculatedXp);
 
   // Track visibility for animation
@@ -70,13 +68,9 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     );
   }
 
-  // Calculate progress percentage
-  const progressPercentage = (landscape.progress / 9) * 100;
-
   // Animation hook
   const {
     containerAnimatedStyle,
-    progressAnimatedStyle,
     glowAnimatedStyle,
     segmentOpacities,
     segmentScales,
@@ -85,7 +79,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
     newlyUnlockedSegmentId,
     isComplete,
     isVisible,
-    progressPercentage,
   });
 
   // Handler for when card becomes visible
@@ -212,12 +205,8 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         </View>
       </View>
 
-      {/* Progress Section */}
-      <GalleryProgress
-        landscape={landscape}
-        progressColor={progressColor}
-        progressAnimatedStyle={progressAnimatedStyle}
-      />
+      {/* Info Section - Bildname + Motivationstext */}
+      <GalleryInfo landscape={landscape} />
 
       {/* Action Section */}
       <GalleryAction

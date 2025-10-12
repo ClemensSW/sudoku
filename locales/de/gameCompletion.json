@@ -107,10 +107,19 @@
     "newSegment": "Neues Segment",
     "complete": "Komplett",
     "imageComplete": "Bild komplett!",
-    "fullyUnlocked": "Vollständig freigeschaltet",
-    "segmentsUnlocked": "{{count}}/9 Segmente freigeschaltet",
-    "solveMore": "Löse {{count}} weitere{{plural}} Sudoku{{plural2}}, um das Bild freizuschalten",
-    "loading": "Lade Bild..."
+    "fullyUnlocked": "Bild vollständig freigeschaltet!",
+    "loading": "Lade Bild...",
+    "progress": {
+      "0": "Spiele dein erstes Sudoku für ein neues Bild",
+      "1": "8 Sudokus bis zum vollständigen Bild",
+      "2": "7 Sudokus bis zum vollständigen Bild",
+      "3": "6 Sudokus bis zum vollständigen Bild",
+      "4": "5 Sudokus bis zum vollständigen Bild",
+      "5": "Noch 4 Sudokus – du bist auf halbem Weg!",
+      "6": "Nur noch 3 Sudokus bis zur Vollendung",
+      "7": "Noch 2 Sudokus – gleich hast du es!",
+      "8": "Löse 1 weiteres Sudoku, um das Bild freizuschalten"
+    }
   },
   "level": {
     "title": "Level",

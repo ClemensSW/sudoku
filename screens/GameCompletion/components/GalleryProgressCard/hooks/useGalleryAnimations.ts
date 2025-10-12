@@ -15,12 +15,10 @@ interface UseGalleryAnimationsParams {
   newlyUnlockedSegmentId?: number;
   isComplete: boolean;
   isVisible: boolean;
-  progressPercentage: number;
 }
 
 interface UseGalleryAnimationsResult {
   containerAnimatedStyle: any;
-  progressAnimatedStyle: any;
   glowAnimatedStyle: any;
   segmentOpacities: SharedValue<number>[];
   segmentScales: SharedValue<number>[];
@@ -31,7 +29,6 @@ export const useGalleryAnimations = ({
   newlyUnlockedSegmentId,
   isComplete,
   isVisible,
-  progressPercentage,
 }: UseGalleryAnimationsParams): UseGalleryAnimationsResult => {
   // Animation values
   const containerScale = useSharedValue(1);
@@ -45,7 +42,6 @@ export const useGalleryAnimations = ({
       .fill(0)
       .map(() => useSharedValue(0.8))
   ).current;
-  const progressWidth = useSharedValue(0);
   const glowOpacity = useSharedValue(0);
 
   // Start animation effect - only when visible
@@ -57,9 +53,6 @@ export const useGalleryAnimations = ({
       withTiming(1.02, { duration: 300 }),
       withTiming(1, { duration: 200 })
     );
-
-    // Animate progress bar
-    progressWidth.value = withTiming(progressPercentage, { duration: 1000 });
 
     // Animate segments
     landscape.segments.forEach((segment, index) => {
@@ -115,15 +108,11 @@ export const useGalleryAnimations = ({
         withTiming(0.5, { duration: 800 })
       );
     }
-  }, [isVisible, landscape, newlyUnlockedSegmentId, progressPercentage, isComplete]);
+  }, [isVisible, landscape, newlyUnlockedSegmentId, isComplete]);
 
   // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: containerScale.value }],
-  }));
-
-  const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value}%`,
   }));
 
   const glowAnimatedStyle = useAnimatedStyle(() => ({
@@ -132,7 +121,6 @@ export const useGalleryAnimations = ({
 
   return {
     containerAnimatedStyle,
-    progressAnimatedStyle,
     glowAnimatedStyle,
     segmentOpacities,
     segmentScales,

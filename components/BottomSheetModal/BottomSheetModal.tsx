@@ -81,13 +81,6 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     };
   }, [visible, hideBottomNav, resetBottomNav]);
 
-  // Close modal when route changes
-  useEffect(() => {
-    if (visible) {
-      onClose();
-    }
-  }, [currentRoute]);
-
   // Render custom handle
   const renderHandle = useCallback(
     (props: any) => <BottomSheetHandle {...props} isDark={isDark} />,

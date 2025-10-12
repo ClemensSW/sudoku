@@ -12,19 +12,19 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    minHeight: 220,
-    borderRadius: 20,
+    height: 120,
+    borderRadius: 18,
     overflow: "hidden",
     position: "relative",
     // Premium shadow
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    elevation: 12,
-    // Subtle border for definition
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
+    elevation: 10,
+    // Subtle border
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.18)",
+    borderColor: "rgba(255, 255, 255, 0.15)",
   },
 
   gradient: {
@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
   },
 
   shimmer: {
     position: "absolute",
     top: 0,
-    left: -100,
-    width: 120,
+    left: -150,
+    width: 150,
     height: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.35)",
     transform: [{ skewX: "-20deg" }],
@@ -58,127 +58,116 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: spacing.lg + 6,
-    paddingHorizontal: spacing.lg + 4,
-    gap: spacing.md + 2,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg + 2,
+    gap: spacing.md + 4,
   },
 
+  // Icon (Left)
   iconContainer: {
-    width: 64,
-    height: 64,
+    width: 72,
+    height: 72,
     justifyContent: "center",
     alignItems: "center",
   },
 
   iconBackground: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(255, 255, 255, 0.22)",
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "rgba(255, 255, 255, 0.18)",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.35)",
+    borderWidth: 2.5,
+    borderColor: "rgba(255, 255, 255, 0.3)",
     position: "relative",
-    // Inner glow
+    // Glow effect
     shadowColor: "#FFFFFF",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
   },
 
   cloudIconOverlay: {
     position: "absolute",
-    top: 6,
-    right: 6,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    // backgroundColor set inline based on progressColor
+    top: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    // backgroundColor set inline
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "rgba(255, 255, 255, 0.5)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
+  // Text (Center)
   textContainer: {
     flex: 1,
-    gap: spacing.xs + 1,
     justifyContent: "center",
+    gap: 4,
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "800",
     color: "#FFFFFF",
-    letterSpacing: 0.2,
-    marginBottom: 3,
-    // Text shadow for readability on gradient
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    letterSpacing: 0.3,
+    // Text shadow
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
 
   subtitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.92)",
-    letterSpacing: 0.1,
-    lineHeight: 18,
-    marginBottom: spacing.xs + 3,
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-
-  benefitsList: {
-    gap: 6,
-  },
-
-  benefitItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 7,
-  },
-
-  benefitIcon: {
-    opacity: 0.9,
-    flexShrink: 0,
-    marginTop: 1,
-  },
-
-  benefitText: {
-    fontSize: 11.5,
-    fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.88)",
-    letterSpacing: 0.1,
-    lineHeight: 16,
-    flex: 1,
-    textShadowColor: "rgba(0, 0, 0, 0.18)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  ctaContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 2,
-    paddingLeft: spacing.xs,
-  },
-
-  ctaText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
-    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.90)",
+    letterSpacing: 0.15,
+    lineHeight: 19,
     textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
 
-  chevron: {
+  // CTA Button (Right)
+  ctaButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.22)",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.35)",
+    // Button shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
+    minWidth: 90,
+  },
+
+  ctaText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    letterSpacing: 0.4,
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  ctaIcon: {
     opacity: 0.95,
   },
 });

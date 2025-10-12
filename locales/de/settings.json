@@ -108,13 +108,8 @@
     }
   },
   "authPrompt": {
-    "title": "Sichere deinen Fortschritt",
-    "subtitle": "Melde dich an und verliere nie wieder deinen Spielstand",
-    "benefits": {
-      "sync": "Automatische Cloud-Synchronisierung",
-      "backup": "Alle Erfolge sicher gespeichert",
-      "devices": "Spiele auf allen Geräten weiter"
-    },
-    "cta": "Jetzt anmelden"
+    "title": "Spielstand sichern",
+    "subtitle": "Verliere nie wieder deinen Fortschritt",
+    "cta": "Anmelden"
   }
 }

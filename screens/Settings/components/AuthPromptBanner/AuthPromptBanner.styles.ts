@@ -11,18 +11,21 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 
-  container: {
-    height: 120,
+  // Shadow wrapper (no transparency for proper elevation)
+  shadowContainer: {
     borderRadius: 18,
-    overflow: "hidden",
-    position: "relative",
-    // Premium shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 14,
     elevation: 10,
-    // Subtle border
+  },
+
+  container: {
+    height: 160,
+    borderRadius: 18,
+    overflow: "hidden",
+    position: "relative",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.15)",
   },
@@ -54,27 +57,29 @@ const styles = StyleSheet.create({
     transform: [{ skewX: "-20deg" }],
   },
 
+  // Vertical Layout
   content: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg + 2,
-    gap: spacing.md + 4,
+    justifyContent: "center",
+    paddingVertical: spacing.md + 4,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm + 2,
   },
 
-  // Icon (Left)
+  // Icon (Top - Centered)
   iconContainer: {
-    width: 72,
-    height: 72,
+    width: 64,
+    height: 64,
     justifyContent: "center",
     alignItems: "center",
   },
 
   iconBackground: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: "rgba(255, 255, 255, 0.18)",
     justifyContent: "center",
     alignItems: "center",
@@ -90,81 +95,68 @@ const styles = StyleSheet.create({
 
   cloudIconOverlay: {
     position: "absolute",
-    top: 4,
-    right: 4,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    top: 3,
+    right: 3,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     // backgroundColor set inline
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.6)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
 
-  // Text (Center)
+  // Bottom Row (Text + Button)
+  bottomRow: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+
+  // Text (Left in bottom row)
   textContainer: {
     flex: 1,
-    justifyContent: "center",
-    gap: 4,
+    gap: 3,
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
     letterSpacing: 0.3,
-    // Text shadow
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
 
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.90)",
+    color: "rgba(255, 255, 255, 0.88)",
     letterSpacing: 0.15,
-    lineHeight: 19,
     textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
 
-  // CTA Button (Right)
+  // CTA Button (Right in bottom row - Icon only)
   ctaButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: "rgba(255, 255, 255, 0.22)",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    gap: 6,
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1.5,
     borderColor: "rgba(255, 255, 255, 0.35)",
-    // Button shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 4,
-    minWidth: 90,
-  },
-
-  ctaText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    letterSpacing: 0.4,
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
 
   ctaIcon: {

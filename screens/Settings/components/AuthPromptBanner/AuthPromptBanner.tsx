@@ -146,57 +146,58 @@ const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
         onPress={handlePress}
         style={styles.touchable}
       >
-        <View style={styles.container}>
-          {/* Gradient background */}
-          <LinearGradient
-            colors={gradientColors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradient}
-          />
+        {/* Shadow wrapper for elevation */}
+        <View style={styles.shadowContainer}>
+          <View style={styles.container}>
+            {/* Gradient background */}
+            <LinearGradient
+              colors={gradientColors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.gradient}
+            />
 
-          {/* Glasmorphism overlay */}
-          <View style={styles.glassOverlay} />
+            {/* Glasmorphism overlay */}
+            <View style={styles.glassOverlay} />
 
-          {/* Shimmer effect */}
-          <Animated.View
-            style={[styles.shimmer, shimmerAnimatedStyle]}
-            pointerEvents="none"
-          />
+            {/* Shimmer effect */}
+            <Animated.View
+              style={[styles.shimmer, shimmerAnimatedStyle]}
+              pointerEvents="none"
+            />
 
-          {/* Content */}
-          <View style={styles.content}>
-            {/* Left: Icon */}
-            <Animated.View style={[styles.iconContainer, iconAnimatedStyle]}>
-              <View style={styles.iconBackground}>
-                <Feather name="shield" size={42} color="#FFFFFF" />
-                <View style={[styles.cloudIconOverlay, { backgroundColor: progressColor + 'E6' }]}>
-                  <Feather name="cloud" size={18} color="#FFFFFF" />
+            {/* Content - Vertical Layout */}
+            <View style={styles.content}>
+              {/* Top: Icon */}
+              <Animated.View style={[styles.iconContainer, iconAnimatedStyle]}>
+                <View style={styles.iconBackground}>
+                  <Feather name="shield" size={38} color="#FFFFFF" />
+                  <View style={[styles.cloudIconOverlay, { backgroundColor: progressColor + 'E6' }]}>
+                    <Feather name="cloud" size={16} color="#FFFFFF" />
+                  </View>
+                </View>
+              </Animated.View>
+
+              {/* Bottom: Text & Button side by side */}
+              <View style={styles.bottomRow}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.title} numberOfLines={1}>
+                    {t("authPrompt.title")}
+                  </Text>
+                  <Text style={styles.subtitle} numberOfLines={1}>
+                    {t("authPrompt.subtitle")}
+                  </Text>
+                </View>
+
+                <View style={styles.ctaButton}>
+                  <Feather
+                    name="arrow-right"
+                    size={20}
+                    color="#FFFFFF"
+                    style={styles.ctaIcon}
+                  />
                 </View>
               </View>
-            </Animated.View>
-
-            {/* Center: Text */}
-            <View style={styles.textContainer}>
-              <Text style={styles.title} numberOfLines={1}>
-                {t("authPrompt.title")}
-              </Text>
-              <Text style={styles.subtitle} numberOfLines={2}>
-                {t("authPrompt.subtitle")}
-              </Text>
-            </View>
-
-            {/* Right: CTA Button */}
-            <View style={styles.ctaButton}>
-              <Text style={styles.ctaText} numberOfLines={1}>
-                {t("authPrompt.cta")}
-              </Text>
-              <Feather
-                name="arrow-right"
-                size={18}
-                color="#FFFFFF"
-                style={styles.ctaIcon}
-              />
             </View>
           </View>
         </View>

@@ -106,5 +106,15 @@
       "red": "Red",
       "purple": "Purple"
     }
+  },
+  "authPrompt": {
+    "title": "Secure Your Progress",
+    "subtitle": "Sign in and never lose your game progress again",
+    "benefits": {
+      "sync": "Automatic cloud synchronization",
+      "backup": "All achievements safely stored",
+      "devices": "Continue playing on all devices"
+    },
+    "cta": "Sign In Now"
   }
 }

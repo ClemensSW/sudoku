@@ -41,6 +41,7 @@ import SettingsCategoryList from "./components/SettingsCategoryList";
 import HelpSection from "./components/HelpSection/HelpSection";
 import ActionsSection from "./components/ActionsSection/ActionsSection";
 import ProfileGroup from "./components/ProfileGroup";
+import AuthPromptBanner from "./components/AuthPromptBanner";
 
 // Import modals
 import AppearanceSettingsModal from "./components/AppearanceSettingsModal";
@@ -97,6 +98,9 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [isChangingTheme, setIsChangingTheme] = useState(false);
+
+  // Auth state (mock for now - will be replaced with actual auth)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Determine if we should show game-specific features
   const showGameFeatures = fromGame && !!onQuitGame;
@@ -238,6 +242,23 @@ const Settings: React.FC<SettingsScreenProps> = ({
     triggerHaptic("success");
   };
 
+  const handleAuthPromptPress = () => {
+    triggerHaptic("light");
+    // TODO: Open auth flow when implemented
+    showAlert({
+      title: t("authPrompt.title"),
+      message: "Auth-Flow wird bald implementiert!",
+      type: "info",
+      buttons: [
+        {
+          text: "OK",
+          style: "primary",
+          onPress: () => {},
+        },
+      ],
+    });
+  };
+
   if (isLoading) {
     return (
       <Animated.View
@@ -287,6 +308,16 @@ const Settings: React.FC<SettingsScreenProps> = ({
               {t("categories.profile")}
             </RNText>
             <ProfileGroup />
+          </Animated.View>
+        )}
+
+        {/* Auth Prompt Banner - Only show if not logged in */}
+        {!showGameFeatures && !isLoggedIn && (
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.delay(100).duration(500)}
+          >
+            <AuthPromptBanner onPress={handleAuthPromptPress} />
           </Animated.View>
         )}
 

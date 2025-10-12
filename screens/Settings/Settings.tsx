@@ -42,6 +42,13 @@ import HelpSection from "./components/HelpSection/HelpSection";
 import ActionsSection from "./components/ActionsSection/ActionsSection";
 import ProfileGroup from "./components/ProfileGroup";
 
+// Import modals
+import AppearanceSettingsModal from "./components/AppearanceSettingsModal";
+import GameSettingsModal from "./components/GameSettingsModal";
+import HelpSettingsModal from "./components/HelpSettingsModal";
+import CommunitySettingsModal from "./components/CommunitySettingsModal";
+import InfoSettingsModal from "./components/InfoSettingsModal";
+
 import styles from "./Settings.styles";
 
 interface SettingsScreenProps {
@@ -81,6 +88,14 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showLegalScreen, setShowLegalScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal states for Level-2 navigation
+  const [showDesignModal, setShowDesignModal] = useState(false);
+  const [showGameModal, setShowGameModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [isChangingTheme, setIsChangingTheme] = useState(false);
 
   // Determine if we should show game-specific features
   const showGameFeatures = fromGame && !!onQuitGame;
@@ -206,6 +221,18 @@ const Settings: React.FC<SettingsScreenProps> = ({
     setShowLegalScreen(true);
   };
 
+  // Modal handlers
+  const handleThemeChange = async (value: "light" | "dark") => {
+    setIsChangingTheme(true);
+    await handleSettingChange("darkMode", value);
+    setTimeout(() => setIsChangingTheme(false), 300);
+  };
+
+  const handleLanguageChange = async (language: "de" | "en" | "hi") => {
+    await i18n.changeLanguage(language);
+    triggerHaptic("success");
+  };
+
   if (isLoading) {
     return (
       <Animated.View
@@ -299,6 +326,11 @@ const Settings: React.FC<SettingsScreenProps> = ({
         >
           <SettingsCategoryList
             showGameFeatures={showGameFeatures}
+            onDesignPress={() => setShowDesignModal(true)}
+            onGamePress={() => setShowGameModal(true)}
+            onHelpPress={() => setShowHelpModal(true)}
+            onCommunityPress={() => setShowCommunityModal(true)}
+            onInfoPress={() => setShowInfoModal(true)}
           />
         </Animated.View>
 
@@ -320,6 +352,79 @@ const Settings: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
       </ScrollView>
+
+      {/* Level-2 Navigation Modals */}
+      {showDesignModal && (
+        <AppearanceSettingsModal
+          visible={showDesignModal}
+          onClose={() => setShowDesignModal(false)}
+          themeValue={settings?.darkMode || "light"}
+          onThemeChange={handleThemeChange}
+          onLanguageChange={handleLanguageChange}
+          isChangingTheme={isChangingTheme}
+        />
+      )}
+
+      {showGameModal && (
+        <GameSettingsModal
+          visible={showGameModal}
+          onClose={() => setShowGameModal(false)}
+          settings={settings}
+          onSettingChange={handleSettingChange}
+          isDuoMode={isDuoMode}
+        />
+      )}
+
+      {showHelpModal && (
+        <HelpSettingsModal
+          visible={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+          onHowToPlay={() => {
+            setShowHelpModal(false);
+            setShowHowToPlay(true);
+          }}
+        />
+      )}
+
+      {showCommunityModal && (
+        <CommunitySettingsModal
+          visible={showCommunityModal}
+          onClose={() => setShowCommunityModal(false)}
+          onShareApp={handleShareApp}
+          onSupportPress={() => {
+            setShowCommunityModal(false);
+            setShowSupportShop(true);
+          }}
+        />
+      )}
+
+      {showInfoModal && (
+        <InfoSettingsModal
+          visible={showInfoModal}
+          onClose={() => setShowInfoModal(false)}
+          onAboutPress={() => {
+            setShowInfoModal(false);
+            handleAboutPress();
+          }}
+          onLegalPress={() => {
+            setShowInfoModal(false);
+            handleLegalPress();
+          }}
+        />
+      )}
+
+      {/* Support Shop Modal */}
+      {showSupportShop && <SupportShopScreen onClose={() => setShowSupportShop(false)} />}
+
+      {/* About Modal */}
+      {showAboutModal && (
+        <AboutModal visible={showAboutModal} onClose={() => setShowAboutModal(false)} />
+      )}
+
+      {/* Legal Screen Modal */}
+      {showLegalScreen && (
+        <LegalScreen visible={showLegalScreen} onClose={() => setShowLegalScreen(false)} />
+      )}
     </Animated.View>
   );
 };

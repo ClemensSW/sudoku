@@ -2,7 +2,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -12,65 +11,78 @@ interface Category {
   id: string;
   titleKey: string;
   icon: keyof typeof Feather.glyphMap;
-  route: string;
   showOnlyInGame?: boolean;
 }
 
 interface SettingsCategoryListProps {
   showGameFeatures: boolean;
+  onDesignPress: () => void;
+  onGamePress: () => void;
+  onHelpPress: () => void;
+  onCommunityPress: () => void;
+  onInfoPress: () => void;
 }
 
 const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   showGameFeatures,
+  onDesignPress,
+  onGamePress,
+  onHelpPress,
+  onCommunityPress,
+  onInfoPress,
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
-  const router = useRouter();
 
   // Define all categories
   const allCategories: Category[] = [
     {
-      id: "profile",
-      titleKey: "categories.profile",
-      icon: "user",
-      route: "/settings/profile",
-    },
-    {
       id: "design",
       titleKey: "categories.design",
       icon: "sun",
-      route: "/settings/design",
     },
     {
       id: "game",
       titleKey: "categories.game",
       icon: "sliders",
-      route: "/settings/game",
     },
     {
       id: "help",
       titleKey: "categories.help",
       icon: "help-circle",
-      route: "/settings/help",
     },
     {
       id: "community",
       titleKey: "categories.community",
       icon: "users",
-      route: "/settings/community",
     },
     {
       id: "info",
       titleKey: "categories.info",
       icon: "info",
-      route: "/settings/info",
     },
   ];
 
-  const handleCategoryPress = (route: string) => {
+  const handleCategoryPress = (categoryId: string) => {
     triggerHaptic("light");
-    router.push(route as any);
+    switch (categoryId) {
+      case "design":
+        onDesignPress();
+        break;
+      case "game":
+        onGamePress();
+        break;
+      case "help":
+        onHelpPress();
+        break;
+      case "community":
+        onCommunityPress();
+        break;
+      case "info":
+        onInfoPress();
+        break;
+    }
   };
 
   // Sort categories based on context (in-game vs normal)
@@ -109,7 +121,7 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
                 borderColor: colors.border,
               },
             ]}
-            onPress={() => handleCategoryPress(category.route)}
+            onPress={() => handleCategoryPress(category.id)}
             activeOpacity={0.7}
           >
             <View style={styles.leftContent}>

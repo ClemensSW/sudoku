@@ -291,7 +291,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         textPrimaryColor={colors.textPrimary}
         surfaceColor={colors.surface}
         borderColor={cardBorder}
-        snapPoints={['30%', '50%']}
+        snapPoints={['50%', '70%']}
       >
         <View style={styles.languageOptions}>
           {sortedLanguages.map((language) => (

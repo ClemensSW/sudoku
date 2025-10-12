@@ -139,29 +139,8 @@ const AuthPromptBanner: React.FC<AuthPromptBannerProps> = ({ onPress }) => {
 
   const gradientColors = getGradientColors();
 
-  // Generate solid button color (lighter version of progress color)
-  const getButtonColor = () => {
-    const hexToRgb = (hex: string) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : { r: 74, g: 144, b: 226 };
-    };
-
-    const rgb = hexToRgb(progressColor);
-
-    if (theme.isDark) {
-      // Darker mode: lighter button
-      return `rgb(${Math.min(255, rgb.r + 40)}, ${Math.min(255, rgb.g + 40)}, ${Math.min(255, rgb.b + 40)})`;
-    } else {
-      // Light mode: slightly darker button
-      return `rgb(${Math.max(0, rgb.r - 20)}, ${Math.max(0, rgb.g - 20)}, ${Math.max(0, rgb.b - 20)})`;
-    }
-  };
-
-  const buttonColor = getButtonColor();
+  // Use progressColor directly for button (it's already the correct solid color)
+  const buttonColor = progressColor;
 
   return (
     <Animated.View style={[styles.wrapper, containerAnimatedStyle]}>

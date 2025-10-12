@@ -320,9 +320,9 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
                   ]}
                 >
                   <View style={styles.languageContent}>
-                    <Text style={styles.flagEmoji}>{language.flag}</Text>
-                    <Text style={[styles.languageName, { color: colors.textPrimary }]}>
-                      {language.name}
+                    <Text style={[styles.flagEmoji, { color: '#FF0000' }]}>TEST FLAG</Text>
+                    <Text style={[styles.languageName, { color: '#FF0000', backgroundColor: '#FFFF00' }]}>
+                      TEST TEXT - {language?.name || 'UNDEFINED'}
                     </Text>
                   </View>
                   {currentLanguage === language.code && (

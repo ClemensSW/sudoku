@@ -5,7 +5,6 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
-import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewManager";
 import FeedbackIcon from "@/assets/svg/feedback.svg";
 import LatteArtIcon from "@/assets/svg/latte-art.svg";
@@ -57,7 +56,6 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
-  const { showAlert } = useAlert();
   const [showReviewSystem, setShowReviewSystem] = useState(false);
 
   // Feedback-Button Handler

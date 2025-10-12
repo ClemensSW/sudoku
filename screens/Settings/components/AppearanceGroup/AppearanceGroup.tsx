@@ -283,42 +283,47 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       />
 
       {/* Language Selection Modal */}
-      <BottomSheetModal
-        visible={showLanguageModal}
-        onClose={() => setShowLanguageModal(false)}
-        title={t("languageModal.title")}
-        isDark={theme.isDark}
-        textPrimaryColor={colors.textPrimary}
-        surfaceColor={colors.surface}
-        borderColor={cardBorder}
-        snapPoints={['50%', '70%']}
-      >
-        <View style={styles.languageOptions}>
-          {sortedLanguages.map((language) => (
-            <TouchableOpacity
-              key={language.code}
-              onPress={() => handleLanguageSelect(language.code)}
-              style={[
-                styles.languageOption,
-                {
-                  backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
-                  borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
-                },
-              ]}
-            >
-              <View style={styles.languageContent}>
-                <Text style={styles.flagEmoji}>{language.flag}</Text>
-                <Text style={[styles.languageName, { color: colors.textPrimary }]}>
-                  {language.name}
-                </Text>
-              </View>
-              {currentLanguage === language.code && (
-                <Feather name="check" size={22} color={colors.primary} />
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
-      </BottomSheetModal>
+      {showLanguageModal && (
+        <BottomSheetModal
+          visible={showLanguageModal}
+          onClose={() => setShowLanguageModal(false)}
+          title={t("languageModal.title")}
+          isDark={theme.isDark}
+          textPrimaryColor={colors.textPrimary}
+          surfaceColor={colors.surface}
+          borderColor={cardBorder}
+          snapPoints={['50%', '70%']}
+        >
+          <View style={styles.languageOptions}>
+            {sortedLanguages.map((language) => {
+              console.log('Rendering language:', language);
+              return (
+                <TouchableOpacity
+                  key={language.code}
+                  onPress={() => handleLanguageSelect(language.code)}
+                  style={[
+                    styles.languageOption,
+                    {
+                      backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
+                      borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
+                    },
+                  ]}
+                >
+                  <View style={styles.languageContent}>
+                    <Text style={styles.flagEmoji}>{language.flag}</Text>
+                    <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                      {language.name}
+                    </Text>
+                  </View>
+                  {currentLanguage === language.code && (
+                    <Feather name="check" size={22} color={colors.primary} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </BottomSheetModal>
+      )}
     </>
   );
 };

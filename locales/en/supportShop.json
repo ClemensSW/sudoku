@@ -7,9 +7,9 @@
   },
   "sections": {
     "oneTime": "One-Time Support",
-    "oneTimeSubtitle": "Unlock 1 image (one-time) + permanent 2× EP",
+    "oneTimeSubtitle": "Unlock 1 image + permanent 2× EP + refill shields",
     "subscription": "Recurring Support",
-    "subscriptionSubtitle": "Unlock images every month + permanent 2× EP",
+    "subscriptionSubtitle": "",
     "activeSubscription": "Your Active Subscription",
     "activeSubscriptionSubtitle": "Thank you for your support! Manage your subscription in the Play Store"
   },
@@ -40,6 +40,10 @@
       "support": {
         "title": "Stay ad-free",
         "subtitle": "Your help makes it possible!"
+      },
+      "shields": {
+        "title": "Refill shields",
+        "subtitle": "Protect your streak"
       }
     },
     "supporter": {
@@ -122,6 +126,20 @@
     "imageLifetime": "Unlock 1 Image",
     "streakShields": "3 Shields/Week",
     "adFree": "Ad-Free"
+  },
+  "shieldBanner": {
+    "noSupporter": {
+      "title": "Premium: 3 Shields per Week",
+      "subtitle": "More protection for your streak"
+    },
+    "oneTimeSupporter": {
+      "title": "Upgrade to Subscription",
+      "subtitle": "Get 3 shields every Monday"
+    },
+    "premiumSubscriber": {
+      "title": "Additional Shields",
+      "subtitle": "One-time support available"
+    }
   },
   "thankYou": {
     "title": "Thank You!",

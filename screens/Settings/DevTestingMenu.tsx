@@ -18,6 +18,7 @@ import {
   debugPrintQuota
 } from '@/modules/subscriptions/purchaseQuota';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { refillShields, getStreakStats } from '@/utils/dailyStreak';
 
 const DevTestingMenu: React.FC = () => {
   const { colors, isDark } = useTheme();
@@ -28,6 +29,7 @@ const DevTestingMenu: React.FC = () => {
     const purchaseType = await getPurchaseType();
     const supporterStatus = await getSupporterStatus();
     const quota = await getImageUnlockQuota();
+    const streakStats = await getStreakStats();
 
     // Determine subscription type for display
     let subTypeLabel = '';
@@ -44,12 +46,17 @@ const DevTestingMenu: React.FC = () => {
       ? `${quota.remainingUnlocks}/${quota.monthlyLimit} (monatlich${subTypeLabel})`
       : `${quota.remainingUnlocks}/${lifetimeQuota} (lifetime)`;
 
+    const shieldInfo = streakStats
+      ? `${streakStats.shieldsAvailable}/${streakStats.maxRegularShields} + ${streakStats.bonusShields} Bonus`
+      : 'N/A';
+
     setStatus(`
 Status: ${hasPurchased ? '✅ Supporter' : '❌ Kein Supporter'}
 Typ: ${purchaseType}${subTypeLabel}
 EP Multiplikator: ${supporterStatus.isSupporter ? '2x' : '1x'}
 Bilder übrig: ${unlockInfo}
 Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
+Schutzschilder: ${shieldInfo}
     `.trim());
   };
 
@@ -167,6 +174,20 @@ Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
     await updateStatus();
   };
 
+  const testShieldRefillOneTime = async () => {
+    await refillShields('one-time');
+    await updateStatus();
+    const stats = await getStreakStats();
+    Alert.alert('✅ Erfolg', `Schutzschilder aufgefüllt (Einmalkauf)!\n\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields}`);
+  };
+
+  const testShieldRefillSubscription = async () => {
+    await refillShields('subscription');
+    await updateStatus();
+    const stats = await getStreakStats();
+    Alert.alert('✅ Erfolg', `Schutzschilder aufgefüllt (Abo)!\n\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (sofort auf 3!)`);
+  };
+
   React.useEffect(() => {
     updateStatus();
   }, []);
@@ -243,6 +264,22 @@ Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
       />
 
       <TestButton
+        icon="shield"
+        label="Schilder auffüllen (Einmalkauf)"
+        description="Auf aktuelles Max (2 oder 3)"
+        onPress={testShieldRefillOneTime}
+        colors={colors}
+      />
+
+      <TestButton
+        icon="shield"
+        label="Schilder auffüllen (Abo)"
+        description="Sofort auf 3 Schilder"
+        onPress={testShieldRefillSubscription}
+        colors={colors}
+      />
+
+      <TestButton
         icon="refresh-cw"
         label="Status aktualisieren"
         description="Zeigt aktuellen Stand"
@@ -270,6 +307,8 @@ Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
           {'\n'}• Gehe zur Galerie → Bild öffnen → Unlock-Button testen
           {'\n'}• Spiele Sudoku → EP sollte 2× sein
           {'\n'}• Dankesseite erscheint nach Kauf im SupportShop
+          {'\n'}• Schutzschilder: Gehe zu Leistung → Streak Tab
+          {'\n'}• Premium-Banner ändert sich je nach Status (none/one-time/subscription)
         </Text>
       </View>
     </View>

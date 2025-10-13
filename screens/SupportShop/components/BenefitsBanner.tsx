@@ -51,6 +51,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
   const benefitVariants: BannerVariant[] = [
     { icon: 'zap', titleKey: 'banner.variants.ep.title', subtitleKey: 'banner.variants.ep.subtitle' },
     { icon: 'image', titleKey: 'banner.variants.images.title', subtitleKey: 'banner.variants.images.subtitle' },
+    { icon: 'shield', titleKey: 'banner.variants.shields.title', subtitleKey: 'banner.variants.shields.subtitle' },
     { icon: 'heart', titleKey: 'banner.variants.support.title', subtitleKey: 'banner.variants.support.subtitle' },
   ];
 

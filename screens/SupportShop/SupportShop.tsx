@@ -13,12 +13,14 @@ import {
 } from "react-native";
 import Animated, {
   FadeIn,
+  FadeOut,
   SlideInUp,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -61,6 +63,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const [currentPurchase, setCurrentPurchase] = useState<Product | null>(null);
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const [activeSubscriptionProductId, setActiveSubscriptionProductId] = useState<string | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   // Decide which product to mark as popular (typically mid-tier)
   const getPopularProductId = () => {
@@ -204,8 +207,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     // Show success state in overlay
     setPurchaseSuccess(true);
 
-    // KAUF REGISTRIERUNG
-    // Registriere den Kauf für den Support-Banner
+    // KAUF REGISTRIERUNG & SHIELDS AUFFÜLLEN
+    // Registriere den Kauf für den Support-Banner und fülle Schutzschilder auf
     try {
       if (currentPurchase) {
         // Bestimme Purchase-Typ basierend auf Product-ID
@@ -221,9 +224,14 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         }, purchaseType);
 
         console.log(`Kauf wurde registriert - Type: ${purchaseType}`);
+
+        // Schutzschilder auffüllen
+        const { refillShields } = await import('@/utils/dailyStreak');
+        await refillShields(purchaseType);
+        console.log(`Schutzschilder aufgefüllt - Type: ${purchaseType}`);
       }
     } catch (error) {
-      console.error("Fehler beim Registrieren des Kaufs:", error);
+      console.error("Fehler beim Registrieren des Kaufs oder Auffüllen der Shields:", error);
       // Fehler beim Registrieren sollte den Kauf-Flow nicht unterbrechen
     }
 
@@ -236,6 +244,14 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
       // Show ThankYouModal
       setShowThankYouModal(true);
     }, 1500);
+  };
+
+  // Handle scroll to hide scroll indicator
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    if (offsetY > 50 && showScrollIndicator) {
+      setShowScrollIndicator(false);
+    }
   };
 
   // Handle purchase error
@@ -335,6 +351,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           { paddingBottom: insets.bottom + 40 },
         ]}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         {/* Benefits Banner - Visual with rotating variants */}
         <Animated.View entering={FadeIn.duration(400)}>
@@ -384,12 +402,11 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
                 : t('sections.subscription')
               }
             </Text>
-            <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              {activeSubscriptionProductId
-                ? t('sections.activeSubscriptionSubtitle')
-                : t('sections.subscriptionSubtitle')
-              }
-            </Text>
+            {activeSubscriptionProductId && (
+              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+                {t('sections.activeSubscriptionSubtitle')}
+              </Text>
+            )}
           </View>
 
           <View style={[
@@ -498,6 +515,57 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         onClose={() => setShowThankYouModal(false)}
         isSupporter={true}
       />
+
+      {/* Scroll Indicator */}
+      {showScrollIndicator && !activeSubscriptionProductId && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            bottom: insets.bottom + 20,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+            pointerEvents: 'none',
+          }}
+          entering={FadeIn.delay(800).duration(600)}
+          exiting={FadeOut.duration(300)}
+        >
+          <LinearGradient
+            colors={['transparent', colors.background]}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 80,
+            }}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: colors.primary + '20',
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: colors.primary + '40',
+            }}
+          >
+            <Feather name="chevron-down" size={16} color={colors.primary} />
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: colors.primary,
+                marginLeft: 6,
+              }}
+            >
+              Mehr Optionen
+            </Text>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 };

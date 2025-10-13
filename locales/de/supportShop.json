@@ -7,9 +7,9 @@
   },
   "sections": {
     "oneTime": "Einmalige Unterstützung",
-    "oneTimeSubtitle": "1 Bild freischalten (einmalig) + dauerhaft 2× EP",
+    "oneTimeSubtitle": "1 Bild freischalten + dauerhaft 2× EP + Schutzschilder auffüllen",
     "subscription": "Regelmäßige Unterstützung",
-    "subscriptionSubtitle": "Jeden Monat Bilder freischalten + dauerhaft 2× EP",
+    "subscriptionSubtitle": "",
     "activeSubscription": "Dein aktives Abo",
     "activeSubscriptionSubtitle": "Vielen Dank für deine Unterstützung! Verwalte dein Abo im Play Store"
   },
@@ -40,6 +40,10 @@
       "support": {
         "title": "Werbefrei bleiben",
         "subtitle": "Deine Hilfe macht's möglich!"
+      },
+      "shields": {
+        "title": "Schilder auffüllen",
+        "subtitle": "Schütze deine Serie"
       }
     },
     "supporter": {
@@ -122,6 +126,20 @@
     "imageLifetime": "1 Bild freischalten",
     "streakShields": "3 Schutzschilder/Woche",
     "adFree": "Werbefrei"
+  },
+  "shieldBanner": {
+    "noSupporter": {
+      "title": "Premium: 3 Schilder pro Woche",
+      "subtitle": "Mehr Schutz für deine Serie"
+    },
+    "oneTimeSupporter": {
+      "title": "Upgrade zum Abo",
+      "subtitle": "Jeden Montag 3 Schilder erhalten"
+    },
+    "premiumSubscriber": {
+      "title": "Zusätzliche Schilder",
+      "subtitle": "Einmalige Unterstützung verfügbar"
+    }
   },
   "thankYou": {
     "title": "Vielen Dank!",

@@ -20,15 +20,17 @@ import {
 
 interface StreakTabProps {
   stats: GameStats;
+  onOpenSupportShop?: () => void;
 }
 
-const StreakTab: React.FC<StreakTabProps> = ({ stats }) => {
+const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const theme = useTheme();
   const colors = theme.colors;
 
   // State
   const [currentMonth, setCurrentMonth] = useState(getCurrentYearMonth());
   const [isPremium, setIsPremium] = useState(false);
+  const [supporterStatus, setSupporterStatus] = useState<'none' | 'one-time' | 'subscription'>('none');
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [pendingRewardMonth, setPendingRewardMonth] = useState<string | null>(null);
 
@@ -36,8 +38,9 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats }) => {
   useEffect(() => {
     (async () => {
       try {
-        const supporterStatus = await getSupporterStatus();
-        setIsPremium(supporterStatus.isPremiumSubscriber);
+        const status = await getSupporterStatus();
+        setIsPremium(status.isPremiumSubscriber);
+        setSupporterStatus(status.supportType || 'none');
 
         // Check for unclaimed rewards
         if (stats.dailyStreak) {
@@ -124,6 +127,8 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats }) => {
           maxRegular={maxRegularShields}
           bonusShields={dailyStreak.bonusShields}
           nextResetDate={nextResetDate}
+          onOpenSupportShop={onOpenSupportShop}
+          supporterStatus={supporterStatus}
         />
 
         {/* Statistiken */}

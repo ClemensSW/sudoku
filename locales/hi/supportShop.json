@@ -7,9 +7,9 @@
   },
   "sections": {
     "oneTime": "एकबारगी समर्थन",
-    "oneTimeSubtitle": "1 चित्र अनलॉक करें (एकबारगी) + स्थायी 2× EP",
+    "oneTimeSubtitle": "1 चित्र अनलॉक + स्थायी 2× EP + शील्ड रीफिल",
     "subscription": "नियमित समर्थन",
-    "subscriptionSubtitle": "हर महीने चित्र अनलॉक करें + स्थायी 2× EP",
+    "subscriptionSubtitle": "",
     "activeSubscription": "आपकी सक्रिय सदस्यता",
     "activeSubscriptionSubtitle": "आपके समर्थन के लिए धन्यवाद! Play Store में अपनी सदस्यता प्रबंधित करें"
   },
@@ -40,6 +40,10 @@
       "support": {
         "title": "विज्ञापन-मुक्त रहें",
         "subtitle": "आपकी मदद इसे संभव बनाती है!"
+      },
+      "shields": {
+        "title": "शील्ड रीफिल करें",
+        "subtitle": "अपनी स्ट्रीक की रक्षा करें"
       }
     },
     "supporter": {
@@ -120,7 +124,22 @@
     "imagePerYearly": "2 छवियाँ/माह",
     "imagePerYear": "{{count}} छवियाँ/वर्ष",
     "imageLifetime": "1 छवि अनलॉक करें",
+    "streakShields": "3 शील्ड/सप्ताह",
     "adFree": "विज्ञापन मुक्त"
+  },
+  "shieldBanner": {
+    "noSupporter": {
+      "title": "प्रीमियम: 3 शील्ड प्रति सप्ताह",
+      "subtitle": "अपनी स्ट्रीक के लिए अधिक सुरक्षा"
+    },
+    "oneTimeSupporter": {
+      "title": "सदस्यता में अपग्रेड करें",
+      "subtitle": "हर सोमवार 3 शील्ड प्राप्त करें"
+    },
+    "premiumSubscriber": {
+      "title": "अतिरिक्त शील्ड",
+      "subtitle": "एकबारगी समर्थन उपलब्ध"
+    }
   },
   "thankYou": {
     "title": "धन्यवाद!",

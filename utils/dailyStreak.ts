@@ -423,3 +423,39 @@ export async function getMonthData(yearMonth: string): Promise<MonthlyPlayData |
 
   return stats.dailyStreak.playHistory[yearMonth] || null;
 }
+
+// ===== Shield Refill Logic (Support Shop) =====
+
+/**
+ * Füllt Schutzschilder nach einem Kauf auf
+ *
+ * @param purchaseType - 'one-time' = aktuelles Maximum auffüllen (2 für Free, 3 für Premium)
+ *                      'subscription' = sofort auf 3 auffüllen
+ */
+export async function refillShields(purchaseType: 'one-time' | 'subscription' = 'one-time'): Promise<void> {
+  try {
+    const stats = await loadStats();
+    if (!stats.dailyStreak) {
+      console.warn('[Daily Streak] dailyStreak missing in refillShields, cannot refill');
+      return;
+    }
+
+    const supporterStatus = await getSupporterStatus();
+
+    if (purchaseType === 'subscription') {
+      // Subscription: Sofort auf 3 auffüllen
+      stats.dailyStreak.shieldsAvailable = 3;
+      console.log('[Daily Streak] 🛡️ Subscription purchase: Shields refilled to 3');
+    } else {
+      // One-time: Auf aktuelles Maximum auffüllen
+      const maxShields = supporterStatus.isPremiumSubscriber ? 3 : 2;
+      stats.dailyStreak.shieldsAvailable = maxShields;
+      console.log(`[Daily Streak] 🛡️ One-time purchase: Shields refilled to ${maxShields}`);
+    }
+
+    await saveStats(stats);
+    console.log('[Daily Streak] Shields successfully refilled and saved');
+  } catch (error) {
+    console.error('[Daily Streak] Error refilling shields:', error);
+  }
+}

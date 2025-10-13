@@ -265,6 +265,22 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       </Text>
                     </View>
                     <View style={styles.benefit}>
+                      <Feather name="shield" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Text style={[
+                        styles.benefitText,
+                        {
+                          color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                          textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                          textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                          textShadowRadius: isActive ? 1 : undefined,
+                          fontSize: 14,
+                          fontWeight: '600',
+                        }
+                      ]}>
+                        {t('benefits.streakShields')}
+                      </Text>
+                    </View>
+                    <View style={styles.benefit}>
                       <Feather name="eye-off" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
                       <Text style={[
                         styles.benefitText,
@@ -368,6 +384,20 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       ? t('benefits.imagePerYearly')
                       : t('benefits.imagePerMonthly')
                     }
+                  </Text>
+                </View>
+                <View style={styles.benefit}>
+                  <Feather name="shield" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Text style={[
+                    styles.benefitText,
+                    {
+                      color: isActive ? 'rgba(255, 255, 255, 0.95)' : colors.textSecondary,
+                      textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
+                      textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
+                      textShadowRadius: isActive ? 1 : undefined,
+                    }
+                  ]}>
+                    {t('benefits.streakShields')}
                   </Text>
                 </View>
                 <View style={styles.benefit}>

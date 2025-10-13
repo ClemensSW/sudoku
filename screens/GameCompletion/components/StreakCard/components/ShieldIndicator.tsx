@@ -10,12 +10,15 @@ import { useRouter } from 'expo-router';
 import { spacing, radius } from '@/utils/theme';
 import ShieldIcon from '@/assets/svg/shield.svg';
 import ShieldEmptyIcon from '@/assets/svg/shieldEmpty.svg';
+import GiftIcon from '@/assets/svg/gift.svg';
 
 interface ShieldIndicatorProps {
   available: number; // Verfügbare reguläre Schutzschilder
   maxRegular: number; // Maximum reguläre Schutzschilder (2 oder 3)
   bonusShields: number; // Bonus-Schutzschilder
   nextResetDate: Date; // Nächster Reset-Termin
+  onOpenSupportShop?: () => void; // Callback um Support Shop zu öffnen
+  supporterStatus?: 'none' | 'one-time' | 'subscription'; // Supporter Status für dynamischen Premium-Banner
 }
 
 const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
@@ -23,8 +26,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
   maxRegular,
   bonusShields,
   nextResetDate,
+  onOpenSupportShop,
+  supporterStatus = 'none',
 }) => {
-  const { t } = useTranslation('leistung');
+  const { t } = useTranslation(['leistung', 'supportShop']);
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
@@ -53,7 +58,12 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
   const hasNoShields = totalShields === 0;
 
   const handlePremiumPress = () => {
-    router.push('/supportShop');
+    if (onOpenSupportShop) {
+      onOpenSupportShop();
+    } else {
+      // Fallback: Try to navigate to settings
+      router.push('/settings');
+    }
   };
 
   // DEBUG: Cycle durch Shield-Werte (0, 1, 2, 3, zurück zu echtem Wert)
@@ -180,34 +190,52 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
       </View>
 
       {/* Premium Upsell - NUR wenn keine Schilder verfügbar */}
-      {hasNoShields && (
-        <Pressable onPress={handlePremiumPress}>
-          <LinearGradient
-            colors={theme.isDark
-              ? ['rgba(74, 218, 127, 0.15)', 'rgba(74, 218, 127, 0.08)']
-              : ['rgba(74, 218, 127, 0.12)', 'rgba(74, 218, 127, 0.06)']
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.premiumCard}
-          >
-            <View style={styles.premiumHeader}>
-              <View style={[styles.premiumIconCircle, { backgroundColor: 'rgba(74, 218, 127, 0.25)' }]}>
-                <Feather name="zap" size={20} color="#74DA7F" />
+      {hasNoShields && (() => {
+        // Determine which banner to show based on supporter status
+        let bannerKey: 'noSupporter' | 'oneTimeSupporter' | 'premiumSubscriber' = 'noSupporter';
+
+        if (supporterStatus === 'subscription') {
+          bannerKey = 'premiumSubscriber';
+        } else if (supporterStatus === 'one-time') {
+          bannerKey = 'oneTimeSupporter';
+        }
+
+        return (
+          <Pressable onPress={handlePremiumPress}>
+            <View
+              style={[
+                styles.premiumCard,
+                {
+                  backgroundColor: theme.isDark
+                    ? 'rgba(212, 175, 55, 0.12)'
+                    : 'rgba(212, 175, 55, 0.15)',
+                  borderColor: theme.isDark
+                    ? 'rgba(212, 175, 55, 0.3)'
+                    : 'rgba(193, 154, 46, 0.35)',
+                },
+              ]}
+            >
+              {/* Gift Icon */}
+              <View style={{ marginRight: 12 }}>
+                <GiftIcon width={36} height={36} />
               </View>
+
+              {/* Text content */}
               <View style={styles.premiumTextContainer}>
-                <Text style={[styles.premiumTitle, { color: colors.textPrimary }]}>
-                  Premium: 3 Schilder pro Woche
+                <Text style={[styles.premiumTitle, { color: theme.isDark ? '#D4AF37' : '#C19A2E' }]}>
+                  {t(`supportShop:shieldBanner.${bannerKey}.title`)}
                 </Text>
                 <Text style={[styles.premiumSubtitle, { color: colors.textSecondary }]}>
-                  Mehr Schutz für deinen Streak
+                  {t(`supportShop:shieldBanner.${bannerKey}.subtitle`)}
                 </Text>
               </View>
-              <Feather name="chevron-right" size={20} color="#74DA7F" />
+
+              {/* Chevron */}
+              <Feather name="chevron-right" size={20} color={theme.isDark ? '#D4AF37' : '#C19A2E'} />
             </View>
-          </LinearGradient>
-        </Pressable>
-      )}
+          </Pressable>
+        );
+      })()}
 
       {/* DEBUG BUTTON - Provisorisch zum Testen */}
       <Pressable
@@ -367,37 +395,24 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // Premium Upsell Card
+  // Premium Upsell Card (Gallery-style elegant design)
   premiumCard: {
-    padding: spacing.md,
-    borderRadius: radius.lg,
     marginTop: spacing.md,
-    borderLeftWidth: 3,
-    borderLeftColor: '#74DA7F',
-  },
-  premiumHeader: {
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-  },
-  premiumIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   premiumTextContainer: {
     flex: 1,
   },
   premiumTitle: {
     fontSize: 15,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    fontWeight: '600',
   },
   premiumSubtitle: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 13,
     marginTop: 2,
   },
 

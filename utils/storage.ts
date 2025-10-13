@@ -108,6 +108,7 @@ export type DailyStreakData = {
   currentStreak: number;                // Aktueller Streak-Counter
   longestDailyStreak: number;           // Historischer Rekord (Daily Streak)
   lastPlayedDate: string;               // ISO date (YYYY-MM-DD)
+  firstLaunchDate: string;              // Erstes App-Start-Datum (ISO date YYYY-MM-DD)
 
   // Schutzschild (Streak Freeze) Management
   shieldsAvailable: number;             // Verfügbare reguläre Schutzschilder (2/3)
@@ -228,6 +229,13 @@ export const loadStats = async (): Promise<GameStats> => {
       // NEU: Migration zu Daily Streak System
       if (parsedStats.dailyStreak === undefined) {
         parsedStats = await migrateToDailyStreak(parsedStats);
+      }
+
+      // MIGRATION: firstLaunchDate für bestehende User hinzufügen
+      if (parsedStats.dailyStreak && !parsedStats.dailyStreak.firstLaunchDate) {
+        console.log('[loadStats] Adding firstLaunchDate to existing dailyStreak data');
+        parsedStats.dailyStreak.firstLaunchDate = getTodayDate();
+        await saveStats(parsedStats);
       }
 
       return parsedStats;
@@ -667,6 +675,7 @@ async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
       currentStreak: 0, // Neues System startet bei 0
       longestDailyStreak: stats.longestStreak || 0, // Historischer Win-Streak als Basis
       lastPlayedDate: '', // Leer, damit erstes Spiel gezählt wird
+      firstLaunchDate: getTodayDate(), // Setze heutiges Datum als ersten App-Start
 
       // Schutzschild Management
       shieldsAvailable: initialShields,

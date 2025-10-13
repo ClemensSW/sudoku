@@ -15,6 +15,7 @@ import LetterXIcon from '@/assets/svg/letter-x.svg';
 interface StreakCalendarProps {
   currentMonth: string; // Format: "2025-01"
   playHistory: { [yearMonth: string]: MonthlyPlayData };
+  firstLaunchDate?: string; // Erstes App-Start-Datum (ISO YYYY-MM-DD)
   onMonthChange?: (yearMonth: string) => void;
 }
 
@@ -24,6 +25,7 @@ const SHOW_DEBUG_BUTTON = true;
 const StreakCalendar: React.FC<StreakCalendarProps> = ({
   currentMonth,
   playHistory,
+  firstLaunchDate,
   onMonthChange,
 }) => {
   const { t } = useTranslation('leistung');
@@ -143,7 +145,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
   const progressPercentage = (playedDays / daysInMonth) * 100;
 
   // Check day status
-  const getDayStatus = (day: number): 'played' | 'shield' | 'missed' | 'future' => {
+  const getDayStatus = (day: number): 'played' | 'shield' | 'missed' | 'future' | 'before-launch' => {
     if (!monthData) return 'missed';
 
     const today = new Date();
@@ -151,6 +153,13 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
 
     // Future days
     if (dayDate > today) return 'future';
+
+    // Check if day is before first app launch
+    if (firstLaunchDate) {
+      const launchDate = new Date(firstLaunchDate);
+      launchDate.setHours(0, 0, 0, 0);
+      if (dayDate < launchDate) return 'before-launch';
+    }
 
     // Check if shield was used
     if (monthData.shieldDays.includes(day)) return 'shield';
@@ -181,6 +190,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
           backgroundColor: theme.isDark ? 'rgba(244,143,177,0.15)' : 'rgba(239,83,80,0.08)',
           borderColor: theme.isDark ? 'rgba(244,143,177,0.35)' : 'rgba(239,83,80,0.25)',
         };
+      case 'before-launch':
       case 'future':
         return {
           backgroundColor: 'transparent',
@@ -214,6 +224,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
         );
       case 'played':
       case 'future':
+      case 'before-launch':
       default:
         // Normale Tage: Nur Tageszahl
         return (
@@ -222,7 +233,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
               styles.dayText,
               {
                 color:
-                  status === 'future'
+                  status === 'future' || status === 'before-launch'
                     ? colors.textSecondary
                     : status === 'played'
                     ? '#FFFFFF'

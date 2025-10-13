@@ -123,6 +123,7 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
         <StreakCalendar
           currentMonth={currentMonth}
           playHistory={dailyStreak.playHistory}
+          firstLaunchDate={dailyStreak.firstLaunchDate}
           onMonthChange={handleMonthChange}
         />
 

@@ -153,6 +153,11 @@ export async function updateDailyStreak(): Promise<void> {
       stats.dailyStreak.currentStreak = 1;
       stats.dailyStreak.lastPlayedDate = today;
 
+      // Set longest streak to at least 1 on first play
+      if (stats.dailyStreak.longestDailyStreak < 1) {
+        stats.dailyStreak.longestDailyStreak = 1;
+      }
+
       await addToPlayHistory(stats, today);
       await saveStats(stats);
 
@@ -235,6 +240,11 @@ export function useShield(stats: GameStats): void {
  */
 async function resetStreak(stats: GameStats, today: string): Promise<void> {
   if (!stats.dailyStreak) return;
+
+  // Update longest streak before resetting if current is higher
+  if (stats.dailyStreak.currentStreak > stats.dailyStreak.longestDailyStreak) {
+    stats.dailyStreak.longestDailyStreak = stats.dailyStreak.currentStreak;
+  }
 
   stats.dailyStreak.currentStreak = 0;
   stats.dailyStreak.lastPlayedDate = today;

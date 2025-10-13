@@ -6,6 +6,11 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
+import LightningIcon from '@/assets/svg/lightning.svg';
+import SuccessIcon from '@/assets/svg/success.svg';
+import CalendarIcon from '@/assets/svg/calendar.svg';
+import CheckMarkIcon from '@/assets/svg/check-mark.svg';
+import ShieldIcon from '@/assets/svg/shield.svg';
 
 interface StreakStatsProps {
   currentStreak: number;
@@ -26,18 +31,21 @@ const StreakStats: React.FC<StreakStatsProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
+  // Ensure longestStreak is at least as high as currentStreak
+  const effectiveLongestStreak = Math.max(longestStreak, currentStreak);
+
   const stats = [
     {
-      icon: 'zap',
-      label: t('streakTab.currentStreak'),
+      icon: 'lightning',
+      label: 'Aktuelle Serie',
       value: currentStreak,
       suffix: t('streakTab.days'),
       color: '#FF9500',
     },
     {
-      icon: 'award',
-      label: t('streakTab.longestStreak'),
-      value: longestStreak,
+      icon: 'success',
+      label: 'Längste Serie',
+      value: effectiveLongestStreak,
       suffix: t('streakTab.days'),
       color: '#FFD700',
     },
@@ -49,7 +57,7 @@ const StreakStats: React.FC<StreakStatsProps> = ({
       color: '#34A853',
     },
     {
-      icon: 'star',
+      icon: 'checkmark',
       label: t('streakTab.stats.completedMonths'),
       value: completedMonths,
       suffix: '',
@@ -77,7 +85,7 @@ const StreakStats: React.FC<StreakStatsProps> = ({
     >
       {/* Header */}
       <View style={styles.header}>
-        <Feather name="bar-chart-2" size={20} color={colors.primary} />
+        <Feather name="bar-chart-2" size={20} color="#95D6A4" />
         <Text style={[styles.title, { color: colors.textPrimary }]}>
           {t('streakTab.stats.title', { defaultValue: 'Statistik' })}
         </Text>
@@ -85,47 +93,75 @@ const StreakStats: React.FC<StreakStatsProps> = ({
 
       {/* Stats Grid */}
       <View style={styles.statsGrid}>
-        {stats.map((stat, index) => (
-          <Animated.View
-            key={stat.label}
-            style={[
-              styles.statItem,
-              {
-                borderColor: theme.isDark
-                  ? 'rgba(255,255,255,0.08)'
-                  : 'rgba(0,0,0,0.06)',
-              },
-            ]}
-            entering={FadeIn.duration(200).delay(300 + index * 50)}
-          >
-            <View
+        {stats.map((stat, index) => {
+          // Determine which SVG icon to render
+          let IconComponent;
+          let iconSize = 32;
+
+          switch (stat.icon) {
+            case 'lightning':
+              IconComponent = LightningIcon;
+              iconSize = 32;
+              break;
+            case 'success':
+              IconComponent = SuccessIcon;
+              iconSize = 32;
+              break;
+            case 'calendar':
+              IconComponent = CalendarIcon;
+              iconSize = 32;
+              break;
+            case 'checkmark':
+              IconComponent = CheckMarkIcon;
+              iconSize = 28;
+              break;
+            case 'shield':
+              IconComponent = ShieldIcon;
+              iconSize = 32;
+              break;
+            default:
+              IconComponent = null;
+          }
+
+          return (
+            <Animated.View
+              key={stat.label}
               style={[
-                styles.iconCircle,
+                styles.statItem,
                 {
-                  backgroundColor: `${stat.color}20`,
+                  borderColor: theme.isDark
+                    ? 'rgba(255,255,255,0.08)'
+                    : 'rgba(0,0,0,0.06)',
+                  // Remove border from last item
+                  borderBottomWidth: index === stats.length - 1 ? 0 : 1,
                 },
               ]}
+              entering={FadeIn.duration(200).delay(300 + index * 50)}
             >
-              <Feather name={stat.icon as any} size={20} color={stat.color} />
-            </View>
-
-            <View style={styles.statContent}>
-              <View style={styles.valueRow}>
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {stat.value.toLocaleString('de-DE')}
-                </Text>
-                {stat.suffix && (
-                  <Text style={[styles.statSuffix, { color: colors.textSecondary }]}>
-                    {stat.suffix}
-                  </Text>
+              <View style={styles.iconWrapper}>
+                {IconComponent && (
+                  <IconComponent width={iconSize} height={iconSize} fill={stat.color} />
                 )}
               </View>
-              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                {stat.label}
-              </Text>
-            </View>
-          </Animated.View>
-        ))}
+
+              <View style={styles.statContent}>
+                <View style={styles.valueRow}>
+                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                    {stat.value.toLocaleString('de-DE')}
+                  </Text>
+                  {stat.suffix && (
+                    <Text style={[styles.statSuffix, { color: colors.textSecondary }]}>
+                      {stat.suffix}
+                    </Text>
+                  )}
+                </View>
+                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                  {stat.label}
+                </Text>
+              </View>
+            </Animated.View>
+          );
+        })}
       </View>
     </Animated.View>
   );
@@ -168,10 +204,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
   },
-  iconCircle: {
+  iconWrapper: {
     width: 44,
-    height: 44,
-    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },

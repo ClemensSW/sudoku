@@ -6,7 +6,7 @@ import { GameStats } from '@/utils/storage';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing } from '@/utils/theme';
-import { getCurrentYearMonth, getNextMonday, claimMonthlyReward } from '@/utils/dailyStreak';
+import { getNextMonday, claimMonthlyReward } from '@/utils/dailyStreak';
 import { getSupporterStatus } from '@/modules/subscriptions/entitlements';
 import { loadStats, saveStats } from '@/utils/storage';
 
@@ -14,7 +14,6 @@ import { loadStats, saveStats } from '@/utils/storage';
 import {
   CurrentStreakCard,
   ShieldIndicator,
-  StreakCalendar,
   StreakStats,
   MonthlyRewardModal,
 } from '@/screens/GameCompletion/components/StreakCard/components';
@@ -30,7 +29,6 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const isFocused = useIsFocused();
 
   // State
-  const [currentMonth, setCurrentMonth] = useState(getCurrentYearMonth());
   const [isPremium, setIsPremium] = useState(false);
   const [supporterStatus, setSupporterStatus] = useState<'none' | 'one-time' | 'subscription'>('none');
   const [showRewardModal, setShowRewardModal] = useState(false);
@@ -79,11 +77,6 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const maxRegularShields = isPremium ? 3 : 2;
   const nextResetDate = getNextMonday(new Date(dailyStreak.lastShieldResetDate));
 
-  // Handler für Monatswechsel
-  const handleMonthChange = (yearMonth: string) => {
-    setCurrentMonth(yearMonth);
-  };
-
   // Handler für Reward-Claim
   const handleClaimReward = async () => {
     if (!pendingRewardMonth) return;
@@ -113,18 +106,12 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Hero: Current Streak Card */}
+        {/* Hero: Current Streak Card mit integriertem Kalender */}
         <CurrentStreakCard
           currentStreak={dailyStreak.currentStreak}
           longestStreak={dailyStreak.longestDailyStreak}
-        />
-
-        {/* Monatskalender */}
-        <StreakCalendar
-          currentMonth={currentMonth}
           playHistory={dailyStreak.playHistory}
           firstLaunchDate={dailyStreak.firstLaunchDate}
-          onMonthChange={handleMonthChange}
         />
 
         {/* Schutzschilder - NACH dem Kalender */}

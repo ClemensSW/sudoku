@@ -26,6 +26,8 @@ import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
 import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
 import DifficultyModal from "../../components/DifficultyModal/DifficultyModal";
 import GameModeModal, { GameMode } from "./components/GameModeModal";
+import DevBanner from "./components/DevBanner";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 import styles from "./Duo.styles";
 
@@ -76,6 +78,7 @@ const Duo: React.FC = () => {
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
+  const themeColor = useProgressColor(); // Dynamic path color
 
   const [showGameModeModal, setShowGameModeModal] = useState(false);
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
@@ -205,11 +208,9 @@ const Duo: React.FC = () => {
       ]}
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
-      <Image
-        source={require("@/assets/images/background/mountains_blue.png")}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+
+      {/* Dev Banner */}
+      <DevBanner />
 
       {isAnyModalOpen && (
         <Animated.View
@@ -255,6 +256,7 @@ const Duo: React.FC = () => {
                   isDark={theme.isDark}
                   onLogoPress={handleStartGame}
                   performance={scrollPerformanceMode} // Dynamische Performance
+                  themeColor={themeColor} // Dynamic theme color
                 />
               )}
             </View>

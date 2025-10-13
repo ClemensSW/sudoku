@@ -38,22 +38,39 @@ const lerp = (a: number, b: number, t: number) => {
   return a + (b - a) * t;
 };
 
-// ---------- Palette ----------
-const PAL = {
-  dark: {
-    teal: "#4A7D78",
-    digit: "#F1F4FB",
-    ringSoft: "rgba(74,125,120,0.20)",
-    ringMid: "rgba(74,125,120,0.40)",
-    auraTint: "rgba(74,125,120,0.15)",
-  },
-  light: {
-    warm: "#F3EFE3", // Glow/Aura-Tint
-    digit: "#5B5D6E", // Ziffern
-    ringSoft: "rgba(91,93,110,0.14)",
-    ringMid: "rgba(91,93,110,0.28)",
-    auraTint: "rgba(243,239,227,0.18)", // Warmes InnerGlow
-  },
+// ---------- Palette Generator ----------
+const getPalette = (themeColor: string, isDark: boolean) => {
+  // Extract RGB from hex color
+  const hexToRgb = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : { r: 94, g: 158, b: 255 }; // Fallback to blue
+  };
+
+  const rgb = hexToRgb(themeColor);
+
+  if (isDark) {
+    return {
+      primary: themeColor,
+      digit: "#F1F4FB",
+      ringSoft: `rgba(${rgb.r},${rgb.g},${rgb.b},0.20)`,
+      ringMid: `rgba(${rgb.r},${rgb.g},${rgb.b},0.40)`,
+      auraTint: `rgba(${rgb.r},${rgb.g},${rgb.b},0.15)`,
+    };
+  } else {
+    return {
+      primary: themeColor,
+      digit: "#5B5D6E",
+      ringSoft: `rgba(${rgb.r},${rgb.g},${rgb.b},0.14)`,
+      ringMid: `rgba(${rgb.r},${rgb.g},${rgb.b},0.28)`,
+      auraTint: `rgba(${rgb.r},${rgb.g},${rgb.b},0.18)`,
+    };
+  }
 };
 
 // ---------- Assets ----------
@@ -92,6 +109,7 @@ interface DuoBoardVisualizerProps {
   style?: StyleProp<ViewStyle>;
   onLogoPress?: () => void;
   performance?: "low" | "balanced" | "high";
+  themeColor?: string; // Dynamic theme color for palette
 }
 
 // Animated.Text spart einen View pro Ziffer
@@ -106,6 +124,7 @@ const VortexDigit = React.memo(function VortexDigitComp({
   H,
   S,
   isDark,
+  digitColor,
 }: {
   seed: VortexSeed;
   vortexClock: SharedValue<number>;
@@ -114,6 +133,7 @@ const VortexDigit = React.memo(function VortexDigitComp({
   H: number;
   S: number;
   isDark: boolean;
+  digitColor: string;
 }) {
   const scaleUnit = S / 300;
   const VORTEX_TURB = 0.18;
@@ -155,7 +175,6 @@ const VortexDigit = React.memo(function VortexDigitComp({
     };
   });
 
-  const digitColor = isDark ? PAL.dark.digit : PAL.light.digit;
   const textShadowColor = isDark ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.22)";
 
   return (
@@ -192,7 +211,10 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   style,
   onLogoPress,
   performance = "low", // CHANGED: Default auf "low" für bessere Performance
+  themeColor = "#5E9EFF", // Default: Blue Dark Mode color
 }) => {
+  // Generate palette based on theme color
+  const PAL = useMemo(() => getPalette(themeColor, isDark), [themeColor, isDark]);
   // --- Maße ---
   const S = size;
   const W = stageWidth ?? S;
@@ -397,9 +419,9 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   });
 
   // --- Render ---
-  const ringSoft = isDark ? PAL.dark.ringSoft : PAL.light.ringSoft;
-  const ringMid = isDark ? PAL.dark.ringMid : PAL.light.ringMid;
-  const auraTint = isDark ? PAL.dark.auraTint : PAL.light.auraTint;
+  const ringSoft = PAL.ringSoft;
+  const ringMid = PAL.ringMid;
+  const auraTint = PAL.auraTint;
 
   return (
     <View
@@ -437,6 +459,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             H={H}
             S={S}
             isDark={isDark}
+            digitColor={PAL.digit}
           />
         ))}
       </View>
@@ -464,7 +487,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             {
               borderRadius: S * 1.1,
               borderWidth: 2,
-              borderColor: isDark ? PAL.dark.teal : "rgba(91,93,110,0.18)",
+              borderColor: PAL.primary,
             },
           ]}
           start={{ x: 0.5, y: 0.5 }}
@@ -524,9 +547,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             width: "70%",
             height: "70%",
             borderRadius: (S * 1.5 * 0.7) / 2,
-            backgroundColor: isDark
-              ? "rgba(74,125,120,0.18)"
-              : "rgba(243,239,227,0.20)",
+            backgroundColor: auraTint,
           }}
         />
       </Animated.View>

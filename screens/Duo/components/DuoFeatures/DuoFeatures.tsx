@@ -5,6 +5,8 @@ import { Feather } from "@expo/vector-icons";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
+import { getPathColor } from "@/utils/pathColors";
 import styles from "./DuoFeatures.styles";
 
 interface Feature {
@@ -26,25 +28,31 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
   const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
+  const primaryColor = useProgressColor(); // Dynamic path color
+
+  // Use theme-based colors from path palette
+  const greenColor = getPathColor('green', theme.isDark);
+  const yellowColor = getPathColor('yellow', theme.isDark);
+  const redColor = getPathColor('red', theme.isDark);
 
   const features: Feature[] = [
     {
       icon: "users",
       title: t('features.items.playTogether.title'),
       description: t('features.items.playTogether.description'),
-      color: "#4A7D78",
+      color: primaryColor, // Dynamic primary color
     },
     {
       icon: "rotate-ccw",
       title: t('features.items.challengingLayout.title'),
       description: t('features.items.challengingLayout.description'),
-      color: colors.warning,
+      color: yellowColor, // Theme yellow
     },
     {
       icon: "target",
       title: t('features.items.strategyTeamwork.title'),
       description: t('features.items.strategyTeamwork.description'),
-      color: colors.error,
+      color: redColor, // Theme red
     },
   ];
 
@@ -84,7 +92,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
         style={styles.buttonContainer}
       >
         <TouchableOpacity
-          style={[styles.startButton, { backgroundColor: "#4A7D78" }]}
+          style={[styles.startButton, { backgroundColor: primaryColor }]}
           onPress={onStartGame}
           activeOpacity={0.8}
         >

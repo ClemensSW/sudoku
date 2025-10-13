@@ -666,7 +666,7 @@ async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
       // Streak Status
       currentStreak: 0, // Neues System startet bei 0
       longestDailyStreak: stats.longestStreak || 0, // Historischer Win-Streak als Basis
-      lastPlayedDate: getTodayDate(),
+      lastPlayedDate: '', // Leer, damit erstes Spiel gezählt wird
 
       // Schutzschild Management
       shieldsAvailable: initialShields,

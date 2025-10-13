@@ -24,6 +24,12 @@ interface StreakCalendarGridProps {
   onNextMonth: () => void;
   canGoBack: boolean;
   canGoForward: boolean;
+  // Debug props
+  showDebugButton?: boolean;
+  debugScenario?: string;
+  onDebugCycle?: () => void;
+  debugLabel?: string;
+  debugNextLabel?: string;
 }
 
 const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
@@ -40,6 +46,12 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
   onNextMonth,
   canGoBack,
   canGoForward,
+  // Debug props
+  showDebugButton = false,
+  debugScenario = 'off',
+  onDebugCycle,
+  debugLabel = 'Aus',
+  debugNextLabel = 'Aus',
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
@@ -243,6 +255,30 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           )}
         </View>
       </View>
+
+      {/* DEBUG BUTTON */}
+      {showDebugButton && onDebugCycle && (
+        <Pressable
+          onPress={onDebugCycle}
+          style={[
+            styles.debugButton,
+            {
+              backgroundColor: theme.isDark ? 'rgba(255,152,0,0.15)' : 'rgba(255,152,0,0.1)',
+              borderColor: '#FF9800',
+            },
+          ]}
+        >
+          <View style={styles.debugRow}>
+            <Feather name="tool" size={16} color="#FF9800" />
+            <Text style={[styles.debugText, { color: colors.textPrimary }]}>
+              DEBUG: {debugLabel}
+            </Text>
+          </View>
+          <Text style={[styles.debugHint, { color: colors.textSecondary }]}>
+            Tap zum Wechseln: {debugNextLabel}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };

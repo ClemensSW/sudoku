@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   flameContainer: {
     position: 'relative',
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
     marginBottom: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
@@ -182,5 +182,29 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: 'white',
+  },
+
+  // Debug Button
+  debugButton: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    gap: spacing.xs,
+  },
+  debugRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  debugText: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  debugHint: {
+    fontSize: 11,
+    fontWeight: '500',
   },
 });

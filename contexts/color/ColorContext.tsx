@@ -10,6 +10,8 @@ interface ColorContextType {
   /** The stored color hex value (theme-agnostic) */
   storedColorHex: string;
   updateSelectedColor: (color: string) => Promise<void>;
+  /** Refresh color from storage (e.g., after level unlock) */
+  refreshColor: () => Promise<void>;
 }
 
 const ColorContext = createContext<ColorContextType | undefined>(undefined);
@@ -18,17 +20,18 @@ export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const theme = useTheme();
   const [storedColorHex, setStoredColorHex] = useState<string>('#4285F4'); // Default: Blau
 
+  // Shared function to load color from storage
+  const loadColor = async () => {
+    try {
+      const colorData = await loadColorUnlock();
+      setStoredColorHex(colorData.selectedColor);
+    } catch (error) {
+      console.error('Error loading progress color:', error);
+    }
+  };
+
   // Load initial color from storage
   useEffect(() => {
-    const loadColor = async () => {
-      try {
-        const colorData = await loadColorUnlock();
-        setStoredColorHex(colorData.selectedColor);
-      } catch (error) {
-        console.error('Error loading progress color:', error);
-      }
-    };
-
     loadColor();
   }, []);
 
@@ -45,8 +48,13 @@ export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
+  // Function to refresh color from storage (e.g., after level unlock)
+  const refreshColor = async () => {
+    await loadColor();
+  };
+
   return (
-    <ColorContext.Provider value={{ progressColor, storedColorHex, updateSelectedColor }}>
+    <ColorContext.Provider value={{ progressColor, storedColorHex, updateSelectedColor, refreshColor }}>
       {children}
     </ColorContext.Provider>
   );
@@ -74,4 +82,12 @@ export const useStoredColorHex = (): string => {
     throw new Error('useStoredColorHex must be used within ColorProvider');
   }
   return context.storedColorHex;
+};
+
+export const useRefreshProgressColor = (): (() => Promise<void>) => {
+  const context = useContext(ColorContext);
+  if (!context) {
+    throw new Error('useRefreshProgressColor must be used within ColorProvider');
+  }
+  return context.refreshColor;
 };

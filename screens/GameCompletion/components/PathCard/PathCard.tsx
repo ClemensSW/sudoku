@@ -24,7 +24,7 @@ import ColorPickerModal from "./components/ColorPickerModal";
 // Hooks
 import { usePathAnimations } from "./hooks/usePathAnimations";
 import { useMilestoneHandling } from "./hooks/useMilestoneHandling";
-import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
+import { useProgressColor, useUpdateProgressColor, useRefreshProgressColor } from "@/hooks/useProgressColor";
 
 // Styles
 import styles from "./PathCard.styles";
@@ -75,6 +75,7 @@ const PathCard: React.FC<PathCardProps> = ({
   // Progress color from Context (reaktiv für alle Komponenten)
   const displayColor = useProgressColor();
   const updateColor = useUpdateProgressColor();
+  const refreshColor = useRefreshProgressColor();
 
   // Animation Hooks
   const { cardAnimatedStyle, trailAnimatedStyle } = usePathAnimations({
@@ -105,13 +106,16 @@ const PathCard: React.FC<PathCardProps> = ({
       // Sync unlocked colors with current level
       await syncUnlockedColors(levelInfo.currentLevel);
 
+      // Refresh color context to reflect newly activated color
+      await refreshColor();
+
       // Reload to get updated data after sync
       const updatedData = await loadColorUnlock();
       setColorUnlockData(updatedData);
     };
 
     loadColorData();
-  }, [levelInfo.currentLevel]);
+  }, [levelInfo.currentLevel, refreshColor]);
 
   const togglePathDescription = useCallback(() => {
     setPathDescExpanded((s) => !s);

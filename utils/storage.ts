@@ -638,11 +638,25 @@ export const syncUnlockedColors = async (currentLevel: number): Promise<void> =>
     const newUnlocked = [...new Set([...currentData.unlockedColors, ...shouldBeUnlocked])];
 
     if (newUnlocked.length !== currentData.unlockedColors.length) {
+      // Finde die neu freigeschaltete Farbe
+      const newlyUnlockedColors = newUnlocked.filter(
+        color => !currentData.unlockedColors.includes(color)
+      );
+
+      // Automatisch die neueste freigeschaltete Farbe aktivieren
+      const colorToActivate = newlyUnlockedColors.length > 0
+        ? newlyUnlockedColors[newlyUnlockedColors.length - 1] // Letzte neue Farbe (höchstes Level)
+        : currentData.selectedColor;
+
       await saveColorUnlock({
         ...currentData,
         unlockedColors: newUnlocked,
+        selectedColor: colorToActivate,
       });
-      console.log(`Colors synced for level ${currentLevel}`);
+
+      if (newlyUnlockedColors.length > 0) {
+        console.log(`Colors synced for level ${currentLevel}. New path color activated: ${colorToActivate}`);
+      }
     }
   } catch (error) {
     console.error("Error syncing unlocked colors:", error);

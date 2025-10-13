@@ -98,11 +98,11 @@ export async function getSupporterStatus(): Promise<SupporterStatus> {
 
     return {
       isSupporter: purchaseType !== 'none',
-      isPremiumSubscriber: false,
+      isPremiumSubscriber: purchaseType === 'subscription', // Support dev testing!
       expiresAt: null,
       productId,
       isInGracePeriod: false,
-      supportType: purchaseType === 'none' ? 'none' : 'one-time',
+      supportType: purchaseType === 'none' ? 'none' : purchaseType,
     };
   }
 }

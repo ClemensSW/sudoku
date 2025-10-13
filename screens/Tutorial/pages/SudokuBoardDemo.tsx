@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface SudokuBoardDemoProps {
   puzzle: number[][];
@@ -23,6 +24,7 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   const renderCell = (row: number, col: number) => {
     const value = puzzle[row][col];
@@ -38,15 +40,17 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
       Math.floor(selectedCell[0] / 3) === Math.floor(row / 3) &&
       Math.floor(selectedCell[1] / 3) === Math.floor(col / 3);
 
-    // Generiere die Theme-konformen Hintergrundfarben
+    // Generiere die Theme-konformen Hintergrundfarben mit dynamischer progressColor
     let backgroundColor = "transparent";
     let textColor = colors.cellTextColor; // Standard-Textfarbe
-    
+
     if (isSelected) {
-      backgroundColor = colors.cellSelectedBackground;
+      // Ausgewählte Zelle: volle Farbe (keine Transparenz)
+      backgroundColor = progressColor;
       textColor = colors.cellSelectedTextColor;
     } else if (isInSameRow || isInSameCol || isInSameBox) {
-      backgroundColor = colors.cellRelatedBackground;
+      // Verwandte Zellen: progressColor mit 35% Transparenz
+      backgroundColor = progressColor + '59';
     }
     
     // Anfängliche (vorgegebene) Werte haben eine andere Textfarbe/Stil

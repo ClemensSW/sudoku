@@ -10,6 +10,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface AnimatedBoardProps {
   grid: number[][];
@@ -45,6 +46,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   // Standardfarben für Hervorhebungen, wenn nicht explizit angegeben
   // Die Farben sind so gewählt, dass sie im Light und Dark Mode gut aussehen
@@ -96,7 +98,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
       return {
         highlighted: true,
         isSelected: true,
-        color: colors.cellSelectedBackground, // Verwende Theme-Farbe für ausgewählte Zelle
+        color: progressColor, // Dynamische progressColor für ausgewählte Zelle
       };
     }
 

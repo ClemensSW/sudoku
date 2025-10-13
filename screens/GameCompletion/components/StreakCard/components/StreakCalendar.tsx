@@ -10,6 +10,7 @@ import { spacing, radius } from '@/utils/theme';
 import { MonthlyPlayData } from '@/utils/storage';
 import { getDaysInMonth } from '@/utils/dailyStreak';
 import ShieldIcon from '@/assets/svg/shield.svg';
+import LetterXIcon from '@/assets/svg/letter-x.svg';
 
 interface StreakCalendarProps {
   currentMonth: string; // Format: "2025-01"
@@ -203,22 +204,13 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
           />
         );
       case 'missed':
-        // Fehltag: Kleines X + Tageszahl
+        // Fehltag: Nur SVG Letter-X-Icon, KEINE Tageszahl
         return (
-          <>
-            <Feather name="x" size={12} color={theme.isDark ? '#EF5350' : '#D32F2F'} />
-            <Text
-              style={[
-                styles.dayText,
-                {
-                  color: theme.isDark ? '#EF5350' : '#D32F2F',
-                  fontWeight: '600',
-                },
-              ]}
-            >
-              {day}
-            </Text>
-          </>
+          <LetterXIcon
+            width={28}
+            height={28}
+            fill={theme.isDark ? '#EF5350' : '#D32F2F'}
+          />
         );
       case 'played':
       case 'future':

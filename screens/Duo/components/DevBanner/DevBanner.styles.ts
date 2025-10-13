@@ -18,8 +18,9 @@ export default StyleSheet.create({
     justifyContent: "center",
   },
   banner: {
-    paddingVertical: 10,
-    paddingHorizontal: 140,
+    paddingVertical: 20,
+    paddingRight: 50,
+    paddingHorizontal: 100,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -28,13 +29,13 @@ export default StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 10,
     elevation: 12,
-    minWidth: 280,
+    minWidth: 380,
   },
   icon: {
     marginRight: 6,
   },
   text: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: "900",
     letterSpacing: 2,
     textTransform: "uppercase",

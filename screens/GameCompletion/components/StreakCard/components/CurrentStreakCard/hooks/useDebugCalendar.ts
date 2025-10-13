@@ -56,18 +56,17 @@ export const useDebugCalendar = ({ selectedMonth, playHistory }: UseDebugCalenda
 
       case 'before-launch':
         // Simuliert realistischen Monat bis heute (firstLaunchDate wird auf 1. gesetzt)
-        // Zeigt Mix aus gespielten Tagen, Shields und Fehltagen
-        // Nur bis heute ausgefüllt, damit es wie echte Benutzung aussieht
+        // MEISTE Tage gespielt, nur wenige Shields/Fehltage → schön voller Kalender
         const today = new Date().getDate();
         for (let d = 1; d <= Math.min(today, daysInMonth); d++) {
-          if (d % 4 === 0) {
-            // Jeder 4. Tag: Shield verwendet
+          if (d % 8 === 0) {
+            // Nur jeder 8. Tag: Shield verwendet (selten)
             mockShieldDays.push(d);
-          } else if (d % 7 === 0) {
-            // Jeder 7. Tag: Fehltag (nicht spielen)
+          } else if (d % 11 === 0) {
+            // Nur jeder 11. Tag: Fehltag (sehr selten)
             // Nichts hinzufügen → wird als "missed" angezeigt
           } else {
-            // Rest: Normal gespielt
+            // ALLE anderen Tage: Normal gespielt ✅
             mockDays.push(d);
           }
         }

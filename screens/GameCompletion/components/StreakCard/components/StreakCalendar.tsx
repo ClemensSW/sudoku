@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
@@ -15,6 +16,9 @@ interface StreakCalendarProps {
   onMonthChange?: (yearMonth: string) => void;
 }
 
+// DEBUG: Toggle für Debug-Button (auf false setzen für Production)
+const SHOW_DEBUG_BUTTON = true;
+
 const StreakCalendar: React.FC<StreakCalendarProps> = ({
   currentMonth,
   playHistory,
@@ -26,9 +30,52 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
 
+  // DEBUG: State für Test-Szenarien
+  const [debugScenario, setDebugScenario] = useState<'off' | 'full' | 'half' | 'shields' | 'mixed'>('off');
+
   // Parse year/month
   const [year, month] = selectedMonth.split('-').map(Number);
-  const monthData = playHistory[selectedMonth];
+  let monthData = playHistory[selectedMonth];
+
+  // DEBUG: Override monthData basierend auf Szenario
+  if (debugScenario !== 'off') {
+    const daysInMonth = getDaysInMonth(selectedMonth);
+    const mockDays: number[] = [];
+    const mockShieldDays: number[] = [];
+
+    switch (debugScenario) {
+      case 'full':
+        // Alle Tage gespielt
+        for (let d = 1; d <= daysInMonth; d++) mockDays.push(d);
+        break;
+      case 'half':
+        // Erste Hälfte gespielt
+        for (let d = 1; d <= Math.floor(daysInMonth / 2); d++) mockDays.push(d);
+        break;
+      case 'shields':
+        // Viele Shield-Tage
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (d % 3 === 0) mockShieldDays.push(d);
+          else if (d % 2 === 0) mockDays.push(d);
+        }
+        break;
+      case 'mixed':
+        // Gemischt: Gespielt, Shields, Fehltage
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (d % 5 === 0) mockShieldDays.push(d);
+          else if (d % 3 !== 0) mockDays.push(d);
+          // Alle anderen sind Fehltage
+        }
+        break;
+    }
+
+    monthData = {
+      days: mockDays,
+      shieldDays: mockShieldDays,
+      completed: debugScenario === 'full',
+      reward: debugScenario === 'full' ? { type: 'bonus_shields', value: 1, claimed: false } : undefined,
+    };
+  }
 
   // Month names
   const monthNames = [
@@ -115,19 +162,22 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
   const getDayStyle = (status: string) => {
     switch (status) {
       case 'played':
+        // Clean: Gefüllter Kreis mit Shield-Farbverlauf
         return {
-          backgroundColor: theme.isDark ? '#34A85350' : '#34A85320',
-          borderColor: '#34A853',
+          backgroundColor: '#95D6A4', // Primäre Shield-Farbe
+          borderColor: 'transparent',
         };
       case 'shield':
+        // Shield-Tag: Subtiler Shield-Akzent mit passenden Farben
         return {
-          backgroundColor: theme.isDark ? '#4285F450' : '#4285F420',
-          borderColor: '#4285F4',
+          backgroundColor: theme.isDark ? '#77CE8E40' : '#77CE8E30',
+          borderColor: '#77CE8E',
         };
       case 'missed':
+        // Fehltag: Subtiler roter Akzent (nicht zu aggressiv)
         return {
-          backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-          borderColor: 'transparent',
+          backgroundColor: theme.isDark ? 'rgba(239,83,80,0.15)' : 'rgba(239,83,80,0.08)',
+          borderColor: theme.isDark ? 'rgba(239,83,80,0.4)' : 'rgba(239,83,80,0.25)',
         };
       case 'future':
         return {
@@ -143,9 +193,14 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
   const getDayIcon = (status: string) => {
     switch (status) {
       case 'played':
-        return <Feather name="check" size={14} color="#34A853" />;
+        // Kein Icon - nur gefüllter Kreis für cleanes Design
+        return null;
       case 'shield':
-        return <Feather name="shield" size={14} color="#4285F4" />;
+        // Kleines, dezentes Shield-Icon
+        return <Feather name="shield" size={12} color="#77CE8E" />;
+      case 'missed':
+        // Kleines X für Fehltag
+        return <Feather name="x" size={12} color={theme.isDark ? '#EF5350' : '#D32F2F'} />;
       default:
         return null;
     }
@@ -162,32 +217,42 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
       ]}
       entering={FadeIn.duration(350)}
     >
-      {/* Header with Month Navigation */}
+      {/* Header with Month Navigation - Gesamte Zeile klickbar */}
       <View style={styles.header}>
         <Pressable
           onPress={handlePreviousMonth}
           disabled={!canGoBack()}
           style={({ pressed }) => [
             styles.navButton,
+            styles.navButtonExpanded,
             { opacity: pressed ? 0.6 : !canGoBack() ? 0.3 : 1 },
           ]}
         >
-          <Feather name="chevron-left" size={24} color={colors.textPrimary} />
+          <Feather name="chevron-left" size={28} color={colors.textPrimary} />
         </Pressable>
 
-        <Text style={[styles.monthTitle, { color: colors.textPrimary }]}>
-          {monthNames[month - 1]} {year}
-        </Text>
+        <Pressable
+          onPress={canGoForward() ? handleNextMonth : canGoBack() ? handlePreviousMonth : undefined}
+          style={({ pressed }) => [
+            styles.monthTitleContainer,
+            { backgroundColor: pressed ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent' },
+          ]}
+        >
+          <Text style={[styles.monthTitle, { color: colors.textPrimary }]}>
+            {monthNames[month - 1]} {year}
+          </Text>
+        </Pressable>
 
         <Pressable
           onPress={handleNextMonth}
           disabled={!canGoForward()}
           style={({ pressed }) => [
             styles.navButton,
+            styles.navButtonExpanded,
             { opacity: pressed ? 0.6 : !canGoForward() ? 0.3 : 1 },
           ]}
         >
-          <Feather name="chevron-right" size={24} color={colors.textPrimary} />
+          <Feather name="chevron-right" size={28} color={colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -220,7 +285,9 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
                 style={[
                   styles.dayCircle,
                   dayStyle,
-                  { borderWidth: status !== 'future' && status !== 'missed' ? 2 : 0 },
+                  {
+                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : 0,
+                  },
                 ]}
               >
                 {getDayIcon(status)}
@@ -231,7 +298,12 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
                       color:
                         status === 'future'
                           ? colors.textSecondary
+                          : status === 'played'
+                          ? '#FFFFFF' // Weißer Text auf grünem Hintergrund
+                          : status === 'missed'
+                          ? (theme.isDark ? '#EF5350' : '#D32F2F')
                           : colors.textPrimary,
+                      fontWeight: status === 'played' ? '700' : '600',
                     },
                   ]}
                 >
@@ -243,7 +315,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
         })}
       </View>
 
-      {/* Progress Bar */}
+      {/* Progress Bar mit Farbverlauf */}
       <View style={styles.progressSection}>
         <View
           style={[
@@ -257,13 +329,19 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
         >
           <Animated.View
             style={[
-              styles.progressFill,
+              styles.progressFillWrapper,
               {
                 width: `${progressPercentage}%`,
-                backgroundColor: monthData?.completed ? '#34A853' : colors.primary,
               },
             ]}
-          />
+          >
+            <LinearGradient
+              colors={['#95D6A4', '#B3E59F']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.progressFill}
+            />
+          </Animated.View>
         </View>
 
         <View style={styles.progressLabelRow}>
@@ -278,6 +356,35 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
           )}
         </View>
       </View>
+
+      {/* DEBUG BUTTON */}
+      {SHOW_DEBUG_BUTTON && (
+        <Pressable
+          onPress={() => {
+            const scenarios: Array<'off' | 'full' | 'half' | 'shields' | 'mixed'> = ['off', 'full', 'half', 'shields', 'mixed'];
+            const currentIndex = scenarios.indexOf(debugScenario);
+            const nextIndex = (currentIndex + 1) % scenarios.length;
+            setDebugScenario(scenarios[nextIndex]);
+          }}
+          style={[
+            styles.debugButton,
+            {
+              backgroundColor: theme.isDark ? 'rgba(255,152,0,0.15)' : 'rgba(255,152,0,0.1)',
+              borderColor: '#FF9800',
+            },
+          ]}
+        >
+          <View style={styles.debugRow}>
+            <Feather name="tool" size={16} color="#FF9800" />
+            <Text style={[styles.debugText, { color: colors.textPrimary }]}>
+              DEBUG: {debugScenario === 'off' ? 'Aus' : debugScenario === 'full' ? 'Voller Monat' : debugScenario === 'half' ? 'Halber Monat' : debugScenario === 'shields' ? 'Viele Shields' : 'Gemischt'}
+            </Text>
+          </View>
+          <Text style={[styles.debugHint, { color: colors.textSecondary }]}>
+            Tap zum Wechseln: {debugScenario === 'off' ? 'Voller Monat' : debugScenario === 'full' ? 'Halber Monat' : debugScenario === 'half' ? 'Viele Shields' : debugScenario === 'shields' ? 'Gemischt' : 'Aus'}
+          </Text>
+        </Pressable>
+      )}
     </Animated.View>
   );
 };
@@ -301,9 +408,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: spacing.md,
+    gap: spacing.xs,
   },
   navButton: {
     padding: spacing.xs,
+  },
+  navButtonExpanded: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  monthTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
   },
   monthTitle: {
     fontSize: 18,
@@ -358,8 +478,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: spacing.xs,
   },
+  progressFillWrapper: {
+    height: '100%',
+    overflow: 'hidden',
+  },
   progressFill: {
     height: '100%',
+    width: '100%',
     borderRadius: 4,
   },
   progressLabelRow: {
@@ -383,6 +508,30 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: 'white',
+  },
+
+  // Debug Button
+  debugButton: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    gap: spacing.xs,
+  },
+  debugRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  debugText: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  debugHint: {
+    fontSize: 11,
+    fontWeight: '500',
   },
 });
 

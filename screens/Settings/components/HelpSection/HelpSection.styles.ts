@@ -7,7 +7,7 @@ export default StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: "hidden",
-    marginBottom: spacing.md,
+    marginBottom: spacing.xxl,
   },
   actionButton: {
     flexDirection: "row",

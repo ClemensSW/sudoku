@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: "hidden",
+    marginBottom: spacing.xxl,
   },
   actionButton: {
     flexDirection: "row",

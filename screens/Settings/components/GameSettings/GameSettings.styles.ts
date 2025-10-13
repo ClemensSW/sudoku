@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 1,
     overflow: "hidden",
-    marginBottom: spacing.md,
+    marginBottom: spacing.xxl,
   },
   settingRow: {
     flexDirection: "row",

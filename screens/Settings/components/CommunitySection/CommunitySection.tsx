@@ -9,6 +9,7 @@ import ReviewManager from "@/screens/Settings/components/ReviewSystem/ReviewMana
 import FeedbackIcon from "@/assets/svg/feedback.svg";
 import LatteArtIcon from "@/assets/svg/latte-art.svg";
 import ShareIcon from "@/assets/svg/share.svg";
+import { spacing } from "@/utils/theme";
 
 // Definiere eigene Styles für diese Komponente, um actionDescription zu unterstützen
 const customStyles = StyleSheet.create({
@@ -16,7 +17,7 @@ const customStyles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: "hidden",
-    marginBottom: 16,
+        marginBottom: spacing.xxl,
   },
   actionButton: {
     flexDirection: "row",

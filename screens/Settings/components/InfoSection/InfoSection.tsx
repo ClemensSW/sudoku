@@ -6,13 +6,14 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import InfoIcon from "@/assets/svg/info.svg";
+import { spacing } from "@/utils/theme";
 
 const customStyles = StyleSheet.create({
   settingsGroup: {
     borderRadius: 12,
     borderWidth: 1,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: spacing.xxl,
   },
   actionButton: {
     flexDirection: "row",

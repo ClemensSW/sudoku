@@ -174,9 +174,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <HairlineDivider color={dividerColor} />
           <StatTile
             customIcon={<LightningIcon width={40} height={40} />}
-            value={formatNumber(stats.longestStreak)}
-            label={t("profile.streak")}
-            description={t("profile.streakDescription")}
+            value={formatNumber(stats.dailyStreak?.currentStreak ?? 0)}
+            label={t("profile.dailyStreak", { defaultValue: "Tages-Streak" })}
+            description={t("profile.dailyStreakDescription", { defaultValue: "Deine Serie" })}
             colors={{
               icon: colors.primary,
               valueColor: valueColor,

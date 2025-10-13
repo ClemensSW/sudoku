@@ -120,6 +120,7 @@
     "imagePerYearly": "2 Images/Month",
     "imagePerYear": "{{count}} Images/Year",
     "imageLifetime": "Unlock 1 Image",
+    "streakShields": "3 Shields/Week",
     "adFree": "Ad-Free"
   },
   "thankYou": {

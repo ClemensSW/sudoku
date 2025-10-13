@@ -50,15 +50,23 @@ export type GameStats = {
   bestTimeMedium: number;
   bestTimeHard: number;
   bestTimeExpert: number;
+
+  // DEPRECATED: Win-Streak (wird durch dailyStreak ersetzt)
+  // Behalten für Rückwärtskompatibilität
   currentStreak: number;
   longestStreak: number;
+
   totalXP: number;
-  reachedMilestones: number[]; 
+  reachedMilestones: number[];
+
   // NEU: Speicherung der gelösten Sudokus pro Schwierigkeitsgrad
   completedEasy: number;
   completedMedium: number;
   completedHard: number;
   completedExpert: number;
+
+  // NEU: Daily Streak System
+  dailyStreak?: DailyStreakData; // Optional für Migration
 };
 
 // Einstellungen Typ
@@ -78,6 +86,44 @@ export type GameSettings = {
 export type ColorUnlockData = {
   selectedColor: string; // Aktuell ausgewählte Farbe
   unlockedColors: string[]; // Freigeschaltete Farben
+};
+
+// ===== Daily Streak System =====
+
+// Monatliche Play-History für Kalender
+export type MonthlyPlayData = {
+  days: number[];                       // Array von gespielten Tagen [1, 3, 5, ...]
+  shieldDays: number[];                 // Tage an denen Schutzschild eingesetzt wurde
+  completed: boolean;                   // true wenn alle Tage des Monats gespielt
+  reward: {
+    claimed: boolean;
+    type: 'bonus_shields' | 'ep_boost' | 'avatar_frame' | 'title_badge';
+    value: any;
+  } | null;
+};
+
+// Daily Streak Datenstruktur
+export type DailyStreakData = {
+  // Streak Status
+  currentStreak: number;                // Aktueller Streak-Counter
+  longestDailyStreak: number;           // Historischer Rekord (Daily Streak)
+  lastPlayedDate: string;               // ISO date (YYYY-MM-DD)
+
+  // Schutzschild (Streak Freeze) Management
+  shieldsAvailable: number;             // Verfügbare reguläre Schutzschilder (2/3)
+  shieldsUsedThisWeek: number;          // Verbrauchte Schutzschilder diese Woche
+  lastShieldResetDate: string;          // Letzter Montag (wöchentlicher Reset)
+  bonusShields: number;                 // Lifetime Bonus-Schutzschilder (aus Rewards)
+  totalShieldsUsed: number;             // Gesamt eingesetzte Schutzschilder (Statistik)
+
+  // Kalender-Daten (letzte 12 Monate werden gespeichert)
+  playHistory: {
+    [yearMonth: string]: MonthlyPlayData; // Format: "2025-01"
+  };
+
+  // Statistiken
+  totalDaysPlayed: number;              // Gesamt gespielte Tage
+  completedMonths: string[];            // Vollständig abgeschlossene Monate ["2024-12", "2025-01"]
 };
 
 // Standard-Statistiken
@@ -155,7 +201,8 @@ export const loadStats = async (): Promise<GameStats> => {
   try {
     const savedStats = await AsyncStorage.getItem(KEYS.STATISTICS);
     if (savedStats) {
-      const parsedStats = JSON.parse(savedStats);
+      let parsedStats = JSON.parse(savedStats);
+
       // Kompatibilität mit älteren Versionen
       if (parsedStats.totalXP === undefined) {
         parsedStats.totalXP = 0;
@@ -163,6 +210,7 @@ export const loadStats = async (): Promise<GameStats> => {
       if (parsedStats.reachedMilestones === undefined) {
         parsedStats.reachedMilestones = [];
       }
+
       // NEU: Kompatibilität mit älteren Versionen für gelöste Sudokus
       if (parsedStats.completedEasy === undefined) {
         parsedStats.completedEasy = 0;
@@ -176,6 +224,12 @@ export const loadStats = async (): Promise<GameStats> => {
       if (parsedStats.completedExpert === undefined) {
         parsedStats.completedExpert = 0;
       }
+
+      // NEU: Migration zu Daily Streak System
+      if (parsedStats.dailyStreak === undefined) {
+        parsedStats = await migrateToDailyStreak(parsedStats);
+      }
+
       return parsedStats;
     }
     return DEFAULT_STATS;
@@ -553,3 +607,76 @@ export const syncUnlockedColors = async (currentLevel: number): Promise<void> =>
     console.error("Error syncing unlocked colors:", error);
   }
 };
+
+// ===== Daily Streak System - Migration & Helpers =====
+
+/**
+ * Helper: Gibt den letzten Montag als ISO-Date-String zurück
+ */
+function getLastMonday(): string {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sonntag, 1 = Montag, ...
+  const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Montag = 0 Tage, Sonntag = 6 Tage
+  const lastMonday = new Date(today);
+  lastMonday.setDate(today.getDate() - daysToSubtract);
+  lastMonday.setHours(0, 0, 0, 0);
+  return lastMonday.toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+/**
+ * Helper: Gibt heutiges Datum als ISO-Date-String zurück (YYYY-MM-DD)
+ */
+export function getTodayDate(): string {
+  const today = new Date();
+  return today.toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+/**
+ * Migration von altem Win-Streak zu Daily Streak System
+ * Wird automatisch beim ersten Laden nach Update ausgeführt
+ */
+async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
+  console.log('[Daily Streak] Migrating to new Daily Streak System...');
+
+  // Check ob Premium Subscriber für Shield-Count
+  let initialShields = 2; // Default für Free User
+  try {
+    const { getSupporterStatus } = await import('@/modules/subscriptions/entitlements');
+    const supporterStatus = await getSupporterStatus();
+    if (supporterStatus.isPremiumSubscriber) {
+      initialShields = 3;
+    }
+  } catch (error) {
+    console.warn('[Daily Streak] Could not check premium status, using free tier shields (2)');
+  }
+
+  const migratedStats: GameStats = {
+    ...stats,
+    dailyStreak: {
+      // Streak Status
+      currentStreak: 0, // Neues System startet bei 0
+      longestDailyStreak: stats.longestStreak || 0, // Historischer Win-Streak als Basis
+      lastPlayedDate: getTodayDate(),
+
+      // Schutzschild Management
+      shieldsAvailable: initialShields,
+      shieldsUsedThisWeek: 0,
+      lastShieldResetDate: getLastMonday(),
+      bonusShields: 0,
+      totalShieldsUsed: 0,
+
+      // Kalender-Daten
+      playHistory: {},
+
+      // Statistiken
+      totalDaysPlayed: 0,
+      completedMonths: [],
+    },
+  };
+
+  // Speichere migrierten State
+  await saveStats(migratedStats);
+  console.log('[Daily Streak] Migration completed successfully');
+
+  return migratedStats;
+}

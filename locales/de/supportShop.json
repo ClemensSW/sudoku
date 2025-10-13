@@ -120,6 +120,7 @@
     "imagePerYearly": "2 Bilder/Monat",
     "imagePerYear": "{{count}} Bilder/Jahr",
     "imageLifetime": "1 Bild freischalten",
+    "streakShields": "3 Schutzschilder/Woche",
     "adFree": "Werbefrei"
   },
   "thankYou": {

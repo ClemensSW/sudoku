@@ -17,6 +17,7 @@ import {
 } from "@/utils/sudoku";
 import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
+import { updateDailyStreak, checkWeeklyShieldReset, checkMonthlyCompletion, getCurrentYearMonth } from "@/utils/dailyStreak";
 
 // Constants for game
 const INITIAL_HINTS = 3;
@@ -115,6 +116,18 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
     // Clear any paused game when starting new game
     await clearPausedGame();
+
+    // Daily Streak System: Update streak & check resets BEFORE game starts
+    try {
+      await checkWeeklyShieldReset(); // Check if Monday reset is due
+      await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
+
+      // Reload stats immediately so GameCompletion shows updated streak
+      const updatedStats = await loadStats();
+      setGameStats(updatedStats);
+    } catch (error) {
+      console.error('[Game] Error updating daily streak:', error);
+    }
 
     // Generate a new game with current difficulty
     setTimeout(() => {
@@ -341,6 +354,14 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
     // Update stats
     await updateStatsAfterGame(true, difficulty, gameTime, autoNotesUsed);
+
+    // Daily Streak System: Check if month is completed after winning
+    try {
+      const currentMonth = getCurrentYearMonth();
+      await checkMonthlyCompletion(currentMonth);
+    } catch (error) {
+      console.error('[Game] Error checking monthly completion:', error);
+    }
 
     // Clear any paused game state when game is completed
     await clearPausedGame();

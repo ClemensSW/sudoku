@@ -26,7 +26,7 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 import LevelCard from "./components/LevelCard";
 import PathCard from "./components/PathCard";
 import GalleryProgressCard from "./components/GalleryProgressCard";
-import StreakCard from "./components/StreakCard";
+import { StreakCalendar } from "./components/StreakCard/components";
 import PerformanceCard from "./components/PerformanceCard/PerformanceCard";
 import FeedbackCard from "./components/FeedbackCard";
 import ConfettiEffect from "./components/ConfettiEffect/ConfettiEffect";
@@ -37,6 +37,9 @@ import styles from "./GameCompletion.styles";
 
 // Profil-Funktionen (NEU)
 import { loadUserProfile, updateUserTitle } from "@/utils/profileStorage";
+
+// Daily Streak Funktionen
+import { getCurrentYearMonth } from "@/utils/dailyStreak";
 
 interface GameCompletionScreenProps {
   visible: boolean;
@@ -380,13 +383,13 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
               </>
             )}
 
-            {/* StreakCard - Renamed from StreakDisplay */}
-            {stats && stats.currentStreak > 0 && !autoNotesUsed && (
+            {/* StreakCalendar - Daily Streak System */}
+            {stats && stats.dailyStreak && !autoNotesUsed && (
               <>
-                <StreakCard
-                  currentStreak={stats.currentStreak}
-                  longestStreak={stats.longestStreak}
-                  isRecord={stats.currentStreak === stats.longestStreak && stats.longestStreak > 2}
+                <StreakCalendar
+                  currentMonth={getCurrentYearMonth()}
+                  playHistory={stats.dailyStreak.playHistory}
+                  onMonthChange={() => {}} // Read-only in GameCompletion
                 />
                 <View style={styles.sectionSpacer} />
               </>

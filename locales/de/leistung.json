@@ -8,6 +8,8 @@
     "xpDescription": "Deine Reise",
     "streak": "In Serie",
     "streakDescription": "Dein Rekord",
+    "dailyStreak": "Tages-Streak",
+    "dailyStreakDescription": "Deine Serie",
     "pictures": "Bilder",
     "picture": "Bild",
     "picturesDescription": "Schöne Galerie"
@@ -87,6 +89,46 @@
     "noSupport": {
       "title": "Unterstütze die Entwicklung",
       "subtitle": "Hilf mir, das Spiel werbefrei zu halten"
+    }
+  },
+  "streakTab": {
+    "title": "Täglicher Streak",
+    "currentStreak": "Aktueller Streak",
+    "longestStreak": "Längster Streak",
+    "day": "Tag",
+    "days": "Tage",
+    "shields": {
+      "title": "Schutzschilder",
+      "available": "Verfügbar",
+      "nextReset": "Nächster Reset",
+      "bonusShields": "Bonus-Schutzschilder",
+      "description": "Schützt deinen Streak automatisch, wenn du einen Tag verpasst"
+    },
+    "calendar": {
+      "played": "Gespielt",
+      "shieldUsed": "Schutzschild eingesetzt",
+      "missed": "Verpasst",
+      "monthProgress": "{{count}}/{{total}} Tage"
+    },
+    "stats": {
+      "title": "Statistik",
+      "totalDaysPlayed": "Gespielte Tage",
+      "completedMonths": "Vollständige Monate",
+      "shieldsUsed": "Eingesetzte Schutzschilder"
+    },
+    "motivation": {
+      "record": "Neuer Rekord! 🏆",
+      "legendary": "Legendär! 🌟",
+      "twoWeeks": "2 Wochen Streak! 💪",
+      "oneWeek": "Eine Woche geschafft! 🔥",
+      "keepGoing": "Weiter so! 👍",
+      "goodStart": "Guter Start! 🎯",
+      "start": "Starte deinen Streak!"
+    },
+    "monthlyReward": {
+      "title": "Gratulation!",
+      "subtitle": "Du hast den {{month}} vollständig abgeschlossen!",
+      "claim": "Belohnung einlösen"
     }
   }
 }

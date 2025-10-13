@@ -1,5 +1,5 @@
 // screens/GameCompletion/components/StreakCard/components/ShieldIndicator.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
@@ -44,11 +44,31 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
     daysUntilReset = 7;
   }
 
-  const totalShields = available + bonusShields;
+  // DEBUG: State für Test-Button
+  const [debugShields, setDebugShields] = useState<number | null>(null);
+
+  // Verwende Debug-Wert wenn gesetzt, sonst echte Werte
+  const effectiveAvailable = debugShields !== null ? debugShields : available;
+  const totalShields = effectiveAvailable + bonusShields;
   const hasNoShields = totalShields === 0;
 
   const handlePremiumPress = () => {
     router.push('/supportShop');
+  };
+
+  // DEBUG: Cycle durch Shield-Werte (0, 1, 2, 3, zurück zu echtem Wert)
+  const handleDebugCycle = () => {
+    if (debugShields === null) {
+      setDebugShields(0);
+    } else if (debugShields === 0) {
+      setDebugShields(1);
+    } else if (debugShields === 1) {
+      setDebugShields(2);
+    } else if (debugShields === 2) {
+      setDebugShields(3);
+    } else {
+      setDebugShields(null); // Zurück zu echtem Wert
+    }
   };
 
   return (
@@ -77,7 +97,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         {/* Shield Icons mit SVG - IMMER 3 Schilder anzeigen */}
         <View style={styles.shieldsGrid}>
           {Array.from({ length: 3 }).map((_, index) => {
-            const isFilled = index < available;
+            const isFilled = index < effectiveAvailable;
             return (
               <View
                 key={`shield-${index}`}
@@ -188,6 +208,26 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
           </LinearGradient>
         </Pressable>
       )}
+
+      {/* DEBUG BUTTON - Provisorisch zum Testen */}
+      <Pressable
+        onPress={handleDebugCycle}
+        style={[
+          styles.debugButton,
+          {
+            backgroundColor: theme.isDark ? 'rgba(255,152,0,0.15)' : 'rgba(255,152,0,0.1)',
+            borderColor: '#FF9800',
+          },
+        ]}
+      >
+        <Feather name="tool" size={16} color="#FF9800" />
+        <Text style={[styles.debugText, { color: colors.textPrimary }]}>
+          DEBUG: {debugShields === null ? `Echt (${available})` : `Test (${debugShields})`}
+        </Text>
+        <Text style={[styles.debugHint, { color: colors.textSecondary }]}>
+          Tap zum Wechseln: {debugShields === null ? '0' : debugShields === 0 ? '1' : debugShields === 1 ? '2' : debugShields === 2 ? '3' : 'Echt'}
+        </Text>
+      </Pressable>
     </Animated.View>
   );
 };
@@ -359,6 +399,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     marginTop: 2,
+  },
+
+  // Debug Button
+  debugButton: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    gap: spacing.xs,
+  },
+  debugText: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  debugHint: {
+    fontSize: 11,
+    fontWeight: '500',
   },
 });
 

@@ -1,34 +1,28 @@
 // screens/GalleryScreen/components/FilterModal/FilterModal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  BackHandler,
-  Platform,
+  StyleSheet,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-  runOnJS,
-  Easing,
-} from "react-native-reanimated";
-import { BlurView } from "expo-blur";
-import { Feather } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  BottomSheetModal as GorhomBottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
-import { spacing } from "@/utils/theme";
+import { useProgressColor } from "@/hooks/useProgressColor";
+import { useNavigation } from '@/contexts/navigation';
+import { spacing, radius } from "@/utils/theme";
 import {
   LANDSCAPE_CATEGORIES,
   LandscapeCategory,
 } from "@/screens/Gallery/utils/landscapes/data";
 import CategoryGrid from "./components/CategoryGrid";
 import InfoSection from "./components/InfoSection";
-import styles from "./FilterModal.styles";
+import BottomSheetHandle from '@/components/BottomSheetModal/BottomSheetHandle';
+import CustomBottomSheetBackdrop from '@/components/BottomSheetModal/BottomSheetBackdrop';
 
 export interface FilterModalProps {
   visible: boolean;
@@ -38,6 +32,7 @@ export interface FilterModalProps {
   totalImages: number;
   filteredCount: number;
   allLandscapes?: any[];
+  onTempCategoriesChange?: (categories: LandscapeCategory[]) => void;
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -48,58 +43,53 @@ const FilterModal: React.FC<FilterModalProps> = ({
   totalImages,
   filteredCount,
   allLandscapes = [],
+  onTempCategoriesChange,
 }) => {
   const { t } = useTranslation('gallery');
   const theme = useTheme();
   const { colors } = theme;
-  const insets = useSafeAreaInsets();
+  const progressColor = useProgressColor();
+  const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
+  const { hideBottomNav, resetBottomNav } = useNavigation();
 
   const [tempSelectedCategories, setTempSelectedCategories] =
     useState<LandscapeCategory[]>(selectedCategories);
 
-  const modalY = useSharedValue(1000);
-  const backdropOpacity = useSharedValue(0);
+  const snapPoints = useMemo(() => ['50%', '90%'], []);
 
   useEffect(() => {
     setTempSelectedCategories(selectedCategories);
   }, [selectedCategories]);
 
+  // Notify parent about temp categories changes
   useEffect(() => {
-    if (!visible) return;
+    if (onTempCategoriesChange) {
+      onTempCategoriesChange(tempSelectedCategories);
+    }
+  }, [tempSelectedCategories, onTempCategoriesChange]);
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        handleClose();
-        return true;
-      }
-    );
-
-    return () => backHandler.remove();
-  }, [visible]);
-
+  // Open/close modal based on visible prop
   useEffect(() => {
     if (visible) {
-      // Kleine Verzögerung damit alles korrekt rendert
-      setTimeout(() => {
-        backdropOpacity.value = withTiming(1, { duration: 300 });
-        modalY.value = withTiming(0, {
-          duration: 300, // Dauer in Millisekunden
-          easing: Easing.out(Easing.cubic), // Geschmeidige Kurve
-        });
-      }, 10);
+      bottomSheetRef.current?.present();
     } else {
-      backdropOpacity.value = withTiming(0, { duration: 200 });
-      modalY.value = withTiming(1000, { duration: 200 });
+      bottomSheetRef.current?.dismiss();
     }
   }, [visible]);
 
-  const handleClose = () => {
-    backdropOpacity.value = withTiming(0, { duration: 200 });
-    modalY.value = withTiming(1000, { duration: 200 }, () => {
-      runOnJS(onClose)();
-    });
-  };
+  // Hide BottomNav when modal is visible
+  useEffect(() => {
+    if (visible) {
+      hideBottomNav();
+    }
+    return () => {
+      resetBottomNav();
+    };
+  }, [visible, hideBottomNav, resetBottomNav]);
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   const handleCategoryToggle = (category: LandscapeCategory) => {
     setTempSelectedCategories((prev) => {
@@ -118,204 +108,153 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const handleApply = () => {
     onApplyFilter(tempSelectedCategories);
-    handleClose();
+    onClose();
   };
-
-  const handleReset = () => {
-    setTempSelectedCategories([]);
-    onApplyFilter([]);
-    handleClose();
-  };
-
-  const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: backdropOpacity.value,
-  }));
-
-  const modalAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: modalY.value }],
-  }));
 
   const allCategoriesSelected =
     tempSelectedCategories.length === 0 ||
     tempSelectedCategories.length === Object.keys(LANDSCAPE_CATEGORIES).length;
 
-  const getPreviewCount = () => {
-    if (tempSelectedCategories.length === 0) return totalImages;
+  // Render custom handle
+  const renderHandle = useCallback(
+    (props: any) => <BottomSheetHandle {...props} isDark={theme.isDark} />,
+    [theme.isDark]
+  );
 
-    if (allLandscapes && allLandscapes.length > 0) {
-      return allLandscapes.filter((landscape: any) =>
-        tempSelectedCategories.includes(landscape.category as LandscapeCategory)
-      ).length;
-    }
+  // Render custom backdrop with blur
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <CustomBottomSheetBackdrop
+        {...props}
+        isDark={theme.isDark}
+        pressBehavior="close"
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+      />
+    ),
+    [theme.isDark]
+  );
 
-    return filteredCount;
-  };
-
-  // WICHTIG: Nicht rendern wenn nicht sichtbar
   if (!visible) return null;
 
   return (
-    // ÄNDERUNG: View statt Modal mit absolutem Container
-    <View style={styles.absoluteContainer}>
-      {/* Backdrop */}
-      <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
-        <TouchableOpacity
-          style={styles.backdropTouch}
-          activeOpacity={1}
-          onPress={handleClose}
-        />
-      </Animated.View>
+    <GorhomBottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        index={0}
+        onDismiss={handleDismiss}
+        enablePanDownToClose
+        handleComponent={renderHandle}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+        }}
+      >
+        {/* Header: Title */}
+        <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>
+            {t('filterModal.title')}
+          </Text>
+        </View>
 
-      {/* Modal Content - GENAU WIE VORHER */}
-      <Animated.View style={[styles.modalContainer, modalAnimatedStyle]}>
-        {Platform.OS === "ios" && (
-          <BlurView
-            intensity={95}
-            tint={theme.isDark ? "dark" : "light"}
-            style={[styles.blurBackground, { overflow: "hidden" }]}
-          />
-        )}
-
-        <View
-          style={[
-            styles.modalContent,
-            {
-              backgroundColor:
-                Platform.OS === "ios"
-                  ? "transparent"
-                  : theme.isDark
-                  ? colors.surface
-                  : colors.background,
-            },
-          ]}
+        {/* Scrollable Content */}
+        <BottomSheetScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={true}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <TouchableOpacity
+          {/* Filter Section */}
+          <View style={styles.section}>
+            {/* All Categories Button */}
+            <TouchableOpacity
+              style={[
+                styles.allButton,
+                {
+                  borderColor: allCategoriesSelected
+                    ? progressColor
+                    : colors.border,
+                  backgroundColor: allCategoriesSelected
+                    ? progressColor
+                    : "transparent",
+                  borderWidth: 2,
+                },
+              ]}
+              onPress={handleSelectAll}
+            >
+              <Text
                 style={[
-                  styles.closeButton,
-                  { backgroundColor: colors.surface },
-                ]}
-                onPress={handleClose}
-              >
-                <Feather name="x" size={20} color={colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
-              {t('filterModal.title')}
-            </Text>
-
-            <View style={styles.headerRight}>
-              {!allCategoriesSelected && (
-                <TouchableOpacity
-                  style={styles.resetButton}
-                  onPress={handleReset}
-                >
-                  <Text style={[styles.resetText, { color: colors.primary }]}>
-                    {t('filterModal.reset')}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
-          {/* Scrollable Content */}
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            {/* Filter Section */}
-            <View style={styles.section}>
-              {/*
-              <View style={styles.sectionHeader}>
-                <Text
-                  style={[styles.sectionTitle, { color: colors.textPrimary }]}
-                >
-                  Nach Kategorien filtern
-                </Text>
-                <Text
-                  style={[
-                    styles.sectionSubtitle,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  {allCategoriesSelected
-                    ? "Alle Kategorien anzeigen"
-                    : `${tempSelectedCategories.length} ausgewählt`}
-                </Text>
-              </View>
-              */}
-
-              {/* All Categories Button */}
-              <TouchableOpacity
-                style={[
-                  styles.allButton,
+                  styles.allButtonText,
                   {
-                    borderColor: allCategoriesSelected
-                      ? colors.primary
-                      : colors.border,
-                    backgroundColor: allCategoriesSelected
-                      ? colors.primary
-                      : "transparent",
-                    borderWidth: 2,
+                    color: allCategoriesSelected
+                      ? "#FFFFFF"
+                      : colors.textPrimary,
                   },
                 ]}
-                onPress={handleSelectAll}
               >
-                <Text
-                  style={[
-                    styles.allButtonText,
-                    {
-                      color: allCategoriesSelected
-                        ? "#FFFFFF"
-                        : colors.textPrimary,
-                    },
-                  ]}
-                >
-                  {t('filterModal.allCategories')}
-                </Text>
-              </TouchableOpacity>
-
-              {/* Category Grid - VERWENDET DIE ORIGINALE KOMPONENTE */}
-              <CategoryGrid
-                selectedCategories={tempSelectedCategories}
-                onToggleCategory={handleCategoryToggle}
-                allSelected={allCategoriesSelected}
-              />
-            </View>
-
-            {/* Info Section - VERWENDET DIE ORIGINALE KOMPONENTE */}
-            <View style={[styles.section, styles.infoSectionContainer]}>
-              <InfoSection />
-            </View>
-          </ScrollView>
-
-          {/* Footer Actions */}
-          <View
-            style={[
-              styles.footer,
-              {
-                backgroundColor:
-                  Platform.OS === "ios" ? "transparent" : colors.background,
-                borderTopColor: colors.border,
-                paddingBottom: Math.max(insets.bottom, spacing.md),
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[styles.applyButton, { backgroundColor: colors.primary }]}
-              onPress={handleApply}
-            >
-              <Text style={styles.applyButtonText}>{t('filterModal.applyFilter')}</Text>
+                {t('filterModal.allCategories')}
+              </Text>
             </TouchableOpacity>
+
+            {/* Category Grid */}
+            <CategoryGrid
+              selectedCategories={tempSelectedCategories}
+              onToggleCategory={handleCategoryToggle}
+              allSelected={allCategoriesSelected}
+            />
           </View>
-        </View>
-      </Animated.View>
-    </View>
+
+          {/* Info Section */}
+          <View style={[styles.section, styles.infoSectionContainer]}>
+            <InfoSection />
+          </View>
+
+          {/* Spacer for fixed button */}
+          <View style={{ height: 100 }} />
+        </BottomSheetScrollView>
+      </GorhomBottomSheetModal>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 16,
+    borderBottomWidth: 0,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+  },
+  section: {
+    marginBottom: spacing.xl,
+  },
+  infoSectionContainer: {
+    marginTop: spacing.lg,
+  },
+  allButton: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  allButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
 
 export default FilterModal;

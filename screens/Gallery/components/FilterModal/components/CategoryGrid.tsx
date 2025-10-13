@@ -9,6 +9,7 @@ import Animated, {
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { LANDSCAPE_CATEGORIES, LandscapeCategory, getCategoryName } from "@/screens/Gallery/utils/landscapes/data";
 import { spacing, radius } from "@/utils/theme";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface CategoryGridProps {
   selectedCategories: LandscapeCategory[];
@@ -23,6 +24,7 @@ const CategoryChip: React.FC<{
 }> = ({ category, isSelected, onPress }) => {
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
   
   // Animation values
   const scale = useSharedValue(1);
@@ -45,8 +47,8 @@ const CategoryChip: React.FC<{
         style={[
           styles.categoryChip,
           {
-            borderColor: isSelected ? colors.primary : colors.border,
-            backgroundColor: isSelected ? colors.primary : "transparent",
+            borderColor: isSelected ? progressColor : colors.border,
+            backgroundColor: isSelected ? progressColor : "transparent",
             borderWidth: 2, // Immer 2px Border
           },
         ]}

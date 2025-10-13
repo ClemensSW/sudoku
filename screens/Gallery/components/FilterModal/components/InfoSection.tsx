@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing, radius } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface InfoItemProps {
   icon: string;
@@ -45,6 +46,7 @@ const InfoSection: React.FC = () => {
   const { t } = useTranslation('gallery');
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   return (
     <View>
@@ -55,7 +57,7 @@ const InfoSection: React.FC = () => {
       <View style={styles.infoContainer}>
         <InfoItem
           icon="grid"
-          iconColor={colors.primary}
+          iconColor={progressColor}
           title={t('filterModal.infoSection.collect.title')}
           description={t('filterModal.infoSection.collect.description')}
         />

@@ -9,6 +9,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useRouter } from 'expo-router';
 import { spacing, radius } from '@/utils/theme';
 import ShieldIcon from '@/assets/svg/shield.svg';
+import ShieldEmptyIcon from '@/assets/svg/shieldEmpty.svg';
 
 interface ShieldIndicatorProps {
   available: number; // Verfügbare reguläre Schutzschilder
@@ -64,7 +65,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Feather name="shield" size={20} color="#74DA7F" />
+          <Feather name="shield" size={20} color="#95D6A4" />
           <Text style={[styles.title, { color: colors.textPrimary }]}>
             {t('streakTab.shields.title', { defaultValue: 'Schutzschilder' })}
           </Text>
@@ -73,25 +74,28 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
       {/* Hero Section: Large Shield Display */}
       <View style={styles.heroSection}>
-        {/* Shield Icons mit SVG */}
+        {/* Shield Icons mit SVG - IMMER 3 Schilder anzeigen */}
         <View style={styles.shieldsGrid}>
-          {Array.from({ length: maxRegular }).map((_, index) => {
+          {Array.from({ length: 3 }).map((_, index) => {
             const isFilled = index < available;
             return (
               <View
-                key={`regular-${index}`}
-                style={[
-                  styles.shieldIconWrapper,
-                  {
-                    opacity: isFilled ? 1 : 0.3,
-                  },
-                ]}
+                key={`shield-${index}`}
+                style={styles.shieldIconWrapper}
               >
-                <ShieldIcon
-                  width={48}
-                  height={48}
-                  fill={isFilled ? '#74DA7F' : (theme.isDark ? '#666' : '#CCC')}
-                />
+                {isFilled ? (
+                  <ShieldIcon
+                    width={56}
+                    height={56}
+                    fill="#74DA7F"
+                  />
+                ) : (
+                  <ShieldEmptyIcon
+                    width={56}
+                    height={56}
+                    fill={theme.isDark ? '#444' : '#DDD'}
+                  />
+                )}
               </View>
             );
           })}

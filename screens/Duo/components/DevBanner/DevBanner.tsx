@@ -32,7 +32,7 @@ const DevBanner: React.FC<DevBannerProps> = ({
           end={{ x: 1, y: 0 }}
           style={styles.banner}
         >
-          <Feather name="tool" size={18} color={iconColor} style={styles.icon} />
+          <Feather name="tool" size={16} color={iconColor} style={styles.icon} />
           <Text style={[styles.text, { color: textColor }]}>{text}</Text>
         </LinearGradient>
       </View>

@@ -31,6 +31,15 @@ const DevTestingMenu: React.FC = () => {
     const quota = await getImageUnlockQuota();
     const streakStats = await getStreakStats();
 
+    // DEBUG: Log zur Analyse
+    console.log('[DevTestingMenu] Status Update:', {
+      purchaseType,
+      isPremiumSubscriber: supporterStatus.isPremiumSubscriber,
+      supportType: supporterStatus.supportType,
+      maxRegularShields: streakStats?.maxRegularShields,
+      shieldsAvailable: streakStats?.shieldsAvailable,
+    });
+
     // Determine subscription type for display
     let subTypeLabel = '';
     if (quota.isSubscription) {
@@ -53,6 +62,7 @@ const DevTestingMenu: React.FC = () => {
     setStatus(`
 Status: ${hasPurchased ? '✅ Supporter' : '❌ Kein Supporter'}
 Typ: ${purchaseType}${subTypeLabel}
+Premium: ${supporterStatus.isPremiumSubscriber ? '✅ Ja' : '❌ Nein'}
 EP Multiplikator: ${supporterStatus.isSupporter ? '2x' : '1x'}
 Bilder übrig: ${unlockInfo}
 Lifetime Quota: ${lifetimeQuota} (gekaufte Produkte)
@@ -72,9 +82,12 @@ Schutzschilder: ${shieldInfo}
     );
     // Record in quota system
     await recordPurchase('de.playfusiongate.sudokuduo.coffee');
+    // Schutzschilder auffüllen (automatisch)
+    await refillShields('one-time');
     await updateStatus();
     const quota = await calculateLifetimeQuota();
-    Alert.alert('✅ Erfolg', `Einmalkauf simuliert!\n\n• 2× EP aktiv\n• ${quota} Bild(er) (lifetime) freischaltbar`);
+    const stats = await getStreakStats();
+    Alert.alert('✅ Erfolg', `Einmalkauf simuliert!\n\n• 2× EP aktiv\n• ${quota} Bild(er) (lifetime) freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields}`);
   };
 
   const simulateMultipleCoffeePurchases = async () => {
@@ -136,8 +149,11 @@ Schutzschilder: ${shieldInfo}
       },
       'subscription'
     );
+    // Schutzschilder auf 3 auffüllen (automatisch bei Abo)
+    await refillShields('subscription');
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Monatliches Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar\n• Aktiv im Support Shop');
+    const stats = await getStreakStats();
+    Alert.alert('✅ Erfolg', `Monatliches Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (Max: 3)\n• Aktiv im Support Shop`);
   };
 
   const simulateYearlySubscription = async () => {
@@ -150,8 +166,11 @@ Schutzschilder: ${shieldInfo}
       },
       'subscription'
     );
+    // Schutzschilder auf 3 auffüllen (automatisch bei Abo)
+    await refillShields('subscription');
     await updateStatus();
-    Alert.alert('✅ Erfolg', 'Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 2 Bilder pro Monat freischaltbar\n• Aktiv im Support Shop');
+    const stats = await getStreakStats();
+    Alert.alert('✅ Erfolg', `Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 2 Bilder pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (Max: 3)\n• Aktiv im Support Shop`);
   };
 
   const resetAll = async () => {
@@ -172,20 +191,6 @@ Schutzschilder: ${shieldInfo}
 
   const showCurrentStatus = async () => {
     await updateStatus();
-  };
-
-  const testShieldRefillOneTime = async () => {
-    await refillShields('one-time');
-    await updateStatus();
-    const stats = await getStreakStats();
-    Alert.alert('✅ Erfolg', `Schutzschilder aufgefüllt (Einmalkauf)!\n\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields}`);
-  };
-
-  const testShieldRefillSubscription = async () => {
-    await refillShields('subscription');
-    await updateStatus();
-    const stats = await getStreakStats();
-    Alert.alert('✅ Erfolg', `Schutzschilder aufgefüllt (Abo)!\n\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (sofort auf 3!)`);
   };
 
   React.useEffect(() => {
@@ -226,7 +231,7 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="coffee"
         label="Einmalkauf simulieren"
-        description="2× EP + 1 Bild (lifetime)"
+        description="2× EP + 1 Bild + Schilder auffüllen"
         onPress={simulateOneTimePurchase}
         colors={colors}
       />
@@ -242,7 +247,7 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="calendar"
         label="Monatliches Abo simulieren"
-        description="2× EP + 1 Bild/Monat"
+        description="2× EP + 1 Bild/Monat + 3 Schilder"
         onPress={simulateMonthlySubscription}
         colors={colors}
       />
@@ -250,7 +255,7 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="heart"
         label="Jährliches Abo simulieren"
-        description="2× EP + 2 Bilder/Monat"
+        description="2× EP + 2 Bilder/Monat + 3 Schilder"
         onPress={simulateYearlySubscription}
         colors={colors}
       />
@@ -260,22 +265,6 @@ Schutzschilder: ${shieldInfo}
         label="Monatliche Quota zurücksetzen"
         description="Unlock-Limit auffrischen"
         onPress={resetMonthlyQuota}
-        colors={colors}
-      />
-
-      <TestButton
-        icon="shield"
-        label="Schilder auffüllen (Einmalkauf)"
-        description="Auf aktuelles Max (2 oder 3)"
-        onPress={testShieldRefillOneTime}
-        colors={colors}
-      />
-
-      <TestButton
-        icon="shield"
-        label="Schilder auffüllen (Abo)"
-        description="Sofort auf 3 Schilder"
-        onPress={testShieldRefillSubscription}
         colors={colors}
       />
 

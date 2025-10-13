@@ -234,6 +234,20 @@ const Leistung: React.FC = () => {
     setShowTitleModal(true);
   };
 
+  // Stats Card Navigation Handlers
+  const handleXPPress = () => {
+    handleTabChange("level");
+  };
+
+  const handlePicturesPress = () => {
+    // Navigate directly to gallery screen without tab change
+    router.push("/gallery");
+  };
+
+  const handleStreakPress = () => {
+    handleTabChange("streak");
+  };
+
   const handleOpenSettings = () => router.push("/settings");
   const handleOpenSupportShop = () => setShowSupportShop(true);
   const handleCloseSupportShop = () => setShowSupportShop(false);
@@ -324,6 +338,9 @@ const Leistung: React.FC = () => {
             completedLandscapesCount={landscapes.length}
             title={getTitleString()}
             onTitlePress={handleTitlePress}
+            onXPPress={handleXPPress}
+            onPicturesPress={handlePicturesPress}
+            onStreakPress={handleStreakPress}
           />
         </View>
 

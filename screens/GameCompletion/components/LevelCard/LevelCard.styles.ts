@@ -135,6 +135,7 @@ export default StyleSheet.create({
     alignItems: "flex-start",
     gap: spacing.md,
     marginBottom: spacing.sm,
+    marginTop: spacing.md,
   },
 
   // EP Info Column: Text + Progress Bar (vertical unit)
@@ -183,7 +184,8 @@ export default StyleSheet.create({
 
   // Next Level Preview Card - Neutral mit Akzent
   nextLevelCard: {
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
     padding: spacing.md,
     borderRadius: 12,
     borderWidth: 1,

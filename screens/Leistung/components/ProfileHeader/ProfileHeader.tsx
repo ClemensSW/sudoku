@@ -23,6 +23,11 @@ interface ProfileHeaderProps {
   title?: string | null;
   /** Callback wenn auf Titel geklickt wird */
   onTitlePress?: () => void;
+
+  /** Callbacks für Stats Card Navigation */
+  onXPPress?: () => void;
+  onPicturesPress?: () => void;
+  onStreakPress?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -34,6 +39,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   completedLandscapesCount,
   title = null,
   onTitlePress,
+  onXPPress,
+  onPicturesPress,
+  onStreakPress,
 }) => {
   const { t } = useTranslation("leistung");
   const theme = useTheme();
@@ -147,19 +155,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               label: labelColor,
               desc: descriptionColor,
             }}
-          />
-          <HairlineDivider color={dividerColor} />
-          <StatTile
-            customIcon={<LightningIcon width={40} height={40} />}
-            value={formatNumber(stats.longestStreak)}
-            label={t("profile.streak")}
-            description={t("profile.streakDescription")}
-            colors={{
-              icon: colors.primary,
-              valueColor: valueColor,
-              label: labelColor,
-              desc: descriptionColor,
-            }}
+            onPress={onXPPress}
           />
           <HairlineDivider color={dividerColor} />
           <StatTile
@@ -173,7 +169,23 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               label: labelColor,
               desc: descriptionColor,
             }}
+            onPress={onPicturesPress}
           />
+          <HairlineDivider color={dividerColor} />
+          <StatTile
+            customIcon={<LightningIcon width={40} height={40} />}
+            value={formatNumber(stats.longestStreak)}
+            label={t("profile.streak")}
+            description={t("profile.streakDescription")}
+            colors={{
+              icon: colors.primary,
+              valueColor: valueColor,
+              label: labelColor,
+              desc: descriptionColor,
+            }}
+            onPress={onStreakPress}
+          />
+
         </View>
       </View>
 
@@ -198,12 +210,14 @@ const StatTile = ({
   label,
   description,
   colors,
+  onPress,
 }: {
   customIcon: React.ReactNode;
   value: string | number;
   label: string;
   description: string;
   colors: { icon: string; valueColor: string; label: string; desc: string };
+  onPress?: () => void;
 }) => {
   const scale = useSharedValue(1);
   const rStyle = useAnimatedStyle(() => ({
@@ -212,6 +226,7 @@ const StatTile = ({
 
   return (
     <Pressable
+      onPress={onPress}
       onPressIn={() => (scale.value = 0.985)}
       onPressOut={() => (scale.value = 1)}
       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}

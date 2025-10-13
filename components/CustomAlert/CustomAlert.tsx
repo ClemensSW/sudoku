@@ -21,6 +21,7 @@ import Animated, {
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./CustomAlert.styles";
 
@@ -85,6 +86,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Local state to control visibility
   const [isVisible, setIsVisible] = useState(visible);
@@ -208,7 +210,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
     }
   };
 
-  // Get icon color based on alert type - softer colors
+  // Get icon color based on alert type - using progress color for default/info
   const getIconColor = (): string => {
     switch (type) {
       case "success":
@@ -218,11 +220,11 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "warning":
         return "#FBBF24"; // Warmer yellow
       case "confirmation":
-        return "#60A5FA"; // Calmer blue
+        return progressColor; // Use current path color
       case "duoMode":
         return "#4A7D78"; // Teal
       default:
-        return colors.primary;
+        return progressColor; // Use current path color for info
     }
   };
 
@@ -241,7 +243,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "primary":
         return {
           ...baseStyle,
-          backgroundColor: colors.primary,
+          backgroundColor: progressColor, // Use current path color
         };
       case "success":
         return {
@@ -261,7 +263,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "info":
         return {
           ...baseStyle,
-          backgroundColor: theme.isDark ? "#8A78B4" : "#6E5AA0",
+          backgroundColor: progressColor, // Use current path color
         };
       case "cancel":
         // Ghost button - no background, no border

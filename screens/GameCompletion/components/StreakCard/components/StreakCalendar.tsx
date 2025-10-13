@@ -289,9 +289,9 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
     marginBottom: spacing.lg,
   },
 

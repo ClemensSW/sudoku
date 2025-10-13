@@ -91,7 +91,10 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { elevation: theme.isDark ? 0 : 6 },
+        {
+          backgroundColor: colors.surface,
+          elevation: theme.isDark ? 0 : 4,
+        },
       ]}
       entering={FadeIn.duration(350)}
     >
@@ -169,15 +172,17 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     borderRadius: radius.xl,
+    padding: 0,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
     marginBottom: spacing.lg,
   },
   gradient: {
-    padding: spacing.xl,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl * 1.5,
     alignItems: 'center',
   },
 

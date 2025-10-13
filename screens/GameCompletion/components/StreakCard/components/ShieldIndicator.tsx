@@ -41,7 +41,6 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
-          borderColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
         },
       ]}
       entering={FadeIn.duration(350).delay(100)}
@@ -124,11 +123,10 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
     marginBottom: spacing.lg,
-    borderWidth: 1.5,
   },
 
   // Header

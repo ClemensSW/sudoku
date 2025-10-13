@@ -1,12 +1,13 @@
 // screens/Settings/components/DesignGroup/DesignGroup.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import * as Localization from "expo-localization";
 import PinselIcon from "@/assets/svg/pinsel.svg";
 import LanguageIcon from "@/assets/svg/language.svg";
+import TagUndNachtIcon from "@/assets/svg/tag-und-nacht.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor, useStoredColorHex } from "@/hooks/useProgressColor";
@@ -47,6 +48,14 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const currentLanguage = i18n.language as "de" | "en" | "hi";
   const sortedLanguages = getSortedLanguages(currentLanguage);
+
+  // State for System Theme Sync
+  const [syncWithSystem, setSyncWithSystem] = useState(theme.isFollowingSystem);
+
+  // Update syncWithSystem when theme.isFollowingSystem changes
+  useEffect(() => {
+    setSyncWithSystem(theme.isFollowingSystem);
+  }, [theme.isFollowingSystem]);
 
   // Load color data on mount
   useEffect(() => {
@@ -102,6 +111,27 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     return t(`pathColor.colors.${colorId}`);
   };
 
+  // Theme Sync Switch handler
+  const handleSyncWithSystemToggle = async (value: boolean) => {
+    triggerHaptic("light");
+    setSyncWithSystem(value);
+
+    if (value) {
+      // Switch ON → Reset to system theme
+      await theme.resetToSystemTheme();
+    } else {
+      // Switch OFF → Current theme becomes manual preference
+      const currentMode = theme.isDark ? "dark" : "light";
+      await theme.updateTheme(currentMode);
+    }
+  };
+
+  // iOS-style switch colors
+  const switchTrackColorActive = theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
+  const switchTrackColorInactive = theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
+  const switchThumbColorActive = "#FFFFFF";
+  const switchThumbColorInactive = theme.isDark ? "#666666" : "rgba(255,255,255,0.7)";
+
   if (!colorUnlockData) return null;
 
   return (
@@ -115,11 +145,37 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
         />
       </View>
 
-      {/* Path Color & Language */}
+      {/* Theme Sync, Path Color & Language */}
       <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        {/* Theme Sync Switch Button */}
+        <TouchableOpacity
+          style={styles.settingRow}
+          onPress={() => handleSyncWithSystemToggle(!syncWithSystem)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.actionIcon}>
+            <TagUndNachtIcon width={48} height={48} />
+          </View>
+          <View style={styles.settingTextContainer}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              {t("appearance.theme", { defaultValue: "Theme" })}
+            </Text>
+            <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
+              {t("appearance.useSystemSettings", { defaultValue: "Geräteeinstellungen verwenden" })}
+            </Text>
+          </View>
+          <Switch
+            value={syncWithSystem}
+            onValueChange={handleSyncWithSystemToggle}
+            trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+            thumbColor={syncWithSystem ? switchThumbColorActive : switchThumbColorInactive}
+            ios_backgroundColor={switchTrackColorInactive}
+          />
+        </TouchableOpacity>
+
         {/* Path Color */}
         <TouchableOpacity
-          style={styles.actionButton}
+          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
           onPress={() => {
             triggerHaptic("light");
             setShowColorModal(true);
@@ -242,12 +298,22 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.md,
     paddingRight: spacing.md,
   },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
+  },
   actionIcon: {
     width: 48,
     height: 48,
     marginRight: spacing.md,
   },
   actionTextContainer: {
+    flex: 1,
+  },
+  settingTextContainer: {
     flex: 1,
   },
   actionTitle: {
@@ -257,6 +323,11 @@ const styles = StyleSheet.create({
   actionSubtitle: {
     fontSize: 14,
     marginTop: 2,
+  },
+  settingSubtext: {
+    fontSize: 13,
+    marginTop: 2,
+    opacity: 0.8,
   },
   colorSubtitleContainer: {
     flexDirection: "row",

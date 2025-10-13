@@ -1,6 +1,6 @@
 // screens/Settings/components/AppearanceGroup/AppearanceGroup.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Switch } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import * as Localization from "expo-localization";
 import PinselIcon from "@/assets/svg/pinsel.svg";
 import LanguageIcon from "@/assets/svg/language.svg";
 import GraduateIcon from "@/assets/svg/GraduateIcon";
+import TagUndNachtIcon from "@/assets/svg/tag-und-nacht.svg";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressColor";
@@ -56,7 +57,15 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     [deviceLanguageCode]
   );
 
+  // State for System Theme Sync (initially load from theme context)
+  const [syncWithSystem, setSyncWithSystem] = useState(theme.isFollowingSystem);
+
   // Load color data and title on mount
+  useEffect(() => {
+    // Update syncWithSystem when theme.isFollowingSystem changes
+    setSyncWithSystem(theme.isFollowingSystem);
+  }, [theme.isFollowingSystem]);
+
   useEffect(() => {
     const loadData = async () => {
       const stats = await loadStats();
@@ -149,60 +158,109 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     setShowLanguageModal(false);
   };
 
+  // Theme Sync Switch handler
+  const handleSyncWithSystemToggle = async (value: boolean) => {
+    triggerHaptic("light");
+    setSyncWithSystem(value);
+
+    if (value) {
+      // Switch ON → Reset to system theme
+      await theme.resetToSystemTheme();
+    } else {
+      // Switch OFF → Current theme becomes manual preference
+      const currentMode = theme.isDark ? "dark" : "light";
+      await theme.updateTheme(currentMode);
+    }
+  };
+
+  // iOS-style switch colors
+  const switchTrackColorActive = theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
+  const switchTrackColorInactive = theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
+  const switchThumbColorActive = "#FFFFFF";
+  const switchThumbColorInactive = theme.isDark ? "#666666" : "rgba(255,255,255,0.7)";
+
   const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
   const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
   const selectedBg = theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)";
   const selectedBorder = theme.isDark ? "rgba(138, 180, 248, 0.4)" : "rgba(66, 133, 244, 0.3)";
 
-  if (!colorUnlockData) return null;
-
-  // Prepare title options for modal (after early return check)
+  // Prepare title options for modal (moved before early return)
   const allLevels = getLevels();
-  const titleOptions = allLevels.map((level, index) => ({
+  const titleOptions = colorUnlockData ? allLevels.map((level, index) => ({
     name: level.name,
     level: index,
     isUnlocked: index <= currentLevel,
-  }));
+  })) : [];
 
   return (
     <>
       <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        {/* Avatar Button */}
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => {
-            triggerHaptic("light");
-            setShowAvatarPicker(true);
-          }}
-        >
-          <View style={styles.avatarIconContainer}>
-            <Image source={getAvatarSource()} style={styles.avatarIcon} />
-          </View>
-          <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
-              {t("appearance.avatar")}
-            </Text>
-          </View>
-          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
-        </TouchableOpacity>
+        {/* Avatar Button - Only show if data loaded */}
+        {colorUnlockData && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              triggerHaptic("light");
+              setShowAvatarPicker(true);
+            }}
+          >
+            <View style={styles.avatarIconContainer}>
+              <Image source={getAvatarSource()} style={styles.avatarIcon} />
+            </View>
+            <View style={styles.actionTextContainer}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+                {t("appearance.avatar")}
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+        )}
 
-        {/* Title Button */}
+        {/* Title Button - Only show if data loaded */}
+        {colorUnlockData && (
+          <TouchableOpacity
+            style={[styles.actionButton, { borderTopWidth: colorUnlockData ? 1 : 0, borderTopColor: colors.border }]}
+            onPress={() => {
+              triggerHaptic("light");
+              setShowTitleModal(true);
+            }}
+          >
+            <View style={styles.actionIcon}>
+              <GraduateIcon width={48} height={48} color={colors.textSecondary} />
+            </View>
+            <View style={styles.actionTextContainer}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+                {t("appearance.title")}
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+        )}
+
+        {/* Theme Sync Switch Button - Always show */}
         <TouchableOpacity
-          style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
-          onPress={() => {
-            triggerHaptic("light");
-            setShowTitleModal(true);
-          }}
+          style={[styles.settingRow, { borderTopWidth: colorUnlockData ? 1 : 0, borderTopColor: colors.border }]}
+          onPress={() => handleSyncWithSystemToggle(!syncWithSystem)}
+          activeOpacity={0.7}
         >
           <View style={styles.actionIcon}>
-            <GraduateIcon width={48} height={48} color={colors.textSecondary} />
+            <TagUndNachtIcon width={48} height={48} />
           </View>
-          <View style={styles.actionTextContainer}>
+          <View style={styles.settingTextContainer}>
             <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
-              {t("appearance.title")}
+              {t("appearance.theme", { defaultValue: "Theme" })}
+            </Text>
+            <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
+              {t("appearance.useSystemSettings", { defaultValue: "Geräteeinstellungen verwenden" })}
             </Text>
           </View>
-          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+          <Switch
+            value={syncWithSystem}
+            onValueChange={handleSyncWithSystemToggle}
+            trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+            thumbColor={syncWithSystem ? switchThumbColorActive : switchThumbColorInactive}
+            ios_backgroundColor={switchTrackColorInactive}
+          />
         </TouchableOpacity>
 
         {/* Path Color Button */}
@@ -362,6 +420,22 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 16,
     fontWeight: "600",
+  },
+  // Switch Row (like GameSettings)
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
+  },
+  settingTextContainer: {
+    flex: 1,
+  },
+  settingSubtext: {
+    fontSize: 13,
+    marginTop: 2,
+    opacity: 0.8,
   },
   // Language Options
   languageOptions: {

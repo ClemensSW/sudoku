@@ -27,6 +27,8 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 // Erweiterte Theme Context Type mit Update-Funktion
 interface ThemeContextType extends Theme {
   updateTheme: (mode: "light" | "dark") => Promise<void>;
+  resetToSystemTheme: () => Promise<void>;
+  isFollowingSystem: boolean;
 }
 
 // Create a context with a default theme - now with dark as default
@@ -38,7 +40,9 @@ const ThemeContext = createContext<ThemeContextType>({
   shadows,
   timing,
   isDark: true,
-  updateTheme: async () => {}, // NEU: Update-Funktion
+  updateTheme: async () => {},
+  resetToSystemTheme: async () => {},
+  isFollowingSystem: false,
 });
 
 // Provider component
@@ -107,6 +111,25 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // Reset zu System-Theme (Switch ON)
+  const resetToSystemTheme = useCallback(async () => {
+    try {
+      // Zu System-Theme wechseln
+      setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+
+      // Flag zurücksetzen
+      setUserHasSetTheme(false);
+
+      // darkMode aus Settings löschen
+      const currentSettings = await loadSettings();
+      const updatedSettings = { ...currentSettings };
+      delete updatedSettings.darkMode;
+      await saveSettings(updatedSettings);
+    } catch (error) {
+      console.error("Error resetting to system theme:", error);
+    }
+  }, [systemColorScheme]);
+
   // Only calculate theme if colorScheme is set
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
   const isDark = colorScheme === "dark";
@@ -121,6 +144,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     timing,
     isDark,
     updateTheme,
+    resetToSystemTheme,
+    isFollowingSystem: !userHasSetTheme,
   };
 
   // Hide splash screen once app is ready

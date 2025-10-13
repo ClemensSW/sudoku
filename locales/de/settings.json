@@ -24,7 +24,8 @@
     "autoNotes": "Auto-Notizen"
   },
   "appearance": {
-    "theme": "Erscheinungsbild",
+    "theme": "Erscheinung",
+    "useSystemSettings": "Geräteeinstellungen verwenden",
     "light": "Hell",
     "dark": "Dunkel",
     "avatar": "Avatar",

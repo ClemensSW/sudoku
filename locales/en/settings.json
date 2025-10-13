@@ -25,6 +25,7 @@
   },
   "appearance": {
     "theme": "Appearance",
+    "useSystemSettings": "Use system settings",
     "light": "Light",
     "dark": "Dark",
     "avatar": "Avatar",

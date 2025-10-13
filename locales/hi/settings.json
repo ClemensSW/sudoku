@@ -24,7 +24,8 @@
     "autoNotes": "स्वचालित नोट्स"
   },
   "appearance": {
-    "theme": "थीम",
+    "theme": "दिखावट",
+    "useSystemSettings": "सिस्टम सेटिंग्स का उपयोग करें",
     "light": "हल्का",
     "dark": "गहरा",
     "avatar": "अवतार",

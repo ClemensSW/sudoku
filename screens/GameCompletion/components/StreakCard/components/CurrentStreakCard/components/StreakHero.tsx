@@ -89,8 +89,8 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
     <LinearGradient
       colors={
         theme.isDark
-          ? ['rgba(255, 231, 133, 0.15)', 'rgba(255, 214, 102, 0.05)']
-          : ['rgba(255, 220, 100, 0.20)', 'rgba(255, 200, 80, 0.08)']
+          ? ['rgba(255, 231, 133, 0.15)', 'rgba(255, 214, 102, 0.08)', 'rgba(255, 214, 102, 0)']
+          : ['rgba(255, 220, 100, 0.20)', 'rgba(255, 200, 80, 0.10)', 'rgba(255, 200, 80, 0)']
       }
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}

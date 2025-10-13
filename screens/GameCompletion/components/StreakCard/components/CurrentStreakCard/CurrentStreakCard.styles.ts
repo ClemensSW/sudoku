@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
   flameContainer: {
     position: 'relative',
     marginTop: spacing.md,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
   },

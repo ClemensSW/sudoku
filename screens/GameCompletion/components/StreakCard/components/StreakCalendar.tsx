@@ -9,6 +9,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
 import { MonthlyPlayData } from '@/utils/storage';
 import { getDaysInMonth } from '@/utils/dailyStreak';
+import ShieldIcon from '@/assets/svg/shield.svg';
 
 interface StreakCalendarProps {
   currentMonth: string; // Format: "2025-01"
@@ -190,19 +191,57 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
     }
   };
 
-  const getDayIcon = (status: string) => {
+  const getDayContent = (status: string, day: number) => {
     switch (status) {
-      case 'played':
-        // Kein Icon - nur gefüllter Kreis für cleanes Design
-        return null;
       case 'shield':
-        // Kleines, dezentes Shield-Icon
-        return <Feather name="shield" size={12} color="#77CE8E" />;
+        // Shield-Tag: Nur SVG Shield-Icon, KEINE Tageszahl
+        return (
+          <ShieldIcon
+            width={32}
+            height={32}
+            fill="#77CE8E"
+          />
+        );
       case 'missed':
-        // Kleines X für Fehltag
-        return <Feather name="x" size={12} color={theme.isDark ? '#EF5350' : '#D32F2F'} />;
+        // Fehltag: Kleines X + Tageszahl
+        return (
+          <>
+            <Feather name="x" size={12} color={theme.isDark ? '#EF5350' : '#D32F2F'} />
+            <Text
+              style={[
+                styles.dayText,
+                {
+                  color: theme.isDark ? '#EF5350' : '#D32F2F',
+                  fontWeight: '600',
+                },
+              ]}
+            >
+              {day}
+            </Text>
+          </>
+        );
+      case 'played':
+      case 'future':
       default:
-        return null;
+        // Normale Tage: Nur Tageszahl
+        return (
+          <Text
+            style={[
+              styles.dayText,
+              {
+                color:
+                  status === 'future'
+                    ? colors.textSecondary
+                    : status === 'played'
+                    ? '#FFFFFF'
+                    : colors.textPrimary,
+                fontWeight: status === 'played' ? '700' : '600',
+              },
+            ]}
+          >
+            {day}
+          </Text>
+        );
     }
   };
 
@@ -290,25 +329,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
                   },
                 ]}
               >
-                {getDayIcon(status)}
-                <Text
-                  style={[
-                    styles.dayText,
-                    {
-                      color:
-                        status === 'future'
-                          ? colors.textSecondary
-                          : status === 'played'
-                          ? '#FFFFFF' // Weißer Text auf grünem Hintergrund
-                          : status === 'missed'
-                          ? (theme.isDark ? '#EF5350' : '#D32F2F')
-                          : colors.textPrimary,
-                      fontWeight: status === 'played' ? '700' : '600',
-                    },
-                  ]}
-                >
-                  {day}
-                </Text>
+                {getDayContent(status, day)}
               </View>
             </Animated.View>
           );
@@ -349,10 +370,15 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
             {t('streakTab.calendar.monthProgress', { count: playedDays, total: daysInMonth })}
           </Text>
           {monthData?.completed && (
-            <View style={[styles.completedBadge, { backgroundColor: '#34A853' }]}>
+            <LinearGradient
+              colors={['#95D6A4', '#B3E59F']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.completedBadge}
+            >
               <Feather name="check-circle" size={14} color="white" />
               <Text style={styles.completedText}>Vollständig</Text>
-            </View>
+            </LinearGradient>
           )}
         </View>
       </View>

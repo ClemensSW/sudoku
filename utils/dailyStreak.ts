@@ -92,10 +92,20 @@ export function formatDate(date: Date, locale: string = 'de-DE'): string {
  */
 export async function updateDailyStreak(): Promise<void> {
   try {
-    const stats = await loadStats();
+    let stats = await loadStats();
+
+    // Safety check: If dailyStreak is still missing after loadStats (which includes migration),
+    // this means migration failed or stats are corrupted. Re-trigger migration.
     if (!stats.dailyStreak) {
-      console.error('[Daily Streak] dailyStreak data missing, cannot update');
-      return;
+      console.warn('[Daily Streak] dailyStreak missing after loadStats, re-triggering migration...');
+      // Force reload which triggers migration again
+      stats = await loadStats();
+
+      // If still missing, abort
+      if (!stats.dailyStreak) {
+        console.error('[Daily Streak] dailyStreak data missing after migration retry, cannot update');
+        return;
+      }
     }
 
     const today = getTodayDate();
@@ -255,8 +265,11 @@ async function addToPlayHistory(
  */
 export async function checkWeeklyShieldReset(): Promise<void> {
   try {
-    const stats = await loadStats();
-    if (!stats.dailyStreak) return;
+    let stats = await loadStats();
+    if (!stats.dailyStreak) {
+      console.warn('[Daily Streak] dailyStreak missing in checkWeeklyShieldReset, skipping reset');
+      return;
+    }
 
     const lastReset = new Date(stats.dailyStreak.lastShieldResetDate);
     const nextMonday = getNextMonday(lastReset);

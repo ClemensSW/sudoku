@@ -232,10 +232,20 @@ export const loadStats = async (): Promise<GameStats> => {
 
       return parsedStats;
     }
-    return DEFAULT_STATS;
+
+    // Wenn keine Stats vorhanden, migriere DEFAULT_STATS auch (für neue User)
+    console.log('[loadStats] No saved stats found, initializing with DEFAULT_STATS and migrating...');
+    const migratedDefaultStats = await migrateToDailyStreak(DEFAULT_STATS);
+    return migratedDefaultStats;
   } catch (error) {
     console.error("Error loading statistics:", error);
-    return DEFAULT_STATS;
+    // Auch bei Error: Gib migrierte DEFAULT_STATS zurück
+    try {
+      return await migrateToDailyStreak(DEFAULT_STATS);
+    } catch (migrationError) {
+      console.error('[loadStats] Migration failed for DEFAULT_STATS:', migrationError);
+      return DEFAULT_STATS;
+    }
   }
 };
 

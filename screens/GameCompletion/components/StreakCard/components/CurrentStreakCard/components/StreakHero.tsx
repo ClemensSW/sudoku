@@ -139,7 +139,7 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
           entering={FadeIn.duration(400).delay(200)}
         >
           <Feather name="award" size={14} color="white" />
-          <Text style={styles.recordText}>Rekord!</Text>
+          <Text style={styles.recordText}>{t('streakTab.recordBadge')}</Text>
         </Animated.View>
       )}
     </LinearGradient>

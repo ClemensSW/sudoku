@@ -50,12 +50,12 @@ const MonthlyRewardModal: React.FC<MonthlyRewardModalProps> = ({
 
   // Parse month name
   const getMonthName = (ym: string) => {
-    const monthNames = [
-      'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-      'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+    const monthKeys = [
+      'january', 'february', 'march', 'april', 'may', 'june',
+      'july', 'august', 'september', 'october', 'november', 'december'
     ];
     const [year, month] = ym.split('-').map(Number);
-    return `${monthNames[month - 1]} ${year}`;
+    return `${t(`streakTab.months.${monthKeys[month - 1]}`)} ${year}`;
   };
 
   // Get reward info
@@ -65,36 +65,36 @@ const MonthlyRewardModal: React.FC<MonthlyRewardModalProps> = ({
         return {
           icon: 'shield',
           color: '#4285F4',
-          title: '+2 Bonus-Schutzschilder',
-          description: 'Diese Schutzschilder bleiben dauerhaft verfügbar!',
+          title: t('streakTab.monthlyReward.rewards.bonusShields.title'),
+          description: t('streakTab.monthlyReward.rewards.bonusShields.description'),
         };
       case 'ep_boost':
         return {
           icon: 'zap',
           color: '#FF9500',
-          title: `+${rewardValue} EP Boost`,
-          description: 'Direkt auf dein Level-Konto gutgeschrieben!',
+          title: t('streakTab.monthlyReward.rewards.epBoost.title', { value: rewardValue }),
+          description: t('streakTab.monthlyReward.rewards.epBoost.description'),
         };
       case 'avatar_frame':
         return {
           icon: 'award',
           color: '#FFD700',
-          title: 'Exklusiver Avatar-Rahmen',
-          description: 'Zeige allen deinen Erfolg!',
+          title: t('streakTab.monthlyReward.rewards.avatarFrame.title'),
+          description: t('streakTab.monthlyReward.rewards.avatarFrame.description'),
         };
       case 'title_badge':
         return {
           icon: 'star',
           color: '#7C4DFF',
-          title: 'Spezielle Titel-Badge',
-          description: `Streak Master ${getMonthName(yearMonth)}`,
+          title: t('streakTab.monthlyReward.rewards.titleBadge.title'),
+          description: t('streakTab.monthlyReward.rewards.titleBadge.description', { month: getMonthName(yearMonth) }),
         };
       default:
         return {
           icon: 'gift',
           color: colors.primary,
-          title: 'Belohnung',
-          description: 'Gratulation!',
+          title: t('streakTab.monthlyReward.rewards.default.title'),
+          description: t('streakTab.monthlyReward.rewards.default.description'),
         };
     }
   };

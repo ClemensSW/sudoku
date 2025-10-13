@@ -90,5 +90,82 @@
       "title": "Support Development",
       "subtitle": "Help me keep the game ad-free"
     }
+  },
+  "streakTab": {
+    "title": "Daily Streak",
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "day": "Day",
+    "days": "Days",
+    "shields": {
+      "title": "Shields",
+      "available": "Available",
+      "nextReset": "Next Reset",
+      "bonusShields": "Bonus Shields",
+      "description": "Automatically protects your streak if you miss a day"
+    },
+    "calendar": {
+      "played": "Played",
+      "shieldUsed": "Shield used",
+      "missed": "Missed",
+      "monthProgress": "{{count}}/{{total}} days"
+    },
+    "stats": {
+      "title": "Statistics",
+      "totalDaysPlayed": "Days Played",
+      "completedMonths": "Completed Months",
+      "shieldsUsed": "Shields Used"
+    },
+    "motivation": {
+      "record": "New Record! 🏆",
+      "legendary": "Legendary! 🌟",
+      "twoWeeks": "2 Weeks Streak! 💪",
+      "oneWeek": "One Week Done! 🔥",
+      "keepGoing": "Keep Going! 👍",
+      "goodStart": "Good Start! 🎯",
+      "start": "Start Your Streak!"
+    },
+    "monthlyReward": {
+      "title": "Congratulations!",
+      "subtitle": "You have completed {{month}}!",
+      "claim": "Claim Reward",
+      "rewards": {
+        "bonusShields": {
+          "title": "+2 Bonus Shields",
+          "description": "These shields remain permanently available!"
+        },
+        "epBoost": {
+          "title": "+{{value}} XP Boost",
+          "description": "Directly credited to your level account!"
+        },
+        "avatarFrame": {
+          "title": "Exclusive Avatar Frame",
+          "description": "Show everyone your achievement!"
+        },
+        "titleBadge": {
+          "title": "Special Title Badge",
+          "description": "Streak Master {{month}}"
+        },
+        "default": {
+          "title": "Reward",
+          "description": "Congratulations!"
+        }
+      }
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "recordBadge": "Record!"
   }
 }

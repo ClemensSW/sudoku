@@ -128,7 +128,44 @@
     "monthlyReward": {
       "title": "Gratulation!",
       "subtitle": "Du hast den {{month}} vollständig abgeschlossen!",
-      "claim": "Belohnung einlösen"
-    }
+      "claim": "Belohnung einlösen",
+      "rewards": {
+        "bonusShields": {
+          "title": "+2 Bonus-Schutzschilder",
+          "description": "Diese Schutzschilder bleiben dauerhaft verfügbar!"
+        },
+        "epBoost": {
+          "title": "+{{value}} EP Boost",
+          "description": "Direkt auf dein Level-Konto gutgeschrieben!"
+        },
+        "avatarFrame": {
+          "title": "Exklusiver Avatar-Rahmen",
+          "description": "Zeige allen deinen Erfolg!"
+        },
+        "titleBadge": {
+          "title": "Spezielle Titel-Badge",
+          "description": "Streak Master {{month}}"
+        },
+        "default": {
+          "title": "Belohnung",
+          "description": "Gratulation!"
+        }
+      }
+    },
+    "months": {
+      "january": "Januar",
+      "february": "Februar",
+      "march": "März",
+      "april": "April",
+      "may": "Mai",
+      "june": "Juni",
+      "july": "Juli",
+      "august": "August",
+      "september": "September",
+      "october": "Oktober",
+      "november": "November",
+      "december": "Dezember"
+    },
+    "recordBadge": "Rekord!"
   }
 }

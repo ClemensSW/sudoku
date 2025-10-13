@@ -80,9 +80,12 @@ export async function getSupporterStatus(): Promise<SupporterStatus> {
       productId = await getActiveSubscriptionProductId();
     }
 
+    // Determine isPremiumSubscriber - support dev testing!
+    const isPremiumSubscriber = hasActiveSubscription || purchaseType === 'subscription';
+
     return {
       isSupporter: hasAnyPurchase,
-      isPremiumSubscriber: hasActiveSubscription,
+      isPremiumSubscriber,
       expiresAt,
       productId,
       isInGracePeriod,

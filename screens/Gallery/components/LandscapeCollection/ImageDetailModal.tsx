@@ -538,7 +538,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           const { height } = event.nativeEvent.layout;
           // Gradient-Höhe = Content-Höhe + 80px Buffer für smooth transition
           // Minimum: 200px, Maximum: 400px (verhindert übermäßige Bildverdeckung)
-          const gradientHeight = Math.min(Math.max(height + 80, 200), 400);
+          const gradientHeight = Math.min(Math.max(height + 100, 200), 600);
           setFooterContentHeight(gradientHeight);
         }}
       >
@@ -584,16 +584,112 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         {/* Action Buttons for incomplete images */}
         {landscape && !landscape.isComplete && !isCurrentProject && (
           <View style={styles.footerActionButton}>
-            {/* Supporter Unlock Button - priority if available */}
-            {canUnlockThisImage && (
+            {canUnlockThisImage ? (
+              // Both buttons side by side wenn Supporter
+              <View style={{ flexDirection: 'row', gap: 8, width: '100%' }}>
+                {/* Supporter Unlock Button */}
+                <View
+                  style={{
+                    flex: 1,
+                    shadowColor: '#D4AF37',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 8,
+                  }}
+                >
+                  <LinearGradient
+                    colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={[
+                        styles.selectProjectButton,
+                        {
+                          backgroundColor: 'transparent',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingHorizontal: 12,
+                        },
+                      ]}
+                      onPress={handleSupporterUnlock}
+                      activeOpacity={0.8}
+                    >
+                      <Feather
+                        name="gift"
+                        size={16}
+                        color="#FFFFFF"
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={[styles.selectButtonText, { fontWeight: '700', fontSize: 13 }]} numberOfLines={1} adjustsFontSizeToFit>
+                        {t('detailModal.supporterUnlockButton')}
+                      </Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                </View>
+
+                {/* Regular segment-based unlock button */}
+                <View
+                  style={{
+                    flex: 1,
+                    shadowColor: '#D4AF37',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 6,
+                    elevation: 6,
+                  }}
+                >
+                  <LinearGradient
+                    colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={[
+                        styles.selectProjectButton,
+                        {
+                          backgroundColor: 'transparent',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingHorizontal: 12,
+                        },
+                      ]}
+                      onPress={handleSelectAsProject}
+                      activeOpacity={0.8}
+                    >
+                      <Feather
+                        name="target"
+                        size={14}
+                        color="#FFFFFF"
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={[styles.selectButtonText, { fontWeight: '600', fontSize: 13 }]} numberOfLines={1} adjustsFontSizeToFit>
+                        {t('detailModal.unlockButton')}
+                      </Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                </View>
+              </View>
+            ) : (
+              // Only regular unlock button wenn kein Supporter
               <View
                 style={{
-                  marginBottom: 8,
                   shadowColor: '#D4AF37',
                   shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 8,
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: 6,
                 }}
               >
                 <LinearGradient
@@ -615,67 +711,22 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                         justifyContent: 'center',
                       },
                     ]}
-                    onPress={handleSupporterUnlock}
+                    onPress={handleSelectAsProject}
                     activeOpacity={0.8}
                   >
                     <Feather
-                      name="gift"
-                      size={18}
+                      name="target"
+                      size={16}
                       color="#FFFFFF"
                       style={{ marginRight: 8 }}
                     />
-                    <Text style={[styles.selectButtonText, { fontWeight: '700' }]}>
-                      {t('detailModal.supporterUnlockButton')}
+                    <Text style={[styles.selectButtonText, { fontWeight: '600' }]}>
+                      {t('detailModal.unlockButton')}
                     </Text>
                   </TouchableOpacity>
                 </LinearGradient>
               </View>
             )}
-
-            {/* Regular segment-based unlock button */}
-            <View
-              style={{
-                shadowColor: '#D4AF37',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.25,
-                shadowRadius: 6,
-                elevation: 6,
-              }}
-            >
-              <LinearGradient
-                colors={['#E5C158', '#D4AF37', '#C19A2E']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                }}
-              >
-                <TouchableOpacity
-                  style={[
-                    styles.selectProjectButton,
-                    {
-                      backgroundColor: 'transparent',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    },
-                  ]}
-                  onPress={handleSelectAsProject}
-                  activeOpacity={0.8}
-                >
-                  <Feather
-                    name="target"
-                    size={16}
-                    color="#FFFFFF"
-                    style={{ marginRight: 8 }}
-                  />
-                  <Text style={[styles.selectButtonText, { fontWeight: '600' }]}>
-                    {t('detailModal.unlockButton')}
-                  </Text>
-                </TouchableOpacity>
-              </LinearGradient>
-            </View>
           </View>
         )}
       </View>

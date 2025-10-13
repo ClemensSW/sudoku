@@ -25,7 +25,7 @@
   },
   "detailModal": {
     "almostDoneSegment": "Almost done! Only 1 segment left",
-    "unlockButton": "Unlock this image",
+    "unlockButton": "Unlock image",
     "currentProjectTag": "Currently unlocking",
     "favoriteTag": "Favorite",
     "supporterUnlockButton": "Unlock instantly"

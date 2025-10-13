@@ -41,6 +41,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 import SupportShopScreen from "@/screens/SupportShop";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Properly define the props for EmptyState component
 interface EmptyStateProps {
@@ -56,6 +57,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   colors,
 }) => {
   const { t } = useTranslation('gallery');
+  const progressColor = useProgressColor();
 
   // Determine empty state key based on active tab
   const getEmptyStateKey = (): string => {
@@ -89,7 +91,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         <TouchableOpacity
           style={[
             styles.emptyButton,
-            { backgroundColor: colors.primary, padding: 12, borderRadius: 8 },
+            { backgroundColor: progressColor, padding: 12, borderRadius: 8 },
           ]}
           onPress={() => router.push("/game")}
         >
@@ -110,6 +112,7 @@ const Gallery: React.FC = () => {
   const { showAlert } = useAlert();
   const insets = useSafeAreaInsets();
   const isFocused = useIsFocused();
+  const progressColor = useProgressColor();
 
   // Get screen dimensions for responsive design
   const { width: screenWidth } = useWindowDimensions();
@@ -482,8 +485,8 @@ const Gallery: React.FC = () => {
                   styles.activeTabButton,
                   {
                     backgroundColor: theme.isDark
-                      ? "rgba(138, 180, 248, 0.12)"
-                      : "rgba(66, 133, 244, 0.08)",
+                      ? `${progressColor}1F` // ~12% opacity
+                      : `${progressColor}14`, // ~8% opacity
                   },
                 ],
               ]}
@@ -493,7 +496,7 @@ const Gallery: React.FC = () => {
               <Feather
                 name={tab.icon as any}
                 size={isCompactMode ? 18 : 16}
-                color={isActive ? colors.primary : colors.textSecondary}
+                color={isActive ? progressColor : colors.textSecondary}
                 style={showTabText ? styles.tabIcon : undefined}
               />
               {showTabText && (
@@ -501,7 +504,7 @@ const Gallery: React.FC = () => {
                   style={[
                     styles.tabText,
                     isSmallMode && styles.smallTabText,
-                    { color: isActive ? colors.primary : colors.textSecondary },
+                    { color: isActive ? progressColor : colors.textSecondary },
                     isActive && styles.activeTabText,
                   ]}
                   numberOfLines={1}
@@ -517,7 +520,7 @@ const Gallery: React.FC = () => {
         <Animated.View
           style={[
             styles.tabIndicator,
-            { backgroundColor: colors.primary },
+            { backgroundColor: progressColor },
             indicatorStyle,
           ]}
         />
@@ -551,7 +554,7 @@ const Gallery: React.FC = () => {
       {/* Aktive Filter-Badge */}
       {selectedCategories.length > 0 && (
         <View style={[styles.filterBadge, { backgroundColor: colors.surface }]}>
-          <Feather name="filter" size={14} color={colors.primary} />
+          <Feather name="filter" size={14} color={progressColor} />
           <Text style={[styles.filterBadgeText, { color: colors.textPrimary }]}>
             {t('filterBadge.active', { count: selectedCategories.length })}
           </Text>

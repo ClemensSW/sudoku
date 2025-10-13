@@ -19,20 +19,6 @@ const BottomNavigation: React.FC = () => {
   const insets = useSafeAreaInsets();
   const progressColor = useProgressColor();
 
-  // Function to get the active tab color based on tab translation key
-  const getActiveTabColor = (translationKey: string): string => {
-    // Use teal color specifically for "duo" tab
-    if (translationKey === "duo") {
-      return "#4A7D78";
-    }
-    // Use custom progress color for "performance" tab
-    if (translationKey === "performance") {
-      return progressColor;
-    }
-    // Default primary color for other tabs
-    return colors.primary;
-  };
-
   const tabs = [
     {
       name: t('navigation.sudoku'),
@@ -81,9 +67,6 @@ const BottomNavigation: React.FC = () => {
           tab.path === "/"
             ? pathname === "/" || pathname === "/index"
             : pathname === tab.path;
-        
-        // Get the appropriate color for this tab when active
-        const activeColor = getActiveTabColor(tab.translationKey);
 
         return (
           <TouchableOpacity
@@ -96,13 +79,13 @@ const BottomNavigation: React.FC = () => {
               <Feather
                 name={tab.icon as any}
                 size={22}
-                color={isActive ? activeColor : colors.textSecondary}
+                color={isActive ? progressColor : colors.textSecondary}
               />
               <Text
                 style={[
                   styles.tabLabel,
                   {
-                    color: isActive ? activeColor : colors.textSecondary,
+                    color: isActive ? progressColor : colors.textSecondary,
                     fontWeight: isActive ? "600" : "400",
                   },
                 ]}
@@ -114,7 +97,7 @@ const BottomNavigation: React.FC = () => {
               <View
                 style={[
                   styles.activeIndicator,
-                  { backgroundColor: activeColor },
+                  { backgroundColor: progressColor },
                 ]}
               />
             )}

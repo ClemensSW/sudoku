@@ -120,16 +120,11 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     // Clear any paused game when starting new game
     await clearPausedGame();
 
-    // Daily Streak System: Update streak & check resets BEFORE game starts
+    // Daily Streak System: Only check weekly reset on game start (not update streak)
     try {
       await checkWeeklyShieldReset(); // Check if Monday reset is due
-      await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
-
-      // Reload stats immediately so GameCompletion shows updated streak
-      const updatedStats = await loadStats();
-      setGameStats(updatedStats);
     } catch (error) {
-      console.error('[Game] Error updating daily streak:', error);
+      console.error('[Game] Error checking weekly shield reset:', error);
     }
 
     // Generate a new game with current difficulty
@@ -358,18 +353,20 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     // Update stats
     await updateStatsAfterGame(true, difficulty, gameTime, autoNotesUsed);
 
-    // Daily Streak System: Check if month is completed after winning
+    // Daily Streak System: Update streak AFTER winning a game
     try {
+      await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
+
       const currentMonth = getCurrentYearMonth();
-      await checkMonthlyCompletion(currentMonth);
+      await checkMonthlyCompletion(currentMonth); // Check if month is completed
     } catch (error) {
-      console.error('[Game] Error checking monthly completion:', error);
+      console.error('[Game] Error updating daily streak:', error);
     }
 
     // Clear any paused game state when game is completed
     await clearPausedGame();
 
-    // Reload stats
+    // Reload stats to show updated streak in GameCompletion
     const updatedStats = await loadStats();
     setGameStats(updatedStats);
 

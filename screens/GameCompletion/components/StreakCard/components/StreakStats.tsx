@@ -96,28 +96,28 @@ const StreakStats: React.FC<StreakStatsProps> = ({
         {stats.map((stat, index) => {
           // Determine which SVG icon to render
           let IconComponent;
-          let iconSize = 40;
+          let iconSize = 48;
 
           switch (stat.icon) {
             case 'lightning':
               IconComponent = LightningIcon;
-              iconSize = 40;
+              iconSize = 48;
               break;
             case 'success':
               IconComponent = SuccessIcon;
-              iconSize = 40;
+              iconSize = 48;
               break;
             case 'calendar':
               IconComponent = CalendarIcon;
-              iconSize = 40;
+              iconSize = 48;
               break;
             case 'checkmark':
               IconComponent = CheckMarkIcon;
-              iconSize = 36;
+              iconSize = 40;
               break;
             case 'shield':
               IconComponent = ShieldIcon;
-              iconSize = 40;
+              iconSize = 48;
               break;
             default:
               IconComponent = null;

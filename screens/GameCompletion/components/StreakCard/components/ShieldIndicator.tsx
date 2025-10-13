@@ -81,7 +81,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
             return (
               <View
                 key={`shield-${index}`}
-                style={styles.shieldIconWrapper}
+                style={[
+                  styles.shieldIconWrapper,
+                  { opacity: isFilled ? 1 : 0.3 }
+                ]}
               >
                 {isFilled ? (
                   <ShieldIcon
@@ -93,7 +96,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
                   <ShieldEmptyIcon
                     width={56}
                     height={56}
-                    fill={theme.isDark ? '#444' : '#DDD'}
+                    fill={theme.isDark ? '#666' : '#CCC'}
                   />
                 )}
               </View>

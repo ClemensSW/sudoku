@@ -14,6 +14,7 @@ import TutorialPage from "../TutorialPage";
 import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
+import { getPathColor } from "@/utils/pathColors";
 
 interface BasicRulesPageProps {
   onNext: () => void;
@@ -177,20 +178,11 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
     };
   }, []);
 
-  // Definiere die Hervorhebungsfarben basierend auf der Theme-Farbe
-  // Wir nutzen jetzt die gleichen Farben, die auch in AnimatedBoard definiert wurden
-  // Im Light und Dark Mode gut unterscheidbar
-  const rowHighlightColor = theme.isDark 
-    ? "rgba(138, 180, 248, 0.35)" // Blau im Dark Mode
-    : "rgba(66, 133, 244, 0.35)"; // Blau im Light Mode
-    
-  const columnHighlightColor = theme.isDark 
-    ? "rgba(242, 139, 130, 0.35)" // Rot im Dark Mode
-    : "rgba(234, 67, 53, 0.35)"; // Rot im Light Mode
-    
-  const blockHighlightColor = theme.isDark 
-    ? "rgba(129, 201, 149, 0.35)" // Grün im Dark Mode
-    : "rgba(52, 168, 83, 0.35)"; // Grün im Light Mode
+  // Definiere die Hervorhebungsfarben mit dynamischen Path-Farben
+  // Row = Blau, Column = Grün, Block = Gelb (35% Opacity = 59 in Hex)
+  const rowHighlightColor = getPathColor('blue', theme.isDark) + '59';
+  const columnHighlightColor = getPathColor('green', theme.isDark) + '59';
+  const blockHighlightColor = getPathColor('yellow', theme.isDark) + '59';
 
   return (
     <TutorialPage
@@ -227,8 +219,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             <Text
               style={[
                 styles.highlightText,
-                // Gleiche Farbe wie die Reihenhervorhebung, aber intensiver
-                { color: theme.isDark ? "#8AB4F8" : "#4285F4" }
+                { color: getPathColor('blue', theme.isDark) }
               ]}
             >
               {t('pages.basicRules.explanation.row')}
@@ -241,8 +232,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             <Text
               style={[
                 styles.highlightText,
-                // Gleiche Farbe wie die Spaltenhervorhebung, aber intensiver
-                { color: theme.isDark ? "#F28B82" : "#EA4335" }
+                { color: getPathColor('green', theme.isDark) }
               ]}
             >
               {t('pages.basicRules.explanation.column')}
@@ -255,8 +245,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             <Text
               style={[
                 styles.highlightText,
-                // Gleiche Farbe wie die Blockhervorhebung, aber intensiver
-                { color: theme.isDark ? "#81C995" : "#34A853" }
+                { color: getPathColor('yellow', theme.isDark) }
               ]}
             >
               {t('pages.basicRules.explanation.block')}

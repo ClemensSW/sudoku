@@ -7,6 +7,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing } from "@/utils/theme";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface TutorialProgressProps {
   currentStep: number;
@@ -19,6 +20,7 @@ const TutorialProgress: React.FC<TutorialProgressProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   // Generate indicators
   const renderIndicators = () => {
@@ -33,7 +35,7 @@ const TutorialProgress: React.FC<TutorialProgressProps> = ({
             styles.indicator,
             {
               backgroundColor: isActive
-                ? colors.primary
+                ? progressColor
                 : theme.isDark
                 ? "rgba(255,255,255,0.2)"
                 : "rgba(0,0,0,0.1)",

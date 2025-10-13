@@ -8,6 +8,7 @@ import AnimatedBoard from "../components/AnimatedBoard";
 import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
 import PencilIcon from "@/assets/svg/pencil.svg";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface NotesPageProps {
   onNext: () => void;
@@ -27,6 +28,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   // Example grid
   const exampleGrid = [
@@ -127,10 +129,10 @@ const NotesPage: React.FC<NotesPageProps> = ({
         {/* Notes Button */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.notesButton, { backgroundColor: theme.isDark ? colors.surface : colors.numberPadButton, borderWidth: 2, borderColor: colors.primary }]}
+            style={[styles.notesButton, { backgroundColor: theme.isDark ? colors.surface : colors.numberPadButton, borderWidth: 2, borderColor: progressColor }]}
             onPress={() => {}}
           >
-            <PencilIcon width={32} height={32} color={colors.primary} />
+            <PencilIcon width={32} height={32} color={progressColor} />
           </TouchableOpacity>
           <Text style={[styles.buttonLabel, { color: colors.textPrimary }]}>
             {t('pages.notes.buttonLabel')}

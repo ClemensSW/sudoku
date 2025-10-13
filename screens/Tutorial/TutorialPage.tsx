@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing, radius } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface TutorialPageProps {
   title: string;
@@ -35,6 +36,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const progressColor = useProgressColor();
 
   const defaultNextText = nextText || t('navigation.next');
   const defaultBackText = backText || t('navigation.back');
@@ -91,7 +93,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
           style={[
             styles.button,
             styles.nextBtn,
-            { backgroundColor: colors.primary },
+            { backgroundColor: progressColor },
           ]}
           onPress={onNext}
         >

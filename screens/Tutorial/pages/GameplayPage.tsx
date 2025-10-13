@@ -14,6 +14,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
 import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Manuell implementiertes SudokuBoard für die Tutorial-Animation
 import SudokuBoardDemo from "./SudokuBoardDemo";
@@ -36,6 +37,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
 
   // Ein gültiges Sudoku mit eindeutiger Lösung in der Mitte (nur 5 passt)
   const exampleGrid = [
@@ -180,7 +182,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                       borderRadius: 12,
                       justifyContent: "center",
                       alignItems: "center",
-                      backgroundColor: colors.primary, // Theme-Farbe statt fester Farbe
+                      backgroundColor: progressColor,
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.25,
@@ -251,7 +253,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
             <Feather
               name="arrow-up"
               size={28}
-              color={colors.primary} // Auch hier Theme-Farbe
+              color={progressColor}
               style={styles.arrow}
             />
           </Animated.View>

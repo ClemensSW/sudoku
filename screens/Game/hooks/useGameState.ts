@@ -102,9 +102,12 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   // Check if game is complete and update used numbers
   useEffect(() => {
     if (board.length > 0 && isBoardComplete(board)) {
-      handleGameComplete();
+      // Use async IIFE to properly handle async handleGameComplete
+      (async () => {
+        await handleGameComplete();
+      })();
     }
-    
+
     if (board.length > 0) {
       updateUsedNumbers();
     }

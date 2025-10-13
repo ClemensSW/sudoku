@@ -175,7 +175,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <StatTile
             customIcon={<LightningIcon width={40} height={40} />}
             value={formatNumber(stats.dailyStreak?.currentStreak ?? 0)}
-            label={t("profile.dailyStreak", { defaultValue: "Tages-Streak" })}
+            label={(stats.dailyStreak?.currentStreak ?? 0) === 1 ? "Tag" : "Tage"}
             description={t("profile.dailyStreakDescription", { defaultValue: "Deine Serie" })}
             colors={{
               icon: colors.primary,

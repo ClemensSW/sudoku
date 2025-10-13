@@ -4,16 +4,20 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
 } from "react-native";
 import {
   BottomSheetModal as GorhomBottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetFooter,
 } from '@gorhom/bottom-sheet';
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { useNavigation } from '@/contexts/navigation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { spacing, radius } from "@/utils/theme";
 import {
   LANDSCAPE_CATEGORIES,
@@ -21,6 +25,7 @@ import {
 } from "@/screens/Gallery/utils/landscapes/data";
 import CategoryGrid from "./components/CategoryGrid";
 import InfoSection from "./components/InfoSection";
+import { darkenColor } from "@/screens/GameCompletion/components/GalleryProgressCard/utils/colorHelpers";
 import BottomSheetHandle from '@/components/BottomSheetModal/BottomSheetHandle';
 import CustomBottomSheetBackdrop from '@/components/BottomSheetModal/BottomSheetBackdrop';
 
@@ -32,7 +37,6 @@ export interface FilterModalProps {
   totalImages: number;
   filteredCount: number;
   allLandscapes?: any[];
-  onTempCategoriesChange?: (categories: LandscapeCategory[]) => void;
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -43,7 +47,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   totalImages,
   filteredCount,
   allLandscapes = [],
-  onTempCategoriesChange,
 }) => {
   const { t } = useTranslation('gallery');
   const theme = useTheme();
@@ -51,6 +54,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const progressColor = useProgressColor();
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { hideBottomNav, resetBottomNav } = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const [tempSelectedCategories, setTempSelectedCategories] =
     useState<LandscapeCategory[]>(selectedCategories);
@@ -62,13 +66,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   }, [selectedCategories]);
 
   // Notify parent about temp categories changes
-  useEffect(() => {
-    if (onTempCategoriesChange) {
-      onTempCategoriesChange(tempSelectedCategories);
-    }
-  }, [tempSelectedCategories, onTempCategoriesChange]);
-
-  // Open/close modal based on visible prop
   useEffect(() => {
     if (visible) {
       bottomSheetRef.current?.present();
@@ -135,6 +132,44 @@ const FilterModal: React.FC<FilterModalProps> = ({
     [theme.isDark]
   );
 
+  // Render footer with Apply button
+  const renderFooter = useCallback(
+    (props: any) => (
+      <BottomSheetFooter {...props} bottomInset={insets.bottom}>
+        <View
+          style={[
+            styles.footer,
+            {
+              backgroundColor: colors.surface,
+              borderTopColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+              paddingBottom: Math.max(insets.bottom, 16) + 8,
+            },
+          ]}
+        >
+          <Pressable
+            onPress={handleApply}
+            style={({ pressed }) => [
+              styles.applyButton,
+              {
+                backgroundColor: pressed
+                  ? darkenColor(progressColor, 20)
+                  : progressColor,
+                shadowColor: progressColor,
+              },
+            ]}
+          >
+            <Feather name="filter" size={18} color="#FFFFFF" />
+            <Text style={styles.applyButtonText}>
+              {t('filterModal.applyFilter')}
+            </Text>
+            <Feather name="arrow-right" size={18} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      </BottomSheetFooter>
+    ),
+    [colors.surface, theme.isDark, insets.bottom, handleApply, progressColor, t]
+  );
+
   if (!visible) return null;
 
   return (
@@ -146,6 +181,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         enablePanDownToClose
         handleComponent={renderHandle}
         backdropComponent={renderBackdrop}
+        footerComponent={renderFooter}
         backgroundStyle={{
           backgroundColor: colors.surface,
           borderWidth: 1,
@@ -254,6 +290,29 @@ const styles = StyleSheet.create({
   allButtonText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  footer: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+  },
+  applyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  applyButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });
 

@@ -1,10 +1,11 @@
 // hooks/useDebugCalendar.ts
 import { useState, useMemo } from 'react';
+import Constants from 'expo-constants';
 import { MonthlyPlayData } from '@/utils/storage';
 import { getDaysInMonth } from '@/utils/dailyStreak';
 
-// DEBUG: Toggle für Debug-Button (auf false setzen für Production)
-export const SHOW_DEBUG_BUTTON = true;
+// DEBUG: Nur in Expo Go anzeigen
+export const SHOW_DEBUG_BUTTON = Constants.appOwnership === 'expo';
 
 export type DebugScenario = 'off' | 'full' | 'half' | 'shields' | 'mixed' | 'before-launch';
 
@@ -54,11 +55,11 @@ export const useDebugCalendar = ({ selectedMonth, playHistory }: UseDebugCalenda
         break;
 
       case 'before-launch':
-        // Simuliert Tage VOR firstLaunchDate (werden ignoriert)
-        // Zeigt nur einige Tage an, als ob firstLaunchDate in der Mitte des Monats wäre
+        // Simuliert VOLLEN Kalender ab Tag 15 (firstLaunchDate wird auf 15. gesetzt)
+        // Tage 1-14: NICHT in mockDays/mockShieldDays → werden als "before-launch" erkannt und ausgegraut
+        // Tage 15-31: Volle Abdeckung mit Spieltagen und Shields → voller Kalender sichtbar
         for (let d = 15; d <= daysInMonth; d++) {
-          if (d % 2 === 0) mockDays.push(d);
-          else if (d % 3 === 0) mockShieldDays.push(d);
+          mockDays.push(d);
         }
         break;
 

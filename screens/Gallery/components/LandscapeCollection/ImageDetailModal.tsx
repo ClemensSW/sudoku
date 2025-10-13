@@ -94,6 +94,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
   const [fullscreenBannerDismissed, setFullscreenBannerDismissed] = useState(false);
+  const [footerContentHeight, setFooterContentHeight] = useState(200); // Dynamische Gradient-Höhe
 
   // Supporter hooks
   const { isSupporter, status: supporterStatus } = useSupporter();
@@ -519,19 +520,28 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         <BlurView
           intensity={60}
           tint="dark"
-          style={styles.footerBlur}
+          style={[styles.footerBlur, { height: footerContentHeight }]}
           pointerEvents="none"
         />
       ) : (
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.9)"]}
-          style={styles.footerGradient}
+          style={[styles.footerGradient, { height: footerContentHeight }]}
           pointerEvents="none"
         />
       )}
 
       {/* Footer content */}
-      <View style={styles.footerContent}>
+      <View
+        style={styles.footerContent}
+        onLayout={(event) => {
+          const { height } = event.nativeEvent.layout;
+          // Gradient-Höhe = Content-Höhe + 80px Buffer für smooth transition
+          // Minimum: 200px, Maximum: 400px (verhindert übermäßige Bildverdeckung)
+          const gradientHeight = Math.min(Math.max(height + 80, 200), 400);
+          setFooterContentHeight(gradientHeight);
+        }}
+      >
         {/* description */}
         <Text style={styles.description}>{getLandscapeDescription(landscape.id)}</Text>
 

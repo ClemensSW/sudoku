@@ -207,8 +207,8 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
         // Fehltag: Nur SVG Letter-X-Icon, KEINE Tageszahl
         return (
           <LetterXIcon
-            width={28}
-            height={28}
+            width={20}
+            height={20}
             fill={theme.isDark ? '#EF5350' : '#D32F2F'}
           />
         );

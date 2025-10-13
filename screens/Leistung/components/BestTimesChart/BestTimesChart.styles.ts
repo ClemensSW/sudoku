@@ -8,15 +8,25 @@ export default StyleSheet.create({
     borderRadius: radius.xl,
     padding: spacing.lg,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+  },
+
+  // Header
+  header: {
+    marginBottom: spacing.md,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
 
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    marginBottom: spacing.md,
+    letterSpacing: 0.3,
   },
 
   chartContainer: {

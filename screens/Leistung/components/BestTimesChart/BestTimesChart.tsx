@@ -6,10 +6,13 @@ import Animated, {
   FadeInUp,
   FadeInDown,
 } from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
+import { getPathColor } from "@/utils/pathColors";
 import styles from "./BestTimesChart.styles";
 
 interface BestTimesChartProps {
@@ -34,6 +37,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Max time for scaling (use largest non-infinity time or default to 15 minutes)
   const validTimes = [
@@ -68,7 +72,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
     expert: getBarPercentage(stats.bestTimeExpert),
   });
 
-  // Bar data with numeric percentages
+  // Bar data with numeric percentages - using path colors
   const difficulties: {
     key: Difficulty;
     name: string;
@@ -79,28 +83,28 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
     {
       key: "easy",
       name: t('bestTimes.difficulties.easy'),
-      color: colors.success,
+      color: getPathColor('blue', theme.isDark),
       time: stats.bestTimeEasy,
       percentage: getBarPercentage(stats.bestTimeEasy),
     },
     {
       key: "medium",
       name: t('bestTimes.difficulties.medium'),
-      color: colors.warning,
+      color: getPathColor('green', theme.isDark),
       time: stats.bestTimeMedium,
       percentage: getBarPercentage(stats.bestTimeMedium),
     },
     {
       key: "hard",
       name: t('bestTimes.difficulties.hard'),
-      color: colors.error,
+      color: getPathColor('yellow', theme.isDark),
       time: stats.bestTimeHard,
       percentage: getBarPercentage(stats.bestTimeHard),
     },
     {
       key: "expert",
       name: t('bestTimes.difficulties.expert'),
-      color: colors.info,
+      color: getPathColor('purple', theme.isDark),
       time: stats.bestTimeExpert,
       percentage: getBarPercentage(stats.bestTimeExpert),
     },
@@ -115,14 +119,20 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
         styles.bestTimesContainer,
         {
           backgroundColor: colors.surface,
-          elevation: theme.isDark ? 0 : 2, // Elevation nur im Light Mode
+          elevation: theme.isDark ? 0 : 4, // Elevation nur im Light Mode (wie ShieldIndicator)
         },
       ]}
       entering={FadeInUp.delay(300).duration(500)}
     >
-      <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-        {t('bestTimes.title')}
-      </Text>
+      {/* Header with Icon */}
+      <View style={styles.header}>
+        <View style={styles.titleRow}>
+          <Feather name="clock" size={20} color={progressColor} />
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            {t('bestTimes.title')}
+          </Text>
+        </View>
+      </View>
 
       <View style={styles.chartContainer}>
         {difficulties.map((diff, index) => {

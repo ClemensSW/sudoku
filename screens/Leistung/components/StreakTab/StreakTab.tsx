@@ -111,19 +111,19 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats }) => {
           longestStreak={dailyStreak.longestDailyStreak}
         />
 
-        {/* Schutzschilder */}
-        <ShieldIndicator
-          available={dailyStreak.shieldsAvailable}
-          maxRegular={maxRegularShields}
-          bonusShields={dailyStreak.bonusShields}
-          nextResetDate={nextResetDate}
-        />
-
         {/* Monatskalender */}
         <StreakCalendar
           currentMonth={currentMonth}
           playHistory={dailyStreak.playHistory}
           onMonthChange={handleMonthChange}
+        />
+
+        {/* Schutzschilder - NACH dem Kalender */}
+        <ShieldIndicator
+          available={dailyStreak.shieldsAvailable}
+          maxRegular={maxRegularShields}
+          bonusShields={dailyStreak.bonusShields}
+          nextResetDate={nextResetDate}
         />
 
         {/* Statistiken */}

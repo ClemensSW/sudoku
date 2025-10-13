@@ -1,11 +1,14 @@
-// screens/Leistung/components/StreakTab/components/ShieldIndicator.tsx
+// screens/GameCompletion/components/StreakCard/components/ShieldIndicator.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { useRouter } from 'expo-router';
 import { spacing, radius } from '@/utils/theme';
+import ShieldIcon from '@/assets/svg/shield.svg';
 
 interface ShieldIndicatorProps {
   available: number; // Verfügbare reguläre Schutzschilder
@@ -23,16 +26,29 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
+  const router = useRouter();
 
   // Calculate days until reset
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  nextResetDate.setHours(0, 0, 0, 0);
-  const daysUntilReset = Math.ceil(
-    (nextResetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+  const resetDate = new Date(nextResetDate);
+  resetDate.setHours(0, 0, 0, 0);
+
+  let daysUntilReset = Math.ceil(
+    (resetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
   );
 
+  // Wenn heute Montag ist und daysUntilReset = 0, dann zeige den nächsten Montag (in 7 Tagen)
+  if (daysUntilReset === 0) {
+    daysUntilReset = 7;
+  }
+
   const totalShields = available + bonusShields;
+  const hasNoShields = totalShields === 0;
+
+  const handlePremiumPress = () => {
+    router.push('/supportShop');
+  };
 
   return (
     <Animated.View
@@ -43,75 +59,128 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
           elevation: theme.isDark ? 0 : 4,
         },
       ]}
-      entering={FadeIn.duration(350).delay(100)}
+      entering={FadeIn.duration(350).delay(200)}
     >
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Feather name="shield" size={20} color="#4285F4" />
+          <Feather name="shield" size={20} color="#74DA7F" />
           <Text style={[styles.title, { color: colors.textPrimary }]}>
-            {t('streakTab.shields.title')}
+            {t('streakTab.shields.title', { defaultValue: 'Schutzschilder' })}
           </Text>
         </View>
       </View>
 
-      {/* Shield Circles */}
-      <View style={styles.shieldsRow}>
-        <View style={styles.shieldsDisplay}>
+      {/* Hero Section: Large Shield Display */}
+      <View style={styles.heroSection}>
+        {/* Shield Icons mit SVG */}
+        <View style={styles.shieldsGrid}>
           {Array.from({ length: maxRegular }).map((_, index) => {
             const isFilled = index < available;
             return (
               <View
                 key={`regular-${index}`}
                 style={[
-                  styles.shieldCircle,
+                  styles.shieldIconWrapper,
                   {
-                    backgroundColor: isFilled
-                      ? '#4285F4'
-                      : theme.isDark
-                      ? 'rgba(255,255,255,0.1)'
-                      : 'rgba(0,0,0,0.06)',
-                    borderColor: isFilled ? '#4285F4' : 'transparent',
+                    opacity: isFilled ? 1 : 0.3,
                   },
                 ]}
               >
-                {isFilled && <Feather name="shield" size={16} color="white" />}
+                <ShieldIcon
+                  width={48}
+                  height={48}
+                  fill={isFilled ? '#74DA7F' : (theme.isDark ? '#666' : '#CCC')}
+                />
               </View>
             );
           })}
         </View>
 
-        <Text style={[styles.countText, { color: colors.textPrimary }]}>
-          {available}/{maxRegular}
-        </Text>
+        {/* Counter */}
+        <View style={styles.counterSection}>
+          <Text style={[styles.counterNumber, { color: hasNoShields ? colors.error : colors.textPrimary }]}>
+            {totalShields}
+          </Text>
+          <Text style={[styles.counterLabel, { color: colors.textSecondary }]}>
+            {totalShields === 1 ? 'Schild verfügbar' : 'Schilder verfügbar'}
+          </Text>
+        </View>
       </View>
 
       {/* Bonus Shields (if available) */}
       {bonusShields > 0 && (
-        <View style={[styles.bonusSection, { backgroundColor: theme.isDark ? 'rgba(255,215,0,0.1)' : 'rgba(255,215,0,0.08)' }]}>
-          <Feather name="gift" size={16} color="#FFD700" />
-          <Text style={[styles.bonusText, { color: colors.textPrimary }]}>
-            {t('streakTab.shields.bonusShields')}: <Text style={styles.bonusNumber}>+{bonusShields}</Text>
+        <View style={[styles.bonusCard, { backgroundColor: theme.isDark ? 'rgba(255,215,0,0.12)' : 'rgba(255,215,0,0.1)' }]}>
+          <View style={styles.bonusHeader}>
+            <View style={[styles.bonusIconCircle, { backgroundColor: 'rgba(255,215,0,0.2)' }]}>
+              <Feather name="gift" size={18} color="#FFD700" />
+            </View>
+            <View style={styles.bonusTextContainer}>
+              <Text style={[styles.bonusTitle, { color: colors.textPrimary }]}>
+                Bonus-Schutzschilder
+              </Text>
+              <Text style={[styles.bonusValue, { color: '#FFD700' }]}>
+                +{bonusShields} Extra
+              </Text>
+            </View>
+          </View>
+          <Text style={[styles.bonusDescription, { color: colors.textSecondary }]}>
+            Diese Schutzschilder bleiben dauerhaft verfügbar!
           </Text>
         </View>
       )}
 
       {/* Info Section */}
-      <View style={styles.infoSection}>
+      <View style={[styles.infoCard, { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
         <View style={styles.infoRow}>
-          <Feather name="clock" size={14} color={colors.textSecondary} />
-          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            {t('streakTab.shields.nextReset')}: {daysUntilReset === 0 ? 'Heute' : `in ${daysUntilReset} ${daysUntilReset === 1 ? 'Tag' : 'Tagen'}`}
+          <Feather name="clock" size={16} color={colors.textSecondary} />
+          <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+            Nächster Reset:
+          </Text>
+          <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
+            in {daysUntilReset} {daysUntilReset === 1 ? 'Tag' : 'Tagen'}
           </Text>
         </View>
 
-        <View style={[styles.descriptionBox, { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
-          <Feather name="info" size={14} color={colors.textSecondary} style={{ marginTop: 2 }} />
-          <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
-            {t('streakTab.shields.description')}
+        <View style={styles.divider} />
+
+        <View style={styles.infoRow}>
+          <Feather name="info" size={16} color={colors.textSecondary} />
+          <Text style={[styles.infoDescription, { color: colors.textSecondary }]}>
+            {t('streakTab.shields.description', { defaultValue: 'Schützt deinen Streak automatisch, wenn du einen Tag verpasst' })}
           </Text>
         </View>
       </View>
+
+      {/* Premium Upsell - NUR wenn keine Schilder verfügbar */}
+      {hasNoShields && (
+        <Pressable onPress={handlePremiumPress}>
+          <LinearGradient
+            colors={theme.isDark
+              ? ['rgba(74, 218, 127, 0.15)', 'rgba(74, 218, 127, 0.08)']
+              : ['rgba(74, 218, 127, 0.12)', 'rgba(74, 218, 127, 0.06)']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.premiumCard}
+          >
+            <View style={styles.premiumHeader}>
+              <View style={[styles.premiumIconCircle, { backgroundColor: 'rgba(74, 218, 127, 0.25)' }]}>
+                <Feather name="zap" size={20} color="#74DA7F" />
+              </View>
+              <View style={styles.premiumTextContainer}>
+                <Text style={[styles.premiumTitle, { color: colors.textPrimary }]}>
+                  Premium: 3 Schilder pro Woche
+                </Text>
+                <Text style={[styles.premiumSubtitle, { color: colors.textSecondary }]}>
+                  Mehr Schutz für deinen Streak
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={20} color="#74DA7F" />
+            </View>
+          </LinearGradient>
+        </Pressable>
+      )}
     </Animated.View>
   );
 };
@@ -131,7 +200,7 @@ const styles = StyleSheet.create({
 
   // Header
   header: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   titleRow: {
     flexDirection: 'row',
@@ -144,73 +213,145 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
 
-  // Shields Display
-  shieldsRow: {
-    flexDirection: 'row',
+  // Hero Section
+  heroSection: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
-  shieldsDisplay: {
+  shieldsGrid: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
+    marginBottom: spacing.lg,
   },
-  shieldCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  shieldIconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-  },
-  countText: {
-    fontSize: 20,
-    fontWeight: '800',
-    fontVariant: ['tabular-nums'],
   },
 
-  // Bonus Section
-  bonusSection: {
+  // Counter
+  counterSection: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  counterNumber: {
+    fontSize: 48,
+    fontWeight: '900',
+    fontVariant: ['tabular-nums'],
+    letterSpacing: -1,
+  },
+  counterLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  // Bonus Card
+  bonusCard: {
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    marginBottom: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FFD700',
+  },
+  bonusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
-  bonusText: {
+  bonusIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bonusTextContainer: {
+    flex: 1,
+  },
+  bonusTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
-  bonusNumber: {
-    fontWeight: '800',
-    color: '#FFD700',
+  bonusValue: {
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.3,
+    marginTop: 2,
+  },
+  bonusDescription: {
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginLeft: 44,
   },
 
-  // Info Section
-  infoSection: {
+  // Info Card
+  infoCard: {
+    padding: spacing.md,
+    borderRadius: radius.lg,
     gap: spacing.sm,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
-  infoText: {
+  infoLabel: {
     fontSize: 13,
     fontWeight: '600',
   },
-  descriptionBox: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radius.md,
+  infoValue: {
+    fontSize: 13,
+    fontWeight: '800',
+    fontVariant: ['tabular-nums'],
   },
-  descriptionText: {
+  divider: {
+    height: 1,
+    backgroundColor: 'rgba(128,128,128,0.15)',
+    marginVertical: spacing.xs,
+  },
+  infoDescription: {
     flex: 1,
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 18,
+  },
+
+  // Premium Upsell Card
+  premiumCard: {
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    marginTop: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: '#74DA7F',
+  },
+  premiumHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  premiumIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  premiumTextContainer: {
+    flex: 1,
+  },
+  premiumTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+  },
+  premiumSubtitle: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 2,
   },
 });
 

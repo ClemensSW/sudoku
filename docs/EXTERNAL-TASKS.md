@@ -174,10 +174,10 @@ Die App bietet:
 - Einmalige Zahlung, keine automatische Verlängerung
 
 ### 3.2 Abonnements
-- Monatlich: €2,99/Monat
-  - Leistung: 2× EP Bonus + 1 Bild pro Monat freischalten
-- Jährlich: €29,99/Jahr
-  - Leistung: 2× EP Bonus + 2 Bilder pro Monat freischalten
+- Monatlich: €1,99/Monat
+  - Leistung: 2× EP Bonus + 1 Bild pro Monat freischalten + 3 Schutzschilder/Woche
+- Jährlich: €19,99/Jahr
+  - Leistung: 2× EP Bonus + 2 Bilder pro Monat freischalten + 3 Schutzschilder/Woche
 
 ### 3.3 Zahlungsabwicklung
 - Zahlung erfolgt über Google Play

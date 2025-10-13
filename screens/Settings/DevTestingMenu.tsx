@@ -75,7 +75,7 @@ Schutzschilder: ${shieldInfo}
       {
         id: 'de.playfusiongate.sudokuduo.coffee',
         name: 'Test Kaffee',
-        price: 2.99,
+        price: 1.99,
         timestamp: new Date().toISOString(),
       },
       'one-time'
@@ -111,7 +111,7 @@ Schutzschilder: ${shieldInfo}
                 {
                   id: 'de.playfusiongate.sudokuduo.coffee',
                   name: 'Test Kaffee',
-                  price: 2.99,
+                  price: 1.99,
                   timestamp: new Date().toISOString(),
                 },
                 'one-time'
@@ -144,7 +144,7 @@ Schutzschilder: ${shieldInfo}
       {
         id: 'de.playfusiongate.sudokuduo.monthly:monthly',
         name: 'Monatliches Abo',
-        price: 2.99,
+        price: 1.99,
         timestamp: new Date().toISOString(),
       },
       'subscription'
@@ -161,7 +161,7 @@ Schutzschilder: ${shieldInfo}
       {
         id: 'de.playfusiongate.sudokuduo.yearly:yearly',
         name: 'Jährliches Abo',
-        price: 29.99,
+        price: 19.99,
         timestamp: new Date().toISOString(),
       },
       'subscription'

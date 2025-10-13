@@ -124,7 +124,7 @@
     "imagePerYearly": "2 Bilder/Monat",
     "imagePerYear": "{{count}} Bilder/Jahr",
     "imageLifetime": "1 Bild freischalten",
-    "streakShields": "3 Schutzschilder/Woche",
+    "streakShields": "3 Schilder/Woche",
     "adFree": "Werbefrei"
   },
   "shieldBanner": {
@@ -184,12 +184,12 @@
     "monthly": {
       "title": "Monatlicher Support",
       "description": "Unterstütze die App-Entwicklung jeden Monat",
-      "price": "€2,99/Monat"
+      "price": "€1,99/Monat"
     },
     "yearly": {
       "title": "Jährlicher Support",
-      "description": "Spare 17% mit jährlicher Unterstützung",
-      "price": "€29,99/Jahr"
+      "description": "Spare 50% mit jährlicher Unterstützung",
+      "price": "€19,99/Jahr"
     }
   },
   "subscriptions": {

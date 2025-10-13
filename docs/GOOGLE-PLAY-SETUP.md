@@ -98,7 +98,7 @@ Diese Anleitung zeigt, wie du In-App-Käufe und Abos in der Google Play Console 
 #### Base Plan
 - **Plan ID:** `monthly`
 - **Billing Period:** 1 Month
-- **Price:** `€2.99/Monat`
+- **Price:** `€1.99/Monat`
 - **Auto-Renewal:** ✅ Enabled
 - **Free Trial:** ❌ Optional
 - **Grace Period:** ✅ **7 days** (empfohlen!)
@@ -118,7 +118,7 @@ Diese Anleitung zeigt, wie du In-App-Käufe und Abos in der Google Play Console 
 #### Base Plan
 - **Plan ID:** `yearly`
 - **Billing Period:** 1 Year
-- **Price:** `€29.99/Jahr` (16% Ersparnis)
+- **Price:** `€19.99/Jahr` (50% Ersparnis)
 - **Grace Period:** ✅ **7 days**
 
 ### Grace Period erklärt:

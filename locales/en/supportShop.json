@@ -184,12 +184,12 @@
     "monthly": {
       "title": "Monthly Support",
       "description": "Support the app development every month",
-      "price": "€2.99/month"
+      "price": "€1.99/month"
     },
     "yearly": {
       "title": "Yearly Support",
-      "description": "Save 17% with annual support",
-      "price": "€29.99/year"
+      "description": "Save 50% with annual support",
+      "price": "€19.99/year"
     }
   },
   "subscriptions": {

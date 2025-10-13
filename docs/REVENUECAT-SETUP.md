@@ -50,8 +50,8 @@ Gehe zu **Products** → **"Create Product"**
 
 | Subscription ID | Name | Preis | Billing | Entitlement |
 |-----------------|------|-------|---------|-------------|
-| `de.playfusiongate.sudokuduo.monthly:monthly` | Monatlich | 2,99 €/Monat | 1 Monat | `supporter` |
-| `de.playfusiongate.sudokuduo.yearly:yearly` | Jährlich | 29,99 €/Jahr | 1 Jahr | `supporter` |
+| `de.playfusiongate.sudokuduo.monthly:monthly` | Monatlich | 1,99 €/Monat | 1 Monat | `supporter` |
+| `de.playfusiongate.sudokuduo.yearly:yearly` | Jährlich | 19,99 €/Jahr | 1 Jahr | `supporter` |
 
 **⚠️ Aktiviere Grace Period (7 Tage):**
 - Nutzer behält Benefits bei Zahlungsproblemen

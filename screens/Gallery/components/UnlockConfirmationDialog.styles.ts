@@ -27,9 +27,6 @@ export default StyleSheet.create({
     elevation: 10,
   },
   iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
@@ -64,7 +61,18 @@ export default StyleSheet.create({
     // Background set dynamically
   },
   confirmButton: {
-    // Background set dynamically
+    overflow: "hidden",
+    padding: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+  gradientButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    borderRadius: 12,
   },
   cancelButtonText: {
     fontSize: 15,

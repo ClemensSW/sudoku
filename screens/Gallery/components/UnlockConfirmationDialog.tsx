@@ -2,9 +2,12 @@ import React from "react";
 import { View, Text, Modal, TouchableOpacity } from "react-native";
 import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { useTranslation } from "react-i18next";
 import { BlurView } from "expo-blur";
+import SchlossOffnenIcon from "@/assets/svg/schloss-offnen.svg";
 import styles from "./UnlockConfirmationDialog.styles";
 
 interface UnlockConfirmationDialogProps {
@@ -26,6 +29,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor();
   const { t } = useTranslation('gallery');
 
   if (!visible) return null;
@@ -56,13 +60,8 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
           ]}
         >
           {/* Icon */}
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.primary + "20" },
-            ]}
-          >
-            <Feather name="unlock" size={32} color={colors.primary} />
+          <View style={styles.iconContainer}>
+            <SchlossOffnenIcon width={48} height={48} fill={progressColor} />
           </View>
 
           {/* Title */}
@@ -97,27 +96,30 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                styles.confirmButton,
-                { backgroundColor: colors.primary },
-              ]}
+              style={[styles.button, styles.confirmButton]}
               onPress={onConfirm}
               disabled={loading}
               activeOpacity={0.7}
             >
-              {loading ? (
-                <Text style={styles.confirmButtonText}>
-                  {t('unlockDialog.unlocking')}
-                </Text>
-              ) : (
-                <>
+              <LinearGradient
+                colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.gradientButton}
+              >
+                {loading ? (
                   <Text style={styles.confirmButtonText}>
-                    {t('unlockDialog.confirm')}
+                    {t('unlockDialog.unlocking')}
                   </Text>
-                  <Feather name="check" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
-                </>
-              )}
+                ) : (
+                  <>
+                    <Text style={styles.confirmButtonText}>
+                      {t('unlockDialog.confirm')}
+                    </Text>
+                    <Feather name="check" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
+                  </>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         </Animated.View>

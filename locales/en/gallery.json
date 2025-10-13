@@ -74,12 +74,12 @@
         "description": "Solve Sudokus to unlock images."
       },
       "selectGoal": {
-        "title": "Set Goals",
-        "description": "Define which images you want to unlock next."
+        "title": "Select Goal",
+        "description": "Tap \"Unlock this image\" to choose a target image."
       },
       "favorites": {
-        "title": "Mark Favorites",
-        "description": "Save your favorite images for later."
+        "title": "Favorites",
+        "description": "Mark images as favorites – they'll appear on your home screen."
       }
     }
   },

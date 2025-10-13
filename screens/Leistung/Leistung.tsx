@@ -118,12 +118,17 @@ const Leistung: React.FC = () => {
     fetchData();
   }, []);
 
-  // **NEU**: Refresh bei Fokus (Titel/Avatar nach Modal-Änderungen)
+  // **NEU**: Refresh bei Fokus (Titel/Avatar/Stats nach Modal-Änderungen oder Käufen)
   useFocusEffect(
     React.useCallback(() => {
       let cancelled = false;
       (async () => {
         try {
+          // Reload stats (wichtig für Shield-Updates nach Käufen)
+          const loadedStats = await loadStats();
+          if (!cancelled) setStats(loadedStats);
+
+          // Reload profile
           const userProfile = await loadUserProfile();
           if (!cancelled) setProfile(userProfile);
 
@@ -275,7 +280,7 @@ const Leistung: React.FC = () => {
       case "gallery":
         return <GalleryTab stats={stats} />;
       case "streak":
-        return <StreakTab stats={stats} />;
+        return <StreakTab stats={stats} onOpenSupportShop={handleOpenSupportShop} />;
       case "times":
         return <TimeTab stats={stats} />;
       default:

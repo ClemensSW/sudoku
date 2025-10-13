@@ -1,6 +1,7 @@
 // screens/Leistung/components/StreakTab/StreakTab.tsx
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { GameStats } from '@/utils/storage';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTheme } from '@/utils/theme/ThemeProvider';
@@ -26,6 +27,7 @@ interface StreakTabProps {
 const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const isFocused = useIsFocused();
 
   // State
   const [currentMonth, setCurrentMonth] = useState(getCurrentYearMonth());
@@ -35,7 +37,10 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const [pendingRewardMonth, setPendingRewardMonth] = useState<string | null>(null);
 
   // Check premium status for shield count & pending rewards
+  // Aktualisiert sich bei jedem Screen-Focus (z.B. nach Kauf im SupportShop)
   useEffect(() => {
+    if (!isFocused) return;
+
     (async () => {
       try {
         const status = await getSupporterStatus();
@@ -57,7 +62,7 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
         console.error('[StreakTab] Error checking premium status:', error);
       }
     })();
-  }, [stats]);
+  }, [stats, isFocused]);
 
   // Safety check: dailyStreak must exist
   if (!stats.dailyStreak) {

@@ -93,7 +93,11 @@
     "title": "दैनिक स्ट्रीक",
     "currentStreak": "वर्तमान स्ट्रीक",
     "longestStreak": "सबसे लंबी स्ट्रीक",
+    "currentStreakLabel": "वर्तमान सीरीज",
+    "longestStreakLabel": "सबसे लंबी सीरीज",
     "day": "दिन",
+    "days_one": "दिन",
+    "days_other": "दिन",
     "days": "दिन",
     "shields": {
       "title": "ढालें",

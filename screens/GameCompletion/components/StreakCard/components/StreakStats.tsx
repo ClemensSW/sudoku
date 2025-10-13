@@ -37,16 +37,16 @@ const StreakStats: React.FC<StreakStatsProps> = ({
   const stats = [
     {
       icon: 'lightning',
-      label: 'Aktuelle Serie',
+      label: t('streakTab.currentStreakLabel'),
       value: currentStreak,
-      suffix: t('streakTab.days'),
+      suffix: t('streakTab.days', { count: currentStreak }),
       color: '#FF9500',
     },
     {
       icon: 'success',
-      label: 'Längste Serie',
+      label: t('streakTab.longestStreakLabel'),
       value: effectiveLongestStreak,
-      suffix: t('streakTab.days'),
+      suffix: t('streakTab.days', { count: effectiveLongestStreak }),
       color: '#FFD700',
     },
     {

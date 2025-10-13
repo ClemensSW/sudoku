@@ -95,7 +95,11 @@
     "title": "Daily Streak",
     "currentStreak": "Current Streak",
     "longestStreak": "Longest Streak",
+    "currentStreakLabel": "Current Streak",
+    "longestStreakLabel": "Longest Streak",
     "day": "Day",
+    "days_one": "Day",
+    "days_other": "Days",
     "days": "Days",
     "shields": {
       "title": "Shields",

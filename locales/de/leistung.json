@@ -95,7 +95,11 @@
     "title": "Täglicher Streak",
     "currentStreak": "Aktueller Streak",
     "longestStreak": "Längster Streak",
+    "currentStreakLabel": "Aktuelle Serie",
+    "longestStreakLabel": "Längste Serie",
     "day": "Tag",
+    "days_one": "Tag",
+    "days_other": "Tage",
     "days": "Tage",
     "shields": {
       "title": "Schutzschilder",

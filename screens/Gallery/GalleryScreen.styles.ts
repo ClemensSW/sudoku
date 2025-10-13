@@ -84,9 +84,9 @@ export default StyleSheet.create({
   },
   
   tabsContainer: {
-    paddingBottom: spacing.sm,
-    paddingTop: spacing.sm,
-    paddingHorizontal: spacing.sm, // Reduced from lg to sm for more space
+    paddingBottom: 12,
+    paddingTop: 12,
+    paddingHorizontal: spacing.sm, // 8px - consistent with AvatarPicker
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -95,9 +95,9 @@ export default StyleSheet.create({
   },
   
   tabButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm, // Reduced from md to sm
-    borderRadius: radius.md,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

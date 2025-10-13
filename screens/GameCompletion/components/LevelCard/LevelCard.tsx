@@ -176,8 +176,8 @@ const LevelCard: React.FC<LevelCardProps> = ({
       <LinearGradient
         colors={
           theme.isDark
-            ? [hexToRGBA(progressColor, 0.15), hexToRGBA(progressColor, 0.05)]
-            : [hexToRGBA(progressColor, 0.08), hexToRGBA(progressColor, 0.02)]
+            ? [hexToRGBA(progressColor, 0.15), hexToRGBA(progressColor, 0.08), hexToRGBA(progressColor, 0)]
+            : [hexToRGBA(progressColor, 0.20), hexToRGBA(progressColor, 0.10), hexToRGBA(progressColor, 0)]
         }
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}

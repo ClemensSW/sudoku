@@ -20,7 +20,8 @@ export default StyleSheet.create({
   heroHeader: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: spacing.xl * 1.5,
+    paddingTop: spacing.xl * 1.8,
+    paddingBottom: spacing.xl * 2,
     paddingHorizontal: spacing.lg,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,

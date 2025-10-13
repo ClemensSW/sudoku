@@ -111,6 +111,16 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     return t(`pathColor.colors.${colorId}`);
   };
 
+  // Theme Toggle handler - automatically disables sync when manually changed
+  const handleThemeToggle = async (value: "light" | "dark") => {
+    // If sync is ON, turn it OFF when user manually changes theme
+    if (syncWithSystem) {
+      setSyncWithSystem(false);
+    }
+    // Call parent's onThemeChange which will save the manual preference
+    onThemeChange(value);
+  };
+
   // Theme Sync Switch handler
   const handleSyncWithSystemToggle = async (value: boolean) => {
     triggerHaptic("light");
@@ -119,6 +129,9 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     if (value) {
       // Switch ON → Reset to system theme
       await theme.resetToSystemTheme();
+      // Update the toggle to match the system theme
+      const systemTheme = theme.isDark ? "dark" : "light";
+      onThemeChange(systemTheme);
     } else {
       // Switch OFF → Current theme becomes manual preference
       const currentMode = theme.isDark ? "dark" : "light";
@@ -140,7 +153,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
       <View style={styles.themeContainer}>
         <ThemeToggleSwitch
           value={themeValue}
-          onValueChange={onThemeChange}
+          onValueChange={handleThemeToggle}
           disabled={isChanging}
         />
       </View>

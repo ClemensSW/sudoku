@@ -83,7 +83,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
                 key={`shield-${index}`}
                 style={[
                   styles.shieldIconWrapper,
-                  { opacity: isFilled ? 1 : 0.3 }
+                  { opacity: isFilled ? 1 : (theme.isDark ? 0.4 : 0.3) }
                 ]}
               >
                 {isFilled ? (

@@ -55,11 +55,21 @@ export const useDebugCalendar = ({ selectedMonth, playHistory }: UseDebugCalenda
         break;
 
       case 'before-launch':
-        // Simuliert VOLLEN Kalender ab Tag 15 (firstLaunchDate wird auf 15. gesetzt)
-        // Tage 1-14: NICHT in mockDays/mockShieldDays → werden als "before-launch" erkannt und ausgegraut
-        // Tage 15-31: Volle Abdeckung mit Spieltagen und Shields → voller Kalender sichtbar
-        for (let d = 15; d <= daysInMonth; d++) {
-          mockDays.push(d);
+        // Simuliert realistischen Monat bis heute (firstLaunchDate wird auf 1. gesetzt)
+        // Zeigt Mix aus gespielten Tagen, Shields und Fehltagen
+        // Nur bis heute ausgefüllt, damit es wie echte Benutzung aussieht
+        const today = new Date().getDate();
+        for (let d = 1; d <= Math.min(today, daysInMonth); d++) {
+          if (d % 4 === 0) {
+            // Jeder 4. Tag: Shield verwendet
+            mockShieldDays.push(d);
+          } else if (d % 7 === 0) {
+            // Jeder 7. Tag: Fehltag (nicht spielen)
+            // Nichts hinzufügen → wird als "missed" angezeigt
+          } else {
+            // Rest: Normal gespielt
+            mockDays.push(d);
+          }
         }
         break;
 
@@ -89,7 +99,7 @@ export const useDebugCalendar = ({ selectedMonth, playHistory }: UseDebugCalenda
       case 'half': return 'Halber Monat';
       case 'shields': return 'Viele Shields';
       case 'mixed': return 'Gemischt';
-      case 'before-launch': return 'Vor App-Start';
+      case 'before-launch': return 'Realistisch';
       default: return 'Aus';
     }
   };
@@ -105,7 +115,7 @@ export const useDebugCalendar = ({ selectedMonth, playHistory }: UseDebugCalenda
       case 'half': return 'Halber Monat';
       case 'shields': return 'Viele Shields';
       case 'mixed': return 'Gemischt';
-      case 'before-launch': return 'Vor App-Start';
+      case 'before-launch': return 'Realistisch';
       default: return 'Aus';
     }
   };

@@ -41,8 +41,9 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
   } = useDebugCalendar({ selectedMonth: internalMonth, playHistory });
 
   // Mock firstLaunchDate for 'before-launch' scenario
+  // Setze auf 1. des aktuellen Monats, damit ganzer Monat bis heute sichtbar ist
   const mockFirstLaunchDate = SHOW_DEBUG_BUTTON && debugScenario === 'before-launch'
-    ? new Date(new Date().getFullYear(), new Date().getMonth(), 15).toISOString().split('T')[0]
+    ? new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]
     : firstLaunchDate;
 
   const {

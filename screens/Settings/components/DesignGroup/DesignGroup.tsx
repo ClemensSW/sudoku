@@ -129,9 +129,8 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     if (value) {
       // Switch ON → Reset to system theme
       await theme.resetToSystemTheme();
-      // Update the toggle to match the system theme
-      const systemTheme = theme.isDark ? "dark" : "light";
-      onThemeChange(systemTheme);
+      // DON'T call onThemeChange - it would mark the theme as manually set!
+      // The ThemeToggleSwitch will automatically update because it uses theme.isDark
     } else {
       // Switch OFF → Current theme becomes manual preference
       const currentMode = theme.isDark ? "dark" : "light";
@@ -152,7 +151,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
       {/* Theme Toggle */}
       <View style={styles.themeContainer}>
         <ThemeToggleSwitch
-          value={themeValue}
+          value={theme.isDark ? "dark" : "light"}
           onValueChange={handleThemeToggle}
           disabled={isChanging}
         />

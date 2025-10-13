@@ -61,7 +61,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
         >
           {/* Icon */}
           <View style={styles.iconContainer}>
-            <SchlossOffnenIcon width={48} height={48} fill={progressColor} />
+            <SchlossOffnenIcon width={64} height={64} fill={progressColor} />
           </View>
 
           {/* Title */}

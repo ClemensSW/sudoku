@@ -142,17 +142,6 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
           <Text style={styles.recordText}>Rekord!</Text>
         </Animated.View>
       )}
-
-      {/* Longest Streak Info */}
-      {!isRecord && longestStreak > 0 && (
-        <View style={styles.recordInfo}>
-          <Feather name="trending-up" size={14} color={colors.textSecondary} />
-          <Text style={[styles.recordInfoText, { color: colors.textSecondary }]}>
-            {t('streakTab.longestStreak', { defaultValue: 'Rekord' })}: {longestStreak}{' '}
-            {longestStreak === 1 ? t('streakTab.day') : t('streakTab.days')}
-          </Text>
-        </View>
-      )}
     </LinearGradient>
   );
 };

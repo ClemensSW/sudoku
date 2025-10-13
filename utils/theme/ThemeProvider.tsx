@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { View } from "react-native";
+import { View, useColorScheme as useSystemColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import colors from "./colors";
 import typography from "./typography";
@@ -43,7 +43,9 @@ const ThemeContext = createContext<ThemeContextType>({
 
 // Provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [colorScheme, setColorScheme] = useState<"light" | "dark">("dark");
+  const systemColorScheme = useSystemColorScheme(); // Get device theme
+  const [colorScheme, setColorScheme] = useState<"light" | "dark" | null>(null);
+  const [userHasSetTheme, setUserHasSetTheme] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
 
   // Load saved theme preference on first render
@@ -51,22 +53,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const prepare = async () => {
       try {
         const settings = await loadSettings();
-        if (settings) {
-          // If the darkMode setting exists and is either 'light' or 'dark'
-          if (settings.darkMode === "light" || settings.darkMode === "dark") {
-            setColorScheme(settings.darkMode);
-          } else {
-            // If it's 'system' or something else, convert it to 'dark' (default)
-            const updatedSettings = {
-              ...settings,
-              darkMode: "dark" as "light" | "dark",
-            };
-            await saveSettings(updatedSettings);
-            setColorScheme("dark");
-          }
+        if (settings && (settings.darkMode === "light" || settings.darkMode === "dark")) {
+          // User has manually set a theme preference
+          setColorScheme(settings.darkMode);
+          setUserHasSetTheme(true);
         } else {
-          // No settings found, default to dark
-          setColorScheme("dark");
+          // No manual preference - use system theme
+          setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+          setUserHasSetTheme(false);
         }
 
         // Small delay to ensure everything is applied
@@ -76,21 +70,32 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         setAppIsReady(true);
       } catch (error) {
         console.error("Error loading theme preference:", error);
-        setColorScheme("dark"); // Default to dark
+        // Fallback to system theme on error
+        setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
         setAppIsReady(true);
       }
     };
 
     prepare();
-  }, []);
+  }, [systemColorScheme]);
 
-  // NEU: Direkte Update-Funktion ohne Polling
+  // Update theme when system theme changes (but only if user hasn't manually set a theme)
+  useEffect(() => {
+    if (!userHasSetTheme && systemColorScheme && appIsReady) {
+      setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+    }
+  }, [systemColorScheme, userHasSetTheme, appIsReady]);
+
+  // Update-Funktion für manuelles Theme-Setzen durch User
   const updateTheme = useCallback(async (mode: "light" | "dark") => {
     try {
-      // Sofort das Theme ändern
+      // Theme sofort ändern
       setColorScheme(mode);
-      
-      // Settings aktualisieren
+
+      // Merken, dass User das Theme manuell gesetzt hat
+      setUserHasSetTheme(true);
+
+      // Settings speichern für nächsten App-Start
       const currentSettings = await loadSettings();
       const updatedSettings = {
         ...currentSettings,
@@ -102,6 +107,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // Only calculate theme if colorScheme is set
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
   const isDark = colorScheme === "dark";
 
@@ -114,7 +120,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     shadows,
     timing,
     isDark,
-    updateTheme, // NEU: Update-Funktion hinzufügen
+    updateTheme,
   };
 
   // Hide splash screen once app is ready
@@ -126,8 +132,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [appIsReady]);
 
-  // Only render children when app is ready
-  if (!appIsReady) {
+  // Only render children when app is ready and theme is determined
+  if (!appIsReady || colorScheme === null) {
     return null; // Return nothing while loading, splash screen is still visible
   }
 

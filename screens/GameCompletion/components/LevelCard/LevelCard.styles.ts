@@ -20,8 +20,8 @@ export default StyleSheet.create({
   heroHeader: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: spacing.xl * 1.8,
-    paddingBottom: spacing.xl * 2,
+    paddingTop: spacing.xxl * 1.6,
+    paddingBottom: spacing.xxl * 2.2,
     paddingHorizontal: spacing.lg,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
@@ -31,7 +31,7 @@ export default StyleSheet.create({
 
   // Badge Container (with glow)
   badgeContainer: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
     position: "relative",
     alignItems: "center",
     justifyContent: "center",

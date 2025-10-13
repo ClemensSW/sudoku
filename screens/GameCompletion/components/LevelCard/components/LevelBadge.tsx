@@ -24,7 +24,7 @@ interface LevelBadgeProps {
 
 const LevelBadge: React.FC<LevelBadgeProps> = ({
   levelInfo,
-  size = 54, // Slightly larger default size for better visibility
+  size = 64, // Larger default size for better visibility
   showAnimation = false,
   animationDelay = 0,
   style,
@@ -98,21 +98,21 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({
         )
       );
     } else {
-      // Always show gentle pulsation
+      // Always show gentle pulsation - slightly stronger
       scale.value = withRepeat(
         withSequence(
-          withTiming(1.1, { duration: 1000 }),
+          withTiming(1.15, { duration: 1000 }),
           withTiming(1, { duration: 1000 })
         ),
         -1, // Infinite repeat
         true // Reverse animation
       );
 
-      // Continuous glow effect
+      // Continuous glow effect - more prominent
       glow.value = withRepeat(
         withSequence(
-          withTiming(0.6, { duration: 1500 }),
-          withTiming(0.2, { duration: 1500 })
+          withTiming(0.7, { duration: 1500 }),
+          withTiming(0.3, { duration: 1500 })
         ),
         -1, // Infinite repeat
         true // Reverse animation

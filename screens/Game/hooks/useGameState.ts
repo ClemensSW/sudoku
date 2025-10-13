@@ -355,12 +355,17 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
     // Daily Streak System: Update streak AFTER winning a game
     try {
+      console.log('[Game] ========================================');
+      console.log('[Game] === GAME COMPLETE - Updating Daily Streak ===');
+      console.log('[Game] ========================================');
       await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
 
       const currentMonth = getCurrentYearMonth();
+      console.log('[Game] Checking monthly completion for:', currentMonth);
       await checkMonthlyCompletion(currentMonth); // Check if month is completed
+      console.log('[Game] Daily Streak update completed!');
     } catch (error) {
-      console.error('[Game] Error updating daily streak:', error);
+      console.error('[Game] ❌ Error updating daily streak:', error);
     }
 
     // Clear any paused game state when game is completed

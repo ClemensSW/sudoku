@@ -111,14 +111,20 @@ export async function updateDailyStreak(): Promise<void> {
     const today = getTodayDate();
     const lastPlayed = stats.dailyStreak.lastPlayedDate;
 
+    console.log('[Daily Streak] === UPDATE CHECK ===');
+    console.log('[Daily Streak] Today:', today);
+    console.log('[Daily Streak] Last played:', lastPlayed);
+    console.log('[Daily Streak] Current streak:', stats.dailyStreak.currentStreak);
+
     // Fall 1: Heute bereits gespielt → nichts tun
     if (lastPlayed === today) {
-      console.log('[Daily Streak] Already played today, no update needed');
+      console.log('[Daily Streak] ❌ Already played today, no update needed');
       return;
     }
 
     // Fall 2: Gestern gespielt → Streak +1
     if (isYesterday(lastPlayed)) {
+      console.log('[Daily Streak] ✅ Last played was yesterday → Streak +1');
       stats.dailyStreak.currentStreak++;
       stats.dailyStreak.lastPlayedDate = today;
 
@@ -127,15 +133,32 @@ export async function updateDailyStreak(): Promise<void> {
         stats.dailyStreak.longestDailyStreak = stats.dailyStreak.currentStreak;
       }
 
+      console.log('[Daily Streak] Adding to play history...');
       await addToPlayHistory(stats, today);
+
+      console.log('[Daily Streak] Saving stats...');
       await saveStats(stats);
 
-      console.log(`[Daily Streak] Streak +1 → ${stats.dailyStreak.currentStreak} days`);
+      console.log(`[Daily Streak] 🎉 SUCCESS! Streak: ${stats.dailyStreak.currentStreak} days, Total days played: ${stats.dailyStreak.totalDaysPlayed}`);
       return;
     }
 
     // Fall 3: Vor 2+ Tagen gespielt → Prüfe Schutzschild
     const daysMissed = getDaysBetween(lastPlayed, today);
+    console.log('[Daily Streak] Days missed:', daysMissed);
+
+    // Fall 3a: Erster Spieltag ever (lastPlayed ist leer oder sehr alt)
+    if (!lastPlayed || lastPlayed === '' || daysMissed > 30) {
+      console.log('[Daily Streak] ✅ First day playing or long break → Starting new streak');
+      stats.dailyStreak.currentStreak = 1;
+      stats.dailyStreak.lastPlayedDate = today;
+
+      await addToPlayHistory(stats, today);
+      await saveStats(stats);
+
+      console.log(`[Daily Streak] 🎉 SUCCESS! Streak: ${stats.dailyStreak.currentStreak} days, Total days played: ${stats.dailyStreak.totalDaysPlayed}`);
+      return;
+    }
 
     if (daysMissed === 2) {
       // Genau 1 Tag verpasst → Versuche Schutzschild einzusetzen

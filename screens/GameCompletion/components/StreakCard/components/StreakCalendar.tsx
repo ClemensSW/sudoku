@@ -17,6 +17,7 @@ interface StreakCalendarProps {
   playHistory: { [yearMonth: string]: MonthlyPlayData };
   firstLaunchDate?: string; // Erstes App-Start-Datum (ISO YYYY-MM-DD)
   onMonthChange?: (yearMonth: string) => void;
+  noMargin?: boolean; // Optional: Remove bottom margin when used inside CurrentStreakCard
 }
 
 // DEBUG: Toggle für Debug-Button (auf false setzen für Production)
@@ -27,6 +28,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
   playHistory,
   firstLaunchDate,
   onMonthChange,
+  noMargin = false,
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
@@ -256,6 +258,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
+          marginBottom: noMargin ? 0 : spacing.lg,
         },
       ]}
       entering={FadeIn.duration(350)}
@@ -429,7 +432,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.18,
     shadowRadius: 16,
-    marginBottom: spacing.lg,
   },
 
   // Header

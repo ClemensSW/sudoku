@@ -104,9 +104,9 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
       {/* Hero Section: Large Shield Display */}
       <View style={styles.heroSection}>
-        {/* Shield Icons mit SVG - IMMER 3 Schilder anzeigen */}
+        {/* Shield Icons mit SVG - Dynamisch 2 oder 3 Schilder anzeigen */}
         <View style={styles.shieldsGrid}>
-          {Array.from({ length: 3 }).map((_, index) => {
+          {Array.from({ length: maxRegular }).map((_, index) => {
             const isFilled = index < effectiveAvailable;
             return (
               <View

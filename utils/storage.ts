@@ -234,7 +234,30 @@ export const loadStats = async (): Promise<GameStats> => {
       // MIGRATION: firstLaunchDate für bestehende User hinzufügen
       if (parsedStats.dailyStreak && !parsedStats.dailyStreak.firstLaunchDate) {
         console.log('[loadStats] Adding firstLaunchDate to existing dailyStreak data');
-        parsedStats.dailyStreak.firstLaunchDate = getTodayDate();
+
+        // Versuche das früheste gespielte Datum zu finden
+        let earliestDate = getTodayDate();
+        if (parsedStats.dailyStreak.playHistory) {
+          const allDates: Date[] = [];
+
+          // Sammle alle gespielten Tage aus der History
+          Object.entries(parsedStats.dailyStreak.playHistory).forEach(([yearMonth, monthData]) => {
+            monthData.days.forEach((day) => {
+              const [year, month] = yearMonth.split('-').map(Number);
+              const date = new Date(year, month - 1, day);
+              allDates.push(date);
+            });
+          });
+
+          // Finde das früheste Datum
+          if (allDates.length > 0) {
+            const earliest = new Date(Math.min(...allDates.map(d => d.getTime())));
+            earliestDate = earliest.toISOString().split('T')[0];
+            console.log('[loadStats] Found earliest play date:', earliestDate);
+          }
+        }
+
+        parsedStats.dailyStreak.firstLaunchDate = earliestDate;
         await saveStats(parsedStats);
       }
 

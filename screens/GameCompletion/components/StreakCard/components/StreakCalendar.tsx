@@ -146,8 +146,6 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
 
   // Check day status
   const getDayStatus = (day: number): 'played' | 'shield' | 'missed' | 'future' | 'before-launch' => {
-    if (!monthData) return 'missed';
-
     const today = new Date();
     const dayDate = new Date(year, month - 1, day);
 
@@ -160,6 +158,9 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
       launchDate.setHours(0, 0, 0, 0);
       if (dayDate < launchDate) return 'before-launch';
     }
+
+    // Wenn kein monthData existiert, sind alle Tage nach firstLaunchDate verpasst
+    if (!monthData) return 'missed';
 
     // Check if shield was used
     if (monthData.shieldDays.includes(day)) return 'shield';

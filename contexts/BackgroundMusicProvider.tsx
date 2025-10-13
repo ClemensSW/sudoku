@@ -70,10 +70,10 @@ export const BackgroundMusicProvider: React.FC<BackgroundMusicProviderProps> = (
           await backgroundMusicManager.play();
           setIsPlaying(true);
         }
-        // Wenn App in den Hintergrund geht
+        // Wenn App in den Hintergrund geht - Musik pausieren
         else if (nextAppState.match(/inactive|background/)) {
-          // Musik läuft weiter im Hintergrund (iOS)
-          // Android pausiert automatisch, aber wir behalten den State
+          await backgroundMusicManager.pause();
+          setIsPlaying(false);
         }
       }
     );

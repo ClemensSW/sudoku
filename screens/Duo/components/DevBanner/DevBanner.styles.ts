@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   banner: {
     paddingVertical: 10,
-    paddingHorizontal: 120,
+    paddingHorizontal: 140,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -28,17 +28,19 @@ export default StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 10,
     elevation: 12,
+    minWidth: 280,
   },
   icon: {
-    marginRight: 8,
+    marginRight: 6,
   },
   text: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "900",
-    letterSpacing: 2.5,
+    letterSpacing: 2,
     textTransform: "uppercase",
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    flexShrink: 0,
   },
 });

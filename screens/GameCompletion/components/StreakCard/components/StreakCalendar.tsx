@@ -176,10 +176,10 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
           borderColor: '#77CE8E',
         };
       case 'missed':
-        // Fehltag: Subtiler roter Akzent (nicht zu aggressiv)
+        // Fehltag: Subtiler roter Akzent (Dark Mode optimiert)
         return {
-          backgroundColor: theme.isDark ? 'rgba(239,83,80,0.15)' : 'rgba(239,83,80,0.08)',
-          borderColor: theme.isDark ? 'rgba(239,83,80,0.4)' : 'rgba(239,83,80,0.25)',
+          backgroundColor: theme.isDark ? 'rgba(244,143,177,0.15)' : 'rgba(239,83,80,0.08)',
+          borderColor: theme.isDark ? 'rgba(244,143,177,0.35)' : 'rgba(239,83,80,0.25)',
         };
       case 'future':
         return {
@@ -204,12 +204,12 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
           />
         );
       case 'missed':
-        // Fehltag: Nur SVG Letter-X-Icon, KEINE Tageszahl
+        // Fehltag: Nur SVG Letter-X-Icon, KEINE Tageszahl (Dark Mode: Pink-Rot)
         return (
           <LetterXIcon
             width={20}
             height={20}
-            fill={theme.isDark ? '#EF5350' : '#D32F2F'}
+            fill={theme.isDark ? '#F48FB1' : '#D32F2F'}
           />
         );
       case 'played':

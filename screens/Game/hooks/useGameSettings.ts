@@ -43,7 +43,8 @@ export const useGameSettings = () => {
 
       const updatedSettings = { ...settings, [key]: value };
       setSettings(updatedSettings);
-      await saveSettings(updatedSettings);
+      // isAutomatic = false → diese Änderung kommt vom User, also Tracking aktualisieren
+      await saveSettings(updatedSettings, false);
 
       // Update local state based on key
       switch (key) {

@@ -15,7 +15,7 @@ import {
   removeNoteFromRelatedCells,
   boardToNumberGrid,
 } from "@/utils/sudoku";
-import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState } from "@/utils/storage";
+import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState, loadSettings, applyDifficultyBasedSettings, saveSettings } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
 import { updateDailyStreak, checkWeeklyShieldReset } from "@/utils/dailyStreak";
 
@@ -125,6 +125,18 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       await checkWeeklyShieldReset(); // Check if Monday reset is due
     } catch (error) {
       console.error('[Game] Error checking weekly shield reset:', error);
+    }
+
+    // NEU: Schwierigkeitsgrad-basierte Settings anwenden
+    try {
+      const currentSettings = await loadSettings();
+      if (currentSettings) {
+        const adjustedSettings = await applyDifficultyBasedSettings(difficulty, currentSettings);
+        await saveSettings(adjustedSettings, true); // isAutomatic = true → kein Tracking-Update
+        console.log(`[Game] Applied difficulty-based settings for ${difficulty}`);
+      }
+    } catch (error) {
+      console.error('[Game] Error applying difficulty-based settings:', error);
     }
 
     // Generate a new game with current difficulty

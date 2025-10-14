@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: radius.xl,
     padding: spacing.xl,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.xxl,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,

@@ -343,6 +343,11 @@ export async function checkWeeklyShieldReset(): Promise<void> {
 /**
  * Prüft ob ein Monat vollständig abgeschlossen wurde
  * Wird nach jedem gewonnenen Spiel aufgerufen
+ *
+ * Berücksichtigt:
+ * - Nur Tage ab firstLaunchDate zählen
+ * - Nur Tage bis heute (keine zukünftigen Tage)
+ * - Shield-Days zählen als erfolgreich (Tag wurde durch Shield geschützt)
  */
 export async function checkMonthlyCompletion(yearMonth: string): Promise<void> {
   try {
@@ -352,10 +357,56 @@ export async function checkMonthlyCompletion(yearMonth: string): Promise<void> {
     const monthData = stats.dailyStreak.playHistory[yearMonth];
     if (!monthData || monthData.completed) return;
 
+    const [year, month] = yearMonth.split('-').map(Number);
     const daysInMonth = getDaysInMonth(yearMonth);
-    const playedDays = monthData.days.length;
 
-    if (playedDays === daysInMonth) {
+    // Berechne wie viele Tage für diesen Monat relevant sind
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Bestimme den ersten relevanten Tag (entweder 1. des Monats oder firstLaunchDate)
+    let firstRelevantDay = 1;
+    if (stats.dailyStreak.firstLaunchDate) {
+      const launchDate = new Date(stats.dailyStreak.firstLaunchDate);
+      launchDate.setHours(0, 0, 0, 0);
+      const launchYear = launchDate.getFullYear();
+      const launchMonth = launchDate.getMonth() + 1;
+
+      // Wenn Launch im gleichen Monat war, starte ab Launch-Tag
+      if (launchYear === year && launchMonth === month) {
+        firstRelevantDay = launchDate.getDate();
+      }
+      // Wenn Launch nach diesem Monat war, kann Monat nicht completed werden
+      else if (launchDate > new Date(year, month - 1, daysInMonth)) {
+        return; // Monat liegt vor Launch-Datum
+      }
+    }
+
+    // Bestimme den letzten relevanten Tag (entweder letzter des Monats oder heute)
+    const lastDayOfMonth = new Date(year, month - 1, daysInMonth);
+    lastDayOfMonth.setHours(0, 0, 0, 0);
+
+    let lastRelevantDay = daysInMonth;
+    if (today < lastDayOfMonth) {
+      // Monat ist noch nicht vorbei, kann noch nicht completed werden
+      return;
+    }
+
+    // Zähle erfolgreiche Tage (gespielt ODER mit Shield geschützt)
+    const successfulDays = new Set([
+      ...monthData.days,
+      ...monthData.shieldDays,
+    ]);
+
+    // Prüfe ob alle relevanten Tage erfolgreich waren
+    const requiredDays = lastRelevantDay - firstRelevantDay + 1;
+    const successfulDaysInRange = Array.from(successfulDays).filter(
+      day => day >= firstRelevantDay && day <= lastRelevantDay
+    ).length;
+
+    console.log(`[Monthly Completion] ${yearMonth}: ${successfulDaysInRange}/${requiredDays} days (range: ${firstRelevantDay}-${lastRelevantDay})`);
+
+    if (successfulDaysInRange === requiredDays) {
       // Monat vollständig! 🎉
       monthData.completed = true;
       monthData.reward = {
@@ -367,7 +418,7 @@ export async function checkMonthlyCompletion(yearMonth: string): Promise<void> {
       stats.dailyStreak.completedMonths.push(yearMonth);
       await saveStats(stats);
 
-      console.log(`[Daily Streak] Month ${yearMonth} completed! Reward available.`);
+      console.log(`[Monthly Completion] ✅ Month ${yearMonth} completed! Reward available.`);
       // TODO: Show MonthlyRewardModal
     }
   } catch (error) {

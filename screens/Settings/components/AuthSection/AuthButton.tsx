@@ -1,9 +1,10 @@
 // screens/Settings/components/AuthSection/AuthButton.tsx
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Platform } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
+import GoogleLogo from '@/assets/svg/google-logo.svg';
+import AppleLogo from '@/assets/svg/apple-logo.svg';
 
 type AuthProvider = 'google' | 'apple';
 
@@ -25,9 +26,9 @@ const AuthButton: React.FC<AuthButtonProps> = ({
 
   const getProviderIcon = () => {
     if (provider === 'google') {
-      return <Feather name="mail" size={20} color="#4285F4" />;
+      return <GoogleLogo width={18} height={18} />;
     }
-    return <Feather name="smartphone" size={20} color={theme.isDark ? '#FFFFFF' : '#000000'} />;
+    return <AppleLogo width={16} height={20} fill={theme.isDark ? '#000000' : '#FFFFFF'} />;
   };
 
   const getButtonStyle = () => {
@@ -93,8 +94,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   iconContainer: {
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },

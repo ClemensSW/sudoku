@@ -8,6 +8,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
 import DevelopmentBadge from './DevelopmentBadge';
 import AuthButton from './AuthButton';
+import ShieldIcon from '@/assets/svg/shield.svg';
 
 interface AuthSectionProps {
   onGooglePress?: () => void;
@@ -39,18 +40,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <View
-            style={[
-              styles.iconCircle,
-              {
-                backgroundColor: theme.isDark
-                  ? 'rgba(74, 144, 226, 0.15)'
-                  : 'rgba(74, 144, 226, 0.12)',
-              },
-            ]}
-          >
-            <Feather name="shield" size={24} color="#4A90E2" />
-          </View>
+          <ShieldIcon width={48} height={48} fill="#4A90E2" />
           <View style={styles.titleContainer}>
             <Text style={[styles.title, { color: colors.textPrimary }]}>
               {t('authSection.title')}
@@ -118,6 +108,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: radius.xl,
     padding: spacing.lg,
+    marginBottom: spacing.lg,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -134,13 +125,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     marginBottom: spacing.xs,
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   titleContainer: {
     flex: 1,

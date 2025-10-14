@@ -20,7 +20,8 @@
       "expo-router",
       "expo-font",
       "expo-web-browser",
-      "expo-localization"
+      "expo-localization",
+      "@react-native-firebase/app"
     ],
     "androidStatusBar": {
       "hidden": true,
@@ -30,7 +31,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yourdomain.sudoku",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -51,7 +53,8 @@
             "DEFAULT"
           ]
         }
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",

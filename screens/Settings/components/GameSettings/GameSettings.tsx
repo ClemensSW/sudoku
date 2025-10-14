@@ -50,35 +50,6 @@ const GameSettings: React.FC<GameSettingsProps> = ({
       {/* Only show these settings in single player mode */}
       {!isDuoMode && (
         <>
-          {/* Highlight related cells */}
-          <TouchableOpacity
-            style={[styles.settingRow, { borderBottomColor: colors.border }]}
-            onPress={() =>
-              onSettingChange("highlightRelatedCells", !settings.highlightRelatedCells)
-            }
-            activeOpacity={0.7}
-          >
-            <View style={styles.settingIcon}>
-              <LinkIcon width={48} height={48} />
-            </View>
-            <View style={styles.settingTextContainer}>
-              <Text
-                style={[styles.settingTitle, { color: colors.textPrimary }]}
-              >
-                {t("gameSettings.highlightRelated")}
-              </Text>
-            </View>
-            <Switch
-              value={settings.highlightRelatedCells}
-              onValueChange={(value) =>
-                onSettingChange("highlightRelatedCells", value)
-              }
-              trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
-              thumbColor={settings.highlightRelatedCells ? switchThumbColorActive : switchThumbColorInactive}
-              ios_backgroundColor={switchTrackColorInactive}
-            />
-          </TouchableOpacity>
-
           {/* Highlight same values */}
           <TouchableOpacity
             style={[styles.settingRow, { borderBottomColor: colors.border }]}
@@ -104,6 +75,35 @@ const GameSettings: React.FC<GameSettingsProps> = ({
               }
               trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
               thumbColor={settings.highlightSameValues ? switchThumbColorActive : switchThumbColorInactive}
+              ios_backgroundColor={switchTrackColorInactive}
+            />
+          </TouchableOpacity>
+
+          {/* Highlight related cells */}
+          <TouchableOpacity
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            onPress={() =>
+              onSettingChange("highlightRelatedCells", !settings.highlightRelatedCells)
+            }
+            activeOpacity={0.7}
+          >
+            <View style={styles.settingIcon}>
+              <LinkIcon width={48} height={48} />
+            </View>
+            <View style={styles.settingTextContainer}>
+              <Text
+                style={[styles.settingTitle, { color: colors.textPrimary }]}
+              >
+                {t("gameSettings.highlightRelated")}
+              </Text>
+            </View>
+            <Switch
+              value={settings.highlightRelatedCells}
+              onValueChange={(value) =>
+                onSettingChange("highlightRelatedCells", value)
+              }
+              trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
+              thumbColor={settings.highlightRelatedCells ? switchThumbColorActive : switchThumbColorInactive}
               ios_backgroundColor={switchTrackColorInactive}
             />
           </TouchableOpacity>

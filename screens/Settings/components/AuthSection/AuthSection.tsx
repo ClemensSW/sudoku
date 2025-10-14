@@ -37,17 +37,24 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         },
       ]}
     >
-      {/* Header */}
+      {/* Header - Centered Layout */}
       <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <ShieldIcon width={48} height={48} fill="#4A90E2" />
-          <View style={styles.titleContainer}>
-            <Text style={[styles.title, { color: colors.textPrimary }]}>
-              {t('authSection.title')}
-            </Text>
-            <DevelopmentBadge />
-          </View>
+        {/* Shield Icon - Large & Centered */}
+        <View style={styles.iconContainer}>
+          <ShieldIcon width={64} height={64} fill="#4A90E2" />
         </View>
+
+        {/* Title - Centered */}
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          {t('authSection.title')}
+        </Text>
+
+        {/* Development Badge - Centered */}
+        <View style={styles.badgeContainer}>
+          <DevelopmentBadge />
+        </View>
+
+        {/* Description */}
         <Text style={[styles.description, { color: colors.textSecondary }]}>
           {t('authSection.description')}
         </Text>
@@ -107,8 +114,8 @@ const AuthSection: React.FC<AuthSectionProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderRadius: radius.xl,
-    padding: spacing.lg,
-    marginBottom: spacing.lg,
+    padding: spacing.xl,
+    marginBottom: spacing.xl,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -116,29 +123,32 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
 
-  // Header
+  // Header - Centered Vertical Layout
   header: {
-    gap: spacing.sm,
-  },
-  titleRow: {
-    flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xs,
   },
-  titleContainer: {
-    flex: 1,
-    gap: spacing.xs,
+  badgeContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     letterSpacing: 0.3,
+    textAlign: 'center',
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '500',
+    textAlign: 'center',
+    paddingHorizontal: spacing.sm,
   },
 
   // Buttons

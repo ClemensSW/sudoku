@@ -30,6 +30,7 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
 
   // State
   const [isPremium, setIsPremium] = useState(false);
+  const [maxRegularShields, setMaxRegularShields] = useState<2 | 3 | 4>(2);
   const [supporterStatus, setSupporterStatus] = useState<'none' | 'one-time' | 'subscription'>('none');
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [pendingRewardMonth, setPendingRewardMonth] = useState<string | null>(null);
@@ -44,6 +45,11 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
         const status = await getSupporterStatus();
         setIsPremium(status.isPremiumSubscriber);
         setSupporterStatus(status.supportType || 'none');
+
+        // Dynamische Shield-Berechnung: Yearly=4, Monthly=3, Free=2
+        const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
+        const maxShields = await getMaxWeeklyShields(status);
+        setMaxRegularShields(maxShields);
 
         // Check for unclaimed rewards
         if (stats.dailyStreak) {
@@ -74,7 +80,7 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   }
 
   const dailyStreak = stats.dailyStreak;
-  const maxRegularShields = isPremium ? 3 : 2;
+  // maxRegularShields wird jetzt dynamisch via useEffect berechnet (Yearly=4, Monthly=3, Free=2)
   // Berechne den nächsten Montag ab HEUTE, nicht ab lastShieldResetDate
   const nextResetDate = getNextMonday(new Date());
 

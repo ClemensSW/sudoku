@@ -6,7 +6,6 @@ import { MonthlyPlayData, loadStats } from '@/utils/storage';
 import { useStreakCalendar } from './hooks/useStreakCalendar';
 import StreakHero from './components/StreakHero';
 import StreakCalendarGrid from './components/StreakCalendarGrid';
-import StreakCalendarDebug from './components/StreakCalendarDebug';
 import { styles } from './CurrentStreakCard.styles';
 
 interface CurrentStreakCardProps {
@@ -17,49 +16,29 @@ interface CurrentStreakCardProps {
 }
 
 const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
-  currentStreak: propCurrentStreak,
-  longestStreak: propLongestStreak,
-  playHistory: propPlayHistory,
-  firstLaunchDate: propFirstLaunchDate,
+  currentStreak,
+  longestStreak,
+  playHistory,
+  firstLaunchDate,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
 
-  // 🚨 DEBUG: Mock data state
-  const [debugData, setDebugData] = useState<{
-    currentStreak: number;
-    longestStreak: number;
-    shieldsAvailable: number;
-    playHistory: { [yearMonth: string]: MonthlyPlayData };
-    firstLaunchDate: string;
-  } | null>(null);
-
-  // Use debug data if available, otherwise use real props
-  const currentStreak = debugData?.currentStreak ?? propCurrentStreak;
-  const longestStreak = debugData?.longestStreak ?? propLongestStreak;
-  const playHistory = debugData?.playHistory ?? propPlayHistory;
-  const firstLaunchDate = debugData?.firstLaunchDate ?? propFirstLaunchDate;
-
   // Load shield availability
   const [shieldsAvailable, setShieldsAvailable] = useState(0);
 
-  // 🚨 DEBUG: Override shields if debug data is active
   useEffect(() => {
-    if (debugData) {
-      setShieldsAvailable(debugData.shieldsAvailable);
-    } else {
-      const loadShields = async () => {
-        const stats = await loadStats();
-        if (stats?.dailyStreak) {
-          setShieldsAvailable(
-            stats.dailyStreak.shieldsAvailable +
-            stats.dailyStreak.bonusShields
-          );
-        }
-      };
-      loadShields();
-    }
-  }, [playHistory, debugData]);
+    const loadShields = async () => {
+      const stats = await loadStats();
+      if (stats?.dailyStreak) {
+        setShieldsAvailable(
+          stats.dailyStreak.shieldsAvailable +
+          stats.dailyStreak.bonusShields
+        );
+      }
+    };
+    loadShields();
+  }, [playHistory]);
 
   const {
     year,
@@ -93,20 +72,6 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
       ]}
       entering={FadeIn.duration(350)}
     >
-      {/* 🚨 DEBUG ONLY - Remove before production */}
-      <StreakCalendarDebug
-        onScenarioSelect={(scenario) => {
-          setDebugData({
-            currentStreak: scenario.currentStreak,
-            longestStreak: scenario.longestStreak,
-            shieldsAvailable: scenario.shieldsAvailable,
-            playHistory: scenario.playHistory,
-            firstLaunchDate: scenario.firstLaunchDate,
-          });
-        }}
-        onReset={() => setDebugData(null)}
-      />
-
       {/* Hero Section */}
       <StreakHero
         currentStreak={currentStreak}

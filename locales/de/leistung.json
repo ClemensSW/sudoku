@@ -102,10 +102,10 @@
     "days_other": "Tage",
     "days": "Tage",
     "shields": {
-      "title": "Schutzschilder",
+      "title": "Schutzschilde",
       "available": "Verfügbar",
       "nextReset": "Nächster Reset",
-      "bonusShields": "Bonus-Schutzschilder",
+      "bonusShields": "Bonus-Schutzschilde",
       "description": "Schützt deinen Streak automatisch, wenn du einen Tag verpasst"
     },
     "calendar": {
@@ -118,7 +118,7 @@
       "title": "Statistik",
       "totalDaysPlayed": "Gespielte Tage",
       "completedMonths": "Vollständige Monate",
-      "shieldsUsed": "Eingesetzte Schutzschilder"
+      "shieldsUsed": "Eingesetzte Schutzschilde"
     },
     "motivation": {
       "record": "Neuer Rekord! 🏆",
@@ -135,8 +135,8 @@
       "claim": "Belohnung einlösen",
       "rewards": {
         "bonusShields": {
-          "title": "+2 Bonus-Schutzschilder",
-          "description": "Diese Schutzschilder bleiben dauerhaft verfügbar!"
+          "title": "+2 Bonus-Schutzschilde",
+          "description": "Diese Schutzschilde bleiben dauerhaft verfügbar!"
         },
         "epBoost": {
           "title": "+{{value}} EP Boost",

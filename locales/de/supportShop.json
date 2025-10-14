@@ -7,7 +7,7 @@
   },
   "sections": {
     "oneTime": "Einmalige Unterstützung",
-    "oneTimeSubtitle": "1 Bild freischalten + dauerhaft 2× EP + Schutzschilder auffüllen",
+    "oneTimeSubtitle": "1 Bild freischalten + dauerhaft 2× EP + Schutzschilde auffüllen",
     "subscription": "Regelmäßige Unterstützung",
     "subscriptionSubtitle": "",
     "activeSubscription": "Dein aktives Abo",
@@ -42,7 +42,7 @@
         "subtitle": "Deine Hilfe macht's möglich!"
       },
       "shields": {
-        "title": "Schilder auffüllen",
+        "title": "Schilde auffüllen",
         "subtitle": "Schütze deine Serie"
       }
     },
@@ -124,20 +124,20 @@
     "imagePerYearly": "2 Bilder/Monat",
     "imagePerYear": "{{count}} Bilder/Jahr",
     "imageLifetime": "1 Bild freischalten",
-    "streakShields": "3 Schilder/Woche",
+    "streakShields": "3 Schilde/Woche",
     "adFree": "Werbefrei"
   },
   "shieldBanner": {
     "noSupporter": {
-      "title": "Premium: 3 Schilder pro Woche",
+      "title": "Premium: 3 Schilde pro Woche",
       "subtitle": "Mehr Schutz für deine Serie"
     },
     "oneTimeSupporter": {
       "title": "Upgrade zum Abo",
-      "subtitle": "Jeden Montag 3 Schilder erhalten"
+      "subtitle": "Jeden Montag 3 Schilde erhalten"
     },
     "premiumSubscriber": {
-      "title": "Zusätzliche Schilder",
+      "title": "Zusätzliche Schilde",
       "subtitle": "Einmalige Unterstützung verfügbar"
     }
   },

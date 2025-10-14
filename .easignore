@@ -89,6 +89,9 @@ coverage/
 # They are generated during EAS build via 'npx expo prebuild'
 # This ensures all native modules are properly linked in every build
 
+android/
+ios/
+
 # ============================================================================
 # IMPORTANT: Files that MUST be included in builds
 # ============================================================================

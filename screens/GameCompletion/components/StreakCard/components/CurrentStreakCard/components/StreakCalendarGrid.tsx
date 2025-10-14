@@ -15,7 +15,7 @@ interface StreakCalendarGridProps {
   year: number;
   month: number;
   monthNames: string[];
-  getDayStatus: (day: number) => 'played' | 'shield' | 'missed' | 'future' | 'before-launch';
+  getDayStatus: (day: number) => 'played' | 'shield' | 'shield-available' | 'missed' | 'today' | 'future' | 'before-launch';
   daysInMonth: number;
   playedDays: number;
   progressPercentage: number;
@@ -57,6 +57,25 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           backgroundColor: theme.isDark ? '#77CE8E40' : '#77CE8E30',
           borderColor: '#77CE8E',
         };
+      case 'shield-available':
+        return {
+          backgroundColor: theme.isDark ? 'rgba(119, 206, 142, 0.15)' : 'rgba(119, 206, 142, 0.08)',
+          borderColor: '#77CE8E',
+          borderWidth: 1.5,
+          borderStyle: 'dashed',
+        };
+      case 'today':
+        return {
+          backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
+          borderColor: colors.textPrimary,
+          borderWidth: 2,
+          borderStyle: 'solid',
+          shadowColor: colors.textPrimary,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+          elevation: 3,
+        };
       case 'missed':
         return {
           backgroundColor: theme.isDark ? 'rgba(244,143,177,0.15)' : 'rgba(239,83,80,0.08)',
@@ -83,6 +102,30 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             height={32}
             fill="#77CE8E"
           />
+        );
+      case 'shield-available':
+        return (
+          <ShieldIcon
+            width={28}
+            height={28}
+            fill="#77CE8E"
+            style={{ opacity: 0.6 }}
+          />
+        );
+      case 'today':
+        return (
+          <Text
+            style={[
+              styles.dayText,
+              {
+                color: colors.textPrimary,
+                fontWeight: '700',
+                fontSize: 16,
+              },
+            ]}
+          >
+            {day}
+          </Text>
         );
       case 'missed':
         return (
@@ -186,7 +229,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
                   styles.dayCircle,
                   dayStyle,
                   {
-                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : 0,
+                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : status === 'shield-available' ? 1.5 : status === 'today' ? 2 : 0,
                   },
                 ]}
               >

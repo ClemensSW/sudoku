@@ -6,9 +6,11 @@ import { getDaysInMonth } from '@/utils/dailyStreak';
 interface UseStreakCalendarProps {
   playHistory?: { [yearMonth: string]: MonthlyPlayData };
   firstLaunchDate?: string;
+  currentStreak: number;
+  shieldsAvailable: number;
 }
 
-export const useStreakCalendar = ({ playHistory, firstLaunchDate }: UseStreakCalendarProps) => {
+export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak, shieldsAvailable }: UseStreakCalendarProps) => {
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -72,22 +74,41 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate }: UseStreakCal
   }, [playHistory, year, month, selectedMonth]);
 
   // Day status checker
-  const getDayStatus = (day: number): 'played' | 'shield' | 'missed' | 'future' | 'before-launch' => {
-    const today = new Date();
+  const getDayStatus = (day: number): 'played' | 'shield' | 'shield-available' | 'missed' | 'today' | 'future' | 'before-launch' => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
     const dayDate = new Date(year, month - 1, day);
 
-    if (dayDate > today) return 'future';
+    // 1. Heute-Check
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (dayDate.getTime() === today.getTime()) {
+      if (monthData?.days.includes(day)) return 'played';
+      return 'today';
+    }
 
+    // 2. Future
+    if (dayDate > now) return 'future';
+
+    // 3. Before launch
     if (firstLaunchDate) {
       const launchDate = new Date(firstLaunchDate);
       launchDate.setHours(0, 0, 0, 0);
       if (dayDate < launchDate) return 'before-launch';
     }
 
-    if (!monthData) return 'missed';
-    if (monthData.shieldDays.includes(day)) return 'shield';
-    if (monthData.days.includes(day)) return 'played';
+    // 4. Gespielt
+    if (monthData?.days.includes(day)) return 'played';
 
+    // 5. Shield wurde eingesetzt
+    if (monthData?.shieldDays.includes(day)) return 'shield';
+
+    // 6. Shield verfügbar (vor heute, Streak nicht gestartet)
+    if (currentStreak === 0 && shieldsAvailable > 0 && dayDate < now) {
+      return 'shield-available';
+    }
+
+    // 7. Verpasst
     return 'missed';
   };
 

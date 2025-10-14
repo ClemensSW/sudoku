@@ -1,8 +1,8 @@
 // CurrentStreakCard.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTheme } from '@/utils/theme/ThemeProvider';
-import { MonthlyPlayData } from '@/utils/storage';
+import { MonthlyPlayData, loadStats } from '@/utils/storage';
 import { useStreakCalendar } from './hooks/useStreakCalendar';
 import StreakHero from './components/StreakHero';
 import StreakCalendarGrid from './components/StreakCalendarGrid';
@@ -24,6 +24,22 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
+  // Load shield availability
+  const [shieldsAvailable, setShieldsAvailable] = useState(0);
+
+  useEffect(() => {
+    const loadShields = async () => {
+      const stats = await loadStats();
+      if (stats?.dailyStreak) {
+        setShieldsAvailable(
+          stats.dailyStreak.shieldsAvailable +
+          stats.dailyStreak.bonusShields
+        );
+      }
+    };
+    loadShields();
+  }, [playHistory]);
+
   const {
     year,
     month,
@@ -38,7 +54,12 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
     daysInMonth,
     playedDays,
     progressPercentage,
-  } = useStreakCalendar({ playHistory, firstLaunchDate });
+  } = useStreakCalendar({
+    playHistory,
+    firstLaunchDate,
+    currentStreak,
+    shieldsAvailable,
+  });
 
   return (
     <Animated.View

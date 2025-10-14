@@ -385,14 +385,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
           />
         </Animated.View>
 
-        {/* How to Play Modal */}
-        {showHowToPlay && (
-          <TutorialContainer
-            onComplete={() => setShowHowToPlay(false)}
-            onBack={() => setShowHowToPlay(false)}
-          />
-        )}
-
         {/* Dev Testing Menu - Only in Expo Go */}
         {__DEV__ && Constants.appOwnership === 'expo' && (
           <Animated.View
@@ -403,6 +395,14 @@ const Settings: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
       </ScrollView>
+
+      {/* How to Play Tutorial - Fullscreen Overlay */}
+      {showHowToPlay && (
+        <TutorialContainer
+          onComplete={() => setShowHowToPlay(false)}
+          onBack={() => setShowHowToPlay(false)}
+        />
+      )}
 
       {/* Level-2 Navigation Modals */}
       {showDesignModal && (

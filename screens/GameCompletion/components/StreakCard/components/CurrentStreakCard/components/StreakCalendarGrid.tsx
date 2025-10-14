@@ -66,8 +66,8 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         };
       case 'inactive':
         return {
-          backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-          borderColor: theme.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)',
+          backgroundColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.02)',
+          borderColor: theme.isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.1)',
           borderWidth: 1,
         };
       case 'today':
@@ -122,8 +122,8 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           <ShieldEmptyIcon
             width={28}
             height={28}
-            fill={theme.isDark ? colors.textSecondary : '#888888'}
-            style={{ opacity: 0.5 }}
+            fill={theme.isDark ? '#FFFFFF' : '#888888'}
+            style={{ opacity: theme.isDark ? 0.7 : 0.5 }}
           />
         );
       case 'today':

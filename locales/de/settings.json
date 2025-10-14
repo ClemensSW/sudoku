@@ -112,5 +112,17 @@
     "title": "Spielstand sichern",
     "subtitle": "Verliere nie wieder deinen Fortschritt",
     "cta": "Anmelden"
+  },
+  "authSection": {
+    "title": "Spielstand sichern",
+    "description": "Sichere deinen Fortschritt und spiele auf allen Geräten weiter",
+    "inDevelopment": "In Entwicklung",
+    "googleSignIn": "Mit Google fortfahren",
+    "appleSignIn": "Mit Apple fortfahren",
+    "platformNote": "Authentifizierung ist auf mobilen Geräten verfügbar",
+    "benefitsTitle": "Vorteile",
+    "benefit1": "Fortschritt auf allen Geräten",
+    "benefit2": "Automatische Cloud-Sicherung",
+    "benefit3": "Nie wieder Daten verlieren"
   }
 }

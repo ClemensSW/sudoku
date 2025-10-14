@@ -41,7 +41,7 @@ import SettingsCategoryList from "./components/SettingsCategoryList";
 import HelpSection from "./components/HelpSection/HelpSection";
 import ActionsSection from "./components/ActionsSection/ActionsSection";
 import ProfileGroup from "./components/ProfileGroup";
-import AuthPromptBanner from "./components/AuthPromptBanner";
+import AuthSection from "./components/AuthSection/AuthSection";
 
 // Import modals
 import AppearanceSettingsModal from "./components/AppearanceSettingsModal";
@@ -242,12 +242,29 @@ const Settings: React.FC<SettingsScreenProps> = ({
     triggerHaptic("success");
   };
 
-  const handleAuthPromptPress = () => {
+  const handleGoogleSignIn = () => {
     triggerHaptic("light");
-    // TODO: Open auth flow when implemented
+    // TODO: Implement Google Sign-In
     showAlert({
-      title: t("authPrompt.title"),
-      message: "Auth-Flow wird bald implementiert!",
+      title: t("authSection.googleSignIn"),
+      message: t("authSection.inDevelopment"),
+      type: "info",
+      buttons: [
+        {
+          text: "OK",
+          style: "primary",
+          onPress: () => {},
+        },
+      ],
+    });
+  };
+
+  const handleAppleSignIn = () => {
+    triggerHaptic("light");
+    // TODO: Implement Apple Sign-In
+    showAlert({
+      title: t("authSection.appleSignIn"),
+      message: t("authSection.inDevelopment"),
       type: "info",
       buttons: [
         {
@@ -311,14 +328,12 @@ const Settings: React.FC<SettingsScreenProps> = ({
           </Animated.View>
         )}
 
-        {/* Auth Prompt Banner - Only show if not logged in */}
+        {/* Auth Section - Only show if not logged in */}
         {!showGameFeatures && !isLoggedIn && (
-          <Animated.View
-            style={styles.section}
-            entering={FadeInDown.delay(100).duration(500)}
-          >
-            <AuthPromptBanner onPress={handleAuthPromptPress} />
-          </Animated.View>
+          <AuthSection
+            onGooglePress={handleGoogleSignIn}
+            onApplePress={handleAppleSignIn}
+          />
         )}
 
         {/* Hilfe Section - Inline in game mode only */}

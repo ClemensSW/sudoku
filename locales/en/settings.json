@@ -112,5 +112,17 @@
     "title": "Save Your Progress",
     "subtitle": "Never lose your achievements again",
     "cta": "Sign In"
+  },
+  "authSection": {
+    "title": "Save Your Progress",
+    "description": "Secure your progress and play across all devices",
+    "inDevelopment": "In Development",
+    "googleSignIn": "Continue with Google",
+    "appleSignIn": "Continue with Apple",
+    "platformNote": "Authentication is available on mobile devices",
+    "benefitsTitle": "Benefits",
+    "benefit1": "Progress across all devices",
+    "benefit2": "Automatic cloud backup",
+    "benefit3": "Never lose data again"
   }
 }

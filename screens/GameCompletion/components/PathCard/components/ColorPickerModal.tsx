@@ -25,6 +25,8 @@ interface ColorPickerModalProps {
   textSecondaryColor: string;
   surfaceColor: string;
   borderColor: string;
+  /** Ob das Modal die Bottom Navigation verwalten soll. Default: true */
+  managesBottomNav?: boolean;
 }
 
 // Definiere alle verfügbaren Farben mit ihren Unlock-Levels
@@ -49,6 +51,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   textSecondaryColor,
   surfaceColor,
   borderColor,
+  managesBottomNav = true,
 }) => {
   const { t } = useTranslation("gameCompletion");
 
@@ -73,6 +76,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
       surfaceColor={surfaceColor}
       borderColor={borderColor}
       snapPoints={['45%', '75%']}
+      managesBottomNav={managesBottomNav}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
         {t("path.colorPicker.subtitle")}

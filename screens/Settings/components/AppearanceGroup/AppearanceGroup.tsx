@@ -312,9 +312,10 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         currentLevel={currentLevel}
         isDark={theme.isDark}
         textPrimaryColor={colors.textPrimary}
-        textSecondaryColor={colors.textSecondary}
+        textSecondaryColor={colors.textSecondaryColor}
         surfaceColor={colors.surface}
         borderColor={colors.border}
+        managesBottomNav={false}
       />
 
       {/* Title Picker Modal */}
@@ -330,6 +331,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         surfaceColor={colors.surface}
         borderColor={colors.border}
         progressColor={progressColor}
+        managesBottomNav={false}
       />
 
       {/* Avatar Picker Modal */}
@@ -338,6 +340,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         onClose={() => setShowAvatarPicker(false)}
         onImageSelected={handleAvatarChange}
         currentAvatarUri={avatarUri}
+        managesBottomNav={false}
       />
 
       {/* Language Selection Modal */}
@@ -351,6 +354,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           surfaceColor={colors.surface}
           borderColor={cardBorder}
           snapPoints={['50%', '70%']}
+          managesBottomNav={false}
         >
           <View style={styles.languageOptions}>
             {sortedLanguages.map((language) => (

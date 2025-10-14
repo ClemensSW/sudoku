@@ -25,6 +25,8 @@ interface TitlePickerModalProps {
   surfaceColor: string;
   borderColor: string;
   progressColor: string;
+  /** Ob das Modal die Bottom Navigation verwalten soll. Default: true */
+  managesBottomNav?: boolean;
 }
 
 const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
@@ -39,6 +41,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
   surfaceColor,
   borderColor,
   progressColor,
+  managesBottomNav = true,
 }) => {
   const { t } = useTranslation("gameCompletion");
 
@@ -91,6 +94,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
       surfaceColor={surfaceColor}
       borderColor={borderColor}
       snapPoints={['40%', '90%']}
+      managesBottomNav={managesBottomNav}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
         {t("titlePicker.subtitle")}

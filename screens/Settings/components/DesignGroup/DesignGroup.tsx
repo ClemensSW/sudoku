@@ -246,6 +246,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
         textSecondaryColor={colors.textSecondary}
         surfaceColor={colors.surface}
         borderColor={colors.border}
+        managesBottomNav={false}
       />
 
       {/* Language Picker Modal */}
@@ -258,6 +259,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
         surfaceColor={colors.surface}
         borderColor={colors.border}
         snapPoints={['50%', '70%']}
+        managesBottomNav={false}
       >
         <View style={styles.languageList}>
           {sortedLanguages.map((lang) => (

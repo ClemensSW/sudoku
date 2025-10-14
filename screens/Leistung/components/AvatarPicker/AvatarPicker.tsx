@@ -26,6 +26,8 @@ interface AvatarPickerProps {
   onClose: () => void;
   onImageSelected: (uri: string | null) => void;
   currentAvatarUri: string | null;
+  /** Ob das Modal die Bottom Navigation verwalten soll. Default: true */
+  managesBottomNav?: boolean;
 }
 
 const AvatarPicker: React.FC<AvatarPickerProps> = ({
@@ -33,6 +35,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   onClose,
   onImageSelected,
   currentAvatarUri,
+  managesBottomNav = true,
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
@@ -201,6 +204,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         initialSnapIndex={0}
         contentContainerStyle={styles.gridContainer}
         ListFooterComponent={TabNavigationHeader}
+        managesBottomNav={managesBottomNav}
       />
 
       {/* Loading Indicator */}

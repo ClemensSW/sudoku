@@ -140,6 +140,7 @@ Schutzschilder: ${shieldInfo}
   };
 
   const simulateMonthlySubscription = async () => {
+    const productId = 'monthly_support'; // Product ID für Detection
     await markAsPurchased(
       {
         id: 'de.playfusiongate.sudokuduo.monthly:monthly',
@@ -149,14 +150,15 @@ Schutzschilder: ${shieldInfo}
       },
       'subscription'
     );
-    // Schutzschilder auf 3 auffüllen (automatisch bei Abo)
-    await refillShields('subscription');
+    // Schutzschilder auf 3 auffüllen (mit productId für sofortige Detection)
+    await refillShields('subscription', productId);
     await updateStatus();
     const stats = await getStreakStats();
-    Alert.alert('✅ Erfolg', `Monatliches Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (Max: 3)\n• Aktiv im Support Shop`);
+    Alert.alert('✅ Erfolg', `Monatliches Abo simuliert!\n\n• 2× EP aktiv\n• 1 Bild pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (sollte 3 sein)\n• Aktiv im Support Shop`);
   };
 
   const simulateYearlySubscription = async () => {
+    const productId = 'yearly_support'; // Product ID für Detection (enthält "yearly" → 4 Schilde!)
     await markAsPurchased(
       {
         id: 'de.playfusiongate.sudokuduo.yearly:yearly',
@@ -166,11 +168,11 @@ Schutzschilder: ${shieldInfo}
       },
       'subscription'
     );
-    // Schutzschilder auf 3 auffüllen (automatisch bei Abo)
-    await refillShields('subscription');
+    // Schutzschilder auf 4 auffüllen (mit productId für sofortige Detection)
+    await refillShields('subscription', productId);
     await updateStatus();
     const stats = await getStreakStats();
-    Alert.alert('✅ Erfolg', `Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 2 Bilder pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (Max: 3)\n• Aktiv im Support Shop`);
+    Alert.alert('✅ Erfolg', `Jährliches Abo simuliert!\n\n• 2× EP aktiv\n• 2 Bilder pro Monat freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields} (sollte 4 sein!)\n• Aktiv im Support Shop`);
   };
 
   const resetAll = async () => {
@@ -247,7 +249,7 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="calendar"
         label="Monatliches Abo simulieren"
-        description="2× EP + 1 Bild/Monat + 3 Schilder"
+        description="2× EP + 1 Bild/Monat + 3 Schilder/Woche"
         onPress={simulateMonthlySubscription}
         colors={colors}
       />
@@ -255,7 +257,7 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="heart"
         label="Jährliches Abo simulieren"
-        description="2× EP + 2 Bilder/Monat + 3 Schilder"
+        description="2× EP + 2 Bilder/Monat + 4 Schilder/Woche 🎉"
         onPress={simulateYearlySubscription}
         colors={colors}
       />

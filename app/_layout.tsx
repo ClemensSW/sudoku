@@ -56,8 +56,19 @@ function AppContainer() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="game" />
-        <Stack.Screen name="settings" />
+        <Stack.Screen
+          name="game"
+          options={{
+            gestureEnabled: false, // Disable swipe gestures to prevent navigation when settings overlay is open
+          }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{
+            gestureEnabled: false, // Disable swipe gestures for settings
+            animation: "slide_from_bottom",
+          }}
+        />
         <Stack.Screen name="(game)" />
         <Stack.Screen name="duo" />
         <Stack.Screen name="leistung" />

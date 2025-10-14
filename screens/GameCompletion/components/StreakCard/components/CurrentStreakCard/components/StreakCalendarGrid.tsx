@@ -66,24 +66,26 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         };
       case 'inactive':
         return {
-          backgroundColor: 'transparent',
-          borderColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+          backgroundColor: theme.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+          borderColor: theme.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)',
           borderWidth: 1,
-          opacity: 0.4,
         };
       case 'today':
         return {
           backgroundColor: theme.isDark
-            ? 'rgba(255, 255, 255, 0.08)'  // Subtiler weißer Ton
+            ? 'rgba(255, 255, 255, 0.12)'  // Etwas stärker für bessere Sichtbarkeit
             : '#FFFFFF',  // Reines Weiß in Light Mode
-          borderColor: theme.isDark ? '#FFFFFF' : '#666666',  // Helleres Grau in Light Mode
+          borderColor: theme.isDark ? '#FFFFFF' : '#666666',
           borderWidth: 2,
           borderStyle: 'solid' as const,
-          shadowColor: theme.isDark ? '#FFFFFF' : '#666666',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: theme.isDark ? 0.3 : 0.2,
-          shadowRadius: 6,
-          elevation: 4,
+          // Shadow nur im Light Mode (vermeidet elevation+transparency Grafikfehler)
+          ...(theme.isDark ? {} : {
+            shadowColor: '#666666',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 6,
+            elevation: 4,
+          }),
         };
       case 'before-launch':
       case 'future':
@@ -118,10 +120,10 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
       case 'inactive':
         return (
           <ShieldEmptyIcon
-            width={24}
-            height={24}
-            fill={theme.isDark ? colors.textSecondary : '#999999'}
-            style={{ opacity: 0.3 }}
+            width={28}
+            height={28}
+            fill={theme.isDark ? colors.textSecondary : '#888888'}
+            style={{ opacity: 0.5 }}
           />
         );
       case 'today':

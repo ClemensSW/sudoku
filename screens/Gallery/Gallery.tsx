@@ -398,7 +398,9 @@ const Gallery: React.FC = () => {
   };
 
   // Navigate directly to LeistungScreen instead of going back
+  const { resetBottomNav } = useNavigation();
   const handleBack = () => {
+    resetBottomNav(); // Reset navigation override before navigating
     router.push("/leistung");
   };
 

@@ -109,10 +109,8 @@ const GameCompletion: React.FC<GameCompletionScreenProps> = ({
     if (visible) {
       hideBottomNav();
     }
-    return () => {
-      resetBottomNav();
-    };
-  }, [visible, hideBottomNav, resetBottomNav]);
+    // Don't reset on unmount - let the next screen control bottom nav visibility
+  }, [visible, hideBottomNav]);
 
   // Beim Öffnen: Profil laden (Titel) + evtl. letztes Unlock-Event anzeigen (parallelisiert)
   useEffect(() => {

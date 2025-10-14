@@ -66,15 +66,17 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         };
       case 'today':
         return {
-          backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
-          borderColor: colors.textPrimary,
-          borderWidth: 2,
+          backgroundColor: theme.isDark
+            ? 'rgba(149, 214, 164, 0.25)'  // Grüner Ton in Dark Mode
+            : 'rgba(149, 214, 164, 0.35)',  // Hellerer Grün in Light Mode
+          borderColor: theme.isDark ? '#95D6A4' : '#7BC68F',  // Lebendiges Grün
+          borderWidth: 2.5,
           borderStyle: 'solid',
-          shadowColor: colors.textPrimary,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-          elevation: 3,
+          shadowColor: theme.isDark ? '#95D6A4' : '#7BC68F',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: theme.isDark ? 0.5 : 0.4,
+          shadowRadius: 8,
+          elevation: 5,
         };
       case 'missed':
         return {
@@ -118,9 +120,10 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             style={[
               styles.dayText,
               {
-                color: colors.textPrimary,
-                fontWeight: '700',
-                fontSize: 16,
+                color: theme.isDark ? '#FFFFFF' : '#2E7D4E',  // Weiß in Dark, Dunkelgrün in Light
+                fontWeight: '800',
+                fontSize: 17,
+                letterSpacing: 0.3,
               },
             ]}
           >
@@ -229,7 +232,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
                   styles.dayCircle,
                   dayStyle,
                   {
-                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : status === 'shield-available' ? 1.5 : status === 'today' ? 2 : 0,
+                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : status === 'shield-available' ? 1.5 : status === 'today' ? 2.5 : 0,
                   },
                 ]}
               >

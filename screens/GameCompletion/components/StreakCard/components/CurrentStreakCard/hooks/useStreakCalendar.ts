@@ -1,5 +1,6 @@
 // hooks/useStreakCalendar.ts
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MonthlyPlayData } from '@/utils/storage';
 import { getDaysInMonth } from '@/utils/dailyStreak';
 
@@ -11,6 +12,8 @@ interface UseStreakCalendarProps {
 }
 
 export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak, shieldsAvailable }: UseStreakCalendarProps) => {
+  const { t } = useTranslation('leistung');
+
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -20,8 +23,18 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
   const monthData = playHistory?.[selectedMonth];
 
   const monthNames = [
-    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+    t('streakTab.months.january'),
+    t('streakTab.months.february'),
+    t('streakTab.months.march'),
+    t('streakTab.months.april'),
+    t('streakTab.months.may'),
+    t('streakTab.months.june'),
+    t('streakTab.months.july'),
+    t('streakTab.months.august'),
+    t('streakTab.months.september'),
+    t('streakTab.months.october'),
+    t('streakTab.months.november'),
+    t('streakTab.months.december'),
   ];
 
   // Navigation handlers

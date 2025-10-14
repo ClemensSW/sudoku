@@ -119,7 +119,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
             {totalShields}
           </Text>
           <Text style={[styles.counterLabel, { color: colors.textSecondary }]}>
-            {totalShields === 1 ? 'Schild verfügbar' : 'Schilde verfügbar'}
+            {t('streakTab.shields.availableLabel', { count: totalShields })}
           </Text>
         </View>
       </View>
@@ -151,10 +151,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         <View style={styles.infoRow}>
           <Feather name="clock" size={16} color={colors.textSecondary} />
           <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-            Nächster Reset:
+            {t('streakTab.shields.nextResetLabel')}
           </Text>
           <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-            in {daysUntilReset} {daysUntilReset === 1 ? 'Tag' : 'Tagen'}
+            {t('streakTab.shields.nextResetValue', { count: daysUntilReset })}
           </Text>
         </View>
 

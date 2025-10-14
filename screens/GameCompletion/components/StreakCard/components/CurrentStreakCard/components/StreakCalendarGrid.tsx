@@ -207,9 +207,9 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
 
       {/* Weekday Headers */}
       <View style={styles.weekdayRow}>
-        {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
+        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
           <Text key={day} style={[styles.weekdayText, { color: colors.textSecondary }]}>
-            {day}
+            {t(`streakTab.calendar.weekdays.short.${day}`)}
           </Text>
         ))}
       </View>

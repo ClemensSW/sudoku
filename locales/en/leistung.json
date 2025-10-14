@@ -104,7 +104,12 @@
     "shields": {
       "title": "Shields",
       "available": "Available",
+      "availableLabel_one": "Shield available",
+      "availableLabel_other": "Shields available",
       "nextReset": "Next Reset",
+      "nextResetLabel": "Next Reset:",
+      "nextResetValue_one": "in {{count}} day",
+      "nextResetValue_other": "in {{count}} days",
       "bonusShields": "Bonus Shields",
       "description": "Automatically protects your streak if you miss a day"
     },
@@ -112,7 +117,18 @@
       "played": "Played",
       "shieldUsed": "Shield used",
       "missed": "Missed",
-      "monthProgress": "{{count}}/{{total}} days"
+      "monthProgress": "{{count}}/{{total}} days",
+      "weekdays": {
+        "short": {
+          "monday": "Mon",
+          "tuesday": "Tue",
+          "wednesday": "Wed",
+          "thursday": "Thu",
+          "friday": "Fri",
+          "saturday": "Sat",
+          "sunday": "Sun"
+        }
+      }
     },
     "stats": {
       "title": "Statistics",

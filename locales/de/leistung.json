@@ -104,7 +104,12 @@
     "shields": {
       "title": "Schutzschilde",
       "available": "Verfügbar",
+      "availableLabel_one": "Schild verfügbar",
+      "availableLabel_other": "Schilde verfügbar",
       "nextReset": "Nächster Reset",
+      "nextResetLabel": "Nächster Reset:",
+      "nextResetValue_one": "in {{count}} Tag",
+      "nextResetValue_other": "in {{count}} Tagen",
       "bonusShields": "Bonus-Schutzschilde",
       "description": "Schützt deinen Streak automatisch, wenn du einen Tag verpasst"
     },
@@ -112,7 +117,18 @@
       "played": "Gespielt",
       "shieldUsed": "Schutzschild eingesetzt",
       "missed": "Verpasst",
-      "monthProgress": "{{count}}/{{total}} Tage"
+      "monthProgress": "{{count}}/{{total}} Tage",
+      "weekdays": {
+        "short": {
+          "monday": "Mo",
+          "tuesday": "Di",
+          "wednesday": "Mi",
+          "thursday": "Do",
+          "friday": "Fr",
+          "saturday": "Sa",
+          "sunday": "So"
+        }
+      }
     },
     "stats": {
       "title": "Statistik",

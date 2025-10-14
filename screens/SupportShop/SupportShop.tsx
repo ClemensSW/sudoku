@@ -391,7 +391,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         <Animated.View
           style={[
             styles.subscriptionsContainer,
-            { marginBottom: activeSubscriptionProductId ? 0 : 20 }
+            { marginBottom: 20 }
           ]}
           entering={SlideInUp.delay(400).duration(500)}
         >
@@ -444,8 +444,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             styles.thanksContainer,
             {
               borderColor: colors.primary + "30",
-              marginVertical: 0,
-              marginTop: 16,
+              marginTop: activeSubscriptionProductId ? 24 : 28,
               marginBottom: 40,
             },
           ]}

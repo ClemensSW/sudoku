@@ -163,14 +163,53 @@ export const isSubscriptionActive = async (): Promise<boolean> => {
 };
 
 /**
+ * Maps Google Play product IDs to internal product IDs
+ * Example: 'de.playfusiongate.sudokuduo.monthly:monthly' → 'monthly_support'
+ * @param googlePlayId The Google Play product ID
+ * @returns Internal product ID used in SupportShop
+ */
+export const mapGooglePlayIdToProductId = (googlePlayId: string | null): string | null => {
+  if (!googlePlayId) return null;
+
+  // Mapping table: Google Play ID → Internal Product ID
+  const mapping: Record<string, string> = {
+    'de.playfusiongate.sudokuduo.monthly:monthly': 'monthly_support',
+    'de.playfusiongate.sudokuduo.yearly:yearly': 'yearly_support',
+  };
+
+  // Check if direct mapping exists
+  if (mapping[googlePlayId]) {
+    return mapping[googlePlayId];
+  }
+
+  // Fallback: Check if it's already an internal ID
+  if (googlePlayId === 'monthly_support' || googlePlayId === 'yearly_support') {
+    return googlePlayId;
+  }
+
+  // Fallback: Try to detect from Google Play ID pattern
+  if (googlePlayId.includes('monthly')) {
+    return 'monthly_support';
+  } else if (googlePlayId.includes('yearly')) {
+    return 'yearly_support';
+  }
+
+  console.warn(`[purchaseTracking] Unknown product ID: ${googlePlayId}`);
+  return null;
+};
+
+/**
  * Get the active subscription product ID
+ * Returns the internal product ID (e.g. 'monthly_support') used in SupportShop
  */
 export const getActiveSubscriptionProductId = async (): Promise<string | null> => {
   try {
     const isActive = await isSubscriptionActive();
     if (!isActive) return null;
 
-    return await AsyncStorage.getItem(ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY);
+    const storedId = await AsyncStorage.getItem(ACTIVE_SUBSCRIPTION_PRODUCT_ID_KEY);
+    // Map Google Play ID to internal product ID
+    return mapGooglePlayIdToProductId(storedId);
   } catch (error) {
     console.error("Error getting active subscription product ID:", error);
     return null;

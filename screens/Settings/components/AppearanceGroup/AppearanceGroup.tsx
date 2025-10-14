@@ -1,6 +1,6 @@
 // screens/Settings/components/AppearanceGroup/AppearanceGroup.tsx
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, Switch } from "react-native";
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Switch, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -15,14 +15,15 @@ import { useProgressColor, useUpdateProgressColor } from "@/hooks/useProgressCol
 import { loadColorUnlock, syncUnlockedColors, ColorUnlockData, loadStats } from "@/utils/storage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { getSortedLanguages, getLanguageLabel } from "@/locales/languages";
-import ColorPickerModal from "@/screens/GameCompletion/components/PathCard/components/ColorPickerModal";
-import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
 import BottomSheetModal from "@/components/BottomSheetModal";
-import { useEffect } from "react";
 import { loadUserProfile, updateUserTitle, updateUserAvatar } from "@/utils/profileStorage";
-import AvatarPicker from "@/screens/Leistung/components/AvatarPicker";
 import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
+
+// Lazy load heavy modal components
+const ColorPickerModal = lazy(() => import("@/screens/GameCompletion/components/PathCard/components/ColorPickerModal"));
+const TitlePickerModal = lazy(() => import("@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal"));
+const AvatarPicker = lazy(() => import("@/screens/Leistung/components/AvatarPicker"));
 
 interface AppearanceGroupProps {
   onLanguageChange: (language: "de" | "en" | "hi") => void;
@@ -59,6 +60,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
 
   // State for System Theme Sync (initially load from theme context)
   const [syncWithSystem, setSyncWithSystem] = useState(theme.isFollowingSystem);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Load color data and title on mount
   useEffect(() => {
@@ -66,16 +68,24 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     setSyncWithSystem(theme.isFollowingSystem);
   }, [theme.isFollowingSystem]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      const stats = await loadStats();
-      const currentXp = stats?.totalXP || 0;
+  // Lazy load data only when first modal is opened
+  const loadDataIfNeeded = useCallback(async () => {
+    if (colorUnlockData || isLoadingData) return; // Already loaded or loading
 
+    setIsLoadingData(true);
+    try {
+      const [stats, profile, uri] = await Promise.all([
+        loadStats(),
+        loadUserProfile(),
+        getAvatarUri(),
+      ]);
+
+      const currentXp = stats?.totalXP || 0;
       const levelThresholds = getLevels();
       let level = 0;
       for (let i = 0; i < levelThresholds.length; i++) {
         if (currentXp >= levelThresholds[i].xp) {
-          level = i; // Index ist das Level (0-basiert)
+          level = i;
         } else {
           break;
         }
@@ -86,67 +96,42 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
       const data = await loadColorUnlock();
       setColorUnlockData(data);
 
-      // Load user title and avatar
-      const profile = await loadUserProfile();
       setSelectedTitleIndex(profile.titleLevelIndex ?? null);
+      setAvatarUri(profile.avatarUri || uri);
+    } finally {
+      setIsLoadingData(false);
+    }
+  }, [colorUnlockData, isLoadingData]);
 
-      const uri = await getAvatarUri();
-      if (profile.avatarUri) {
-        setAvatarUri(profile.avatarUri);
-      } else if (uri) {
-        setAvatarUri(uri);
-      }
-    };
-    loadData();
-  }, []);
-
-  // Color handlers
-  const handleColorSelect = async (color: string) => {
+  // Color handlers - memoized
+  const handleColorSelect = useCallback(async (color: string) => {
     await updateColor(color);
     const updatedData = await loadColorUnlock();
     setColorUnlockData(updatedData);
     triggerHaptic("success");
-  };
+  }, [updateColor]);
 
-  const getColorName = (hex: string): string => {
-    const colorMap: Record<string, string> = {
-      "#4285F4": t("pathColor.colors.blue"),
-      "#34A853": t("pathColor.colors.green"),
-      "#F9AB00": t("pathColor.colors.yellow"),
-      "#FBBC05": t("pathColor.colors.yellow"),
-      "#EA4335": t("pathColor.colors.red"),
-      "#7C4DFF": t("pathColor.colors.purple"),
-      "#673AB7": t("pathColor.colors.purple"),
-    };
-    return colorMap[hex] || t("pathColor.colors.blue");
-  };
-
-  // Avatar handler
-  const handleAvatarChange = async (uri: string | null) => {
+  // Avatar handler - memoized
+  const handleAvatarChange = useCallback(async (uri: string | null) => {
     await updateUserAvatar(uri);
     setAvatarUri(uri);
     triggerHaptic("success");
-  };
+  }, []);
 
-  const getAvatarSource = () => getAvatarSourceFromUri(avatarUri, DEFAULT_AVATAR);
+  const getAvatarSource = useMemo(
+    () => getAvatarSourceFromUri(avatarUri, DEFAULT_AVATAR),
+    [avatarUri]
+  );
 
-  // Title handlers
-  const handleTitleSelect = async (levelIndex: number | null) => {
+  // Title handlers - memoized
+  const handleTitleSelect = useCallback(async (levelIndex: number | null) => {
     await updateUserTitle(levelIndex);
     setSelectedTitleIndex(levelIndex);
     triggerHaptic("success");
-  };
+  }, []);
 
-  const getTitleName = (): string => {
-    if (selectedTitleIndex === null) {
-      return t("appearance.noTitle");
-    }
-    const allLevels = getLevels();
-    return allLevels[selectedTitleIndex]?.name || t("appearance.noTitle");
-  };
-
-  // Language handlers
-  const handleLanguageSelect = async (language: string) => {
+  // Language handlers - memoized
+  const handleLanguageSelect = useCallback(async (language: string) => {
     if (language === currentLanguage) {
       setShowLanguageModal(false);
       return;
@@ -156,41 +141,46 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
     await i18n.changeLanguage(language);
     onLanguageChange(language as "de" | "en" | "hi");
     setShowLanguageModal(false);
-  };
+  }, [currentLanguage, i18n, onLanguageChange]);
 
-  // Theme Sync Switch handler
-  const handleSyncWithSystemToggle = async (value: boolean) => {
+  // Theme Sync Switch handler - memoized
+  const handleSyncWithSystemToggle = useCallback(async (value: boolean) => {
     triggerHaptic("light");
     setSyncWithSystem(value);
 
     if (value) {
-      // Switch ON → Reset to system theme
       await theme.resetToSystemTheme();
     } else {
-      // Switch OFF → Current theme becomes manual preference
       const currentMode = theme.isDark ? "dark" : "light";
       await theme.updateTheme(currentMode);
     }
-  };
+  }, [theme]);
 
-  // iOS-style switch colors
-  const switchTrackColorActive = theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
-  const switchTrackColorInactive = theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
-  const switchThumbColorActive = "#FFFFFF";
-  const switchThumbColorInactive = theme.isDark ? "#666666" : "rgba(255,255,255,0.7)";
+  // Memoized style values
+  const switchColors = useMemo(() => ({
+    trackActive: theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)",
+    trackInactive: theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)",
+    thumbActive: "#FFFFFF",
+    thumbInactive: theme.isDark ? "#666666" : "rgba(255,255,255,0.7)",
+  }), [theme.isDark]);
 
-  const cardBg = theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface;
-  const cardBorder = theme.isDark ? "rgba(255,255,255,0.10)" : colors.border;
-  const selectedBg = theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)";
-  const selectedBorder = theme.isDark ? "rgba(138, 180, 248, 0.4)" : "rgba(66, 133, 244, 0.3)";
+  const cardStyles = useMemo(() => ({
+    bg: theme.isDark ? "rgba(255,255,255,0.06)" : colors.surface,
+    border: theme.isDark ? "rgba(255,255,255,0.10)" : colors.border,
+    selectedBg: theme.isDark ? "rgba(138, 180, 248, 0.15)" : "rgba(66, 133, 244, 0.08)",
+    selectedBorder: theme.isDark ? "rgba(138, 180, 248, 0.4)" : "rgba(66, 133, 244, 0.3)",
+  }), [theme.isDark, colors.surface, colors.border]);
 
-  // Prepare title options for modal (moved before early return)
-  const allLevels = getLevels();
-  const titleOptions = colorUnlockData ? allLevels.map((level, index) => ({
-    name: level.name,
-    level: index,
-    isUnlocked: index <= currentLevel,
-  })) : [];
+  // Prepare title options for modal - memoized
+  const titleOptions = useMemo(() => {
+    if (!colorUnlockData) return [];
+    const allLevels = getLevels();
+    return allLevels.map((level, index) => ({
+      name: level.name,
+      level: index,
+      isUnlocked: index <= currentLevel,
+    }));
+  }, [colorUnlockData, currentLevel]);
 
   return (
     <>
@@ -199,8 +189,9 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         {colorUnlockData && (
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => {
+            onPress={async () => {
               triggerHaptic("light");
+              await loadDataIfNeeded();
               setShowAvatarPicker(true);
             }}
           >
@@ -220,8 +211,9 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         {colorUnlockData && (
           <TouchableOpacity
             style={[styles.actionButton, { borderTopWidth: colorUnlockData ? 1 : 0, borderTopColor: colors.border }]}
-            onPress={() => {
+            onPress={async () => {
               triggerHaptic("light");
+              await loadDataIfNeeded();
               setShowTitleModal(true);
             }}
           >
@@ -257,17 +249,18 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           <Switch
             value={syncWithSystem}
             onValueChange={handleSyncWithSystemToggle}
-            trackColor={{ false: switchTrackColorInactive, true: switchTrackColorActive }}
-            thumbColor={syncWithSystem ? switchThumbColorActive : switchThumbColorInactive}
-            ios_backgroundColor={switchTrackColorInactive}
+            trackColor={{ false: switchColors.trackInactive, true: switchColors.trackActive }}
+            thumbColor={syncWithSystem ? switchColors.thumbActive : switchColors.thumbInactive}
+            ios_backgroundColor={switchColors.trackInactive}
           />
         </TouchableOpacity>
 
         {/* Path Color Button */}
         <TouchableOpacity
           style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
-          onPress={() => {
+          onPress={async () => {
             triggerHaptic("light");
+            await loadDataIfNeeded();
             setShowColorModal(true);
           }}
         >
@@ -302,46 +295,56 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
         </TouchableOpacity>
       </View>
 
-      {/* Color Picker Modal */}
-      <ColorPickerModal
-        visible={showColorModal}
-        onClose={() => setShowColorModal(false)}
-        selectedColor={colorUnlockData?.selectedColor}
-        unlockedColors={colorUnlockData?.unlockedColors || []}
-        onSelectColor={handleColorSelect}
-        currentLevel={currentLevel}
-        isDark={theme.isDark}
-        textPrimaryColor={colors.textPrimary}
-        textSecondaryColor={colors.textSecondaryColor}
-        surfaceColor={colors.surface}
-        borderColor={colors.border}
-        managesBottomNav={false}
-      />
+      {/* Lazy-loaded Modals with Suspense - Only render when visible */}
+      {showColorModal && (
+        <Suspense fallback={<View style={{position: 'absolute'}} />}>
+          <ColorPickerModal
+            visible={showColorModal}
+            onClose={() => setShowColorModal(false)}
+            selectedColor={colorUnlockData?.selectedColor}
+            unlockedColors={colorUnlockData?.unlockedColors || []}
+            onSelectColor={handleColorSelect}
+            currentLevel={currentLevel}
+            isDark={theme.isDark}
+            textPrimaryColor={colors.textPrimary}
+            textSecondaryColor={colors.textSecondary}
+            surfaceColor={colors.surface}
+            borderColor={colors.border}
+            managesBottomNav={false}
+          />
+        </Suspense>
+      )}
 
-      {/* Title Picker Modal */}
-      <TitlePickerModal
-        visible={showTitleModal}
-        onClose={() => setShowTitleModal(false)}
-        titles={titleOptions}
-        selectedTitleIndex={selectedTitleIndex}
-        onSelectTitle={handleTitleSelect}
-        isDark={theme.isDark}
-        textPrimaryColor={colors.textPrimary}
-        textSecondaryColor={colors.textSecondary}
-        surfaceColor={colors.surface}
-        borderColor={colors.border}
-        progressColor={progressColor}
-        managesBottomNav={false}
-      />
+      {showTitleModal && (
+        <Suspense fallback={<View style={{position: 'absolute'}} />}>
+          <TitlePickerModal
+            visible={showTitleModal}
+            onClose={() => setShowTitleModal(false)}
+            titles={titleOptions}
+            selectedTitleIndex={selectedTitleIndex}
+            onSelectTitle={handleTitleSelect}
+            isDark={theme.isDark}
+            textPrimaryColor={colors.textPrimary}
+            textSecondaryColor={colors.textSecondary}
+            surfaceColor={colors.surface}
+            borderColor={colors.border}
+            progressColor={progressColor}
+            managesBottomNav={false}
+          />
+        </Suspense>
+      )}
 
-      {/* Avatar Picker Modal */}
-      <AvatarPicker
-        visible={showAvatarPicker}
-        onClose={() => setShowAvatarPicker(false)}
-        onImageSelected={handleAvatarChange}
-        currentAvatarUri={avatarUri}
-        managesBottomNav={false}
-      />
+      {showAvatarPicker && (
+        <Suspense fallback={<View style={{position: 'absolute'}} />}>
+          <AvatarPicker
+            visible={showAvatarPicker}
+            onClose={() => setShowAvatarPicker(false)}
+            onImageSelected={handleAvatarChange}
+            currentAvatarUri={avatarUri}
+            managesBottomNav={false}
+          />
+        </Suspense>
+      )}
 
       {/* Language Selection Modal */}
       {showLanguageModal && (
@@ -352,7 +355,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
           isDark={theme.isDark}
           textPrimaryColor={colors.textPrimary}
           surfaceColor={colors.surface}
-          borderColor={cardBorder}
+          borderColor={cardStyles.border}
           snapPoints={['50%', '70%']}
           managesBottomNav={false}
         >
@@ -364,8 +367,8 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
                 style={[
                   styles.languageOption,
                   {
-                    backgroundColor: currentLanguage === language.code ? selectedBg : cardBg,
-                    borderColor: currentLanguage === language.code ? selectedBorder : cardBorder,
+                    backgroundColor: currentLanguage === language.code ? cardStyles.selectedBg : cardStyles.bg,
+                    borderColor: currentLanguage === language.code ? cardStyles.selectedBorder : cardStyles.border,
                   },
                 ]}
               >

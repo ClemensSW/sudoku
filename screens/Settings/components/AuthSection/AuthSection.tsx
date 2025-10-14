@@ -37,6 +37,11 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         },
       ]}
     >
+      {/* Corner Badge - Top Right */}
+      <View style={styles.cornerBadge}>
+        <DevelopmentBadge />
+      </View>
+
       {/* Header - Centered Layout */}
       <View style={styles.header}>
         {/* Shield Icon - Large & Centered */}
@@ -48,11 +53,6 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         <Text style={[styles.title, { color: colors.textPrimary }]}>
           {t('authSection.title')}
         </Text>
-
-        {/* Development Badge - Centered */}
-        <View style={styles.badgeContainer}>
-          <DevelopmentBadge />
-        </View>
 
         {/* Description */}
         <Text style={[styles.description, { color: colors.textSecondary }]}>
@@ -90,23 +90,6 @@ const AuthSection: React.FC<AuthSectionProps> = ({
           </View>
         )}
       </View>
-
-      {/* Optional: Benefits Section */}
-      <View style={styles.benefitsSection}>
-        <Text style={[styles.benefitsTitle, { color: colors.textSecondary }]}>
-          {t('authSection.benefitsTitle')}
-        </Text>
-        <View style={styles.benefitsList}>
-          {['benefit1', 'benefit2', 'benefit3'].map((key, index) => (
-            <View key={key} style={styles.benefitItem}>
-              <Feather name="check" size={16} color="#4CAF50" />
-              <Text style={[styles.benefitText, { color: colors.textSecondary }]}>
-                {t(`authSection.${key}`)}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </View>
     </Animated.View>
   );
 };
@@ -121,6 +104,17 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 4,
     gap: spacing.lg,
+    overflow: 'hidden', // Important for corner badge
+    position: 'relative',
+  },
+
+  // Corner Badge - Top Right (Diagonal)
+  cornerBadge: {
+    position: 'absolute',
+    top: 16,
+    right: -8,
+    transform: [{ rotate: '12deg' }],
+    zIndex: 10,
   },
 
   // Header - Centered Vertical Layout
@@ -132,10 +126,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xs,
-  },
-  badgeContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 22,
@@ -167,32 +157,6 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-
-  // Benefits
-  benefitsSection: {
-    gap: spacing.sm,
-    paddingTop: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(128, 128, 128, 0.15)',
-  },
-  benefitsTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  benefitsList: {
-    gap: spacing.xs,
-  },
-  benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  benefitText: {
     fontSize: 13,
     lineHeight: 18,
   },

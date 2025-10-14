@@ -74,7 +74,7 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
   }, [playHistory, year, month, selectedMonth]);
 
   // Day status checker
-  const getDayStatus = (day: number): 'played' | 'shield' | 'shield-available' | 'missed' | 'today' | 'future' | 'before-launch' => {
+  const getDayStatus = (day: number): 'played' | 'shield' | 'streak-broken' | 'inactive' | 'today' | 'future' | 'before-launch' => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const dayDate = new Date(year, month - 1, day);
@@ -103,13 +103,34 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
     // 5. Shield wurde eingesetzt
     if (monthData?.shieldDays.includes(day)) return 'shield';
 
-    // 6. Shield verfügbar (vor heute, Streak nicht gestartet)
-    if (currentStreak === 0 && shieldsAvailable > 0 && dayDate < now) {
-      return 'shield-available';
+    // 6. Streak-Break Detection (wenn Streak = 0)
+    if (currentStreak === 0 && dayDate < now) {
+      // Finde alle erfolgreichen Tage (gespielt ODER mit Shield geschützt)
+      const allSuccessfulDays = [
+        ...(monthData?.days || []),
+        ...(monthData?.shieldDays || [])
+      ].sort((a, b) => a - b);
+
+      const lastSuccessfulDay = allSuccessfulDays[allSuccessfulDays.length - 1];
+
+      // Erster Tag nach dem letzten erfolgreichen Tag = Streak-Break
+      if (lastSuccessfulDay && day === lastSuccessfulDay + 1) {
+        return 'streak-broken';
+      }
+
+      // Alle Tage NACH dem Streak-Break = inactive
+      if (lastSuccessfulDay && day > lastSuccessfulDay + 1) {
+        return 'inactive';
+      }
+
+      // Kein erfolgreicher Tag im Monat = inactive
+      if (allSuccessfulDays.length === 0) {
+        return 'inactive';
+      }
     }
 
-    // 7. Verpasst
-    return 'missed';
+    // 7. Verpasst (während aktivem Streak)
+    return 'streak-broken';
   };
 
   // Progress calculation

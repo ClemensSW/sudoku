@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import ShieldIcon from '@/assets/svg/shield.svg';
+import ShieldEmptyIcon from '@/assets/svg/shieldEmpty.svg';
 import LetterXIcon from '@/assets/svg/letter-x.svg';
 import { styles } from '../CurrentStreakCard.styles';
 
@@ -15,7 +16,7 @@ interface StreakCalendarGridProps {
   year: number;
   month: number;
   monthNames: string[];
-  getDayStatus: (day: number) => 'played' | 'shield' | 'shield-available' | 'missed' | 'today' | 'future' | 'before-launch';
+  getDayStatus: (day: number) => 'played' | 'shield' | 'streak-broken' | 'inactive' | 'today' | 'future' | 'before-launch';
   daysInMonth: number;
   playedDays: number;
   progressPercentage: number;
@@ -57,12 +58,18 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           backgroundColor: theme.isDark ? '#77CE8E40' : '#77CE8E30',
           borderColor: '#77CE8E',
         };
-      case 'shield-available':
+      case 'streak-broken':
         return {
-          backgroundColor: theme.isDark ? 'rgba(119, 206, 142, 0.15)' : 'rgba(119, 206, 142, 0.08)',
-          borderColor: '#77CE8E',
+          backgroundColor: theme.isDark ? 'rgba(244,143,177,0.15)' : 'rgba(239,83,80,0.08)',
+          borderColor: theme.isDark ? 'rgba(244,143,177,0.35)' : 'rgba(239,83,80,0.25)',
           borderWidth: 1.5,
-          borderStyle: 'dashed',
+        };
+      case 'inactive':
+        return {
+          backgroundColor: 'transparent',
+          borderColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+          borderWidth: 1,
+          opacity: 0.4,
         };
       case 'today':
         return {
@@ -71,17 +78,12 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             : '#FFFFFF',  // Reines Weiß in Light Mode
           borderColor: theme.isDark ? '#FFFFFF' : '#666666',  // Helleres Grau in Light Mode
           borderWidth: 2,
-          borderStyle: 'solid',
+          borderStyle: 'solid' as const,
           shadowColor: theme.isDark ? '#FFFFFF' : '#666666',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: theme.isDark ? 0.3 : 0.2,
           shadowRadius: 6,
           elevation: 4,
-        };
-      case 'missed':
-        return {
-          backgroundColor: theme.isDark ? 'rgba(244,143,177,0.15)' : 'rgba(239,83,80,0.08)',
-          borderColor: theme.isDark ? 'rgba(244,143,177,0.35)' : 'rgba(239,83,80,0.25)',
         };
       case 'before-launch':
       case 'future':
@@ -105,13 +107,21 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             fill="#77CE8E"
           />
         );
-      case 'shield-available':
+      case 'streak-broken':
         return (
-          <ShieldIcon
-            width={28}
-            height={28}
-            fill="#77CE8E"
-            style={{ opacity: 0.6 }}
+          <LetterXIcon
+            width={20}
+            height={20}
+            fill={theme.isDark ? '#F48FB1' : '#D32F2F'}
+          />
+        );
+      case 'inactive':
+        return (
+          <ShieldEmptyIcon
+            width={24}
+            height={24}
+            fill={theme.isDark ? colors.textSecondary : '#999999'}
+            style={{ opacity: 0.3 }}
           />
         );
       case 'today':
@@ -128,14 +138,6 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           >
             {day}
           </Text>
-        );
-      case 'missed':
-        return (
-          <LetterXIcon
-            width={20}
-            height={20}
-            fill={theme.isDark ? '#F48FB1' : '#D32F2F'}
-          />
         );
       case 'played':
       case 'future':
@@ -231,7 +233,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
                   styles.dayCircle,
                   dayStyle,
                   {
-                    borderWidth: status === 'shield' || status === 'missed' ? 1.5 : status === 'shield-available' ? 1.5 : status === 'today' ? 2 : 0,
+                    borderWidth: status === 'shield' ? 1.5 : status === 'streak-broken' ? 1.5 : status === 'inactive' ? 1 : status === 'today' ? 2 : 0,
                   },
                 ]}
               >

@@ -17,7 +17,7 @@ import { Theme } from "./types";
 
 // Re-export Theme type for convenience
 export type { Theme } from "./types";
-import { loadSettings, saveSettings } from "@/utils/storage";
+import { loadSettings, saveSettings, DEFAULT_SETTINGS } from "@/utils/storage";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -57,12 +57,27 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const prepare = async () => {
       try {
         const settings = await loadSettings();
-        if (settings && (settings.darkMode === "light" || settings.darkMode === "dark")) {
+
+        if (settings === null) {
+          // First app launch - no settings saved yet
+          // Use system theme
+          console.log('[ThemeProvider] First launch detected - using system theme:', systemColorScheme);
+          setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+          setUserHasSetTheme(false);
+
+          // Save default settings with system theme
+          await saveSettings({
+            ...DEFAULT_SETTINGS,
+            // Don't save darkMode - this indicates "follow system"
+          });
+        } else if (settings.darkMode === "light" || settings.darkMode === "dark") {
           // User has manually set a theme preference
+          console.log('[ThemeProvider] User theme preference found:', settings.darkMode);
           setColorScheme(settings.darkMode);
           setUserHasSetTheme(true);
         } else {
-          // No manual preference - use system theme
+          // Settings exist but no manual theme preference - use system theme
+          console.log('[ThemeProvider] No theme preference - using system theme:', systemColorScheme);
           setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
           setUserHasSetTheme(false);
         }

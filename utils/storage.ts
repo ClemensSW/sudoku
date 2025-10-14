@@ -147,7 +147,7 @@ const DEFAULT_STATS: GameStats = {
 };
 
 // Standard-Einstellungen
-const DEFAULT_SETTINGS: GameSettings = {
+export const DEFAULT_SETTINGS: GameSettings = {
   highlightRelatedCells: true,
   showMistakes: true,
   highlightSameValues: true,
@@ -437,7 +437,7 @@ export const saveSettings = async (settings: GameSettings): Promise<void> => {
 };
 
 // Lade Einstellungen
-export const loadSettings = async (): Promise<GameSettings> => {
+export const loadSettings = async (): Promise<GameSettings | null> => {
   try {
     const savedSettings = await AsyncStorage.getItem(KEYS.SETTINGS);
     if (savedSettings) {
@@ -451,7 +451,8 @@ export const loadSettings = async (): Promise<GameSettings> => {
       }
       return parsedSettings;
     }
-    return DEFAULT_SETTINGS;
+    // Kein gespeicherter Wert → Erster Start → null zurückgeben
+    return null;
   } catch (error) {
     console.error("Error loading settings:", error);
     return DEFAULT_SETTINGS;

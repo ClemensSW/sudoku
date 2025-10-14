@@ -28,7 +28,7 @@ import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
-import { loadSettings, saveSettings } from "@/utils/storage";
+import { loadSettings, saveSettings, DEFAULT_SETTINGS } from "@/utils/storage";
 import { GameSettings as GameSettingsType } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 import AboutModal from "./components/AboutModal";
@@ -108,7 +108,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
-      setSettings(loadedSettings);
+      setSettings(loadedSettings ?? DEFAULT_SETTINGS);
       setIsLoading(false);
     };
 

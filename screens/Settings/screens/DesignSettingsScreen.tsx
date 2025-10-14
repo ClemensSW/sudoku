@@ -10,7 +10,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import DesignGroup from "../components/DesignGroup";
-import { GameSettings as GameSettingsType, loadSettings, saveSettings } from "@/utils/storage";
+import { GameSettings as GameSettingsType, loadSettings, saveSettings, DEFAULT_SETTINGS } from "@/utils/storage";
 
 const DesignSettingsScreen: React.FC = () => {
   const { t, i18n } = useTranslation("settings");
@@ -25,7 +25,7 @@ const DesignSettingsScreen: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
-      setSettings(loadedSettings);
+      setSettings(loadedSettings ?? DEFAULT_SETTINGS);
     };
     loadData();
   }, []);

@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { backgroundMusicManager } from '@/utils/backgroundMusic';
-import { loadSettings } from '@/utils/storage';
+import { loadSettings, DEFAULT_SETTINGS } from '@/utils/storage';
 
 interface BackgroundMusicContextType {
   isPlaying: boolean;
@@ -43,7 +43,7 @@ export const BackgroundMusicProvider: React.FC<BackgroundMusicProviderProps> = (
   // Synchronisiere Musik mit Settings
   const syncMusicWithSettings = async () => {
     const settings = await loadSettings();
-    await toggleMusic(settings.backgroundMusic);
+    await toggleMusic(settings?.backgroundMusic ?? DEFAULT_SETTINGS.backgroundMusic);
   };
 
   // Toggle Musik ein/aus
@@ -63,7 +63,7 @@ export const BackgroundMusicProvider: React.FC<BackgroundMusicProviderProps> = (
       async (nextAppState: AppStateStatus) => {
         const settings = await loadSettings();
 
-        if (!settings.backgroundMusic) return;
+        if (!(settings?.backgroundMusic ?? DEFAULT_SETTINGS.backgroundMusic)) return;
 
         // Wenn App in den Vordergrund kommt und Musik aktiviert ist
         if (nextAppState === 'active') {

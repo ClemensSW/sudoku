@@ -11,7 +11,7 @@ import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import { useNavigation } from "@/contexts/navigation";
 import Header from "@/components/Header/Header";
 import GameSettings from "../components/GameSettings/GameSettings";
-import { GameSettings as GameSettingsType, loadSettings, saveSettings } from "@/utils/storage";
+import { GameSettings as GameSettingsType, loadSettings, saveSettings, DEFAULT_SETTINGS } from "@/utils/storage";
 import { triggerHaptic, setVibrationEnabledCache } from "@/utils/haptics";
 
 const GameSettingsScreen: React.FC = () => {
@@ -27,7 +27,7 @@ const GameSettingsScreen: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       const loadedSettings = await loadSettings();
-      setSettings(loadedSettings);
+      setSettings(loadedSettings ?? DEFAULT_SETTINGS);
     };
     loadData();
   }, []);

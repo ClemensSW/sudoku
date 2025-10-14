@@ -1,6 +1,6 @@
 // utils/backgroundMusic.ts
 import { Audio } from 'expo-av';
-import { loadSettings } from './storage';
+import { loadSettings, DEFAULT_SETTINGS } from './storage';
 
 class BackgroundMusicManager {
   private sound: Audio.Sound | null = null;
@@ -96,7 +96,7 @@ class BackgroundMusicManager {
   async syncWithSettings(): Promise<void> {
     const settings = await loadSettings();
 
-    if (settings.backgroundMusic) {
+    if (settings?.backgroundMusic ?? DEFAULT_SETTINGS.backgroundMusic) {
       await this.play();
     } else {
       await this.pause();

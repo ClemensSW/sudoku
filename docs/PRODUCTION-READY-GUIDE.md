@@ -1,225 +1,292 @@
-# 🚀 Production Ready Guide - Sudoku Duo
+# 🚀 Produktions-Guide für Sudoku Duo
 
-**In-App-Käufe & Abonnements Live schalten**
+**So bringst du In-App-Käufe & Abonnements live!**
 
----
-
-## ✅ Voraussetzungen-Check
-
-Bevor du startest:
-
-- [ ] Code kompiliert ohne Fehler
-- [ ] Preise korrekt: €1,99/Monat & €19,99/Jahr
-- [ ] Alle Tests bestanden
-- [ ] RevenueCat API Key eingetragen (`config.ts`)
+Diese Anleitung führt dich Schritt für Schritt durch die Einrichtung - auch ohne vorherige Erfahrung mit App-Monetarisierung.
 
 ---
 
-## 📝 Schritt 1: Google Play Console Setup (30 Min)
+## 📋 Inhaltsverzeichnis
 
-### 1.1 Einmalkäufe erstellen
+1. [Schnell-Check: Bist du bereit?](#schnell-check)
+2. [Google Play Console einrichten (30 Min)](#google-play)
+3. [RevenueCat einrichten (20 Min)](#revenuecat)
+4. [Legal Docs erstellen (2-4 Std)](#legal-docs)
+5. [Testen (30 Min)](#testen)
+6. [Live-Schalten](#live-schalten)
+7. [Troubleshooting](#troubleshooting)
 
-Gehe zu **Monetize → In-app products** → **Create product**
+---
 
-| Product ID | Name | Preis | Type |
-|------------|------|-------|------|
-| `de.playfusiongate.sudokuduo.coffee` | Kaffee | €1,99 | Non-consumable |
-| `de.playfusiongate.sudokuduo.breakfast` | Frühstück | €4,99 | Non-consumable |
-| `de.playfusiongate.sudokuduo.lunch` | Mittagessen | €9,99 | Non-consumable |
-| `de.playfusiongate.sudokuduo.feast` | Festmahl | €19,99 | Non-consumable |
+## <a id="schnell-check"></a>✅ Schnell-Check: Bist du bereit?
 
-**Wichtig:** Type = **Non-consumable** (für "Restore Purchases")
+Bevor du startest, prüfe diese Punkte:
 
-### 1.2 Abonnements erstellen
+- [ ] App kompiliert ohne Fehler
+- [ ] Du hast einen **Google Play Console** Account
+- [ ] Du hast einen **RevenueCat** Account (kostenlos: [app.revenuecat.com](https://app.revenuecat.com))
+- [ ] Du hast 2-3 Stunden Zeit
 
-Gehe zu **Monetize → Subscriptions** → **Create subscription**
+**Preise für deine Produkte:**
+- ☕ Kaffee: €1,99
+- 🥐 Frühstück: €4,99
+- 🍱 Mittagessen: €9,99
+- 👑 Festmahl: €19,99
+- 📅 Monatliches Abo: €1,99/Monat
+- 🎯 Jährliches Abo: €19,99/Jahr
 
-#### Abo 1: Monatlich
-- **ID:** `de.playfusiongate.sudokuduo.monthly`
-- **Base Plan ID:** `monthly`
+---
+
+## <a id="google-play"></a>🎮 Google Play Console einrichten
+
+### Schritt 1: Einmalkäufe erstellen (15 Min)
+
+1. **Öffne Google Play Console:** [play.google.com/console](https://play.google.com/console)
+2. **Navigiere zu:** Deine App → **Monetarisierung** → **In-App-Produkte**
+3. **Klicke auf:** "Produkt erstellen"
+
+**Erstelle 4 Produkte:**
+
+| Produkt-ID | Name | Beschreibung | Preis | Typ |
+|------------|------|--------------|-------|-----|
+| `de.playfusiongate.sudokuduo.coffee` | Kaffee | Ein Kaffee für den Entwickler | €1,99 | **Non-consumable** |
+| `de.playfusiongate.sudokuduo.breakfast` | Frühstück | Ein leckeres Frühstück | €4,99 | **Non-consumable** |
+| `de.playfusiongate.sudokuduo.lunch` | Mittagessen | Ein nahrhaftes Mittagessen | €9,99 | **Non-consumable** |
+| `de.playfusiongate.sudokuduo.feast` | Festmahl | Ein königliches Festmahl | €19,99 | **Non-consumable** |
+
+**WICHTIG:**
+- ✅ Typ = **"Non-consumable"** (damit "Käufe wiederherstellen" funktioniert)
+- ✅ Produkt-IDs **EXAKT** wie oben eingeben (Groß-/Kleinschreibung beachten!)
+- ✅ Nach dem Erstellen: Produkte auf **"Aktiv"** setzen
+
+### Schritt 2: Abonnements erstellen (15 Min)
+
+1. **Navigiere zu:** **Monetarisierung** → **Abonnements**
+2. **Klicke auf:** "Abonnement erstellen"
+
+**Abo 1: Monatlich**
+- **Abonnement-ID:** `de.playfusiongate.sudokuduo.monthly`
+- **Name:** Monatlicher Support
+- **Basis-Tarif-ID:** `monthly`
 - **Preis:** €1,99/Monat
-- **Grace Period:** 7 Tage ✅
+- **Zahlungszyklus:** Monatlich
+- **Grace Period:** 7 Tage (empfohlen)
 
-#### Abo 2: Jährlich
-- **ID:** `de.playfusiongate.sudokuduo.yearly`
-- **Base Plan ID:** `yearly`
+**Abo 2: Jährlich**
+- **Abonnement-ID:** `de.playfusiongate.sudokuduo.yearly`
+- **Name:** Jährlicher Support
+- **Basis-Tarif-ID:** `yearly`
 - **Preis:** €19,99/Jahr
-- **Grace Period:** 7 Tage ✅
+- **Zahlungszyklus:** Jährlich
+- **Grace Period:** 7 Tage (empfohlen)
 
-### 1.3 Produkte aktivieren
+**WICHTIG:**
+- ✅ Produkt-IDs **EXAKT** wie oben eingeben
+- ✅ "Grace Period" aktivieren (gibt Nutzern Zeit bei Zahlungsproblemen)
+- ✅ Nach dem Erstellen: Abos auf **"Aktiv"** setzen
 
-- [ ] Alle 6 Products auf **"Active"** setzen
-- [ ] App in **Internal Testing** (min.)
+### Schritt 3: Service Account erstellen
+
+1. **Navigiere zu:** **Setup** → **API-Zugriff**
+2. **Klicke auf:** "Service Account erstellen" (falls noch nicht vorhanden)
+3. **Folge der Anleitung:** Link zu Google Cloud Console
+4. **Erstelle einen Service Account:**
+   - Name: z.B. "RevenueCat Integration"
+   - Rolle: **"Viewer"** + **"Financial data viewer"**
+5. **Erstelle einen Schlüssel (JSON-Datei):**
+   - Im Service Account → "Schlüssel" → "Schlüssel erstellen" → JSON
+6. **Lade die JSON-Datei herunter** (du brauchst sie gleich für RevenueCat)
 
 ---
 
-## 🔧 Schritt 2: RevenueCat Setup (20 Min)
+## <a id="revenuecat"></a>🔧 RevenueCat einrichten
 
-### 2.1 Entitlement erstellen
+### Schritt 1: Projekt erstellen
 
-1. Gehe zu **Project Settings → Entitlements**
-2. **Create Entitlement**
-3. Identifier: `supporter`
-4. Display Name: `Supporter`
+1. **Gehe zu:** [app.revenuecat.com](https://app.revenuecat.com)
+2. **Erstelle ein neues Projekt:** "Sudoku Duo"
+3. **Wähle:** Android (Google Play)
 
-**Wichtig:** ALLE 6 Products nutzen dieses eine Entitlement!
+### Schritt 2: Google Play verbinden
 
-### 2.2 Products verknüpfen
+1. **Navigiere zu:** **Project Settings** → **Integrations** → **Google Play**
+2. **Lade deine Service Account JSON-Datei hoch** (aus Google Play Console)
+3. **Package Name eingeben:** `de.playfusiongate.sudokuduo`
+4. **Klicke auf:** "Save"
 
-Gehe zu **Products** → **Create Product**
+### Schritt 3: Entitlement erstellen
 
-Erstelle 6 Products:
+**Was ist ein Entitlement?**
+Ein Entitlement ist wie eine "Zugangsberechtigung". Alle 6 Produkte (4 Einmalkäufe + 2 Abos) geben dem Nutzer das gleiche Entitlement: **"supporter"**.
+
+1. **Navigiere zu:** **Entitlements**
+2. **Klicke auf:** "Create Entitlement"
+3. **Identifier:** `supporter`
+4. **Display Name:** "Supporter"
+5. **Klicke auf:** "Create"
+
+### Schritt 4: Produkte hinzufügen
+
+1. **Navigiere zu:** **Products**
+2. **Klicke auf:** "Add Product"
+3. **Füge alle 6 Produkte hinzu:**
 
 **Einmalkäufe:**
-- `de.playfusiongate.sudokuduo.coffee` → Entitlement: `supporter`
-- `de.playfusiongate.sudokuduo.breakfast` → Entitlement: `supporter`
-- `de.playfusiongate.sudokuduo.lunch` → Entitlement: `supporter`
-- `de.playfusiongate.sudokuduo.feast` → Entitlement: `supporter`
+- Product ID: `de.playfusiongate.sudokuduo.coffee` → Entitlement: `supporter`
+- Product ID: `de.playfusiongate.sudokuduo.breakfast` → Entitlement: `supporter`
+- Product ID: `de.playfusiongate.sudokuduo.lunch` → Entitlement: `supporter`
+- Product ID: `de.playfusiongate.sudokuduo.feast` → Entitlement: `supporter`
 
-**Abos:**
-- `de.playfusiongate.sudokuduo.monthly:monthly` → Entitlement: `supporter`
-- `de.playfusiongate.sudokuduo.yearly:yearly` → Entitlement: `supporter`
+**Abonnements:**
+- Product ID: `de.playfusiongate.sudokuduo.monthly:monthly` → Entitlement: `supporter`
+- Product ID: `de.playfusiongate.sudokuduo.yearly:yearly` → Entitlement: `supporter`
 
-### 2.3 Offerings erstellen
+**WICHTIG für Abos:**
+Die Product ID für Abos ist: `[Abo-ID]:[Basis-Tarif-ID]`
+Beispiel: `de.playfusiongate.sudokuduo.monthly:monthly`
 
-1. Gehe zu **Offerings** → **Create Offering**
-2. Identifier: `default`
-3. Füge Packages hinzu:
+### Schritt 5: Offerings erstellen
 
-**One-Time:**
-- Package: `coffee` → Product: `coffee`
-- Package: `breakfast` → Product: `breakfast`
-- Package: `lunch` → Product: `lunch`
-- Package: `feast` → Product: `feast`
+**Was ist ein Offering?**
+Ein Offering ist eine Sammlung von Produkten, die du in der App anzeigst.
 
-**Subscriptions:**
-- Package: `$rc_monthly` → Product: `monthly:monthly`
-- Package: `$rc_annual` → Product: `yearly:yearly`
+1. **Navigiere zu:** **Offerings**
+2. **Klicke auf:** "Create Offering"
+3. **Identifier:** `default`
+4. **Display Name:** "Standard"
+5. **Füge Packages hinzu:**
 
-### 2.4 Service Account verbinden
+**One-Time Packages:**
+- Identifier: `coffee` → Product: `de.playfusiongate.sudokuduo.coffee`
+- Identifier: `breakfast` → Product: `de.playfusiongate.sudokuduo.breakfast`
+- Identifier: `lunch` → Product: `de.playfusiongate.sudokuduo.lunch`
+- Identifier: `feast` → Product: `de.playfusiongate.sudokuduo.feast`
 
-1. Gehe zu **Google Play Console → Setup → API access**
-2. Erstelle **Service Account** (falls noch nicht vorhanden)
-3. Lade **JSON-Datei** herunter
-4. In RevenueCat: **Project Settings → Integrations → Google Play**
-5. **Upload JSON-Datei**
+**Subscription Packages:**
+- Identifier: `$rc_monthly` → Product: `de.playfusiongate.sudokuduo.monthly:monthly`
+- Identifier: `$rc_annual` → Product: `de.playfusiongate.sudokuduo.yearly:yearly`
 
-**Wichtig:** Service Account braucht "View financial data" Berechtigung!
+**WICHTIG:**
+- Für Abos verwende die **speziellen Identifier**: `$rc_monthly` und `$rc_annual`
+- Diese sorgen dafür, dass RevenueCat die Produkte automatisch richtig zuordnet
 
----
+### Schritt 6: API Keys kopieren
 
-## ⚖️ Schritt 3: Legal Docs erstellen (2-4 Std)
+1. **Navigiere zu:** **Project Settings** → **API Keys**
+2. **Kopiere den "Public Android Key"**
+3. **Füge ihn in deinen Code ein:**
 
-### 3.1 Impressum (PFLICHT in DE/AT/CH)
+Öffne: `screens/SupportShop/utils/billing/config.ts`
 
-**Vorlage:** https://www.e-recht24.de/impressum-generator.html
-
-Inhalt:
+```typescript
+REVENUECAT_API_KEY_ANDROID: "goog_DEIN_KEY_HIER",
 ```
-Name: [Dein Name/Firma]
-Anschrift: [Straße, PLZ, Ort]
-E-Mail: [support@domain.de]
-```
-
-Speichere als: `assets/legal/impressum-de.md` & `impressum-en.md`
-
-### 3.2 Datenschutzerklärung (PFLICHT EU)
-
-**Vorlage:** https://www.e-recht24.de/muster-datenschutzerklaerung.html
-
-Drittanbieter erwähnen:
-- **RevenueCat** (Payment Processing)
-- **Google Play Billing** (Zahlungsabwicklung)
-- **AsyncStorage** (Lokale Daten)
-
-Speichere als: `assets/legal/datenschutz-de.md` & `privacy-policy-en.md`
-
-### 3.3 Nutzungsbedingungen (PFLICHT für Abos)
-
-Vorlage in `docs/EXTERNAL-TASKS.md` Abschnitt 1.3
-
-Wichtig:
-- Preise nennen (€1,99 & €19,99)
-- Kündigung beschreiben
-- Widerrufsrecht (EU)
-
-Speichere als: `assets/legal/nutzungsbedingungen-de.md` & `terms-en.md`
-
-### 3.4 Dokumente veröffentlichen
-
-**Option A: In der App** (empfohlen)
-- Erstelle Ordner `assets/legal/`
-- Kopiere alle .md Dateien
-- Implementiere LegalScreen.tsx
-
-**Option B: GitHub Pages** (für Play Store URLs)
-1. Erstelle Repo `sudoku-duo-legal`
-2. Upload Legal Docs
-3. Aktiviere GitHub Pages
-4. URLs: `https://dein-user.github.io/sudoku-duo-legal/privacy`
-
-### 3.5 URLs in Play Console eintragen
-
-1. **App content → Privacy policy**
-   - URL eintragen (PFLICHT!)
-
-2. **Monetization → Subscriptions → [Abo auswählen] → Terms of service**
-   - URL eintragen (PFLICHT!)
 
 ---
 
-## 🧪 Schritt 4: Testing (30 Min)
+## <a id="legal-docs"></a>📜 Legal Docs erstellen
 
-### 4.1 License Testing aktivieren
+**Warum brauchst du das?**
+Google Play verlangt für Apps mit In-App-Käufen:
+- ✅ **Datenschutzerklärung** (Privacy Policy)
+- ✅ **Nutzungsbedingungen** (Terms of Service) - PFLICHT für Abos!
 
-1. **Google Play Console → Setup → License testing**
-2. Füge Test-E-Mail hinzu
-3. Diese Accounts kaufen OHNE echte Zahlung
+### Option A: Einfach mit Generator (empfohlen für Einsteiger)
 
-### 4.2 Test-Käufe durchführen
+**1. Datenschutzerklärung erstellen:**
+- Gehe zu: [www.e-recht24.de/muster-datenschutzerklaerung.html](https://www.e-recht24.de/muster-datenschutzerklaerung.html)
+- Fülle das Formular aus
+- Erwähne: RevenueCat, Google Play Billing
+- Lade das PDF herunter
 
-#### Test 1: Einmalkauf
-1. Baue **Internal Testing Build**
-2. Installiere auf **echtem Gerät**
-3. Melde dich mit **Test-Account** an
-4. Kaufe "Kaffee" (€1,99)
-5. Prüfe:
-   - [ ] Entitlement `supporter` aktiv?
-   - [ ] 2× EP funktioniert?
-   - [ ] 1 Bild/Monat verfügbar?
-   - [ ] Schutzschilder aufgefüllt?
+**2. Nutzungsbedingungen erstellen:**
+- Gehe zu: [www.e-recht24.de/muster-nutzungsbedingungen.html](https://www.e-recht24.de/muster-nutzungsbedingungen.html)
+- Wichtig: Erwähne Preise (€1,99 / €19,99), Kündigungsrecht, Widerrufsrecht
+- Lade das PDF herunter
 
-#### Test 2: Abo
-1. Kaufe "Monatliches Abo" (€1,99)
-2. Prüfe:
-   - [ ] Entitlement `supporter` aktiv?
-   - [ ] 3 Schutzschilder verfügbar?
-   - [ ] Im Support Shop als "Aktiv" angezeigt?
+**3. Hochladen:**
+- Option 1: **In der App** (erstelle einen "Legal"-Screen)
+- Option 2: **GitHub Pages** (kostenlos):
+  1. Erstelle ein GitHub Repo "sudoku-duo-legal"
+  2. Lade PDFs hoch (konvertiere zu HTML/Markdown)
+  3. Aktiviere GitHub Pages
+  4. URLs: `https://deinuser.github.io/sudoku-duo-legal/privacy`
 
-#### Test 3: Restore Purchases
-1. App deinstallieren
-2. Neu installieren
-3. "Käufe wiederherstellen" klicken
-4. Prüfe:
-   - [ ] Entitlement wieder aktiv?
-   - [ ] Benefits verfügbar?
-
-### 4.3 RevenueCat Dashboard prüfen
-
-1. Gehe zu **Customers**
-2. Suche deine Test-User-ID
-3. Prüfe:
-   - [ ] `supporter` Entitlement aktiv?
-   - [ ] Kauf unter "Transactions"?
+**4. URLs in Google Play Console eintragen:**
+- **App content** → **Privacy policy** → URL eintragen
+- **Monetization** → **Subscriptions** → [Abo auswählen] → **Terms of service** → URL eintragen
 
 ---
 
-## 🎉 Schritt 5: Go Live
+## <a id="testen"></a>🧪 Testen
 
-### 5.1 Finale Checkliste
+### Schritt 1: License Testing aktivieren
+
+**Was ist License Testing?**
+Du kannst Käufe **ohne echtes Geld** testen!
+
+1. **Google Play Console:** **Setup** → **License testing**
+2. **Füge deine Test-E-Mail hinzu** (die du auf deinem Testgerät verwendest)
+3. **Klicke auf:** "Save"
+
+### Schritt 2: Test-Build installieren
+
+1. **Erstelle einen Internal Testing Build:**
+   ```bash
+   eas build --profile preview --platform android
+   ```
+2. **Installiere die App auf einem echten Gerät** (Emulator funktioniert NICHT für In-App-Käufe!)
+3. **Melde dich mit deinem Test-Account an**
+
+### Schritt 3: Kaufe etwas
+
+**Test 1: Einmalkauf**
+1. Öffne den Support Shop
+2. Kaufe "Kaffee" (€1,99)
+3. **Erwartetes Verhalten:**
+   - ✅ Kauf wird verarbeitet (Google Play Dialog)
+   - ✅ "Vielen Dank"-Meldung
+   - ✅ 2× EP ist aktiv
+   - ✅ Schutzschilder werden aufgefüllt
+   - ✅ 1 Bild kann freigeschaltet werden
+
+**Test 2: Abo**
+1. Kaufe "Monatliches Abo" (€1,99/Monat)
+2. **Erwartetes Verhalten:**
+   - ✅ Abo wird aktiviert
+   - ✅ 3 Schutzschilder pro Woche (Montags)
+   - ✅ 1 Bild pro Monat freigeschaltet
+   - ✅ Im Support Shop steht "Aktives Abo"
+
+**Test 3: Jährliches Abo**
+1. Kaufe "Jährliches Abo" (€19,99/Jahr)
+2. **Erwartetes Verhalten:**
+   - ✅ **4 Schutzschilder pro Woche** (statt 3!)
+   - ✅ 2 Bilder pro Monat freigeschaltet
+
+**Test 4: Restore Purchases**
+1. Deinstalliere die App
+2. Installiere neu
+3. Klicke "Käufe wiederherstellen"
+4. **Erwartetes Verhalten:**
+   - ✅ Alle Benefits sind wieder da
+
+### Schritt 4: RevenueCat Dashboard prüfen
+
+1. **Gehe zu:** [app.revenuecat.com](https://app.revenuecat.com) → **Customers**
+2. **Suche deine User-ID** (wird in der App angezeigt)
+3. **Prüfe:**
+   - ✅ `supporter` Entitlement ist aktiv
+   - ✅ Kauf ist unter "Transactions" sichtbar
+
+---
+
+## <a id="live-schalten"></a>🎉 Live-Schalten
+
+### Finale Checkliste
 
 **Google Play Console:**
-- [ ] Alle 6 Products auf "Active"
+- [ ] Alle 6 Produkte auf "Aktiv"
 - [ ] Grace Period aktiviert (7 Tage)
 - [ ] Preise korrekt (€1,99 & €19,99)
 - [ ] Privacy Policy URL eingetragen
@@ -228,37 +295,103 @@ Speichere als: `assets/legal/nutzungsbedingungen-de.md` & `terms-en.md`
 **RevenueCat:**
 - [ ] Entitlement `supporter` erstellt
 - [ ] Alle 6 Products verknüpft
-- [ ] Offerings konfiguriert
+- [ ] Offerings konfiguriert (`default`)
 - [ ] Service Account verbunden
 - [ ] Test-Kauf erfolgreich
 
 **Code:**
 - [ ] API Key in `config.ts` gesetzt
-- [ ] Alle Preise synchronisiert
+- [ ] App kompiliert ohne Fehler
 - [ ] Legal Docs eingebunden
-- [ ] Error Handling getestet
 
-**Legal:**
-- [ ] Impressum erstellt (DE/EN)
-- [ ] Datenschutz erstellt (DE/EN)
-- [ ] Nutzungsbedingungen erstellt (DE/EN)
-- [ ] URLs online verfügbar
+### App veröffentlichen
 
-### 5.2 App veröffentlichen
+1. **Erstelle Production Build:**
+   ```bash
+   eas build --profile production --platform android
+   ```
 
-1. Gehe zu **Google Play Console → Release → Production**
-2. **Create new release**
-3. Upload signiertes AAB
-4. **Review** und **Go Live** klicken
+2. **Google Play Console:**
+   - **Release** → **Production**
+   - **Create new release**
+   - Upload AAB
+   - **Review** → **Go Live**
 
 🎊 **FERTIG! Deine In-App-Käufe sind jetzt live!**
+
+---
+
+## <a id="troubleshooting"></a>🆘 Troubleshooting
+
+### "Warum zeigt meine APK andere Preise als Expo Go?"
+
+**Problem:**
+- Expo Go: €1,99 / €19,99 ✅
+- APK Build: €2,99 / €29,99 ❌
+
+**Ursache:**
+Expo Go nutzt **hardcoded Fallback-Preise** aus den Übersetzungsdateien.
+Die APK verbindet sich mit **RevenueCat**, das die Preise aus der **Google Play Console** holt.
+
+**Lösung:**
+1. **Google Play Console öffnen**
+2. **Monetarisierung** → **Abonnements** → [Abo auswählen]
+3. **Preise bearbeiten:** €1,99/Monat & €19,99/Jahr
+4. **Speichern**
+5. **Warte 1-2 Stunden** (Google braucht Zeit zum Synchronisieren)
+6. **Neuen Build erstellen** → Preise sollten jetzt stimmen!
+
+---
+
+### "Product not found"
+
+**Lösung:**
+- ✅ Product-IDs in Google Play Console & RevenueCat **identisch**?
+- ✅ Warte 1-2 Stunden nach dem Erstellen (Google braucht Zeit)
+- ✅ App in **Internal Testing** (nicht Draft)?
+- ✅ RevenueCat Service Account korrekt verbunden?
+
+---
+
+### "Entitlement nicht aktiv nach Kauf"
+
+**Lösung:**
+1. **RevenueCat Dashboard** → **Customers** → **Transactions**
+2. **Prüfe:** Ist der Kauf dort sichtbar?
+3. **Falls NEIN:**
+   - Service Account Permissions prüfen (muss "Financial data viewer" haben)
+   - RevenueCat → Project Settings → Integrations → Google Play neu verbinden
+4. **Falls JA, aber Entitlement nicht aktiv:**
+   - Prüfe Entitlement-Zuordnung in RevenueCat Products
+
+---
+
+### "Restore Purchases funktioniert nicht"
+
+**Lösung:**
+- ✅ Produkte als **"Non-consumable"** markiert? (in Google Play Console)
+- ✅ Gleicher Google-Account auf beiden Geräten?
+- ✅ Package Name identisch? (`de.playfusiongate.sudokuduo`)
+
+---
+
+### "Kauf wird nicht registriert / Schilde nicht aufgefüllt"
+
+**Lösung:**
+1. **Prüfe Logs:**
+   ```
+   [BillingManager] Purchase successful
+   [Daily Streak] Shields refilled
+   ```
+2. **Falls Logs fehlen:** SupportShop.tsx → handlePurchaseCompleted nicht aufgerufen
+3. **Prüfe:** RevenueCat Events kommen an? (`purchase-completed`)
 
 ---
 
 ## 📊 Nach dem Launch: Monitoring
 
 ### Google Play Analytics
-**Monetization → Overview:**
+**Monetarisierung → Übersicht:**
 - Buyers (zahlende Nutzer)
 - Revenue (Einnahmen)
 - Subscriptions (aktive Abos)
@@ -269,51 +402,18 @@ Speichere als: `assets/legal/nutzungsbedingungen-de.md` & `terms-en.md`
 - Revenue über Zeit
 - Churn Rate
 
-### Reviews beobachten
-- Play Store Reviews prüfen
-- Auf Billing-Probleme achten
-- Schnell reagieren
-
----
-
-## 🆘 Troubleshooting
-
-### "Product not found"
-**Lösung:**
-- Product-IDs in Play Console & RevenueCat identisch?
-- Warte 1-2 Stunden (Google Sync-Zeit)
-- App in Internal Testing (nicht Draft)?
-
-### Entitlement nicht aktiv nach Kauf
-**Lösung:**
-- RevenueCat Dashboard → Customers → Transactions prüfen
-- Service Account Permissions prüfen
-- Entitlement-Zuordnung in Products prüfen
-
-### Restore Purchases funktioniert nicht
-**Lösung:**
-- Products als **Non-consumable** markiert?
-- Gleicher Google-Account verwendet?
-- App-Package-Name identisch?
-
-### "Item already owned"
-**Lösung:**
-- Non-consumable kann nicht mehrfach gekauft werden
-- Nutze "Restore Purchases"
-- Bei Test: Account wechseln oder Refund via Play Console
-
 ---
 
 ## 🌍 Internationaler Verkauf
 
-### Was automatisch funktioniert:
-✅ Google Play rechnet Währungen automatisch um
-✅ Steuern werden automatisch abgezogen
-✅ RevenueCat funktioniert global
+**Was automatisch funktioniert:**
+- ✅ Google Play rechnet Währungen automatisch um
+- ✅ Steuern werden automatisch abgezogen
+- ✅ RevenueCat funktioniert global
 
-### Was du tun musst:
+**Was du tun musst:**
 
-#### 1. Länder freischalten
+### Länder freischalten
 ```
 Play Console → Release → Production → Countries/regions
 ```
@@ -323,30 +423,14 @@ Play Console → Release → Production → Countries/regions
 - **Phase 2:** EU (FR, IT, ES, NL, etc.)
 - **Phase 3:** Global (USA, UK, CA, AU)
 
-#### 2. Preise anpassen (optional)
-- **Standard:** Google rechnet um (€1.99 → $2.19)
-- **Optional:** Manuell setzen (€1.99 → $1.99)
+### Preise anpassen (optional)
+- **Standard:** Google rechnet um (€1,99 → $2,19)
+- **Optional:** Manuell setzen (€1,99 → $1,99)
 - **Tipp:** Runde Beträge wirken attraktiver
-
-#### 3. App übersetzen (optional)
-Deine App unterstützt bereits:
-- ✅ Deutsch (DE)
-- ✅ English (EN)
-- ✅ हिन्दी (Hindi)
-
-Für weitere Länder:
-- Französisch, Spanisch, Italienisch ergänzen
-- Play Store Listing übersetzen
-- Screenshots lokalisieren
 
 ---
 
-## 📚 Weitere Ressourcen
-
-**Detaillierte Anleitungen:**
-- [REVENUECAT-SETUP.md](./REVENUECAT-SETUP.md) - RevenueCat im Detail
-- [GOOGLE-PLAY-SETUP.md](./GOOGLE-PLAY-SETUP.md) - Play Console im Detail
-- [EXTERNAL-TASKS.md](./EXTERNAL-TASKS.md) - Legal Docs Vorlagen
+## 🎓 Weitere Ressourcen
 
 **Externe Docs:**
 - [RevenueCat Docs](https://www.revenuecat.com/docs)
@@ -357,4 +441,4 @@ Für weitere Länder:
 
 **🎯 Mit dieser Anleitung bist du produktionsbereit!**
 
-Fragen? Schau in die detaillierten Guides oder Google Play / RevenueCat Support.
+Bei Problemen: Google Play / RevenueCat Support kontaktieren

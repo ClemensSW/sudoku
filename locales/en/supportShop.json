@@ -125,6 +125,8 @@
     "imagePerYear": "{{count}} Images/Year",
     "imageLifetime": "Unlock 1 Image",
     "streakShields": "3 Shields/Week",
+    "streakShieldsMonthly": "3 Shields/Week",
+    "streakShieldsYearly": "4 Shields/Week",
     "adFree": "Ad-Free"
   },
   "shieldBanner": {

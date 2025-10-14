@@ -295,6 +295,7 @@ async function addToPlayHistory(
 
 /**
  * Prüft und führt wöchentlichen Schutzschild-Reset durch (jeden Montag)
+ * Yearly: 4 Schilde, Monthly: 3 Schilde, Free: 2 Schilde
  */
 export async function checkWeeklyShieldReset(): Promise<void> {
   try {
@@ -321,14 +322,17 @@ export async function checkWeeklyShieldReset(): Promise<void> {
     if (now >= nextMonday) {
       // Reset ist fällig!
       const supporterStatus = await getSupporterStatus();
-      const maxShields = supporterStatus.isPremiumSubscriber ? 3 : 2;
+
+      // Dynamische Berechnung: Yearly=4, Monthly=3, Free/One-time=2
+      const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
+      const maxShields = await getMaxWeeklyShields(supporterStatus);
 
       stats.dailyStreak.shieldsAvailable = maxShields;
       stats.dailyStreak.shieldsUsedThisWeek = 0;
       stats.dailyStreak.lastShieldResetDate = formatDateISO(now); // Setze auf HEUTE, nicht nextMonday
 
       await saveStats(stats);
-      console.log(`[Shield Reset] ✅ Weekly shield reset: ${maxShields} shields restored`);
+      console.log(`[Shield Reset] ✅ Weekly shield reset: ${maxShields} shields restored (Yearly: 4, Monthly: 3, Free: 2)`);
       console.log(`[Shield Reset] Next reset will be on: ${formatDateISO(getNextMonday(now))}`);
     } else {
       console.log('[Shield Reset] ❌ Not due yet');
@@ -473,7 +477,8 @@ export async function getStreakStats() {
   if (!stats.dailyStreak) return null;
 
   const supporterStatus = await getSupporterStatus();
-  const maxRegularShields = supporterStatus.isPremiumSubscriber ? 3 : 2;
+  const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
+  const maxRegularShields = await getMaxWeeklyShields(supporterStatus);
 
   return {
     currentStreak: stats.dailyStreak.currentStreak,
@@ -503,10 +508,16 @@ export async function getMonthData(yearMonth: string): Promise<MonthlyPlayData |
 /**
  * Füllt Schutzschilder nach einem Kauf auf
  *
- * @param purchaseType - 'one-time' = aktuelles Maximum auffüllen (2 für Free, 3 für Premium)
- *                      'subscription' = sofort auf 3 auffüllen
+ * @param purchaseType - 'one-time' = aktuelles Maximum auffüllen (2 für Free, 3/4 für Premium)
+ *                      'subscription' = dynamisch (Yearly=4, Monthly=3)
+ * @param productId - Optional: Product-ID des Kaufs (z.B. "yearly_support", "monthly_support")
+ *                    Wenn übergeben, wird direkt aus der ID erkannt ob yearly (4 Schilde) oder monthly (3 Schilde)
+ *                    ohne auf RevenueCat-Sync zu warten
  */
-export async function refillShields(purchaseType: 'one-time' | 'subscription' = 'one-time'): Promise<void> {
+export async function refillShields(
+  purchaseType: 'one-time' | 'subscription' = 'one-time',
+  productId?: string
+): Promise<void> {
   try {
     const stats = await loadStats();
     if (!stats.dailyStreak) {
@@ -514,19 +525,36 @@ export async function refillShields(purchaseType: 'one-time' | 'subscription' = 
       return;
     }
 
-    const supporterStatus = await getSupporterStatus();
+    let maxShields: 2 | 3 | 4;
 
-    if (purchaseType === 'subscription') {
-      // Subscription: Sofort auf 3 auffüllen
-      stats.dailyStreak.shieldsAvailable = 3;
-      console.log('[Daily Streak] 🛡️ Subscription purchase: Shields refilled to 3');
+    // Falls productId übergeben wurde: Direkt aus Product-ID erkennen (schneller, kein RevenueCat-Wait)
+    if (productId) {
+      const isYearly = productId.toLowerCase().includes('yearly');
+
+      if (purchaseType === 'subscription') {
+        maxShields = isYearly ? 4 : 3;
+        console.log(`[Daily Streak] 🛡️ Subscription purchase (from productId): ${productId} → ${maxShields} shields (Yearly=4, Monthly=3)`);
+      } else {
+        // One-time: Prüfe aktuellen Supporter-Status für Maximum
+        const supporterStatus = await getSupporterStatus();
+        const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
+        maxShields = await getMaxWeeklyShields(supporterStatus);
+        console.log(`[Daily Streak] 🛡️ One-time purchase: Shields refilled to ${maxShields}`);
+      }
     } else {
-      // One-time: Auf aktuelles Maximum auffüllen
-      const maxShields = supporterStatus.isPremiumSubscriber ? 3 : 2;
-      stats.dailyStreak.shieldsAvailable = maxShields;
-      console.log(`[Daily Streak] 🛡️ One-time purchase: Shields refilled to ${maxShields}`);
+      // Fallback: Wie vorher (holt von RevenueCat)
+      const supporterStatus = await getSupporterStatus();
+      const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
+      maxShields = await getMaxWeeklyShields(supporterStatus);
+
+      if (purchaseType === 'subscription') {
+        console.log(`[Daily Streak] 🛡️ Subscription purchase (from RevenueCat): Shields refilled to ${maxShields} (Yearly=4, Monthly=3)`);
+      } else {
+        console.log(`[Daily Streak] 🛡️ One-time purchase: Shields refilled to ${maxShields}`);
+      }
     }
 
+    stats.dailyStreak.shieldsAvailable = maxShields;
     await saveStats(stats);
     console.log('[Daily Streak] Shields successfully refilled and saved');
   } catch (error) {

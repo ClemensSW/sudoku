@@ -125,6 +125,8 @@
     "imagePerYear": "{{count}} Bilder/Jahr",
     "imageLifetime": "1 Bild freischalten",
     "streakShields": "3 Schilde/Woche",
+    "streakShieldsMonthly": "3 Schilde/Woche",
+    "streakShieldsYearly": "4 Schilde/Woche",
     "adFree": "Werbefrei"
   },
   "shieldBanner": {

@@ -125,6 +125,8 @@
     "imagePerYear": "{{count}} छवियाँ/वर्ष",
     "imageLifetime": "1 छवि अनलॉक करें",
     "streakShields": "3 शील्ड/सप्ताह",
+    "streakShieldsMonthly": "3 शील्ड/सप्ताह",
+    "streakShieldsYearly": "4 शील्ड/सप्ताह",
     "adFree": "विज्ञापन मुक्त"
   },
   "shieldBanner": {

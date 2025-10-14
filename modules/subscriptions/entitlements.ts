@@ -123,6 +123,48 @@ export async function getEpMultiplier(
 }
 
 /**
+ * Prüft ob der Nutzer ein jährliches Abo hat
+ * @param status Supporter-Status (optional, wird geholt wenn nicht übergeben)
+ * @returns true wenn yearly subscription aktiv ist
+ */
+export async function isYearlySubscriber(
+  status?: SupporterStatus
+): Promise<boolean> {
+  const supporterStatus = status || (await getSupporterStatus());
+
+  if (!supporterStatus.isPremiumSubscriber || !supporterStatus.productId) {
+    return false;
+  }
+
+  // Check if productId contains "yearly"
+  return supporterStatus.productId.includes('yearly');
+}
+
+/**
+ * Gibt die maximale Anzahl an Schilden pro Woche zurück
+ * @param status Supporter-Status (optional, wird geholt wenn nicht übergeben)
+ * @returns 4 für Yearly, 3 für Monthly, 2 für Free/One-time
+ */
+export async function getMaxWeeklyShields(
+  status?: SupporterStatus
+): Promise<2 | 3 | 4> {
+  const supporterStatus = status || (await getSupporterStatus());
+
+  // Yearly Subscriber: 4 Schilde/Woche
+  if (await isYearlySubscriber(supporterStatus)) {
+    return 4;
+  }
+
+  // Monthly Subscriber: 3 Schilde/Woche
+  if (supporterStatus.isPremiumSubscriber) {
+    return 3;
+  }
+
+  // Free/One-time: 2 Schilde/Woche
+  return 2;
+}
+
+/**
  * Gibt die aktuelle Image-Unlock-Quota zurück
  * Unterscheidet zwischen One-time (1 lifetime), Monthly (1/Monat) und Yearly (2/Monat)
  * @returns ImageUnlockQuota mit allen Details

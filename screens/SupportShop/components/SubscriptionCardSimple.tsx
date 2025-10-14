@@ -277,7 +277,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           fontWeight: '600',
                         }
                       ]}>
-                        {t('benefits.streakShields')}
+                        {isYearly ? t('benefits.streakShieldsYearly') : t('benefits.streakShieldsMonthly')}
                       </Text>
                     </View>
                     <View style={styles.benefit}>
@@ -397,7 +397,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       textShadowRadius: isActive ? 1 : undefined,
                     }
                   ]}>
-                    {t('benefits.streakShields')}
+                    {isYearly ? t('benefits.streakShieldsYearly') : t('benefits.streakShieldsMonthly')}
                   </Text>
                 </View>
                 <View style={styles.benefit}>

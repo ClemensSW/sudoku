@@ -168,22 +168,31 @@ class BillingManager {
   }
 
   private async updateProductPrices(): Promise<void> {
-    if (!this.offerings) return;
+    if (!this.offerings) {
+      console.warn('[BillingManager] No offerings available, using fallback prices from i18n');
+      return;
+    }
 
     // Update product prices from RevenueCat packages
     const allProducts = [...this.products, ...this.subscriptions];
-    
+
     for (const product of allProducts) {
       if (product.revenueCatId) {
         const rcPackage = this.offerings.availablePackages.find(
           pkg => pkg.product.identifier === product.revenueCatId
         );
-        
+
         if (rcPackage) {
-          product.price = rcPackage.product.priceString;
+          const revenueCatPrice = rcPackage.product.priceString;
+          console.log(`[BillingManager] Updated price for ${product.productId}: ${product.price} → ${revenueCatPrice}`);
+          product.price = revenueCatPrice;
+        } else {
+          console.warn(`[BillingManager] No RevenueCat package found for ${product.productId}, keeping fallback price: ${product.price}`);
         }
       }
     }
+
+    console.log('[BillingManager] Price update completed');
   }
 
   public getAllProducts(): Product[] {

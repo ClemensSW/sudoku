@@ -65,6 +65,12 @@ export async function signInWithGoogle(): Promise<User | null> {
     // 2. Sign in and get Google ID Token
     const { idToken, user: googleUser } = await GoogleSignin.signIn();
 
+    // Check if user object is present
+    if (!googleUser || !idToken) {
+      console.log('[GoogleAuth] Sign-in returned incomplete data - user cancelled or failed');
+      return null;
+    }
+
     console.log('[GoogleAuth] ✅ Google Sign-In successful:', {
       email: googleUser.email,
       name: googleUser.name,

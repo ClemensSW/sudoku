@@ -145,33 +145,6 @@
       "goodStart": "Good Start! 🎯",
       "start": "Start Your Streak!"
     },
-    "monthlyReward": {
-      "title": "Congratulations!",
-      "subtitle": "You have completed {{month}}!",
-      "claim": "Claim Reward",
-      "rewards": {
-        "bonusShields": {
-          "title": "+2 Bonus Shields",
-          "description": "These shields remain permanently available!"
-        },
-        "epBoost": {
-          "title": "+{{value}} XP Boost",
-          "description": "Directly credited to your level account!"
-        },
-        "avatarFrame": {
-          "title": "Exclusive Avatar Frame",
-          "description": "Show everyone your achievement!"
-        },
-        "titleBadge": {
-          "title": "Special Title Badge",
-          "description": "Streak Master {{month}}"
-        },
-        "default": {
-          "title": "Reward",
-          "description": "Congratulations!"
-        }
-      }
-    },
     "months": {
       "january": "January",
       "february": "February",

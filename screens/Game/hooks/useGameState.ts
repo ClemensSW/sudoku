@@ -17,7 +17,7 @@ import {
 } from "@/utils/sudoku";
 import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
-import { updateDailyStreak, checkWeeklyShieldReset, checkMonthlyCompletion, getCurrentYearMonth } from "@/utils/dailyStreak";
+import { updateDailyStreak, checkWeeklyShieldReset } from "@/utils/dailyStreak";
 
 // Constants for game
 const INITIAL_HINTS = 3;
@@ -359,10 +359,6 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       console.log('[Game] === GAME COMPLETE - Updating Daily Streak ===');
       console.log('[Game] ========================================');
       await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
-
-      const currentMonth = getCurrentYearMonth();
-      console.log('[Game] Checking monthly completion for:', currentMonth);
-      await checkMonthlyCompletion(currentMonth); // Check if month is completed
       console.log('[Game] Daily Streak update completed!');
     } catch (error) {
       console.error('[Game] ❌ Error updating daily streak:', error);

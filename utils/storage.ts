@@ -94,12 +94,6 @@ export type ColorUnlockData = {
 export type MonthlyPlayData = {
   days: number[];                       // Array von gespielten Tagen [1, 3, 5, ...]
   shieldDays: number[];                 // Tage an denen Schutzschild eingesetzt wurde
-  completed: boolean;                   // true wenn alle Tage des Monats gespielt
-  reward: {
-    claimed: boolean;
-    type: 'bonus_shields' | 'ep_boost' | 'avatar_frame' | 'title_badge';
-    value: any;
-  } | null;
 };
 
 // Daily Streak Datenstruktur
@@ -242,7 +236,8 @@ export const loadStats = async (): Promise<GameStats> => {
 
           // Sammle alle gespielten Tage aus der History
           Object.entries(parsedStats.dailyStreak.playHistory).forEach(([yearMonth, monthData]) => {
-            monthData.days.forEach((day) => {
+            const typedMonthData = monthData as MonthlyPlayData;
+            typedMonthData.days.forEach((day: number) => {
               const [year, month] = yearMonth.split('-').map(Number);
               const date = new Date(year, month - 1, day);
               allDates.push(date);

@@ -20,7 +20,6 @@ interface StreakCalendarGridProps {
   daysInMonth: number;
   playedDays: number;
   progressPercentage: number;
-  isCompleted: boolean;
   onPreviousMonth: () => void;
   onNextMonth: () => void;
   canGoBack: boolean;
@@ -36,7 +35,6 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
   daysInMonth,
   playedDays,
   progressPercentage,
-  isCompleted,
   onPreviousMonth,
   onNextMonth,
   canGoBack,
@@ -279,17 +277,6 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>
             {t('streakTab.calendar.monthProgress', { count: playedDays, total: daysInMonth })}
           </Text>
-          {isCompleted && (
-            <LinearGradient
-              colors={['#95D6A4', '#B3E59F']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.completedBadge}
-            >
-              <Feather name="check-circle" size={14} color="white" />
-              <Text style={styles.completedText}>Vollständig</Text>
-            </LinearGradient>
-          )}
         </View>
       </View>
     </View>

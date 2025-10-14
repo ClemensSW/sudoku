@@ -145,33 +145,6 @@
       "goodStart": "Guter Start! 🎯",
       "start": "Starte deine Serie!"
     },
-    "monthlyReward": {
-      "title": "Gratulation!",
-      "subtitle": "Du hast den {{month}} vollständig abgeschlossen!",
-      "claim": "Belohnung einlösen",
-      "rewards": {
-        "bonusShields": {
-          "title": "+2 Bonus-Schutzschilde",
-          "description": "Diese Schutzschilde bleiben dauerhaft verfügbar!"
-        },
-        "epBoost": {
-          "title": "+{{value}} EP Boost",
-          "description": "Direkt auf dein Level-Konto gutgeschrieben!"
-        },
-        "avatarFrame": {
-          "title": "Exklusiver Avatar-Rahmen",
-          "description": "Zeige allen deinen Erfolg!"
-        },
-        "titleBadge": {
-          "title": "Spezielle Titel-Badge",
-          "description": "Serien-Meister {{month}}"
-        },
-        "default": {
-          "title": "Belohnung",
-          "description": "Gratulation!"
-        }
-      }
-    },
     "months": {
       "january": "Januar",
       "february": "Februar",

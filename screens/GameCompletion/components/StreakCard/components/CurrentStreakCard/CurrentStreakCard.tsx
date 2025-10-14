@@ -89,7 +89,6 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
           daysInMonth={daysInMonth}
           playedDays={playedDays}
           progressPercentage={progressPercentage}
-          isCompleted={monthData?.completed || false}
           onPreviousMonth={handlePreviousMonth}
           onNextMonth={handleNextMonth}
           canGoBack={canGoBack()}

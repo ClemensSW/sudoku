@@ -6,16 +6,14 @@ import { GameStats } from '@/utils/storage';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing } from '@/utils/theme';
-import { getNextMonday, claimMonthlyReward } from '@/utils/dailyStreak';
+import { getNextMonday } from '@/utils/dailyStreak';
 import { getSupporterStatus } from '@/modules/subscriptions/entitlements';
-import { loadStats, saveStats } from '@/utils/storage';
 
 // Import components from GameCompletion/StreakCard
 import {
   CurrentStreakCard,
   ShieldIndicator,
   StreakStats,
-  MonthlyRewardModal,
 } from '@/screens/GameCompletion/components/StreakCard/components';
 
 interface StreakTabProps {
@@ -32,10 +30,8 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [maxRegularShields, setMaxRegularShields] = useState<2 | 3 | 4>(2);
   const [supporterStatus, setSupporterStatus] = useState<'none' | 'one-time' | 'subscription'>('none');
-  const [showRewardModal, setShowRewardModal] = useState(false);
-  const [pendingRewardMonth, setPendingRewardMonth] = useState<string | null>(null);
 
-  // Check premium status for shield count & pending rewards
+  // Check premium status for shield count
   // Aktualisiert sich bei jedem Screen-Focus (z.B. nach Kauf im SupportShop)
   useEffect(() => {
     if (!isFocused) return;
@@ -50,18 +46,6 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
         const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
         const maxShields = await getMaxWeeklyShields(status);
         setMaxRegularShields(maxShields);
-
-        // Check for unclaimed rewards
-        if (stats.dailyStreak) {
-          const playHistory = stats.dailyStreak.playHistory;
-          for (const [yearMonth, monthData] of Object.entries(playHistory)) {
-            if (monthData.completed && monthData.reward && !monthData.reward.claimed) {
-              setPendingRewardMonth(yearMonth);
-              setShowRewardModal(true);
-              break; // Show only first unclaimed reward
-            }
-          }
-        }
       } catch (error) {
         console.error('[StreakTab] Error checking premium status:', error);
       }
@@ -83,29 +67,6 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   // maxRegularShields wird jetzt dynamisch via useEffect berechnet (Yearly=4, Monthly=3, Free=2)
   // Berechne den nächsten Montag ab HEUTE, nicht ab lastShieldResetDate
   const nextResetDate = getNextMonday(new Date());
-
-  // Handler für Reward-Claim
-  const handleClaimReward = async () => {
-    if (!pendingRewardMonth) return;
-
-    try {
-      const success = await claimMonthlyReward(pendingRewardMonth);
-      if (success) {
-        // Reload stats to update UI
-        const updatedStats = await loadStats();
-        // Trigger stats refresh in parent (Leistung.tsx)
-        // For now, just close modal
-        setShowRewardModal(false);
-        setPendingRewardMonth(null);
-      }
-    } catch (error) {
-      console.error('[StreakTab] Error claiming reward:', error);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setShowRewardModal(false);
-  };
 
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
@@ -140,18 +101,6 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
           totalShieldsUsed={dailyStreak.totalShieldsUsed}
         />
       </ScrollView>
-
-      {/* Monthly Reward Modal */}
-      {pendingRewardMonth && (
-        <MonthlyRewardModal
-          visible={showRewardModal}
-          yearMonth={pendingRewardMonth}
-          rewardType={dailyStreak.playHistory[pendingRewardMonth]?.reward?.type || 'bonus_shields'}
-          rewardValue={dailyStreak.playHistory[pendingRewardMonth]?.reward?.value}
-          onClaim={handleClaimReward}
-          onClose={handleCloseModal}
-        />
-      )}
     </Animated.View>
   );
 };

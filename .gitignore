@@ -9,6 +9,11 @@ dist/
 web-build/
 expo-env.d.ts
 
+# Native folders (CNG - Continuous Native Generation)
+# These are generated during build via 'npx expo prebuild'
+android/
+ios/
+
 # Native
 *.orig.*
 *.jks

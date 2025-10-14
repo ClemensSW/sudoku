@@ -82,15 +82,19 @@ __tests__/
 # Coverage Reports
 coverage/
 
-# Build artifacts from local builds (if any)
-android/app/build/
-ios/build/
+# ============================================================================
+# CONTINUOUS NATIVE GENERATION (CNG)
+# ============================================================================
+# android/ and ios/ folders are NOT committed to git
+# They are generated during EAS build via 'npx expo prebuild'
+# This ensures all native modules are properly linked in every build
 
 # ============================================================================
 # IMPORTANT: Files that MUST be included in builds
 # ============================================================================
 # The following files are EXCLUDED from ignore (i.e., INCLUDED in build):
 # - README.md (app information)
+# - google-services.json (Firebase configuration for Android)
 # - assets/legal/*.md (AGBs, Datenschutz, Impressum, Widerruf - used in app)
 # - All source code in app/, components/, screens/, utils/, etc.
 # - All assets in assets/ (images, fonts, animations, legal docs)

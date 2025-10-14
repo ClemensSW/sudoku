@@ -25,6 +25,8 @@ import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
 import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import { useNavigation } from "@/contexts/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { signInWithGoogle } from "@/utils/auth/googleAuth";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
@@ -83,6 +85,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const { toggleMusic } = useBackgroundMusic();
   const { hideBottomNav, resetBottomNav } = useNavigation();
   const { updateTheme } = theme;
+  const { user, isLoggedIn, loading: authLoading } = useAuth();
 
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -98,9 +101,6 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [isChangingTheme, setIsChangingTheme] = useState(false);
-
-  // Auth state (mock for now - will be replaced with actual auth)
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Determine if we should show game-specific features
   const showGameFeatures = fromGame && !!onQuitGame;
@@ -245,21 +245,53 @@ const Settings: React.FC<SettingsScreenProps> = ({
     triggerHaptic("success");
   };
 
-  const handleGoogleSignIn = () => {
-    triggerHaptic("light");
-    // TODO: Implement Google Sign-In
-    showAlert({
-      title: t("authSection.googleSignIn"),
-      message: t("authSection.inDevelopment"),
-      type: "info",
-      buttons: [
-        {
-          text: "OK",
-          style: "primary",
-          onPress: () => {},
-        },
-      ],
-    });
+  const handleGoogleSignIn = async () => {
+    try {
+      triggerHaptic("light");
+      console.log('[Settings] Starting Google Sign-In...');
+
+      // Zeige Loading-State (via authLoading wird automatisch getrackt)
+      const user = await signInWithGoogle();
+
+      if (user) {
+        // Success!
+        console.log('[Settings] ✅ Google Sign-In successful:', user.email);
+        triggerHaptic("success");
+
+        showAlert({
+          title: t("authSection.signInSuccess") || "Erfolgreich angemeldet!",
+          message: `Willkommen ${user.displayName || user.email}!`,
+          type: "success",
+          buttons: [
+            {
+              text: "OK",
+              style: "primary",
+              onPress: () => {},
+            },
+          ],
+        });
+      } else {
+        // User cancelled
+        console.log('[Settings] User cancelled Google Sign-In');
+      }
+    } catch (error: any) {
+      console.error('[Settings] ❌ Google Sign-In error:', error);
+      triggerHaptic("error");
+
+      // Show error message
+      showAlert({
+        title: t("authSection.signInError") || "Anmeldung fehlgeschlagen",
+        message: error.message || "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+        type: "error",
+        buttons: [
+          {
+            text: "OK",
+            style: "primary",
+            onPress: () => {},
+          },
+        ],
+      });
+    }
   };
 
   const handleAppleSignIn = () => {

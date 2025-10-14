@@ -37,7 +37,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         },
       ]}
     >
-      {/* Corner Badge - Top Right */}
+      {/* Corner Badge - Top Right - Development Badge (Requires Dev Build) */}
       <View style={styles.cornerBadge}>
         <DevelopmentBadge />
       </View>
@@ -67,7 +67,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
             provider="google"
             label={t('authSection.googleSignIn')}
             onPress={onGooglePress || (() => {})}
-            disabled={true} // Disabled während Entwicklung
+            disabled={true} // ❌ DISABLED - Requires Development Build (not Expo Go)
           />
         )}
 
@@ -76,7 +76,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
             provider="apple"
             label={t('authSection.appleSignIn')}
             onPress={onApplePress || (() => {})}
-            disabled={true} // Disabled während Entwicklung
+            disabled={true} // ❌ DISABLED - Requires Development Build (not Expo Go)
           />
         )}
 

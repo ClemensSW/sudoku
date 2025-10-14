@@ -14,6 +14,8 @@ import { Platform, View, StyleSheet } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import BottomNavigation from "@/components/BottomNavigation/BottomNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { initializeFirebase } from "@/utils/cloudSync/firebaseConfig";
+import { AuthProvider } from "@/contexts/AuthProvider";
 
 /**
  * App Container - Main Layout Component
@@ -87,6 +89,11 @@ function AppContainer() {
  * Sets up all providers in the correct order
  */
 export default function AppLayout() {
+  // Initialize Firebase on app startup
+  useEffect(() => {
+    initializeFirebase();
+  }, []);
+
   return (
     <GestureHandlerRootView style={styles.gestureRoot}>
       <SafeAreaProvider>
@@ -95,11 +102,13 @@ export default function AppLayout() {
             <ColorProvider>
               <BackgroundMusicProvider>
                 <NavigationProvider>
-                  <BottomSheetModalProvider>
-                    <AlertProvider>
-                      <AppContainer />
-                    </AlertProvider>
-                  </BottomSheetModalProvider>
+                  <AuthProvider>
+                    <BottomSheetModalProvider>
+                      <AlertProvider>
+                        <AppContainer />
+                      </AlertProvider>
+                    </BottomSheetModalProvider>
+                  </AuthProvider>
                 </NavigationProvider>
               </BackgroundMusicProvider>
             </ColorProvider>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1088781317667",
+    "project_id": "sudoku-duo-79ddf",
+    "storage_bucket": "sudoku-duo-79ddf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088781317667:android:695615ef6ecbeb0ab8a396",
+        "android_client_info": {
+          "package_name": "de.playfusiongate.sudokuduo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1088781317667-362ho9im6tvpatev5eh461e9qidlr4h6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.playfusiongate.sudokuduo",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1088781317667-q8rjg6nvk723ie0rekrua6hrc1kuiggt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjWIhRPYe8_kcVS9rcnZAHsvM5nwyjy3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088781317667-q8rjg6nvk723ie0rekrua6hrc1kuiggt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

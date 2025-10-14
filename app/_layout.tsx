@@ -16,6 +16,7 @@ import BottomNavigation from "@/components/BottomNavigation/BottomNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { initializeFirebase } from "@/utils/cloudSync/firebaseConfig";
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { configureGoogleSignIn } from "@/utils/auth/googleAuth";
 
 /**
  * App Container - Main Layout Component
@@ -89,9 +90,16 @@ function AppContainer() {
  * Sets up all providers in the correct order
  */
 export default function AppLayout() {
-  // Initialize Firebase on app startup
+  // Initialize Firebase & Google Sign-In on app startup
   useEffect(() => {
     initializeFirebase();
+
+    // Configure Google Sign-In (only in Development Build)
+    try {
+      configureGoogleSignIn();
+    } catch (error) {
+      console.warn('[App] Google Sign-In not available (Expo Go detected)');
+    }
   }, []);
 
   return (

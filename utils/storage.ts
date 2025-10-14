@@ -474,10 +474,14 @@ export const saveSettings = async (settings: GameSettings, isAutomatic: boolean 
 
     // NEU: Feuere Event wenn Settings automatisch geändert wurden
     // Damit useGameSettings die Settings neu laden kann
+    // WICHTIG: Event mit Delay feuern um AsyncStorage-Commit abzuwarten
     if (isAutomatic && typeof window !== 'undefined') {
-      // @ts-ignore - Custom Event für Settings-Änderungen
-      window.dispatchEvent?.(new Event('settingsChanged'));
-      console.log("[saveSettings] Dispatched settingsChanged event");
+      // Warte 10ms um sicherzustellen dass AsyncStorage commit fertig ist
+      setTimeout(() => {
+        // @ts-ignore - Custom Event für Settings-Änderungen
+        window.dispatchEvent?.(new Event('settingsChanged'));
+        console.log("[saveSettings] Dispatched settingsChanged event (with 10ms delay for AsyncStorage commit)");
+      }, 10);
     }
   } catch (error) {
     console.error("Error saving settings:", error);

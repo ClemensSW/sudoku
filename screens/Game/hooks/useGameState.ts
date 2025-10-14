@@ -134,7 +134,13 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       if (currentSettings) {
         const adjustedSettings = await applyDifficultyBasedSettings(difficulty, currentSettings);
         await saveSettings(adjustedSettings, true); // isAutomatic = true → kein Tracking-Update
-        console.log(`[Game] Applied difficulty-based settings for ${difficulty}:`, {
+
+        // WICHTIG: Warte zusätzlich 50ms für AsyncStorage-Commit + Event-Propagierung
+        // saveSettings feuert Event mit 10ms Delay, wir warten hier nochmal 50ms
+        // Gesamt: 60ms Buffer damit useGameSettings die neuen Settings laden kann
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+        console.log(`[Game] Settings applied and saved for ${difficulty}:`, {
           highlightSameValues: adjustedSettings.highlightSameValues,
           highlightRelatedCells: adjustedSettings.highlightRelatedCells,
           showMistakes: adjustedSettings.showMistakes,

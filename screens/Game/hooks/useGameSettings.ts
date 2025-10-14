@@ -39,7 +39,21 @@ export const useGameSettings = () => {
       }
     };
 
-    loadGameSettings();
+    // WICHTIG: Verzögertes Laden beim ersten Mount
+    // Gibt startNewGame() Zeit die Settings anzupassen (läuft bei ~300ms)
+    if (refreshTrigger === 0) {
+      // Initial mount - warte 150ms bevor Settings geladen werden
+      // startNewGame passt Settings in den ersten 150ms an
+      const timer = setTimeout(() => {
+        console.log("[useGameSettings] Initial load after 150ms delay");
+        loadGameSettings();
+      }, 150);
+      return () => clearTimeout(timer);
+    } else {
+      // Reload durch Event - lade sofort (Settings wurden bereits angepasst)
+      console.log("[useGameSettings] Reloading due to event (refreshTrigger =", refreshTrigger, ")");
+      loadGameSettings();
+    }
   }, [refreshTrigger]); // ← WICHTIG: Reagiert auf refreshTrigger
 
   // Funktion zum manuellen Neu-Laden der Settings

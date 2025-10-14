@@ -8,7 +8,7 @@
     "xpDescription": "Deine Reise",
     "streak": "In Serie",
     "streakDescription": "Dein Rekord",
-    "dailyStreak": "Tages-Streak",
+    "dailyStreak": "Tages-Serie",
     "dailyStreakDescription": "Deine Serie",
     "pictures": "Bilder",
     "picture": "Bild",
@@ -92,9 +92,9 @@
     }
   },
   "streakTab": {
-    "title": "Täglicher Streak",
-    "currentStreak": "Aktueller Streak",
-    "longestStreak": "Längster Streak",
+    "title": "Tägliche Serie",
+    "currentStreak": "Aktuelle Serie",
+    "longestStreak": "Längste Serie",
     "currentStreakLabel": "Aktuelle Serie",
     "longestStreakLabel": "Längste Serie",
     "day": "Tag",
@@ -111,7 +111,7 @@
       "nextResetValue_one": "in {{count}} Tag",
       "nextResetValue_other": "in {{count}} Tagen",
       "bonusShields": "Bonus-Schutzschilde",
-      "description": "Schützt deinen Streak automatisch, wenn du einen Tag verpasst"
+      "description": "Schützt deine Serie automatisch, wenn du einen Tag verpasst"
     },
     "calendar": {
       "played": "Gespielt",
@@ -139,11 +139,11 @@
     "motivation": {
       "record": "Neuer Rekord! 🏆",
       "legendary": "Legendär! 🌟",
-      "twoWeeks": "2 Wochen Streak! 💪",
+      "twoWeeks": "2 Wochen Serie! 💪",
       "oneWeek": "Eine Woche geschafft! 🔥",
       "keepGoing": "Weiter so! 👍",
       "goodStart": "Guter Start! 🎯",
-      "start": "Starte deinen Streak!"
+      "start": "Starte deine Serie!"
     },
     "monthlyReward": {
       "title": "Gratulation!",
@@ -164,7 +164,7 @@
         },
         "titleBadge": {
           "title": "Spezielle Titel-Badge",
-          "description": "Streak Master {{month}}"
+          "description": "Serien-Meister {{month}}"
         },
         "default": {
           "title": "Belohnung",

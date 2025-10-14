@@ -164,7 +164,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         <View style={styles.infoRow}>
           <Feather name="info" size={16} color={colors.textSecondary} />
           <Text style={[styles.infoDescription, { color: colors.textSecondary }]}>
-            {t('streakTab.shields.description', { defaultValue: 'Schützt deinen Streak automatisch, wenn du einen Tag verpasst' })}
+            {t('streakTab.shields.description', { defaultValue: 'Schützt deine Serie automatisch, wenn du einen Tag verpasst' })}
           </Text>
         </View>
       </View>

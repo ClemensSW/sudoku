@@ -41,8 +41,8 @@
         "description": "Fordere dich heraus und steigere dein Niveau – jede Stufe bringt mehr Punkte!"
       },
       "streak": {
-        "title": "Tägliche Streak",
-        "description": "Spiele täglich, um deine Streak zu halten und Bonuspunkte zu sammeln."
+        "title": "Tägliche Serie",
+        "description": "Spiele täglich, um deine Serie zu halten und Bonuspunkte zu sammeln."
       }
     },
     "sudokuTips": {

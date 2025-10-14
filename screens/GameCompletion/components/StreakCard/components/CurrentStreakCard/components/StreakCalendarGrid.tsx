@@ -68,7 +68,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         return {
           backgroundColor: theme.isDark
             ? 'rgba(255, 255, 255, 0.08)'  // Subtiler weißer Ton
-            : 'rgba(0, 0, 0, 0.03)',  // Sehr leichter Schatten
+            : '#FFFFFF',  // Reines Weiß in Light Mode
           borderColor: theme.isDark ? '#FFFFFF' : '#000000',  // Klar & neutral
           borderWidth: 2,
           borderStyle: 'solid',

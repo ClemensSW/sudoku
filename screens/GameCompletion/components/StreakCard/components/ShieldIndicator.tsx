@@ -12,9 +12,9 @@ import ShieldEmptyIcon from '@/assets/svg/shieldEmpty.svg';
 import GiftIcon from '@/assets/svg/gift.svg';
 
 interface ShieldIndicatorProps {
-  available: number; // Verfügbare reguläre Schutzschilder
-  maxRegular: number; // Maximum reguläre Schutzschilder (2 oder 3)
-  bonusShields: number; // Bonus-Schutzschilder
+  available: number; // Verfügbare reguläre Schutzschilde
+  maxRegular: number; // Maximum reguläre Schutzschilde (2 oder 3)
+  bonusShields: number; // Bonus-Schutzschilde
   nextResetDate: Date; // Nächster Reset-Termin
   onOpenSupportShop?: () => void; // Callback um Support Shop zu öffnen
   supporterStatus?: 'none' | 'one-time' | 'subscription'; // Supporter Status für dynamischen Premium-Banner
@@ -76,14 +76,14 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         <View style={styles.titleRow}>
           <Feather name="shield" size={20} color="#95D6A4" />
           <Text style={[styles.title, { color: colors.textPrimary }]}>
-            {t('streakTab.shields.title', { defaultValue: 'Schutzschilder' })}
+            {t('streakTab.shields.title', { defaultValue: 'Schutzschilde' })}
           </Text>
         </View>
       </View>
 
       {/* Hero Section: Large Shield Display */}
       <View style={styles.heroSection}>
-        {/* Shield Icons mit SVG - Dynamisch 2 oder 3 Schilder anzeigen */}
+        {/* Shield Icons mit SVG - Dynamisch 2 oder 3 Schilde anzeigen */}
         <View style={styles.shieldsGrid}>
           {Array.from({ length: maxRegular }).map((_, index) => {
             const isFilled = index < available;
@@ -119,7 +119,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
             {totalShields}
           </Text>
           <Text style={[styles.counterLabel, { color: colors.textSecondary }]}>
-            {totalShields === 1 ? 'Schild verfügbar' : 'Schilder verfügbar'}
+            {totalShields === 1 ? 'Schild verfügbar' : 'Schilde verfügbar'}
           </Text>
         </View>
       </View>
@@ -133,7 +133,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
             </View>
             <View style={styles.bonusTextContainer}>
               <Text style={[styles.bonusTitle, { color: colors.textPrimary }]}>
-                Bonus-Schutzschilder
+                Bonus-Schutzschilde
               </Text>
               <Text style={[styles.bonusValue, { color: '#FFD700' }]}>
                 +{bonusShields} Extra
@@ -141,7 +141,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
             </View>
           </View>
           <Text style={[styles.bonusDescription, { color: colors.textSecondary }]}>
-            Diese Schutzschilder bleiben dauerhaft verfügbar!
+            Diese Schutzschilde bleiben dauerhaft verfügbar!
           </Text>
         </View>
       )}
@@ -168,7 +168,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
         </View>
       </View>
 
-      {/* Premium Upsell - NUR wenn keine Schilder verfügbar */}
+      {/* Premium Upsell - NUR wenn keine Schilde verfügbar */}
       {hasNoShields && (() => {
         // Determine which banner to show based on supporter status
         let bannerKey: 'noSupporter' | 'oneTimeSupporter' | 'premiumSubscriber' = 'noSupporter';

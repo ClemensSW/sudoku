@@ -6,22 +6,12 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug",
-        "cache": {
-          "paths": [
-            "node_modules",
-            "android/.gradle"
-          ]
-        }
-      }
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "apk"
       }
     },
     "production": {

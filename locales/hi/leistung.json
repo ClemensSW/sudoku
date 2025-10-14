@@ -102,7 +102,12 @@
     "shields": {
       "title": "ढालें",
       "available": "उपलब्ध",
+      "availableLabel_one": "ढाल उपलब्ध",
+      "availableLabel_other": "ढालें उपलब्ध",
       "nextReset": "अगला रीसेट",
+      "nextResetLabel": "अगला रीसेट:",
+      "nextResetValue_one": "{{count}} दिन में",
+      "nextResetValue_other": "{{count}} दिनों में",
       "bonusShields": "बोनस ढालें",
       "description": "यदि आप एक दिन छूट जाते हैं तो आपकी स्ट्रीक को स्वचालित रूप से सुरक्षित करता है"
     },
@@ -110,7 +115,18 @@
       "played": "खेला गया",
       "shieldUsed": "ढाल का उपयोग किया गया",
       "missed": "छूट गया",
-      "monthProgress": "{{count}}/{{total}} दिन"
+      "monthProgress": "{{count}}/{{total}} दिन",
+      "weekdays": {
+        "short": {
+          "monday": "सोम",
+          "tuesday": "मंगल",
+          "wednesday": "बुध",
+          "thursday": "गुरु",
+          "friday": "शुक्र",
+          "saturday": "शनि",
+          "sunday": "रवि"
+        }
+      }
     },
     "stats": {
       "title": "आंकड़े",

@@ -34,20 +34,20 @@ export const DIFFICULTY_SETTINGS: Record<
     uniqueSolution: true,
   },
   medium: {
-    minCells: 35, //35
-    maxCells: 39, //39
+    minCells: 78, //35
+    maxCells: 78, //39
     symmetric: true,
     uniqueSolution: true,
   },
   hard: {
-    minCells: 27, //27
-    maxCells: 31, //31
+    minCells: 78, //27
+    maxCells: 78, //31
     symmetric: true,
     uniqueSolution: true,
   },
   expert: {
-    minCells: 20, //20
-    maxCells: 24, //24
+    minCells: 78, //20
+    maxCells: 78, //24
     symmetric: false,
     uniqueSolution: true,
   },

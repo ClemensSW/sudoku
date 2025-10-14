@@ -18,6 +18,7 @@ const KEYS = {
   SETTINGS: "@sudoku/settings",
   PAUSED_GAME: "@sudoku/paused_game",
   COLOR_UNLOCK: "@sudoku/color_unlock",
+  SETTINGS_TRACKING: "@sudoku/settings_tracking",
 };
 
 // Spielzustand Typ
@@ -80,6 +81,13 @@ export type GameSettings = {
   soundEffects: boolean;
   backgroundMusic: boolean;
   language: "de" | "en";
+};
+
+// Settings Modification Tracking - trackt ob User Settings manuell verändert hat
+export type SettingsModificationTracking = {
+  highlightSameValuesModified: boolean;
+  highlightRelatedCellsModified: boolean;
+  showMistakesModified: boolean;
 };
 
 // Farbauswahl Typ
@@ -298,6 +306,9 @@ export const updateStatsAfterGame = async (
 
     const currentStats = await loadStats();
 
+    // WICHTIG: Stats VOR dem Update speichern für Auto-Adjust-Prüfung
+    const previousStats = { ...currentStats };
+
     // NEU: XP-Gewinn berechnen MIT Supporter-Bonus
     let xpGain = 0;
     if (won) {
@@ -399,6 +410,11 @@ export const updateStatsAfterGame = async (
 
     console.log("Saving updated stats:", updatedStats);
     await saveStats(updatedStats);
+
+    // NEU: Auto-Adjust Settings wenn Schwierigkeitsgrad freigeschaltet wurde
+    if (won) {
+      await autoAdjustSettingsOnDifficultyUnlock(previousStats, updatedStats);
+    }
   } catch (error) {
     console.error("Error updating statistics:", error);
   }
@@ -425,6 +441,37 @@ export const markMilestoneReached = async (
 // Speichere Einstellungen
 export const saveSettings = async (settings: GameSettings): Promise<void> => {
   try {
+    // Lade vorherige Settings um zu prüfen ob sich relevante Werte geändert haben
+    const previousSettings = await loadSettings();
+    const tracking = await loadSettingsTracking();
+
+    // Prüfe ob User Settings manuell verändert hat (nur wenn vorherige Settings existieren)
+    if (previousSettings) {
+      const updatedTracking = { ...tracking };
+
+      // Markiere als modifiziert wenn sich der Wert geändert hat
+      if (previousSettings.highlightSameValues !== settings.highlightSameValues) {
+        updatedTracking.highlightSameValuesModified = true;
+      }
+      if (previousSettings.highlightRelatedCells !== settings.highlightRelatedCells) {
+        updatedTracking.highlightRelatedCellsModified = true;
+      }
+      if (previousSettings.showMistakes !== settings.showMistakes) {
+        updatedTracking.showMistakesModified = true;
+      }
+
+      // Speichere Tracking nur wenn sich etwas geändert hat
+      if (
+        updatedTracking.highlightSameValuesModified !== tracking.highlightSameValuesModified ||
+        updatedTracking.highlightRelatedCellsModified !== tracking.highlightRelatedCellsModified ||
+        updatedTracking.showMistakesModified !== tracking.showMistakesModified
+      ) {
+        await saveSettingsTracking(updatedTracking);
+        console.log("[saveSettings] Updated modification tracking:", updatedTracking);
+      }
+    }
+
+    // Speichere die Settings selbst
     await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
   } catch (error) {
     console.error("Error saving settings:", error);
@@ -444,6 +491,38 @@ export const loadSettings = async (): Promise<GameSettings | null> => {
       if (parsedSettings.backgroundMusic === undefined) {
         parsedSettings.backgroundMusic = false;
       }
+
+      // MIGRATION: Tracking für bestehende User initialisieren
+      const tracking = await loadSettingsTracking();
+
+      // Wenn Tracking noch nicht existiert (erste Load nach Update)
+      if (
+        !tracking.highlightSameValuesModified &&
+        !tracking.highlightRelatedCellsModified &&
+        !tracking.showMistakesModified
+      ) {
+        console.log("[loadSettings] Initializing tracking for existing user");
+
+        // Prüfe ob Settings von den Defaults abweichen → dann hat User vermutlich schon angepasst
+        const updatedTracking = { ...tracking };
+
+        if (parsedSettings.highlightSameValues !== DEFAULT_SETTINGS.highlightSameValues) {
+          updatedTracking.highlightSameValuesModified = true;
+          console.log("[loadSettings] highlightSameValues differs from default → marking as modified");
+        }
+        if (parsedSettings.highlightRelatedCells !== DEFAULT_SETTINGS.highlightRelatedCells) {
+          updatedTracking.highlightRelatedCellsModified = true;
+          console.log("[loadSettings] highlightRelatedCells differs from default → marking as modified");
+        }
+        if (parsedSettings.showMistakes !== DEFAULT_SETTINGS.showMistakes) {
+          updatedTracking.showMistakesModified = true;
+          console.log("[loadSettings] showMistakes differs from default → marking as modified");
+        }
+
+        // Speichere initialisiertes Tracking
+        await saveSettingsTracking(updatedTracking);
+      }
+
       return parsedSettings;
     }
     // Kein gespeicherter Wert → Erster Start → null zurückgeben
@@ -504,6 +583,95 @@ export const getProgressValue = (stats: GameStats): number => {
     return Math.min(100, ((stats.completedMedium || 0) / 3) * 100); // Fortschritt zu Schwer
   } else {
     return Math.min(100, ((stats.completedEasy || 0) / 1) * 100); // Fortschritt zu Medium
+  }
+};
+
+// ===== Settings Modification Tracking =====
+
+// Standard Tracking-Werte: Alle Settings sind initial nicht verändert
+const DEFAULT_SETTINGS_TRACKING: SettingsModificationTracking = {
+  highlightSameValuesModified: false,
+  highlightRelatedCellsModified: false,
+  showMistakesModified: false,
+};
+
+// Lade Settings Tracking
+export const loadSettingsTracking = async (): Promise<SettingsModificationTracking> => {
+  try {
+    const savedTracking = await AsyncStorage.getItem(KEYS.SETTINGS_TRACKING);
+    return savedTracking ? JSON.parse(savedTracking) : DEFAULT_SETTINGS_TRACKING;
+  } catch (error) {
+    console.error("Error loading settings tracking:", error);
+    return DEFAULT_SETTINGS_TRACKING;
+  }
+};
+
+// Speichere Settings Tracking
+export const saveSettingsTracking = async (tracking: SettingsModificationTracking): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(KEYS.SETTINGS_TRACKING, JSON.stringify(tracking));
+  } catch (error) {
+    console.error("Error saving settings tracking:", error);
+  }
+};
+
+// Automatische Settings-Anpassung beim Freischalten von Schwierigkeitsgraden
+export const autoAdjustSettingsOnDifficultyUnlock = async (
+  previousStats: GameStats,
+  newStats: GameStats
+): Promise<void> => {
+  try {
+    const currentSettings = await loadSettings();
+    const tracking = await loadSettingsTracking();
+
+    if (!currentSettings) {
+      console.log("[autoAdjustSettings] No settings loaded, skipping auto-adjust");
+      return;
+    }
+
+    let settingsChanged = false;
+    const updatedSettings = { ...currentSettings };
+
+    // Check 1: Mittel wurde gerade freigeschaltet (completedEasy: 0 → 1)
+    if (
+      (previousStats.completedEasy || 0) < 1 &&
+      (newStats.completedEasy || 0) >= 1 &&
+      !tracking.highlightSameValuesModified
+    ) {
+      console.log("[autoAdjustSettings] Medium unlocked → disabling highlightSameValues");
+      updatedSettings.highlightSameValues = false;
+      settingsChanged = true;
+    }
+
+    // Check 2: Schwer wurde gerade freigeschaltet (completedMedium: 2 → 3)
+    if (
+      (previousStats.completedMedium || 0) < 3 &&
+      (newStats.completedMedium || 0) >= 3 &&
+      !tracking.highlightRelatedCellsModified
+    ) {
+      console.log("[autoAdjustSettings] Hard unlocked → disabling highlightRelatedCells");
+      updatedSettings.highlightRelatedCells = false;
+      settingsChanged = true;
+    }
+
+    // Check 3: Experte wurde gerade freigeschaltet (completedHard: 8 → 9)
+    if (
+      (previousStats.completedHard || 0) < 9 &&
+      (newStats.completedHard || 0) >= 9 &&
+      !tracking.showMistakesModified
+    ) {
+      console.log("[autoAdjustSettings] Expert unlocked → disabling showMistakes");
+      updatedSettings.showMistakes = false;
+      settingsChanged = true;
+    }
+
+    // Speichere die aktualisierten Settings (ohne Tracking-Flags zu setzen!)
+    if (settingsChanged) {
+      await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(updatedSettings));
+      console.log("[autoAdjustSettings] Settings automatically adjusted on difficulty unlock");
+    }
+  } catch (error) {
+    console.error("[autoAdjustSettings] Error during auto-adjust:", error);
   }
 };
 

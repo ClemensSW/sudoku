@@ -488,7 +488,10 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             color: colors.textSecondary,
             textAlign: 'left',
           }}>
-            {t('thanks.personalMessage')}
+            {activeSubscriptionProductId
+              ? t('thanks.personalMessageSubscriber')
+              : t('thanks.personalMessage')
+            }
           </Text>
         </Animated.View>
       </ScrollView>

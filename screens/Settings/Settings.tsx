@@ -186,11 +186,14 @@ const Settings: React.FC<SettingsScreenProps> = ({
   };
 
   const handleBack = () => {
-    if (onBackToGame) {
+    if (fromGame && onBackToGame) {
+      // When opened from game, ALWAYS use the callback
       onBackToGame();
-    } else {
+    } else if (!fromGame) {
+      // Only use router.back() when NOT from game
       router.back();
     }
+    // If fromGame but no callback: do nothing (shouldn't happen)
   };
 
   const handleQuitGame = () => {

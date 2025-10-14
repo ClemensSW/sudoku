@@ -127,31 +127,11 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       console.error('[Game] Error checking weekly shield reset:', error);
     }
 
-    // WICHTIG: Schwierigkeitsgrad-basierte Settings anwenden BEVOR das Spiel generiert wird
-    // Dadurch können useGameSettings und andere Hooks die aktualisierten Settings laden
-    try {
-      const currentSettings = await loadSettings();
-      if (currentSettings) {
-        const adjustedSettings = await applyDifficultyBasedSettings(difficulty, currentSettings);
-        await saveSettings(adjustedSettings, true); // isAutomatic = true → kein Tracking-Update
-
-        // WICHTIG: Warte zusätzlich 50ms für AsyncStorage-Commit + Event-Propagierung
-        // saveSettings feuert Event mit 10ms Delay, wir warten hier nochmal 50ms
-        // Gesamt: 60ms Buffer damit useGameSettings die neuen Settings laden kann
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        console.log(`[Game] Settings applied and saved for ${difficulty}:`, {
-          highlightSameValues: adjustedSettings.highlightSameValues,
-          highlightRelatedCells: adjustedSettings.highlightRelatedCells,
-          showMistakes: adjustedSettings.showMistakes,
-        });
-      }
-    } catch (error) {
-      console.error('[Game] Error applying difficulty-based settings:', error);
-    }
+    // HINWEIS: Settings-Anpassung wurde nach Game.tsx verschoben
+    // Settings werden jetzt SOFORT beim Mount angepasst, BEVOR useGameSettings das erste Mal lädt
+    // Dadurch hat useGameSettings bereits die korrekten Settings beim Initial-Load
 
     // Generate a new game with current difficulty
-    // Settings wurden bereits oben angepasst, sodass useGameSettings die neuen Werte laden kann
     setTimeout(() => {
       const { board: newBoard, solution: newSolution } =
         generateGame(difficulty);

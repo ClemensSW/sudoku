@@ -101,21 +101,44 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
   // Initialize game only once - check for resume parameter
   useEffect(() => {
     if (!gameInitialized) {
-      setTimeout(async () => {
-        if (shouldResume) {
-          const resumed = await gameActions.resumeGame();
-          if (!resumed) {
-            // If resume failed, start new game
-            gameActions.startNewGame();
+      // WICHTIG: Settings-Anpassung SOFORT durchführen, BEVOR useGameSettings das erste Mal lädt (150ms)
+      // Dadurch hat useGameSettings beim Initial-Load bereits die korrekten Settings
+      (async () => {
+        try {
+          // Wenn wir ein Spiel fortsetzen, keine Settings anpassen
+          if (!shouldResume) {
+            const { loadSettings, applyDifficultyBasedSettings, saveSettings } = await import("@/utils/storage");
+            const currentSettings = await loadSettings();
+            if (currentSettings) {
+              const adjustedSettings = await applyDifficultyBasedSettings(
+                initialDifficulty || "medium",
+                currentSettings
+              );
+              await saveSettings(adjustedSettings, true); // isAutomatic = true
+              console.log(`[Game.tsx] Settings adjusted for ${initialDifficulty || "medium"} BEFORE game init`);
+            }
           }
-        } else {
-          gameActions.startNewGame();
+        } catch (error) {
+          console.error('[Game.tsx] Error adjusting settings before game init:', error);
         }
 
-        setGameInitialized(true);
-      }, 300);
+        // Settings sind jetzt angepasst, starte Game-Initialisierung nach 300ms
+        setTimeout(async () => {
+          if (shouldResume) {
+            const resumed = await gameActions.resumeGame();
+            if (!resumed) {
+              // If resume failed, start new game
+              gameActions.startNewGame();
+            }
+          } else {
+            gameActions.startNewGame();
+          }
+
+          setGameInitialized(true);
+        }, 300);
+      })();
     }
-  }, [gameInitialized, gameActions, shouldResume]);
+  }, [gameInitialized, gameActions, shouldResume, initialDifficulty]);
 
   // Handle back button
   useEffect(() => {

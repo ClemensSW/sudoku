@@ -40,14 +40,13 @@ export const useGameSettings = () => {
     };
 
     // WICHTIG: Verzögertes Laden beim ersten Mount
-    // Gibt startNewGame() Zeit die Settings anzupassen (läuft bei ~300ms)
+    // Settings wurden bereits in Game.tsx angepasst (0ms), wir warten 100ms für AsyncStorage-Commit
     if (refreshTrigger === 0) {
-      // Initial mount - warte 150ms bevor Settings geladen werden
-      // startNewGame passt Settings in den ersten 150ms an
+      // Initial mount - warte 100ms damit AsyncStorage-Commit abgeschlossen ist
       const timer = setTimeout(() => {
-        console.log("[useGameSettings] Initial load after 150ms delay");
+        console.log("[useGameSettings] Initial load after 100ms delay (waiting for AsyncStorage commit)");
         loadGameSettings();
-      }, 150);
+      }, 100);
       return () => clearTimeout(timer);
     } else {
       // Reload durch Event - lade sofort (Settings wurden bereits angepasst)

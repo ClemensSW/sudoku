@@ -69,12 +69,12 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           backgroundColor: theme.isDark
             ? 'rgba(255, 255, 255, 0.08)'  // Subtiler weißer Ton
             : '#FFFFFF',  // Reines Weiß in Light Mode
-          borderColor: theme.isDark ? '#FFFFFF' : '#000000',  // Klar & neutral
+          borderColor: theme.isDark ? '#FFFFFF' : '#666666',  // Helleres Grau in Light Mode
           borderWidth: 2,
           borderStyle: 'solid',
-          shadowColor: theme.isDark ? '#FFFFFF' : '#000000',
+          shadowColor: theme.isDark ? '#FFFFFF' : '#666666',
           shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: theme.isDark ? 0.3 : 0.15,
+          shadowOpacity: theme.isDark ? 0.3 : 0.2,
           shadowRadius: 6,
           elevation: 4,
         };
@@ -120,7 +120,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             style={[
               styles.dayText,
               {
-                color: colors.textPrimary,  // Neutral, keine Verwechslung mit "gespielt"
+                color: theme.isDark ? colors.textPrimary : '#666666',  // Helleres Grau in Light Mode
                 fontWeight: '700',
                 fontSize: 16,
               },

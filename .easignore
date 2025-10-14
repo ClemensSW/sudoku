@@ -1,0 +1,98 @@
+# .easignore - EAS Build Ignore File
+# This file defines which files should be excluded from EAS Build uploads
+# IMPORTANT: When .easignore exists, .gitignore is NOT used by EAS
+# Therefore, this file includes all .gitignore rules plus additional exclusions
+
+# ============================================================================
+# FROM .gitignore - Essential exclusions
+# ============================================================================
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+# ============================================================================
+# ADDITIONAL EAS BUILD EXCLUSIONS - Development & Documentation
+# ============================================================================
+
+# Version Control
+.git/
+.gitignore
+.gitattributes
+
+# IDE & Editor Configurations
+.vscode/
+.idea/
+*.code-workspace
+
+# Development Documentation (NOT needed in build)
+docs/
+CLAUDE.md
+expo-build-commands.md
+
+# Refactoring & Development Notes (in screens/)
+screens/GameCompletion/REFACTORING_SUMMARY.md
+screens/GameCompletion/components/PlayerProgressionCard/README.md
+
+# CI/CD & GitHub
+.github/
+
+# Claude Code Configuration
+.claude/
+
+# Testing (if not needed for builds)
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Coverage Reports
+coverage/
+
+# Build artifacts from local builds (if any)
+android/app/build/
+ios/build/
+
+# ============================================================================
+# IMPORTANT: Files that MUST be included in builds
+# ============================================================================
+# The following files are EXCLUDED from ignore (i.e., INCLUDED in build):
+# - README.md (app information)
+# - assets/legal/*.md (AGBs, Datenschutz, Impressum, Widerruf - used in app)
+# - All source code in app/, components/, screens/, utils/, etc.
+# - All assets in assets/ (images, fonts, animations, legal docs)
+# - package.json, app.json, eas.json, tsconfig.json
+# - All translation files in locales/

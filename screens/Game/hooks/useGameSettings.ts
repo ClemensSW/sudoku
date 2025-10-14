@@ -11,8 +11,9 @@ export const useGameSettings = () => {
   const [showMistakes, setShowMistakes] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Load settings on mount
+  // Load settings on mount AND when refreshTrigger changes
   useEffect(() => {
     const loadGameSettings = async () => {
       try {
@@ -25,6 +26,11 @@ export const useGameSettings = () => {
           setVibrationEnabled(loadedSettings.vibration);
           // Update vibration cache
           setVibrationEnabledCache(loadedSettings.vibration);
+          console.log("[useGameSettings] Loaded settings:", {
+            highlightSameValues: loadedSettings.highlightSameValues,
+            highlightRelatedCells: loadedSettings.highlightRelatedCells,
+            showMistakes: loadedSettings.showMistakes,
+          });
         }
         setIsLoading(false);
       } catch (error) {
@@ -34,7 +40,31 @@ export const useGameSettings = () => {
     };
 
     loadGameSettings();
+  }, [refreshTrigger]); // ← WICHTIG: Reagiert auf refreshTrigger
+
+  // Funktion zum manuellen Neu-Laden der Settings
+  const reloadSettings = useCallback(() => {
+    console.log("[useGameSettings] Manually reloading settings...");
+    setRefreshTrigger(prev => prev + 1);
   }, []);
+
+  // WICHTIG: Lausche auf automatische Settings-Änderungen (von startNewGame)
+  // Wenn Settings mit isAutomatic=true gespeichert werden, laden wir sie neu
+  useEffect(() => {
+    const handleSettingsChanged = () => {
+      console.log("[useGameSettings] Settings changed event received, reloading...");
+      reloadSettings();
+    };
+
+    // Custom Event Listener (wird von saveSettings gefeuert)
+    // @ts-ignore - Custom Event
+    window.addEventListener?.('settingsChanged', handleSettingsChanged);
+
+    return () => {
+      // @ts-ignore
+      window.removeEventListener?.('settingsChanged', handleSettingsChanged);
+    };
+  }, [reloadSettings]);
 
   // Update a setting
   const updateSetting = useCallback(
@@ -74,5 +104,6 @@ export const useGameSettings = () => {
     vibrationEnabled,
     isLoading: isLoading,
     updateSetting,
+    reloadSettings, // ← NEU: Exportiere reload-Funktion
   };
 };

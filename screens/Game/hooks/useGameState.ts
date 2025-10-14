@@ -127,19 +127,25 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       console.error('[Game] Error checking weekly shield reset:', error);
     }
 
-    // NEU: Schwierigkeitsgrad-basierte Settings anwenden
+    // WICHTIG: Schwierigkeitsgrad-basierte Settings anwenden BEVOR das Spiel generiert wird
+    // Dadurch können useGameSettings und andere Hooks die aktualisierten Settings laden
     try {
       const currentSettings = await loadSettings();
       if (currentSettings) {
         const adjustedSettings = await applyDifficultyBasedSettings(difficulty, currentSettings);
         await saveSettings(adjustedSettings, true); // isAutomatic = true → kein Tracking-Update
-        console.log(`[Game] Applied difficulty-based settings for ${difficulty}`);
+        console.log(`[Game] Applied difficulty-based settings for ${difficulty}:`, {
+          highlightSameValues: adjustedSettings.highlightSameValues,
+          highlightRelatedCells: adjustedSettings.highlightRelatedCells,
+          showMistakes: adjustedSettings.showMistakes,
+        });
       }
     } catch (error) {
       console.error('[Game] Error applying difficulty-based settings:', error);
     }
 
     // Generate a new game with current difficulty
+    // Settings wurden bereits oben angepasst, sodass useGameSettings die neuen Werte laden kann
     setTimeout(() => {
       const { board: newBoard, solution: newSolution } =
         generateGame(difficulty);

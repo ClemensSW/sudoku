@@ -471,6 +471,14 @@ export const saveSettings = async (settings: GameSettings, isAutomatic: boolean 
 
     // Speichere die Settings selbst
     await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+
+    // NEU: Feuere Event wenn Settings automatisch geändert wurden
+    // Damit useGameSettings die Settings neu laden kann
+    if (isAutomatic && typeof window !== 'undefined') {
+      // @ts-ignore - Custom Event für Settings-Änderungen
+      window.dispatchEvent?.(new Event('settingsChanged'));
+      console.log("[saveSettings] Dispatched settingsChanged event");
+    }
   } catch (error) {
     console.error("Error saving settings:", error);
   }
@@ -488,37 +496,6 @@ export const loadSettings = async (): Promise<GameSettings | null> => {
       }
       if (parsedSettings.backgroundMusic === undefined) {
         parsedSettings.backgroundMusic = false;
-      }
-
-      // MIGRATION: Tracking für bestehende User initialisieren
-      const tracking = await loadSettingsTracking();
-
-      // Wenn Tracking noch nicht existiert (erste Load nach Update)
-      if (
-        !tracking.highlightSameValuesModified &&
-        !tracking.highlightRelatedCellsModified &&
-        !tracking.showMistakesModified
-      ) {
-        console.log("[loadSettings] Initializing tracking for existing user");
-
-        // Prüfe ob Settings von den Defaults abweichen → dann hat User vermutlich schon angepasst
-        const updatedTracking = { ...tracking };
-
-        if (parsedSettings.highlightSameValues !== DEFAULT_SETTINGS.highlightSameValues) {
-          updatedTracking.highlightSameValuesModified = true;
-          console.log("[loadSettings] highlightSameValues differs from default → marking as modified");
-        }
-        if (parsedSettings.highlightRelatedCells !== DEFAULT_SETTINGS.highlightRelatedCells) {
-          updatedTracking.highlightRelatedCellsModified = true;
-          console.log("[loadSettings] highlightRelatedCells differs from default → marking as modified");
-        }
-        if (parsedSettings.showMistakes !== DEFAULT_SETTINGS.showMistakes) {
-          updatedTracking.showMistakesModified = true;
-          console.log("[loadSettings] showMistakes differs from default → marking as modified");
-        }
-
-        // Speichere initialisiertes Tracking
-        await saveSettingsTracking(updatedTracking);
       }
 
       return parsedSettings;

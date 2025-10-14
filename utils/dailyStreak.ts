@@ -304,10 +304,20 @@ export async function checkWeeklyShieldReset(): Promise<void> {
       return;
     }
 
-    const lastReset = new Date(stats.dailyStreak.lastShieldResetDate);
-    const nextMonday = getNextMonday(lastReset);
     const now = new Date();
+    const lastReset = new Date(stats.dailyStreak.lastShieldResetDate);
+    lastReset.setHours(0, 0, 0, 0);
 
+    // Berechne nächsten Montag ab dem letzten Reset
+    const nextMonday = getNextMonday(lastReset);
+    nextMonday.setHours(0, 0, 0, 0);
+
+    console.log('[Shield Reset] Checking weekly reset...');
+    console.log('[Shield Reset] Last reset:', formatDateISO(lastReset));
+    console.log('[Shield Reset] Next Monday:', formatDateISO(nextMonday));
+    console.log('[Shield Reset] Now:', formatDateISO(now));
+
+    // Prüfe ob Reset fällig ist (nextMonday <= heute)
     if (now >= nextMonday) {
       // Reset ist fällig!
       const supporterStatus = await getSupporterStatus();
@@ -315,10 +325,13 @@ export async function checkWeeklyShieldReset(): Promise<void> {
 
       stats.dailyStreak.shieldsAvailable = maxShields;
       stats.dailyStreak.shieldsUsedThisWeek = 0;
-      stats.dailyStreak.lastShieldResetDate = formatDateISO(nextMonday);
+      stats.dailyStreak.lastShieldResetDate = formatDateISO(now); // Setze auf HEUTE, nicht nextMonday
 
       await saveStats(stats);
-      console.log(`[Daily Streak] Weekly shield reset: ${maxShields} shields restored`);
+      console.log(`[Shield Reset] ✅ Weekly shield reset: ${maxShields} shields restored`);
+      console.log(`[Shield Reset] Next reset will be on: ${formatDateISO(getNextMonday(now))}`);
+    } else {
+      console.log('[Shield Reset] ❌ Not due yet');
     }
   } catch (error) {
     console.error('[Daily Streak] Error checking weekly shield reset:', error);

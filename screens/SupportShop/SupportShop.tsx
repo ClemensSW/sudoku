@@ -439,7 +439,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         </Animated.View>
 
         {/* Personal Thank You Message with Profile */}
-        <Animated.View
+        <View
           style={[
             styles.thanksContainer,
             {
@@ -448,7 +448,6 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
               marginBottom: 40,
             },
           ]}
-          entering={SlideInUp.delay(600).duration(500)}
         >
           {/* Header with Profile */}
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, width: '100%' }}>
@@ -493,7 +492,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
               : t('thanks.personalMessage')
             }
           </Text>
-        </Animated.View>
+        </View>
       </ScrollView>
 
       {/* Purchase overlay */}

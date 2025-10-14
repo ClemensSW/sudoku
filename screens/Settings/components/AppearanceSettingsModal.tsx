@@ -35,6 +35,7 @@ const AppearanceSettingsModal: React.FC<AppearanceSettingsModalProps> = ({
       surfaceColor={colors.surface}
       borderColor={colors.border}
       snapPoints={['75%', '90%']}
+      managesBottomNav={false}
     >
       <DesignGroup
         themeValue={themeValue}

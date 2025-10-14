@@ -33,6 +33,7 @@ const CommunitySettingsModal: React.FC<CommunitySettingsModalProps> = ({
       surfaceColor={colors.surface}
       borderColor={colors.border}
       snapPoints={['75%', '90%']}
+      managesBottomNav={false}
     >
       <CommunitySection
         onShareApp={onShareApp}

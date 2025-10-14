@@ -21,6 +21,8 @@ export interface BottomSheetModalProps {
   initialSnapIndex?: number;
   /** Enable scroll behavior. Default: true */
   enableScroll?: boolean;
+  /** Ob das Modal die Bottom Navigation verwalten soll. Default: true (für Rückwärtskompatibilität) */
+  managesBottomNav?: boolean;
 }
 
 /**
@@ -47,6 +49,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   snapPoints: customSnapPoints,
   initialSnapIndex = 0,
   enableScroll = true,
+  managesBottomNav = true,
 }) => {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
@@ -71,15 +74,17 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     }
   }, [visible]);
 
-  // Hide BottomNav when modal is visible
+  // Hide BottomNav when modal is visible (nur wenn managesBottomNav = true)
   useEffect(() => {
+    if (!managesBottomNav) return;
+
     if (visible) {
       hideBottomNav();
     }
     return () => {
       resetBottomNav();
     };
-  }, [visible, hideBottomNav, resetBottomNav]);
+  }, [visible, managesBottomNav, hideBottomNav, resetBottomNav]);
 
   // Render custom handle
   const renderHandle = useCallback(

@@ -28,6 +28,8 @@ export interface BottomSheetModalWithFlatListProps<T> {
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
   ListFooterComponent?: React.ComponentType<any> | React.ReactElement | null;
   ListEmptyComponent?: React.ComponentType<any> | React.ReactElement | null;
+  /** Ob das Modal die Bottom Navigation verwalten soll. Default: true (für Rückwärtskompatibilität) */
+  managesBottomNav?: boolean;
 }
 
 /**
@@ -56,6 +58,7 @@ function BottomSheetModalWithFlatList<T>({
   ListHeaderComponent,
   ListFooterComponent,
   ListEmptyComponent,
+  managesBottomNav = true,
 }: BottomSheetModalWithFlatListProps<T>) {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
@@ -78,13 +81,15 @@ function BottomSheetModalWithFlatList<T>({
   }, [visible]);
 
   useEffect(() => {
+    if (!managesBottomNav) return;
+
     if (visible) {
       hideBottomNav();
     }
     return () => {
       resetBottomNav();
     };
-  }, [visible, hideBottomNav, resetBottomNav]);
+  }, [visible, managesBottomNav, hideBottomNav, resetBottomNav]);
 
   useEffect(() => {
     if (visible) {

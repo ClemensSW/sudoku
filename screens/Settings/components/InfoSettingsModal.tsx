@@ -31,6 +31,7 @@ const InfoSettingsModal: React.FC<InfoSettingsModalProps> = ({
       surfaceColor={colors.surface}
       borderColor={colors.border}
       snapPoints={['75%', '90%']}
+      managesBottomNav={false}
     >
       <InfoSection
         onAboutPress={onAboutPress}

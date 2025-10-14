@@ -44,7 +44,8 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
   );
 
   // Wenn heute Montag ist und daysUntilReset = 0, dann zeige den nächsten Montag (in 7 Tagen)
-  if (daysUntilReset === 0) {
+  // Wenn daysUntilReset negativ ist (Reset-Datum liegt in der Vergangenheit), zeige auch 7 Tage
+  if (daysUntilReset <= 0) {
     daysUntilReset = 7;
   }
 

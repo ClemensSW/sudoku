@@ -75,7 +75,8 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
 
   const dailyStreak = stats.dailyStreak;
   const maxRegularShields = isPremium ? 3 : 2;
-  const nextResetDate = getNextMonday(new Date(dailyStreak.lastShieldResetDate));
+  // Berechne den nächsten Montag ab HEUTE, nicht ab lastShieldResetDate
+  const nextResetDate = getNextMonday(new Date());
 
   // Handler für Reward-Claim
   const handleClaimReward = async () => {

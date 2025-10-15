@@ -11,7 +11,7 @@
  * ⚠️ IMPORTANT: This is irreversible!
  */
 
-import { getFirebaseAuth, getFirestore } from '@/utils/cloudSync/firebaseConfig';
+import { getFirebaseAuth, getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
 import { revokeGoogleAccess } from './googleAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -44,7 +44,7 @@ export async function deleteUserAccount(): Promise<void> {
 
     // Step 1: Delete Firestore user document
     try {
-      const firestore = getFirestore();
+      const firestore = getFirebaseFirestore();
       const userDocRef = firestore.collection('users').doc(userId);
       await userDocRef.delete();
       console.log('[DeleteAccount] ✅ Firestore user document deleted');
@@ -65,6 +65,8 @@ export async function deleteUserAccount(): Promise<void> {
     // Step 3: Delete Firebase Auth account
     // IMPORTANT: This must be done BEFORE clearing local data
     // because we need the auth session to delete the account
+    // Note: user.delete() is deprecated in v22, but still works
+    // Migration to modular API will be done in future update
     await user.delete();
     console.log('[DeleteAccount] ✅ Firebase Auth account deleted');
 

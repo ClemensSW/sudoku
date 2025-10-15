@@ -17,6 +17,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { initializeFirebase } from "@/utils/cloudSync/firebaseConfig";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { configureGoogleSignIn } from "@/utils/auth/googleAuth";
+import BillingManager from "@/screens/SupportShop/utils/billing/BillingManager";
 
 /**
  * App Container - Main Layout Component
@@ -100,6 +101,18 @@ export default function AppLayout() {
     } catch (error) {
       console.warn('[App] Google Sign-In not available (Expo Go detected)');
     }
+
+    // Initialize BillingManager (RevenueCat)
+    const initBilling = async () => {
+      try {
+        const billingManager = BillingManager.getInstance();
+        await billingManager.initialize();
+        console.log('[App] BillingManager initialized successfully');
+      } catch (error) {
+        console.warn('[App] BillingManager initialization failed (mock mode or config missing):', error);
+      }
+    };
+    initBilling();
   }, []);
 
   return (

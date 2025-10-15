@@ -50,6 +50,7 @@ const Leistung: React.FC = () => {
 
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const tabSectionPosition = useSharedValue(0);
+  const [tabSectionY, setTabSectionY] = useState<number>(0); // Regular state for scroll logic
   const [headerHeight, setHeaderHeight] = useState<number>(60);
   const scrollY = useSharedValue(0);
 
@@ -166,9 +167,8 @@ const Leistung: React.FC = () => {
 
     // Scroll to tab navigation if it's below the header
     setTimeout(() => {
-      if (scrollViewRef.current && tabSectionPosition.value > 0) {
-        const targetPosition = tabSectionPosition.value; // Scroll exactly to tab position
-        scrollViewRef.current.scrollTo({ x: 0, y: targetPosition, animated: true });
+      if (scrollViewRef.current && tabSectionY > 0) {
+        scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY, animated: true });
       }
     }, 100);
   };
@@ -176,6 +176,7 @@ const Leistung: React.FC = () => {
   const handleTabSectionLayout = (event: any) => {
     const { y } = event.nativeEvent.layout;
     tabSectionPosition.value = y;
+    setTabSectionY(y); // Store in state for non-worklet access
   };
 
   const scrollHandler = useAnimatedScrollHandler({

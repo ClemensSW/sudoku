@@ -13,11 +13,13 @@
  */
 
 import React, { createContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { uploadUserData, hasCloudData } from '@/utils/cloudSync/uploadService';
 import { downloadUserData } from '@/utils/cloudSync/downloadService';
 import { mergeAllData } from '@/utils/cloudSync/mergeService';
+import { syncOnAppLaunch, syncOnAppPause } from '@/utils/cloudSync/syncService';
 import { loadStats, loadSettings, loadColorUnlock, saveStats, saveSettings, saveColorUnlock, DEFAULT_SETTINGS } from '@/utils/storage';
 import { gameStatsToFirestore, gameSettingsToFirestore, colorUnlockToFirestore } from '@/utils/cloudSync/firestoreSchema';
 import { getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
@@ -203,6 +205,54 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Run async
     handleCloudSync();
   }, [user, initializing]);
+
+  /**
+   * Auto-Sync on App State Change
+   * Triggert Sync wenn:
+   * - App wird aktiv (Launch/Foreground): syncOnAppLaunch()
+   * - App geht in Background: syncOnAppPause()
+   */
+  useEffect(() => {
+    // Nur wenn User eingeloggt ist
+    if (!user) {
+      return;
+    }
+
+    console.log('[AuthProvider] Setting up AppState listener for auto-sync...');
+
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      console.log('[AuthProvider] AppState changed to:', nextAppState);
+
+      if (nextAppState === 'active') {
+        // App wird aktiv → Sync
+        syncOnAppLaunch().then(result => {
+          if (result.success) {
+            console.log('[AuthProvider] ✅ Auto-sync on launch successful');
+          } else {
+            console.log('[AuthProvider] ⚠️ Auto-sync on launch skipped/failed:', result.errors);
+          }
+        });
+      } else if (nextAppState === 'background') {
+        // App geht in Background → Sync
+        syncOnAppPause().then(result => {
+          if (result.success) {
+            console.log('[AuthProvider] ✅ Auto-sync on pause successful');
+          } else {
+            console.log('[AuthProvider] ⚠️ Auto-sync on pause skipped/failed:', result.errors);
+          }
+        });
+      }
+    };
+
+    // Subscribe to AppState changes
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    // Cleanup: Remove listener when component unmounts or user logs out
+    return () => {
+      console.log('[AuthProvider] Removing AppState listener');
+      subscription.remove();
+    };
+  }, [user]);
 
   /**
    * Sign Out

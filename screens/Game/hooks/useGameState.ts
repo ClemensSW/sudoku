@@ -18,6 +18,7 @@ import {
 import { updateStatsAfterGame, loadStats, GameStats, savePausedGame, loadPausedGame, clearPausedGame, PausedGameState, loadSettings, applyDifficultyBasedSettings, saveSettings } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
 import { updateDailyStreak, checkWeeklyShieldReset } from "@/utils/dailyStreak";
+import { syncAfterGameCompletion } from "@/utils/cloudSync/syncService";
 
 // Constants for game
 const INITIAL_HINTS = 3;
@@ -376,6 +377,17 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     setGameStats(updatedStats);
 
     triggerHaptic("success");
+
+    // Cloud Sync: Trigger sync after game completion (non-blocking)
+    syncAfterGameCompletion().then(result => {
+      if (result.success) {
+        console.log('[Game] ✅ Auto-sync after game completion successful');
+      } else {
+        console.log('[Game] ⚠️ Auto-sync after game completion skipped/failed:', result.errors);
+      }
+    }).catch(error => {
+      console.error('[Game] ❌ Auto-sync after game completion error:', error);
+    });
   };
 
   // Handle game quit - counts as a loss for statistics but with user quit flag

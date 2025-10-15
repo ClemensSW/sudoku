@@ -68,6 +68,9 @@ export type GameStats = {
 
   // NEU: Daily Streak System
   dailyStreak?: DailyStreakData; // Optional für Migration
+
+  // Cloud Sync: Timestamp für Conflict Resolution
+  updatedAt?: number; // Timestamp in milliseconds (Date.now())
 };
 
 // Einstellungen Typ
@@ -81,6 +84,9 @@ export type GameSettings = {
   soundEffects: boolean;
   backgroundMusic: boolean;
   language: "de" | "en";
+
+  // Cloud Sync: Timestamp für Conflict Resolution
+  updatedAt?: number; // Timestamp in milliseconds (Date.now())
 };
 
 // Settings Modification Tracking - trackt ob User Settings manuell verändert hat
@@ -94,6 +100,9 @@ export type SettingsModificationTracking = {
 export type ColorUnlockData = {
   selectedColor: string; // Aktuell ausgewählte Farbe
   unlockedColors: string[]; // Freigeschaltete Farben
+
+  // Cloud Sync: Timestamp für Conflict Resolution
+  updatedAt?: number; // Timestamp in milliseconds (Date.now())
 };
 
 // ===== Daily Streak System =====
@@ -127,6 +136,9 @@ export type DailyStreakData = {
   // Statistiken
   totalDaysPlayed: number;              // Gesamt gespielte Tage
   completedMonths: string[];            // Vollständig abgeschlossene Monate ["2024-12", "2025-01"]
+
+  // Cloud Sync: Timestamp für Conflict Resolution (Cloud-Wins Strategy)
+  updatedAt?: number;                   // Timestamp in milliseconds (Date.now())
 };
 
 // Standard-Statistiken
@@ -193,7 +205,13 @@ export const clearGameState = async (): Promise<void> => {
 // Speichere Statistiken
 export const saveStats = async (stats: GameStats): Promise<void> => {
   try {
-    await AsyncStorage.setItem(KEYS.STATISTICS, JSON.stringify(stats));
+    // Cloud Sync: Setze updatedAt timestamp
+    const statsWithTimestamp: GameStats = {
+      ...stats,
+      updatedAt: Date.now(),
+    };
+
+    await AsyncStorage.setItem(KEYS.STATISTICS, JSON.stringify(statsWithTimestamp));
   } catch (error) {
     console.error("Error saving statistics:", error);
   }
@@ -469,8 +487,14 @@ export const saveSettings = async (settings: GameSettings, isAutomatic: boolean 
       console.log("[saveSettings] Automatic save - not updating tracking");
     }
 
+    // Cloud Sync: Setze updatedAt timestamp
+    const settingsWithTimestamp: GameSettings = {
+      ...settings,
+      updatedAt: Date.now(),
+    };
+
     // Speichere die Settings selbst
-    await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+    await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(settingsWithTimestamp));
 
     // NEU: Feuere Event wenn Settings automatisch geändert wurden
     // Damit useGameSettings die Settings neu laden kann
@@ -706,7 +730,13 @@ const DEFAULT_COLOR_UNLOCK: ColorUnlockData = {
 // Speichere Farbauswahl
 export const saveColorUnlock = async (colorData: ColorUnlockData): Promise<void> => {
   try {
-    await AsyncStorage.setItem(KEYS.COLOR_UNLOCK, JSON.stringify(colorData));
+    // Cloud Sync: Setze updatedAt timestamp
+    const colorDataWithTimestamp: ColorUnlockData = {
+      ...colorData,
+      updatedAt: Date.now(),
+    };
+
+    await AsyncStorage.setItem(KEYS.COLOR_UNLOCK, JSON.stringify(colorDataWithTimestamp));
   } catch (error) {
     console.error("Error saving color unlock:", error);
   }
@@ -877,6 +907,9 @@ async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
       // Statistiken
       totalDaysPlayed: 0,
       completedMonths: [],
+
+      // Cloud Sync: Timestamp
+      updatedAt: Date.now(),
     },
   };
 

@@ -12,7 +12,12 @@
  * To enable: npx expo prebuild && npx expo run:android
  */
 
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  isSuccessResponse,
+  isCancelledResponse,
+  isNoSavedCredentialFoundResponse
+} from '@react-native-google-signin/google-signin';
 import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
 import { GoogleAuthProvider, signInWithCredential, User } from 'firebase/auth';
 
@@ -62,12 +67,27 @@ export async function signInWithGoogle(): Promise<User | null> {
     // 1. Check if Play Services are available (Android only)
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-    // 2. Sign in and get Google ID Token
-    const { idToken, user: googleUser } = await GoogleSignin.signIn();
+    // 2. Sign in and get response (v16 API)
+    const response = await GoogleSignin.signIn();
 
-    // Check if user object is present
+    // Handle cancelled response
+    if (isCancelledResponse(response)) {
+      console.log('[GoogleAuth] User cancelled sign-in');
+      return null;
+    }
+
+    // Check if sign-in was successful
+    if (!isSuccessResponse(response)) {
+      console.log('[GoogleAuth] Sign-in returned non-success response');
+      return null;
+    }
+
+    // Extract user data and tokens from successful response
+    const { idToken, user: googleUser } = response.data;
+
+    // Validate required data
     if (!googleUser || !idToken) {
-      console.log('[GoogleAuth] Sign-in returned incomplete data - user cancelled or failed');
+      console.log('[GoogleAuth] Sign-in returned incomplete data - missing user or token');
       return null;
     }
 
@@ -136,9 +156,10 @@ export async function signOutFromGoogle(): Promise<void> {
 /**
  * Check if user is currently signed in with Google
  */
-export async function isGoogleSignedIn(): Promise<boolean> {
+export function isGoogleSignedIn(): boolean {
   try {
-    return await GoogleSignin.isSignedIn();
+    // v16: hasPreviousSignIn() is synchronous and replaces isSignedIn()
+    return GoogleSignin.hasPreviousSignIn();
   } catch (error) {
     console.error('[GoogleAuth] ❌ Error checking Google sign-in status:', error);
     return false;
@@ -147,11 +168,25 @@ export async function isGoogleSignedIn(): Promise<boolean> {
 
 /**
  * Get current Google user info (without signing in again)
+ * Returns null if no user is signed in
  */
 export async function getCurrentGoogleUser() {
   try {
-    const userInfo = await GoogleSignin.signInSilently();
-    return userInfo;
+    // v16: signInSilently() returns SignInSilentlyResponse
+    const response = await GoogleSignin.signInSilently();
+
+    // Check if response has saved credentials
+    if (isNoSavedCredentialFoundResponse(response)) {
+      console.log('[GoogleAuth] No saved credentials found');
+      return null;
+    }
+
+    // Check if response type is success
+    if (response.type === 'success' && response.data) {
+      return response.data;
+    }
+
+    return null;
   } catch (error) {
     console.error('[GoogleAuth] ❌ Error getting current Google user:', error);
     return null;

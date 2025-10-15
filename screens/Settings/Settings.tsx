@@ -635,6 +635,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
           onClose={() => setShowAccountDataModal(false)}
           onSignOut={handleSignOut}
           onDeleteAccount={handleDeleteAccount}
+          showAlert={showAlert}
         />
       )}
 

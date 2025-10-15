@@ -10,6 +10,7 @@ interface AccountDataModalProps {
   onClose: () => void;
   onSignOut: () => void;
   onDeleteAccount: () => void;
+  showAlert: (config: any) => void;
 }
 
 const AccountDataModal: React.FC<AccountDataModalProps> = ({
@@ -17,6 +18,7 @@ const AccountDataModal: React.FC<AccountDataModalProps> = ({
   onClose,
   onSignOut,
   onDeleteAccount,
+  showAlert,
 }) => {
   const { t } = useTranslation("settings");
   const { colors, isDark } = useTheme();
@@ -36,6 +38,7 @@ const AccountDataModal: React.FC<AccountDataModalProps> = ({
       <AccountDataSection
         onSignOut={onSignOut}
         onDeleteAccount={onDeleteAccount}
+        showAlert={showAlert}
       />
     </BottomSheetModal>
   );

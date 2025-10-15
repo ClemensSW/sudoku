@@ -5,7 +5,6 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
-import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { manualSync, getSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
@@ -13,17 +12,18 @@ import { manualSync, getSyncStatus, SyncStatus } from "@/utils/cloudSync/syncSer
 interface AccountDataSectionProps {
   onSignOut: () => void;
   onDeleteAccount: () => void;
+  showAlert: (config: any) => void;
 }
 
 const AccountDataSection: React.FC<AccountDataSectionProps> = ({
   onSignOut,
   onDeleteAccount,
+  showAlert,
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
   const progressColor = useProgressColor();
-  const { showAlert } = useAlert();
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
   const [isSyncing, setIsSyncing] = useState(false);

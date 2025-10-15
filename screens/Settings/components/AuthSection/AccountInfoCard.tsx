@@ -3,20 +3,23 @@
  * AccountInfoCard
  *
  * Zeigt Account-Informationen wenn User eingeloggt ist:
- * - User Email/Name
+ * - User Email/Name mit Google Profilbild
+ * - Auto-Sync Information
  * - Letzter Sync-Zeitpunkt
  * - Manual Sync Button
  * - Sign Out Button
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
 import { useAuth } from '@/hooks/useAuth';
+import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { manualSync, getSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
 
 interface AccountInfoCardProps {
@@ -28,6 +31,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const { user, signOut, loading: authLoading } = useAuth();
+  const { showAlert } = useAlert();
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
   const [isSyncing, setIsSyncing] = useState(false);
@@ -74,28 +78,52 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
       if (result.success) {
         console.log('[AccountInfoCard] ✅ Manual sync successful');
-        Alert.alert(
-          t('authSection.syncSuccess'),
-          t('authSection.syncSuccessMessage', {
+        showAlert({
+          title: t('authSection.syncSuccess'),
+          message: t('authSection.syncSuccessMessage', {
             conflicts: result.conflictsResolved,
-          })
-        );
+          }),
+          type: 'success',
+          buttons: [
+            {
+              text: 'OK',
+              style: 'primary',
+              onPress: () => {},
+            },
+          ],
+        });
       } else {
         console.error('[AccountInfoCard] ⚠️ Manual sync failed:', result.errors);
-        Alert.alert(
-          t('authSection.syncError'),
-          result.errors?.[0] || t('authSection.syncErrorMessage')
-        );
+        showAlert({
+          title: t('authSection.syncError'),
+          message: result.errors?.[0] || t('authSection.syncErrorMessage'),
+          type: 'error',
+          buttons: [
+            {
+              text: 'OK',
+              style: 'primary',
+              onPress: () => {},
+            },
+          ],
+        });
       }
 
       // Update sync status
       setSyncStatus(getSyncStatus());
     } catch (error: any) {
       console.error('[AccountInfoCard] ❌ Manual sync error:', error);
-      Alert.alert(
-        t('authSection.syncError'),
-        error.message || t('authSection.syncErrorMessage')
-      );
+      showAlert({
+        title: t('authSection.syncError'),
+        message: error.message || t('authSection.syncErrorMessage'),
+        type: 'error',
+        buttons: [
+          {
+            text: 'OK',
+            style: 'primary',
+            onPress: () => {},
+          },
+        ],
+      });
     } finally {
       setIsSyncing(false);
     }
@@ -104,13 +132,15 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   // Handle sign out
   const handleSignOut = async () => {
     try {
-      Alert.alert(
-        t('authSection.signOutConfirmTitle'),
-        t('authSection.signOutConfirmMessage'),
-        [
+      showAlert({
+        title: t('authSection.signOutConfirmTitle'),
+        message: t('authSection.signOutConfirmMessage'),
+        type: 'warning',
+        buttons: [
           {
             text: t('authSection.cancel'),
             style: 'cancel',
+            onPress: () => {},
           },
           {
             text: t('authSection.signOut'),
@@ -119,21 +149,37 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
               try {
                 await signOut();
                 if (onSignOut) onSignOut();
-                Alert.alert(
-                  t('authSection.signOutSuccess'),
-                  t('authSection.signOutSuccessMessage')
-                );
+                showAlert({
+                  title: t('authSection.signOutSuccess'),
+                  message: t('authSection.signOutSuccessMessage'),
+                  type: 'success',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
               } catch (error: any) {
                 console.error('[AccountInfoCard] Sign out error:', error);
-                Alert.alert(
-                  t('authSection.signOutError'),
-                  error.message || t('authSection.signOutErrorMessage')
-                );
+                showAlert({
+                  title: t('authSection.signOutError'),
+                  message: error.message || t('authSection.signOutErrorMessage'),
+                  type: 'error',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
               }
             },
           },
-        ]
-      );
+        ],
+      });
     } catch (error) {
       console.error('[AccountInfoCard] Sign out alert error:', error);
     }
@@ -143,6 +189,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
   const email = user.email || t('authSection.noEmail');
   const displayName = user.displayName || email.split('@')[0];
+  const photoURL = user.photoURL;
 
   return (
     <Animated.View
@@ -155,11 +202,20 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
         },
       ]}
     >
-      {/* Header */}
+      {/* User Info Header */}
       <View style={styles.header}>
-        <View style={[styles.avatarContainer, { backgroundColor: colors.primary + '20' }]}>
-          <Feather name="user" size={28} color={colors.primary} />
+        {/* Profile Photo */}
+        <View style={[styles.avatarContainer, { borderColor: colors.primary }]}>
+          {photoURL ? (
+            <Image source={{ uri: photoURL }} style={styles.avatarImage} />
+          ) : (
+            <View style={[styles.avatarFallback, { backgroundColor: colors.primary + '20' }]}>
+              <Feather name="user" size={32} color={colors.primary} />
+            </View>
+          )}
         </View>
+
+        {/* User Details */}
         <View style={styles.userInfo}>
           <Text style={[styles.displayName, { color: colors.textPrimary }]} numberOfLines={1}>
             {displayName}
@@ -170,7 +226,22 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
         </View>
       </View>
 
-      {/* Sync Status */}
+      {/* Auto-Sync Info Banner */}
+      <View style={[styles.autoSyncBanner, { backgroundColor: colors.primary + '15' }]}>
+        <View style={styles.autoSyncIconContainer}>
+          <Feather name="check-circle" size={18} color={colors.primary} />
+        </View>
+        <View style={styles.autoSyncTextContainer}>
+          <Text style={[styles.autoSyncTitle, { color: colors.primary }]}>
+            {t('authSection.autoSyncInfo')}
+          </Text>
+          <Text style={[styles.autoSyncSubtitle, { color: colors.textSecondary }]}>
+            {t('authSection.autoSyncDetails')}
+          </Text>
+        </View>
+      </View>
+
+      {/* Last Sync Status */}
       <View style={[styles.syncStatusContainer, { backgroundColor: colors.background }]}>
         <View style={styles.syncStatusRow}>
           <Feather
@@ -197,47 +268,49 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
         )}
       </View>
 
-      {/* Actions */}
+      {/* Action Buttons */}
       <View style={styles.actions}>
-        {/* Sync Button */}
+        {/* Sync Button - Gradient Style */}
         <TouchableOpacity
-          style={[
-            styles.syncButton,
-            {
-              backgroundColor: colors.primary,
-              opacity: isSyncing ? 0.6 : 1,
-            },
-          ]}
           onPress={handleManualSync}
           disabled={isSyncing}
-          activeOpacity={0.7}
+          activeOpacity={0.8}
+          style={styles.syncButtonContainer}
         >
-          {isSyncing ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Feather name="refresh-cw" size={18} color="#fff" />
-          )}
-          <Text style={styles.syncButtonText}>
-            {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
-          </Text>
+          <LinearGradient
+            colors={
+              theme.isDark
+                ? [colors.primary, colors.primary]
+                : [colors.primary, '#3A7BD5']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.syncButton, { opacity: isSyncing ? 0.6 : 1 }]}
+          >
+            {isSyncing ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Feather name="refresh-cw" size={18} color="#fff" />
+            )}
+            <Text style={styles.syncButtonText}>
+              {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
 
-        {/* Sign Out Button */}
+        {/* Sign Out Button - Outline Style */}
         <TouchableOpacity
-          style={[
-            styles.signOutButton,
-            { borderColor: colors.error, opacity: authLoading ? 0.6 : 1 },
-          ]}
+          style={[styles.signOutButton, { borderColor: colors.textSecondary, opacity: authLoading ? 0.6 : 1 }]}
           onPress={handleSignOut}
           disabled={authLoading}
           activeOpacity={0.7}
         >
           {authLoading ? (
-            <ActivityIndicator size="small" color={colors.error} />
+            <ActivityIndicator size="small" color={colors.textSecondary} />
           ) : (
-            <Feather name="log-out" size={18} color={colors.error} />
+            <Feather name="log-out" size={18} color={colors.textSecondary} />
           )}
-          <Text style={[styles.signOutButtonText, { color: colors.error }]}>
+          <Text style={[styles.signOutButtonText, { color: colors.textSecondary }]}>
             {t('authSection.signOut')}
           </Text>
         </TouchableOpacity>
@@ -265,9 +338,20 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   avatarContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  avatarFallback: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -276,13 +360,40 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   displayName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     letterSpacing: 0.2,
   },
   email: {
     fontSize: 14,
     fontWeight: '500',
+  },
+
+  // Auto-Sync Banner
+  autoSyncBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: radius.md,
+    gap: spacing.sm,
+  },
+  autoSyncIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  autoSyncTextContainer: {
+    flex: 1,
+    gap: 2,
+  },
+  autoSyncTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.1,
+  },
+  autoSyncSubtitle: {
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
   },
 
   // Sync Status
@@ -316,19 +427,23 @@ const styles = StyleSheet.create({
   actions: {
     gap: spacing.sm,
   },
+  syncButtonContainer: {
+    borderRadius: radius.md,
+    overflow: 'hidden',
+  },
   syncButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    paddingVertical: spacing.md,
-    borderRadius: radius.md,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.lg,
   },
   syncButtonText: {
     color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   signOutButton: {
     flexDirection: 'row',
@@ -336,6 +451,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: spacing.sm,
     paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderRadius: radius.md,
     borderWidth: 1.5,
   },

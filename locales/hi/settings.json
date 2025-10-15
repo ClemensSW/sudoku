@@ -115,7 +115,7 @@
   },
   "authSection": {
     "title": "प्रगति सहेजें",
-    "description": "अपनी प्रगति सुरक्षित करें और सभी उपकरणों पर खेलें",
+    "description": "अपनी प्रगति को सभी उपकरणों पर स्वचालित रूप से सिंक करें",
     "inDevelopment": "विकास में",
     "googleSignIn": "Google के साथ जारी रखें",
     "appleSignIn": "Apple के साथ जारी रखें",
@@ -144,6 +144,10 @@
     "signOutSuccess": "साइन आउट किया गया",
     "signOutSuccessMessage": "आप सफलतापूर्वक साइन आउट कर चुके हैं।",
     "signOutError": "साइन आउट विफल",
-    "signOutErrorMessage": "साइन आउट विफल रहा। कृपया पुनः प्रयास करें।"
+    "signOutErrorMessage": "साइन आउट विफल रहा। कृपया पुनः प्रयास करें।",
+    "autoSyncInfo": "आपकी प्रगति स्वचालित रूप से सिंक होती है",
+    "autoSyncDetails": "खेलते समय, ऐप लॉन्च पर और बैकग्राउंड में",
+    "signInSuccess": "सफलतापूर्वक साइन इन किया गया!",
+    "signInError": "साइन इन विफल"
   }
 }

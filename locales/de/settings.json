@@ -115,7 +115,7 @@
   },
   "authSection": {
     "title": "Spielstand sichern",
-    "description": "Sichere deinen Fortschritt und spiele auf allen Geräten weiter",
+    "description": "Synchronisiere deinen Fortschritt automatisch über alle Geräte",
     "inDevelopment": "In Entwicklung",
     "googleSignIn": "Mit Google fortfahren",
     "appleSignIn": "Mit Apple fortfahren",
@@ -144,6 +144,10 @@
     "signOutSuccess": "Erfolgreich abgemeldet",
     "signOutSuccessMessage": "Du wurdest erfolgreich abgemeldet.",
     "signOutError": "Abmeldung fehlgeschlagen",
-    "signOutErrorMessage": "Abmeldung fehlgeschlagen. Bitte versuche es erneut."
+    "signOutErrorMessage": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+    "autoSyncInfo": "Dein Fortschritt wird automatisch synchronisiert",
+    "autoSyncDetails": "Beim Spielen, App-Start und im Hintergrund",
+    "signInSuccess": "Erfolgreich angemeldet!",
+    "signInError": "Anmeldung fehlgeschlagen"
   }
 }

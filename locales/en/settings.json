@@ -115,7 +115,7 @@
   },
   "authSection": {
     "title": "Save Your Progress",
-    "description": "Secure your progress and play across all devices",
+    "description": "Synchronize your progress automatically across all devices",
     "inDevelopment": "In Development",
     "googleSignIn": "Continue with Google",
     "appleSignIn": "Continue with Apple",
@@ -144,6 +144,10 @@
     "signOutSuccess": "Signed Out",
     "signOutSuccessMessage": "You have been signed out successfully.",
     "signOutError": "Sign Out Failed",
-    "signOutErrorMessage": "Sign out failed. Please try again."
+    "signOutErrorMessage": "Sign out failed. Please try again.",
+    "autoSyncInfo": "Your progress syncs automatically",
+    "autoSyncDetails": "While playing, on app launch, and in background",
+    "signInSuccess": "Successfully signed in!",
+    "signInError": "Sign in failed"
   }
 }

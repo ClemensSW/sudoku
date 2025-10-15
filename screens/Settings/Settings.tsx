@@ -27,6 +27,7 @@ import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import { useNavigation } from "@/contexts/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithGoogle } from "@/utils/auth/googleAuth";
+import { manualSync } from "@/utils/cloudSync/syncService";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
@@ -270,6 +271,18 @@ const Settings: React.FC<SettingsScreenProps> = ({
               onPress: () => {},
             },
           ],
+        });
+
+        // Immediate sync after login (non-blocking)
+        console.log('[Settings] Triggering immediate sync after login...');
+        manualSync().then(result => {
+          if (result.success) {
+            console.log('[Settings] ✅ Immediate sync after login successful');
+          } else {
+            console.log('[Settings] ⚠️ Immediate sync after login skipped/failed:', result.errors);
+          }
+        }).catch(error => {
+          console.error('[Settings] ❌ Immediate sync after login error:', error);
         });
       } else {
         // User cancelled

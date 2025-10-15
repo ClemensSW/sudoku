@@ -6,7 +6,6 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { spacing, radius } from '@/utils/theme';
-import DevelopmentBadge from './DevelopmentBadge';
 import AuthButton from './AuthButton';
 import ShieldIcon from '@/assets/svg/shield.svg';
 
@@ -37,12 +36,6 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         },
       ]}
     >
-      {/* Corner Badge - Top Right - Development Badge */}
-      {/* Note: Google Sign-In only works in Development Build, not Expo Go */}
-      <View style={styles.cornerBadge}>
-        <DevelopmentBadge />
-      </View>
-
       {/* Header - Centered Layout */}
       <View style={styles.header}>
         {/* Shield Icon - Large & Centered */}
@@ -105,17 +98,6 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 4,
     gap: spacing.lg,
-    overflow: 'hidden', // Important for corner badge
-    position: 'relative',
-  },
-
-  // Corner Badge - Top Right (Diagonal)
-  cornerBadge: {
-    position: 'absolute',
-    top: 16,
-    right: -8,
-    transform: [{ rotate: '12deg' }],
-    zIndex: 10,
   },
 
   // Header - Centered Vertical Layout

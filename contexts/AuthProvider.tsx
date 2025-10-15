@@ -1,6 +1,6 @@
 // contexts/AuthProvider.tsx
 /**
- * Authentication Context Provider (Firebase Web SDK)
+ * Authentication Context Provider (React Native Firebase)
  *
  * Manages authentication state for the entire app:
  * - User login/logout
@@ -8,18 +8,19 @@
  * - Loading states
  * - Error handling
  *
- * ✅ Funktioniert mit Expo Go (Firebase JS SDK)
+ * ✅ Native Performance (React Native Firebase SDK)
+ * ⚠️ Requires Development Build (not compatible with Expo Go)
  */
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
-import { onAuthStateChanged, signOut as firebaseSignOut, User } from 'firebase/auth';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 // ===== Types =====
 
 export interface AuthContextType {
   // State
-  user: User | null;
+  user: FirebaseAuthTypes.User | null;
   isLoggedIn: boolean;
   loading: boolean;
   initializing: boolean;
@@ -40,7 +41,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // ===== Provider Component =====
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
 
@@ -60,7 +61,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const auth = getFirebaseAuth();
 
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // Native SDK: onAuthStateChanged returns unsubscribe function
+      const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
         console.log('[AuthProvider] Auth state changed:', {
           isLoggedIn: firebaseUser !== null,
           uid: firebaseUser?.uid,
@@ -96,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('[AuthProvider] Signing out user...');
 
       const auth = getFirebaseAuth();
-      await firebaseSignOut(auth);
+      await auth.signOut();
 
       console.log('[AuthProvider] ✅ User signed out successfully');
     } catch (error) {

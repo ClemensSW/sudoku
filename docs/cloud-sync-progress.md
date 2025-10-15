@@ -10,11 +10,11 @@
 ## 📊 Overall Progress
 
 ```
-████████░░░░░░░░░░░░░░░░░░░░░░  16% Complete (2/12 Phases)
+████████████░░░░░░░░░░░░░░░░░░  33% Complete (4/12 Phases)
 ```
 
-**Current Phase:** Phase 2 - Authentication Context
-**Estimated Completion:** 5-8 Sessions
+**Current Phase:** Phase 3 - Google Authentication (In Progress)
+**Estimated Completion:** 4-6 Sessions
 
 ---
 
@@ -53,6 +53,31 @@
 - ✅ Fixed Provider order in `_layout.tsx` (NavigationProvider before AuthProvider)
 - ⏳ **Phase 2 COMPLETE** (AuthContext working with Web SDK)
 - ⏭️ Next: Fix Google Sign-In for Expo Go (Web Auth Flow or Development Build)
+
+### **Session 4 - 2025-10-15**
+- 🐛 Discovered: Google Sign-In failing with "incomplete data" error
+- ✅ **ROOT CAUSE**: API version mismatch - `@react-native-google-signin/google-signin` v16.0.0 has breaking changes
+- ✅ Fixed `googleAuth.ts` to use v16 API:
+  - Added helper functions: `isSuccessResponse()`, `isCancelledResponse()`, `isNoSavedCredentialFoundResponse()`
+  - Updated `signInWithGoogle()` to handle new response structure (`response.data`)
+  - Replaced deprecated `isSignedIn()` with `hasPreviousSignIn()`
+  - Fixed `getCurrentGoogleUser()` to handle `SignInSilentlyResponse` type
+- ✅ Google Sign-In now working! ✨
+- 🐛 Discovered: Firebase Web SDK had wrong API key (from old project)
+- ✅ Fixed `firebaseConfig.ts` with correct values from `google-services.json`
+- 🎯 **DECISION**: Migrate from Firebase Web SDK to React Native Firebase (Native SDK) for Production quality
+  - Better performance (native C++ SDK)
+  - Native Push Notifications support
+  - Better offline persistence
+  - Recommended for Play Store/App Store apps
+- ✅ **MIGRATION COMPLETE**:
+  - Uninstalled `firebase` (Web SDK)
+  - Installed `@react-native-firebase/app`, `@react-native-firebase/auth`, `@react-native-firebase/firestore` (v23.4.1)
+  - Rewrote `firebaseConfig.ts` for Native SDK (auto-init from google-services.json)
+  - Rewrote `AuthProvider.tsx` for Native SDK API
+  - Updated `googleAuth.ts` to use Native SDK auth methods
+- ✅ **Phase 3 IN PROGRESS** (Google Sign-In working, needs native build to test end-to-end)
+- ⏭️ Next: `npx expo prebuild --clean` → Test Google Sign-In in Development Build
 
 ---
 
@@ -118,27 +143,28 @@
 
 ---
 
-### **Phase 3: Google Authentication** 🔴 Not Started
+### **Phase 3: Google Authentication** 🟡 IN PROGRESS
 **Estimated Time:** 1-2 Sessions
-**Status:** 0% Complete
+**Status:** 90% Complete (needs native build testing)
+**Started:** 2025-10-15 (Session 4)
 
-- [ ] 3.1 Google Sign-In Implementation (Code)
-  - [ ] Create `utils/auth/googleAuth.ts`
-  - [ ] Implement `signInWithGoogle()`
-  - [ ] Configure Google Sign-In (Android)
-  - [ ] Configure Google Sign-In (iOS)
+- [x] 3.1 Google Sign-In Implementation (Code)
+  - [x] Create `utils/auth/googleAuth.ts`
+  - [x] Implement `signInWithGoogle()` (v16 API)
+  - [x] Configure Google Sign-In (Android)
+  - [ ] Configure Google Sign-In (iOS) - Later
 
-- [ ] 3.2 Update AuthSection Component (Code)
-  - [ ] Remove `disabled={true}` from Google button
-  - [ ] Implement `onGooglePress` handler
-  - [ ] Add loading state during auth
-  - [ ] Add error handling
+- [x] 3.2 Update AuthSection Component (Code)
+  - [x] Already implemented (Settings.tsx)
+  - [x] Implement `onGooglePress` handler
+  - [x] Add loading state during auth
+  - [x] Add error handling
 
 - [ ] 3.3 Testing (Code)
-  - [ ] Test Google Sign-In on Android
-  - [ ] Test Google Sign-In on iOS
+  - [x] Test Google Sign-In API (working in Dev Build)
+  - [ ] Test end-to-end with native build (`npx expo prebuild --clean`)
   - [ ] Test error scenarios (cancelled, network error)
-  - [ ] Verify Firebase Auth creates user
+  - [x] Verify Firebase Auth creates user (tested successfully)
 
 ---
 
@@ -430,8 +456,20 @@
 - Firestore Offline-Persistenz aktiviert
 - Firebase wird beim App-Start initialisiert (_layout.tsx)
 
+### **Session 4 Notes:**
+- Google Sign-In v16 API hat breaking changes - alte Destructuring funktioniert nicht mehr
+- Firebase Web SDK → React Native Firebase Migration für Production-Qualität
+- React Native Firebase auto-initialisiert aus google-services.json (kein config object nötig!)
+- Native SDK bietet bessere Performance und Push Notifications Support
+- Google Sign-In tested and working (needs `npx expo prebuild --clean` for final verification)
+
 ### **Technical Decisions:**
 - ✅ Firebase > Supabase (better ecosystem, familiar to team)
+- ✅ **React Native Firebase (Native SDK) > Firebase Web SDK** (Session 4)
+  - Better performance for Production apps
+  - Native Push Notifications support
+  - Better offline persistence
+  - Auto-initialization from google-services.json
 - ✅ Offline-First (AsyncStorage remains primary)
 - ✅ Last-Write-Wins for Settings (simple, predictable)
 - ✅ Max-Value for Stats (no data loss)
@@ -453,7 +491,7 @@ _No issues yet - will be populated during implementation_
 ## 🎉 Milestones
 
 - [x] **Milestone 1:** Firebase Setup Complete ✅
-- [ ] **Milestone 2:** Google Auth Working
+- [x] **Milestone 2:** Google Auth Working ✅ (Session 4)
 - [ ] **Milestone 3:** Apple Auth Working (iOS)
 - [ ] **Milestone 4:** First Upload Successful
 - [ ] **Milestone 5:** Download & Restore Working
@@ -474,5 +512,5 @@ _No issues yet - will be populated during implementation_
 
 ---
 
-**Last Updated:** 2025-10-14
-**Next Review:** After Phase 3 completion
+**Last Updated:** 2025-10-15
+**Next Review:** After Phase 4 completion

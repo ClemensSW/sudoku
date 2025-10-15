@@ -1,6 +1,6 @@
 // utils/auth/googleAuth.ts
 /**
- * Google Sign-In Integration (Firebase JS SDK + Google Sign-In Native Module)
+ * Google Sign-In Integration (React Native Firebase + Google Sign-In Native Module)
  *
  * Handles Google OAuth Sign-In with Firebase Authentication
  * - Configure Google Sign-In
@@ -19,7 +19,7 @@ import {
   isNoSavedCredentialFoundResponse
 } from '@react-native-google-signin/google-signin';
 import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
-import { GoogleAuthProvider, signInWithCredential, User } from 'firebase/auth';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 /**
  * Konfiguriert Google Sign-In
@@ -54,13 +54,13 @@ export function configureGoogleSignIn(): void {
 }
 
 /**
- * Sign in with Google (Firebase JS SDK + Google Sign-In Native)
+ * Sign in with Google (React Native Firebase + Google Sign-In Native)
  * Öffnet Google Sign-In Dialog und authentifiziert mit Firebase
  *
  * @returns Firebase User oder null bei Abbruch
  * @throws Error bei Fehlern (Network, Permission, etc.)
  */
-export async function signInWithGoogle(): Promise<User | null> {
+export async function signInWithGoogle(): Promise<FirebaseAuthTypes.User | null> {
   try {
     console.log('[GoogleAuth] Starting Google Sign-In...');
 
@@ -97,11 +97,11 @@ export async function signInWithGoogle(): Promise<User | null> {
     });
 
     // 3. Create Firebase credential with Google ID Token
-    const googleCredential = GoogleAuthProvider.credential(idToken);
+    const auth = getFirebaseAuth();
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
     // 4. Sign in to Firebase with the credential
-    const auth = getFirebaseAuth();
-    const userCredential = await signInWithCredential(auth, googleCredential);
+    const userCredential = await auth.signInWithCredential(googleCredential);
 
     console.log('[GoogleAuth] ✅ Firebase authentication successful:', {
       uid: userCredential.user.uid,

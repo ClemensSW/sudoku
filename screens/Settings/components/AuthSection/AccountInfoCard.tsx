@@ -4,11 +4,11 @@
  *
  * Zeigt Account-Informationen wenn User eingeloggt ist:
  * - User Email/Name mit Google Profilbild
- * - Auto-Sync Status
- * - Sign Out Button
+ * - Auto-Sync Info mit Last Sync Zeitstempel
+ * - Manual Sync Button
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ import { spacing, radius } from '@/utils/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { useProgressColor } from '@/hooks/useProgressColor';
+import { manualSync, getSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
 
 interface AccountInfoCardProps {
   onSignOut?: () => void;
@@ -27,63 +28,103 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   const { t } = useTranslation('settings');
   const theme = useTheme();
   const colors = theme.colors;
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { showAlert } = useAlert();
   const progressColor = useProgressColor();
 
-  // Handle sign out
-  const handleSignOut = async () => {
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Poll sync status every second while syncing
+  useEffect(() => {
+    if (isSyncing) {
+      const interval = setInterval(() => {
+        const status = getSyncStatus();
+        setSyncStatus(status);
+
+        if (!status.isSyncing) {
+          setIsSyncing(false);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isSyncing]);
+
+  // Format last sync time
+  const formatLastSync = (timestamp: number | null): string => {
+    if (!timestamp) return t('authSection.neverSynced');
+
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return t('authSection.justNow');
+    if (minutes < 60) return t('authSection.minutesAgo', { count: minutes });
+    if (hours < 24) return t('authSection.hoursAgo', { count: hours });
+    return t('authSection.daysAgo', { count: days });
+  };
+
+  // Handle manual sync
+  const handleManualSync = async () => {
     try {
+      setIsSyncing(true);
+      console.log('[AccountInfoCard] Manual sync requested');
+
+      const result = await manualSync();
+
+      if (result.success) {
+        console.log('[AccountInfoCard] ✅ Manual sync successful');
+        showAlert({
+          title: t('authSection.syncSuccess'),
+          message: t('authSection.syncSuccessMessage', {
+            conflicts: result.conflictsResolved,
+          }),
+          type: 'success',
+          buttons: [
+            {
+              text: 'OK',
+              style: 'primary',
+              onPress: () => {},
+            },
+          ],
+        });
+      } else {
+        console.error('[AccountInfoCard] ⚠️ Manual sync failed:', result.errors);
+        showAlert({
+          title: t('authSection.syncError'),
+          message: result.errors?.[0] || t('authSection.syncErrorMessage'),
+          type: 'error',
+          buttons: [
+            {
+              text: 'OK',
+              style: 'primary',
+              onPress: () => {},
+            },
+          ],
+        });
+      }
+
+      // Update sync status
+      setSyncStatus(getSyncStatus());
+    } catch (error: any) {
+      console.error('[AccountInfoCard] ❌ Manual sync error:', error);
       showAlert({
-        title: t('authSection.signOutConfirmTitle'),
-        message: t('authSection.signOutConfirmMessage'),
-        type: 'warning',
+        title: t('authSection.syncError'),
+        message: error.message || t('authSection.syncErrorMessage'),
+        type: 'error',
         buttons: [
           {
-            text: t('authSection.cancel'),
-            style: 'cancel',
+            text: 'OK',
+            style: 'primary',
             onPress: () => {},
-          },
-          {
-            text: t('authSection.signOut'),
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await signOut();
-                if (onSignOut) onSignOut();
-                showAlert({
-                  title: t('authSection.signOutSuccess'),
-                  message: t('authSection.signOutSuccessMessage'),
-                  type: 'success',
-                  buttons: [
-                    {
-                      text: 'OK',
-                      style: 'primary',
-                      onPress: () => {},
-                    },
-                  ],
-                });
-              } catch (error: any) {
-                console.error('[AccountInfoCard] Sign out error:', error);
-                showAlert({
-                  title: t('authSection.signOutError'),
-                  message: error.message || t('authSection.signOutErrorMessage'),
-                  type: 'error',
-                  buttons: [
-                    {
-                      text: 'OK',
-                      style: 'primary',
-                      onPress: () => {},
-                    },
-                  ],
-                });
-              }
-            },
           },
         ],
       });
-    } catch (error) {
-      console.error('[AccountInfoCard] Sign out alert error:', error);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -128,28 +169,40 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
         </View>
       </View>
 
-      {/* Auto-Sync Info - Simple one-liner */}
+      {/* Auto-Sync Info with Last Sync */}
       <View style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}>
-        <Feather name="cloud-lightning" size={16} color={progressColor} />
-        <Text style={[styles.syncInfoText, { color: colors.textSecondary }]}>
-          {t('authSection.autoSyncInfo')}
-        </Text>
+        <View style={styles.syncInfoHeader}>
+          <Feather name="cloud-lightning" size={16} color={progressColor} />
+          <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
+            {t('authSection.autoSyncInfo')}
+          </Text>
+        </View>
+        <View style={styles.syncStatusRow}>
+          <Feather
+            name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
+            size={14}
+            color={syncStatus.lastError ? colors.error : progressColor}
+          />
+          <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
+            {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
+          </Text>
+        </View>
       </View>
 
-      {/* Sign Out Button */}
+      {/* Manual Sync Button */}
       <TouchableOpacity
-        style={[styles.signOutButton, { borderColor: colors.border }]}
-        onPress={handleSignOut}
-        disabled={authLoading}
-        activeOpacity={0.7}
+        style={[styles.syncButton, { backgroundColor: progressColor }]}
+        onPress={handleManualSync}
+        disabled={isSyncing}
+        activeOpacity={0.8}
       >
-        {authLoading ? (
-          <ActivityIndicator size="small" color={colors.textSecondary} />
+        {isSyncing ? (
+          <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Feather name="log-out" size={18} color={colors.textSecondary} />
+          <Feather name="refresh-cw" size={18} color="#fff" />
         )}
-        <Text style={[styles.signOutButtonText, { color: colors.textSecondary }]}>
-          {t('authSection.signOut')}
+        <Text style={styles.syncButtonText}>
+          {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
         </Text>
       </TouchableOpacity>
     </Animated.View>
@@ -206,34 +259,47 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // Auto-Sync Info - Simple
+  // Auto-Sync Info
   syncInfo: {
+    padding: spacing.md,
+    borderRadius: radius.md,
+    gap: spacing.xs,
+  },
+  syncInfoHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.sm,
-    borderRadius: radius.sm,
     gap: spacing.xs,
   },
   syncInfoText: {
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  syncStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginLeft: spacing.md + 8, // Indent to align with text
+  },
+  lastSyncText: {
+    fontSize: 12,
     fontWeight: '500',
   },
 
-  // Sign Out Button
-  signOutButton: {
+  // Manual Sync Button
+  syncButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.sm + 2,
-    paddingHorizontal: spacing.md,
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderRadius: radius.md,
-    borderWidth: 1,
   },
-  signOutButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+  syncButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });
 

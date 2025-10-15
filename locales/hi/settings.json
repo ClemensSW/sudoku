@@ -7,6 +7,7 @@
     "help": "मदद",
     "actions": "क्रियाएं",
     "community": "समुदाय",
+    "accountData": "खाता और डेटा",
     "info": "जानकारी"
   },
   "sections": {
@@ -112,6 +113,19 @@
     "title": "प्रगति सहेजें",
     "subtitle": "अपनी उपलब्धियां कभी न खोएं",
     "cta": "साइन इन करें"
+  },
+  "accountData": {
+    "title": "खाता और डेटा",
+    "syncSection": "सिंक और बैकअप",
+    "accountSection": "खाता प्रबंधन",
+    "deleteAccount": "खाता हटाएं",
+    "deleteAccountConfirmTitle": "खाता हटाएं?",
+    "deleteAccountConfirmMessage": "आपका सारा डेटा स्थायी रूप से हटा दिया जाएगा। इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+    "deleteAccountSuccess": "खाता हटाया गया",
+    "deleteAccountSuccessMessage": "आपका खाता और सभी संबद्ध डेटा हटा दिया गया है।",
+    "deleteAccountError": "हटाना विफल रहा",
+    "deleteAccountErrorMessage": "आपका खाता हटाने में विफल। कृपया पुनः प्रयास करें।",
+    "cancel": "रद्द करें"
   },
   "authSection": {
     "title": "प्रगति सहेजें",

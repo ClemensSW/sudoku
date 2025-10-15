@@ -7,6 +7,7 @@
     "help": "Hilfe",
     "actions": "Aktionen",
     "community": "Community",
+    "accountData": "Konto & Daten",
     "info": "Info"
   },
   "sections": {
@@ -112,6 +113,19 @@
     "title": "Spielstand sichern",
     "subtitle": "Verliere nie wieder deinen Fortschritt",
     "cta": "Anmelden"
+  },
+  "accountData": {
+    "title": "Konto & Daten",
+    "syncSection": "Synchronisierung & Backup",
+    "accountSection": "Kontoverwaltung",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountConfirmTitle": "Konto wirklich löschen?",
+    "deleteAccountConfirmMessage": "Alle deine Daten werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteAccountSuccess": "Konto erfolgreich gelöscht",
+    "deleteAccountSuccessMessage": "Dein Konto und alle zugehörigen Daten wurden gelöscht.",
+    "deleteAccountError": "Konto löschen fehlgeschlagen",
+    "deleteAccountErrorMessage": "Das Löschen deines Kontos ist fehlgeschlagen. Bitte versuche es erneut.",
+    "cancel": "Abbrechen"
   },
   "authSection": {
     "title": "Spielstand sichern",

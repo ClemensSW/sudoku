@@ -7,6 +7,7 @@
     "help": "Help",
     "actions": "Actions",
     "community": "Community",
+    "accountData": "Account & Data",
     "info": "Info"
   },
   "sections": {
@@ -112,6 +113,19 @@
     "title": "Save Your Progress",
     "subtitle": "Never lose your achievements again",
     "cta": "Sign In"
+  },
+  "accountData": {
+    "title": "Account & Data",
+    "syncSection": "Sync & Backup",
+    "accountSection": "Account Management",
+    "deleteAccount": "Delete Account",
+    "deleteAccountConfirmTitle": "Delete Account?",
+    "deleteAccountConfirmMessage": "All your data will be permanently deleted. This action cannot be undone.",
+    "deleteAccountSuccess": "Account Deleted",
+    "deleteAccountSuccessMessage": "Your account and all associated data have been deleted.",
+    "deleteAccountError": "Deletion Failed",
+    "deleteAccountErrorMessage": "Failed to delete your account. Please try again.",
+    "cancel": "Cancel"
   },
   "authSection": {
     "title": "Save Your Progress",

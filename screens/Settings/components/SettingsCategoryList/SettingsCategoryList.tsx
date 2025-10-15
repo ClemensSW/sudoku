@@ -20,6 +20,7 @@ interface SettingsCategoryListProps {
   onGamePress: () => void;
   onHelpPress: () => void;
   onCommunityPress: () => void;
+  onAccountDataPress: () => void;
   onInfoPress: () => void;
 }
 
@@ -29,6 +30,7 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   onGamePress,
   onHelpPress,
   onCommunityPress,
+  onAccountDataPress,
   onInfoPress,
 }) => {
   const { t } = useTranslation("settings");
@@ -58,6 +60,11 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
       icon: "users",
     },
     {
+      id: "accountData",
+      titleKey: "categories.accountData",
+      icon: "shield",
+    },
+    {
       id: "info",
       titleKey: "categories.info",
       icon: "info",
@@ -79,6 +86,9 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
       case "community":
         onCommunityPress();
         break;
+      case "accountData":
+        onAccountDataPress();
+        break;
       case "info":
         onInfoPress();
         break;
@@ -88,16 +98,16 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   // Sort categories based on context (in-game vs normal)
   const getSortedCategories = () => {
     if (showGameFeatures) {
-      // Im Spiel: Spiel > Profil > Anzeige > Community > Info
+      // Im Spiel: Spiel > Profil > Anzeige > Community > Konto & Daten > Info
       // (Hilfe+Actions inline above)
-      const order = ["game", "profile", "design", "community", "info"];
+      const order = ["game", "profile", "design", "community", "accountData", "info"];
       return order
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);
     } else {
-      // Normal: Anzeige > Spiel > Hilfe > Community > Info
+      // Normal: Anzeige > Spiel > Hilfe > Community > Konto & Daten > Info
       // (Profil inline above)
-      const order = ["design", "game", "help", "community", "info"];
+      const order = ["design", "game", "help", "community", "accountData", "info"];
       return order
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);

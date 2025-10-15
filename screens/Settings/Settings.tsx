@@ -28,6 +28,7 @@ import { useNavigation } from "@/contexts/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithGoogle } from "@/utils/auth/googleAuth";
 import { manualSync } from "@/utils/cloudSync/syncService";
+import { deleteUserAccount } from "@/utils/auth/deleteAccount";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
 import SupportShopScreen from "@/screens/SupportShop";
@@ -52,6 +53,7 @@ import AppearanceSettingsModal from "./components/AppearanceSettingsModal";
 import GameSettingsModal from "./components/GameSettingsModal";
 import HelpSettingsModal from "./components/HelpSettingsModal";
 import CommunitySettingsModal from "./components/CommunitySettingsModal";
+import AccountDataModal from "./components/AccountDataModal";
 import InfoSettingsModal from "./components/InfoSettingsModal";
 
 import styles from "./Settings.styles";
@@ -101,6 +103,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showGameModal, setShowGameModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showCommunityModal, setShowCommunityModal] = useState(false);
+  const [showAccountDataModal, setShowAccountDataModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [isChangingTheme, setIsChangingTheme] = useState(false);
 
@@ -325,6 +328,127 @@ const Settings: React.FC<SettingsScreenProps> = ({
     });
   };
 
+  const handleSignOut = async () => {
+    try {
+      triggerHaptic("light");
+      showAlert({
+        title: t('authSection.signOutConfirmTitle'),
+        message: t('authSection.signOutConfirmMessage'),
+        type: 'warning',
+        buttons: [
+          {
+            text: t('authSection.cancel'),
+            style: 'cancel',
+            onPress: () => {},
+          },
+          {
+            text: t('authSection.signOut'),
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await signOut();
+                triggerHaptic("success");
+                setShowAccountDataModal(false);
+                showAlert({
+                  title: t('authSection.signOutSuccess'),
+                  message: t('authSection.signOutSuccessMessage'),
+                  type: 'success',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
+              } catch (error: any) {
+                console.error('[Settings] Sign out error:', error);
+                triggerHaptic("error");
+                showAlert({
+                  title: t('authSection.signOutError'),
+                  message: error.message || t('authSection.signOutErrorMessage'),
+                  type: 'error',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
+              }
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      console.error('[Settings] Sign out alert error:', error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      triggerHaptic("warning");
+      showAlert({
+        title: t('accountData.deleteAccountConfirmTitle'),
+        message: t('accountData.deleteAccountConfirmMessage'),
+        type: 'warning',
+        buttons: [
+          {
+            text: t('accountData.cancel'),
+            style: 'cancel',
+            onPress: () => {},
+          },
+          {
+            text: t('accountData.deleteAccount'),
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                console.log('[Settings] Deleting account...');
+                await deleteUserAccount();
+                setShowAccountDataModal(false);
+                triggerHaptic("success");
+
+                // Navigate to home screen
+                router.replace('/');
+
+                showAlert({
+                  title: t('accountData.deleteAccountSuccess'),
+                  message: t('accountData.deleteAccountSuccessMessage'),
+                  type: 'success',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
+              } catch (error: any) {
+                console.error('[Settings] ❌ Delete account error:', error);
+                triggerHaptic("error");
+                showAlert({
+                  title: t('accountData.deleteAccountError'),
+                  message: error.message || t('accountData.deleteAccountErrorMessage'),
+                  type: 'error',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      style: 'primary',
+                      onPress: () => {},
+                    },
+                  ],
+                });
+              }
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      console.error('[Settings] Delete account alert error:', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <Animated.View
@@ -435,6 +559,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             onGamePress={() => setShowGameModal(true)}
             onHelpPress={() => setShowHelpModal(true)}
             onCommunityPress={() => setShowCommunityModal(true)}
+            onAccountDataPress={() => setShowAccountDataModal(true)}
             onInfoPress={() => setShowInfoModal(true)}
           />
         </Animated.View>
@@ -501,6 +626,15 @@ const Settings: React.FC<SettingsScreenProps> = ({
             setShowSupportShop(true);
           }}
           showAlert={showAlert}
+        />
+      )}
+
+      {showAccountDataModal && isLoggedIn && (
+        <AccountDataModal
+          visible={showAccountDataModal}
+          onClose={() => setShowAccountDataModal(false)}
+          onSignOut={handleSignOut}
+          onDeleteAccount={handleDeleteAccount}
         />
       )}
 

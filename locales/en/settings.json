@@ -123,6 +123,27 @@
     "benefitsTitle": "Benefits",
     "benefit1": "Progress across all devices",
     "benefit2": "Automatic cloud backup",
-    "benefit3": "Never lose data again"
+    "benefit3": "Never lose data again",
+    "noEmail": "No Email",
+    "lastSync": "Last Sync",
+    "neverSynced": "Never synced",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "syncNow": "Sync Now",
+    "syncing": "Syncing...",
+    "syncSuccess": "Sync Successful",
+    "syncSuccessMessage": "Your data was synced successfully. {{conflicts}} conflicts resolved.",
+    "syncError": "Sync Failed",
+    "syncErrorMessage": "Sync failed. Please try again later.",
+    "signOut": "Sign Out",
+    "signOutConfirmTitle": "Sign Out?",
+    "signOutConfirmMessage": "Do you really want to sign out? Your data stays safely stored in the cloud.",
+    "cancel": "Cancel",
+    "signOutSuccess": "Signed Out",
+    "signOutSuccessMessage": "You have been signed out successfully.",
+    "signOutError": "Sign Out Failed",
+    "signOutErrorMessage": "Sign out failed. Please try again."
   }
 }

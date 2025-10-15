@@ -44,6 +44,7 @@ import HelpSection from "./components/HelpSection/HelpSection";
 import ActionsSection from "./components/ActionsSection/ActionsSection";
 import ProfileGroup from "./components/ProfileGroup";
 import AuthSection from "./components/AuthSection/AuthSection";
+import AccountInfoCard from "./components/AuthSection/AccountInfoCard";
 
 // Import modals
 import AppearanceSettingsModal from "./components/AppearanceSettingsModal";
@@ -361,6 +362,11 @@ const Settings: React.FC<SettingsScreenProps> = ({
             </RNText>
             <ProfileGroup />
           </Animated.View>
+        )}
+
+        {/* Account Info Card - Show if logged in */}
+        {!showGameFeatures && isLoggedIn && (
+          <AccountInfoCard />
         )}
 
         {/* Auth Section - Only show if not logged in */}

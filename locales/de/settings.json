@@ -123,6 +123,27 @@
     "benefitsTitle": "Vorteile",
     "benefit1": "Fortschritt auf allen Geräten",
     "benefit2": "Automatische Cloud-Sicherung",
-    "benefit3": "Nie wieder Daten verlieren"
+    "benefit3": "Nie wieder Daten verlieren",
+    "noEmail": "Keine E-Mail",
+    "lastSync": "Letzter Sync",
+    "neverSynced": "Noch nie synchronisiert",
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {{count}} Min.",
+    "hoursAgo": "vor {{count}} Std.",
+    "daysAgo": "vor {{count}} Tag(en)",
+    "syncNow": "Jetzt synchronisieren",
+    "syncing": "Synchronisiere...",
+    "syncSuccess": "Sync erfolgreich",
+    "syncSuccessMessage": "Deine Daten wurden erfolgreich synchronisiert. {{conflicts}} Konflikte gelöst.",
+    "syncError": "Sync fehlgeschlagen",
+    "syncErrorMessage": "Synchronisierung fehlgeschlagen. Bitte versuche es später erneut.",
+    "signOut": "Abmelden",
+    "signOutConfirmTitle": "Abmelden?",
+    "signOutConfirmMessage": "Möchtest du dich wirklich abmelden? Deine Daten bleiben sicher in der Cloud gespeichert.",
+    "cancel": "Abbrechen",
+    "signOutSuccess": "Erfolgreich abgemeldet",
+    "signOutSuccessMessage": "Du wurdest erfolgreich abgemeldet.",
+    "signOutError": "Abmeldung fehlgeschlagen",
+    "signOutErrorMessage": "Abmeldung fehlgeschlagen. Bitte versuche es erneut."
   }
 }

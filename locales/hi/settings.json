@@ -123,6 +123,27 @@
     "benefitsTitle": "लाभ",
     "benefit1": "सभी उपकरणों पर प्रगति",
     "benefit2": "स्वचालित क्लाउड बैकअप",
-    "benefit3": "फिर कभी डेटा न खोएं"
+    "benefit3": "फिर कभी डेटा न खोएं",
+    "noEmail": "कोई ईमेल नहीं",
+    "lastSync": "अंतिम सिंक",
+    "neverSynced": "कभी सिंक नहीं किया गया",
+    "justNow": "अभी",
+    "minutesAgo": "{{count}} मिनट पहले",
+    "hoursAgo": "{{count}} घंटे पहले",
+    "daysAgo": "{{count}} दिन पहले",
+    "syncNow": "अभी सिंक करें",
+    "syncing": "सिंक हो रहा है...",
+    "syncSuccess": "सिंक सफल",
+    "syncSuccessMessage": "आपका डेटा सफलतापूर्वक सिंक किया गया। {{conflicts}} विरोधों को हल किया गया।",
+    "syncError": "सिंक विफल",
+    "syncErrorMessage": "सिंक विफल रहा। कृपया बाद में पुनः प्रयास करें।",
+    "signOut": "साइन आउट करें",
+    "signOutConfirmTitle": "साइन आउट करें?",
+    "signOutConfirmMessage": "क्या आप वाकई साइन आउट करना चाहते हैं? आपका डेटा क्लाउड में सुरक्षित रूप से संग्रहीत रहता है।",
+    "cancel": "रद्द करें",
+    "signOutSuccess": "साइन आउट किया गया",
+    "signOutSuccessMessage": "आप सफलतापूर्वक साइन आउट कर चुके हैं।",
+    "signOutError": "साइन आउट विफल",
+    "signOutErrorMessage": "साइन आउट विफल रहा। कृपया पुनः प्रयास करें।"
   }
 }

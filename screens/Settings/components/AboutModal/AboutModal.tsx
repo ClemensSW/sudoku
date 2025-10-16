@@ -15,8 +15,8 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import Constants from "expo-constants";
 import InfoIcon from "@/assets/svg/info.svg";
-import appConfig from "@/app.json";
 import styles from "./AboutModal.styles";
 
 interface AboutModalProps {
@@ -28,7 +28,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const { colors } = theme;
-  const version = appConfig.expo.version;
+  const version = Constants.expoConfig?.version || "1.0.0";
   const { height: screenHeight } = useWindowDimensions();
 
   // Berechne maxHeight für ScrollView basierend auf Bildschirmhöhe

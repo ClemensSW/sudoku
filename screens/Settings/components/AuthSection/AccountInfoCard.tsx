@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { useProgressColor } from '@/hooks/useProgressColor';
 import { manualSync, getSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
+import CloudsIcon from '@/assets/svg/clouds.svg';
 
 interface AccountInfoCardProps {
   onSignOut?: () => void;
@@ -172,7 +173,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
       {/* Auto-Sync Info with Last Sync */}
       <View style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}>
         <View style={styles.syncInfoHeader}>
-          <Feather name="cloud-lightning" size={16} color={progressColor} />
+          <CloudsIcon width={64} height={64} />
           <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
             {t('authSection.autoSyncInfo')}
           </Text>
@@ -266,19 +267,21 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   syncInfoHeader: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   syncInfoText: {
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: spacing.sm,
   },
   syncStatusRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing.xs,
-    marginLeft: spacing.md + 8, // Indent to align with text
   },
   lastSyncText: {
     fontSize: 12,

@@ -331,7 +331,8 @@ export async function hasCloudData(userId: string): Promise<boolean> {
       .doc('stats')
       .get();
 
-    const hasData = statsDoc.exists;
+    // Handle both function and boolean forms of exists (API version compatibility)
+    const hasData = typeof statsDoc.exists === 'function' ? statsDoc.exists() : statsDoc.exists;
     console.log('[UploadService] User has cloud data:', hasData);
 
     return hasData;

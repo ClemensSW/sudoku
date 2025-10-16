@@ -89,7 +89,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const { toggleMusic } = useBackgroundMusic();
   const { hideBottomNav, resetBottomNav } = useNavigation();
   const { updateTheme } = theme;
-  const { user, isLoggedIn, loading: authLoading } = useAuth();
+  const { user, isLoggedIn, loading: authLoading, signOut } = useAuth();
 
   const [settings, setSettings] = useState<GameSettingsType | null>(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);

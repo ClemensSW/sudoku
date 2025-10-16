@@ -51,7 +51,13 @@ export async function downloadStats(userId: string): Promise<GameStats | null> {
       return null;
     }
 
-    const firestoreStats = doc.data() as FirestoreStats;
+    const data = doc.data();
+    if (!data) {
+      console.log('[DownloadService] Stats document is empty');
+      return null;
+    }
+
+    const firestoreStats = data as FirestoreStats;
     const localStats = firestoreToGameStats(firestoreStats);
 
     console.log('[DownloadService] ✅ Stats downloaded successfully');
@@ -77,7 +83,13 @@ export async function downloadSettings(userId: string): Promise<GameSettings | n
       return null;
     }
 
-    const firestoreSettings = doc.data() as FirestoreSettings;
+    const data = doc.data();
+    if (!data) {
+      console.log('[DownloadService] Settings document is empty');
+      return null;
+    }
+
+    const firestoreSettings = data as FirestoreSettings;
     const localSettings = firestoreToGameSettings(firestoreSettings);
 
     console.log('[DownloadService] ✅ Settings downloaded successfully');
@@ -103,7 +115,13 @@ export async function downloadColorUnlock(userId: string): Promise<ColorUnlockDa
       return null;
     }
 
-    const firestoreColorUnlock = doc.data() as FirestoreColorUnlock;
+    const data = doc.data();
+    if (!data) {
+      console.log('[DownloadService] ColorUnlock document is empty');
+      return null;
+    }
+
+    const firestoreColorUnlock = data as FirestoreColorUnlock;
     const localColorUnlock = firestoreToColorUnlock(firestoreColorUnlock);
 
     console.log('[DownloadService] ✅ ColorUnlock downloaded successfully');

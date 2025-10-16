@@ -42,9 +42,33 @@ export async function deleteUserAccount(): Promise<void> {
     const userId = user.uid;
     console.log('[DeleteAccount] Deleting account for user:', userId);
 
-    // Step 1: Delete Firestore user document
+    // Step 1: Delete Firestore user document AND sub-collections
     try {
       const firestore = getFirebaseFirestore();
+
+      console.log('[DeleteAccount] Deleting Firestore sub-collections...');
+
+      // Delete sub-collection documents first (Firestore doesn't auto-delete sub-collections)
+      const deletePromises = [
+        firestore.collection('users').doc(userId).collection('data').doc('stats').delete(),
+        firestore.collection('users').doc(userId).collection('data').doc('settings').delete(),
+        firestore.collection('users').doc(userId).collection('data').doc('colorUnlock').delete(),
+      ];
+
+      // Wait for all sub-documents to be deleted (use allSettled to continue even if some fail)
+      const results = await Promise.allSettled(deletePromises);
+
+      // Log any failures
+      results.forEach((result, index) => {
+        const docName = ['stats', 'settings', 'colorUnlock'][index];
+        if (result.status === 'rejected') {
+          console.warn(`[DeleteAccount] ⚠️ Failed to delete ${docName}:`, result.reason);
+        } else {
+          console.log(`[DeleteAccount] ✅ Deleted ${docName}`);
+        }
+      });
+
+      // Then delete parent document (this also removes the profile field)
       const userDocRef = firestore.collection('users').doc(userId);
       await userDocRef.delete();
       console.log('[DeleteAccount] ✅ Firestore user document deleted');

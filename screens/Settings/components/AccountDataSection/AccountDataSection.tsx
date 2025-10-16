@@ -8,6 +8,7 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { manualSync, getSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
+import CloudsIcon from "@/assets/svg/clouds.svg";
 
 interface AccountDataSectionProps {
   onSignOut: () => void;
@@ -147,7 +148,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
           {/* Auto-Sync Info */}
           <View style={[styles.syncInfoContainer, { backgroundColor: progressColor + '10' }]}>
             <View style={styles.syncInfoHeader}>
-              <Feather name="cloud-lightning" size={16} color={progressColor} />
+              <CloudsIcon width={64} height={64} />
               <Text style={[styles.syncInfoTitle, { color: colors.textPrimary }]}>
                 {t('authSection.autoSyncInfo')}
               </Text>
@@ -247,19 +248,21 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   syncInfoHeader: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   syncInfoTitle: {
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: spacing.sm,
   },
   syncStatusRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing.xs,
-    marginLeft: spacing.md + 8,
   },
   lastSyncText: {
     fontSize: 12,

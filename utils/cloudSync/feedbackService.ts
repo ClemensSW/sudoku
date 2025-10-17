@@ -439,6 +439,7 @@ export async function submitFeedback(
 
       return {
         success: true, // Queue success
+        queued: true, // Indicate that feedback was queued
         sentViaEmail,
         error: error,
       };
@@ -447,6 +448,7 @@ export async function submitFeedback(
 
       return {
         success: false,
+        queued: false,
         error: queueError,
         sentViaEmail,
       };

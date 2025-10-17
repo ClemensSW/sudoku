@@ -31,7 +31,7 @@ type FeedbackView = "rating" | "category" | "detail" | "success";
 interface FeedbackBottomSheetProps {
   visible: boolean;
   onClose: () => void;
-  onFeedbackSubmit: (data: FeedbackData) => void;
+  onFeedbackSubmit: (data: FeedbackData) => Promise<{ queued?: boolean }>;
   onPlayStoreRedirect?: () => void;
 }
 
@@ -50,6 +50,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   const [rating, setRating] = useState<Rating | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedbackQueued, setFeedbackQueued] = useState(false);
 
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
 
@@ -117,7 +118,10 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   const handleSubmit = useCallback(async (data: FeedbackData) => {
     setIsSubmitting(true);
     try {
-      await onFeedbackSubmit(data);
+      const result = await onFeedbackSubmit(data);
+
+      // Check if feedback was queued
+      setFeedbackQueued(result.queued || false);
 
       // Show success view after submission
       setTimeout(() => {
@@ -161,6 +165,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
     setRating(null);
     setCategory(null);
     setIsSubmitting(false);
+    setFeedbackQueued(false);
     onClose();
   }, [onClose]);
 
@@ -205,6 +210,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
       setRating(null);
       setCategory(null);
       setIsSubmitting(false);
+      setFeedbackQueued(false);
     }
   }, [visible]);
 
@@ -250,7 +256,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
           />
         ) : null;
       case "success":
-        return <SuccessView onClose={handleSuccessClose} />;
+        return <SuccessView onClose={handleSuccessClose} queued={feedbackQueued} />;
       default:
         return <RatingView onRate={handleRate} />;
     }

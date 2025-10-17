@@ -53,7 +53,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   };
 
   // Handle feedback submission - 3-Tier Fallback Strategy
-  const handleFeedbackSubmit = async (data: FeedbackData) => {
+  const handleFeedbackSubmit = async (data: FeedbackData): Promise<{ queued?: boolean }> => {
     // Log for debugging
     logFeedbackData(data);
 
@@ -82,24 +82,8 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
           onFeedbackSent(data);
         }
 
-        // Show success message
-        if (showAlert) {
-          showAlert({
-            title: TEXTS.FEEDBACK_SENT_TITLE,
-            message: TEXTS.FEEDBACK_SENT_SUBTITLE,
-            type: 'success',
-            buttons: [
-              {
-                text: TEXTS.FEEDBACK_SENT_BUTTON,
-                onPress: onClose,
-                style: 'primary'
-              }
-            ],
-          });
-        } else {
-          onClose();
-        }
-        return;
+        // Return result with queued status
+        return { queued: firebaseResult.queued };
       }
 
       // TIER 2: Firebase failed, try email fallback
@@ -120,24 +104,8 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
           onFeedbackSent(data);
         }
 
-        // Show success message
-        if (showAlert) {
-          showAlert({
-            title: TEXTS.FEEDBACK_SENT_TITLE,
-            message: TEXTS.FEEDBACK_SENT_SUBTITLE,
-            type: 'success',
-            buttons: [
-              {
-                text: TEXTS.FEEDBACK_SENT_BUTTON,
-                onPress: onClose,
-                style: 'primary'
-              }
-            ],
-          });
-        } else {
-          onClose();
-        }
-        return;
+        // Return result (email was sent, so not queued)
+        return { queued: false };
       }
 
       // TIER 3: Both Firebase and Email failed
@@ -158,6 +126,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       } else {
         onClose();
       }
+      throw new Error('All feedback methods failed');
     } catch (error) {
       console.error('[ReviewManager] ❌ Error in feedback submission:', error);
 
@@ -186,7 +155,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
           } else {
             onClose();
           }
-          return;
+          return { queued: false };
         }
       } catch (emailError) {
         console.error('[ReviewManager] Email fallback also failed:', emailError);
@@ -209,6 +178,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       } else {
         onClose();
       }
+      throw new Error('Failed to submit feedback');
     }
   };
 

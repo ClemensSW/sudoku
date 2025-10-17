@@ -340,6 +340,7 @@ export interface FeedbackUploadResult {
   feedbackId?: string; // Firestore document ID
   error?: Error;
   sentViaEmail?: boolean; // true wenn Email-Fallback verwendet
+  queued?: boolean; // true wenn Feedback zur Offline-Queue hinzugefügt wurde
 }
 
 // ===== Export All =====

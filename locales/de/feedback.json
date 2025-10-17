@@ -58,6 +58,11 @@
     "subtitle": "Dein Feedback hilft mir sehr, die App zu verbessern.",
     "button": "Schließen"
   },
+  "queued": {
+    "title": "Feedback gespeichert!",
+    "subtitle": "Dein Feedback wird automatisch gesendet, sobald du wieder online bist.",
+    "button": "Schließen"
+  },
   "errors": {
     "sendFailed": {
       "title": "Feedback konnte nicht gesendet werden",

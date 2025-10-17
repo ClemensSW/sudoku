@@ -16,9 +16,10 @@ import SuccessSvg from '@/assets/svg/success.svg';
 
 interface SuccessViewProps {
   onClose: () => void;
+  queued?: boolean; // true if feedback was queued for later upload
 }
 
-const SuccessView: React.FC<SuccessViewProps> = ({ onClose }) => {
+const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) => {
   const theme = useTheme();
   const themeStyles = getThemeStyles(theme.isDark);
   const { t } = useTranslation('feedback');
@@ -115,11 +116,11 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose }) => {
       {/* Title & Subtitle */}
       <View style={styles.textContainer}>
         <Text style={[styles.titleText, { color: themeStyles.text }]}>
-          {t('sent.title')}
+          {queued ? t('queued.title') : t('sent.title')}
         </Text>
 
         <Text style={[styles.subtitleText, { color: themeStyles.secondaryText }]}>
-          {t('sent.subtitle')}
+          {queued ? t('queued.subtitle') : t('sent.subtitle')}
         </Text>
       </View>
 
@@ -143,7 +144,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose }) => {
               },
             ]}
           >
-            {t('sent.button')}
+            {queued ? t('queued.button') : t('sent.button')}
           </Text>
         </TouchableOpacity>
       </View>

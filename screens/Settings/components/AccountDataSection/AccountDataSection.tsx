@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
   },
   section: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   sectionTitle: {
     fontSize: 13,
@@ -244,18 +244,18 @@ const styles = StyleSheet.create({
 
   // Sync Info
   syncInfoContainer: {
-    padding: spacing.md,
-    gap: spacing.xs,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   syncInfoHeader: {
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   syncInfoTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
     paddingHorizontal: spacing.sm,
   },
   syncStatusRow: {
@@ -290,9 +290,9 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.md + 2,
-    paddingHorizontal: spacing.md,
-    gap: spacing.sm,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
   },
   actionText: {
     flex: 1,

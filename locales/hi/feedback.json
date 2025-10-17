@@ -50,7 +50,8 @@
     "placeholder": "मुझे और विवरण बताएं...",
     "placeholderExperience": "अपने अनुभव के बारे में और बताएं...",
     "emailPlaceholder": "आपका ईमेल (वैकल्पिक)",
-    "button": "भेजें"
+    "button": "भेजें",
+    "submitting": "भेजा जा रहा है..."
   },
   "sent": {
     "title": "बहुत धन्यवाद!",

@@ -48,6 +48,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   const [currentView, setCurrentView] = useState<FeedbackView>("rating");
   const [rating, setRating] = useState<Rating | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
 
@@ -110,8 +111,16 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   }, []);
 
   // Handle feedback submission
-  const handleSubmit = useCallback((data: FeedbackData) => {
-    onFeedbackSubmit(data);
+  const handleSubmit = useCallback(async (data: FeedbackData) => {
+    setIsSubmitting(true);
+    try {
+      await onFeedbackSubmit(data);
+    } finally {
+      // Reset submitting state after a short delay
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 500);
+    }
   }, [onFeedbackSubmit]);
 
   // Handle back button
@@ -141,6 +150,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
     setCurrentView("rating");
     setRating(null);
     setCategory(null);
+    setIsSubmitting(false);
     onClose();
   }, [onClose]);
 
@@ -184,6 +194,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
       setCurrentView("rating");
       setRating(null);
       setCategory(null);
+      setIsSubmitting(false);
     }
   }, [visible]);
 
@@ -220,6 +231,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
             category={category}
             rating={rating}
             onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
           />
         ) : null;
       default:

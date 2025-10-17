@@ -50,7 +50,8 @@
     "placeholder": "Tell me more details...",
     "placeholderExperience": "Tell me more about your experience...",
     "emailPlaceholder": "Your email (optional)",
-    "button": "Send"
+    "button": "Send",
+    "submitting": "Sending..."
   },
   "sent": {
     "title": "Thank you!",

@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import { styles, getThemeStyles } from '../styles';
 import { FeedbackData, FeedbackCategory, Rating } from '../types';
@@ -19,12 +20,14 @@ interface DetailViewProps {
   category: FeedbackCategory | null;
   rating: Rating;
   onSubmit: (data: FeedbackData) => void;
+  isSubmitting?: boolean;
 }
 
 const DetailView: React.FC<DetailViewProps> = ({
   category,
   rating,
-  onSubmit
+  onSubmit,
+  isSubmitting = false
 }) => {
   const { t } = useTranslation('feedback');
   const [details, setDetails] = useState('');
@@ -42,7 +45,7 @@ const DetailView: React.FC<DetailViewProps> = ({
 
   // Handle submission
   const handleSubmit = () => {
-    if (details.trim().length === 0) return;
+    if (details.trim().length === 0 || isSubmitting) return;
 
     // Dismiss keyboard first
     Keyboard.dismiss();
@@ -92,22 +95,37 @@ const DetailView: React.FC<DetailViewProps> = ({
             style={[
               styles.buttonContainer,
               {
-                backgroundColor: details.trim().length > 0 ? '#FFCB2B' : themeStyles.borderColor,
+                backgroundColor: details.trim().length > 0 && !isSubmitting
+                  ? '#FFCB2B'
+                  : themeStyles.borderColor,
+                opacity: isSubmitting ? 0.7 : 1,
               }
             ]}
             onPress={handleSubmit}
-            disabled={details.trim().length === 0}
+            disabled={details.trim().length === 0 || isSubmitting}
             activeOpacity={0.8}
           >
-            <Text style={[
-              styles.buttonText,
-              {
-                color: '#1A1A1A', // Always dark on yellow button
-                opacity: details.trim().length > 0 ? 1 : 0.5
-              }
-            ]}>
-              {t('detail.button')}
-            </Text>
+            {isSubmitting ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <ActivityIndicator size="small" color="#1A1A1A" />
+                <Text style={[
+                  styles.buttonText,
+                  { color: '#1A1A1A' }
+                ]}>
+                  {t('detail.submitting')}
+                </Text>
+              </View>
+            ) : (
+              <Text style={[
+                styles.buttonText,
+                {
+                  color: '#1A1A1A',
+                  opacity: details.trim().length > 0 ? 1 : 0.5
+                }
+              ]}>
+                {t('detail.button')}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

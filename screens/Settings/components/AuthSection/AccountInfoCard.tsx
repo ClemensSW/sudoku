@@ -52,6 +52,18 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
     }
   }, [isSyncing]);
 
+  // Also poll sync status every 5 seconds when not syncing (to catch external syncs)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isSyncing) {
+        const status = getSyncStatus();
+        setSyncStatus(status);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isSyncing]);
+
   // Format last sync time
   const formatLastSync = (timestamp: number | null): string => {
     if (!timestamp) return t('authSection.neverSynced');

@@ -94,7 +94,8 @@ service cloud.firestore {
           data.appVersion.size() >= 1 &&
           data.appVersion.size() <= 50 &&
 
-          data.createdAt is timestamp &&
+          // createdAt can be either timestamp or int (milliseconds since epoch)
+          (data.createdAt is timestamp || data.createdAt is int) &&
 
           data.status == 'new' &&
 
@@ -104,7 +105,7 @@ service cloud.firestore {
           (!('userEmail' in data) || data.userEmail is string || data.userEmail == null) &&
           (!('deviceInfo' in data) || data.deviceInfo is string) &&
           (!('sentViaEmail' in data) || data.sentViaEmail is bool) &&
-          (!('emailSentAt' in data) || data.emailSentAt is timestamp)
+          (!('emailSentAt' in data) || data.emailSentAt is timestamp || data.emailSentAt is int)
         );
       }
     }
@@ -147,18 +148,18 @@ service cloud.firestore {
 - ❌ Delete: Denied (permanent)
 
 **Validation:**
-- `rating`: Must be 1-5
+- `rating`: Must be 1-5 (integer)
 - `details`: Required, 1-5000 characters
 - `platform`: Must be 'android', 'ios', or 'web'
 - `appVersion`: Required, max 50 characters
-- `createdAt`: Required timestamp
+- `createdAt`: Required timestamp or int (milliseconds since epoch)
 - `status`: Must be 'new' on creation
 - `category`: Optional, must be valid category
 - `userId`: Optional (can be null for anonymous)
 - `userEmail`: Optional (can be null)
 - `deviceInfo`: Optional string
 - `sentViaEmail`: Optional boolean
-- `emailSentAt`: Optional timestamp
+- `emailSentAt`: Optional timestamp or int (milliseconds)
 
 **Why anonymous write is safe:**
 - ✅ Write-only (no reads = no data leakage)

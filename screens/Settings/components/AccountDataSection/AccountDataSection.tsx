@@ -7,7 +7,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
-import { manualSync, getSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
+import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
 import CloudsIcon from "@/assets/svg/clouds.svg";
 
 interface AccountDataSectionProps {
@@ -29,33 +29,15 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Poll sync status every second while syncing
+  // Subscribe to sync status updates (event-based, no polling!)
   useEffect(() => {
-    if (isSyncing) {
-      const interval = setInterval(() => {
-        const status = getSyncStatus();
-        setSyncStatus(status);
+    const unsubscribe = subscribeSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsSyncing(status.isSyncing);
+    });
 
-        if (!status.isSyncing) {
-          setIsSyncing(false);
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isSyncing]);
-
-  // Also poll sync status every 5 seconds when not syncing (to catch external syncs)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isSyncing) {
-        const status = getSyncStatus();
-        setSyncStatus(status);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isSyncing]);
+    return unsubscribe;
+  }, []);
 
   // Format last sync time
   const formatLastSync = (timestamp: number | null): string => {

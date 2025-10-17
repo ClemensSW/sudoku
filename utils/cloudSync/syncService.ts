@@ -60,6 +60,10 @@ let syncStatus: SyncStatus = {
   lastError: null,
 };
 
+// Listener für Sync-Status Updates
+type SyncStatusListener = (status: SyncStatus) => void;
+const syncStatusListeners: Set<SyncStatusListener> = new Set();
+
 // Debounce: Min 5 Minuten zwischen Syncs
 const MIN_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
@@ -68,6 +72,35 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
 
 // ===== Helper Functions =====
+
+/**
+ * Benachrichtigt alle Listener über Status-Änderung
+ */
+function notifySyncStatusListeners(): void {
+  const statusCopy = { ...syncStatus };
+  syncStatusListeners.forEach(listener => {
+    try {
+      listener(statusCopy);
+    } catch (error) {
+      console.error('[SyncService] Error in sync status listener:', error);
+    }
+  });
+}
+
+/**
+ * Registriert einen Listener für Sync-Status Updates
+ * @returns Cleanup-Funktion zum Entfernen des Listeners
+ */
+export function subscribeSyncStatus(listener: SyncStatusListener): () => void {
+  syncStatusListeners.add(listener);
+  // Sofort aktuellen Status senden
+  listener({ ...syncStatus });
+
+  // Return cleanup function
+  return () => {
+    syncStatusListeners.delete(listener);
+  };
+}
 
 /**
  * Prüft ob Sync erlaubt ist (Debouncing)
@@ -148,6 +181,7 @@ export async function syncUserData(options: {
     // 3. Mark as syncing
     syncStatus.isSyncing = true;
     syncStatus.lastError = null;
+    notifySyncStatusListeners();
 
     console.log('[SyncService] Starting sync for user:', user.uid);
 
@@ -171,6 +205,7 @@ export async function syncUserData(options: {
 
       syncStatus.isSyncing = false;
       syncStatus.lastSync = Date.now();
+      notifySyncStatusListeners();
 
       return {
         success: uploadResult.success,
@@ -226,6 +261,7 @@ export async function syncUserData(options: {
     // 9. Update status
     syncStatus.isSyncing = false;
     syncStatus.lastSync = Date.now();
+    notifySyncStatusListeners();
 
     console.log('[SyncService] ✅ Sync complete!');
 
@@ -247,6 +283,7 @@ export async function syncUserData(options: {
     // Update status
     syncStatus.isSyncing = false;
     syncStatus.lastError = error.message;
+    notifySyncStatusListeners();
 
     return {
       success: false,
@@ -354,6 +391,7 @@ export default {
   syncOnAppPause,
   syncAfterGameCompletion,
   getSyncStatus,
+  subscribeSyncStatus,
   isSyncing,
   getLastSyncTimestamp,
   getLastSyncError,

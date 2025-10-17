@@ -98,7 +98,7 @@ const DetailView: React.FC<DetailViewProps> = ({
             <Text style={[
               styles.buttonText,
               {
-                color: theme.isDark ? '#1A1A1A' : '#FFFFFF',
+                color: '#1A1A1A', // Always dark on yellow button
                 opacity: details.trim().length > 0 ? 1 : 0.5
               }
             ]}>

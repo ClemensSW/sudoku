@@ -60,8 +60,10 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
               styles.categoryItem,
               {
                 backgroundColor: selectedCategory === cat.id
-                  ? 'rgba(255, 203, 43, 0.15)'
-                  : 'transparent'
+                  ? (theme.isDark ? 'rgba(255, 203, 43, 0.15)' : 'rgba(255, 203, 43, 0.08)')
+                  : 'transparent',
+                borderWidth: selectedCategory === cat.id ? 1 : 0,
+                borderColor: selectedCategory === cat.id ? '#FFCB2B' : 'transparent',
               }
             ]}
             onPress={() => handleCategorySelect(cat.id)}
@@ -88,7 +90,9 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
             <View style={[
               styles.categoryIconContainer,
               {
-                backgroundColor: 'rgba(255, 203, 43, 0.15)'
+                backgroundColor: theme.isDark
+                  ? 'rgba(255, 203, 43, 0.15)'
+                  : 'rgba(255, 203, 43, 0.12)'
               }
             ]}>
               <Feather
@@ -125,7 +129,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
           <Text style={[
             styles.buttonText,
             {
-              color: theme.isDark ? '#1A1A1A' : '#FFFFFF',
+              color: '#1A1A1A', // Always dark on yellow button
               opacity: selectedCategory ? 1 : 0.5
             }
           ]}>

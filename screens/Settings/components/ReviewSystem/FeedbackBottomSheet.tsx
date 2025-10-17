@@ -101,9 +101,11 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   const handleSelectCategory = useCallback((selectedCategory: FeedbackCategory) => {
     setCategory(selectedCategory);
 
-    // Navigate to detail view
+    // Navigate to detail view and snap to 100% for keyboard visibility
     setTimeout(() => {
       setCurrentView("detail");
+      // Snap to 100% to ensure button is visible
+      bottomSheetRef.current?.snapToIndex(1);
     }, 300);
   }, []);
 

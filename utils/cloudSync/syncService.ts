@@ -35,7 +35,21 @@ import {
   saveColorUnlock,
   DEFAULT_SETTINGS,
 } from '@/utils/storage';
-import { gameStatsToFirestore, gameSettingsToFirestore, colorUnlockToFirestore } from './firestoreSchema';
+import {
+  loadLandscapeCollection,
+  saveLandscapeCollection,
+} from '@/screens/Gallery/utils/landscapes/storage';
+import {
+  loadUserProfile,
+  saveUserProfile,
+} from '@/utils/profileStorage';
+import {
+  gameStatsToFirestore,
+  gameSettingsToFirestore,
+  colorUnlockToFirestore,
+  landscapesToFirestore,
+  userProfileToFirestore,
+} from './firestoreSchema';
 
 // ===== Types =====
 
@@ -194,6 +208,8 @@ export async function syncUserData(options: {
     const localStats = await loadStats();
     const localSettings = (await loadSettings()) || DEFAULT_SETTINGS;
     const localColorUnlock = await loadColorUnlock();
+    const localLandscapes = await loadLandscapeCollection();
+    const localProfile = await loadUserProfile();
 
     // 6. Merge mit Conflict Resolution
     console.log('[SyncService] Step 3/5: Merging data...');
@@ -221,23 +237,39 @@ export async function syncUserData(options: {
       localSettings,
       cloudData.settings,
       localColorUnlock,
-      cloudData.colorUnlock
+      cloudData.colorUnlock,
+      localLandscapes,
+      cloudData.landscapes,
+      localProfile,
+      cloudData.profile
     );
 
     console.log('[SyncService] Conflicts resolved:', merged.conflictsResolved);
 
     // 7. Save merged lokal
     console.log('[SyncService] Step 4/5: Saving merged data locally...');
-    await Promise.all([
+    const savePromises = [
       saveStats(merged.stats),
       saveSettings(merged.settings),
       saveColorUnlock(merged.colorUnlock),
-    ]);
+    ];
+
+    // Landscapes optional speichern (falls vorhanden)
+    if (merged.landscapes) {
+      savePromises.push(saveLandscapeCollection(merged.landscapes));
+    }
+
+    // Profile optional speichern (falls vorhanden)
+    if (merged.profile) {
+      savePromises.push(saveUserProfile(merged.profile));
+    }
+
+    await Promise.all(savePromises);
 
     // 8. Upload merged zurück zu Cloud
     console.log('[SyncService] Step 5/5: Uploading merged data to cloud...');
     const firestore = getFirebaseFirestore();
-    await Promise.all([
+    const uploadPromises = [
       firestore
         .collection('users')
         .doc(user.uid)
@@ -256,7 +288,36 @@ export async function syncUserData(options: {
         .collection('data')
         .doc('colorUnlock')
         .set(colorUnlockToFirestore(merged.colorUnlock)),
-    ]);
+    ];
+
+    // Landscapes optional uploaden (falls vorhanden)
+    if (merged.landscapes) {
+      uploadPromises.push(
+        firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('data')
+          .doc('landscapes')
+          .set(landscapesToFirestore(merged.landscapes))
+      );
+    }
+
+    // Profile optional uploaden (falls vorhanden)
+    if (merged.profile) {
+      const existingDoc = await firestore.collection('users').doc(user.uid).get();
+      const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
+
+      uploadPromises.push(
+        firestore.collection('users').doc(user.uid).set(
+          {
+            profile: userProfileToFirestore(merged.profile, existingProfile),
+          },
+          { merge: true }
+        )
+      );
+    }
+
+    await Promise.all(uploadPromises);
 
     // 9. Update status
     syncStatus.isSyncing = false;

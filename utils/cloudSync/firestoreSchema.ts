@@ -18,6 +18,9 @@ import type {
   MonthlyPlayData,
 } from '@/utils/storage';
 
+import type { UserProfile } from '@/utils/profileStorage';
+import type { LandscapeCollection } from '@/screens/Gallery/utils/landscapes/types';
+
 import type {
   FirestoreStats,
   FirestoreSettings,
@@ -280,12 +283,144 @@ export function createProfileFromFirebaseUser(
   return {
     displayName: user.displayName || null,
     email: user.email || null,
-    avatarUrl: null, // Später: Cloud Storage URL
+    avatarUrl: null, // Default-Avatar wird via photoURL gespeichert
     photoURL: user.photoURL || null,
     title: null, // Wird später aus Stats berechnet
     titleLevelIndex: null, // Wird später aus Stats berechnet
     createdAt: Date.now(),
     updatedAt: Date.now(),
+  };
+}
+
+/**
+ * Konvertiert lokales UserProfile → FirestoreProfile
+ * Verwendet für vollständige Profile-Synchronisierung (Name + Avatar + Titel)
+ */
+export function userProfileToFirestore(
+  profile: UserProfile,
+  existingFirestoreProfile?: Partial<FirestoreProfile>
+): FirestoreProfile {
+  return {
+    // Name: displayName wird von lokalem 'name' gesetzt
+    displayName: profile.name || null,
+
+    // Avatar: photoURL speichert Default-Avatar-Pfad (z.B. "default://avatar-cartoon-01")
+    // avatarUrl bleibt null (für zukünftige Custom-Avatars)
+    photoURL: profile.avatarUri || null,
+    avatarUrl: null,
+
+    // Titel: titleLevelIndex aus lokalem Profil
+    title: null, // Wird client-seitig aus titleLevelIndex berechnet
+    titleLevelIndex: profile.titleLevelIndex ?? null,
+
+    // Email + createdAt von existierendem Profil übernehmen (falls vorhanden)
+    email: existingFirestoreProfile?.email || null,
+    createdAt: existingFirestoreProfile?.createdAt || Date.now(),
+
+    // Timestamp aktualisieren
+    updatedAt: Date.now(),
+  };
+}
+
+/**
+ * Konvertiert FirestoreProfile → lokales UserProfile
+ */
+export function firestoreToUserProfile(firestoreProfile: FirestoreProfile): UserProfile {
+  return {
+    name: firestoreProfile.displayName || 'User',
+    avatarUri: firestoreProfile.photoURL || null,
+    title: firestoreProfile.title || null, // Legacy - wird nicht mehr verwendet
+    titleLevelIndex: firestoreProfile.titleLevelIndex ?? null,
+  };
+}
+
+// ===== Converter: Landscape Gallery ↔ FirestoreLandscapes =====
+
+/**
+ * Konvertiert lokale LandscapeCollection → FirestoreLandscapes
+ * Nur Fortschrittsdaten werden synchronisiert, keine statischen Assets
+ */
+export function landscapesToFirestore(collection: LandscapeCollection): FirestoreLandscapes {
+  const firestoreLandscapes: { [landscapeId: string]: FirestoreLandscape } = {};
+
+  // Konvertiere jede Landscape
+  Object.entries(collection.landscapes).forEach(([id, landscape]) => {
+    // Finde den letzten freigeschalteten Zeitpunkt
+    const unlockedSegments = landscape.segments.filter(s => s.isUnlocked);
+    const lastUnlocked =
+      unlockedSegments.length > 0
+        ? unlockedSegments[unlockedSegments.length - 1].unlockedAt || new Date().toISOString()
+        : new Date().toISOString();
+
+    firestoreLandscapes[id] = {
+      id: landscape.id,
+      unlockedSegments: landscape.progress, // Anzahl der freigeschalteten Segmente
+      isFavorite: landscape.isFavorite,
+      lastUnlocked: lastUnlocked,
+    };
+  });
+
+  return {
+    currentImageId: collection.currentImageId || '',
+    favorites: collection.favorites || [],
+    lastUsedFavoriteIndex: collection.lastUsedFavoriteIndex || 0,
+    lastChangedDate: collection.lastChangedDate || new Date().toISOString(),
+    landscapes: firestoreLandscapes,
+    updatedAt: Date.now(),
+  };
+}
+
+/**
+ * Konvertiert FirestoreLandscapes → lokale LandscapeCollection
+ * WICHTIG: Diese Funktion merged mit der existierenden lokalen Collection,
+ * da statische Daten (Namen, Bilder) lokal bleiben
+ */
+export function firestoreToLandscapes(
+  firestoreLandscapes: FirestoreLandscapes,
+  localCollection: LandscapeCollection
+): LandscapeCollection {
+  const updatedLandscapes = { ...localCollection.landscapes };
+
+  // Merge Firestore-Daten in lokale Landscapes
+  Object.entries(firestoreLandscapes.landscapes).forEach(([id, firestoreLandscape]) => {
+    const localLandscape = updatedLandscapes[id];
+
+    if (localLandscape) {
+      // Update nur den Fortschritt, nicht die statischen Daten
+      const unlockedCount = firestoreLandscape.unlockedSegments;
+
+      // Update segments: Markiere die ersten N Segmente als unlocked
+      const updatedSegments = localLandscape.segments.map((segment, index) => ({
+        ...segment,
+        isUnlocked: index < unlockedCount,
+        unlockedAt:
+          index < unlockedCount && !segment.unlockedAt
+            ? firestoreLandscape.lastUnlocked
+            : segment.unlockedAt,
+      }));
+
+      updatedLandscapes[id] = {
+        ...localLandscape,
+        segments: updatedSegments,
+        progress: unlockedCount,
+        isComplete: unlockedCount >= 9,
+        isFavorite: firestoreLandscape.isFavorite,
+        completedAt:
+          unlockedCount >= 9
+            ? localLandscape.completedAt || firestoreLandscape.lastUnlocked
+            : undefined,
+      };
+    }
+  });
+
+  return {
+    ...localCollection,
+    landscapes: updatedLandscapes,
+    currentImageId: firestoreLandscapes.currentImageId || localCollection.currentImageId,
+    favorites: firestoreLandscapes.favorites || localCollection.favorites,
+    lastUsedFavoriteIndex:
+      firestoreLandscapes.lastUsedFavoriteIndex ?? localCollection.lastUsedFavoriteIndex,
+    lastChangedDate: firestoreLandscapes.lastChangedDate || localCollection.lastChangedDate,
   };
 }
 
@@ -463,6 +598,12 @@ export default {
 
   // Profile Converters
   createProfileFromFirebaseUser,
+  userProfileToFirestore,
+  firestoreToUserProfile,
+
+  // Landscape Converters
+  landscapesToFirestore,
+  firestoreToLandscapes,
 
   // Validation
   validateGameStats,

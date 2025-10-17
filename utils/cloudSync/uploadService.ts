@@ -25,12 +25,17 @@ import {
   DEFAULT_SETTINGS,
 } from '@/utils/storage';
 
+import { loadLandscapeCollection } from '@/screens/Gallery/utils/landscapes/storage';
+import { loadUserProfile } from '@/utils/profileStorage';
+
 // Import Converter Functions
 import {
   gameStatsToFirestore,
   gameSettingsToFirestore,
   colorUnlockToFirestore,
+  landscapesToFirestore,
   createProfileFromFirebaseUser,
+  userProfileToFirestore,
   validateGameStats,
   validateGameSettings,
   validateColorUnlock,
@@ -42,6 +47,7 @@ import type {
   FirestoreStats,
   FirestoreSettings,
   FirestoreColorUnlock,
+  FirestoreLandscapes,
   FirestoreProfile,
 } from './types';
 
@@ -193,7 +199,41 @@ export async function uploadColorUnlock(userId: string): Promise<void> {
 }
 
 /**
+ * Upload Landscapes zu Firestore
+ */
+export async function uploadLandscapes(userId: string): Promise<void> {
+  try {
+    console.log('[UploadService] Uploading landscapes for user:', userId);
+
+    // 1. Load lokale Landscape Collection
+    const localLandscapes = await loadLandscapeCollection();
+
+    // 2. Convert to Firestore format
+    const firestoreLandscapes: FirestoreLandscapes = landscapesToFirestore(localLandscapes);
+
+    // 3. Upload to Firestore
+    const firestore = getFirebaseFirestore();
+    await firestore
+      .collection('users')
+      .doc(userId)
+      .collection('data')
+      .doc('landscapes')
+      .set(firestoreLandscapes, { merge: false });
+
+    console.log('[UploadService] ✅ Landscapes uploaded successfully');
+  } catch (error: any) {
+    console.error('[UploadService] ❌ Error uploading landscapes:', error);
+    throw new UploadError(
+      'Failed to upload landscapes',
+      error.code || 'UNKNOWN_ERROR',
+      error
+    );
+  }
+}
+
+/**
  * Upload Profile zu Firestore
+ * Kombiniert Firebase Auth User Daten mit lokalen Profile-Daten (Name, Avatar, Titel)
  */
 export async function uploadProfile(
   userId: string,
@@ -202,11 +242,25 @@ export async function uploadProfile(
   try {
     console.log('[UploadService] Uploading profile for user:', userId);
 
-    // 1. Create Profile from Firebase User
-    const firestoreProfile: FirestoreProfile = createProfileFromFirebaseUser(user);
+    // 1. Load lokales User-Profil (Name, Avatar, Titel)
+    const localProfile = await loadUserProfile();
 
-    // 2. Upload to Firestore (direkt im users/ document, nicht in sub-collection)
+    // 2. Hole existierendes Firestore-Profil (für Email + createdAt)
     const firestore = getFirebaseFirestore();
+    const existingDoc = await firestore.collection('users').doc(userId).get();
+    const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
+
+    // 3. Konvertiere lokales Profil zu Firestore-Format
+    //    Nutzt Firebase Auth für Email, kombiniert mit lokalem Namen/Avatar
+    const firestoreProfile: FirestoreProfile = userProfileToFirestore(
+      localProfile,
+      existingProfile || {
+        email: user.email,
+        createdAt: Date.now(),
+      }
+    );
+
+    // 4. Upload to Firestore (direkt im users/ document, nicht in sub-collection)
     await firestore.collection('users').doc(userId).set(
       {
         profile: firestoreProfile,
@@ -272,6 +326,9 @@ export async function uploadUserData(
       uploadColorUnlock(userId).then(() => {
         uploadedDocuments.push('colorUnlock');
       }),
+      uploadLandscapes(userId).then(() => {
+        uploadedDocuments.push('landscapes');
+      }),
     ];
 
     // Wait for all uploads (aber fange Errors individuell)
@@ -279,7 +336,7 @@ export async function uploadUserData(
 
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
-        const docName = ['stats', 'settings', 'colorUnlock'][index];
+        const docName = ['stats', 'settings', 'colorUnlock', 'landscapes'][index];
         console.error(`[UploadService] ${docName} upload failed:`, result.reason);
         errors.push({
           document: docName,
@@ -349,6 +406,7 @@ export default {
   uploadStats,
   uploadSettings,
   uploadColorUnlock,
+  uploadLandscapes,
   uploadProfile,
   uploadUserData,
   hasCloudData,

@@ -83,7 +83,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
 
       // Close bottom sheet after delay
       setTimeout(() => {
-        handleClose();
+        onClose();
       }, 500);
     }
     // 1-4 stars: Show category selection
@@ -95,7 +95,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
         setCurrentView("category");
       }, 300);
     }
-  }, [onPlayStoreRedirect]);
+  }, [onPlayStoreRedirect, onClose]);
 
   // Handle category selection
   const handleSelectCategory = useCallback((selectedCategory: FeedbackCategory) => {

@@ -8,6 +8,7 @@
     "actions": "क्रियाएं",
     "community": "समुदाय",
     "accountData": "खाता और डेटा",
+    "data": "डेटा",
     "info": "जानकारी"
   },
   "sections": {
@@ -125,6 +126,19 @@
     "deleteAccountSuccessMessage": "आपका खाता और सभी संबद्ध डेटा हटा दिया गया है।",
     "deleteAccountError": "हटाना विफल रहा",
     "deleteAccountErrorMessage": "आपका खाता हटाने में विफल। कृपया पुनः प्रयास करें।",
+    "cancel": "रद्द करें"
+  },
+  "localData": {
+    "title": "डेटा",
+    "dataSection": "स्थानीय गेम डेटा",
+    "deleteLocalData": "सभी गेम डेटा हटाएं",
+    "deleteDataDescription": "सभी स्थानीय रूप से संग्रहीत गेम डेटा हटाएं और पूरी तरह से नए सिरे से शुरू करें।",
+    "deleteDataConfirmTitle": "सभी डेटा हटाएं?",
+    "deleteDataConfirmMessage": "आपकी संपूर्ण प्रगति, सांख्यिकी, सेटिंग्स और अनलॉक की गई सामग्री स्थायी रूप से हटा दी जाएगी। इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+    "deleteDataSuccess": "डेटा हटाया गया",
+    "deleteDataSuccessMessage": "सभी स्थानीय गेम डेटा हटा दिया गया है। ऐप पुनः आरंभ होगा।",
+    "deleteDataError": "हटाना विफल रहा",
+    "deleteDataErrorMessage": "डेटा हटाने में विफल। कृपया पुनः प्रयास करें।",
     "cancel": "रद्द करें"
   },
   "authSection": {

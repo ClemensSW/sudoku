@@ -8,6 +8,7 @@
     "actions": "Aktionen",
     "community": "Community",
     "accountData": "Konto & Daten",
+    "data": "Daten",
     "info": "Info"
   },
   "sections": {
@@ -125,6 +126,19 @@
     "deleteAccountSuccessMessage": "Dein Konto und alle zugehörigen Daten wurden gelöscht.",
     "deleteAccountError": "Konto löschen fehlgeschlagen",
     "deleteAccountErrorMessage": "Das Löschen deines Kontos ist fehlgeschlagen. Bitte versuche es erneut.",
+    "cancel": "Abbrechen"
+  },
+  "localData": {
+    "title": "Daten",
+    "dataSection": "Lokale Spieledaten",
+    "deleteLocalData": "Alle Spieledaten löschen",
+    "deleteDataDescription": "Lösche alle lokal gespeicherten Spieledaten und starte komplett von vorne.",
+    "deleteDataConfirmTitle": "Alle Daten wirklich löschen?",
+    "deleteDataConfirmMessage": "Dein gesamter Fortschritt, Statistiken, Einstellungen und freigeschalteten Inhalte werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteDataSuccess": "Daten erfolgreich gelöscht",
+    "deleteDataSuccessMessage": "Alle lokalen Spieledaten wurden gelöscht. Die App wird neu gestartet.",
+    "deleteDataError": "Löschen fehlgeschlagen",
+    "deleteDataErrorMessage": "Das Löschen der Daten ist fehlgeschlagen. Bitte versuche es erneut.",
     "cancel": "Abbrechen"
   },
   "authSection": {

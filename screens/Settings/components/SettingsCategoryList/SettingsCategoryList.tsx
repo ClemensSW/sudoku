@@ -16,6 +16,7 @@ interface Category {
 
 interface SettingsCategoryListProps {
   showGameFeatures: boolean;
+  isLoggedIn: boolean;
   onDesignPress: () => void;
   onGamePress: () => void;
   onHelpPress: () => void;
@@ -26,6 +27,7 @@ interface SettingsCategoryListProps {
 
 const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   showGameFeatures,
+  isLoggedIn,
   onDesignPress,
   onGamePress,
   onHelpPress,
@@ -36,6 +38,11 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
+
+  // Get dynamic title key for accountData based on login status
+  const getAccountDataTitleKey = () => {
+    return isLoggedIn ? "categories.accountData" : "categories.data";
+  };
 
   // Define all categories
   const allCategories: Category[] = [
@@ -148,7 +155,7 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
                 />
               </View>
               <Text style={[styles.categoryTitle, { color: colors.textPrimary }]}>
-                {t(category.titleKey)}
+                {category.id === 'accountData' ? t(getAccountDataTitleKey()) : t(category.titleKey)}
               </Text>
             </View>
             <Feather name="chevron-right" size={20} color={colors.textSecondary} />

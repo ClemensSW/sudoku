@@ -8,6 +8,7 @@
     "actions": "Actions",
     "community": "Community",
     "accountData": "Account & Data",
+    "data": "Data",
     "info": "Info"
   },
   "sections": {
@@ -125,6 +126,19 @@
     "deleteAccountSuccessMessage": "Your account and all associated data have been deleted.",
     "deleteAccountError": "Deletion Failed",
     "deleteAccountErrorMessage": "Failed to delete your account. Please try again.",
+    "cancel": "Cancel"
+  },
+  "localData": {
+    "title": "Data",
+    "dataSection": "Local Game Data",
+    "deleteLocalData": "Delete All Game Data",
+    "deleteDataDescription": "Delete all locally stored game data and start completely fresh.",
+    "deleteDataConfirmTitle": "Delete All Data?",
+    "deleteDataConfirmMessage": "Your entire progress, statistics, settings, and unlocked content will be permanently deleted. This action cannot be undone.",
+    "deleteDataSuccess": "Data Deleted",
+    "deleteDataSuccessMessage": "All local game data has been deleted. The app will restart.",
+    "deleteDataError": "Deletion Failed",
+    "deleteDataErrorMessage": "Failed to delete data. Please try again.",
     "cancel": "Cancel"
   },
   "authSection": {

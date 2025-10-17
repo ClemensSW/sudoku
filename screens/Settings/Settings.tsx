@@ -54,6 +54,7 @@ import GameSettingsModal from "./components/GameSettingsModal";
 import HelpSettingsModal from "./components/HelpSettingsModal";
 import CommunitySettingsModal from "./components/CommunitySettingsModal";
 import AccountDataModal from "./components/AccountDataModal";
+import LocalDataModal from "./components/LocalDataModal";
 import InfoSettingsModal from "./components/InfoSettingsModal";
 
 import styles from "./Settings.styles";
@@ -555,6 +556,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
         >
           <SettingsCategoryList
             showGameFeatures={showGameFeatures}
+            isLoggedIn={isLoggedIn}
             onDesignPress={() => setShowDesignModal(true)}
             onGamePress={() => setShowGameModal(true)}
             onHelpPress={() => setShowHelpModal(true)}
@@ -635,6 +637,14 @@ const Settings: React.FC<SettingsScreenProps> = ({
           onClose={() => setShowAccountDataModal(false)}
           onSignOut={handleSignOut}
           onDeleteAccount={handleDeleteAccount}
+          showAlert={showAlert}
+        />
+      )}
+
+      {showAccountDataModal && !isLoggedIn && (
+        <LocalDataModal
+          visible={showAccountDataModal}
+          onClose={() => setShowAccountDataModal(false)}
           showAlert={showAlert}
         />
       )}

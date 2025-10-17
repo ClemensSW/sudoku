@@ -96,6 +96,20 @@ function generateUUID(): string {
   });
 }
 
+/**
+ * Entfernt alle undefined Felder aus einem Objekt
+ * Firestore akzeptiert keine undefined Werte
+ */
+function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  const result: any = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      result[key] = obj[key];
+    }
+  }
+  return result;
+}
+
 // ===== Firestore Upload =====
 
 /**
@@ -154,9 +168,12 @@ export async function uploadFeedbackToFirestore(
       emailSentAt: sentViaEmail ? (Date.now() as FirestoreTimestamp) : undefined,
     };
 
+    // Remove undefined fields (Firestore doesn't accept undefined)
+    const cleanedDoc = removeUndefinedFields(feedbackDoc);
+
     // Upload to Firestore
     const firestore = getFirebaseFirestore();
-    const docRef = await firestore.collection('feedback').add(feedbackDoc);
+    const docRef = await firestore.collection('feedback').add(cleanedDoc);
 
     console.log('[FeedbackService] ✅ Feedback uploaded successfully:', docRef.id);
 
@@ -224,28 +241,34 @@ export async function addToOfflineQueue(
     const userId = currentUser?.uid || null;
     const userEmail = input.email || currentUser?.email || null;
 
+    // Create feedback document
+    const feedbackDoc = {
+      // User Info
+      userId,
+      userEmail,
+
+      // Feedback Data
+      rating: input.rating,
+      category: input.category,
+      details: input.details,
+
+      // Device/App Info
+      platform: metadata.platform,
+      appVersion: metadata.appVersion,
+      deviceInfo: metadata.deviceInfo,
+
+      // Email Fallback Info
+      sentViaEmail,
+      emailSentAt: sentViaEmail ? (Date.now() as FirestoreTimestamp) : undefined,
+    };
+
+    // Remove undefined fields (Firestore doesn't accept undefined)
+    const cleanedFeedback = removeUndefinedFields(feedbackDoc);
+
     // Create queue item
     const queueItem: FeedbackQueueItem = {
       id: generateUUID(),
-      feedback: {
-        // User Info
-        userId,
-        userEmail,
-
-        // Feedback Data
-        rating: input.rating,
-        category: input.category,
-        details: input.details,
-
-        // Device/App Info
-        platform: metadata.platform,
-        appVersion: metadata.appVersion,
-        deviceInfo: metadata.deviceInfo,
-
-        // Email Fallback Info
-        sentViaEmail,
-        emailSentAt: sentViaEmail ? (Date.now() as FirestoreTimestamp) : undefined,
-      },
+      feedback: cleanedFeedback as any,
       attempts: 0,
       lastAttemptAt: null,
       createdAt: Date.now() as FirestoreTimestamp,
@@ -327,9 +350,12 @@ export async function processOfflineQueue(): Promise<number> {
           status: 'new',
         };
 
+        // Remove undefined fields (Firestore doesn't accept undefined)
+        const cleanedDoc = removeUndefinedFields(feedbackDoc);
+
         // Upload to Firestore
         const firestore = getFirebaseFirestore();
-        const docRef = await firestore.collection('feedback').add(feedbackDoc);
+        const docRef = await firestore.collection('feedback').add(cleanedDoc);
 
         console.log(`[FeedbackService] ✅ Item ${item.id} uploaded successfully: ${docRef.id}`);
 

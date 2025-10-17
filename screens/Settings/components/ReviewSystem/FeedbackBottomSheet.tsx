@@ -21,11 +21,12 @@ import { useNavigation } from '@/contexts/navigation';
 import RatingView from './views/RatingView';
 import CategoryView from './views/CategoryView';
 import DetailView from './views/DetailView';
+import SuccessView from './views/SuccessView';
 
 // Import Types
 import { Rating, FeedbackCategory, FeedbackData } from './types';
 
-type FeedbackView = "rating" | "category" | "detail";
+type FeedbackView = "rating" | "category" | "detail" | "success";
 
 interface FeedbackBottomSheetProps {
   visible: boolean;
@@ -64,6 +65,8 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
         return t("category.title");
       case "detail":
         return t("detail.title");
+      case "success":
+        return t("sent.title");
       default:
         return t("rating.title");
     }
@@ -115,11 +118,15 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
     setIsSubmitting(true);
     try {
       await onFeedbackSubmit(data);
-    } finally {
-      // Reset submitting state after a short delay
+
+      // Show success view after submission
       setTimeout(() => {
         setIsSubmitting(false);
+        setCurrentView("success");
       }, 500);
+    } catch (error) {
+      // Reset submitting state on error
+      setIsSubmitting(false);
     }
   }, [onFeedbackSubmit]);
 
@@ -127,7 +134,10 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   const handleBackPress = useCallback(() => {
     triggerHaptic("light");
 
-    if (currentView === "detail") {
+    if (currentView === "success") {
+      // On success view, close modal
+      onClose();
+    } else if (currentView === "detail") {
       setCurrentView("category");
     } else if (currentView === "category") {
       setCurrentView("rating");
@@ -218,6 +228,11 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
     [isDark]
   );
 
+  // Handle success close
+  const handleSuccessClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
   // Render current view
   const renderView = () => {
     switch (currentView) {
@@ -234,6 +249,8 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
             isSubmitting={isSubmitting}
           />
         ) : null;
+      case "success":
+        return <SuccessView onClose={handleSuccessClose} />;
       default:
         return <RatingView onRate={handleRate} />;
     }
@@ -244,7 +261,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       onDismiss={handleDismiss}
-      enablePanDownToClose={currentView === "rating"}
+      enablePanDownToClose={currentView === "rating" || currentView === "success"}
       handleComponent={renderHandle}
       backdropComponent={renderBackdrop}
       backgroundStyle={{
@@ -258,7 +275,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
     >
       {/* Header with title and close/back button */}
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        {currentView !== "rating" ? (
+        {currentView !== "rating" && currentView !== "success" ? (
           <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color={colors.textPrimary} />
           </TouchableOpacity>

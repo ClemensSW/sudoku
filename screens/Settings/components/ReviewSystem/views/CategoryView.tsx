@@ -92,13 +92,13 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
               {
                 backgroundColor: theme.isDark
                   ? 'rgba(255, 203, 43, 0.15)'
-                  : 'rgba(255, 203, 43, 0.12)'
+                  : 'rgba(255, 203, 43, 0.2)'
               }
             ]}>
               <Feather
                 name={CATEGORY_ICONS[cat.id]}
                 size={20}
-                color="#FFCB2B"
+                color={theme.isDark ? '#FFCB2B' : '#B8860B'}
               />
             </View>
 

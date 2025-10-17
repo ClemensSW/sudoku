@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import { styles, getThemeStyles } from '../styles';
 import { FeedbackData, FeedbackCategory, Rating } from '../types';
@@ -42,6 +43,9 @@ const DetailView: React.FC<DetailViewProps> = ({
   // Handle submission
   const handleSubmit = () => {
     if (details.trim().length === 0) return;
+
+    // Dismiss keyboard first
+    Keyboard.dismiss();
 
     triggerHaptic('medium');
 

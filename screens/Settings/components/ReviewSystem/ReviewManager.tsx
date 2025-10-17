@@ -1,14 +1,11 @@
-// screens/SettingsScreen/components/ReviewSystem/ReviewManager.tsx
-import React, { useState, useEffect } from 'react';
+// screens/Settings/components/ReviewSystem/ReviewManager.tsx
+import React from 'react';
 import { Platform } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import RatingModal from './RatingModal';
-import FeedbackCategoryModal from './FeedbackCategoryModal';
-import FeedbackDetailModal from './FeedbackDetailModal';
-import { FeedbackData, Rating, FeedbackCategory } from './types';
+import { FeedbackData } from './types';
 import { openPlayStoreForRating, sendFeedbackViaEmail, logFeedbackData } from './utils';
 import { TEXTS } from './constants';
 import { triggerHaptic } from '@/utils/haptics';
+import FeedbackBottomSheet from './FeedbackBottomSheet';
 
 interface ReviewManagerProps {
   // Is the manager active/visible
@@ -42,107 +39,35 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
   onFeedbackSent,
   showAlert
 }) => {
-  const { t } = useTranslation('feedback');
-
-  // State for the different modals
-  const [showRatingModal, setShowRatingModal] = useState(false);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-
-  // Rating data
-  const [rating, setRating] = useState<Rating | null>(null);
-  const [category, setCategory] = useState<FeedbackCategory | null>(null);
-
-  // Show initially when isVisible is true
-  useEffect(() => {
-    if (isVisible) {
-      setShowRatingModal(true);
-    } else {
-      resetAll();
-    }
-  }, [isVisible]);
-
-  // Reset all states
-  const resetAll = () => {
-    setShowRatingModal(false);
-    setShowCategoryModal(false);
-    setShowFeedbackModal(false);
-    setRating(null);
-    setCategory(null);
-  };
-
-  // Main close function
-  const handleClose = () => {
-    resetAll();
-    onClose();
-  };
-
-  // Rating modal: Rating selected
-  const handleRate = async (selectedRating: Rating) => {
-    setRating(selectedRating);
-    
-    // Only 5-star ratings go directly to Play Store
-    if (selectedRating === 5) {
-      triggerHaptic('success');
-      setShowRatingModal(false);
-      
-      try {
-        const opened = await openPlayStoreForRating(appPackageName);
-        if (opened && onPlayStoreRedirect) {
-          onPlayStoreRedirect();
-        }
-      } catch (error) {
-        console.error('Error opening Play Store:', error);
+  // Handle Play Store redirect (for 5-star ratings)
+  const handlePlayStoreRedirect = async () => {
+    try {
+      const opened = await openPlayStoreForRating(appPackageName);
+      if (opened && onPlayStoreRedirect) {
+        onPlayStoreRedirect();
       }
-      
-      // Reset after a short delay
-      setTimeout(() => {
-        handleClose();
-      }, 500);
-    } 
-    // 1-4 stars: Go to category selection for more detailed feedback
-    else {
-      triggerHaptic(selectedRating === 4 ? 'light' : 'warning');
-      setShowRatingModal(false);
-      
-      // Small delay for better UX
-      setTimeout(() => {
-        setShowCategoryModal(true);
-      }, 300);
+    } catch (error) {
+      console.error('Error opening Play Store:', error);
     }
   };
 
-  // Category modal: Category selected
-  const handleSelectCategory = (selectedCategory: FeedbackCategory) => {
-    setCategory(selectedCategory);
-    setShowCategoryModal(false);
-    
-    // Small delay for better UX
-    setTimeout(() => {
-      setShowFeedbackModal(true);
-    }, 300);
-  };
-
-  // Feedback modal: Feedback submitted
-  const handleSubmitFeedback = async (data: FeedbackData) => {
+  // Handle feedback submission
+  const handleFeedbackSubmit = async (data: FeedbackData) => {
     // Log for debugging
     logFeedbackData(data);
-    
-    // Close modal
-    setShowFeedbackModal(false);
-    
+
     // Haptic Feedback
     triggerHaptic('success');
-    
+
     try {
-      // Send feedback via email
+      // Send feedback via email (fallback for now, Firebase in Phase 2)
       const sent = await sendFeedbackViaEmail(data, feedbackEmail);
-      
+
       // Execute callback if present
       if (onFeedbackSent) {
         onFeedbackSent(data);
       }
-      
+
       // Show success or error message
       if (sent) {
         if (showAlert) {
@@ -153,31 +78,31 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
             buttons: [
               {
                 text: TEXTS.FEEDBACK_SENT_BUTTON,
-                onPress: handleClose,
+                onPress: onClose,
                 style: 'primary'
               }
             ],
           });
         } else {
-          handleClose();
+          onClose();
         }
       } else {
         // If no email app is available
         if (showAlert) {
           showAlert({
-            title: t('errors.sendFailed.title'),
-            message: t('errors.sendFailed.message', { email: feedbackEmail }),
+            title: 'Fehler beim Senden',
+            message: `Keine E-Mail-App gefunden. Bitte sende dein Feedback an: ${feedbackEmail}`,
             type: 'warning',
             buttons: [
               {
-                text: t('errors.sendFailed.button'),
-                onPress: handleClose,
+                text: 'OK',
+                onPress: onClose,
                 style: 'primary'
               }
             ],
           });
         } else {
-          handleClose();
+          onClose();
         }
       }
     } catch (error) {
@@ -186,50 +111,30 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
       // Show error message
       if (showAlert) {
         showAlert({
-          title: t('errors.generic.title'),
-          message: t('errors.generic.message'),
+          title: 'Fehler',
+          message: 'Beim Senden des Feedbacks ist ein Fehler aufgetreten.',
           type: 'error',
           buttons: [
             {
-              text: t('errors.generic.button'),
-              onPress: handleClose,
+              text: 'OK',
+              onPress: onClose,
               style: 'primary'
             }
           ],
         });
       } else {
-        handleClose();
+        onClose();
       }
     }
   };
 
   return (
-    <>
-      {/* Rating Modal */}
-      <RatingModal
-        visible={showRatingModal}
-        onClose={handleClose}
-        onRate={handleRate}
-      />
-      
-      {/* Category Selection Modal */}
-      <FeedbackCategoryModal
-        visible={showCategoryModal}
-        onClose={handleClose}
-        onSelectCategory={handleSelectCategory}
-      />
-      
-      {/* Feedback Detail Modal */}
-      {rating && (
-        <FeedbackDetailModal
-          visible={showFeedbackModal}
-          category={category}
-          rating={rating}
-          onClose={handleClose}
-          onSubmit={handleSubmitFeedback}
-        />
-      )}
-    </>
+    <FeedbackBottomSheet
+      visible={isVisible}
+      onClose={onClose}
+      onFeedbackSubmit={handleFeedbackSubmit}
+      onPlayStoreRedirect={handlePlayStoreRedirect}
+    />
   );
 };
 

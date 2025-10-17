@@ -218,6 +218,27 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
     alignSelf: 'center',
   },
+
+  // View Container Styles (for BottomSheet)
+  ratingViewContainer: {
+    flex: 1,
+    width: '100%',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  categoryViewContainer: {
+    flex: 1,
+    width: '100%',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  detailViewContainer: {
+    flex: 1,
+    width: '100%',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
 });
 
 // Separate theme colors into their own object (not part of StyleSheet)

@@ -287,6 +287,61 @@ export interface ValidationResult {
   warnings: string[];
 }
 
+// ===== Feedback System =====
+
+/**
+ * Feedback Data (Firestore Document)
+ * Collection: feedback
+ *
+ * Anonymes Feedback-System für User-Bewertungen
+ */
+export interface FirestoreFeedback {
+  // User Info (Optional - anonym erlaubt)
+  userId: string | null; // Firestore Auth UID (null = anonym)
+  userEmail: string | null; // Optional: für Rückantworten
+
+  // Feedback Data
+  rating: 1 | 2 | 3 | 4 | 5; // Sternebewertung
+  category?: 'problem' | 'missing' | 'idea' | 'complicated' | 'other'; // Optional
+  details: string; // User-Text
+
+  // Device/App Info
+  platform: 'android' | 'ios' | 'web';
+  appVersion: string; // z.B. "1.3.0"
+  deviceInfo?: string; // Optional: z.B. "Android 13"
+
+  // Metadata
+  createdAt: FirestoreTimestamp;
+  status: 'new' | 'reviewed' | 'resolved'; // Für Admin-Dashboard
+
+  // Optional: Email-Fallback Info
+  sentViaEmail?: boolean; // true wenn Email-Fallback verwendet wurde
+  emailSentAt?: FirestoreTimestamp;
+}
+
+/**
+ * Feedback Queue Item (Offline Storage)
+ * Stored in AsyncStorage when offline
+ */
+export interface FeedbackQueueItem {
+  id: string; // UUID für queue item
+  feedback: Omit<FirestoreFeedback, 'createdAt' | 'status'>; // Ohne server-side fields
+  attempts: number; // Retry counter
+  lastAttemptAt: FirestoreTimestamp | null;
+  createdAt: FirestoreTimestamp; // Wann wurde es in die Queue gelegt
+  status: 'pending' | 'uploading' | 'uploaded' | 'failed';
+}
+
+/**
+ * Feedback Upload Result
+ */
+export interface FeedbackUploadResult {
+  success: boolean;
+  feedbackId?: string; // Firestore document ID
+  error?: Error;
+  sentViaEmail?: boolean; // true wenn Email-Fallback verwendet
+}
+
 // ===== Export All =====
 
 export type {

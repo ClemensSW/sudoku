@@ -6,6 +6,7 @@ import { openPlayStoreForRating, sendFeedbackViaEmail, logFeedbackData } from '.
 import { TEXTS } from './constants';
 import { triggerHaptic } from '@/utils/haptics';
 import FeedbackBottomSheet from './FeedbackBottomSheet';
+import { submitFeedback, type FeedbackInput } from '@/utils/cloudSync/feedbackService';
 
 interface ReviewManagerProps {
   // Is the manager active/visible
@@ -51,7 +52,7 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
     }
   };
 
-  // Handle feedback submission
+  // Handle feedback submission - 3-Tier Fallback Strategy
   const handleFeedbackSubmit = async (data: FeedbackData) => {
     // Log for debugging
     logFeedbackData(data);
@@ -59,17 +60,29 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
     // Haptic Feedback
     triggerHaptic('success');
 
+    // Convert FeedbackData to FeedbackInput
+    const feedbackInput: FeedbackInput = {
+      rating: data.rating,
+      category: data.category,
+      details: data.details,
+      email: data.email,
+    };
+
     try {
-      // Send feedback via email (fallback for now, Firebase in Phase 2)
-      const sent = await sendFeedbackViaEmail(data, feedbackEmail);
+      // TIER 1: Try Firebase upload (direct or offline queue)
+      console.log('[ReviewManager] Attempting Firebase upload...');
+      const firebaseResult = await submitFeedback(feedbackInput, false);
 
-      // Execute callback if present
-      if (onFeedbackSent) {
-        onFeedbackSent(data);
-      }
+      // Firebase upload successful (direct or queued)
+      if (firebaseResult.success) {
+        console.log('[ReviewManager] ✅ Feedback submitted successfully via Firebase');
 
-      // Show success or error message
-      if (sent) {
+        // Execute callback
+        if (onFeedbackSent) {
+          onFeedbackSent(data);
+        }
+
+        // Show success message
         if (showAlert) {
           showAlert({
             title: TEXTS.FEEDBACK_SENT_TITLE,
@@ -86,16 +99,36 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
         } else {
           onClose();
         }
-      } else {
-        // If no email app is available
+        return;
+      }
+
+      // TIER 2: Firebase failed, try email fallback
+      console.warn('[ReviewManager] Firebase upload failed, trying email fallback...');
+      const emailSent = await sendFeedbackViaEmail(data, feedbackEmail);
+
+      if (emailSent) {
+        // Email sent successfully - now upload to Firebase with sentViaEmail flag
+        console.log('[ReviewManager] Email sent, uploading to Firebase with email flag...');
+        try {
+          await submitFeedback(feedbackInput, true);
+        } catch (err) {
+          console.warn('[ReviewManager] Could not upload email-sent feedback to Firebase:', err);
+        }
+
+        // Execute callback
+        if (onFeedbackSent) {
+          onFeedbackSent(data);
+        }
+
+        // Show success message
         if (showAlert) {
           showAlert({
-            title: 'Fehler beim Senden',
-            message: `Keine E-Mail-App gefunden. Bitte sende dein Feedback an: ${feedbackEmail}`,
-            type: 'warning',
+            title: TEXTS.FEEDBACK_SENT_TITLE,
+            message: TEXTS.FEEDBACK_SENT_SUBTITLE,
+            type: 'success',
             buttons: [
               {
-                text: 'OK',
+                text: TEXTS.FEEDBACK_SENT_BUTTON,
                 onPress: onClose,
                 style: 'primary'
               }
@@ -104,15 +137,66 @@ const ReviewManager: React.FC<ReviewManagerProps> = ({
         } else {
           onClose();
         }
+        return;
+      }
+
+      // TIER 3: Both Firebase and Email failed
+      console.error('[ReviewManager] ❌ All feedback methods failed');
+      if (showAlert) {
+        showAlert({
+          title: 'Fehler beim Senden',
+          message: `Keine E-Mail-App gefunden. Bitte sende dein Feedback an: ${feedbackEmail}`,
+          type: 'warning',
+          buttons: [
+            {
+              text: 'OK',
+              onPress: onClose,
+              style: 'primary'
+            }
+          ],
+        });
+      } else {
+        onClose();
       }
     } catch (error) {
-      console.error('Error sending feedback:', error);
+      console.error('[ReviewManager] ❌ Error in feedback submission:', error);
 
-      // Show error message
+      // Try email as last resort
+      try {
+        const emailSent = await sendFeedbackViaEmail(data, feedbackEmail);
+        if (emailSent) {
+          // Email sent successfully
+          if (onFeedbackSent) {
+            onFeedbackSent(data);
+          }
+
+          if (showAlert) {
+            showAlert({
+              title: TEXTS.FEEDBACK_SENT_TITLE,
+              message: TEXTS.FEEDBACK_SENT_SUBTITLE,
+              type: 'success',
+              buttons: [
+                {
+                  text: TEXTS.FEEDBACK_SENT_BUTTON,
+                  onPress: onClose,
+                  style: 'primary'
+                }
+              ],
+            });
+          } else {
+            onClose();
+          }
+          return;
+        }
+      } catch (emailError) {
+        console.error('[ReviewManager] Email fallback also failed:', emailError);
+      }
+
+      // Final error - nothing worked
       if (showAlert) {
         showAlert({
           title: 'Fehler',
-          message: 'Beim Senden des Feedbacks ist ein Fehler aufgetreten.',
+          message: 'Beim Senden des Feedbacks ist ein Fehler aufgetreten. Bitte versuche es später erneut.',
           type: 'error',
           buttons: [
             {

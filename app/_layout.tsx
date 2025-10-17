@@ -18,6 +18,7 @@ import { initializeFirebase } from "@/utils/cloudSync/firebaseConfig";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { configureGoogleSignIn } from "@/utils/auth/googleAuth";
 import BillingManager from "@/screens/SupportShop/utils/billing/BillingManager";
+import { processOfflineQueue } from "@/utils/cloudSync/feedbackService";
 
 /**
  * App Container - Main Layout Component
@@ -93,7 +94,22 @@ function AppContainer() {
 export default function AppLayout() {
   // Initialize Firebase & Google Sign-In on app startup
   useEffect(() => {
-    initializeFirebase();
+    const initializeApp = async () => {
+      // Initialize Firebase
+      await initializeFirebase();
+
+      // Process offline feedback queue after Firebase is ready
+      try {
+        const uploadedCount = await processOfflineQueue();
+        if (uploadedCount > 0) {
+          console.log(`[App] ✅ Processed ${uploadedCount} pending feedback items from offline queue`);
+        }
+      } catch (error) {
+        console.warn('[App] Failed to process offline feedback queue:', error);
+      }
+    };
+
+    initializeApp();
 
     // Configure Google Sign-In (only in Development Build)
     try {

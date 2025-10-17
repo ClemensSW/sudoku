@@ -154,7 +154,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
             <Image source={{ uri: photoURL }} style={styles.avatarImage} />
           ) : (
             <View style={[styles.avatarFallback, { backgroundColor: progressColor + '20' }]}>
-              <Feather name="user" size={32} color={progressColor} />
+              <Feather name="user" size={36} color={progressColor} />
             </View>
           )}
         </View>
@@ -213,25 +213,25 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 const styles = StyleSheet.create({
   container: {
     borderRadius: radius.xl,
-    padding: spacing.lg,
+    padding: spacing.xl,
     marginBottom: spacing.xxl,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-    gap: spacing.md,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+    gap: spacing.lg,
   },
 
   // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   avatarContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     borderWidth: 2,
     overflow: 'hidden',
   },
@@ -248,33 +248,33 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
   displayName: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
   email: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
   },
 
   // Auto-Sync Info
   syncInfo: {
-    padding: spacing.md,
+    padding: spacing.lg,
     borderRadius: radius.md,
-    gap: spacing.xs,
+    gap: spacing.md,
   },
   syncInfoHeader: {
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   syncInfoText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
     paddingHorizontal: spacing.sm,
   },
   syncStatusRow: {
@@ -294,8 +294,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
     borderRadius: radius.md,
   },
   syncButtonText: {

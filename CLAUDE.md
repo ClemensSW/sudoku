@@ -262,6 +262,10 @@ const MyComponent = () => {
 - App uses Hermes JS engine for better performance
 - New Architecture enabled in app.json
 - Firebase integration for cloud sync (optional feature)
+  - **Important:** Google Analytics is **intentionally disabled** for privacy reasons
+  - Only Firebase Authentication and Firestore are used
+  - No user tracking or analytics data is collected
+  - Configuration files (`google-services.json`, `GoogleService-Info.plist`) must not contain Analytics IDs
 - Google Sign-In available in development builds (not Expo Go)
 - RevenueCat for in-app purchases (supporter features)
 - Lottie animations for confetti and visual effects

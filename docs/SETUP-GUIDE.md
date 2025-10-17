@@ -32,11 +32,16 @@ Bevor du startest, stelle sicher dass du hast:
 1. **Projektname:** `sudoku-duo` (oder ein anderer Name)
 2. Klicke **"Weiter"**
 
-### **Schritt 3: Google Analytics (Optional)**
+### **Schritt 3: Google Analytics deaktiviert lassen**
 
-1. **Empfehlung:** Aktiviere Google Analytics (für spätere Statistiken)
-2. Wähle ein bestehendes Analytics-Konto oder erstelle ein neues
+1. **Wichtig:** **DEAKTIVIERE** Google Analytics für dieses Projekt
+2. Wähle **"Don't enable Google Analytics for this project"** oder überspringe den Analytics-Schritt
 3. Klicke **"Projekt erstellen"**
+
+⚠️ **Warum kein Analytics?**
+- Sudoku Duo nutzt **bewusst KEIN** Google Analytics um Datenschutz zu maximieren
+- Keine Nutzer-Tracking-Daten werden erfasst
+- Falls Analytics versehentlich aktiviert wurde: In Firebase Console → Projekteinstellungen → Integrationen → Analytics trennen
 
 ⏳ **Warte 30-60 Sekunden**, bis das Projekt erstellt wurde.
 

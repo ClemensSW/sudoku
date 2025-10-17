@@ -47,13 +47,13 @@ const customStyles = StyleSheet.create({
 
 interface CommunitySectionProps {
   onSupportPress: () => void;
-  onSharePress: () => void;
+  onShareApp: () => void;
   showAlert?: (config: any) => void;
 }
 
 const CommunitySection: React.FC<CommunitySectionProps> = ({
   onSupportPress,
-  onSharePress,
+  onShareApp,
   showAlert,
 }) => {
   const { t } = useTranslation("settings");
@@ -150,7 +150,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           customStyles.actionButton,
           { borderTopWidth: 1, borderTopColor: colors.border }
         ]}
-        onPress={onSharePress}
+        onPress={onShareApp}
       >
         <View style={customStyles.actionIcon}>
           <ShareIcon width={48} height={48} />

@@ -17,10 +17,11 @@ import styles from './LandscapeScreen.styles';
 
 interface LandscapeScreenProps {
   stats: GameStats | null;
-  onContinue: () => void;
+  onContinue: () => void; // For continue button & auto-skip (always handleContinue)
   onViewGallery: () => void;
   isLastScreen?: boolean;
   onNewGame?: () => void;
+  onFinalContinue?: () => void; // For final action buttons (back to menu)
 }
 
 /**
@@ -37,6 +38,7 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
   onViewGallery,
   isLastScreen = false,
   onNewGame,
+  onFinalContinue,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -118,8 +120,8 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
       </ScrollView>
 
       {/* Buttons - conditional based on last screen */}
-      {isLastScreen && onNewGame ? (
-        <ActionButtons onNewGame={onNewGame} onContinue={onContinue} />
+      {isLastScreen && onNewGame && onFinalContinue ? (
+        <ActionButtons onNewGame={onNewGame} onContinue={onFinalContinue} />
       ) : (
         <ContinueButton onPress={onContinue} />
       )}

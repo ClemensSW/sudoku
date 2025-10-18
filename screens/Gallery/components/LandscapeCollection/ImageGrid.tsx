@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  StyleSheet,
 } from "react-native";
 import Animated, {
   FadeIn,
@@ -23,6 +24,36 @@ import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
 
 
+// Props interface for LandscapeCard
+interface LandscapeCardProps {
+  item: Landscape;
+  index: number;
+  onImagePress?: (landscape: Landscape, index: number) => void;
+  onToggleFavorite?: (landscape: Landscape) => void;
+  currentImageId?: string;
+  shouldAnimate?: boolean;
+  colors: any; // Theme colors passed from parent
+  isDark: boolean; // Theme mode passed from parent
+  t: (key: string, options?: any) => string; // Translation function from parent
+}
+
+// Custom comparison function for better memoization
+const arePropsEqual = (
+  prevProps: LandscapeCardProps,
+  nextProps: LandscapeCardProps
+) => {
+  // Only re-render if these specific props change
+  return (
+    prevProps.item.id === nextProps.item.id &&
+    prevProps.item.progress === nextProps.item.progress &&
+    prevProps.item.isComplete === nextProps.item.isComplete &&
+    prevProps.item.isFavorite === nextProps.item.isFavorite &&
+    prevProps.currentImageId === nextProps.currentImageId &&
+    prevProps.shouldAnimate === nextProps.shouldAnimate &&
+    prevProps.isDark === nextProps.isDark
+  );
+};
+
 // Extract to a separate component to properly use hooks
 const LandscapeCard = React.memo(
   ({
@@ -32,19 +63,10 @@ const LandscapeCard = React.memo(
     onToggleFavorite,
     currentImageId,
     shouldAnimate,
-  }: {
-    item: Landscape;
-    index: number;
-    onImagePress?: (landscape: Landscape, index: number) => void;
-    onToggleFavorite?: (landscape: Landscape) => void;
-    currentImageId?: string;
-    shouldAnimate?: boolean;
-  }) => {
-    // Use key to ensure we don't re-render unnecessarily
-    const cardKey = `${item.id}-${item.progress}-${item.isComplete}`;
-    const theme = useTheme();
-    const { colors } = theme;
-    const { t } = useTranslation('gallery');
+    colors,
+    isDark,
+    t,
+  }: LandscapeCardProps) => {
 
     // Prüfen, ob dieses Bild aktuell freigeschaltet wird
     const isCurrentProject = currentImageId === item.id && !item.isComplete;
@@ -150,17 +172,24 @@ const LandscapeCard = React.memo(
               <View
                 style={[
                   styles.placeholderImage,
-                  { backgroundColor: theme.isDark ? "#2D3748" : "#E2E8F0" },
+                  { backgroundColor: isDark ? "#2D3748" : "#E2E8F0" },
                 ]}
               >
-                {/* Zeige verschwommenes Vorschaubild mit sehr niedriger Opazität als Teaser */}
+                {/* Zeige Vorschaubild mit sehr niedriger Opazität als Teaser (OHNE blurRadius für Performance) */}
                 <Image
                   source={item.previewSource}
                   style={[
                     styles.blurredImage,
-                    { opacity: Math.min(0.2 + item.progress * 0.07, 0.6) },
+                    { opacity: Math.min(0.15 + item.progress * 0.05, 0.4) },
                   ]}
-                  blurRadius={20}
+                />
+
+                {/* Overlay für "blur" Effekt - viel schneller als blurRadius */}
+                <View
+                  style={{
+                    ...StyleSheet.absoluteFillObject,
+                    backgroundColor: isDark ? 'rgba(45, 55, 72, 0.6)' : 'rgba(226, 232, 240, 0.6)',
+                  }}
                 />
 
                 {/* Zentrales Icon - für alle Kategorien gleich */}
@@ -169,7 +198,7 @@ const LandscapeCard = React.memo(
                     name="image"
                     size={32}
                     color={
-                      theme.isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"
+                      isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"
                     }
                   />
 
@@ -179,7 +208,7 @@ const LandscapeCard = React.memo(
                       style={[
                         styles.placeholderText,
                         {
-                          color: theme.isDark
+                          color: isDark
                             ? "rgba(255,255,255,0.6)"
                             : "rgba(0,0,0,0.5)",
                           opacity: Math.min(0.6 + item.progress * 0.07, 1),
@@ -253,7 +282,8 @@ const LandscapeCard = React.memo(
         </Animated.View>
       </Animated.View>
     );
-  }
+  },
+  arePropsEqual // Custom comparison function for better performance
 );
 
 interface ImageGridProps {
@@ -276,12 +306,20 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
   onScroll,
 }, ref) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, isDark } = theme;
   const { t } = useTranslation('gallery');
 
-  // WICHTIG: getItemLayout ist bei numColumns schwierig korrekt zu implementieren
-  // Wir verzichten darauf, da es zu Scroll-Problemen führt
-  // Die Performance-Vorteile durch removeClippedSubviews und optimierte Render-Parameter reichen aus
+  // getItemLayout for better scrolling performance with numColumns=2
+  // Each row contains 2 items, so we calculate based on row index
+  const ITEM_HEIGHT = 200; // Approximate height from styles
+  const getItemLayout = (data: Landscape[] | null | undefined, index: number) => {
+    const rowIndex = Math.floor(index / 2);
+    return {
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * rowIndex,
+      index,
+    };
+  };
 
   // No content available
   if (!isLoading && landscapes.length === 0) {
@@ -323,16 +361,21 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
             onToggleFavorite={onToggleFavorite}
             currentImageId={currentImageId}
             shouldAnimate={shouldAnimate}
+            colors={colors}
+            isDark={isDark}
+            t={t}
           />
         )}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={styles.gridContainer}
         showsVerticalScrollIndicator={false}
-        initialNumToRender={8}
-        maxToRenderPerBatch={10}
-        windowSize={10}
+        initialNumToRender={12}
+        maxToRenderPerBatch={15}
+        windowSize={7}
         removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50}
+        getItemLayout={getItemLayout}
         onScroll={onScroll}
         scrollEventThrottle={16}
         onScrollToIndexFailed={(info) => {

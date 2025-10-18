@@ -136,11 +136,8 @@ const Gallery: React.FC = () => {
     [key: string]: { x: number; width: number };
   }>({});
 
-  // Key, um bei jedem Fokus die Gruppe (5) neu zu mischen
-  const [shuffleKey, setShuffleKey] = useState(0);
-  useEffect(() => {
-    if (isFocused) setShuffleKey((k) => k + 1);
-  }, [isFocused]);
+  // Shuffle cache - wird nur bei echtem Daten-Change aktualisiert, nicht bei jedem Focus
+  const shuffleCacheRef = useRef<Map<string, Landscape[]>>(new Map());
 
   // Ref für FlatList und Scroll-Position
   const gridRef = useRef<any>(null);
@@ -290,14 +287,21 @@ const Gallery: React.FC = () => {
   const baseList: Landscape[] = useMemo(() => {
     if (!collection) return hookLandscapes;
 
+    // Cache-Key basierend auf Tab und relevanten Daten
+    const cacheKey = `${activeTab}-${collection.currentImageId || 'none'}-${collection.favorites.join(',')}-${Object.keys(collection.landscapes).length}`;
+
+    // Check cache first
+    const cached = shuffleCacheRef.current.get(cacheKey);
+    if (cached) return cached;
+
+    let result: Landscape[];
+
     // Für "all" Tab: verwende die spezielle Sortierung mit allen Bildern
     if (activeTab === "all") {
-      return sortLandscapesForGallery(collection);
+      result = sortLandscapesForGallery(collection);
     }
-
     // Für "inProgress" Tab: zeige ALLE nicht-kompletten Bilder
-    if (activeTab === "inProgress") {
-      // Erstelle eine gefilterte Collection mit allen nicht-kompletten Bildern
+    else if (activeTab === "inProgress") {
       const filteredCollection = {
         ...collection,
         landscapes: Object.fromEntries(
@@ -308,12 +312,10 @@ const Gallery: React.FC = () => {
         currentImageId: collection.currentImageId,
         favorites: collection.favorites,
       };
-      return sortLandscapesForGallery(filteredCollection);
+      result = sortLandscapesForGallery(filteredCollection);
     }
-
     // Für "completed" Tab: zeige alle kompletten Bilder (inkl. dem mit progress === 9)
-    if (activeTab === "completed") {
-      // Erstelle eine gefilterte Collection nur mit kompletten Bildern
+    else if (activeTab === "completed") {
       const filteredCollection = {
         ...collection,
         landscapes: Object.fromEntries(
@@ -321,16 +323,13 @@ const Gallery: React.FC = () => {
             ([_, landscape]) => landscape.isComplete || landscape.progress === 9
           )
         ),
-        // WICHTIG: currentImageId auf null setzen, damit es nicht an Position 1 kommt
         currentImageId: null,
         favorites: collection.favorites,
       };
-      return sortLandscapesForGallery(filteredCollection);
+      result = sortLandscapesForGallery(filteredCollection);
     }
-
     // Für "favorites" Tab: zeige alle favorisierten kompletten Bilder
-    if (activeTab === "favorites") {
-      // Erstelle eine gefilterte Collection nur mit favorisierten kompletten Bildern
+    else if (activeTab === "favorites") {
       const filteredCollection = {
         ...collection,
         landscapes: Object.fromEntries(
@@ -340,16 +339,27 @@ const Gallery: React.FC = () => {
               (landscape.isComplete || landscape.progress === 9)
           )
         ),
-        // WICHTIG: currentImageId auf null setzen, damit es nicht an Position 1 kommt
         currentImageId: null,
         favorites: collection.favorites,
       };
-      return sortLandscapesForGallery(filteredCollection);
+      result = sortLandscapesForGallery(filteredCollection);
+    }
+    // Fallback: verwende die vom Hook gefilterten Daten
+    else {
+      result = hookLandscapes;
     }
 
-    // Fallback: verwende die vom Hook gefilterten Daten
-    return hookLandscapes;
-  }, [collection, hookLandscapes, activeTab, shuffleKey]);
+    // Cache the result
+    shuffleCacheRef.current.set(cacheKey, result);
+
+    // Keep cache size manageable (max 10 entries)
+    if (shuffleCacheRef.current.size > 10) {
+      const firstKey = shuffleCacheRef.current.keys().next().value;
+      shuffleCacheRef.current.delete(firstKey);
+    }
+
+    return result;
+  }, [collection, hookLandscapes, activeTab]);
 
   // Danach (optional) Kategorie-Filter anwenden
   const landscapes = useMemo(() => {

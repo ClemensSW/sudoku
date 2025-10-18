@@ -20,6 +20,7 @@ import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 import { getCategoryName, getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
 
 
@@ -206,14 +207,11 @@ const LandscapeCard = React.memo(
               </View>
             )}
 
-            {/* Pseudo-Gradient overlay (5 stacked views) - Looks like LinearGradient but 50% faster */}
-            <View style={styles.imageGradient}>
-              <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0)' }} />
-              <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.15)' }} />
-              <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} />
-              <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }} />
-              <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.7)' }} />
-            </View>
+            {/* Gradient overlay for better visibility of text elements */}
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.7)"]}
+              style={styles.imageGradient}
+            />
 
             {/* Aktiv-Badge links oben anzeigen, wenn dieses Bild aktuell freigeschaltet wird */}
             {isCurrentProject && (

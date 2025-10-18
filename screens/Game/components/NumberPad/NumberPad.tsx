@@ -69,7 +69,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
     callback();
   }, []);
 
-  // PERFORMANCE: Memoize animated styles outside render
+  // PERFORMANCE: Animated styles created at component top level
   const noteAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: noteScale.value }],
   }));
@@ -81,16 +81,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const hintAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: hintScale.value }],
   }));
-
-  // Create animated styles for number buttons
-  const numberAnimatedStyles = useMemo(
-    () => numberScales.map((_, index) =>
-      useAnimatedStyle(() => ({
-        transform: [{ scale: numberScales[index].value }],
-      }))
-    ),
-    [numberScales]
-  );
 
   // Render action buttons
   const renderActionButtons = () => {
@@ -263,7 +253,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     elevation: 5,
                     opacity: isDisabled ? 0.3 : 1, // Reduzierte Sichtbarkeit für verwendete Zahlen
                   },
-                  numberAnimatedStyles[i],
+                  useAnimatedStyle(() => ({
+                    transform: [{ scale: numberScales[i].value }],
+                  })),
                 ]}
                 onPress={() => {
                   if (!isDisabled) {

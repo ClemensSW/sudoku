@@ -13,12 +13,9 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    paddingVertical: 40,
+    paddingTop: 48,
+    paddingBottom: 32,
     alignItems: 'center',
-  },
-  headerIcon: {
-    fontSize: 48,
-    marginBottom: 12,
   },
   headerTitle: {
     fontSize: 28,

@@ -62,9 +62,6 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
       >
         {/* Header */}
         <Animated.View entering={FadeInUp.duration(400)} style={styles.header}>
-          <Text style={[styles.headerIcon, { color: colors.primary }]}>
-            {streakInfo?.shieldUsed ? '🛡️' : '🔥'}
-          </Text>
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
             {headerText}
           </Text>

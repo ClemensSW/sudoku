@@ -16,7 +16,8 @@ export default StyleSheet.create({
     marginBottom: 24,
   },
   heroGradient: {
-    paddingVertical: 40,
+    paddingTop: 48,
+    paddingBottom: 40,
     paddingHorizontal: 20,
     alignItems: 'center',
   },

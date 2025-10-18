@@ -136,8 +136,10 @@ const GameCompletionFlow: React.FC<GameCompletionFlowProps> = ({
         return (
           <LandscapeScreen
             stats={stats || null}
-            onContinue={handleContinue}
+            onContinue={isLastScreen ? onContinue : handleContinue}
             onViewGallery={handleViewGallery}
+            isLastScreen={isLastScreen}
+            onNewGame={handleNewGame}
           />
         );
 

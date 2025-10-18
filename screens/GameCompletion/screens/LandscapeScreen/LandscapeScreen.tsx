@@ -10,6 +10,7 @@ import { GameStats } from '@/utils/storage';
 // Components
 import GalleryProgressCard from '../../components/GalleryProgressCard';
 import ContinueButton from '../../shared/ContinueButton';
+import ActionButtons from '../../shared/ActionButtons';
 
 // Styles
 import styles from './LandscapeScreen.styles';
@@ -18,6 +19,8 @@ interface LandscapeScreenProps {
   stats: GameStats | null;
   onContinue: () => void;
   onViewGallery: () => void;
+  isLastScreen?: boolean;
+  onNewGame?: () => void;
 }
 
 /**
@@ -32,6 +35,8 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
   stats,
   onContinue,
   onViewGallery,
+  isLastScreen = false,
+  onNewGame,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -108,12 +113,16 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
           />
         </Animated.View>
 
-        {/* Bottom Spacing for Button */}
-        <View style={styles.bottomSpacer} />
+        {/* Bottom Spacing for Buttons */}
+        <View style={isLastScreen ? styles.bottomSpacerLarge : styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Continue Button */}
-      <ContinueButton onPress={onContinue} />
+      {/* Buttons - conditional based on last screen */}
+      {isLastScreen && onNewGame ? (
+        <ActionButtons onNewGame={onNewGame} onContinue={onContinue} />
+      ) : (
+        <ContinueButton onPress={onContinue} />
+      )}
     </View>
   );
 };

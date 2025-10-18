@@ -29,4 +29,7 @@ export default StyleSheet.create({
   bottomSpacer: {
     height: 20,
   },
+  bottomSpacerLarge: {
+    height: 40,
+  },
 });

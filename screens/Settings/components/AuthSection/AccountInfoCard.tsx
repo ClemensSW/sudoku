@@ -207,7 +207,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 const styles = StyleSheet.create({
   container: {
     borderRadius: radius.xl,
-    padding: spacing.xl,
+    padding: spacing.md,
     marginBottom: spacing.xxl,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,

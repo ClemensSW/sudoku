@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
-import { useProgressColor } from '@/hooks/useProgressColor';
+import InkIcon from '@/assets/svg/ink.svg';
 
 // Components
 import ActionButtons from '../../shared/ActionButtons';
@@ -35,7 +35,22 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const colors = theme.colors;
-  const pathColor = useProgressColor();
+
+  // AutoNotes Ink-themed colors (based on ink.svg icon colors)
+  // Icon colors: #3E3E7A, #51518E, #8888E8, #C5C5FF (Purple/Ink tones)
+  const inkTheme = {
+    primary: theme.isDark
+      ? '#C5C5FF' // Light purple - excellent contrast on dark backgrounds
+      : '#51518E', // Medium purple - strong contrast on light backgrounds
+
+    accent: theme.isDark
+      ? '#8888E8' // Medium purple for highlights
+      : '#8888E8', // Same for light mode
+
+    gradient: theme.isDark
+      ? ['rgba(136, 136, 232, 0.15)', 'rgba(81, 81, 142, 0.08)', 'rgba(81, 81, 142, 0)']
+      : ['rgba(81, 81, 142, 0.12)', 'rgba(136, 136, 232, 0.06)', 'rgba(136, 136, 232, 0)'],
+  };
 
   return (
     <View style={styles.container}>
@@ -50,30 +65,14 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
           style={styles.heroHeader}
         >
           <LinearGradient
-            colors={
-              theme.isDark
-                ? [colors.card, colors.background]
-                : [colors.surface, colors.background]
-            }
+            colors={inkTheme.gradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.heroGradient}
           >
-            {/* Animated Success Icon with Glow */}
+            {/* Ink Icon - 48px, no glow circles */}
             <View style={styles.heroIconWrapper}>
-              <View
-                style={[
-                  styles.iconGlow,
-                  { backgroundColor: `${pathColor}40` },
-                ]}
-              />
-              <View
-                style={[
-                  styles.iconGlowOuter,
-                  { backgroundColor: `${pathColor}20` },
-                ]}
-              />
-              <Feather name="check-circle" size={64} color={pathColor} />
+              <InkIcon width={48} height={48} />
             </View>
 
             {/* Main Title */}
@@ -95,18 +94,18 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
               styles.infoCard,
               {
                 backgroundColor: theme.isDark ? colors.surface : colors.card,
-                borderColor: colors.warning,
+                borderColor: inkTheme.primary,
               },
             ]}
           >
-            {/* Warning Icon */}
+            {/* Info Icon with Ink Theme */}
             <View
               style={[
                 styles.warningIcon,
-                { backgroundColor: `${colors.warning}20` },
+                { backgroundColor: `${inkTheme.primary}20` },
               ]}
             >
-              <Feather name="info" size={24} color={colors.warning} />
+              <Feather name="info" size={24} color={inkTheme.primary} />
             </View>
 
             {/* Info Title */}
@@ -162,8 +161,12 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Action Buttons */}
-      <ActionButtons onNewGame={onNewGame} onContinue={onContinue} />
+      {/* Action Buttons with Ink Theme */}
+      <ActionButtons
+        onNewGame={onNewGame}
+        onContinue={onContinue}
+        customColor={inkTheme.primary}
+      />
     </View>
   );
 };

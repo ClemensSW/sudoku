@@ -1,5 +1,11 @@
 const IS_DEV = process.env.EAS_BUILD_PROFILE === 'development';
 const IS_PREVIEW = process.env.EAS_BUILD_PROFILE === 'preview';
+const fs = require('fs');
+const path = require('path');
+
+// Check if Google Services files exist
+const hasIOSGoogleServices = fs.existsSync(path.join(__dirname, 'GoogleService-Info.plist'));
+const hasAndroidGoogleServices = fs.existsSync(path.join(__dirname, 'google-services.json'));
 
 export default {
   expo: {
@@ -35,7 +41,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'com.yourdomain.sudoku',
       jsEngine: 'hermes',
-      googleServicesFile: './GoogleService-Info.plist',
+      ...(hasIOSGoogleServices && { googleServicesFile: './GoogleService-Info.plist' }),
     },
     android: {
       adaptiveIcon: {
@@ -52,7 +58,7 @@ export default {
           category: ['LAUNCHER', 'DEFAULT'],
         },
       ],
-      googleServicesFile: './google-services.json',
+      ...(hasAndroidGoogleServices && { googleServicesFile: './google-services.json' }),
     },
     web: {
       bundler: 'metro',

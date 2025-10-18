@@ -331,7 +331,7 @@ const Leistung: React.FC = () => {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
+        scrollEventThrottle={32}
       >
         {/* Profile Header */}
         <View style={styles.profileContainer}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, ScrollView, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { GameStats } from "@/utils/storage";
 import LevelCard from "@/screens/GameCompletion/components/LevelCard";
@@ -19,10 +19,7 @@ const LevelTab: React.FC<LevelTabProps> = ({
 }) => {
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <View style={styles.scrollContent}>
         {/* Level Card - shows XP, progress, title selection */}
         <LevelCard
           stats={stats}
@@ -46,7 +43,7 @@ const LevelTab: React.FC<LevelTabProps> = ({
           xpGain={0}
           showPathDescription={true}
         />
-      </ScrollView>
+      </View>
     </Animated.View>
   );
 };

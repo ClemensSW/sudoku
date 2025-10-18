@@ -39,8 +39,39 @@ const LegalScreen: React.FC<LegalScreenProps> = ({ visible, onClose }) => {
   // Snap points - Start at 70%, expandable to fullscreen
   const snapPoints = useMemo(() => ['70%', '100%'], []);
 
+  // Import markdown files - Metro transformer loads them as strings
+  const legalDocs = {
+    de: {
+      impressum: require('@/assets/legal/impressum.de.md'),
+      datenschutz: require('@/assets/legal/datenschutz.de.md'),
+      agb: require('@/assets/legal/agb.de.md'),
+      widerruf: require('@/assets/legal/widerruf.de.md'),
+    },
+    en: {
+      impressum: require('@/assets/legal/impressum.en.md'),
+      datenschutz: require('@/assets/legal/datenschutz.en.md'),
+      agb: require('@/assets/legal/agb.en.md'),
+      widerruf: require('@/assets/legal/widerruf.en.md'),
+    },
+  };
+
   // Get document content from the markdown files
   const getDocumentContent = (docType: LegalDocType, lang: string): string => {
+    try {
+      const doc = legalDocs[lang as keyof typeof legalDocs]?.[docType];
+      if (!doc) {
+        return "Document not found";
+      }
+      // Metro transformer returns the content directly as a string
+      return doc;
+    } catch (error) {
+      console.error('Error loading legal document:', error);
+      return "Error loading document";
+    }
+  };
+
+  // OLD HARDCODED TEMPLATES (NO LONGER NEEDED - kept for reference only)
+  const getDocumentContentOLD = (docType: LegalDocType, lang: string): string => {
     const templates = {
       de: {
         impressum: `# Impressum

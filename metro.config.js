@@ -1,10 +1,13 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
+// Use custom transformer for .md and .svg files
+config.transformer.babelTransformerPath = path.resolve(__dirname, 'metro.transformer.js');
+
+// Remove svg and md from assetExts and add to sourceExts
 config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== 'svg' && ext !== 'md');
-config.resolver.sourceExts.push('svg');
-config.resolver.assetExts.push('md');
+config.resolver.sourceExts.push('svg', 'md');
 
 module.exports = config;

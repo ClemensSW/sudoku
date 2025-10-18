@@ -72,7 +72,7 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
           >
             {/* Ink Icon - 48px, no glow circles */}
             <View style={styles.heroIconWrapper}>
-              <InkIcon width={48} height={48} />
+              <InkIcon width={100} height={100} />
             </View>
 
             {/* Main Title */}

@@ -34,7 +34,7 @@ const ContinueButton: React.FC<ContinueButtonProps> = ({
         variant="primary"
         customColor={pathColor}
         style={styles.button}
-        icon={<Feather name="arrow-right" size={22} color="white" />}
+        icon={<Feather name="arrow-right" size={22} color={theme.colors.buttonText} />}
         iconPosition="right"
       />
     </View>

@@ -22,8 +22,8 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   heroIconWrapper: {
-    width: 48,
-    height: 48,
+    width: 100,
+    height: 100,
     marginTop: 48,
     marginBottom: 80,
     alignItems: 'center',

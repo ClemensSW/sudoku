@@ -42,17 +42,16 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
-  // PERFORMANCE: Memoize animation values - created once per component lifecycle
-  const noteScale = useMemo(() => useSharedValue(1), []);
-  const eraseScale = useMemo(() => useSharedValue(1), []);
-  const hintScale = useMemo(() => useSharedValue(1), []);
-  const numberScales = useMemo(
-    () => Array.from({ length: 9 }, () => useSharedValue(1)),
-    []
-  );
+  // Animation values
+  const noteScale = useSharedValue(1);
+  const eraseScale = useSharedValue(1);
+  const hintScale = useSharedValue(1);
 
-  // PERFORMANCE: Memoize button press handler
-  const handleButtonPress = useCallback((
+  // Animation-Werte für Zahlenbuttons als Array
+  const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
+
+  // Button-Animation-Handler
+  const handleButtonPress = (
     scaleValue: Animated.SharedValue<number>,
     callback: () => void
   ) => {
@@ -67,9 +66,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
 
     // Callback ausführen
     callback();
-  }, []);
+  };
 
-  // PERFORMANCE: Animated styles created at component top level
+  // Animated styles
   const noteAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: noteScale.value }],
   }));

@@ -89,8 +89,14 @@ export function formatDate(date: Date, locale: string = 'de-DE'): string {
  * - Streak +1 wenn gestern gespielt
  * - Schutzschild einsetzen wenn 1 Tag verpasst
  * - Streak reset wenn 2+ Tage verpasst
+ *
+ * @returns Object mit Änderungsstatus für UI
  */
-export async function updateDailyStreak(): Promise<void> {
+export async function updateDailyStreak(): Promise<{
+  changed: boolean;
+  newStreak: number;
+  shieldUsed: boolean;
+}> {
   try {
     let stats = await loadStats();
 
@@ -119,7 +125,11 @@ export async function updateDailyStreak(): Promise<void> {
     // Fall 1: Heute bereits gespielt → nichts tun
     if (lastPlayed === today) {
       console.log('[Daily Streak] ❌ Already played today, no update needed');
-      return;
+      return {
+        changed: false,
+        newStreak: stats.dailyStreak.currentStreak,
+        shieldUsed: false,
+      };
     }
 
     // Fall 2: Gestern gespielt → Streak +1
@@ -140,7 +150,11 @@ export async function updateDailyStreak(): Promise<void> {
       await saveStats(stats);
 
       console.log(`[Daily Streak] 🎉 SUCCESS! Streak: ${stats.dailyStreak.currentStreak} days, Total days played: ${stats.dailyStreak.totalDaysPlayed}`);
-      return;
+      return {
+        changed: true,
+        newStreak: stats.dailyStreak.currentStreak,
+        shieldUsed: false,
+      };
     }
 
     // Fall 3: Vor 2+ Tagen gespielt → Prüfe Schutzschild
@@ -162,7 +176,11 @@ export async function updateDailyStreak(): Promise<void> {
       await saveStats(stats);
 
       console.log(`[Daily Streak] 🎉 SUCCESS! Streak: ${stats.dailyStreak.currentStreak} days, Total days played: ${stats.dailyStreak.totalDaysPlayed}`);
-      return;
+      return {
+        changed: true,
+        newStreak: 1,
+        shieldUsed: false,
+      };
     }
 
     if (daysMissed === 2) {
@@ -182,23 +200,40 @@ export async function updateDailyStreak(): Promise<void> {
 
         console.log(`[Daily Streak] Shield used! Streak preserved: ${stats.dailyStreak.currentStreak} days`);
         // TODO: Show notification to user ("Schutzschild aktiviert!")
-        return;
+        return {
+          changed: true,
+          newStreak: stats.dailyStreak.currentStreak,
+          shieldUsed: true,
+        };
       } else {
         // Kein Schutzschild verfügbar → Streak verloren
         await resetStreak(stats, today);
         console.log('[Daily Streak] No shield available, streak reset');
         // TODO: Show notification ("Streak verloren - kein Schutzschild verfügbar")
-        return;
+        return {
+          changed: true,
+          newStreak: 0,
+          shieldUsed: false,
+        };
       }
     } else if (daysMissed > 2) {
       // 2+ Tage verpasst → Streak verloren (auch mit Schutzschild)
       await resetStreak(stats, today);
       console.log(`[Daily Streak] ${daysMissed - 1} days missed, streak reset`);
       // TODO: Show notification ("Streak verloren")
-      return;
+      return {
+        changed: true,
+        newStreak: 0,
+        shieldUsed: false,
+      };
     }
   } catch (error) {
     console.error('[Daily Streak] Error updating daily streak:', error);
+    return {
+      changed: false,
+      newStreak: 0,
+      shieldUsed: false,
+    };
   }
 }
 

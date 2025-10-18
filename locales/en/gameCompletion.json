@@ -7,7 +7,8 @@
   "buttons": {
     "nextGame": "Next Game",
     "backToMenu": "Back to Menu",
-    "viewGallery": "View Gallery"
+    "viewGallery": "View Gallery",
+    "continue": "Continue"
   },
   "feedback": {
     "autoNotes": [
@@ -82,7 +83,10 @@
   },
   "autoNotesWarning": "When using auto-notes, this game will not count towards statistics or level progress.",
   "streak": {
-    "title": "Win Streak",
+    "title": "Daily Streak!",
+    "subtitle": "Play every day for longer streaks",
+    "shieldUsedTitle": "Shield Used!",
+    "shieldUsedSubtitle": "Your streak is preserved",
     "record": "New record achieved!",
     "impressive": "Impressive streak!",
     "strong": "Strong performance!",
@@ -105,6 +109,7 @@
   "gallery": {
     "title": "Image Collection",
     "newSegment": "New Segment",
+    "unlocked": "Unlocked!",
     "complete": "Complete",
     "imageComplete": "Image complete!",
     "fullyUnlocked": "Image fully unlocked!",
@@ -154,5 +159,12 @@
     "unlocked": "Unlocked",
     "locked": "Still Locked",
     "unlockAt": "From Level {{level}}"
+  },
+  "autoNotes": {
+    "title": "Auto-Notes Used",
+    "message": "Games with auto-notes are not counted towards progress",
+    "noXP": "No XP gain",
+    "noStreak": "No streak progress",
+    "noStats": "No stats update"
   }
 }

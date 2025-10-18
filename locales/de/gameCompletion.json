@@ -7,7 +7,8 @@
   "buttons": {
     "nextGame": "Nächstes Spiel",
     "backToMenu": "Zurück zum Menü",
-    "viewGallery": "Zur Galerie"
+    "viewGallery": "Zur Galerie",
+    "continue": "Weiter"
   },
   "feedback": {
     "autoNotes": [
@@ -82,7 +83,10 @@
   },
   "autoNotesWarning": "Bei der Verwendung von Auto-Notizen wird dieses Spiel nicht für Statistiken oder Level-Fortschritt gezählt.",
   "streak": {
-    "title": "Siegesserie",
+    "title": "Tägliche Serie!",
+    "subtitle": "Spiele jeden Tag für längere Streaks",
+    "shieldUsedTitle": "Schutzschild eingesetzt!",
+    "shieldUsedSubtitle": "Deine Serie bleibt erhalten",
     "record": "Neuer Rekord erreicht!",
     "impressive": "Beeindruckende Serie!",
     "strong": "Starke Leistung!",
@@ -105,6 +109,7 @@
   "gallery": {
     "title": "Bild-Sammlung",
     "newSegment": "Neues Segment",
+    "unlocked": "Freigeschaltet!",
     "complete": "Komplett",
     "imageComplete": "Bild komplett!",
     "fullyUnlocked": "Bild vollständig freigeschaltet!",
@@ -154,5 +159,12 @@
     "unlocked": "Freigeschaltet",
     "locked": "Noch gesperrt",
     "unlockAt": "Ab Level {{level}}"
+  },
+  "autoNotes": {
+    "title": "Auto-Notizen verwendet",
+    "message": "Spiele mit Auto-Notizen werden nicht für Fortschritt gezählt",
+    "noXP": "Kein XP-Gewinn",
+    "noStreak": "Kein Streak-Fortschritt",
+    "noStats": "Keine Statistik-Aktualisierung"
   }
 }

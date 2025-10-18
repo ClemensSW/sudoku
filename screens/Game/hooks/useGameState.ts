@@ -47,6 +47,11 @@ export interface GameState {
   autoNotesUsed: boolean;
   isLoading: boolean;
   gameStats: GameStats | null;
+  streakInfo: {
+    changed: boolean;
+    newStreak: number;
+    shieldUsed: boolean;
+  } | null;
 }
 
 interface GameStateActions {
@@ -86,6 +91,11 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   const [errorsRemaining, setErrorsRemaining] = useState(MAX_ERRORS);
   const [autoNotesUsed, setAutoNotesUsed] = useState(false);
   const [gameStats, setGameStats] = useState<GameStats | null>(null);
+  const [streakInfo, setStreakInfo] = useState<{
+    changed: boolean;
+    newStreak: number;
+    shieldUsed: boolean;
+  } | null>(null);
 
   // Load initial stats
   useEffect(() => {
@@ -157,6 +167,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       setHintsRemaining(INITIAL_HINTS);
       setErrorsRemaining(MAX_ERRORS);
       setAutoNotesUsed(false);
+      setStreakInfo(null);
 
       // Give haptic feedback
       triggerHaptic("success");
@@ -364,10 +375,12 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       console.log('[Game] ========================================');
       console.log('[Game] === GAME COMPLETE - Updating Daily Streak ===');
       console.log('[Game] ========================================');
-      await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
-      console.log('[Game] Daily Streak update completed!');
+      const streakUpdate = await updateDailyStreak();       // Update daily streak (streak +1, shield usage, etc.)
+      setStreakInfo(streakUpdate); // Store streak info for GameCompletion screen
+      console.log('[Game] Daily Streak update completed!', streakUpdate);
     } catch (error) {
       console.error('[Game] ❌ Error updating daily streak:', error);
+      setStreakInfo(null);
     }
 
     // Clear any paused game state when game is completed
@@ -506,6 +519,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       autoNotesUsed,
       isLoading,
       gameStats,
+      streakInfo,
     },
     {
       startNewGame,

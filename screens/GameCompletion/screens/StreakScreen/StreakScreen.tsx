@@ -1,0 +1,96 @@
+// screens/GameCompletion/screens/StreakScreen/StreakScreen.tsx
+import React from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/utils/theme/ThemeProvider';
+import { GameStats } from '@/utils/storage';
+
+// Components
+import { CurrentStreakCard } from '../../components/StreakCard/components';
+import ActionButtons from '../../shared/ActionButtons';
+
+// Styles
+import styles from './StreakScreen.styles';
+
+interface StreakScreenProps {
+  stats: GameStats | null;
+  streakInfo: {
+    changed: boolean;
+    newStreak: number;
+    shieldUsed: boolean;
+  } | null;
+  onNewGame: () => void;
+  onContinue: () => void;
+}
+
+/**
+ * Screen 3: Daily Streak (Conditional - nur wenn Streak sich geändert hat)
+ *
+ * Zeigt:
+ * - Header Text (variiert je nach Shield-Usage)
+ * - Current Streak Card (mit Kalender)
+ * - Action Buttons (Neues Spiel + Menü)
+ */
+const StreakScreen: React.FC<StreakScreenProps> = ({
+  stats,
+  streakInfo,
+  onNewGame,
+  onContinue,
+}) => {
+  const { t } = useTranslation('gameCompletion');
+  const theme = useTheme();
+  const colors = theme.colors;
+
+  if (!stats?.dailyStreak) return null;
+
+  // Header Text variiert je nach Shield-Usage
+  const headerText = streakInfo?.shieldUsed
+    ? t('streak.shieldUsedTitle')
+    : t('streak.title');
+
+  const subtitleText = streakInfo?.shieldUsed
+    ? t('streak.shieldUsedSubtitle')
+    : t('streak.subtitle');
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <Animated.View entering={FadeInUp.duration(400)} style={styles.header}>
+          <Text style={[styles.headerIcon, { color: colors.primary }]}>
+            {streakInfo?.shieldUsed ? '🛡️' : '🔥'}
+          </Text>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+            {headerText}
+          </Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+            {subtitleText}
+          </Text>
+        </Animated.View>
+
+        {/* Streak Card */}
+        <Animated.View entering={FadeInUp.delay(200).duration(400)}>
+          <CurrentStreakCard
+            currentStreak={stats.dailyStreak.currentStreak}
+            longestStreak={stats.dailyStreak.longestDailyStreak}
+            playHistory={stats.dailyStreak.playHistory}
+            firstLaunchDate={stats.dailyStreak.firstLaunchDate}
+          />
+        </Animated.View>
+
+        {/* Bottom Spacing for Buttons */}
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
+
+      {/* Action Buttons */}
+      <ActionButtons onNewGame={onNewGame} onContinue={onContinue} />
+    </View>
+  );
+};
+
+export default StreakScreen;

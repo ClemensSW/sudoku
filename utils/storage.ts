@@ -10,6 +10,8 @@ import {
 } from "@/screens/Gallery/utils/landscapes/storage";
 // Supporter EP-Multiplikator
 import { calculateEpWithBonus } from "@/modules/game/epCalculator";
+// PERFORMANCE: In-Memory Cache für AsyncStorage
+import { storageCache, withCache } from "@/utils/storage/cache";
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -212,14 +214,24 @@ export const saveStats = async (stats: GameStats): Promise<void> => {
     };
 
     await AsyncStorage.setItem(KEYS.STATISTICS, JSON.stringify(statsWithTimestamp));
+
+    // PERFORMANCE: Invalidiere Cache nach dem Speichern
+    storageCache.delete(KEYS.STATISTICS);
   } catch (error) {
     console.error("Error saving statistics:", error);
   }
 };
 
 // Lade Statistiken
+// PERFORMANCE: Mit Cache-Unterstützung für häufige Zugriffe
 export const loadStats = async (): Promise<GameStats> => {
   try {
+    // Prüfe Cache zuerst (TTL: 3 Sekunden)
+    const cached = storageCache.get<GameStats>(KEYS.STATISTICS, 3000);
+    if (cached) {
+      return cached;
+    }
+
     const savedStats = await AsyncStorage.getItem(KEYS.STATISTICS);
     if (savedStats) {
       let parsedStats = JSON.parse(savedStats);
@@ -282,12 +294,16 @@ export const loadStats = async (): Promise<GameStats> => {
         await saveStats(parsedStats);
       }
 
+      // PERFORMANCE: Speichere im Cache
+      storageCache.set(KEYS.STATISTICS, parsedStats);
       return parsedStats;
     }
 
     // Wenn keine Stats vorhanden, migriere DEFAULT_STATS auch (für neue User)
     console.log('[loadStats] No saved stats found, initializing with DEFAULT_STATS and migrating...');
     const migratedDefaultStats = await migrateToDailyStreak(DEFAULT_STATS);
+    // PERFORMANCE: Speichere im Cache
+    storageCache.set(KEYS.STATISTICS, migratedDefaultStats);
     return migratedDefaultStats;
   } catch (error) {
     console.error("Error loading statistics:", error);

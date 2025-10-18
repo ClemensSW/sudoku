@@ -6,6 +6,7 @@ import React, {
   useEffect,
   ReactNode,
   useCallback,
+  useMemo,
 } from "react";
 import { View, useColorScheme as useSystemColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
@@ -149,8 +150,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
   const isDark = colorScheme === "dark";
 
-  // Construct the theme object with update function
-  const theme: ThemeContextType = {
+  // PERFORMANCE OPTIMIERT: Memoize theme object to prevent cascading re-renders
+  // Nur neu erstellen wenn sich colorScheme, updateTheme, resetToSystemTheme oder userHasSetTheme ändern
+  const theme: ThemeContextType = useMemo(() => ({
     colors: themeColors,
     typography,
     spacing,
@@ -161,7 +163,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     updateTheme,
     resetToSystemTheme,
     isFollowingSystem: !userHasSetTheme,
-  };
+  }), [themeColors, isDark, updateTheme, resetToSystemTheme, userHasSetTheme]);
 
   // Hide splash screen once app is ready
   useEffect(() => {

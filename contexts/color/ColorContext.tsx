@@ -1,5 +1,5 @@
 // contexts/color/ColorContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { loadColorUnlock, updateSelectedColor as updateStoredColor } from '@/utils/storage';
 import { getColorFromHex } from '@/utils/pathColors';
 import { useTheme } from '@/utils/theme/ThemeProvider';
@@ -35,26 +35,35 @@ export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     loadColor();
   }, []);
 
-  // Compute display color based on theme (light/dark) and stored hex
-  const progressColor = getColorFromHex(storedColorHex, theme.isDark);
+  // PERFORMANCE: Memoize display color computation
+  const progressColor = useMemo(
+    () => getColorFromHex(storedColorHex, theme.isDark),
+    [storedColorHex, theme.isDark]
+  );
 
-  // Function to update color and notify all consumers
-  const updateSelectedColor = async (color: string) => {
+  // PERFORMANCE: Memoize update function
+  const updateSelectedColor = useCallback(async (color: string) => {
     try {
       await updateStoredColor(color);
-      setStoredColorHex(color); // This triggers re-computation of progressColor
+      setStoredColorHex(color);
     } catch (error) {
       console.error('Error updating progress color:', error);
     }
-  };
+  }, []);
 
-  // Function to refresh color from storage (e.g., after level unlock)
-  const refreshColor = async () => {
+  // PERFORMANCE: Memoize refresh function
+  const refreshColor = useCallback(async () => {
     await loadColor();
-  };
+  }, []);
+
+  // PERFORMANCE: Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({ progressColor, storedColorHex, updateSelectedColor, refreshColor }),
+    [progressColor, storedColorHex, updateSelectedColor, refreshColor]
+  );
 
   return (
-    <ColorContext.Provider value={{ progressColor, storedColorHex, updateSelectedColor, refreshColor }}>
+    <ColorContext.Provider value={contextValue}>
       {children}
     </ColorContext.Provider>
   );

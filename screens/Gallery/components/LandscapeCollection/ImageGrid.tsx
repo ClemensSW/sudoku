@@ -20,7 +20,6 @@ import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 import { getCategoryName, getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
-import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
 
 
@@ -71,32 +70,13 @@ const LandscapeCard = React.memo(
     // Prüfen, ob dieses Bild aktuell freigeschaltet wird
     const isCurrentProject = currentImageId === item.id && !item.isComplete;
 
-    // Animation-values
+    // Animation-value for card press feedback (only one for optimal scroll performance)
     const scale = useSharedValue(1);
-    const heartScale = useSharedValue(1);
-    const badgeScale = useSharedValue(1);
 
-    // Reference for tracking current favorite state to prevent unnecessary animations
-    const isFavoriteRef = React.useRef(item.isFavorite);
-
-    // Animated styles
+    // Animated style for card press feedback
     const cardAnimatedStyle = useAnimatedStyle(() => {
       return {
         transform: [{ scale: scale.value }],
-      };
-    });
-
-    // Heart animation for favorites button
-    const heartAnimatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: heartScale.value }],
-      };
-    });
-
-    // Badge animation
-    const badgeAnimatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: badgeScale.value }],
       };
     });
 
@@ -226,10 +206,12 @@ const LandscapeCard = React.memo(
               </View>
             )}
 
-            {/* Gradient overlay for better visibility of text elements */}
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.7)"]}
-              style={styles.imageGradient}
+            {/* Gradient overlay for better visibility of text elements - Using View for better scroll performance */}
+            <View
+              style={[
+                styles.imageGradient,
+                { backgroundColor: 'rgba(0,0,0,0.5)' }
+              ]}
             />
 
             {/* Aktiv-Badge links oben anzeigen, wenn dieses Bild aktuell freigeschaltet wird */}
@@ -250,11 +232,10 @@ const LandscapeCard = React.memo(
               </View>
             )}
 
-            {/* Statusabzeichen mit Animation - wie vorher, rechts oben */}
-            <Animated.View
+            {/* Statusabzeichen - statisch für bessere Scroll-Performance */}
+            <View
               style={[
                 styles.statusBadge,
-                badgeAnimatedStyle,
                 { backgroundColor: getBadgeColor() },
               ]}
             >
@@ -267,7 +248,7 @@ const LandscapeCard = React.memo(
                 }
               />
               <Text style={styles.badgeText}>{getBadgeText()}</Text>
-            </Animated.View>
+            </View>
 
             {/* Infobereich für Titel und Kategorie */}
             <View style={styles.infoContainer}>
@@ -371,13 +352,13 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
         columnWrapperStyle={styles.gridContainer}
         showsVerticalScrollIndicator={false}
         initialNumToRender={12}
-        maxToRenderPerBatch={15}
-        windowSize={7}
+        maxToRenderPerBatch={10}
+        windowSize={5}
         removeClippedSubviews={true}
         updateCellsBatchingPeriod={50}
         getItemLayout={getItemLayout}
         onScroll={onScroll}
-        scrollEventThrottle={16}
+        scrollEventThrottle={32}
         onScrollToIndexFailed={(info) => {
           // Fallback wenn scrollToIndex fehlschlägt
           const wait = new Promise(resolve => setTimeout(resolve, 50));

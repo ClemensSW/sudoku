@@ -1,5 +1,5 @@
 // screens/GameCompletion/hooks/useCompletionFlow.ts
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 
 export type ScreenType = 'level-path' | 'landscape' | 'streak' | 'auto-notes';
 
@@ -10,6 +10,7 @@ interface UseCompletionFlowProps {
     newStreak: number;
     shieldUsed: boolean;
   } | null;
+  visible: boolean;
 }
 
 interface UseCompletionFlowReturn {
@@ -36,8 +37,19 @@ interface UseCompletionFlowReturn {
 export const useCompletionFlow = ({
   autoNotesUsed,
   streakInfo,
+  visible,
 }: UseCompletionFlowProps): UseCompletionFlowReturn => {
   const [currentStep, setCurrentStep] = useState(0);
+  const prevVisibleRef = useRef(visible);
+
+  // Reset flow when becoming visible
+  useEffect(() => {
+    if (visible && !prevVisibleRef.current) {
+      console.log('[GameCompletionFlow] Resetting flow to step 0');
+      setCurrentStep(0);
+    }
+    prevVisibleRef.current = visible;
+  }, [visible]);
 
   // Bestimme Screens basierend auf Kontext
   const screens = useMemo<ScreenType[]>(() => {

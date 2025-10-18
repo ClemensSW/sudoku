@@ -59,12 +59,18 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
             end={{ x: 0, y: 1 }}
             style={styles.heroGradient}
           >
-            {/* Success Icon */}
+            {/* Animated Success Icon with Glow */}
             <View style={styles.heroIconWrapper}>
               <View
                 style={[
                   styles.iconGlow,
                   { backgroundColor: `${pathColor}40` },
+                ]}
+              />
+              <View
+                style={[
+                  styles.iconGlowOuter,
+                  { backgroundColor: `${pathColor}20` },
                 ]}
               />
               <Feather name="check-circle" size={64} color={pathColor} />

@@ -73,6 +73,7 @@ const GameCompletionFlow: React.FC<GameCompletionFlowProps> = ({
   const { screens, currentStep, handleContinue, isLastScreen } = useCompletionFlow({
     autoNotesUsed,
     streakInfo: streakInfo || null,
+    visible,
   });
 
   // Hide bottom nav when visible

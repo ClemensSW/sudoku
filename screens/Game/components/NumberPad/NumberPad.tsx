@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, Pressable } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
@@ -42,16 +42,17 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Individuelle Animation-Werte für jeden Button
-  const noteScale = useSharedValue(1);
-  const eraseScale = useSharedValue(1);
-  const hintScale = useSharedValue(1);
+  // PERFORMANCE: Memoize animation values - created once per component lifecycle
+  const noteScale = useMemo(() => useSharedValue(1), []);
+  const eraseScale = useMemo(() => useSharedValue(1), []);
+  const hintScale = useMemo(() => useSharedValue(1), []);
+  const numberScales = useMemo(
+    () => Array.from({ length: 9 }, () => useSharedValue(1)),
+    []
+  );
 
-  // Animation-Werte für Zahlenbuttons als Array
-  const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
-
-  // Button-Animation-Handler
-  const handleButtonPress = (
+  // PERFORMANCE: Memoize button press handler
+  const handleButtonPress = useCallback((
     scaleValue: Animated.SharedValue<number>,
     callback: () => void
   ) => {
@@ -66,16 +67,30 @@ const NumberPad: React.FC<NumberPadProps> = ({
 
     // Callback ausführen
     callback();
-  };
+  }, []);
 
-  // Animation-Styles erstellen
-  const getAnimatedStyle = (index: number) => {
-    return useAnimatedStyle(() => {
-      return {
+  // PERFORMANCE: Memoize animated styles outside render
+  const noteAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: noteScale.value }],
+  }));
+
+  const eraseAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: eraseScale.value }],
+  }));
+
+  const hintAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: hintScale.value }],
+  }));
+
+  // Create animated styles for number buttons
+  const numberAnimatedStyles = useMemo(
+    () => numberScales.map((_, index) =>
+      useAnimatedStyle(() => ({
         transform: [{ scale: numberScales[index].value }],
-      };
-    });
-  };
+      }))
+    ),
+    [numberScales]
+  );
 
   // Render action buttons
   const renderActionButtons = () => {
@@ -98,9 +113,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 borderWidth: noteModeActive ? 2 : 0,
                 borderColor: colors.primary,
               },
-              useAnimatedStyle(() => ({
-                transform: [{ scale: noteScale.value }],
-              })),
+              noteAnimatedStyle,
             ]}
             onPress={() => {
               handleButtonPress(noteScale, onNoteToggle);
@@ -134,9 +147,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                   ? colors.surface
                   : colors.numberPadButton,
               },
-              useAnimatedStyle(() => ({
-                transform: [{ scale: eraseScale.value }],
-              })),
+              eraseAnimatedStyle,
             ]}
             onPress={() => {
               handleButtonPress(eraseScale, onErasePress);
@@ -171,9 +182,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     ? colors.surface
                     : colors.numberPadButton,
                 },
-                useAnimatedStyle(() => ({
-                  transform: [{ scale: hintScale.value }],
-                })),
+                hintAnimatedStyle,
               ]}
               onPress={() => {
                 if (!hintDisabled) {
@@ -254,7 +263,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                     elevation: 5,
                     opacity: isDisabled ? 0.3 : 1, // Reduzierte Sichtbarkeit für verwendete Zahlen
                   },
-                  getAnimatedStyle(i),
+                  numberAnimatedStyles[i],
                 ]}
                 onPress={() => {
                   if (!isDisabled) {

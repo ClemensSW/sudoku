@@ -11,6 +11,7 @@ import styles from './ActionButtons.styles';
 interface ActionButtonsProps {
   onNewGame: () => void;
   onContinue: () => void;
+  customColor?: string; // Optional custom color (overrides path color)
 }
 
 /**
@@ -21,10 +22,14 @@ interface ActionButtonsProps {
 const ActionButtons: React.FC<ActionButtonsProps> = ({
   onNewGame,
   onContinue,
+  customColor,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
   const pathColor = useProgressColor();
+
+  // Use custom color if provided, otherwise use path color
+  const buttonColor = customColor || pathColor;
 
   return (
     <View
@@ -45,7 +50,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         title={t('buttons.nextGame')}
         onPress={onNewGame}
         variant="primary"
-        customColor={pathColor}
+        customColor={buttonColor}
         style={styles.primaryButton}
         icon={<Feather name="play" size={22} color="white" />}
         iconPosition="left"
@@ -55,7 +60,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         title={t('buttons.backToMenu')}
         onPress={onContinue}
         variant="outline"
-        customColor={pathColor}
+        customColor={buttonColor}
         style={styles.secondaryButton}
       />
     </View>

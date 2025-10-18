@@ -53,6 +53,12 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
     ? t('streak.shieldUsedSubtitle')
     : t('streak.subtitle');
 
+  // Streak-themed button colors (matches StreakCard header gradient)
+  // Professional orange/gold tones with excellent readability
+  const streakButtonColor = theme.isDark
+    ? '#FFB74D' // Material Orange 300 - warmer, lighter for dark backgrounds
+    : '#FF9800'; // Material Orange 500 - vibrant, high contrast for light backgrounds
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -84,8 +90,12 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Action Buttons */}
-      <ActionButtons onNewGame={onNewGame} onContinue={onContinue} />
+      {/* Action Buttons with Streak-themed colors */}
+      <ActionButtons
+        onNewGame={onNewGame}
+        onContinue={onContinue}
+        customColor={streakButtonColor}
+      />
     </View>
   );
 };

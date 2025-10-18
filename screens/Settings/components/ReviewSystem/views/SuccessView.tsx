@@ -89,7 +89,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) =>
       {/* Success Icon */}
       <Animated.View
         style={[
-          styles.iconWrapper,
+          styles.successIconWrapper,
           {
             transform: [{ scale: iconScale }],
           },

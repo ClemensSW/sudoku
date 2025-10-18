@@ -80,6 +80,12 @@ export const styles = StyleSheet.create({
   
   // Content Styles
   iconWrapper: {
+    marginBottom: 24,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successIconWrapper: {
     marginTop: 80,
     marginBottom: 60,
     height: 120,

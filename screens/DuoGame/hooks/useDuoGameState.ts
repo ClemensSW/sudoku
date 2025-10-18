@@ -1,5 +1,5 @@
 // screens/DuoGameScreen/hooks/useDuoGameState.ts
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   SudokuBoard as SudokuBoardType,
   Difficulty,
@@ -138,6 +138,24 @@ export const useDuoGameState = (
     generateInitialPlayerAreas()
   );
 
+  // PERFORMANCE: Create Set-based lookup for O(1) cell ownership checks
+  // Previously used Array.some() which is O(n) - called frequently during gameplay!
+  const player1CellSet = useMemo(() => {
+    const set = new Set<string>();
+    playerAreas[0].cells.forEach(cell => {
+      set.add(`${cell.row},${cell.col}`);
+    });
+    return set;
+  }, [playerAreas]);
+
+  const player2CellSet = useMemo(() => {
+    const set = new Set<string>();
+    playerAreas[1].cells.forEach(cell => {
+      set.add(`${cell.row},${cell.col}`);
+    });
+    return set;
+  }, [playerAreas]);
+
   // Debug-Info-Objekt - WICHTIG: Nicht als Ref verwenden, sondern als normalen State
   const [debugInfo, setDebugInfo] = useState({
     player1InitialEmpty: 0,
@@ -147,30 +165,25 @@ export const useDuoGameState = (
     areasInitialized: true,
   });
 
-  // Check if a cell belongs to a player
+  // PERFORMANCE: Optimized cell ownership check with Set-based lookup (O(1) instead of O(n))
   const getCellOwner = useCallback(
     (row: number, col: number): 0 | 1 | 2 => {
       if (row === 4 && col === 4) return 0; // Neutral middle cell
 
-      const [player1Area, player2Area] = playerAreas;
+      const cellKey = `${row},${col}`;
 
-      // Check player 1 area
-      if (
-        player1Area.cells.some((cell) => cell.row === row && cell.col === col)
-      ) {
+      // O(1) Set lookup instead of O(n) Array.some()
+      if (player1CellSet.has(cellKey)) {
         return 1;
       }
 
-      // Check player 2 area
-      if (
-        player2Area.cells.some((cell) => cell.row === row && cell.col === col)
-      ) {
+      if (player2CellSet.has(cellKey)) {
         return 2;
       }
 
       return 0; // Should never get here
     },
-    [playerAreas]
+    [player1CellSet, player2CellSet]
   );
 
   // ÜBERARBEITETE FUNKTION: Zähle die anfänglichen leeren Zellen für jeden Spieler

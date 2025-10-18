@@ -62,13 +62,13 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   // Calculate remaining hearts
   const heartsRemaining = maxErrors - errorsCount;
 
-  // Get heart color based on remaining hearts
+  // Get heart color - immer neutrales Grau (subtil & professionell)
   const getHeartColor = (index: number) => {
-    // If this is the last heart AND there's only one heart remaining, use warning color
+    // Letztes Herz etwas dunkler für Emphasis
     if (index === 0 && heartsRemaining === 1) {
-      return colors.warning; // Match single player warning color
+      return isDark ? '#C0C4C8' : '#3C4043'; // Etwas kräftiger, aber immer noch neutral
     }
-    // Otherwise use the player's theme color
+    // Ansonsten standard neutral gray
     return theme.heart;
   };
 

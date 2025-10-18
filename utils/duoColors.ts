@@ -419,10 +419,10 @@ export const getPlayerErrorIndicatorColors = (
   pathColorHex: string,
   isDark: boolean
 ): DuoErrorIndicatorColors => {
-  // UNIVERSAL ERROR COLORS - unabhängig vom Spieler
+  // NEUTRAL GRAY HEARTS - subtil und professionell
   return {
-    background: isDark ? 'rgba(239, 83, 80, 0.15)' : 'rgba(211, 47, 47, 0.10)',
-    heart: isDark ? '#EF5350' : '#D32F2F',
+    background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+    heart: isDark ? '#9AA0A6' : '#5F6368', // iOS-inspirierte neutrale Grautöne
   };
 };
 

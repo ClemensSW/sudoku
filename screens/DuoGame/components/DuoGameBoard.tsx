@@ -166,12 +166,28 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
           </View>
 
           {/* Grid + cells */}
-          <View style={styles.gridContainer}>
-            {/* 3x3 separators */}
-            <View style={[styles.gridLine, styles.horizontalGridLine, { top: CELL_SIZE * 3 }]} />
-            <View style={[styles.gridLine, styles.horizontalGridLine, { top: CELL_SIZE * 6 }]} />
-            <View style={[styles.gridLine, styles.verticalGridLine, { left: CELL_SIZE * 3 }]} />
-            <View style={[styles.gridLine, styles.verticalGridLine, { left: CELL_SIZE * 6 }]} />
+          <View style={[styles.gridContainer, { borderColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }]}>
+            {/* 3x3 separators - deutlich sichtbar im Dark Mode */}
+            <View style={[
+              styles.gridLine,
+              styles.horizontalGridLine,
+              { top: CELL_SIZE * 3, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
+            ]} />
+            <View style={[
+              styles.gridLine,
+              styles.horizontalGridLine,
+              { top: CELL_SIZE * 6, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
+            ]} />
+            <View style={[
+              styles.gridLine,
+              styles.verticalGridLine,
+              { left: CELL_SIZE * 3, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
+            ]} />
+            <View style={[
+              styles.gridLine,
+              styles.verticalGridLine,
+              { left: CELL_SIZE * 6, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
+            ]} />
 
             {/* Cells */}
             {board.map((rowData, r) => (
@@ -262,7 +278,7 @@ const styles = StyleSheet.create({
     width: GRID_SIZE,
     height: GRID_SIZE,
     borderWidth: 2,
-    borderColor: "rgba(0, 0, 0, 0.4)",
+    // borderColor dynamisch gesetzt (theme-aware)
     overflow: "hidden",
     position: "relative",
     borderRadius: 8,
@@ -275,7 +291,7 @@ const styles = StyleSheet.create({
   },
   gridLine: {
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    // backgroundColor dynamisch gesetzt (theme-aware)
     zIndex: 2,
   },
   horizontalGridLine: {

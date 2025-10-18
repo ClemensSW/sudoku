@@ -24,6 +24,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./CustomAlert.styles";
+import WarningIcon from "@/assets/svg/warning.svg";
 
 // Define button types with different visual styles
 export type ButtonType =
@@ -218,7 +219,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "error":
         return "#F87171"; // Softer red
       case "warning":
-        return "#FBBF24"; // Warmer yellow
+        return "#DD636E"; // Warning icon color
       case "confirmation":
         return progressColor; // Use current path color
       case "duoMode":
@@ -355,19 +356,28 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           <Animated.View
             style={[
               styles.iconContainer,
+              type === "warning" && {
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+              },
               {
-                backgroundColor: hideIconBackground ? "transparent" : `${getIconColor()}10`, // Very subtle background
+                backgroundColor: hideIconBackground ? "transparent" : `${getIconColor()}20`, // Subtle background
               },
               iconAnimatedStyle,
             ]}
           >
             {customIcon || (
-              <Feather
-                name={getIcon() as any}
-                size={32}
-                color={getIconColor()}
-                style={{ opacity: 0.9 }}
-              />
+              type === "warning" ? (
+                <WarningIcon width={64} height={64} />
+              ) : (
+                <Feather
+                  name={getIcon() as any}
+                  size={32}
+                  color={getIconColor()}
+                  style={{ opacity: 0.9 }}
+                />
+              )
             )}
           </Animated.View>
         </View>

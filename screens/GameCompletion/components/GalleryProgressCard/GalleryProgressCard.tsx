@@ -25,6 +25,7 @@ export interface GalleryProgressCardProps {
   isComplete?: boolean;
   onViewGallery: () => void;
   stats?: GameStats;
+  buttonVariant?: 'primary' | 'outline'; // primary = filled, outline = less prominent
 }
 
 const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
@@ -33,6 +34,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   isComplete = false,
   onViewGallery,
   stats,
+  buttonVariant = 'primary',
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -108,33 +110,6 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
           {t('gallery.title')}
         </Text>
-
-        {/* Badge (optional) */}
-        {newlyUnlockedSegmentId !== undefined && (
-          <Animated.View
-            style={[
-              styles.badge,
-              { backgroundColor: progressColor },
-            ]}
-            entering={ZoomIn.duration(300).delay(300)}
-          >
-            <Feather name="plus" size={12} color="#FFFFFF" />
-            <Text style={styles.badgeText}>{t('gallery.newSegment')}</Text>
-          </Animated.View>
-        )}
-
-        {isComplete && (
-          <Animated.View
-            style={[
-              styles.badge,
-              { backgroundColor: colors.success },
-            ]}
-            entering={ZoomIn.duration(300).delay(300)}
-          >
-            <Feather name="check" size={12} color="#FFFFFF" />
-            <Text style={styles.badgeText}>{t('gallery.complete')}</Text>
-          </Animated.View>
-        )}
       </View>
 
       {/* Puzzle Section - luftig */}
@@ -212,6 +187,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       <GalleryAction
         progressColor={progressColor}
         onPress={onViewGallery}
+        variant={buttonVariant}
       />
     </Animated.View>
   );

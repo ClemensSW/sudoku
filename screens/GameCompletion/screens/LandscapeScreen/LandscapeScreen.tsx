@@ -106,6 +106,7 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
             isComplete={landscapeCompleted}
             onViewGallery={onViewGallery}
             stats={stats}
+            buttonVariant="outline"
           />
         </Animated.View>
 

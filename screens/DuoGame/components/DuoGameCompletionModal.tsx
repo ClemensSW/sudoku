@@ -19,26 +19,8 @@ import Button from "@/components/Button/Button";
 import { useRouter } from "expo-router";
 import { Difficulty } from "@/utils/sudoku";
 import DuoCircularProgress from "./DuoCircularProgress";
-
-// Duo Mode primary colors - used consistently throughout
-const GREEN_COLOR = "#4A7D78";
-const YELLOW_COLOR = "#8A7B46";
-
-// Player colors - names will be translated via i18n
-const PLAYER_COLORS = {
-  1: {
-    colorKey: "green",
-    primary: GREEN_COLOR,
-    secondary: "#6CACA6",
-    background: "rgba(74, 125, 120, 0.1)",
-  },
-  2: {
-    colorKey: "yellow",
-    primary: YELLOW_COLOR,
-    secondary: "#D5C178",
-    background: "rgba(138, 123, 70, 0.1)",
-  }
-};
+import { getPlayerCompletionColors, type DuoPlayerId } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DuoGameCompletionModalProps {
   visible: boolean;
@@ -91,11 +73,26 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   const colors = theme.colors;
   const isDarkMode = theme.isDark;
   const router = useRouter();
-  
+  const pathColorHex = useStoredColorHex();
+
+  // Get player colors based on theme
+  const player1Colors = useMemo(
+    () => getPlayerCompletionColors(1 as DuoPlayerId, pathColorHex, isDarkMode),
+    [pathColorHex, isDarkMode]
+  );
+  const player2Colors = useMemo(
+    () => getPlayerCompletionColors(2 as DuoPlayerId, pathColorHex, isDarkMode),
+    [pathColorHex, isDarkMode]
+  );
+  const PLAYER_COLORS = useMemo(() => ({
+    1: player1Colors,
+    2: player2Colors,
+  }), [player1Colors, player2Colors]);
+
   // Dynamische Farbe basierend auf Gewinner
   const getWinnerColor = () => {
-    if (winner === 2) return YELLOW_COLOR;
-    return GREEN_COLOR; // Standard ist grün (für Spieler 1 oder Unentschieden)
+    if (winner === 2) return player2Colors.primary;
+    return player1Colors.primary; // Standard ist blau (für Spieler 1 oder Unentschieden)
   };
   
   // Die Gewinnerfarbe, die wir in den UI-Elementen verwenden werden

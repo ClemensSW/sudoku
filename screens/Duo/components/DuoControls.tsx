@@ -11,6 +11,8 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { getPlayerPrimaryColor } from "@/utils/duoColors";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -41,11 +43,14 @@ const DuoControls: React.FC<DuoControlsProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Neue Teal-Farbe für Buttons
-  const BUTTON_COLOR = "#4A7D78"; // Teal color
-
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
+
+  // Use centralized duo colors
+  const pathColorHex = useStoredColorHex();
+  const BUTTON_COLOR = React.useMemo(() => {
+    return getPlayerPrimaryColor(player, pathColorHex, theme.isDark);
+  }, [player, pathColorHex, theme.isDark]);
 
   // For top player (Player 2), entire container is rotated 180 degrees
   return (

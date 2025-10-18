@@ -9,46 +9,9 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
-
-// Player color themes (higher contrast)
-const PLAYER_THEMES = {
-  1: {
-    cellBackground: "#4A7D78",
-    textColor: "#F1F4FB",
-    selectedBackground: "#406B6D",
-    initial: { textColor: "#F1F4FB" },
-    notes: { textColor: "rgba(241, 244, 251, 0.9)" },
-    error: {
-      background: "rgba(255, 100, 100, 0.4)",
-      selectedBackground: "rgba(255, 120, 120, 0.6)",
-      textColor: "#FFD5D5",
-    },
-  },
-  2: {
-    cellBackground: "#F3EFE3",
-    textColor: "#5B5D6E",
-    selectedBackground: "#E6E0C5",
-    initial: { textColor: "#5B5D6E" },
-    notes: { textColor: "rgba(91, 93, 110, 0.95)" },
-    error: {
-      background: "rgba(255, 100, 100, 0.3)",
-      selectedBackground: "rgba(255, 120, 120, 0.5)",
-      textColor: "#BB5555",
-    },
-  },
-  0: {
-    cellBackground: "#E0E8E7",
-    textColor: "#2D3045",
-    selectedBackground: "#C5D1CF",
-    initial: { textColor: "#2D3045" },
-    notes: { textColor: "rgba(45, 48, 69, 0.95)" },
-    error: {
-      background: "rgba(255, 100, 100, 0.3)",
-      selectedBackground: "rgba(255, 120, 120, 0.5)",
-      textColor: "#BB5555",
-    },
-  },
-} as const;
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { getPlayerCellColors, type DuoPlayerId } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DuoGameCellProps {
   cell: SudokuCell;
@@ -71,7 +34,12 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   rotateForPlayer2 = true,
   showErrors = true,
 }) => {
-  const theme = PLAYER_THEMES[player];
+  const { isDark } = useTheme();
+  const pathColorHex = useStoredColorHex();
+  const theme = React.useMemo(
+    () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark),
+    [player, pathColorHex, isDark]
+  );
 
   // Pulse animation only when *filled* by the player
   const scale = useSharedValue(1);

@@ -29,8 +29,8 @@
     "label": "Learn more"
   },
   "players": {
-    "green": "Green",
-    "yellow": "Yellow"
+    "blue": "Blue",
+    "red": "Red"
   },
   "completion": {
     "tie": "It's a tie!",

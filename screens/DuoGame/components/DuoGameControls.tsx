@@ -18,6 +18,8 @@ import { triggerHaptic } from "@/utils/haptics";
 import DuoErrorIndicator from "./DuoErrorIndicator";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { getPlayerControlColors, type DuoPlayerId } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -27,61 +29,20 @@ const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 95); // Etwas schmaler für
 const ACTION_BUTTON_WIDTH_TWO = Math.min(width / 3 - 8, 110); // Breiter für zwei Buttons
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
-// Player themes to match the board colors
-const PLAYER_THEMES = {
-  // Player 1 (bottom)
-  1: {
-    controls: {
-      darkBackgroundColor: "rgba(74, 125, 120, 0.2)", // Original für Dark Mode
-      lightBackgroundColor: "rgba(74, 125, 120, 0.15)", // Angepasste Farbe für Light Mode
-      numberButton: {
-        background: "#4A7D78", // Teal
-        textColor: "#F1F4FB", // Light blue/white
-        disabledBackground: "rgba(74, 125, 120, 0.5)", // Faded teal
-        disabledTextColor: "rgba(241, 244, 251, 0.5)", // Faded white
-      },
-      actionButton: {
-        background: "rgba(64, 107, 109, 0.9)", // Erhöhter Kontrast
-        activeBackground: "#4A7D78", // Full teal when active
-        iconColor: "#F1F4FB", // Light blue/white
-        textColor: "#F1F4FB", // Light blue/white
-        disabledBackground: "rgba(64, 107, 109, 0.4)", // Very faded teal
-        disabledIconColor: "rgba(241, 244, 251, 0.5)", // Faded white
-        borderColor: "#F1F4FB", // Light blue/white border for active state
-      },
-    },
-  },
-  // Player 2 (top)
-  2: {
-    controls: {
-      darkBackgroundColor: "#292a2d", // Original für Dark Mode
-      lightBackgroundColor: "rgba(138, 123, 70, 0.15)", // Neue Farbe für Light Mode
-      numberButton: {
-        background: "#5B5D6E", // Dark blue-gray
-        textColor: "#F3EFE3", // Light beige
-        disabledBackground: "rgba(91, 93, 110, 0.5)", // Faded blue-gray
-        disabledTextColor: "rgba(243, 239, 227, 0.5)", // Faded beige
-      },
-      actionButton: {
-        background: "rgba(91, 93, 110, 0.9)", // Erhöhter Kontrast
-        activeBackground: "#4D4F5C", // Even darker blue-gray for active state
-        iconColor: "#F3EFE3", // Light beige (same as numberButton.textColor)
-        textColor: "#F3EFE3", // Light beige
-        disabledBackground: "rgba(91, 93, 110, 0.4)", // Faded dark blue-gray
-        disabledIconColor: "rgba(243, 239, 227, 0.5)", // Faded light beige
-        borderColor: "#F3EFE3", // Light beige border for active state
-      },
-    },
-  },
+// Professionelle Schatten-Systeme für verschiedene Button-Typen
+const numberButtonShadow = {
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 4,
 };
 
-// Einheitliches Schatten-System für alle interaktiven Elemente
-const buttonShadow = {
+const actionButtonShadow = {
   shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.2,
-  shadowRadius: 3,
-  elevation: 3,
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.12,
+  shadowRadius: 2,
+  elevation: 2,
 };
 
 interface DuoGameControlsProps {
@@ -113,8 +74,12 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
-  const theme = PLAYER_THEMES[player].controls;
   const { isDark } = useTheme(); // Get dark mode state
+  const pathColorHex = useStoredColorHex();
+  const theme = React.useMemo(
+    () => getPlayerControlColors(player as DuoPlayerId, pathColorHex, isDark),
+    [player, pathColorHex, isDark]
+  );
   const { t } = useTranslation('duoGame');
 
   // Animation values for buttons
@@ -186,8 +151,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                     backgroundColor: isDisabled
                       ? theme.numberButton.disabledBackground
                       : theme.numberButton.background,
+                    shadowColor: isDisabled ? '#000' : theme.numberButton.borderColor, // Farbiger Schatten!
                   },
-                  buttonShadow, // Einheitlicher Schatten
+                  numberButtonShadow, // Professional number button shadow
                 ]}
                 onPress={() => {
                   if (!isDisabled) {
@@ -248,7 +214,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 borderWidth: noteMode ? 2 : 0,
                 borderColor: theme.actionButton.borderColor,
               },
-              buttonShadow, // Einheitlicher Schatten
+              actionButtonShadow, // Professional action button shadow
               disabled && styles.disabledButton,
             ]}
             onPress={() => {
@@ -308,11 +274,11 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             <TouchableOpacity
               style={[
                 styles.actionButton,
-                { 
+                {
                   width: buttonWidth,
                   backgroundColor: theme.actionButton.background
                 },
-                buttonShadow,
+                actionButtonShadow, // Professional action button shadow
                 disabled && styles.disabledButton,
               ]}
               onPress={() => {
@@ -358,11 +324,11 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { 
+              {
                 width: buttonWidth,
-                backgroundColor: theme.actionButton.background 
+                backgroundColor: theme.actionButton.background
               },
-              buttonShadow,
+              actionButtonShadow, // Professional action button shadow
               (hintDisabled || disabled) && styles.disabledButton,
             ]}
             onPress={() => {

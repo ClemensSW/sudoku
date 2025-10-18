@@ -29,8 +29,8 @@
     "label": "Mehr erfahren"
   },
   "players": {
-    "green": "Grün",
-    "yellow": "Gelb"
+    "blue": "Blau",
+    "red": "Rot"
   },
   "completion": {
     "tie": "Unentschieden!",

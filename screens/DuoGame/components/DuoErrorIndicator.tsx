@@ -10,20 +10,8 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-
-// Player themes based on the provided color palette
-const PLAYER_THEMES = {
-  // Player 1 (bottom)
-  1: {
-    background: "rgba(74, 125, 120, 0.2)",
-    heart: "#4A7D78", // Teal - default color
-  },
-  // Player 2 (top)
-  2: {
-    background: "rgba(243, 239, 227, 0.2)",
-    heart: "#5B5D6E", // Dark blue-gray - default color
-  },
-};
+import { getPlayerErrorIndicatorColors, type DuoPlayerId } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DuoErrorIndicatorProps {
   player: 1 | 2;
@@ -40,9 +28,14 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   compact = false,
   showErrors = true, // Standardwert true
 }) => {
-  // Get theme for warning color
-  const { colors } = useTheme();
-  
+  // Get theme for warning color and dark mode
+  const { colors, isDark } = useTheme();
+  const pathColorHex = useStoredColorHex();
+  const theme = React.useMemo(
+    () => getPlayerErrorIndicatorColors(player as DuoPlayerId, pathColorHex, isDark),
+    [player, pathColorHex, isDark]
+  );
+
   // Animation for pulse effect when losing a heart
   const scale = useSharedValue(1);
   const previousErrors = React.useRef(errorsCount);
@@ -65,9 +58,6 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
       transform: [{ scale: scale.value }],
     };
   });
-
-  // Get theme based on player
-  const theme = PLAYER_THEMES[player];
   
   // Calculate remaining hearts
   const heartsRemaining = maxErrors - errorsCount;

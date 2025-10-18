@@ -6,11 +6,10 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import styles from "./GameModeModal.styles";
+import { getDuoBrandColor } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 export type GameMode = "local" | "online";
-
-// DUO-FARBE definieren (gleiche wie im DifficultyModal)
-const DUO_COLOR = "#4A7D78"; // Konsistentes Teal aus DifficultyModal
 
 interface GameModeModalProps {
   visible: boolean;
@@ -28,9 +27,10 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
   const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
-  
-  // Duo-Farbe konsistent mit DifficultyModal
-  const duoIconColor = DUO_COLOR; // Verwende immer die gleiche Farbe
+  const pathColorHex = useStoredColorHex();
+
+  // Duo-Farbe theme-aware (dynamic based on path color)
+  const duoIconColor = getDuoBrandColor(pathColorHex);
 
   if (!visible) return null;
 

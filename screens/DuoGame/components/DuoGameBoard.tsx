@@ -15,6 +15,9 @@ import {
   BOARD_SIZE as SHARED_BOARD_SIZE,
   CELL_SIZE as SHARED_CELL_SIZE,
 } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
+import { useTheme } from "@/utils/theme/ThemeProvider";
+import { getDuoBoardColors } from "@/utils/duoColors";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 // Use the same board size as regular SudokuBoard
 const BOARD_SIZE = SHARED_BOARD_SIZE;
@@ -23,13 +26,6 @@ const GRID_SIZE = BOARD_SIZE * 0.95;
 // So we need to recalculate CELL_SIZE to account for the thicker border
 const GRID_BORDER_WIDTH = 2;
 const CELL_SIZE = (GRID_SIZE - 2 * GRID_BORDER_WIDTH) / 9;
-
-// Player color themes
-const PLAYER_COLORS = {
-  1: "#4A7D78", // Teal - Player 1 (bottom)
-  2: "#F3EFE3", // Light beige - Player 2 (top)
-  0: "#E0E8E7", // Neutral - Middle cell
-} as const;
 
 interface DuoGameBoardProps {
   board: SudokuBoard;
@@ -50,6 +46,13 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   isLoading = false,
   showErrors = true,
 }) => {
+  const { isDark } = useTheme();
+  const pathColorHex = useStoredColorHex();
+  const boardColors = React.useMemo(
+    () => getDuoBoardColors(pathColorHex, isDark),
+    [pathColorHex, isDark]
+  );
+
   // --- One-time board entrance animation & subtle loading scale ---
   const scale = useSharedValue(0.95);
   const opacity = useSharedValue(0);
@@ -129,11 +132,11 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
             <View
               style={[
                 styles.playerAreaBackground,
-                { top: 0, height: BOARD_SIZE * 0.47, backgroundColor: PLAYER_COLORS[2] },
+                { top: 0, height: BOARD_SIZE * 0.47, backgroundColor: boardColors.player2Background },
               ]}
             />
             <LinearGradient
-              colors={[PLAYER_COLORS[2], PLAYER_COLORS[1]]}
+              colors={[boardColors.player2Background, boardColors.player1Background]}
               style={[
                 styles.gradientTransition,
                 { top: BOARD_SIZE * 0.47, height: BOARD_SIZE * 0.15 },
@@ -144,7 +147,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
             <View
               style={[
                 styles.playerAreaBackground,
-                { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: PLAYER_COLORS[1] },
+                { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: boardColors.player1Background },
               ]}
             />
             {/* Middle cell highlight */}
@@ -156,6 +159,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                   top: BOARD_SIZE * 0.47 + BOARD_SIZE * 0.15 / 2 - CELL_SIZE / 2,
                   width: CELL_SIZE,
                   height: CELL_SIZE,
+                  backgroundColor: boardColors.neutralBackground, // Dynamic color based on theme
                 },
               ]}
             />
@@ -246,7 +250,7 @@ const styles = StyleSheet.create({
   },
   middleCellBackground: {
     position: "absolute",
-    backgroundColor: PLAYER_COLORS[0],
+    // backgroundColor is set dynamically in the component based on theme
     zIndex: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },

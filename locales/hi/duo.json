@@ -29,8 +29,8 @@
     "label": "अधिक जानें"
   },
   "players": {
-    "green": "हरा",
-    "yellow": "पीला"
+    "blue": "नीला",
+    "red": "लाल"
   },
   "completion": {
     "tie": "बराबरी!",

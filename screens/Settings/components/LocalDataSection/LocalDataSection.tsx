@@ -7,6 +7,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { clearAllLocalData } from "@/utils/storage/clearAllData";
+import WarningIcon from "@/assets/svg/warning.svg";
 
 interface LocalDataSectionProps {
   showAlert: (config: any) => void;
@@ -105,18 +106,18 @@ const LocalDataSection: React.FC<LocalDataSectionProps> = ({
 
         <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {/* Info Container */}
-          <View style={[styles.infoContainer, { backgroundColor: colors.error + '10' }]}>
+          <View style={[styles.infoContainer, { backgroundColor: '#DD636E20' }]}>
             <View style={styles.warningHeader}>
-              <Feather name="alert-triangle" size={32} color={colors.error} />
+              <WarningIcon width={64} height={64} />
             </View>
-            <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+            <Text style={[styles.descriptionText, { color: colors.textPrimary }]}>
               {t('localData.deleteDataDescription')}
             </Text>
           </View>
 
           {/* Delete Button */}
           <TouchableOpacity
-            style={[styles.deleteButton, { backgroundColor: colors.error }]}
+            style={[styles.deleteButton, { backgroundColor: '#DA4A54' }]}
             onPress={handleDeleteLocalData}
             disabled={isDeleting}
             activeOpacity={0.8}
@@ -158,18 +159,19 @@ const styles = StyleSheet.create({
 
   // Info Container
   infoContainer: {
-    padding: spacing.md,
-    gap: spacing.sm,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   warningHeader: {
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    gap: spacing.md,
   },
   descriptionText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    fontWeight: '600',
     textAlign: 'center',
-    paddingHorizontal: spacing.xs,
+    lineHeight: 22,
+    paddingHorizontal: spacing.sm,
   },
 
   // Delete Button

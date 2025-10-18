@@ -7,6 +7,7 @@ import {
 } from "./types";
 import { getDefaultCollectionState } from "./data";
 import { sortLandscapes } from "./sorting";
+import { landscapeCache } from "./storageCache";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
@@ -38,23 +39,20 @@ const ensureFavoritesConsistency = (c: LandscapeCollection): LandscapeCollection
 };
 
 /**
- * Lädt die Landschaftssammlung aus dem AsyncStorage
+ * Lädt die Landschaftssammlung aus dem Cache/AsyncStorage
  * Initialisiert eine neue Sammlung, falls keine existiert
  */
 export const loadLandscapeCollection = async (): Promise<LandscapeCollection> => {
   try {
-    const storedData = await AsyncStorage.getItem(LANDSCAPE_COLLECTION_KEY);
-    if (storedData) {
-      const parsed = JSON.parse(storedData) as LandscapeCollection;
-      const fixed = ensureFavoritesConsistency(parsed);
-      // Speichere sicherheitshalber zurück (idempotent)
+    // Hole aus dem Cache (lazy load von AsyncStorage wenn nötig)
+    const collection = await landscapeCache.get();
+    // Stelle Konsistenz sicher
+    const fixed = ensureFavoritesConsistency(collection);
+    // Wenn Konsistenz-Fix nötig war, speichere zurück
+    if (fixed !== collection) {
       await saveLandscapeCollection(fixed);
-      return fixed;
     }
-    // Keine Daten vorhanden, initialisiere mit Standardwerten
-    const defaultCollection = getDefaultCollectionState();
-    await saveLandscapeCollection(defaultCollection);
-    return defaultCollection;
+    return fixed;
   } catch (error) {
     console.error("Fehler beim Laden der Landschaftssammlung:", error);
     // Bei Fehler trotzdem eine nutzbare Sammlung zurückgeben
@@ -63,13 +61,26 @@ export const loadLandscapeCollection = async (): Promise<LandscapeCollection> =>
 };
 
 /**
- * Speichert die Landschaftssammlung im AsyncStorage
+ * Speichert die Landschaftssammlung im Cache (debounced write zu AsyncStorage)
  */
 export const saveLandscapeCollection = async (collection: LandscapeCollection): Promise<void> => {
   try {
-    await AsyncStorage.setItem(LANDSCAPE_COLLECTION_KEY, JSON.stringify(collection));
+    // Schreibe in den Cache (debounced AsyncStorage write)
+    await landscapeCache.set(collection);
   } catch (error) {
     console.error("Fehler beim Speichern der Landschaftssammlung:", error);
+  }
+};
+
+/**
+ * Erzwingt sofortiges Schreiben des Cache in AsyncStorage (für kritische Operationen)
+ * Sollte aufgerufen werden bei: App Background, kritischen Updates, vor Navigation
+ */
+export const flushLandscapeCache = async (): Promise<void> => {
+  try {
+    await landscapeCache.flushImmediate();
+  } catch (error) {
+    console.error("Fehler beim Flushen des Landscape-Cache:", error);
   }
 };
 
@@ -188,6 +199,8 @@ export const unlockNextSegment = async (): Promise<UnlockEvent | null> => {
     }
 
     await saveLandscapeCollection(collection);
+    // Kritische Operation - sofort in AsyncStorage schreiben
+    await flushLandscapeCache();
     await markAsUnlocked();
 
     const unlockEvent: UnlockEvent = {

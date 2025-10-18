@@ -143,19 +143,26 @@ const Gallery: React.FC = () => {
   const gridRef = useRef<any>(null);
   const scrollOffset = useRef<number>(0);
 
-  // Track ob die initiale Animation bereits gelaufen ist
-  const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState(false);
+  // Track welche Tabs bereits animiert wurden (per Tab)
+  const animatedTabsRef = useRef<Set<LandscapeFilter>>(new Set());
+  const [shouldAnimateCurrentTab, setShouldAnimateCurrentTab] = useState(true);
 
-  // Setze hasInitiallyAnimated auf true nach dem ersten Fokus und Animation
+  // Prüfe ob der aktuelle Tab bereits animiert wurde
   useEffect(() => {
-    if (isFocused && !hasInitiallyAnimated) {
-      // Warte bis die Animation durchgelaufen ist
-      const timer = setTimeout(() => {
-        setHasInitiallyAnimated(true);
-      }, 1000); // Zeit für die längste Animation (letztes Item)
-      return () => clearTimeout(timer);
+    if (isFocused) {
+      const hasAnimated = animatedTabsRef.current.has(activeTab);
+      setShouldAnimateCurrentTab(!hasAnimated);
+
+      if (!hasAnimated) {
+        // Markiere Tab als animiert nach Animation-Dauer
+        const timer = setTimeout(() => {
+          animatedTabsRef.current.add(activeTab);
+          setShouldAnimateCurrentTab(false);
+        }, 1000); // Zeit für die längste Animation (8. Item mit 800ms delay + 400ms duration)
+        return () => clearTimeout(timer);
+      }
     }
-  }, [isFocused, hasInitiallyAnimated]);
+  }, [isFocused, activeTab]);
 
   // Determine display mode based on screen size
   const isCompactMode = screenWidth < 370;
@@ -426,7 +433,8 @@ const Gallery: React.FC = () => {
   const handleCloseDetailModal = () => {
     setDetailModalVisible(false);
     // Nach dem Schließen: Animation deaktivieren und zur Position zurück scrollen
-    setHasInitiallyAnimated(true);
+    animatedTabsRef.current.add(activeTab);
+    setShouldAnimateCurrentTab(false);
 
     // Warte kurz bis Modal geschlossen ist, dann scrolle zurück zur exakten Position
     setTimeout(() => {
@@ -593,7 +601,7 @@ const Gallery: React.FC = () => {
               onImagePress={handleImagePress}
               onToggleFavorite={handleToggleFavorite}
               currentImageId={currentImageId}
-              shouldAnimate={!hasInitiallyAnimated}
+              shouldAnimate={shouldAnimateCurrentTab}
               onScroll={handleScroll}
             />
           ) : (

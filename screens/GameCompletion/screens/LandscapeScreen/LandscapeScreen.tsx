@@ -75,15 +75,9 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
     };
   }, [getLastUnlockEvent]);
 
-  // Auto-continue if no landscape available
-  useEffect(() => {
-    if (!currentLandscape) {
-      console.log('[LandscapeScreen] No landscape available, auto-continuing to next screen');
-      onContinue();
-    }
-  }, [currentLandscape, onContinue]);
-
+  // Defensive check: This screen should only be rendered when currentLandscape exists
   if (!currentLandscape) {
+    console.warn('[LandscapeScreen] Rendered without currentLandscape - this should not happen');
     return null;
   }
 

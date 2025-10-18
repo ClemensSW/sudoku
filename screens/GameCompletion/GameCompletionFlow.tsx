@@ -10,6 +10,7 @@ import Animated, {
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useNavigation } from '@/contexts/navigation';
+import { useLandscapes } from '@/screens/Gallery/hooks/useLandscapes';
 import { Difficulty } from '@/utils/sudoku';
 import { GameStats } from '@/utils/storage';
 
@@ -69,11 +70,15 @@ const GameCompletionFlow: React.FC<GameCompletionFlowProps> = ({
   const router = useRouter();
   const { hideBottomNav, resetBottomNav } = useNavigation();
 
+  // Landscape Integration
+  const { currentLandscape } = useLandscapes();
+
   // Flow Management
   const { screens, currentStep, handleContinue, isLastScreen } = useCompletionFlow({
     autoNotesUsed,
     streakInfo: streakInfo || null,
     visible,
+    hasLandscape: !!currentLandscape,
   });
 
   // Hide bottom nav when visible

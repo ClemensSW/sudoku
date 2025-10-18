@@ -11,6 +11,7 @@ interface UseCompletionFlowProps {
     shieldUsed: boolean;
   } | null;
   visible: boolean;
+  hasLandscape: boolean;
 }
 
 interface UseCompletionFlowReturn {
@@ -38,6 +39,7 @@ export const useCompletionFlow = ({
   autoNotesUsed,
   streakInfo,
   visible,
+  hasLandscape,
 }: UseCompletionFlowProps): UseCompletionFlowReturn => {
   const [currentStep, setCurrentStep] = useState(0);
   const prevVisibleRef = useRef(visible);
@@ -59,8 +61,16 @@ export const useCompletionFlow = ({
       return ['auto-notes'];
     }
 
-    // Fall 2: Normaler Flow
-    const flow: ScreenType[] = ['level-path', 'landscape'];
+    // Fall 2: Normaler Flow - beginnt immer mit Level+Path
+    const flow: ScreenType[] = ['level-path'];
+
+    // Landscape Screen nur wenn verfügbar
+    if (hasLandscape) {
+      flow.push('landscape');
+      console.log('[GameCompletionFlow] Landscape available → Adding landscape screen');
+    } else {
+      console.log('[GameCompletionFlow] No landscape available → Skipping landscape screen');
+    }
 
     // Streak Screen nur wenn sich Streak geändert hat
     if (streakInfo?.changed) {
@@ -70,9 +80,9 @@ export const useCompletionFlow = ({
       console.log('[GameCompletionFlow] Streak unchanged → Skipping streak screen');
     }
 
-    console.log('[GameCompletionFlow] Flow screens:', flow);
+    console.log('[GameCompletionFlow] Final flow screens:', flow);
     return flow;
-  }, [autoNotesUsed, streakInfo]);
+  }, [autoNotesUsed, streakInfo, hasLandscape]);
 
   // Navigation: Weiter zum nächsten Screen
   const handleContinue = useCallback(() => {

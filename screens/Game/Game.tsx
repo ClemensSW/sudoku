@@ -1,5 +1,5 @@
 // screens/GameScreen/GameScreen.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -166,8 +166,8 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     return () => backHandler.remove();
   }, [gameState.isGameRunning, gameState.isGameComplete, gameActions, router, showPauseModal]);
 
-  // Function to handle complete game restart - for both game over and game completion
-  const handleCompleteGameRestart = () => {
+  // PERFORMANCE: Memoize handler to prevent re-creation on every render
+  const handleCompleteGameRestart = useCallback(() => {
     // Wait for animation/alert to close
     setTimeout(() => {
       // Navigate to game screen with difficulty parameter to completely restart the game
@@ -176,7 +176,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
         params: { difficulty: gameState.difficulty },
       });
     }, 200);
-  };
+  }, [router, gameState.difficulty]);
 
   // Check for game completion and show modal
   useEffect(() => {
@@ -218,14 +218,13 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     };
   });
 
-  // Handle number press
-  const handleNumberPress = (number: number) => {
+  // PERFORMANCE: Memoize handlers
+  const handleNumberPress = useCallback((number: number) => {
     // Pass the showMistakes setting to the handleNumberPress function
     gameActions.handleNumberPress(number, gameSettings.showMistakes);
-  };
+  }, [gameActions, gameSettings.showMistakes]);
 
-  // Handle hint press with alerts
-  const handleHintPress = () => {
+  const handleHintPress = useCallback(() => {
     const result = gameActions.handleHintPress();
 
     if (result) {
@@ -246,17 +245,15 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     } else {
       showAlert(noHintsAlert());
     }
-  };
+  }, [gameActions, showAlert]);
 
-  // Handle auto notes
-  const handleAutoNotesPress = () => {
+  const handleAutoNotesPress = useCallback(() => {
     if (gameActions.handleAutoNotesPress()) {
       showAlert(autoNotesAlert());
     }
-  };
+  }, [gameActions, showAlert]);
 
-  // Handle back navigation - now pauses automatically without alert
-  const handleBackPress = async () => {
+  const handleBackPress = useCallback(async () => {
     if (gameState.isGameRunning && !gameState.isGameComplete) {
       // Pause the game automatically
       await gameActions.pauseGame();
@@ -264,20 +261,17 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
     } else {
       router.navigate("../");
     }
-  };
+  }, [gameState.isGameRunning, gameState.isGameComplete, gameActions, router]);
 
-  // Handle settings button
-  const handleSettingsPress = () => {
+  const handleSettingsPress = useCallback(() => {
     setShowSettings(true);
-  };
+  }, []);
 
-  // Handle settings close
-  const handleSettingsClose = () => {
+  const handleSettingsClose = useCallback(() => {
     setShowSettings(false);
-  };
+  }, []);
 
-  // Handle quit from settings with quit tracking
-  const handleQuitFromSettings = () => {
+  const handleQuitFromSettings = useCallback(() => {
     showAlert(
       quitGameAlert(async () => {
         // Mark as quit/loss in statistics before navigating
@@ -288,37 +282,34 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
         router.navigate("../");
       })
     );
-  };
+  }, [showAlert, gameActions, router]);
 
-  // Handle pause from settings
-  const handlePauseFromSettings = async () => {
+  const handlePauseFromSettings = useCallback(async () => {
     // Pause the game and navigate back
     await gameActions.pauseGame();
     setShowSettings(false);
     router.navigate("../");
-  };
+  }, [gameActions, router]);
 
-  // Handle pause button press
-  const handlePausePress = () => {
+  const handlePausePress = useCallback(() => {
     setShowPauseModal(true);
-  };
+  }, []);
 
-  // Handle pause modal resume
-  const handlePauseModalResume = () => {
+  const handlePauseModalResume = useCallback(() => {
     setShowPauseModal(false);
-  };
+  }, []);
 
   // Handlers for completion modal
-  const handleCompletionModalClose = () => {
+  const handleCompletionModalClose = useCallback(() => {
     setShowCompletionModal(false);
-  };
+  }, []);
 
-  const handleNavigateToHome = () => {
+  const handleNavigateToHome = useCallback(() => {
     setShowCompletionModal(false);
     setTimeout(() => {
       router.navigate("../");
     }, 100);
-  };
+  }, [router]);
 
   // If board is not yet loaded
   // If board is not yet loaded

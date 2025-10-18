@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
 import SudokuCell from "@/screens/Game/components/SudokuCell/SudokuCell";
@@ -81,8 +81,8 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     };
   });
 
-  // Check if the cell is related to the selected cell
-  const isRelatedCell = (row: number, col: number): boolean => {
+  // PERFORMANCE: Memoize cell relation check (called 81 times per render)
+  const isRelatedCell = useCallback((row: number, col: number): boolean => {
     if (!selectedCell || !highlightRelated) return false;
 
     const isInSameRow = selectedCell.row === row;
@@ -92,10 +92,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       Math.floor(selectedCell.col / 3) === Math.floor(col / 3);
 
     return isInSameRow || isInSameCol || isInSameBox;
-  };
+  }, [selectedCell, highlightRelated]);
 
-  // Neue Funktion, um zu prüfen, ob eine Zelle den gleichen Wert hat wie die ausgewählte Zelle
-  const hasSameValue = (row: number, col: number): boolean => {
+  // PERFORMANCE: Memoize same value check (called 81 times per render)
+  const hasSameValue = useCallback((row: number, col: number): boolean => {
     if (!selectedCell || !highlightSameValues) return false;
 
     const selectedValue = board[selectedCell.row][selectedCell.col].value;
@@ -105,20 +105,29 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       board[row][col].value !== 0 &&
       !(selectedCell.row === row && selectedCell.col === col)
     );
-  };
+  }, [selectedCell, highlightSameValues, board]);
 
-  // Dynamische Inline-Styles für Theme-Unterstützung
-  const boardStyle = {
-    backgroundColor: colors.boardBackgroundColor,
-  };
+  // PERFORMANCE: Memoize dynamic inline styles
+  const boardStyle = useMemo(
+    () => ({
+      backgroundColor: colors.boardBackgroundColor,
+    }),
+    [colors.boardBackgroundColor]
+  );
 
-  const gridContainerStyle = {
-    borderColor: colors.boardBorderColor,
-  };
+  const gridContainerStyle = useMemo(
+    () => ({
+      borderColor: colors.boardBorderColor,
+    }),
+    [colors.boardBorderColor]
+  );
 
-  const gridLineStyle = {
-    backgroundColor: colors.boardGridLineColor,
-  };
+  const gridLineStyle = useMemo(
+    () => ({
+      backgroundColor: colors.boardGridLineColor,
+    }),
+    [colors.boardGridLineColor]
+  );
 
   return (
     <View style={styles.boardContainer}>

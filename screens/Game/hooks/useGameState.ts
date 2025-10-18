@@ -100,6 +100,13 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     loadGameStats();
   }, []);
 
+  // PERFORMANCE: Watch for game over condition
+  useEffect(() => {
+    if (errorsRemaining === 0 && !isGameComplete) {
+      handleGameOver();
+    }
+  }, [errorsRemaining, isGameComplete, handleGameOver]);
+
   // Check if game is complete and update used numbers
   useEffect(() => {
     if (board.length > 0 && isBoardComplete(board)) {
@@ -112,7 +119,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     if (board.length > 0) {
       updateUsedNumbers();
     }
-  }, [board]);
+  }, [board, handleGameComplete, updateUsedNumbers]);
 
   // Start a new game
   const startNewGame = useCallback(async () => {
@@ -156,14 +163,29 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     }, 500);
   }, [difficulty]);
 
-  // Select a cell
-  const handleCellPress = (row: number, col: number) => {
+  // PERFORMANCE: Memoize handlers
+  const handleCellPress = useCallback((row: number, col: number) => {
     triggerHaptic("light");
     setSelectedCell({ row, col });
-  };
+  }, []);
 
-  // Enter a number in a cell
-  const handleNumberPress = (number: number, showMistakes: boolean = true) => {
+  const handleError = useCallback((showMistakes: boolean) => {
+    // If showMistakes is false, don't count errors
+    if (!showMistakes) return;
+
+    setErrorsRemaining(prev => {
+      const newErrorsRemaining = prev - 1;
+      triggerHaptic("error");
+
+      if (newErrorsRemaining <= 0) {
+        // Handle game over will be called via useEffect watching errorsRemaining
+        return 0;
+      }
+      return newErrorsRemaining;
+    });
+  }, []);
+
+  const handleNumberPress = useCallback((number: number, showMistakes: boolean = true) => {
     if (!selectedCell || isGameComplete) return;
 
     const { row, col } = selectedCell;
@@ -186,7 +208,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       const updatedBoard = setCellValue(board, row, col, number);
 
       // Check if the move violates Sudoku rules
-      const isRuleViolation = 
+      const isRuleViolation =
         updatedBoard[row][col].value === number &&
         !updatedBoard[row][col].isValid;
 
@@ -199,7 +221,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       // If number was successfully set
       if (updatedBoard[row][col].value === number && previousValue !== number) {
         let boardWithUpdatedNotes = updatedBoard;
-        
+
         // Nur Notizen entfernen, wenn die Zahl richtig ist ODER wenn "Fehler anzeigen" deaktiviert ist
         if (!isErrorMove || !showMistakes) {
           // Update notes in related cells
@@ -229,10 +251,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
         triggerHaptic("error");
       }
     }
-  };
+  }, [selectedCell, isGameComplete, board, noteModeActive, solution, handleError]);
 
-  // Erase a cell
-  const handleErasePress = () => {
+  const handleErasePress = useCallback(() => {
     if (!selectedCell || isGameComplete) return;
 
     const { row, col } = selectedCell;
@@ -249,16 +270,14 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     updatedBoard[row][col].notes = [];
     setBoard(updatedBoard);
     triggerHaptic("light");
-  };
+  }, [selectedCell, isGameComplete, board]);
 
-  // Toggle note mode
-  const toggleNoteMode = () => {
-    setNoteModeActive(!noteModeActive);
+  const toggleNoteMode = useCallback(() => {
+    setNoteModeActive(prev => !prev);
     triggerHaptic("light");
-  };
+  }, []);
 
-  // Provide a hint with proper return type
-  const handleHintPress = (): HintResult | null => {
+  const handleHintPress = useCallback((): HintResult | null => {
     // Check if hints are available
     if (hintsRemaining <= 0) {
       triggerHaptic("error");
@@ -292,40 +311,23 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     const updatedBoard = solveCell(board, solution, row, col);
     setBoard(updatedBoard);
     triggerHaptic("success");
-    
-    return { type: "success" };
-  };
 
-  // Handle auto notes with proper return type
-  const handleAutoNotesPress = (): boolean => {
+    return { type: "success" };
+  }, [hintsRemaining, selectedCell, board, solution]);
+
+  const handleAutoNotesPress = useCallback((): boolean => {
     const updatedBoard = autoUpdateNotes(board);
     setBoard(updatedBoard);
     setAutoNotesUsed(true);
     triggerHaptic("medium");
     return true;
-  };
+  }, [board]);
 
-  // Update timer
-  const handleTimeUpdate = (time: number) => {
+  const handleTimeUpdate = useCallback((time: number) => {
     setGameTime(time);
-  };
+  }, []);
 
-  // Handle error
-  const handleError = (showMistakes: boolean) => {
-    // If showMistakes is false, don't count errors
-    if (!showMistakes) return;
-    
-    const newErrorsRemaining = errorsRemaining - 1;
-    setErrorsRemaining(newErrorsRemaining);
-    triggerHaptic("error");
-    
-    if (newErrorsRemaining <= 0) {
-      handleGameOver();
-    }
-  };
-
-  // Game over handler
-  const handleGameOver = async () => {
+  const handleGameOver = useCallback(async () => {
     if (isGameComplete) return;
 
     setIsGameComplete(true);
@@ -344,10 +346,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     setGameStats(updatedStats);
 
     triggerHaptic("error");
-  };
+  }, [isGameComplete, difficulty, gameTime, autoNotesUsed]);
 
-  // Game completion handler
-  const handleGameComplete = async () => {
+  const handleGameComplete = useCallback(async () => {
     if (isGameComplete) return;
 
     setIsGameComplete(true);
@@ -388,10 +389,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     }).catch(error => {
       console.error('[Game] ❌ Auto-sync after game completion error:', error);
     });
-  };
+  }, [isGameComplete, difficulty, gameTime, autoNotesUsed]);
 
-  // Handle game quit - counts as a loss for statistics but with user quit flag
-  const handleQuitGame = async () => {
+  const handleQuitGame = useCallback(async () => {
     if (isGameComplete) return;
 
     setIsUserQuit(true); // Mark that this was a user-initiated quit
@@ -410,10 +410,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     setGameStats(updatedStats);
 
     triggerHaptic("error");
-  };
+  }, [isGameComplete, difficulty, gameTime, autoNotesUsed]);
 
-  // Update used numbers for NumPad
-  const updateUsedNumbers = () => {
+  const updateUsedNumbers = useCallback(() => {
     const counts: { [key: number]: number } = {};
 
     // Count each number in the board
@@ -435,10 +434,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     }
 
     setUsedNumbers(used);
-  };
+  }, [board]);
 
-  // Pause the game and save state
-  const pauseGame = async () => {
+  const pauseGame = useCallback(async () => {
     if (!isGameRunning || isGameComplete) return;
 
     const pausedState: PausedGameState = {
@@ -454,10 +452,9 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
     await savePausedGame(pausedState);
     triggerHaptic("light");
-  };
+  }, [isGameRunning, isGameComplete, board, solution, difficulty, gameTime, hintsRemaining, errorsRemaining, autoNotesUsed]);
 
-  // Resume a paused game
-  const resumeGame = async (): Promise<boolean> => {
+  const resumeGame = useCallback(async (): Promise<boolean> => {
     try {
       const pausedState = await loadPausedGame();
 
@@ -489,7 +486,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       console.error("Error resuming game:", error);
       return false;
     }
-  };
+  }, []);
 
   return [
     {

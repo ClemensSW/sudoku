@@ -30,7 +30,7 @@ import { clearPausedGame } from "@/utils/storage";
 
 import { Difficulty } from "@/utils/sudoku";
 import Header from "@/components/Header/Header";
-import GameCompletionScreen from "@/screens/GameCompletion";
+import GameCompletionFlow from "@/screens/GameCompletion/GameCompletionFlow";
 import GameStatusBar from "./components/GameStatusBar/GameStatusBar";
 
 // Import custom hooks
@@ -431,16 +431,17 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
         </ScrollView>
       </View>
 
-      {/* Game Completion Modal */}
-      <GameCompletionScreen
+      {/* Game Completion Flow */}
+      <GameCompletionFlow
         visible={showCompletionModal}
         onClose={handleCompletionModalClose}
-        onNewGame={handleCompleteGameRestart} // Use the same restart function here
+        onNewGame={handleCompleteGameRestart}
         onContinue={handleNavigateToHome}
         timeElapsed={gameState.gameTime}
         difficulty={gameState.difficulty}
         autoNotesUsed={gameState.autoNotesUsed}
         stats={gameState.gameStats}
+        streakInfo={gameState.streakInfo}
       />
 
       {/* Settings Panel */}

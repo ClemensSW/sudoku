@@ -9,7 +9,8 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useProgressColor } from '@/hooks/useProgressColor';
 import { useSupporter } from '@/modules/subscriptions/hooks/useSupporter';
 import { Difficulty } from '@/utils/sudoku';
-import { GameStats, loadUserProfile, updateUserTitle } from '@/utils/storage';
+import { GameStats } from '@/utils/storage';
+import { loadUserProfile, updateUserTitle } from '@/utils/profileStorage';
 import { calculateXpGain } from '../../components/PlayerProgressionCard/utils';
 
 // Components

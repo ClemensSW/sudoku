@@ -53,11 +53,11 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
     ? t('streak.shieldUsedSubtitle')
     : t('streak.subtitle');
 
-  // Streak-themed button colors (matches StreakCard header gradient)
-  // Professional orange/gold tones with excellent readability
+  // Streak-themed button colors (matches StreakCard icon colors)
+  // Icon colors: #FFDC64 (lighter gold), #FFC850 (darker gold)
   const streakButtonColor = theme.isDark
-    ? '#FFB74D' // Material Orange 300 - warmer, lighter for dark backgrounds
-    : '#FF9800'; // Material Orange 500 - vibrant, high contrast for light backgrounds
+    ? '#FFDC64' // Matches lighter Streak icon gold - perfect harmony on dark backgrounds
+    : '#FFA726'; // Material Orange 400 - darker gold for high contrast on light backgrounds
 
   return (
     <View style={styles.container}>

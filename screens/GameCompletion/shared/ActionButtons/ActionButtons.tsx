@@ -52,7 +52,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         variant="primary"
         customColor={buttonColor}
         style={styles.primaryButton}
-        icon={<Feather name="play" size={22} color="white" />}
+        icon={<Feather name="play" size={22} color={theme.colors.buttonText} />}
         iconPosition="left"
       />
 

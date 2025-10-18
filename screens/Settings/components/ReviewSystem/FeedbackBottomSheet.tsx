@@ -279,24 +279,26 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
       }}
       style={styles.bottomSheet}
     >
-      {/* Header with title and close/back button */}
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        {currentView !== "rating" && currentView !== "success" ? (
-          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-            <Feather name="arrow-left" size={24} color={colors.textPrimary} />
+      {/* Header with title and close/back button (hidden for success view) */}
+      {currentView !== "success" && (
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          {currentView !== "rating" ? (
+            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+              <Feather name="arrow-left" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.placeholder} />
+          )}
+
+          <Text style={[styles.title, { color: colors.textPrimary }]}>
+            {getTitle()}
+          </Text>
+
+          <TouchableOpacity onPress={handleClosePress} style={styles.closeButton}>
+            <Feather name="x" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
-        ) : (
-          <View style={styles.placeholder} />
-        )}
-
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
-          {getTitle()}
-        </Text>
-
-        <TouchableOpacity onPress={handleClosePress} style={styles.closeButton}>
-          <Feather name="x" size={24} color={colors.textPrimary} />
-        </TouchableOpacity>
-      </View>
+        </View>
+      )}
 
       {/* Scrollable Content */}
       <BottomSheetScrollView

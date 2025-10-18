@@ -95,22 +95,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) =>
           },
         ]}
       >
-        <View
-          style={[
-            styles.emojiCircle,
-            {
-              backgroundColor: theme.isDark
-                ? 'rgba(52, 211, 153, 0.2)'
-                : 'rgba(16, 185, 129, 0.15)',
-              width: 80,
-              height: 80,
-              borderRadius: 40,
-            },
-          ]}
-        />
-        <View style={styles.iconAbsolute}>
-          <SuccessSvg width={72} height={72} />
-        </View>
+        <SuccessSvg width={120} height={120} />
       </Animated.View>
 
       {/* Title & Subtitle */}

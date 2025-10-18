@@ -1,5 +1,5 @@
 // screens/LeistungScreen/components/ProfileHeader/ProfileHeader.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -10,6 +10,7 @@ import AvatarPicker from "../AvatarPicker";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "../../utils/defaultAvatars";
 import HikingIcon from "@/assets/svg/hiking.svg";
 import LightningIcon from "@/assets/svg/lightning.svg";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 interface ProfileHeaderProps {
   stats: GameStats;
@@ -46,12 +47,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const { t } = useTranslation("leistung");
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Name
   const isDefaultName = !name || name === "User" || name === "Jerome";
   const [isEditingName, setIsEditingName] = useState(isDefaultName);
   const [editedName, setEditedName] = useState(isDefaultName ? "" : name);
   const inputRef = useRef<TextInput>(null);
+
+  // Synchronize editedName with name prop when it changes (fixes immediate display bug)
+  useEffect(() => {
+    if (!isEditingName) {
+      setEditedName(isDefaultName ? "" : name);
+    }
+  }, [name, isDefaultName, isEditingName]);
 
   // Avatar
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
@@ -100,7 +109,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <Pressable onPress={() => inputRef.current?.focus()}>
             <TextInput
               ref={inputRef}
-              style={[styles.nameInput, { color: colors.textPrimary, borderColor: colors.primary }]}
+              style={[styles.nameInput, { color: colors.textPrimary, borderColor: progressColor }]}
               value={editedName}
               onChangeText={setEditedName}
               onBlur={handleNameEdit}

@@ -308,6 +308,7 @@ export const syncSuccessAlert = (onPress?: () => void) => ({
   message: i18n.t('settings:authSection.syncSuccessMessage'),
   type: "success" as AlertType,
   customIcon: React.createElement(CloudsIcon, { width: 64, height: 64 }),
+  hideIconBackground: true,
   buttons: [
     {
       text: i18n.t('alerts:buttons.ok'),

@@ -126,6 +126,19 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
         }
       : null;
 
+  // Intelligente Border-Logik: An 3×3 Grenzen keinen Border, dort ist Grid-Linie
+  const getBorderWidths = () => {
+    const base = 0.5;
+    return {
+      borderTopWidth: base,
+      borderLeftWidth: base,
+      // Unterer Border: Entfernen bei Row 2 und 5 (dort sind horizontale Grid-Linien)
+      borderBottomWidth: (row === 2 || row === 5) ? 0 : base,
+      // Rechter Border: Entfernen bei Col 2 und 5 (dort sind vertikale Grid-Linien)
+      borderRightWidth: (col === 2 || col === 5) ? 0 : base,
+    };
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -133,7 +146,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
         { backgroundColor: getCellBackgroundColor() },
         middleCellShadow as any,
         {
-          borderWidth: 0.5,
+          ...getBorderWidths(),
           borderColor: player === 0 ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.2)",
         },
       ]}

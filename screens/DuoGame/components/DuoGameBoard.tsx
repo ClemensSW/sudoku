@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   gridLine: {
     position: "absolute",
     // backgroundColor dynamisch gesetzt (theme-aware)
-    zIndex: 2,
+    zIndex: 10, // Hoch genug, um klar über allen Zellen zu liegen
   },
   horizontalGridLine: {
     width: GRID_SIZE,

@@ -1,12 +1,13 @@
 // screens/Settings/components/LocalDataSection/LocalDataSection.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { clearAllLocalData } from "@/utils/storage/clearAllData";
+import Button from "@/components/Button/Button";
 import WarningIcon from "@/assets/svg/warning.svg";
 
 interface LocalDataSectionProps {
@@ -116,21 +117,19 @@ const LocalDataSection: React.FC<LocalDataSectionProps> = ({
           </View>
 
           {/* Delete Button */}
-          <TouchableOpacity
-            style={[styles.deleteButton, { backgroundColor: '#DA4A54' }]}
-            onPress={handleDeleteLocalData}
-            disabled={isDeleting}
-            activeOpacity={0.8}
-          >
-            {isDeleting ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Feather name="trash-2" size={18} color="#fff" />
-            )}
-            <Text style={styles.deleteButtonText}>
-              {t('localData.deleteLocalData')}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.deleteButtonContainer}>
+            <Button
+              title={t('localData.deleteLocalData')}
+              onPress={handleDeleteLocalData}
+              disabled={isDeleting}
+              loading={isDeleting}
+              variant="primary"
+              customColor="#DA4A54" // Keep original red color
+              icon={!isDeleting ? <Feather name="trash-2" size={18} color={colors.buttonText} /> : undefined}
+              iconPosition="left"
+              style={styles.deleteButton}
+            />
+          </View>
         </View>
       </View>
     </View>
@@ -175,20 +174,12 @@ const styles = StyleSheet.create({
   },
 
   // Delete Button
-  deleteButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md + 2,
+  deleteButtonContainer: {
     margin: spacing.md,
-    borderRadius: radius.md,
   },
-  deleteButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+  deleteButton: {
+    width: "100%",
+    // Button component übernimmt: backgroundColor (#DA4A54), padding, borderRadius, text styling
   },
 });
 

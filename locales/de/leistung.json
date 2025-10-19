@@ -137,13 +137,70 @@
       "shieldsUsed": "Eingesetzte Schutzschilde"
     },
     "motivation": {
-      "record": "Neuer Rekord! 🏆",
-      "legendary": "Legendär! 🌟",
-      "twoWeeks": "2 Wochen Serie! 💪",
-      "oneWeek": "Eine Woche geschafft! 🔥",
-      "keepGoing": "Weiter so! 👍",
-      "goodStart": "Guter Start! 🎯",
-      "start": "Starte deine Serie!"
+      "milestones": {
+        "year": {
+          "emoji": "👑",
+          "text": "1 Jahr Serie! Du bist eine Legende!"
+        },
+        "hundred": {
+          "emoji": "💯",
+          "text": "100 Tage! Unglaublich!"
+        },
+        "fifty": {
+          "emoji": "⭐",
+          "text": "50 Tage Streak!"
+        },
+        "threeWeeks": {
+          "emoji": "🎯",
+          "text": "21 Tage - Gewohnheit gebildet!"
+        },
+        "legendary": {
+          "emoji": "🌟",
+          "text": "Legendär!"
+        },
+        "twoWeeks": {
+          "emoji": "💪",
+          "text": "2 Wochen Serie!"
+        },
+        "oneWeek": {
+          "emoji": "🔥",
+          "text": "Eine Woche geschafft!"
+        },
+        "keepGoing": {
+          "emoji": "👍",
+          "text": "Weiter so!"
+        },
+        "goodStart": {
+          "emoji": "🎯",
+          "text": "Guter Start!"
+        },
+        "start": {
+          "emoji": "🎮",
+          "text": "Starte deine Serie!"
+        }
+      },
+      "recordRotation": [
+        {
+          "emoji": "🏆",
+          "text": "Neuer Rekord!"
+        },
+        {
+          "emoji": "🚀",
+          "text": "Fantastisch!"
+        },
+        {
+          "emoji": "⚡",
+          "text": "Unglaublich!"
+        },
+        {
+          "emoji": "🌠",
+          "text": "Du bist auf Feuer!"
+        },
+        {
+          "emoji": "🎊",
+          "text": "Immer weiter so!"
+        }
+      ]
     },
     "months": {
       "january": "Januar",

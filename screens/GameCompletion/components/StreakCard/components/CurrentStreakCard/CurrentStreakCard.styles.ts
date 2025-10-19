@@ -49,26 +49,19 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: -spacing.xs,
   },
+  motivationContainer: {
+    alignItems: 'center',
+    marginTop: spacing.md,
+  },
+  motivationEmoji: {
+    fontSize: 28,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
+  },
   motivationText: {
     fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: spacing.sm,
-  },
-  recordBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 20,
-    marginTop: spacing.md,
-  },
-  recordText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: 'white',
-    letterSpacing: 0.5,
   },
   recordInfo: {
     flexDirection: 'row',

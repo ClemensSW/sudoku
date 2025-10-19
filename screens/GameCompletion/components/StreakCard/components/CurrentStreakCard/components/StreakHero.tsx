@@ -74,16 +74,83 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
     transform: [{ scale: counterScale.value }],
   }));
 
-  // Motivational message
-  const getMotivationalText = () => {
-    if (isRecord) return t('streakTab.motivation.record', { defaultValue: 'Neuer Rekord! 🏆' });
-    if (currentStreak >= 30) return t('streakTab.motivation.legendary', { defaultValue: 'Legendär! 🌟' });
-    if (currentStreak >= 14) return t('streakTab.motivation.twoWeeks', { defaultValue: '2 Wochen Streak! 💪' });
-    if (currentStreak >= 7) return t('streakTab.motivation.oneWeek', { defaultValue: 'Eine Woche geschafft! 🔥' });
-    if (currentStreak >= 3) return t('streakTab.motivation.keepGoing', { defaultValue: 'Weiter so! 👍' });
-    if (currentStreak === 0) return t('streakTab.motivation.start', { defaultValue: 'Starte deinen Streak!' });
-    return t('streakTab.motivation.goodStart', { defaultValue: 'Guter Start! 🎯' });
+  // Get motivational message with emoji separated
+  const getMotivation = (): { emoji: string; text: string } => {
+    // 🎖️ Check for milestone achievements first (priority)
+    if (currentStreak >= 365) {
+      return {
+        emoji: t('streakTab.motivation.milestones.year.emoji'),
+        text: t('streakTab.motivation.milestones.year.text')
+      };
+    }
+    if (currentStreak === 100) {
+      return {
+        emoji: t('streakTab.motivation.milestones.hundred.emoji'),
+        text: t('streakTab.motivation.milestones.hundred.text')
+      };
+    }
+    if (currentStreak === 50) {
+      return {
+        emoji: t('streakTab.motivation.milestones.fifty.emoji'),
+        text: t('streakTab.motivation.milestones.fifty.text')
+      };
+    }
+    if (currentStreak === 21) {
+      return {
+        emoji: t('streakTab.motivation.milestones.threeWeeks.emoji'),
+        text: t('streakTab.motivation.milestones.threeWeeks.text')
+      };
+    }
+
+    // Regular milestone ranges
+    if (currentStreak >= 30) {
+      return {
+        emoji: t('streakTab.motivation.milestones.legendary.emoji'),
+        text: t('streakTab.motivation.milestones.legendary.text')
+      };
+    }
+    if (currentStreak >= 14) {
+      return {
+        emoji: t('streakTab.motivation.milestones.twoWeeks.emoji'),
+        text: t('streakTab.motivation.milestones.twoWeeks.text')
+      };
+    }
+    if (currentStreak >= 7) {
+      return {
+        emoji: t('streakTab.motivation.milestones.oneWeek.emoji'),
+        text: t('streakTab.motivation.milestones.oneWeek.text')
+      };
+    }
+    if (currentStreak >= 3) {
+      return {
+        emoji: t('streakTab.motivation.milestones.keepGoing.emoji'),
+        text: t('streakTab.motivation.milestones.keepGoing.text')
+      };
+    }
+    if (currentStreak === 0) {
+      return {
+        emoji: t('streakTab.motivation.milestones.start.emoji'),
+        text: t('streakTab.motivation.milestones.start.text')
+      };
+    }
+
+    // 🔄 Rotating record messages for non-milestone records
+    if (isRecord) {
+      const rotationIndex = currentStreak % 5;
+      return {
+        emoji: t(`streakTab.motivation.recordRotation.${rotationIndex}.emoji`),
+        text: t(`streakTab.motivation.recordRotation.${rotationIndex}.text`)
+      };
+    }
+
+    // Default for 1-2 days
+    return {
+      emoji: t('streakTab.motivation.milestones.goodStart.emoji'),
+      text: t('streakTab.motivation.milestones.goodStart.text')
+    };
   };
+
+  const motivation = getMotivation();
 
   return (
     <LinearGradient
@@ -127,21 +194,13 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
         </Text>
       </Animated.View>
 
-      {/* Motivational Text */}
-      <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
-        {getMotivationalText()}
-      </Text>
-
-      {/* Record Badge */}
-      {isRecord && (
-        <Animated.View
-          style={[styles.recordBadge, { backgroundColor: '#FFD700' }]}
-          entering={FadeIn.duration(400).delay(200)}
-        >
-          <Feather name="award" size={14} color="white" />
-          <Text style={styles.recordText}>{t('streakTab.recordBadge')}</Text>
-        </Animated.View>
-      )}
+      {/* Motivational Message - Emoji Centered Above, Text Below */}
+      <View style={styles.motivationContainer}>
+        <Text style={styles.motivationEmoji}>{motivation.emoji}</Text>
+        <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
+          {motivation.text}
+        </Text>
+      </View>
     </LinearGradient>
   );
 };

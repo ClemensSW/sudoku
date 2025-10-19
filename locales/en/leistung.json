@@ -137,13 +137,70 @@
       "shieldsUsed": "Shields Used"
     },
     "motivation": {
-      "record": "New Record! 🏆",
-      "legendary": "Legendary! 🌟",
-      "twoWeeks": "2 Weeks Streak! 💪",
-      "oneWeek": "One Week Done! 🔥",
-      "keepGoing": "Keep Going! 👍",
-      "goodStart": "Good Start! 🎯",
-      "start": "Start Your Streak!"
+      "milestones": {
+        "year": {
+          "emoji": "👑",
+          "text": "1 Year Streak! You're a legend!"
+        },
+        "hundred": {
+          "emoji": "💯",
+          "text": "100 Days! Incredible!"
+        },
+        "fifty": {
+          "emoji": "⭐",
+          "text": "50 Day Streak!"
+        },
+        "threeWeeks": {
+          "emoji": "🎯",
+          "text": "21 Days - Habit Formed!"
+        },
+        "legendary": {
+          "emoji": "🌟",
+          "text": "Legendary!"
+        },
+        "twoWeeks": {
+          "emoji": "💪",
+          "text": "2 Weeks Streak!"
+        },
+        "oneWeek": {
+          "emoji": "🔥",
+          "text": "One Week Done!"
+        },
+        "keepGoing": {
+          "emoji": "👍",
+          "text": "Keep Going!"
+        },
+        "goodStart": {
+          "emoji": "🎯",
+          "text": "Good Start!"
+        },
+        "start": {
+          "emoji": "🎮",
+          "text": "Start Your Streak!"
+        }
+      },
+      "recordRotation": [
+        {
+          "emoji": "🏆",
+          "text": "New Record!"
+        },
+        {
+          "emoji": "🚀",
+          "text": "Fantastic!"
+        },
+        {
+          "emoji": "⚡",
+          "text": "Incredible!"
+        },
+        {
+          "emoji": "🌠",
+          "text": "You're on fire!"
+        },
+        {
+          "emoji": "🎊",
+          "text": "Keep it up!"
+        }
+      ]
     },
     "months": {
       "january": "January",

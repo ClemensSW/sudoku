@@ -10,7 +10,7 @@
 // 5. Professionell & zurückhaltend - Fokus auf Gameplay
 
 import { colors } from '@/utils/theme/colors';
-import { mixColors } from './colorHelpers';
+import { mixColors, lightenColor } from './colorHelpers';
 
 export type DuoPlayerId = 0 | 1 | 2;
 
@@ -18,22 +18,26 @@ export type DuoPlayerId = 0 | 1 | 2;
  * Generiert subtile Zone Colors mit Path Color Tints
  * Player 1: 4% Path Color Tint (farbig, aber sehr dezent)
  * Player 2: Neutral grau (keine Farbe)
- * Unterscheidung deutlich sichtbar in beiden Modi
+ * Dark Mode: Path Color wird aufgehellt für freundlicheren, wärmeren Look
  */
 function getZoneColors(isDark: boolean, pathColorHex: string) {
   const baseLight = colors.light.surface;    // #FFFFFF
   const baseDark = colors.dark.surface;      // #292A2D
 
   if (isDark) {
+    // Path Color im Dark Mode aufhellen für freundlichen Glow-Effekt
+    const lightenedPathColor = lightenColor(pathColorHex, 70); // 70% heller - sanftes Leuchten
+
     return {
-      // Player 1 (unten): Dark Background + 4% Path Color Tint
-      player1Background: mixColors(pathColorHex, baseDark, 96), // 4% Path Color
+      // Player 1 (unten): Dark Background + 4% aufgehellte Path Color
+      player1Background: mixColors(lightenedPathColor, baseDark, 96), // 4% helle Path Color
       // Player 2 (oben): Neutral Dark Background (keine Farbe)
       player2Background: baseDark,  // #292A2D
       // Middle/Neutral: Zwischen beiden
-      neutralBackground: mixColors(pathColorHex, baseDark, 98), // 2% Path Color
+      neutralBackground: mixColors(lightenedPathColor, baseDark, 98), // 2% helle Path Color
     };
   } else {
+    // Light Mode bleibt unverändert - originale Path Color
     return {
       // Player 1 (unten): Light Background + 4% Path Color Tint
       player1Background: mixColors(pathColorHex, baseLight, 96), // 4% Path Color

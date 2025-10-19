@@ -25,9 +25,8 @@ export default StyleSheet.create({
     elevation: 2,
   },
   featureIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 48,
+    height: 48,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,

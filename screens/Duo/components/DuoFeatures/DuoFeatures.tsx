@@ -43,7 +43,7 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
       color: primaryColor, // Dynamic primary color
     },
     {
-      icon: "rotate-ccw",
+      icon: "smile",
       title: t('features.items.challengingLayout.title'),
       description: t('features.items.challengingLayout.description'),
       color: yellowColor, // Theme yellow
@@ -67,13 +67,8 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
           key={`feature-${index}`}
           style={[styles.featureCard, { backgroundColor: colors.surface }]}
         >
-          <View
-            style={[
-              styles.featureIcon,
-              { backgroundColor: `${feature.color}15` },
-            ]}
-          >
-            <Feather name={feature.icon as any} size={22} color={feature.color} />
+          <View style={styles.featureIcon}>
+            <Feather name={feature.icon as any} size={48} color={feature.color} />
           </View>
           <View style={styles.featureContent}>
             <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>

@@ -19,6 +19,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { useProgressColor } from '@/hooks/useProgressColor';
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
+import { syncSuccessAlert } from '@/components/CustomAlert/AlertHelpers';
+import { triggerHaptic } from '@/utils/haptics';
 import Button from '@/components/Button/Button';
 import CloudsIcon from '@/assets/svg/clouds.svg';
 
@@ -67,28 +69,18 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   const handleManualSync = async () => {
     try {
       setIsSyncing(true);
+      triggerHaptic("light");
       console.log('[AccountInfoCard] Manual sync requested');
 
       const result = await manualSync();
 
       if (result.success) {
         console.log('[AccountInfoCard] ✅ Manual sync successful');
-        showAlert({
-          title: t('authSection.syncSuccess'),
-          message: t('authSection.syncSuccessMessage', {
-            conflicts: result.conflictsResolved,
-          }),
-          type: 'success',
-          buttons: [
-            {
-              text: 'OK',
-              style: 'primary',
-              onPress: () => {},
-            },
-          ],
-        });
+        triggerHaptic("success");
+        showAlert(syncSuccessAlert());
       } else {
         console.error('[AccountInfoCard] ⚠️ Manual sync failed:', result.errors);
+        triggerHaptic("error");
         showAlert({
           title: t('authSection.syncError'),
           message: result.errors?.[0] || t('authSection.syncErrorMessage'),
@@ -107,6 +99,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
       setSyncStatus(getSyncStatus());
     } catch (error: any) {
       console.error('[AccountInfoCard] ❌ Manual sync error:', error);
+      triggerHaptic("error");
       showAlert({
         title: t('authSection.syncError'),
         message: error.message || t('authSection.syncErrorMessage'),

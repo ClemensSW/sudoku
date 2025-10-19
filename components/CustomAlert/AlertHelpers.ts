@@ -3,6 +3,7 @@ import React from 'react';
 import i18n from '@/locales/i18n';
 import { AlertButton, AlertType, ButtonType } from './CustomAlert';
 import InkIcon from '@/assets/svg/ink.svg';
+import CloudsIcon from '@/assets/svg/clouds.svg';
 
 /**
  * Helper functions to quickly create different types of alerts
@@ -297,4 +298,21 @@ export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) =
       onPress: onConfirm
     }
   ] as AlertButton[]
+});
+
+/**
+ * Create sync success alert configuration with CloudsIcon
+ */
+export const syncSuccessAlert = (onPress?: () => void) => ({
+  title: i18n.t('settings:authSection.syncSuccess'),
+  message: i18n.t('settings:authSection.syncSuccessMessage'),
+  type: "success" as AlertType,
+  customIcon: React.createElement(CloudsIcon, { width: 64, height: 64 }),
+  buttons: [
+    {
+      text: i18n.t('alerts:buttons.ok'),
+      style: "primary" as ButtonType,
+      onPress
+    }
+  ]
 });

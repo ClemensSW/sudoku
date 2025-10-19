@@ -8,6 +8,7 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
+import { syncSuccessAlert } from "@/components/CustomAlert/AlertHelpers";
 import Button from "@/components/Button/Button";
 import CloudsIcon from "@/assets/svg/clouds.svg";
 
@@ -68,20 +69,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
       if (result.success) {
         console.log('[AccountDataSection] ✅ Manual sync successful');
         triggerHaptic("success");
-        showAlert({
-          title: t('authSection.syncSuccess'),
-          message: t('authSection.syncSuccessMessage', {
-            conflicts: result.conflictsResolved,
-          }),
-          type: 'success',
-          buttons: [
-            {
-              text: 'OK',
-              style: 'primary',
-              onPress: () => {},
-            },
-          ],
-        });
+        showAlert(syncSuccessAlert());
       } else {
         console.error('[AccountDataSection] ⚠️ Manual sync failed:', result.errors);
         triggerHaptic("error");

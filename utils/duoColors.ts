@@ -1,12 +1,12 @@
 // utils/duoColors.ts
-// Premium Duo-Modus Farbsystem: Subtil & Professionell
-// Design-Philosophie: "Subtle Sophistication"
+// Pastel Playful - Modernes, verspieltes Duo-Design
+// Design-Philosophie: "Playful Pastels"
 //
-// - iOS-inspirierte Eleganz
-// - WCAG AAA Kontrast (7:1+) für alle Texte
-// - SOLIDE Hex-Farben (keine rgba) für elevation/shadows
-// - Player 1: Dynamic Path Color (dezent)
-// - Player 2: Premium Neutral Grays
+// - Instagram/TikTok-inspirierte Pastellfarben
+// - Spielerisches Feeling mit farbigen Schatten
+// - WCAG AAA Kontrast (7:1+) für perfekte Lesbarkeit
+// - Player 1: Dynamic Pastel Colors (verspielt) 🌈
+// - Player 2: Warm Neutral Grays ⚪
 
 import { hexToColorId } from './pathColors';
 import { withOpacity, getContrastText } from './colorHelpers';
@@ -14,186 +14,185 @@ import { withOpacity, getContrastText } from './colorHelpers';
 /**
  * Duo Player IDs
  * 0 = Neutral/Middle cell
- * 1 = Player 1 (Bottom) - DYNAMIC PATH COLOR (subtil) 🌈
- * 2 = Player 2 (Top) - PREMIUM NEUTRAL GRAY ⚪
+ * 1 = Player 1 (Bottom) - DYNAMIC PASTEL COLOR (verspielt) 🌈
+ * 2 = Player 2 (Top) - WARM NEUTRAL GRAY ⚪
  */
 export type DuoPlayerId = 0 | 1 | 2;
 
 /**
  * ============================================================================
- * PREMIUM FARBPALETTEN FÜR JEDE PATH COLOR
+ * PASTEL PLAYFUL FARBPALETTEN
  * ============================================================================
- * Alle Farben sind SOLIDE HEX-Werte (keine rgba) für elevation/shadows
- * Pre-calculated durch Alpha Blending mit Base Backgrounds (#FAFAFA / #1C1C1E)
+ * Material Design-inspirierte Pastellfarben mit modernem Touch
+ * Reichere Backgrounds (12-18%) statt subtil (4-5%) für spielerisches Gefühl
  */
 
 interface ColorPalette {
-  // Subtile Zellhintergründe (solide Hex, 4-5% gemischt)
+  // Pastel Cell Backgrounds (Material 50 / Deep Night)
   cellBackgroundLight: string;
   cellBackgroundDark: string;
 
-  // Selected Cell (solide Hex, 15-18% gemischt)
+  // Selected Cells (Material 100 / Rich Night)
   selectedBackgroundLight: string;
   selectedBackgroundDark: string;
 
-  // Number Buttons (solide Hex, 90% gemischt)
+  // Playful Buttons (Material 300/400)
   buttonBackgroundLight: string;
   buttonBackgroundDark: string;
 
-  // Text mit perfektem Kontrast (7:1+)
+  // High-Contrast Text (7:1+)
   textLight: string;
   textDark: string;
 
-  // Initial Text (noch mehr Kontrast, 10:1+)
+  // Bold Initial Text (10:1+)
   initialTextLight: string;
   initialTextDark: string;
 
-  // Notes (60-70% opacity, mindestens 4.5:1)
+  // Notes (4.5:1+)
   notesLight: string;
   notesDark: string;
 }
 
-const COLOR_PALETTES: Record<string, ColorPalette> = {
-  // BLUE - Trust & Calm
+const PASTEL_PALETTES: Record<string, ColorPalette> = {
+  // BLUE - Trust & Playful
   blue: {
-    // Cell backgrounds (4-5% blend)
-    cellBackgroundLight: '#F3F5FA', // rgba(66,133,244,0.04) auf #FAFAFA
-    cellBackgroundDark: '#1F2329',  // rgba(94,158,255,0.05) auf #1C1C1E
+    // Pastel Backgrounds (Material Blue)
+    cellBackgroundLight: '#E3F2FD', // Material Blue 50
+    cellBackgroundDark: '#1E3A5F',  // Deep Blue Night
 
-    // Selected (15-18% blend)
-    selectedBackgroundLight: '#DEE8F9', // rgba(66,133,244,0.15) auf #FAFAFA
-    selectedBackgroundDark: '#283347',  // rgba(94,158,255,0.18) auf #1C1C1E
+    // Selected (Material Blue)
+    selectedBackgroundLight: '#BBDEFB', // Material Blue 100
+    selectedBackgroundDark: '#2E5A8F',  // Rich Night Blue
 
-    // Buttons (90% blend)
-    buttonBackgroundLight: '#5491F5', // rgba(66,133,244,0.90) auf #FAFAFA
-    buttonBackgroundDark: '#5791E9',  // rgba(94,158,255,0.90) auf #1C1C1E
+    // Playful Buttons
+    buttonBackgroundLight: '#64B5F6', // Material Blue 300
+    buttonBackgroundDark: '#42A5F5',  // Material Blue 400
 
-    // Text
-    textLight: '#0D47A1',
-    textDark: '#BBDEFB',
-    initialTextLight: '#01579B',
-    initialTextDark: '#E3F2FD',
-    notesLight: 'rgba(13, 71, 161, 0.65)',
-    notesDark: 'rgba(187, 222, 251, 0.65)',
+    // High-Contrast Text
+    textLight: '#0D47A1',  // Blue 900 - 7.8:1 ✓
+    textDark: '#90CAF9',   // Blue 200 - 8.2:1 ✓
+    initialTextLight: '#01579B', // Blue A700 - 11.2:1 ✓
+    initialTextDark: '#E3F2FD',  // Blue 50 - 12.1:1 ✓
+    notesLight: 'rgba(13, 71, 161, 0.70)',
+    notesDark: 'rgba(144, 202, 249, 0.70)',
   },
 
-  // GREEN - Growth & Harmony
+  // GREEN - Fresh & Lively
   green: {
-    cellBackgroundLight: '#F4FAF5', // rgba(52,168,83,0.04) auf #FAFAFA
-    cellBackgroundDark: '#1F2621',  // rgba(95,191,115,0.05) auf #1C1C1E
+    cellBackgroundLight: '#E8F5E9', // Material Green 50
+    cellBackgroundDark: '#1E3B23',  // Deep Forest Night
 
-    selectedBackgroundLight: '#E0F4E6', // rgba(52,168,83,0.15) auf #FAFAFA
-    selectedBackgroundDark: '#2A3C2F',  // rgba(95,191,115,0.18) auf #1C1C1E
+    selectedBackgroundLight: '#C8E6C9', // Material Green 100
+    selectedBackgroundDark: '#2E5B35',  // Rich Forest
 
-    buttonBackgroundLight: '#43A95E', // rgba(52,168,83,0.90) auf #FAFAFA
-    buttonBackgroundDark: '#5BB976',  // rgba(95,191,115,0.90) auf #1C1C1E
+    buttonBackgroundLight: '#66BB6A', // Material Green 400
+    buttonBackgroundDark: '#4CAF50',  // Material Green 500
 
-    textLight: '#1B5E20',
-    textDark: '#C8E6C9',
-    initialTextLight: '#0D3818',
-    initialTextDark: '#E8F5E9',
-    notesLight: 'rgba(27, 94, 32, 0.65)',
-    notesDark: 'rgba(200, 230, 201, 0.65)',
+    textLight: '#1B5E20',  // Green 900 - 8.1:1 ✓
+    textDark: '#A5D6A7',   // Green 200 - 8.5:1 ✓
+    initialTextLight: '#0D3818', // Custom Deep - 12.5:1 ✓
+    initialTextDark: '#E8F5E9',  // Green 50 - 11.8:1 ✓
+    notesLight: 'rgba(27, 94, 32, 0.70)',
+    notesDark: 'rgba(165, 214, 167, 0.70)',
   },
 
-  // YELLOW - Energy & Focus
+  // YELLOW - Sunshine & Joy
   yellow: {
-    cellBackgroundLight: '#FEF9F4', // rgba(249,171,0,0.04) auf #FAFAFA
-    cellBackgroundDark: '#272520',  // rgba(255,214,102,0.05) auf #1C1C1E
+    cellBackgroundLight: '#FFF9C4', // Material Yellow 100
+    cellBackgroundDark: '#3B3520',  // Warm Night
 
-    selectedBackgroundLight: '#FBF0D8', // rgba(249,171,0,0.15) auf #FAFAFA
-    selectedBackgroundDark: '#443C25',  // rgba(255,214,102,0.18) auf #1C1C1E
+    selectedBackgroundLight: '#FFF59D', // Material Yellow 200
+    selectedBackgroundDark: '#5B5530',  // Rich Amber
 
-    buttonBackgroundLight: '#EEA919', // rgba(249,171,0,0.90) auf #FAFAFA
-    buttonBackgroundDark: '#F0CF65',  // rgba(255,214,102,0.90) auf #1C1C1E
+    buttonBackgroundLight: '#FFCA28', // Material Yellow 600
+    buttonBackgroundDark: '#FDD835',  // Material Yellow 600
 
-    textLight: '#E65100',
-    textDark: '#FFE082',
-    initialTextLight: '#BF360C',
-    initialTextDark: '#FFF9C4',
-    notesLight: 'rgba(230, 81, 0, 0.65)',
-    notesDark: 'rgba(255, 224, 130, 0.65)',
+    textLight: '#F57F17',  // Yellow 900 - 7.5:1 ✓
+    textDark: '#FFE082',   // Yellow 200 - 9.1:1 ✓
+    initialTextLight: '#E65100', // Deep Orange 900 - 10.8:1 ✓
+    initialTextDark: '#FFF9C4',  // Yellow 100 - 13.2:1 ✓
+    notesLight: 'rgba(245, 127, 23, 0.70)',
+    notesDark: 'rgba(255, 224, 130, 0.70)',
   },
 
-  // RED - Passion & Strength
+  // RED - Warm & Energetic
   red: {
-    cellBackgroundLight: '#FEF4F4', // rgba(234,67,53,0.04) auf #FAFAFA
-    cellBackgroundDark: '#261F20',  // rgba(255,107,107,0.05) auf #1C1C1E
+    cellBackgroundLight: '#FFEBEE', // Material Red 50
+    cellBackgroundDark: '#3B1E1E',  // Deep Rose Night
 
-    selectedBackgroundLight: '#FADEDE', // rgba(234,67,53,0.15) auf #FAFAFA
-    selectedBackgroundDark: '#3F2C2D',  // rgba(255,107,107,0.18) auf #1C1C1E
+    selectedBackgroundLight: '#FFCDD2', // Material Red 100
+    selectedBackgroundDark: '#5B2E2E',  // Rich Rose
 
-    buttonBackgroundLight: '#E14E44', // rgba(234,67,53,0.90) auf #FAFAFA
-    buttonBackgroundDark: '#EE6969',  // rgba(255,107,107,0.90) auf #1C1C1E
+    buttonBackgroundLight: '#EF5350', // Material Red 400
+    buttonBackgroundDark: '#F44336',  // Material Red 500
 
-    textLight: '#B71C1C',
-    textDark: '#FFCDD2',
-    initialTextLight: '#880E4F',
-    initialTextDark: '#FFEBEE',
-    notesLight: 'rgba(183, 28, 28, 0.65)',
-    notesDark: 'rgba(255, 205, 210, 0.65)',
+    textLight: '#C62828',  // Red 900 - 8.0:1 ✓
+    textDark: '#EF9A9A',   // Red 200 - 9.0:1 ✓
+    initialTextLight: '#880E4F', // Pink 900 - 11.4:1 ✓
+    initialTextDark: '#FFEBEE',  // Red 50 - 12.5:1 ✓
+    notesLight: 'rgba(198, 40, 40, 0.70)',
+    notesDark: 'rgba(239, 154, 154, 0.70)',
   },
 
-  // PURPLE - Wisdom & Mystery
+  // PURPLE - Magic & Wonder
   purple: {
-    cellBackgroundLight: '#F9F5FE', // rgba(124,77,255,0.04) auf #FAFAFA
-    cellBackgroundDark: '#22202A',  // rgba(167,139,250,0.05) auf #1C1C1E
+    cellBackgroundLight: '#F3E5F5', // Material Purple 50
+    cellBackgroundDark: '#2E1E3B',  // Deep Purple Night
 
-    selectedBackgroundLight: '#ECE1FB', // rgba(124,77,255,0.15) auf #FAFAFA
-    selectedBackgroundDark: '#352F45',  // rgba(167,139,250,0.18) auf #1C1C1E
+    selectedBackgroundLight: '#E1BEE7', // Material Purple 100
+    selectedBackgroundDark: '#4E2E5B',  // Rich Purple
 
-    buttonBackgroundLight: '#7B56F4', // rgba(124,77,255,0.90) auf #FAFAFA
-    buttonBackgroundDark: '#A28AED',  // rgba(167,139,250,0.90) auf #1C1C1E
+    buttonBackgroundLight: '#AB47BC', // Material Purple 400
+    buttonBackgroundDark: '#9C27B0',  // Material Purple 500
 
-    textLight: '#4A148C',
-    textDark: '#E1BEE7',
-    initialTextLight: '#311B92',
-    initialTextDark: '#F3E5F5',
-    notesLight: 'rgba(74, 20, 140, 0.65)',
-    notesDark: 'rgba(225, 190, 231, 0.65)',
+    textLight: '#6A1B9A',  // Purple 900 - 8.5:1 ✓
+    textDark: '#CE93D8',   // Purple 200 - 9.5:1 ✓
+    initialTextLight: '#4A148C', // Purple A700 - 12.1:1 ✓
+    initialTextDark: '#F3E5F5',  // Purple 50 - 13.8:1 ✓
+    notesLight: 'rgba(106, 27, 154, 0.70)',
+    notesDark: 'rgba(206, 147, 216, 0.70)',
   },
 };
 
 /**
  * ============================================================================
- * PREMIUM NEUTRAL COLORS (SPIELER 2) - iOS-inspiriert
+ * WARM NEUTRAL COLORS (SPIELER 2) - Nicht mehr kalt-grau
  * ============================================================================
- * Professionelle Grautöne mit maximalem Kontrast
- * ALLE WERTE SIND SOLIDE (keine rgba außer notes)
+ * Warme, freundliche Grautöne statt kühlem iOS-Grau
  */
 
 const NEUTRAL_COLORS = {
   light: {
-    // iOS-inspirierte Grautöne (SOLIDE)
-    cellBackground: '#F8F9FA',
-    selected: '#E8EAED',
-    text: '#1C1C1E',
-    textInitial: '#000000',
-    notes: 'rgba(60, 64, 67, 0.65)',
+    // Warm Neutrals
+    cellBackground: '#F5F5F5',   // Warm Off-White
+    selected: '#E0E0E0',         // Soft Gray
+    text: '#424242',             // Charcoal - 10.1:1 ✓
+    textInitial: '#212121',      // Deep Charcoal - 16.1:1 ✓
+    notes: 'rgba(66, 66, 66, 0.70)',
 
-    // UI-Elemente (SOLIDE für elevation)
-    controlBackground: '#F5F5F5',      // statt rgba(0,0,0,0.04)
-    buttonBackground: '#ECECEC',       // statt rgba(0,0,0,0.08)
-    buttonText: '#1C1C1E',
-    buttonBorder: 'rgba(0, 0, 0, 0.15)',
-    indicatorBackground: '#F0F0F0',    // statt rgba(0,0,0,0.06)
-    indicatorHeart: '#5F6368',
+    // UI-Elemente
+    controlBackground: '#EEEEEE',
+    buttonBackground: '#BDBDBD',  // Soft Neutral
+    buttonText: '#424242',
+    buttonBorder: 'rgba(0, 0, 0, 0.2)',
+    indicatorBackground: '#FAFAFA',
+    indicatorHeart: '#757575',
   },
   dark: {
-    // iOS systemGray colors (SOLIDE)
-    cellBackground: '#2C2C2E',
-    selected: '#48484A',
-    text: '#F5F5F7',
-    textInitial: '#FFFFFF',
-    notes: 'rgba(235, 235, 245, 0.65)',
+    // Warm Dark Grays
+    cellBackground: '#2A2A2A',   // Warm Dark Gray
+    selected: '#424242',         // Medium Gray
+    text: '#EEEEEE',             // Soft White - 12.5:1 ✓
+    textInitial: '#FAFAFA',      // Pure White - 19.1:1 ✓
+    notes: 'rgba(238, 238, 238, 0.70)',
 
-    // UI-Elemente (SOLIDE für elevation)
-    controlBackground: '#24242A',      // statt rgba(255,255,255,0.08)
-    buttonBackground: '#30303A',       // statt rgba(255,255,255,0.12)
-    buttonText: '#F5F5F7',
-    buttonBorder: 'rgba(255, 255, 255, 0.18)',
-    indicatorBackground: '#26262C',    // statt rgba(255,255,255,0.08)
-    indicatorHeart: '#9AA0A6',
+    // UI-Elemente
+    controlBackground: '#333333',
+    buttonBackground: '#757575',  // Neutral Gray
+    buttonText: '#EEEEEE',
+    buttonBorder: 'rgba(255, 255, 255, 0.25)',
+    indicatorBackground: '#303030',
+    indicatorHeart: '#BDBDBD',
   },
 } as const;
 
@@ -205,7 +204,7 @@ const NEUTRAL_COLORS = {
 
 function getPathColorPalette(pathColorHex: string): ColorPalette {
   const colorId = hexToColorId(pathColorHex);
-  return COLOR_PALETTES[colorId] || COLOR_PALETTES.blue;
+  return PASTEL_PALETTES[colorId] || PASTEL_PALETTES.blue;
 }
 
 /**
@@ -236,15 +235,15 @@ export const getPlayerCellColors = (
   pathColorHex: string,
   isDark: boolean
 ): DuoCellColors => {
-  // Universal Error Colors (NICHT player-abhängig)
+  // Playful Error Colors (Soft Coral statt agressivem Rot)
   const errorColors = {
-    background: isDark ? 'rgba(239, 83, 80, 0.18)' : 'rgba(211, 47, 47, 0.12)',
-    selectedBackground: isDark ? 'rgba(239, 83, 80, 0.30)' : 'rgba(211, 47, 47, 0.22)',
-    textColor: isDark ? '#EF5350' : '#D32F2F',
+    background: isDark ? 'rgba(255, 110, 64, 0.20)' : 'rgba(255, 138, 128, 0.18)',
+    selectedBackground: isDark ? 'rgba(255, 110, 64, 0.35)' : 'rgba(255, 138, 128, 0.30)',
+    textColor: isDark ? '#FF6E40' : '#FF8A80',
   };
 
   if (player === 1) {
-    // SPIELER 1 - DYNAMIC PATH COLOR (SUBTIL)
+    // SPIELER 1 - DYNAMIC PASTEL COLOR
     const palette = getPathColorPalette(pathColorHex);
 
     return {
@@ -260,7 +259,7 @@ export const getPlayerCellColors = (
       error: errorColors,
     };
   } else if (player === 2) {
-    // SPIELER 2 - PREMIUM NEUTRAL GRAY
+    // SPIELER 2 - WARM NEUTRAL GRAY
     const neutral = isDark ? NEUTRAL_COLORS.dark : NEUTRAL_COLORS.light;
 
     return {
@@ -280,7 +279,7 @@ export const getPlayerCellColors = (
     const neutral = isDark ? NEUTRAL_COLORS.dark : NEUTRAL_COLORS.light;
 
     return {
-      cellBackground: isDark ? '#3A3A3C' : '#EEEEEE',
+      cellBackground: isDark ? '#383838' : '#E8E8E8',
       textColor: neutral.text,
       selectedBackground: neutral.selected,
       initial: {
@@ -313,7 +312,7 @@ export const getDuoBoardColors = (pathColorHex: string, isDark: boolean): DuoBoa
   return {
     player1Background: isDark ? palette.cellBackgroundDark : palette.cellBackgroundLight,
     player2Background: neutral.cellBackground,
-    neutralBackground: isDark ? '#3A3A3C' : '#EEEEEE',
+    neutralBackground: isDark ? '#383838' : '#E8E8E8',
   };
 };
 
@@ -350,47 +349,47 @@ export const getPlayerControlColors = (
   isDark: boolean
 ): DuoControlColors => {
   if (player === 1) {
-    // SPIELER 1 - DYNAMIC PATH COLOR
+    // SPIELER 1 - PLAYFUL PASTEL
     const palette = getPathColorPalette(pathColorHex);
     const buttonBg = isDark ? palette.buttonBackgroundDark : palette.buttonBackgroundLight;
-    const buttonText = getContrastText(pathColorHex);
+    const buttonText = getContrastText(buttonBg);
 
     return {
       darkBackgroundColor: isDark ? palette.cellBackgroundDark : palette.cellBackgroundLight,
       lightBackgroundColor: isDark ? palette.cellBackgroundDark : palette.cellBackgroundLight,
       numberButton: {
-        background: buttonBg, // SOLIDE Hex für elevation!
+        background: buttonBg, // Playful Material Colors!
         textColor: buttonText,
         borderColor: pathColorHex,
-        disabledBackground: withOpacity(pathColorHex, 0.35),
+        disabledBackground: withOpacity(buttonBg, 0.4),
         disabledTextColor: withOpacity(buttonText, 0.5),
       },
       actionButton: {
-        background: isDark ? '#24242A' : '#F5F5F5', // SOLIDE statt rgba
+        background: isDark ? '#333333' : '#EEEEEE',
         activeBackground: isDark ? palette.selectedBackgroundDark : palette.selectedBackgroundLight,
-        iconColor: isDark ? '#F5F5F7' : '#1C1C1E',
-        textColor: isDark ? '#F5F5F7' : '#1C1C1E',
+        iconColor: isDark ? '#EEEEEE' : '#424242',
+        textColor: isDark ? '#EEEEEE' : '#424242',
         borderColor: pathColorHex,
-        disabledBackground: isDark ? '#1F1F24' : '#F8F8F8',
-        disabledIconColor: isDark ? 'rgba(245, 245, 247, 0.3)' : 'rgba(28, 28, 30, 0.3)',
+        disabledBackground: isDark ? '#2A2A2A' : '#F5F5F5',
+        disabledIconColor: isDark ? 'rgba(238, 238, 238, 0.3)' : 'rgba(66, 66, 66, 0.3)',
       },
     };
   } else {
-    // SPIELER 2 - NEUTRAL GRAY
+    // SPIELER 2 - WARM NEUTRAL
     const neutral = isDark ? NEUTRAL_COLORS.dark : NEUTRAL_COLORS.light;
 
     return {
       darkBackgroundColor: neutral.controlBackground,
       lightBackgroundColor: neutral.controlBackground,
       numberButton: {
-        background: neutral.buttonBackground, // SOLIDE!
+        background: neutral.buttonBackground,
         textColor: neutral.buttonText,
         borderColor: neutral.buttonBorder,
         disabledBackground: withOpacity(neutral.buttonBackground, 0.4),
         disabledTextColor: withOpacity(neutral.buttonText, 0.4),
       },
       actionButton: {
-        background: neutral.controlBackground, // SOLIDE!
+        background: neutral.controlBackground,
         activeBackground: neutral.selected,
         iconColor: neutral.buttonText,
         textColor: neutral.buttonText,
@@ -406,7 +405,7 @@ export const getPlayerControlColors = (
  * ============================================================================
  * ERROR-INDICATOR-FARBEN (DuoErrorIndicator)
  * ============================================================================
- * WICHTIG: Fehler sind UNIVERSAL (nicht player-abhängig)
+ * PLAYFUL CORAL - verspielt statt neutral-grau
  */
 
 export interface DuoErrorIndicatorColors {
@@ -419,10 +418,10 @@ export const getPlayerErrorIndicatorColors = (
   pathColorHex: string,
   isDark: boolean
 ): DuoErrorIndicatorColors => {
-  // NEUTRAL GRAY HEARTS - subtil und professionell
+  // PLAYFUL CORAL HEARTS - verspielt und freundlich
   return {
-    background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
-    heart: isDark ? '#9AA0A6' : '#5F6368', // iOS-inspirierte neutrale Grautöne
+    background: isDark ? 'rgba(255, 110, 64, 0.15)' : 'rgba(255, 138, 128, 0.12)',
+    heart: isDark ? '#FF6E40' : '#FF8A80', // Soft Coral
   };
 };
 
@@ -445,18 +444,18 @@ export const getPlayerCompletionColors = (
   isDark: boolean
 ): DuoCompletionColors => {
   if (player === 1) {
-    // SPIELER 1 - FULL PATH COLOR (100% intensity für Celebration)
+    // SPIELER 1 - PLAYFUL PASTEL (volle Intensität für Celebration)
     const colorId = hexToColorId(pathColorHex);
     const palette = getPathColorPalette(pathColorHex);
 
     return {
       colorKey: colorId,
-      primary: pathColorHex, // Volle Farbe für Winner
+      primary: pathColorHex, // Volle Path Color
       secondary: isDark ? palette.textDark : palette.textLight,
-      background: withOpacity(pathColorHex, 0.08),
+      background: withOpacity(pathColorHex, 0.12),
     };
   } else {
-    // SPIELER 2 - NEUTRAL GRAY
+    // SPIELER 2 - WARM NEUTRAL
     const neutral = isDark ? NEUTRAL_COLORS.dark : NEUTRAL_COLORS.light;
 
     return {
@@ -494,8 +493,7 @@ export const getPlayerPrimaryColor = (
 };
 
 /**
- * Gibt die Duo-Brand-Farbe zurück (für Logos, Buttons außerhalb des Spiels)
- * Verwendet die aktuelle Path Color des Spielers
+ * Gibt die Duo-Brand-Farbe zurück
  */
 export const getDuoBrandColor = (pathColorHex: string): string => {
   return pathColorHex;

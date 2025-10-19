@@ -31,10 +31,10 @@ const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
 // Professionelle Schatten-Systeme für verschiedene Button-Typen
 const numberButtonShadow = {
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  elevation: 4,
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.35,      // Etwas stärker für Playful Glow-Effekt
+  shadowRadius: 6,
+  elevation: 5,
 };
 
 const actionButtonShadow = {

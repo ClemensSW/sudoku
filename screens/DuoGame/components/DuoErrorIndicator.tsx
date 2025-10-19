@@ -62,14 +62,10 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   // Calculate remaining hearts
   const heartsRemaining = maxErrors - errorsCount;
 
-  // Get heart color - immer neutrales Grau (subtil & professionell)
-  const getHeartColor = (index: number) => {
-    // Letztes Herz etwas dunkler für Emphasis
-    if (index === 0 && heartsRemaining === 1) {
-      return isDark ? '#C0C4C8' : '#3C4043'; // Etwas kräftiger, aber immer noch neutral
-    }
-    // Ansonsten standard neutral gray
-    return theme.heart;
+  // Get heart color - Playful Coral für moderne, spielerische Optik
+  const getHeartColor = () => {
+    // Einheitliche coral Farbe - spielerisch & modern
+    return theme.heart; // Soft Coral: #FF8A80 (light) / #FF6E40 (dark)
   };
 
   // Heart size based on compact mode
@@ -138,7 +134,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
                 <Feather
                   name="heart"
                   size={heartSize}
-                  color={getHeartColor(index)}
+                  color={getHeartColor()}
                 />
               )}
             </Animated.View>

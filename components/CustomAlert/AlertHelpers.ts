@@ -283,12 +283,12 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
 
 /**
  * Create quit game confirmation alert styled specifically for Duo Mode
- * Uses the current dynamic path color for the icon and confirm button
+ * Uses warning type for WarningIcon, but with Duo Mode button styling
  */
 export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
   title: i18n.t('alerts:game.quit.title'),
   message: i18n.t('alerts:game.quit.message'),
-  type: "duoMode" as AlertType, // Custom type for Duo Mode
+  type: "warning" as AlertType, // Same as normal quit alert - shows WarningIcon
   buttons: [
     {
       text: i18n.t('alerts:buttons.cancel'),

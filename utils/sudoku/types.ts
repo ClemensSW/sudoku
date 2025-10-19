@@ -34,8 +34,8 @@ export const DIFFICULTY_SETTINGS: Record<
     uniqueSolution: true,
   },
   medium: {
-    minCells: 78, //35
-    maxCells: 78, //39
+    minCells: 35, //35
+    maxCells: 39, //39
     symmetric: true,
     uniqueSolution: true,
   },

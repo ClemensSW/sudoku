@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   Pressable,
-  ViewStyle,
-  TextStyle,
   BackHandler,
 } from "react-native";
 import Animated, {
@@ -23,6 +20,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
+import Button from "@/components/Button/Button";
 import styles from "./CustomAlert.styles";
 import WarningIcon from "@/assets/svg/warning.svg";
 
@@ -229,88 +227,36 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
     }
   };
 
-  // Get button style based on button type
-  const getButtonStyle = (buttonType: ButtonType = "default"): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      paddingVertical: 14,
-      paddingHorizontal: 20,
-      borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 48, // Larger touch target
-    };
-
+  // Map ButtonType to global Button component props
+  const getButtonProps = (buttonType: ButtonType = "default"): {
+    variant: "primary" | "secondary" | "ghost";
+    customColor?: string;
+  } => {
     switch (buttonType) {
       case "primary":
-        return {
-          ...baseStyle,
-          backgroundColor: progressColor, // Use current path color
-        };
-      case "success":
-        return {
-          ...baseStyle,
-          backgroundColor: "#34D399",
-        };
-      case "danger":
-        return {
-          ...baseStyle,
-          backgroundColor: "#F87171",
-        };
-      case "duoButton":
-        return {
-          ...baseStyle,
-          backgroundColor: progressColor, // Use current path color (dynamic!)
-        };
-      case "info":
-        return {
-          ...baseStyle,
-          backgroundColor: progressColor, // Use current path color
-        };
-      case "cancel":
-        // Ghost button - no background, no border
-        return {
-          ...baseStyle,
-          backgroundColor: "transparent",
-        };
-      default:
-        return {
-          ...baseStyle,
-          backgroundColor: theme.isDark
-            ? "rgba(255,255,255,0.08)"
-            : "rgba(0,0,0,0.04)",
-        };
-    }
-  };
-
-  // Get button text style based on button type
-  const getButtonTextStyle = (
-    buttonType: ButtonType = "default"
-  ): TextStyle => {
-    const baseStyle: TextStyle = {
-      fontSize: 16,
-      fontWeight: "600",
-      letterSpacing: 0.2,
-    };
-
-    switch (buttonType) {
-      case "primary":
-      case "success":
-      case "danger":
       case "duoButton":
       case "info":
         return {
-          ...baseStyle,
-          color: "#FFFFFF",
+          variant: "primary",
+          customColor: progressColor,
+        };
+      case "success":
+        return {
+          variant: "primary",
+          customColor: "#34D399",
+        };
+      case "danger":
+        return {
+          variant: "primary",
+          customColor: "#F87171",
         };
       case "cancel":
         return {
-          ...baseStyle,
-          color: colors.textSecondary, // Softer text for cancel
+          variant: "ghost",
         };
       default:
         return {
-          ...baseStyle,
-          color: colors.textPrimary,
+          variant: "secondary",
         };
     }
   };
@@ -399,24 +345,25 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
             buttons.length > 1 && styles.buttonStackedContainer,
           ]}
         >
-          {[...buttons].reverse().map((button, index) => (
-            <View
-              key={`btn-${index}`}
-              style={[
-                buttons.length > 1 ? styles.buttonFullWidth : styles.buttonFlex,
-              ]}
-            >
-              <TouchableOpacity
-                style={getButtonStyle(button.style)}
-                onPress={() => handleButtonPress(button.onPress)}
-                activeOpacity={0.75}
+          {[...buttons].reverse().map((button, index) => {
+            const buttonProps = getButtonProps(button.style);
+            return (
+              <View
+                key={`btn-${index}`}
+                style={[
+                  buttons.length > 1 ? styles.buttonFullWidth : styles.buttonFlex,
+                ]}
               >
-                <Text style={getButtonTextStyle(button.style)}>
-                  {button.text}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+                <Button
+                  title={button.text}
+                  onPress={() => handleButtonPress(button.onPress)}
+                  variant={buttonProps.variant}
+                  customColor={buttonProps.customColor}
+                  style={styles.alertButton}
+                />
+              </View>
+            );
+          })}
         </View>
       </Animated.View>
     </Animated.View>

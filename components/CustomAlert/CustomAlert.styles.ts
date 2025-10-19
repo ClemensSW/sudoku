@@ -70,4 +70,8 @@ export default StyleSheet.create({
   buttonFullWidth: {
     width: "100%",
   },
+  alertButton: {
+    width: "100%",
+    // Button component übernimmt: height, padding, borderRadius, backgroundColor
+  },
 });

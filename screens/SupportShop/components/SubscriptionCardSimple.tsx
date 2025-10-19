@@ -14,6 +14,7 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { Product } from "../utils/billing/BillingManager";
+import Button from "@/components/Button/Button";
 import styles, { cardWidth, fullCardWidth } from "./SubscriptionCardSimple.styles";
 import CalendarIcon from "@/assets/svg/calendar.svg";
 import HeartIcon from "@/assets/svg/heart.svg";
@@ -445,12 +446,24 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               </View>
 
               {/* CTA Button */}
-              <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : progressColor }]}>
-                <Text style={styles.buttonText}>
-                  {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
-                </Text>
-                <Feather name={isActive ? 'settings' : 'arrow-right'} size={16} color="#FFFFFF" />
-              </View>
+              <Button
+                title={isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
+                onPress={handlePress}
+                variant="primary"
+                customColor={isActive ? 'rgba(255, 255, 255, 0.25)' : progressColor}
+                iconRight={<Feather name={isActive ? 'settings' : 'arrow-right'} size={16} />}
+                disabled={disabled}
+                style={{
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  shadowOpacity: 0,
+                  elevation: 0,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                  fontWeight: '700',
+                }}
+              />
             </>
           )}
         </View>

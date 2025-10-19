@@ -150,7 +150,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
           key={`title-${currentVariant.titleKey}`}
           style={[
             styles.title,
-            { color: theme.colors.buttonText },
+            { color: '#FFFFFF' }, // Always white on colored gradient background
             isSupporter && {
               textShadowColor: 'rgba(0, 0, 0, 0.2)',
               textShadowOffset: { width: 0, height: 1 },
@@ -166,7 +166,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
           key={`subtitle-${currentVariant.subtitleKey}`}
           style={[
             styles.subtitle,
-            { color: theme.colors.buttonText },
+            { color: '#FFFFFF' }, // Always white on colored gradient background
             isSupporter && {
               textShadowColor: 'rgba(0, 0, 0, 0.15)',
               textShadowOffset: { width: 0, height: 1 },
@@ -193,7 +193,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
           <Feather
             name={currentVariant.icon}
             size={32}
-            color={theme.colors.buttonText}
+            color="#FFFFFF"
           />
         )}
       </Animated.View>

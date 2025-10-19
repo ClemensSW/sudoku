@@ -15,54 +15,57 @@ import { mixColors } from './colorHelpers';
 export type DuoPlayerId = 0 | 1 | 2;
 
 /**
- * Generiert subtile Zone Colors durch Lightness-Mixing
- * 3% Unterschied zwischen Zonen - kaum sichtbar, aber vorhanden
+ * Generiert subtile Zone Colors mit Path Color Tints
+ * Player 1: 4% Path Color Tint (farbig, aber sehr dezent)
+ * Player 2: Neutral grau (keine Farbe)
+ * Unterscheidung deutlich sichtbar in beiden Modi
  */
-function getZoneColors(isDark: boolean) {
+function getZoneColors(isDark: boolean, pathColorHex: string) {
   const baseLight = colors.light.surface;    // #FFFFFF
   const baseDark = colors.dark.surface;      // #292A2D
 
   if (isDark) {
     return {
-      // Player 1 (unten): Standard Dark Background
-      player1Background: baseDark,  // #292A2D
-      // Player 2 (oben): 3% heller für subtile Unterscheidung
-      player2Background: mixColors(baseDark, '#FFFFFF', 3), // ~#2E2F32
+      // Player 1 (unten): Dark Background + 4% Path Color Tint
+      player1Background: mixColors(pathColorHex, baseDark, 96), // 4% Path Color
+      // Player 2 (oben): Neutral Dark Background (keine Farbe)
+      player2Background: baseDark,  // #292A2D
       // Middle/Neutral: Zwischen beiden
-      neutralBackground: mixColors(baseDark, '#FFFFFF', 1.5), // ~#2C2D30
+      neutralBackground: mixColors(pathColorHex, baseDark, 98), // 2% Path Color
     };
   } else {
     return {
-      // Player 1 (unten): Standard Light Background
-      player1Background: baseLight, // #FFFFFF
-      // Player 2 (oben): 3% dunkler für subtile Unterscheidung
-      player2Background: mixColors(baseLight, '#000000', 3), // ~#F7F7F7
+      // Player 1 (unten): Light Background + 4% Path Color Tint
+      player1Background: mixColors(pathColorHex, baseLight, 96), // 4% Path Color
+      // Player 2 (oben): Neutral Light Background (keine Farbe)
+      player2Background: baseLight, // #FFFFFF
       // Middle/Neutral: Zwischen beiden
-      neutralBackground: mixColors(baseLight, '#000000', 1.5), // ~#FBFBFB
+      neutralBackground: mixColors(pathColorHex, baseLight, 98), // 2% Path Color
     };
   }
 }
 
 /**
- * Cell Colors - nutzt Theme Colors + Path Color nur für Selection
- * Ownership wird durch Lightness-Gradient kommuniziert, nicht durch Farbe
+ * Cell Colors - nutzt Theme Colors + Path Color für Selection & Zone Tint
+ * Player 1 Zone: Subtiler Path Color Tint (4%)
+ * Player 2 Zone: Neutral grau
  */
 export const getPlayerCellColors = (
   player: DuoPlayerId,
   pathColorHex: string,
   isDark: boolean
 ) => {
-  const zoneColors = getZoneColors(isDark);
+  const zoneColors = getZoneColors(isDark, pathColorHex);
   const themeColors = isDark ? colors.dark : colors.light;
 
-  // Basis: Normales Cell Background (zone-abhängig für subtilen Gradient)
+  // Basis: Zone-abhängiger Background mit Path Color Tint für P1
   const cellBackground =
-    player === 1 ? zoneColors.player1Background :
-    player === 2 ? zoneColors.player2Background :
-    zoneColors.neutralBackground;
+    player === 1 ? zoneColors.player1Background :   // Mit Path Color Tint
+    player === 2 ? zoneColors.player2Background :   // Neutral
+    zoneColors.neutralBackground;                   // Zwischen beiden
 
   return {
-    // Cell backgrounds - neutral mit subtilen Zonen-Unterschieden
+    // Cell backgrounds - P1 mit Path Color Tint, P2 neutral
     cellBackground,
     // Selected state nutzt Path Color für BEIDE Spieler (gleichwertig!)
     selectedBackground: pathColorHex,
@@ -86,17 +89,19 @@ export const getPlayerCellColors = (
 };
 
 /**
- * Board Colors - Gradient durch Lightness-Unterschiede
- * Kein farbiger Gradient, nur subtile Helligkeits-Variation
+ * Board Colors - Gradient mit subtilen Path Color Tints
+ * Player 1: 4% Path Color Tint
+ * Player 2: Neutral grau
+ * Gradient: Fließender Übergang zwischen farbig und neutral
  */
 export const getDuoBoardColors = (pathColorHex: string, isDark: boolean) => {
-  const zoneColors = getZoneColors(isDark);
+  const zoneColors = getZoneColors(isDark, pathColorHex);
 
   return {
     // Zonen-Hintergründe für Gradient
-    player1Background: zoneColors.player1Background,
-    player2Background: zoneColors.player2Background,
-    neutralBackground: zoneColors.neutralBackground,
+    player1Background: zoneColors.player1Background,  // Mit Path Color Tint
+    player2Background: zoneColors.player2Background,  // Neutral
+    neutralBackground: zoneColors.neutralBackground,  // Zwischen beiden
   };
 };
 

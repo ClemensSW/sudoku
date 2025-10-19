@@ -103,7 +103,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         style={[
           styles.container,
           {
-            backgroundColor: isDark ? "#15181D" : "#F8F9FA",
+            backgroundColor: colors.background,
             // Leuchtender Path Color Glow (wie Board!)
             shadowColor: pathColorHex,
             shadowOpacity: isDark ? 0.6 : 0.35,

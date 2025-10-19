@@ -148,7 +148,15 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
       <View style={styles.content}>
         <Animated.Text
           key={`title-${currentVariant.titleKey}`}
-          style={[styles.title, { color: theme.colors.buttonText }]}
+          style={[
+            styles.title,
+            { color: theme.colors.buttonText },
+            isSupporter && {
+              textShadowColor: 'rgba(0, 0, 0, 0.2)',
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 3,
+            }
+          ]}
           entering={FadeIn.duration(400)}
           exiting={FadeOut.duration(400)}
         >
@@ -156,7 +164,15 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
         </Animated.Text>
         <Animated.Text
           key={`subtitle-${currentVariant.subtitleKey}`}
-          style={[styles.subtitle, { color: theme.colors.buttonText }]}
+          style={[
+            styles.subtitle,
+            { color: theme.colors.buttonText },
+            isSupporter && {
+              textShadowColor: 'rgba(0, 0, 0, 0.15)',
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 2,
+            }
+          ]}
           entering={FadeIn.duration(400).delay(100)}
           exiting={FadeOut.duration(400)}
         >

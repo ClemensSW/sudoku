@@ -244,8 +244,8 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    // Shadow & Border werden dynamisch gesetzt (Path Color)
-    shadowOffset: { width: 0, height: 6 },
+    // Shadow wird dynamisch gesetzt (Path Color Glow)
+    shadowOffset: { width: 0, height: 0 },  // Zentriert für gleichmäßigen Glow
   },
   board: {
     width: BOARD_SIZE,

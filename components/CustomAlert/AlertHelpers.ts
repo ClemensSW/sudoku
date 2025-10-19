@@ -4,6 +4,8 @@ import i18n from '@/locales/i18n';
 import { AlertButton, AlertType, ButtonType } from './CustomAlert';
 import InkIcon from '@/assets/svg/ink.svg';
 import CloudsIcon from '@/assets/svg/clouds.svg';
+import ShieldIcon from '@/assets/svg/shield.svg';
+import ShieldEmptyIcon from '@/assets/svg/shieldEmpty.svg';
 
 /**
  * Helper functions to quickly create different types of alerts
@@ -308,6 +310,42 @@ export const syncSuccessAlert = (onPress?: () => void) => ({
   message: i18n.t('settings:authSection.syncSuccessMessage'),
   type: "success" as AlertType,
   customIcon: React.createElement(CloudsIcon, { width: 64, height: 64 }),
+  hideIconBackground: true,
+  buttons: [
+    {
+      text: i18n.t('alerts:buttons.ok'),
+      style: "primary" as ButtonType,
+      onPress
+    }
+  ]
+});
+
+/**
+ * Create sign in success alert configuration with ShieldIcon
+ */
+export const signInSuccessAlert = (userName: string, onPress?: () => void) => ({
+  title: i18n.t('settings:authSection.signInSuccess'),
+  message: `Willkommen ${userName}!`,
+  type: "success" as AlertType,
+  customIcon: React.createElement(ShieldIcon, { width: 64, height: 64 }),
+  hideIconBackground: true,
+  buttons: [
+    {
+      text: i18n.t('alerts:buttons.ok'),
+      style: "primary" as ButtonType,
+      onPress
+    }
+  ]
+});
+
+/**
+ * Create sign out success alert configuration with ShieldEmptyIcon
+ */
+export const signOutSuccessAlert = (onPress?: () => void) => ({
+  title: i18n.t('settings:authSection.signOutSuccess'),
+  message: i18n.t('settings:authSection.signOutSuccessMessage'),
+  type: "success" as AlertType,
+  customIcon: React.createElement(ShieldEmptyIcon, { width: 64, height: 64 }),
   hideIconBackground: true,
   buttons: [
     {

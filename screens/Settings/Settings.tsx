@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
-import { quitGameAlert } from "@/components/CustomAlert/AlertHelpers";
+import { quitGameAlert, signInSuccessAlert, signOutSuccessAlert } from "@/components/CustomAlert/AlertHelpers";
 import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import { useNavigation } from "@/contexts/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -264,18 +264,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
         console.log('[Settings] ✅ Google Sign-In successful:', user.email);
         triggerHaptic("success");
 
-        showAlert({
-          title: t("authSection.signInSuccess") || "Erfolgreich angemeldet!",
-          message: `Willkommen ${user.displayName || user.email}!`,
-          type: "success",
-          buttons: [
-            {
-              text: "OK",
-              style: "primary",
-              onPress: () => {},
-            },
-          ],
-        });
+        showAlert(signInSuccessAlert(user.displayName || user.email));
 
         // Immediate sync after login (non-blocking)
         console.log('[Settings] Triggering immediate sync after login...');
@@ -350,18 +339,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
                 await signOut();
                 triggerHaptic("success");
                 setShowAccountDataModal(false);
-                showAlert({
-                  title: t('authSection.signOutSuccess'),
-                  message: t('authSection.signOutSuccessMessage'),
-                  type: 'success',
-                  buttons: [
-                    {
-                      text: 'OK',
-                      style: 'primary',
-                      onPress: () => {},
-                    },
-                  ],
-                });
+                showAlert(signOutSuccessAlert());
               } catch (error: any) {
                 console.error('[Settings] Sign out error:', error);
                 triggerHaptic("error");

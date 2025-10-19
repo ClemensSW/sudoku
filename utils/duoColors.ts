@@ -206,3 +206,12 @@ export const getDuoIconColors = (pathColorHex: string, isDark: boolean) => {
     iconColor: pathColorHex,
   };
 };
+
+/**
+ * Duo Brand Color
+ * Gibt die Path Color für Duo Mode zurück (beide Spieler gleichwertig)
+ */
+export const getDuoBrandColor = (pathColorHex: string): string => {
+  // Im Unified Professional Design nutzen beide Spieler die Path Color gleichwertig
+  return pathColorHex;
+};

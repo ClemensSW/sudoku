@@ -33,8 +33,14 @@ interface ButtonProps {
   loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  /** @deprecated Use iconLeft or iconRight instead */
   icon?: React.ReactNode;
+  /** @deprecated Use iconLeft or iconRight instead */
   iconPosition?: "left" | "right";
+  /** Icon to display on the left side of the button */
+  iconLeft?: React.ReactNode;
+  /** Icon to display on the right side of the button */
+  iconRight?: React.ReactNode;
   withHaptic?: boolean;
   hapticType?: "light" | "medium" | "heavy";
   /** Custom color for primary variant (overrides theme primary) */
@@ -51,6 +57,8 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
   icon,
   iconPosition = "left",
+  iconLeft,
+  iconRight,
   withHaptic = true,
   hapticType = "light",
   customColor,
@@ -58,6 +66,10 @@ const Button: React.FC<ButtonProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const scale = useSharedValue(1);
+
+  // Backward compatibility: if icon prop is used, map it to iconLeft or iconRight
+  const leftIcon = iconLeft || (icon && iconPosition === "left" ? icon : undefined);
+  const rightIcon = iconRight || (icon && iconPosition === "right" ? icon : undefined);
 
   // Animation for press effects
   const animatedStyles = useAnimatedStyle(() => {
@@ -192,6 +204,43 @@ const Button: React.FC<ButtonProps> = ({
     return textStyles;
   };
 
+  // Get icon color based on variant (same logic as text color)
+  const getIconColor = (): string => {
+    if (disabled) {
+      return variant === "outline" || variant === "ghost"
+        ? colors.buttonDisabled
+        : colors.buttonTextDisabled;
+    }
+
+    switch (variant) {
+      case "primary":
+      case "danger":
+      case "success":
+        return colors.buttonText; // White for filled buttons
+      case "secondary":
+        return colors.textPrimary;
+      case "outline":
+      case "ghost":
+        return customColor || colors.primary;
+      default:
+        return colors.buttonText;
+    }
+  };
+
+  // Clone icon elements with automatic color injection
+  const cloneIconWithColor = (iconElement: React.ReactNode) => {
+    if (!iconElement) return null;
+
+    // If it's already a valid React element, clone it with the color
+    if (React.isValidElement(iconElement)) {
+      return React.cloneElement(iconElement as React.ReactElement<any>, {
+        color: getIconColor(),
+      });
+    }
+
+    return iconElement;
+  };
+
   // Combine all styles
   const buttonStyles = getButtonStyle();
   const titleStyles = getTextStyle();
@@ -215,21 +264,21 @@ const Button: React.FC<ButtonProps> = ({
       >
         {loading ? (
           <ActivityIndicator
-            color={
-              variant === "outline" || variant === "ghost"
-                ? (customColor || colors.primary)
-                : colors.buttonText
-            }
+            color={getIconColor()}
             size="small"
           />
         ) : (
           <>
-            {icon && iconPosition === "left" && (
-              <Animated.View style={styles.iconLeft}>{icon}</Animated.View>
+            {leftIcon && (
+              <Animated.View style={styles.iconLeft}>
+                {cloneIconWithColor(leftIcon)}
+              </Animated.View>
             )}
             <Text style={titleStyles}>{title}</Text>
-            {icon && iconPosition === "right" && (
-              <Animated.View style={styles.iconRight}>{icon}</Animated.View>
+            {rightIcon && (
+              <Animated.View style={styles.iconRight}>
+                {cloneIconWithColor(rightIcon)}
+              </Animated.View>
             )}
           </>
         )}

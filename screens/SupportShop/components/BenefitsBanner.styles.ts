@@ -41,14 +41,12 @@ export default StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
     marginBottom: 6,
     letterSpacing: 0.3,
   },
   subtitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.95)',
     letterSpacing: 0.2,
   },
   iconContainer: {

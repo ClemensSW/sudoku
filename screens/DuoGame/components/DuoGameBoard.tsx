@@ -129,9 +129,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
         styles.boardWrapper,
         animatedStyle,
         {
-          // Leuchtender Path Color Rand (wie LevelCard)
-          borderWidth: 2,
-          borderColor: pathColorHex,
+          // Leuchtender Path Color Glow (wie LevelCard - nur Shadow, kein Border!)
           shadowColor: pathColorHex,  // Farbiger Glow-Effekt!
           shadowOpacity: isDark ? 0.6 : 0.35,  // Stärker im Dark Mode
           shadowRadius: isDark ? 16 : 12,

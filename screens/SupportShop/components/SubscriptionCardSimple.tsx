@@ -316,9 +316,23 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
               {/* Best Value Badge */}
               {!isActive && isBestValue && (
-                <View style={[styles.badge, { backgroundColor: progressColor }]}>
-                  <Feather name="star" size={12} color="#FFFFFF" />
-                  <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
+                <View style={[
+                  styles.badge,
+                  theme.isDark ? {
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    borderColor: progressColor,
+                  } : {
+                    backgroundColor: progressColor,
+                  }
+                ]}>
+                  <Feather name="star" size={12} color={theme.isDark ? progressColor : "#FFFFFF"} />
+                  <Text style={[
+                    styles.badgeText,
+                    { color: theme.isDark ? progressColor : "#FFFFFF" }
+                  ]}>
+                    {t('subscriptions.bestValue')}
+                  </Text>
                 </View>
               )}
 

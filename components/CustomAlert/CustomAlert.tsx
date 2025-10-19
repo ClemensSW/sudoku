@@ -305,7 +305,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           <Animated.View
             style={[
               styles.iconContainer,
-              type === "warning" && {
+              (type === "warning" || customIcon) && {
                 width: 80,
                 height: 80,
                 borderRadius: 40,

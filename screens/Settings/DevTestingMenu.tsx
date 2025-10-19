@@ -212,7 +212,7 @@ Schutzschilder: ${shieldInfo}
         color: colors.textPrimary,
         marginBottom: 12,
       }}>
-        🧪 Supporter Testing (nur Expo Go)
+        🧪 Supporter Testing (Dev Build)
       </Text>
 
       <View style={{

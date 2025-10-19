@@ -544,8 +544,8 @@ const Settings: React.FC<SettingsScreenProps> = ({
           />
         </Animated.View>
 
-        {/* Dev Testing Menu - Only in Expo Go */}
-        {__DEV__ && Constants.appOwnership === 'expo' && (
+        {/* Dev Testing Menu - Development Builds (Expo Go & dev-client) */}
+        {__DEV__ && (
           <Animated.View
             style={styles.section}
             entering={FadeInDown.delay(600).duration(500)}

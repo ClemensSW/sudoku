@@ -29,12 +29,13 @@ const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 95); // Etwas schmaler für
 const ACTION_BUTTON_WIDTH_TWO = Math.min(width / 3 - 8, 110); // Breiter für zwei Buttons
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 
-// Professionelle Schatten-Systeme für verschiedene Button-Typen
+// Professionelle Schatten-Systeme - neutral wie im normalen Game
 const numberButtonShadow = {
-  shadowOffset: { width: 0, height: 3 },
-  shadowOpacity: 0.35,      // Etwas stärker für Playful Glow-Effekt
-  shadowRadius: 6,
-  elevation: 5,
+  shadowColor: "#000",          // Neutral gray shadow (nicht farbig!)
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,          // Subtil & professionell
+  shadowRadius: 3,
+  elevation: 3,
 };
 
 const actionButtonShadow = {
@@ -151,9 +152,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                     backgroundColor: isDisabled
                       ? theme.numberButton.disabledBackground
                       : theme.numberButton.background,
-                    shadowColor: isDisabled ? '#000' : theme.numberButton.borderColor, // Farbiger Schatten!
                   },
-                  numberButtonShadow, // Professional number button shadow
+                  numberButtonShadow, // Neutral shadow (beide Spieler identisch!)
                 ]}
                 onPress={() => {
                   if (!isDisabled) {
@@ -209,12 +209,12 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               {
                 width: buttonWidth,
                 backgroundColor: noteMode
-                  ? theme.actionButton.activeBackground
-                  : theme.actionButton.background,
+                  ? theme.actionButton.activeBackground     // Subtile Path Color Background
+                  : theme.actionButton.background,          // Neutral wie Number Buttons
                 borderWidth: noteMode ? 2 : 0,
-                borderColor: theme.actionButton.borderColor,
+                borderColor: noteMode ? theme.actionButton.activeBorderColor : 'transparent',
               },
-              actionButtonShadow, // Professional action button shadow
+              actionButtonShadow,
               disabled && styles.disabledButton,
             ]}
             onPress={() => {
@@ -230,9 +230,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               color={
                 disabled
                   ? theme.actionButton.disabledIconColor
-                  : noteMode
-                  ? theme.actionButton.textColor
-                  : theme.actionButton.iconColor
+                  : theme.actionButton.iconColor          // Neutral icon color
               }
             />
             <Text
@@ -241,7 +239,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 {
                   color: disabled
                     ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.textColor,
+                    : theme.actionButton.textColor,       // Neutral text color
                 },
               ]}
             >
@@ -276,9 +274,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 styles.actionButton,
                 {
                   width: buttonWidth,
-                  backgroundColor: theme.actionButton.background
+                  backgroundColor: theme.actionButton.background,  // Neutral
                 },
-                actionButtonShadow, // Professional action button shadow
+                actionButtonShadow,
                 disabled && styles.disabledButton,
               ]}
               onPress={() => {
@@ -294,7 +292,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 color={
                   disabled
                     ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.iconColor
+                    : theme.actionButton.iconColor              // Neutral icon
                 }
               />
               <Text
@@ -303,7 +301,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   {
                     color: disabled
                       ? theme.actionButton.disabledIconColor
-                      : theme.actionButton.textColor,
+                      : theme.actionButton.textColor,           // Neutral text
                   },
                 ]}
               >
@@ -326,9 +324,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               styles.actionButton,
               {
                 width: buttonWidth,
-                backgroundColor: theme.actionButton.background
+                backgroundColor: theme.actionButton.background,  // Neutral
               },
-              actionButtonShadow, // Professional action button shadow
+              actionButtonShadow,
               (hintDisabled || disabled) && styles.disabledButton,
             ]}
             onPress={() => {
@@ -344,7 +342,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               color={
                 hintDisabled || disabled
                   ? theme.actionButton.disabledIconColor
-                  : theme.actionButton.iconColor
+                  : theme.actionButton.iconColor              // Neutral icon
               }
             />
             <Text
@@ -354,7 +352,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   color:
                     hintDisabled || disabled
                       ? theme.actionButton.disabledIconColor
-                      : theme.actionButton.textColor,
+                      : theme.actionButton.textColor,         // Neutral text
                 },
               ]}
             >

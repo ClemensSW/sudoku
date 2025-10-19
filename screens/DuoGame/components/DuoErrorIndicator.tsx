@@ -62,10 +62,10 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   // Calculate remaining hearts
   const heartsRemaining = maxErrors - errorsCount;
 
-  // Get heart color - Playful Coral für moderne, spielerische Optik
+  // Get heart color - neutral gray wie normale UI-Icons
   const getHeartColor = () => {
-    // Einheitliche coral Farbe - spielerisch & modern
-    return theme.heart; // Soft Coral: #FF8A80 (light) / #FF6E40 (dark)
+    // Neutral gray - professionell & zurückhaltend (#9AA0A6)
+    return theme.heart;
   };
 
   // Heart size based on compact mode

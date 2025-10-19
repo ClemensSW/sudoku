@@ -71,8 +71,13 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   };
 
   const getTextColor = () => {
+    // Error state hat Priorität
     if (!cell.isValid && showErrors) return theme.error.textColor;
+    // Selected cells haben weißen Text (auf Path Color Background)
+    if (isSelected) return '#FFFFFF';
+    // Initial numbers nutzen Theme Initial Color
     if (cell.isInitial) return theme.initial.textColor;
+    // Normale numbers nutzen Theme Text Color
     return theme.textColor;
   };
 

@@ -127,14 +127,16 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     <View style={styles.boardContainer}>
       <Animated.View style={[styles.boardWrapper, animatedStyle]}>
         <View style={styles.board}>
-          {/* Player areas + gradient (static) */}
+          {/* Player areas + subtle lightness gradient (static) */}
           <View style={styles.playerAreasContainer} pointerEvents="none">
+            {/* Player 2 Zone (oben) - 3% Lightness-Unterschied */}
             <View
               style={[
                 styles.playerAreaBackground,
                 { top: 0, height: BOARD_SIZE * 0.47, backgroundColor: boardColors.player2Background },
               ]}
             />
+            {/* Lightness-basierter Gradient (kein farbiger Gradient!) */}
             <LinearGradient
               colors={[boardColors.player2Background, boardColors.player1Background]}
               style={[
@@ -144,13 +146,14 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
             />
+            {/* Player 1 Zone (unten) - Standard Background */}
             <View
               style={[
                 styles.playerAreaBackground,
                 { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: boardColors.player1Background },
               ]}
             />
-            {/* Middle cell highlight */}
+            {/* Middle cell - neutraler Hintergrund (zwischen Zonen) */}
             <View
               style={[
                 styles.middleCellBackground,
@@ -159,7 +162,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                   top: BOARD_SIZE * 0.47 + BOARD_SIZE * 0.15 / 2 - CELL_SIZE / 2,
                   width: CELL_SIZE,
                   height: CELL_SIZE,
-                  backgroundColor: boardColors.neutralBackground, // Dynamic color based on theme
+                  backgroundColor: boardColors.neutralBackground,
                 },
               ]}
             />

@@ -11,6 +11,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    alignSelf: "stretch", // Nimmt volle Breite des Parents wenn möglich
   },
 
   buttonText: {
@@ -23,6 +24,7 @@ export default StyleSheet.create({
   // Animation container
   animatedContainer: {
     overflow: "hidden",
+    alignSelf: "stretch", // Nimmt volle Breite des Parents
   },
 
   // Icon styling

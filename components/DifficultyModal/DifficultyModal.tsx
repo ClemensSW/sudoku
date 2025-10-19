@@ -5,7 +5,6 @@ import Animated, {
   ZoomIn,
   FadeIn,
   FadeInRight,
-  SlideInRight
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -18,6 +17,7 @@ import {
   getProgressValue
 } from "@/utils/storage";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import Button from "@/components/Button/Button";
 import styles from "./DifficultyModal.styles";
 import { getDuoBrandColor } from "@/utils/duoColors";
 import { useStoredColorHex } from "@/contexts/color/ColorContext";
@@ -269,12 +269,13 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
           </View>
         )}
 
-        <TouchableOpacity
-          style={[styles.modalButton, { backgroundColor: primaryColor }]}
+        <Button
+          title={modalConfirmText}
           onPress={onConfirm}
-        >
-          <Text style={styles.modalButtonText}>{modalConfirmText}</Text>
-        </TouchableOpacity>
+          variant="primary"
+          customColor={primaryColor}
+          style={styles.modalButton}
+        />
       </Animated.View>
     </View>
   );

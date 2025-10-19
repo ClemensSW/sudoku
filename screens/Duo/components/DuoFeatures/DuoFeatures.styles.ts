@@ -50,23 +50,7 @@ export default StyleSheet.create({
     marginBottom: 40,
   },
   startButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 30,
-    width: "100%",
-    maxWidth: 320,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  startButtonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "700",
+    width: "100%", // Gleiche Breite wie featureCard oben
+    // Button component übernimmt: backgroundColor, padding, borderRadius, shadow, text styling
   },
 });

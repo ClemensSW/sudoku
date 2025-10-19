@@ -55,16 +55,8 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   modalButton: {
-    width: "100%",
-    paddingVertical: 16,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "700",
+    width: "100%", // Gleiche Breite wie difficultyButton
+    // Button component übernimmt: backgroundColor, padding, borderRadius, alignment
   },
   
   // Neue Stile für das progressive Freischalten

@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import { useProgressColor } from '@/hooks/useProgressColor';
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
+import Button from '@/components/Button/Button';
 import CloudsIcon from '@/assets/svg/clouds.svg';
 
 interface AccountInfoCardProps {
@@ -185,21 +186,17 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
       </View>
 
       {/* Manual Sync Button */}
-      <TouchableOpacity
-        style={[styles.syncButton, { backgroundColor: progressColor }]}
+      <Button
+        title={isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
         onPress={handleManualSync}
         disabled={isSyncing}
-        activeOpacity={0.8}
-      >
-        {isSyncing ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Feather name="refresh-cw" size={18} color="#fff" />
-        )}
-        <Text style={styles.syncButtonText}>
-          {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
-        </Text>
-      </TouchableOpacity>
+        loading={isSyncing}
+        variant="primary"
+        customColor={progressColor}
+        icon={!isSyncing ? <Feather name="refresh-cw" size={18} color={colors.buttonText} /> : undefined}
+        iconPosition="left"
+        style={styles.syncButton}
+      />
     </Animated.View>
   );
 };
@@ -284,19 +281,8 @@ const styles = StyleSheet.create({
 
   // Manual Sync Button
   syncButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-  },
-  syncButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+    width: "100%",
+    // Button component übernimmt: backgroundColor, padding, borderRadius, text styling
   },
 });
 

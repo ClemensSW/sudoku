@@ -1,10 +1,11 @@
 // screens/DuoScreen/components/DuoFeatures/DuoFeatures.tsx
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { getPathColor } from "@/utils/pathColors";
+import Button from "@/components/Button/Button";
 import styles from "./DuoFeatures.styles";
 
 // SVG Icons
@@ -89,16 +90,14 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
         );
       })}
 
-      <View
-        style={styles.buttonContainer}
-      >
-        <TouchableOpacity
-          style={[styles.startButton, { backgroundColor: primaryColor }]}
+      <View style={styles.buttonContainer}>
+        <Button
+          title={t('features.startButton')}
           onPress={onStartGame}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.startButtonText}>{t('features.startButton')}</Text>
-        </TouchableOpacity>
+          variant="primary"
+          customColor={primaryColor}
+          style={styles.startButton}
+        />
       </View>
     </View>
   );

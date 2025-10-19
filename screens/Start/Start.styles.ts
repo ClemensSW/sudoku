@@ -55,41 +55,25 @@ export const styles = StyleSheet.create({
   },
   buttonWrapper: {
     width: "100%",
+    maxWidth: 300, // Einheitliche max Breite für alle Buttons
     alignItems: "center",
     marginBottom: 0
   },
   startButton: {
-    width: "100%",
-    maxWidth: 300,
-    height: 60,
-    borderRadius: 20,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  startButtonText: {
-    color: "#FFFFFF",
-    fontSize: 19,
-    fontWeight: "700",
-    letterSpacing: 0.5
+    width: "100%", // Volle Breite des buttonWrapper (maxWidth: 300)
+    // height: 56 vom Button Component (gleich wie resumeButton)
   },
   howToPlayButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
     marginBottom: 20,
-    marginTop: -15
+    marginTop: -15,
+    alignSelf: "center", // Zentriert den Button
+    // Button component übernimmt: padding, borderRadius
   },
   howToPlayText: {
     fontSize: 16,
     fontWeight: "600",
-    letterSpacing: 0.2
+    letterSpacing: 0.2,
+    // Wird mit Button textStyle gemerged
   },
   resumeButton: {
     width: "100%",

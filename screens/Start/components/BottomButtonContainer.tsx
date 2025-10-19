@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Theme } from "@/utils/theme/ThemeProvider";
 import { PausedGameState } from "@/utils/storage";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import Button from "@/components/Button/Button";
 import { styles } from "../Start.styles";
 
 interface BottomButtonContainerProps {
@@ -68,20 +69,16 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
       <View style={styles.buttonsContainer}>
         {/* "Wie spielt man?" nur anzeigen wenn kein pausiertes Spiel vorhanden */}
         {!pausedGame && (
-          <TouchableOpacity
-            style={styles.howToPlayButton}
+          <Button
+            title={t('buttons.howToPlay')}
             onPress={onHowToPlayPress}
-            activeOpacity={0.7}
-          >
-            <Text
-              style={[
-                styles.howToPlayText,
-                { color: isDark ? "#FFFFFF" : "#1A2C42" },
-              ]}
-            >
-              {t('buttons.howToPlay')}
-            </Text>
-          </TouchableOpacity>
+            variant="ghost"
+            style={styles.howToPlayButton}
+            textStyle={[
+              styles.howToPlayText,
+              { color: isDark ? "#FFFFFF" : "#1A2C42" },
+            ]}
+          />
         )}
 
         {/* Resume Game Button - nur wenn pausiertes Spiel vorhanden */}
@@ -139,15 +136,13 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
 
         {/* New Game Button */}
         <Animated.View style={[styles.buttonWrapper, buttonAnimatedStyle]}>
-          <TouchableOpacity
-            style={[styles.startButton, { backgroundColor: progressColor }]}
+          <Button
+            title={t('buttons.newGame')}
             onPress={onStartGamePress}
-            activeOpacity={0.9}
-            onPressIn={onButtonPressIn}
-            onPressOut={onButtonPressOut}
-          >
-            <Text style={styles.startButtonText}>{t('buttons.newGame')}</Text>
-          </TouchableOpacity>
+            variant="primary"
+            customColor={progressColor}
+            style={styles.startButton}
+          />
         </Animated.View>
       </View>
     </View>

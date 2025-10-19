@@ -1,14 +1,12 @@
 // components/Button/Button.tsx
 import React from "react";
 import {
-  TouchableOpacity,
   Text,
   ActivityIndicator,
   ViewStyle,
   TextStyle,
   Pressable,
 } from "react-native";
-import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -150,10 +148,7 @@ const Button: React.FC<ButtonProps> = ({
       });
     }
 
-    // Custom styles
-    if (style) {
-      buttonStyles.push(style);
-    }
+    // Custom styles are NOT applied here anymore (applied to animatedContainer instead)
 
     return buttonStyles;
   };
@@ -202,7 +197,7 @@ const Button: React.FC<ButtonProps> = ({
   const titleStyles = getTextStyle();
 
   return (
-    <Animated.View style={[styles.animatedContainer, animatedStyles]}>
+    <Animated.View style={[styles.animatedContainer, animatedStyles, style]}>
       <Pressable
         style={buttonStyles}
         onPress={handlePress}

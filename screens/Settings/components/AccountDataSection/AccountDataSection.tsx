@@ -1,6 +1,6 @@
 // screens/Settings/components/AccountDataSection/AccountDataSection.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -8,6 +8,7 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
+import Button from "@/components/Button/Button";
 import CloudsIcon from "@/assets/svg/clouds.svg";
 
 interface AccountDataSectionProps {
@@ -160,21 +161,19 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
           </View>
 
           {/* Manual Sync Button */}
-          <TouchableOpacity
-            style={[styles.syncButton, { backgroundColor: progressColor }]}
-            onPress={handleManualSync}
-            disabled={isSyncing}
-            activeOpacity={0.8}
-          >
-            {isSyncing ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Feather name="refresh-cw" size={18} color="#fff" />
-            )}
-            <Text style={styles.syncButtonText}>
-              {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.syncButtonContainer}>
+            <Button
+              title={isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
+              onPress={handleManualSync}
+              disabled={isSyncing}
+              loading={isSyncing}
+              variant="primary"
+              customColor={progressColor}
+              icon={!isSyncing ? <Feather name="refresh-cw" size={18} color={colors.buttonText} /> : undefined}
+              iconPosition="left"
+              style={styles.syncButton}
+            />
+          </View>
         </View>
       </View>
 
@@ -264,20 +263,12 @@ const styles = StyleSheet.create({
   },
 
   // Sync Button
-  syncButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md + 2,
+  syncButtonContainer: {
     margin: spacing.md,
-    borderRadius: radius.md,
   },
-  syncButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+  syncButton: {
+    width: "100%",
+    // Button component übernimmt: backgroundColor, padding, borderRadius, text styling
   },
 
   // Action Buttons

@@ -121,7 +121,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
       {/* Background with gradient - Premium Gold for Supporters, Dynamic Path Color Gradient otherwise */}
       <View style={styles.background}>
         <LinearGradient
-          colors={isSupporter ? ['#E5C158', '#D4AF37', '#C19A2E'] : gradientColors}
+          colors={isSupporter ? ['#C19A2E', '#D4AF37', '#E5C158'] : [...gradientColors].reverse()}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}

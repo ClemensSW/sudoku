@@ -19,8 +19,6 @@ import {
 import { useProgressColor } from "@/hooks/useProgressColor";
 import Button from "@/components/Button/Button";
 import styles from "./DifficultyModal.styles";
-import { getDuoBrandColor } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DifficultyModalProps {
   visible: boolean;
@@ -52,8 +50,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const { t } = useTranslation('start');
   const theme = useTheme();
   const colors = theme.colors;
-  const dynamicProgressColor = useProgressColor();
-  const pathColorHex = useStoredColorHex();
+  const progressColor = useProgressColor(); // Theme-aware path color for both modes
   const [stats, setStats] = useState<GameStats | null>(null);
   const [unlockedDifficulties, setUnlockedDifficulties] = useState<Difficulty[]>(["easy"]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,9 +59,6 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const modalTitle = title || t('difficultyModal.title');
   const modalSubtitle = subtitle || t('difficultyModal.subtitle');
   const modalConfirmText = confirmText || t('difficultyModal.confirm');
-
-  // Wähle die Primärfarbe basierend auf dem Modus
-  const primaryColor = isDuoMode ? getDuoBrandColor(pathColorHex) : dynamicProgressColor;
 
   // Helper function to get progress message with i18next
   const getProgressMessage = (stats: GameStats): string => {
@@ -178,12 +172,12 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                   style={[
                     styles.difficultyButton,
                     isSelected && {
-                      backgroundColor: `${primaryColor}15`,
-                      borderColor: primaryColor,
+                      backgroundColor: `${progressColor}15`,
+                      borderColor: progressColor,
                     },
                     {
                       borderColor: isSelected
-                        ? primaryColor
+                        ? progressColor
                         : theme.isDark
                         ? "rgba(255,255,255,0.1)"
                         : "rgba(0,0,0,0.1)",
@@ -196,7 +190,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                       styles.difficultyText,
                       {
                         color: isSelected
-                          ? primaryColor
+                          ? progressColor
                           : colors.textPrimary,
                       },
                     ]}
@@ -205,7 +199,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                   </Text>
 
                   {isSelected && (
-                    <Feather name="check" size={18} color={primaryColor} />
+                    <Feather name="check" size={18} color={progressColor} />
                   )}
                 </TouchableOpacity>
               );
@@ -261,7 +255,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                   styles.progressBarFill, 
                   { 
                     width: `${progressPercentage}%`,
-                    backgroundColor: primaryColor
+                    backgroundColor: progressColor
                   }
                 ]} 
               />
@@ -273,7 +267,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
           title={modalConfirmText}
           onPress={onConfirm}
           variant="primary"
-          customColor={primaryColor}
+          customColor={progressColor}
           style={styles.modalButton}
         />
       </Animated.View>

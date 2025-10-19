@@ -9,14 +9,14 @@ interface CompletionHeaderProps {
   gameTime: number;
   winner: 0 | 1 | 2;
   winReason: "completion" | "errors";
-  pathColorHex: string;
+  progressColor: string;
 }
 
 const CompletionHeader: React.FC<CompletionHeaderProps> = ({
   gameTime,
   winner,
   winReason,
-  pathColorHex,
+  progressColor,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -54,7 +54,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
         style={[
           styles.timeContainer,
           {
-            backgroundColor: winner !== 0 ? pathColorHex : colors.primary,
+            backgroundColor: winner !== 0 ? progressColor : colors.primary,
           },
         ]}
       >

@@ -9,14 +9,14 @@ import Button from "@/components/Button/Button";
 interface ActionButtonsProps {
   onRematch: () => void;
   onBackToMenu: () => void;
-  pathColorHex: string;
+  progressColor: string;
   buttonOpacity: Animated.SharedValue<number>;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
   onRematch,
   onBackToMenu,
-  pathColorHex,
+  progressColor,
   buttonOpacity,
 }) => {
   const { t } = useTranslation("duoGame");
@@ -32,15 +32,13 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         title={t("completion.buttons.rematch")}
         onPress={onRematch}
         variant="primary"
+        customColor={progressColor}
+        iconLeft={<Feather name="refresh-cw" size={20} />}
         style={{
           width: "100%",
-          height: 56,
+          paddingVertical: 16,
           marginBottom: 16,
-          backgroundColor: pathColorHex,
-          shadowColor: pathColorHex, // Match shadow color with button color
         }}
-        icon={<Feather name="refresh-cw" size={20} color="#FFFFFF" />}
-        iconPosition="left"
       />
 
       {/* Back to Menu Button */}
@@ -48,12 +46,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         title={t("completion.buttons.backToMenu")}
         onPress={onBackToMenu}
         variant="outline"
+        customColor={progressColor}
         style={{
           width: "100%",
-          height: 56,
-          borderColor: pathColorHex,
+          paddingVertical: 16,
         }}
-        textStyle={{ color: pathColorHex }}
       />
     </Animated.View>
   );

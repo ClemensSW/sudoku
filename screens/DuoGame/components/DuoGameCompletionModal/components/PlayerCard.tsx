@@ -17,7 +17,7 @@ interface PlayerCardProps {
   hintsRemaining: number;
   maxErrors: number;
   maxHints: number;
-  pathColorHex: string;
+  progressColor: string;
   playerScale: Animated.SharedValue<number>;
   trophyScale: Animated.SharedValue<number>;
 }
@@ -31,7 +31,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   hintsRemaining,
   maxErrors,
   maxHints,
-  pathColorHex,
+  progressColor,
   playerScale,
   trophyScale,
 }) => {
@@ -50,7 +50,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   const showTrophy = isWinner || isTie;
 
   // Determine border color (Winner gets Path Color)
-  const borderColor = isWinner ? pathColorHex : colors.border;
+  const borderColor = isWinner ? progressColor : colors.border;
 
   // Determine opacity (loser is slightly faded)
   const opacity = !isTie && !isWinner ? 0.7 : 1;
@@ -73,7 +73,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           <Text
             style={[
               styles.winnerText,
-              { backgroundColor: pathColorHex },
+              { backgroundColor: progressColor },
             ]}
           >
             {t("completion.winner")}
@@ -100,7 +100,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
                 styles.trophyCircle,
                 {
                   backgroundColor: isWinner
-                    ? `${pathColorHex}20` // 20% opacity
+                    ? `${progressColor}20` // 20% opacity
                     : isDark
                     ? "rgba(255,255,255,0.1)"
                     : "rgba(0,0,0,0.05)",
@@ -110,7 +110,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
               <Feather
                 name={isWinner ? "award" : "star"}
                 size={isWinner ? 20 : 16}
-                color={isWinner ? pathColorHex : colors.textSecondary}
+                color={isWinner ? progressColor : colors.textSecondary}
               />
             </View>
           </Animated.View>
@@ -125,11 +125,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
             percentage={completionPercentage}
             size={90}
             strokeWidth={8}
-            color={isWinner ? pathColorHex : colors.textSecondary}
+            color={isWinner ? progressColor : colors.textSecondary}
             bgColor={
               isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"
             }
-            textColor={isWinner ? pathColorHex : colors.textPrimary}
+            textColor={isWinner ? progressColor : colors.textPrimary}
           />
 
           {/* Status text below the circle */}

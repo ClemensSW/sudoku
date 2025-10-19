@@ -5,9 +5,8 @@ import Animated, { ZoomIn, FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import styles from "./GameModeModal.styles";
-import { getDuoBrandColor } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 export type GameMode = "local" | "online";
 
@@ -27,10 +26,7 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
   const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
-  const pathColorHex = useStoredColorHex();
-
-  // Duo-Farbe theme-aware (dynamic based on path color)
-  const duoIconColor = getDuoBrandColor(pathColorHex);
+  const progressColor = useProgressColor(); // Theme-aware path color
 
   if (!visible) return null;
 
@@ -80,12 +76,12 @@ const GameModeModal: React.FC<GameModeModalProps> = ({
           >
             <View style={[
               styles.modeIconContainer,
-              { backgroundColor: `${duoIconColor}15` } // 15 für 15% Opacity
+              { backgroundColor: `${progressColor}15` }
             ]}>
-              <Feather 
-                name="users" 
-                size={28} 
-                color={duoIconColor} // HIER: Grüne Duo-Farbe statt colors.primary
+              <Feather
+                name="users"
+                size={28}
+                color={progressColor}
               />
             </View>
             <View style={styles.modeTextContainer}>

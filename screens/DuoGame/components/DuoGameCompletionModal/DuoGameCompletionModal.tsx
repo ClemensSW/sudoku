@@ -3,9 +3,9 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { Difficulty } from "@/utils/sudoku";
 import ConfettiEffect from "@/screens/GameCompletion/components/ConfettiEffect/ConfettiEffect";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 // Sub-components
 import CompletionHeader from "./components/CompletionHeader";
@@ -63,7 +63,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   player2SolvedCells,
 }) => {
   const { colors, isDark } = useTheme();
-  const pathColorHex = useStoredColorHex();
+  const progressColor = useProgressColor(); // Theme-aware path color
 
   // Animations
   const {
@@ -105,7 +105,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           {
             backgroundColor: colors.background,
             // Leuchtender Path Color Glow (wie Board!)
-            shadowColor: pathColorHex,
+            shadowColor: progressColor,
             shadowOpacity: isDark ? 0.6 : 0.35,
             shadowRadius: isDark ? 16 : 12,
             elevation: 10,
@@ -122,7 +122,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           gameTime={gameTime}
           winner={winner}
           winReason={winReason}
-          pathColorHex={pathColorHex}
+          progressColor={progressColor}
         />
 
         {/* Battle Container */}
@@ -137,7 +137,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             hintsRemaining={maxHints - player1Hints}
             maxErrors={maxErrors}
             maxHints={maxHints}
-            pathColorHex={pathColorHex}
+            progressColor={progressColor}
             playerScale={player1Scale}
             trophyScale={trophy1Scale}
           />
@@ -155,7 +155,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             hintsRemaining={maxHints - player2Hints}
             maxErrors={maxErrors}
             maxHints={maxHints}
-            pathColorHex={pathColorHex}
+            progressColor={progressColor}
             playerScale={player2Scale}
             trophyScale={trophy2Scale}
           />
@@ -165,7 +165,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         <ActionButtons
           onRematch={onRevanche}
           onBackToMenu={onClose}
-          pathColorHex={pathColorHex}
+          progressColor={progressColor}
           buttonOpacity={buttonOpacity}
         />
       </Animated.View>

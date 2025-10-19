@@ -249,7 +249,8 @@ export const autoNotesAlert = (onPress?: () => void) => ({
   title: i18n.t('alerts:game.autoNotes.title'),
   message: i18n.t('alerts:game.autoNotes.message'),
   type: "info" as AlertType,
-  customIcon: React.createElement(InkIcon, { width: 32, height: 32 }),
+  customIcon: React.createElement(InkIcon, { width: 64, height: 64 }),
+  hideIconBackground: true,
   buttons: [
     {
       text: i18n.t('alerts:buttons.ok'),

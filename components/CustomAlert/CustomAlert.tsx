@@ -229,7 +229,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 
   // Map ButtonType to global Button component props
   const getButtonProps = (buttonType: ButtonType = "default"): {
-    variant: "primary" | "secondary" | "ghost";
+    variant: "primary" | "secondary" | "outline" | "ghost";
     customColor?: string;
   } => {
     switch (buttonType) {
@@ -252,7 +252,8 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
         };
       case "cancel":
         return {
-          variant: "ghost",
+          variant: "outline",
+          customColor: progressColor, // Path color for consistency
         };
       default:
         return {

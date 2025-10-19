@@ -30,6 +30,7 @@ export type ButtonType =
   | "primary"
   | "success"
   | "danger"
+  | "destructive"
   | "cancel"
   | "duoButton"
   | "info";
@@ -246,6 +247,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
           customColor: "#34D399",
         };
       case "danger":
+      case "destructive":
         return {
           variant: "primary",
           customColor: "#F87171",
@@ -253,7 +255,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "cancel":
         return {
           variant: "outline",
-          customColor: progressColor, // Path color for consistency
+          customColor: colors.textSecondary, // Neutral gray for safe action
         };
       default:
         return {

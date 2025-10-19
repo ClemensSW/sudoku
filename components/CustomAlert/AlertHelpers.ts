@@ -262,7 +262,7 @@ export const autoNotesAlert = (onPress?: () => void) => ({
 export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
   title: i18n.t('alerts:game.quit.title'),
   message: i18n.t('alerts:game.quit.message'),
-  type: "confirmation" as AlertType,
+  type: "warning" as AlertType,
   buttons: [
     {
       text: i18n.t('alerts:buttons.cancel'),
@@ -271,7 +271,7 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
     },
     {
       text: i18n.t('alerts:buttons.toMenu'),
-      style: "primary" as ButtonType,
+      style: "destructive" as ButtonType,
       onPress: onConfirm
     }
   ] as AlertButton[]

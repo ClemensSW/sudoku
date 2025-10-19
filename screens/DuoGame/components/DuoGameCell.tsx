@@ -83,6 +83,13 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 
   const shouldUnderlineNumber = (num: number) => num === 6 || num === 9;
 
+  const getNotesColor = () => {
+    // Selected cells haben weiße Notizen (auf Path Color Background)
+    if (isSelected) return '#FFFFFF';
+    // Normale Notizen nutzen Theme Notes Color
+    return theme.notes.textColor;
+  };
+
   const renderNotes = () => {
     if (cell.value !== 0 || !cell.notes || cell.notes.length === 0) return null;
 
@@ -93,7 +100,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
             key={`note-${num}`}
             style={[
               styles.noteText,
-              { color: theme.notes.textColor },
+              { color: getNotesColor() },  // Dynamische Farbe: weiß wenn selected
               cell.notes.includes(num) ? styles.activeNote : styles.inactiveNote,
               player === 2 && rotateForPlayer2 && styles.rotatedText,
               shouldUnderlineNumber(num) && styles.underlinedNumber,

@@ -44,9 +44,6 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 6,
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   subtitle: {
     fontSize: 15,

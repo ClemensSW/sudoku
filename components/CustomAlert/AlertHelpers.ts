@@ -282,13 +282,13 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
 });
 
 /**
- * Create quit game confirmation alert styled specifically for Duo Mode
- * Uses warning type for WarningIcon, but with Duo Mode button styling
+ * Create quit game confirmation alert for Duo Mode
+ * Identical to normal quit alert (warning icon + red destructive button)
  */
 export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
   title: i18n.t('alerts:game.quit.title'),
   message: i18n.t('alerts:game.quit.message'),
-  type: "warning" as AlertType, // Same as normal quit alert - shows WarningIcon
+  type: "warning" as AlertType,
   buttons: [
     {
       text: i18n.t('alerts:buttons.cancel'),
@@ -297,7 +297,7 @@ export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) =
     },
     {
       text: i18n.t('alerts:buttons.toMenu'),
-      style: "duoButton" as ButtonType, // Custom style for Duo Mode
+      style: "destructive" as ButtonType, // Same red as normal mode
       onPress: onConfirm
     }
   ] as AlertButton[]

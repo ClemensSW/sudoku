@@ -32,7 +32,6 @@ export type ButtonType =
   | "danger"
   | "destructive"
   | "cancel"
-  | "duoButton"
   | "info";
 
 // Define alert types with different visual styles
@@ -235,7 +234,6 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   } => {
     switch (buttonType) {
       case "primary":
-      case "duoButton":
       case "info":
         return {
           variant: "primary",

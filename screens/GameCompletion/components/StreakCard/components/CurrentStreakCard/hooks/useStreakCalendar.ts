@@ -52,6 +52,12 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
     setSelectedMonth(newYearMonth);
   };
 
+  const handleGoToCurrentMonth = () => {
+    const now = new Date();
+    const currentYearMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+    setSelectedMonth(currentYearMonth);
+  };
+
   const canGoBack = () => {
     const date = new Date(year, month - 1, 1);
     const twelveMonthsAgo = new Date();
@@ -162,6 +168,7 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
     // Navigation
     handlePreviousMonth,
     handleNextMonth,
+    handleGoToCurrentMonth,
     canGoBack,
     canGoForward,
 

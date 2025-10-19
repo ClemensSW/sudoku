@@ -22,6 +22,7 @@ interface StreakCalendarGridProps {
   progressPercentage: number;
   onPreviousMonth: () => void;
   onNextMonth: () => void;
+  onGoToCurrentMonth: () => void;
   canGoBack: boolean;
   canGoForward: boolean;
 }
@@ -37,6 +38,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
   progressPercentage,
   onPreviousMonth,
   onNextMonth,
+  onGoToCurrentMonth,
   canGoBack,
   canGoForward,
 }) => {
@@ -180,7 +182,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         </Pressable>
 
         <Pressable
-          onPress={canGoForward ? onNextMonth : canGoBack ? onPreviousMonth : undefined}
+          onPress={onGoToCurrentMonth}
           style={({ pressed }) => [
             styles.monthTitleContainer,
             { backgroundColor: pressed ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent' },

@@ -47,6 +47,7 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
     monthNames,
     handlePreviousMonth,
     handleNextMonth,
+    handleGoToCurrentMonth,
     canGoBack,
     canGoForward,
     calendar,
@@ -91,6 +92,7 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
           progressPercentage={progressPercentage}
           onPreviousMonth={handlePreviousMonth}
           onNextMonth={handleNextMonth}
+          onGoToCurrentMonth={handleGoToCurrentMonth}
           canGoBack={canGoBack()}
           canGoForward={canGoForward()}
         />

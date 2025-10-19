@@ -204,7 +204,7 @@ const Duo: React.FC = () => {
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.isDark ? "#1A202C" : colors.background },
+        { backgroundColor: colors.background },
       ]}
     >
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />

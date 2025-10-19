@@ -125,6 +125,7 @@ const VortexDigit = React.memo(function VortexDigitComp({
   S,
   isDark,
   digitColor,
+  performance,
 }: {
   seed: VortexSeed;
   vortexClock: SharedValue<number>;
@@ -134,6 +135,7 @@ const VortexDigit = React.memo(function VortexDigitComp({
   S: number;
   isDark: boolean;
   digitColor: string;
+  performance: "low" | "balanced" | "high";
 }) {
   const scaleUnit = S / 300;
   const VORTEX_TURB = 0.18;
@@ -175,7 +177,12 @@ const VortexDigit = React.memo(function VortexDigitComp({
     };
   });
 
-  const textShadowColor = isDark ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.22)";
+  // Text shadows nur in high performance mode (sehr performance-intensiv!)
+  const useTextShadow = performance === "high";
+  const textShadowRadius = useTextShadow ? 2 : 0;
+  const textShadowColor = useTextShadow
+    ? (isDark ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.22)")
+    : "transparent";
 
   return (
     <AT
@@ -186,7 +193,7 @@ const VortexDigit = React.memo(function VortexDigitComp({
           fontSize: seed.size,
           fontWeight: "700",
           color: digitColor,
-          textShadowRadius: 2,
+          textShadowRadius,
           textShadowOffset: { width: 0, height: 0 },
           textShadowColor,
           includeFontPadding: false,
@@ -224,9 +231,9 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
   // --- Performance profile & density ---
   // REDUCED: Weniger Digits für bessere Performance
   const baseCount =
-    performance === "low" ? 18 : performance === "high" ? 36 : 24;
+    performance === "low" ? 12 : performance === "high" ? 24 : 16;
   const density = clamp(Math.sqrt((W * H) / (300 * 440)), 0.85, 1.25);
-  const VORTEX_COUNT = Math.min(48, Math.round(baseCount * density)); // Max 48 statt 64
+  const VORTEX_COUNT = Math.min(36, Math.round(baseCount * density)); // Max 36 für bessere Performance
 
   // --- Animation running state ---
   const isAnimationRunning = useRef(false);
@@ -311,7 +318,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
 
       // SLOWER: Langsamere Rotationen für bessere Performance
       vortexClock.value = withRepeat(
-        withTiming(1, { duration: 18000, easing: Easing.linear }), // 18s statt 14s
+        withTiming(1, { duration: 24000, easing: Easing.linear }), // 24s für noch bessere Performance
         -1,
         false
       );
@@ -460,6 +467,7 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             S={S}
             isDark={isDark}
             digitColor={PAL.digit}
+            performance={performance}
           />
         ))}
       </View>

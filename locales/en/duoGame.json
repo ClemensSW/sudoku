@@ -4,5 +4,23 @@
     "notes": "Notes",
     "clear": "Clear",
     "hint": "Hint"
+  },
+  "players": {
+    "player1": "Player 1",
+    "player2": "Player 2"
+  },
+  "completion": {
+    "tie": "It's a Tie!",
+    "winnerTitle": "{{player}} wins!",
+    "bothCompleted": "Both completed their field",
+    "reasonFaster": "Finished faster",
+    "reasonErrors": "Opponent made too many errors",
+    "winner": "WINNER",
+    "complete": "Complete",
+    "filled": "Filled",
+    "buttons": {
+      "rematch": "Rematch",
+      "backToMenu": "Back to Menu"
+    }
   }
 }

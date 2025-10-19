@@ -4,5 +4,23 @@
     "notes": "नोट्स",
     "clear": "मिटाएं",
     "hint": "संकेत"
+  },
+  "players": {
+    "player1": "खिलाड़ी 1",
+    "player2": "खिलाड़ी 2"
+  },
+  "completion": {
+    "tie": "बराबरी!",
+    "winnerTitle": "{{player}} जीते!",
+    "bothCompleted": "दोनों ने अपना क्षेत्र पूरा किया",
+    "reasonFaster": "तेज़ी से पूरा किया",
+    "reasonErrors": "प्रतिद्वंद्वी ने बहुत अधिक गलतियाँ कीं",
+    "winner": "विजेता",
+    "complete": "पूर्ण",
+    "filled": "भरा हुआ",
+    "buttons": {
+      "rematch": "फिर से खेलें",
+      "backToMenu": "मेन्यू पर वापस जाएं"
+    }
   }
 }

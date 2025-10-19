@@ -4,5 +4,23 @@
     "notes": "Notizen",
     "clear": "Löschen",
     "hint": "Hinweis"
+  },
+  "players": {
+    "player1": "Spieler 1",
+    "player2": "Spieler 2"
+  },
+  "completion": {
+    "tie": "Unentschieden!",
+    "winnerTitle": "{{player}} gewinnt!",
+    "bothCompleted": "Beide haben ihr Feld vervollständigt",
+    "reasonFaster": "Schneller fertig",
+    "reasonErrors": "Gegner hat zu viele Fehler",
+    "winner": "GEWINNER",
+    "complete": "Fertig",
+    "filled": "Ausgefüllt",
+    "buttons": {
+      "rematch": "Revanche",
+      "backToMenu": "Zurück zum Menü"
+    }
   }
 }

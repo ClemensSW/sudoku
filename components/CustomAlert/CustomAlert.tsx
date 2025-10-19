@@ -223,7 +223,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "confirmation":
         return progressColor; // Use current path color
       case "duoMode":
-        return "#4A7D78"; // Teal
+        return progressColor; // Use current path color (dynamic!)
       default:
         return progressColor; // Use current path color for info
     }
@@ -259,7 +259,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
       case "duoButton":
         return {
           ...baseStyle,
-          backgroundColor: "#4A7D78",
+          backgroundColor: progressColor, // Use current path color (dynamic!)
         };
       case "info":
         return {

@@ -279,7 +279,7 @@ export const quitGameAlert = (onConfirm: () => void, onCancel?: () => void) => (
 
 /**
  * Create quit game confirmation alert styled specifically for Duo Mode
- * Uses teal color (#4A7D78) for the icon and confirm button
+ * Uses the current dynamic path color for the icon and confirm button
  */
 export const duoQuitGameAlert = (onConfirm: () => void, onCancel?: () => void) => ({
   title: i18n.t('alerts:game.quit.title'),

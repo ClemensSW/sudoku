@@ -215,3 +215,17 @@ export const getDuoBrandColor = (pathColorHex: string): string => {
   // Im Unified Professional Design nutzen beide Spieler die Path Color gleichwertig
   return pathColorHex;
 };
+
+/**
+ * Player Primary Color für Preview/Controls
+ * Beide Spieler nutzen neutrale numberPadButton Farbe (gleichwertig)
+ */
+export const getPlayerPrimaryColor = (
+  player: DuoPlayerId,
+  pathColorHex: string,
+  isDark: boolean
+): string => {
+  const themeColors = isDark ? colors.dark : colors.light;
+  // Beide Spieler bekommen die gleiche neutrale Farbe (wie NumberPad)
+  return themeColors.numberPadButton;  // #F1F3F4 Light / #35363A Dark
+};

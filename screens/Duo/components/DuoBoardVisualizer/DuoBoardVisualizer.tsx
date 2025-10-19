@@ -7,8 +7,6 @@ import {
   View,
   StyleSheet,
   Pressable,
-  Image,
-  ImageSourcePropType,
   ViewStyle,
   StyleProp,
   Text,
@@ -27,6 +25,14 @@ import Animated, {
 import type { SharedValue } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
+import { hexToColorId } from "@/utils/pathColors";
+
+// SVG Icons für alle Path Colors
+import IconBlue from "@/assets/images/iconBlue.svg";
+import IconGreen from "@/assets/images/iconGreen.svg";
+import IconYellow from "@/assets/images/iconYellow.svg";
+import IconRed from "@/assets/images/iconRed.svg";
+import IconPurple from "@/assets/images/iconPurple.svg";
 
 // ---------- Helpers (worklets) ----------
 const clamp = (v: number, lo: number, hi: number) => {
@@ -73,8 +79,19 @@ const getPalette = (themeColor: string, isDark: boolean) => {
   }
 };
 
-// ---------- Assets ----------
-const APP_LOGO: ImageSourcePropType = require("@/assets/images/icon.png");
+// ---------- Icon Selection Helper ----------
+// Get correct icon component based on theme color
+const getIconComponent = (themeColor: string) => {
+  const colorId = hexToColorId(themeColor);
+  switch (colorId) {
+    case 'blue': return IconBlue;
+    case 'green': return IconGreen;
+    case 'yellow': return IconYellow;
+    case 'red': return IconRed;
+    case 'purple': return IconPurple;
+    default: return IconBlue;
+  }
+};
 
 // ---------- Types ----------
 type VortexSeed = {
@@ -222,6 +239,9 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
 }) => {
   // Generate palette based on theme color
   const PAL = useMemo(() => getPalette(themeColor, isDark), [themeColor, isDark]);
+
+  // Get dynamic icon component based on theme color
+  const DynamicIcon = useMemo(() => getIconComponent(themeColor), [themeColor]);
   // --- Maße ---
   const S = size;
   const W = stageWidth ?? S;
@@ -586,10 +606,9 @@ const DuoBoardVisualizer: React.FC<DuoBoardVisualizerProps> = ({
             justifyContent: "center",
           }}
         >
-          <Image
-            source={APP_LOGO}
-            style={{ width: "70%", height: "70%" }}
-            resizeMode="contain"
+          <DynamicIcon
+            width={S * 0.7}
+            height={S * 0.7}
           />
         </Pressable>
       </Animated.View>

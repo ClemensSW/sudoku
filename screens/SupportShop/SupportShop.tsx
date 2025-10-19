@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 
 import { useNavigation } from "@/contexts/navigation";
 import { useSupporter } from "@/modules/subscriptions/hooks/useSupporter";
+import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Components
 import BenefitsBanner from "./components/BenefitsBanner";
@@ -49,6 +50,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const progressColor = useProgressColor(); // Dynamic path color
 
   const { hideBottomNav, resetBottomNav } = useNavigation();
   const { status } = useSupporter();
@@ -357,8 +359,8 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         {/* Benefits Banner - Visual with rotating variants */}
         <Animated.View entering={FadeIn.duration(400)}>
           <BenefitsBanner
-            primaryColor={colors.primary}
-            secondaryColor={colors.primaryDark}
+            primaryColor={progressColor}
+            secondaryColor={progressColor}
           />
         </Animated.View>
 
@@ -545,20 +547,20 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: colors.primary + '20',
+              backgroundColor: progressColor + '20',
               paddingHorizontal: 16,
               paddingVertical: 8,
               borderRadius: 20,
               borderWidth: 1,
-              borderColor: colors.primary + '40',
+              borderColor: progressColor + '40',
             }}
           >
-            <Feather name="chevron-down" size={16} color={colors.primary} />
+            <Feather name="chevron-down" size={16} color={progressColor} />
             <Text
               style={{
                 fontSize: 13,
                 fontWeight: '600',
-                color: colors.primary,
+                color: progressColor,
                 marginLeft: 6,
               }}
             >

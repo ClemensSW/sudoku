@@ -67,17 +67,25 @@ export const PATH_COLOR_HEX = {
 } as const;
 
 /**
- * Mappt Legacy Hex-Werte zu ColorIds
+ * Mappt Hex-Werte zu ColorIds (unterstützt Light und Dark Mode Farben)
  */
 export const hexToColorId = (hex: string): PathColorId => {
   const normalized = hex.toUpperCase();
 
-  // Alte Werte auch supporten
-  if (normalized === '#4285F4') return 'blue';
-  if (normalized === '#34A853') return 'green';
-  if (normalized === '#FBBC05' || normalized === '#F9AB00') return 'yellow';
-  if (normalized === '#EA4335') return 'red';
-  if (normalized === '#673AB7' || normalized === '#7C4DFF') return 'purple';
+  // Blue (Light und Dark)
+  if (normalized === '#4285F4' || normalized === '#5E9EFF') return 'blue';
+
+  // Green (Light und Dark)
+  if (normalized === '#34A853' || normalized === '#5FBF73') return 'green';
+
+  // Yellow (Light und Dark, inkl. alte Werte)
+  if (normalized === '#FBBC05' || normalized === '#F9AB00' || normalized === '#FFD666') return 'yellow';
+
+  // Red (Light und Dark)
+  if (normalized === '#EA4335' || normalized === '#FF6B6B') return 'red';
+
+  // Purple (Light und Dark, inkl. alte Werte)
+  if (normalized === '#673AB7' || normalized === '#7C4DFF' || normalized === '#A78BFA') return 'purple';
 
   // Default fallback
   return 'blue';
@@ -89,4 +97,32 @@ export const hexToColorId = (hex: string): PathColorId => {
 export const getColorFromHex = (hex: string, isDark: boolean): string => {
   const colorId = hexToColorId(hex);
   return getPathColor(colorId, isDark);
+};
+
+/**
+ * Generiert einen schönen LinearGradient für jede Path-Farbe
+ * Returns: [color1, color2, color3] für diagonalen Gradient (top-left to bottom-right)
+ */
+export const getPathGradient = (colorHex: string, isDark: boolean): [string, string, string] => {
+  const colorId = hexToColorId(colorHex);
+
+  // Gradient-Definitionen für Light Mode (hellere Variante → Basis → dunklere Variante)
+  const lightGradients: Record<PathColorId, [string, string, string]> = {
+    blue: ['#5A9DFF', '#4285F4', '#3367D6'],
+    green: ['#4DBF6A', '#34A853', '#2D8E47'],
+    yellow: ['#FFC133', '#F9AB00', '#E09600'],
+    red: ['#FF5F4D', '#EA4335', '#D93025'],
+    purple: ['#9366FF', '#7C4DFF', '#6536E6'],
+  };
+
+  // Gradient-Definitionen für Dark Mode (sanfter, pastelliger)
+  const darkGradients: Record<PathColorId, [string, string, string]> = {
+    blue: ['#7FB3FF', '#5E9EFF', '#4A8AE6'],
+    green: ['#7DD88F', '#5FBF73', '#4DA660'],
+    yellow: ['#FFE599', '#FFD666', '#F0C04D'],
+    red: ['#FF8A7A', '#FF6B6B', '#F05252'],
+    purple: ['#BBA4FA', '#A78BFA', '#9372E8'],
+  };
+
+  return isDark ? darkGradients[colorId] : lightGradients[colorId];
 };

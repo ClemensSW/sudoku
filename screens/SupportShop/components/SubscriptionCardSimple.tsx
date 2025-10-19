@@ -12,6 +12,7 @@ import { Feather } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { Product } from "../utils/billing/BillingManager";
 import styles, { cardWidth, fullCardWidth } from "./SubscriptionCardSimple.styles";
 import CalendarIcon from "@/assets/svg/calendar.svg";
@@ -41,6 +42,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
   const { colors } = theme;
+  const progressColor = useProgressColor(); // Dynamic path color
 
   // Animation values
   const scale = useSharedValue(1);
@@ -127,7 +129,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
             styles.container,
             {
               backgroundColor: isActive ? 'transparent' : (theme.isDark ? colors.card : "#FFFFFF"),
-              borderColor: isActive ? "#D4AF37" : (isBestValue ? colors.primary : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)")),
+              borderColor: isActive ? "#D4AF37" : (isBestValue ? progressColor : (theme.isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)")),
               borderWidth: isActive ? 2 : (isBestValue ? 2 : 1),
               overflow: 'hidden',
               width: isFullWidth ? fullCardWidth : cardWidth,
@@ -230,7 +232,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
                   <View style={{ flexDirection: 'column', gap: 6 }}>
                     <View style={styles.benefit}>
-                      <Feather name="zap" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="zap" size={16} color={isActive ? '#FFFFFF' : progressColor} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -246,7 +248,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       </Text>
                     </View>
                     <View style={styles.benefit}>
-                      <Feather name="image" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="image" size={16} color={isActive ? '#FFFFFF' : progressColor} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -265,7 +267,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       </Text>
                     </View>
                     <View style={styles.benefit}>
-                      <Feather name="shield" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="shield" size={16} color={isActive ? '#FFFFFF' : progressColor} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -281,7 +283,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                       </Text>
                     </View>
                     <View style={styles.benefit}>
-                      <Feather name="eye-off" size={16} color={isActive ? '#FFFFFF' : colors.primary} />
+                      <Feather name="eye-off" size={16} color={isActive ? '#FFFFFF' : progressColor} />
                       <Text style={[
                         styles.benefitText,
                         {
@@ -313,7 +315,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 
               {/* Best Value Badge */}
               {!isActive && isBestValue && (
-                <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+                <View style={[styles.badge, { backgroundColor: progressColor }]}>
                   <Feather name="star" size={12} color="#FFFFFF" />
                   <Text style={styles.badgeText}>{t('subscriptions.bestValue')}</Text>
                 </View>
@@ -356,7 +358,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               {/* Benefits - Compact */}
               <View style={styles.benefitsRow}>
                 <View style={styles.benefit}>
-                  <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Feather name="zap" size={14} color={isActive ? '#FFFFFF' : progressColor} />
                   <Text style={[
                     styles.benefitText,
                     {
@@ -370,7 +372,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   </Text>
                 </View>
                 <View style={styles.benefit}>
-                  <Feather name="image" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Feather name="image" size={14} color={isActive ? '#FFFFFF' : progressColor} />
                   <Text style={[
                     styles.benefitText,
                     {
@@ -387,7 +389,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   </Text>
                 </View>
                 <View style={styles.benefit}>
-                  <Feather name="shield" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Feather name="shield" size={14} color={isActive ? '#FFFFFF' : progressColor} />
                   <Text style={[
                     styles.benefitText,
                     {
@@ -401,7 +403,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   </Text>
                 </View>
                 <View style={styles.benefit}>
-                  <Feather name="eye-off" size={14} color={isActive ? '#FFFFFF' : colors.primary} />
+                  <Feather name="eye-off" size={14} color={isActive ? '#FFFFFF' : progressColor} />
                   <Text style={[
                     styles.benefitText,
                     {
@@ -443,7 +445,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
               </View>
 
               {/* CTA Button */}
-              <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : colors.primary }]}>
+              <View style={[styles.button, { backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : progressColor }]}>
                 <Text style={styles.buttonText}>
                   {isActive ? t('subscriptions.manage') : t('subscriptions.subscribe')}
                 </Text>

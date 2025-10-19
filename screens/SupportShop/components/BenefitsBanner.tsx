@@ -14,6 +14,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { useSupporter } from '@/modules/subscriptions/hooks/useSupporter';
+import { getPathGradient } from '@/utils/pathColors';
 import styles from './BenefitsBanner.styles';
 import GiftIcon from '@/assets/svg/gift.svg';
 
@@ -28,7 +29,7 @@ try {
 
 interface BannerProps {
   primaryColor: string;
-  secondaryColor: string;
+  secondaryColor: string; // Not used anymore, but kept for backward compatibility
 }
 
 interface BannerVariant {
@@ -37,10 +38,13 @@ interface BannerVariant {
   subtitleKey: string;
 }
 
-const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor }) => {
+const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
   const theme = useTheme();
   const { t } = useTranslation('supportShop');
   const { isSupporter } = useSupporter();
+
+  // Get dynamic gradient colors based on current path color and theme
+  const gradientColors = getPathGradient(primaryColor, theme.isDark);
 
   // Animation values
   const scale = useSharedValue(1);
@@ -114,10 +118,10 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor, secondaryColor })
       style={styles.container}
       entering={FadeIn.duration(800)}
     >
-      {/* Background with gradient - Premium Gold for Supporters */}
+      {/* Background with gradient - Premium Gold for Supporters, Dynamic Path Color Gradient otherwise */}
       <View style={styles.background}>
         <LinearGradient
-          colors={isSupporter ? ['#E5C158', '#D4AF37', '#C19A2E'] : [primaryColor, secondaryColor]}
+          colors={isSupporter ? ['#E5C158', '#D4AF37', '#C19A2E'] : gradientColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}

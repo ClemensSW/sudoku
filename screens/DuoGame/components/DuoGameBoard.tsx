@@ -125,7 +125,19 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
 
   return (
     <View style={styles.boardContainer}>
-      <Animated.View style={[styles.boardWrapper, animatedStyle]}>
+      <Animated.View style={[
+        styles.boardWrapper,
+        animatedStyle,
+        {
+          // Leuchtender Path Color Rand (wie LevelCard)
+          borderWidth: 2,
+          borderColor: pathColorHex,
+          shadowColor: pathColorHex,  // Farbiger Glow-Effekt!
+          shadowOpacity: isDark ? 0.6 : 0.35,  // Stärker im Dark Mode
+          shadowRadius: isDark ? 16 : 12,
+          elevation: 10,
+        }
+      ]}>
         <View style={styles.board}>
           {/* Player areas + subtle lightness gradient (static) */}
           <View style={styles.playerAreasContainer} pointerEvents="none">
@@ -234,11 +246,8 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 8,
+    // Shadow & Border werden dynamisch gesetzt (Path Color)
+    shadowOffset: { width: 0, height: 6 },
   },
   board: {
     width: BOARD_SIZE,

@@ -1,16 +1,19 @@
 // screens/DuoScreen/components/DuoFeatures/DuoFeatures.tsx
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { getPathColor } from "@/utils/pathColors";
 import styles from "./DuoFeatures.styles";
 
+// SVG Icons
+import UnterstutzungIcon from "@/assets/svg/unterstutzung.svg";
+import HappyIcon from "@/assets/svg/happy.svg";
+import ZielIcon from "@/assets/svg/ziel.svg";
+
 interface Feature {
-  icon: string;
+  icon: React.FC<{ width: number; height: number; fill?: string }>;
   title: string;
   description: string;
   color: string;
@@ -37,19 +40,19 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
 
   const features: Feature[] = [
     {
-      icon: "users",
+      icon: UnterstutzungIcon,
       title: t('features.items.playTogether.title'),
       description: t('features.items.playTogether.description'),
       color: primaryColor, // Dynamic primary color
     },
     {
-      icon: "smile",
+      icon: HappyIcon,
       title: t('features.items.challengingLayout.title'),
       description: t('features.items.challengingLayout.description'),
       color: yellowColor, // Theme yellow
     },
     {
-      icon: "target",
+      icon: ZielIcon,
       title: t('features.items.strategyTeamwork.title'),
       description: t('features.items.strategyTeamwork.description'),
       color: redColor, // Theme red
@@ -62,26 +65,29 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
         {t('features.title')}
       </Text>
 
-      {features.map((feature, index) => (
-        <View
-          key={`feature-${index}`}
-          style={[styles.featureCard, { backgroundColor: colors.surface }]}
-        >
-          <View style={styles.featureIcon}>
-            <Feather name={feature.icon as any} size={48} color={feature.color} />
+      {features.map((feature, index) => {
+        const IconComponent = feature.icon;
+        return (
+          <View
+            key={`feature-${index}`}
+            style={[styles.featureCard, { backgroundColor: colors.surface }]}
+          >
+            <View style={styles.featureIcon}>
+              <IconComponent width={48} height={48} fill={feature.color} />
+            </View>
+            <View style={styles.featureContent}>
+              <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>
+                {feature.title}
+              </Text>
+              <Text
+                style={[styles.featureDescription, { color: colors.textSecondary }]}
+              >
+                {feature.description}
+              </Text>
+            </View>
           </View>
-          <View style={styles.featureContent}>
-            <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>
-              {feature.title}
-            </Text>
-            <Text
-              style={[styles.featureDescription, { color: colors.textSecondary }]}
-            >
-              {feature.description}
-            </Text>
-          </View>
-        </View>
-      ))}
+        );
+      })}
 
       <View
         style={styles.buttonContainer}

@@ -2,10 +2,9 @@
  * PrivateJoin Screen
  *
  * Handles joining private matches via invite code (deep link entry)
- * Full implementation in Phase 3.4
  */
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,6 +18,13 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import functions from '@react-native-firebase/functions';
+import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
+
+interface JoinPrivateMatchResult {
+  matchId: string;
+  success: boolean;
+}
 
 export default function PrivateJoin() {
   const router = useRouter();
@@ -28,9 +34,27 @@ export default function PrivateJoin() {
 
   const inviteCode = params.inviteCode?.toUpperCase();
 
+  const [isJoining, setIsJoining] = useState(false);
+  const [matchId, setMatchId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Listen for match updates (auto-start detection)
+  const { matchState } = useRealtimeMatch(matchId ?? null);
+
   useEffect(() => {
     console.log('[PrivateJoin] Opened with invite code:', inviteCode);
   }, [inviteCode]);
+
+  // Navigate to game when match starts (status changes to "active")
+  useEffect(() => {
+    if (matchState && matchState.status === 'active' && matchId) {
+      console.log('[PrivateJoin] Match started! Navigating to game...');
+      router.replace({
+        pathname: '/duo-online/game',
+        params: { matchId },
+      });
+    }
+  }, [matchState?.status, matchId, router]);
 
   const styles = StyleSheet.create({
     container: {
@@ -159,9 +183,33 @@ export default function PrivateJoin() {
     router.back();
   };
 
-  const handleJoinMatch = () => {
-    // TODO: Phase 3.4 - Call joinPrivateMatch Cloud Function
-    console.log('[PrivateJoin] TODO: Join match with code:', inviteCode);
+  const handleJoinMatch = async () => {
+    if (!inviteCode) return;
+
+    setIsJoining(true);
+    setError(null);
+
+    try {
+      console.log('[PrivateJoin] Joining match with code:', inviteCode);
+
+      const result = await functions().httpsCallable<
+        { inviteCode: string; displayName: string },
+        JoinPrivateMatchResult
+      >('joinPrivateMatch')({
+        inviteCode,
+        displayName: 'Guest Player', // TODO: Get from auth context
+      });
+
+      console.log('[PrivateJoin] Successfully joined match:', result.data.matchId);
+
+      // Set matchId to start listening for match updates
+      setMatchId(result.data.matchId);
+      setIsJoining(false);
+    } catch (err: any) {
+      console.error('[PrivateJoin] Failed to join match:', err);
+      setError(err.message || 'Failed to join match');
+      setIsJoining(false);
+    }
   };
 
   // No invite code provided
@@ -233,29 +281,53 @@ export default function PrivateJoin() {
             <Text style={styles.inviteCode}>{inviteCode}</Text>
           </View>
 
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton]}
-            onPress={handleJoinMatch}
-          >
-            <Text style={[styles.buttonText, styles.primaryButtonText]}>
-              Join Match
-            </Text>
-          </TouchableOpacity>
+          {isJoining ? (
+            // Loading state
+            <View style={{ alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <Text style={[styles.subtitle, { marginTop: theme.spacing.md }]}>
+                Joining match...
+              </Text>
+            </View>
+          ) : matchId ? (
+            // Waiting for match to start
+            <View style={{ alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <Text style={[styles.subtitle, { marginTop: theme.spacing.md }]}>
+                Waiting for match to start...
+              </Text>
+            </View>
+          ) : (
+            // Join button
+            <>
+              <TouchableOpacity
+                style={[styles.button, styles.primaryButton]}
+                onPress={handleJoinMatch}
+                disabled={!!error}
+              >
+                <Text style={[styles.buttonText, styles.primaryButtonText]}>
+                  Join Match
+                </Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={handleBack}
-          >
-            <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-              {t('common.cancel', 'Cancel')}
-            </Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.secondaryButton]}
+                onPress={handleBack}
+              >
+                <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+                  {t('common.cancel', 'Cancel')}
+                </Text>
+              </TouchableOpacity>
 
-          <View style={styles.comingSoonBadge}>
-            <Text style={styles.comingSoonText}>
-              Full implementation in Phase 3.4
-            </Text>
-          </View>
+              {error && (
+                <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.error + '20' }]}>
+                  <Text style={[styles.comingSoonText, { color: theme.colors.error }]}>
+                    {error}
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
         </View>
       </View>
     </SafeAreaView>

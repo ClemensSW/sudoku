@@ -38,10 +38,10 @@ export function useMatchmaking() {
       try {
         console.log('[useMatchmaking] Searching for match...');
 
-        const result = await functions('europe-west3').httpsCallable<
+        const result = await functions().httpsCallable<
           { difficulty: string; elo: number; displayName: string },
           MatchmakingResult
-        >('matchmaking')({
+        >('matchmaking', { region: 'europe-west3' })({
           difficulty,
           elo,
           displayName,

@@ -237,10 +237,10 @@ export default function PrivateMatchLobby() {
     try {
       console.log('[PrivateLobby] Creating private match with difficulty:', difficulty);
 
-      const result = await functions('europe-west3').httpsCallable<
+      const result = await functions().httpsCallable<
         { difficulty: string; displayName: string },
         CreatePrivateMatchResult
-      >('createPrivateMatch')({
+      >('createPrivateMatch', { region: 'europe-west3' })({
         difficulty,
         displayName: 'Host Player', // TODO: Get from auth context
       });

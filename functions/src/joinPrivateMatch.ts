@@ -15,6 +15,7 @@ import * as admin from "firebase-admin";
 import type { MatchDocument } from "./types/firestore";
 
 export const joinPrivateMatch = onCall(
+  {region: "europe-west3"},
   async (request) => {
     // Auth check
     if (!request.auth) {

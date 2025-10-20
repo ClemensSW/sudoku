@@ -17,7 +17,7 @@ import * as admin from "firebase-admin";
 import { generateSudokuPuzzle, generateAIName } from "./utils/sudokuGenerator";
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
-export const matchmaking = onCall(async (request) => {
+export const matchmaking = onCall({region: "europe-west3"}, async (request) => {
   // Auth check
   if (!request.auth) {
     throw new HttpsError(

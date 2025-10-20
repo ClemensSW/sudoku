@@ -15,6 +15,7 @@ import { generateSudokuPuzzle, generateInviteCode } from "./utils/sudokuGenerato
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
 export const createPrivateMatch = onCall(
+  {region: "europe-west3"},
   async (request) => {
     // Auth check
     if (!request.auth) {

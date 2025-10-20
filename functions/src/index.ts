@@ -13,7 +13,7 @@ admin.initializeApp();
 // ===== Exports =====
 
 // Health Check Function (Test-Funktion)
-export const healthCheck = onRequest((req, res) => {
+export const healthCheck = onRequest({region: "europe-west3"}, (req, res) => {
   res.json({
     status: "ok",
     message: "Sudoku Duo Cloud Functions are running!",

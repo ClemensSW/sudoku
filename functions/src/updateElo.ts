@@ -16,7 +16,7 @@ import * as admin from "firebase-admin";
 import { calculateEloChanges, getRankTier } from "./utils/eloCalculator";
 import type { MatchDocument } from "./types/firestore";
 
-export const updateElo = onCall(async (request) => {
+export const updateElo = onCall({region: "europe-west3"}, async (request) => {
   // Auth check
   if (!request.auth) {
     throw new HttpsError(

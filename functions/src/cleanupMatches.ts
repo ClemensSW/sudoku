@@ -12,7 +12,10 @@
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 
-export const cleanupMatches = onSchedule({schedule: "every 1 hours"}, async (event) => {
+export const cleanupMatches = onSchedule({
+  schedule: "every 1 hours",
+  region: "europe-west3",
+}, async (event) => {
     const db = admin.firestore();
     const now = Date.now();
 

@@ -42,16 +42,19 @@ export async function initializeFirebase(): Promise<void> {
     // ⚠️ DEVELOPMENT ONLY: Connect to Firebase Emulator
     if (__DEV__) {
       try {
-        // Use different host for Android emulator vs iOS/web
-        const localhost = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+        // Use different host depending on platform and device type
+        // Physical Device: Use computer's IP address (192.168.0.206)
+        // Android Emulator: Use 10.0.2.2 (special emulator IP)
+        // iOS Simulator: Use localhost
+        const localhost = Platform.OS === 'android' ? '192.168.0.206' : 'localhost';
 
         // Connect to Functions Emulator
         functions().useEmulator(localhost, 5001);
         console.log(`[Firebase] ✅ Connected to Functions Emulator at ${localhost}:5001`);
 
         // Connect to Firestore Emulator
-        firestore().useEmulator(localhost, 8080);
-        console.log(`[Firebase] ✅ Connected to Firestore Emulator at ${localhost}:8080`);
+        firestore().useEmulator(localhost, 8088);
+        console.log(`[Firebase] ✅ Connected to Firestore Emulator at ${localhost}:8088`);
 
         // Connect to Auth Emulator
         auth().useEmulator(`http://${localhost}:9099`);

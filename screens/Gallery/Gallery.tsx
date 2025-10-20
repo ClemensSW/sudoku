@@ -143,6 +143,9 @@ const Gallery: React.FC = () => {
   const gridRef = useRef<any>(null);
   const scrollOffset = useRef<number>(0);
 
+  // Force refresh key für FlatList nach Unlock
+  const [refreshKey, setRefreshKey] = useState(0);
+
   // Track welche Tabs bereits animiert wurden (per Tab)
   const animatedTabsRef = useRef<Set<LandscapeFilter>>(new Set());
   const [shouldAnimateCurrentTab, setShouldAnimateCurrentTab] = useState(true);
@@ -414,6 +417,18 @@ const Gallery: React.FC = () => {
     }
   };
 
+  // Handler: Nach Unlock - lädt Daten neu und zwingt FlatList zum Re-Render
+  const handleImageUnlocked = async () => {
+    // Cache invalidieren
+    shuffleCacheRef.current.clear();
+
+    // Daten neu laden
+    await reload();
+
+    // FlatList zwingen, neu zu rendern
+    setRefreshKey(prev => prev + 1);
+  };
+
   // Navigate directly to LeistungScreen instead of going back
   const { resetBottomNav } = useNavigation();
   const handleBack = () => {
@@ -603,6 +618,7 @@ const Gallery: React.FC = () => {
               currentImageId={currentImageId}
               shouldAnimate={shouldAnimateCurrentTab}
               onScroll={handleScroll}
+              refreshKey={refreshKey}
             />
           ) : (
             <EmptyState activeTab={activeTab} router={router} colors={colors} />
@@ -636,7 +652,7 @@ const Gallery: React.FC = () => {
         onToggleFavorite={handleToggleFavorite}
         onSelectAsProject={handleSelectAsProject}
         currentImageId={currentImageId}
-        onImageUnlocked={reload}
+        onImageUnlocked={handleImageUnlocked}
         onOpenSupportShop={() => setShowSupportShop(true)}
       />
 

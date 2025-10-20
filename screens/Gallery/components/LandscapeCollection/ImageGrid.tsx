@@ -274,6 +274,7 @@ interface ImageGridProps {
   currentImageId?: string; // ID des aktuell freizuschaltenden Bildes
   shouldAnimate?: boolean; // Soll die Animation abgespielt werden?
   onScroll?: (event: any) => void; // Handler für Scroll-Events
+  refreshKey?: number; // Key um FlatList zu zwingen neu zu rendern
 }
 
 const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
@@ -284,6 +285,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
   currentImageId,
   shouldAnimate = true,
   onScroll,
+  refreshKey = 0,
 }, ref) => {
   const theme = useTheme();
   const { colors, isDark } = theme;
@@ -358,6 +360,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
         getItemLayout={getItemLayout}
         onScroll={onScroll}
         scrollEventThrottle={32}
+        extraData={refreshKey}
         onScrollToIndexFailed={(info) => {
           // Fallback wenn scrollToIndex fehlschlägt
           const wait = new Promise(resolve => setTimeout(resolve, 50));

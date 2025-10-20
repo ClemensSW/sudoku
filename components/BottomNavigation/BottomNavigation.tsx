@@ -29,7 +29,7 @@ const BottomNavigation: React.FC = () => {
     {
       name: t('navigation.duo'),
       translationKey: "duo",
-      path: "/duo",
+      path: "/duo-online",
       icon: "users",
     },
     {
@@ -66,6 +66,8 @@ const BottomNavigation: React.FC = () => {
         const isActive =
           tab.path === "/"
             ? pathname === "/" || pathname === "/index"
+            : tab.path === "/duo-online"
+            ? pathname.startsWith("/duo-online") || pathname === "/duo"
             : pathname === tab.path;
 
         return (

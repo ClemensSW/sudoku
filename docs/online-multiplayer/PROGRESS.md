@@ -10,9 +10,9 @@
 
 | Metric | Status | Progress |
 |--------|--------|----------|
-| **Overall Progress** | 🚧 Implementation | 22% (Phase 1: 5/23 tasks) |
-| **Current Phase** | Phase 1.1 ✅ | Firebase Setup Complete |
-| **Backend Setup** | 🚧 In Progress | 5/23 tasks |
+| **Overall Progress** | 🚧 Implementation | 57% (Phase 1: 13/23 tasks) |
+| **Current Phase** | Phase 1.2 ✅ | Database Schema Complete |
+| **Backend Setup** | 🚧 In Progress | 13/23 tasks |
 | **Frontend Components** | ⏳ Pending | 0/25 components |
 | **Tests Written** | ⏳ Pending | 0/15 test files |
 | **Deployment** | ⏳ Pending | Not started |
@@ -37,7 +37,7 @@
 ### Phase 1: Foundation & Infrastructure 🚧
 **Status:** In Progress
 **Target Duration:** Week 1-2
-**Completion:** 22% (5/23 tasks)
+**Completion:** 57% (13/23 tasks)
 
 #### 1.1 Firebase Setup ✅
 - [x] Upgrade Firebase project plan (Blaze Plan)
@@ -46,15 +46,22 @@
 - [x] Init Cloud Functions: Created `.firebaserc`, `firebase.json`, `functions/` with TypeScript
 - [x] Setup Firebase Emulators: Configured Auth (9099), Functions (5001), Firestore (8080), UI (4000)
 
-#### 1.2 Database Schema
-- [ ] Create Firestore collection: `users`
-- [ ] Create Firestore collection: `matches`
-- [ ] Create Firestore collection: `matchmaking`
-- [ ] Create Firestore collection: `leaderboards`
-- [ ] Setup Composite Indexes (matchmaking queries)
-- [ ] Setup Composite Indexes (private match lookup)
-- [ ] Implement Security Rules (all collections)
-- [ ] Test Security Rules with Emulator
+#### 1.2 Database Schema ✅
+- [x] Create TypeScript Interfaces for all Firestore collections (`functions/src/types/firestore.ts`)
+- [x] Define UserDocument (profile, onlineStats, achievements)
+- [x] Define MatchDocument (metadata, players, gameState, result)
+- [x] Define MatchmakingDocument (search criteria, ELO range)
+- [x] Define LeaderboardDocument (rankings, tiers)
+- [x] Setup Composite Indexes in `firestore.indexes.json`:
+  - matches (status + type + createdAt)
+  - matches (inviteCode + status)
+  - matchmaking (searching + type + difficulty + elo + searchStartedAt)
+  - users (onlineStats.currentElo + totalMatches)
+- [x] Implement Security Rules (`firestore.rules`):
+  - Users: Own document + ELO validation
+  - Matches: Players only + max 81 moves validation
+  - Matchmaking: Own document + 2-minute timeout
+  - Leaderboards: Read-only for users
 
 #### 1.3 Cloud Functions
 - [ ] Implement `matchmaking` function
@@ -234,7 +241,19 @@ None - Planning phase complete
 
 ## 🟢 Recently Completed
 
-### Session 2 (2025-01-20)
+### Session 2 (2025-01-20) - Continued
+- ✅ **Phase 1.2 Complete:** Database Schema
+- ✅ Created TypeScript Interfaces (`functions/src/types/firestore.ts`)
+  - UserDocument, MatchDocument, MatchmakingDocument, LeaderboardDocument
+  - All sub-types: GameState, CellMove, PlayerInfo, MatchResult, etc.
+- ✅ Defined Composite Indexes in `firestore.indexes.json` (4 indexes)
+- ✅ Implemented comprehensive Security Rules in `firestore.rules`
+  - Helper functions (isSignedIn, isOwner, isPlayerInMatch, isValidEloChange)
+  - Rules for users/, matches/, matchmaking/, leaderboards/
+  - ELO validation (max ±50 per match)
+  - Move validation (max 81 moves per player)
+
+### Session 2 (2025-01-20) - Start
 - ✅ **Phase 1.1 Complete:** Firebase Setup
 - ✅ Created `.firebaserc`, `firebase.json`, `firestore.rules`, `firestore.indexes.json`
 - ✅ Setup `functions/` with TypeScript (package.json, tsconfig.json, src/index.ts)
@@ -298,15 +317,15 @@ None - Planning phase complete
 ## 📊 Metrics Tracking
 
 ### Code Statistics
-- **Files Created:** 11 (3 docs + 8 config/code files)
-- **Lines of Code:** ~150 (TypeScript setup + config)
+- **Files Created:** 12 (3 docs + 9 config/code files)
+- **Lines of Code:** ~500 (TypeScript interfaces + Security Rules + Indexes)
 - **Test Coverage:** 0% (tests start in Phase 1.3)
 
 ### Time Tracking
 - **Planning:** 2 hours
-- **Implementation:** 1 hour (Phase 1.1)
+- **Implementation:** 2 hours (Phase 1.1 + 1.2)
 - **Testing:** 0 hours
-- **Total:** 3 hours
+- **Total:** 4 hours
 
 ### Estimated Remaining
 - **Phase 1:** 16-20 hours

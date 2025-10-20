@@ -2,14 +2,111 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ===== Temporary Rules (Phase 1) =====
-    // Allow all authenticated users (wird in Phase 1.2 ersetzt)
+    // ===== Helper Functions =====
 
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // ===== Final Rules (TODO: Implement in Phase 1.2) =====
-    // Siehe PLAN.md Section 5 für vollständige Security Rules
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isPlayerInMatch(matchData) {
+      return isSignedIn()
+             && (matchData.players[0].uid == request.auth.uid
+                 || matchData.players[1].uid == request.auth.uid);
+    }
+
+    function isValidEloChange(oldElo, newElo) {
+      let diff = newElo - oldElo;
+      return diff >= -50 && diff <= 50;  // Max ±50 ELO per match
+    }
+
+    function isValidMove(move) {
+      return move.row >= 0 && move.row < 9
+             && move.col >= 0 && move.col < 9
+             && move.value >= 0 && move.value <= 9;
+    }
+
+    // ===== Users Collection =====
+
+    match /users/{userId} {
+      // Read: Own document OR public profile fields
+      allow read: if isOwner(userId)
+                  || (isSignedIn() && resource.data.keys().hasAll(['profile']));
+
+      // Create: Own document only
+      allow create: if isOwner(userId);
+
+      // Update: Only own document, ELO changes must be valid
+      allow update: if isOwner(userId)
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['onlineStats.currentElo'])
+                        || isValidEloChange(resource.data.onlineStats.currentElo,
+                                            request.resource.data.onlineStats.currentElo));
+
+      // Delete: Not allowed (data retention)
+      allow delete: if false;
+
+      // Match History Subcollection
+      match /matches/{matchId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Data Subcollection (existing cloud sync)
+      match /data/{document} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ===== Matches Collection =====
+
+    match /matches/{matchId} {
+      // Read: Anyone authenticated (for spectator mode later)
+      allow read: if isSignedIn();
+
+      // Create: Anyone authenticated
+      allow create: if isSignedIn()
+                    && request.resource.data.players[0].uid == request.auth.uid;
+
+      // Update: Only players in the match
+      allow update: if isPlayerInMatch(resource.data);
+
+      // Validation: Max 81 moves per player
+      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['gameState.player1Moves', 'gameState.player2Moves'])
+                    || (request.resource.data.gameState.player1Moves.size() <= 81
+                        && request.resource.data.gameState.player2Moves.size() <= 81);
+
+      // Delete: Not allowed (match history retention)
+      allow delete: if false;
+    }
+
+    // ===== Matchmaking Collection =====
+
+    match /matchmaking/{userId} {
+      // Read/Write: Only own document
+      allow read, write: if isOwner(userId);
+
+      // Validation: Search timeout (max 2 minutes)
+      allow create, update: if request.resource.data.searchStartedAt <= request.time.toMillis()
+                             && request.resource.data.expireAt <= request.time.toMillis() + 120000;
+
+      // Delete: Own document only
+      allow delete: if isOwner(userId);
+    }
+
+    // ===== Leaderboards Collection =====
+
+    match /leaderboards/{rankType} {
+      // Read: Anyone authenticated
+      allow read: if isSignedIn();
+
+      // Write: Only Cloud Functions (has admin token)
+      // NOTE: This will be set when Cloud Functions are deployed with admin SDK
+      allow write: if false;  // For now, block writes (will be updated by Cloud Functions)
+
+      // Delete: Not allowed
+      allow delete: if false;
+    }
   }
 }

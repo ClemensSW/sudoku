@@ -46,7 +46,7 @@ export default function PrivateMatchLobby() {
   const [error, setError] = useState<string | null>(null);
 
   // Listen for match updates (opponent joins)
-  const { matchState, isConnected } = useRealtimeMatch(matchId ?? null);
+  const { matchState, isConnected } = useRealtimeMatch(matchId);
 
   const styles = StyleSheet.create({
     container: {
@@ -261,9 +261,9 @@ export default function PrivateMatchLobby() {
     if (inviteCode) {
       await Clipboard.setStringAsync(inviteCode);
       alert.showAlert({
-        title: 'Copied!',
-        message: 'Invite code copied to clipboard',
-        buttons: [{ text: 'OK' }],
+        title: t('duoOnline.private.codeCopied', 'Copied!'),
+        message: t('duoOnline.private.codeCopiedMsg', 'Invite code copied to clipboard'),
+        buttons: [{ text: t('common.ok', 'OK') }],
       });
     }
   };
@@ -301,13 +301,17 @@ export default function PrivateMatchLobby() {
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
             <Feather name="arrow-left" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Create Private Match</Text>
+          <Text style={styles.headerTitle}>
+            {t('duoOnline.private.createTitle', 'Create Private Match')}
+          </Text>
           <View style={{ width: 40 }} />
         </View>
 
         <View style={styles.content}>
           <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Select Difficulty</Text>
+            <Text style={styles.sectionTitle}>
+              {t('duoOnline.private.selectDifficulty', 'Select Difficulty')}
+            </Text>
 
             <View style={styles.difficultyGrid}>
               {(['easy', 'medium', 'hard', 'expert'] as const).map((level) => (
@@ -345,7 +349,9 @@ export default function PrivateMatchLobby() {
             {isCreating ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color={theme.colors.primary} />
-                <Text style={styles.loadingText}>Creating match...</Text>
+                <Text style={styles.loadingText}>
+                  {t('duoOnline.private.creating', 'Creating match...')}
+                </Text>
               </View>
             ) : (
               <>
@@ -353,7 +359,9 @@ export default function PrivateMatchLobby() {
                   style={styles.createButton}
                   onPress={createMatch}
                 >
-                  <Text style={styles.createButtonText}>Create Match</Text>
+                  <Text style={styles.createButtonText}>
+                    {t('duoOnline.private.createButton', 'Create Match')}
+                  </Text>
                 </TouchableOpacity>
 
                 {error && <Text style={styles.errorText}>{error}</Text>}
@@ -371,7 +379,9 @@ export default function PrivateMatchLobby() {
       <StatusBar hidden={true} />
       <View style={styles.header}>
         <View style={{ width: 40 }} />
-        <Text style={styles.headerTitle}>Private Lobby</Text>
+        <Text style={styles.headerTitle}>
+          {t('duoOnline.private.lobbyTitle', 'Private Lobby')}
+        </Text>
         <TouchableOpacity style={styles.backButton} onPress={handleCancel}>
           <Feather name="x" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
@@ -383,13 +393,17 @@ export default function PrivateMatchLobby() {
             <Feather name="users" size={40} color={theme.colors.primary} />
           </View>
 
-          <Text style={styles.lobbyTitle}>Waiting for Opponent</Text>
+          <Text style={styles.lobbyTitle}>
+            {t('duoOnline.private.waitingOpponent', 'Waiting for Opponent')}
+          </Text>
           <Text style={styles.lobbySubtitle}>
-            Share this code with a friend to start the match
+            {t('duoOnline.private.shareCode', 'Share your invite code with a friend to start playing')}
           </Text>
 
           <View style={styles.inviteCodeContainer}>
-            <Text style={styles.inviteCodeLabel}>INVITE CODE</Text>
+            <Text style={styles.inviteCodeLabel}>
+              {t('duoOnline.private.inviteCode', 'INVITE CODE')}
+            </Text>
             <Text style={styles.inviteCode}>{inviteCode}</Text>
           </View>
 
@@ -400,7 +414,7 @@ export default function PrivateMatchLobby() {
             >
               <Feather name="share-2" size={20} color={theme.colors.buttonText} />
               <Text style={[styles.buttonText, styles.primaryButtonText]}>
-                Share Invite
+                {t('duoOnline.private.shareInvite', 'Share Invite')}
               </Text>
             </TouchableOpacity>
 
@@ -410,7 +424,7 @@ export default function PrivateMatchLobby() {
             >
               <Feather name="copy" size={20} color={theme.colors.textPrimary} />
               <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-                Copy Code
+                {t('duoOnline.private.copyCode', 'Copy Code')}
               </Text>
             </TouchableOpacity>
 

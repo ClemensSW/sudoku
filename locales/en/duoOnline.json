@@ -1,0 +1,69 @@
+{
+  "menu": {
+    "subtitle": "Choose your game mode",
+    "local": "Local Play",
+    "localDesc": "Play with a friend on the same device",
+    "online": "Online Play",
+    "onlineDesc": "Play against players worldwide"
+  },
+  "play": {
+    "title": "Online Play",
+    "subtitle": "Choose how you want to play",
+    "ranked": "Ranked Match",
+    "rankedDesc": "Compete against players of similar skill",
+    "private": "Private Match",
+    "privateDesc": "Create a private game with friends",
+    "ai": "Play vs AI",
+    "aiDesc": "Practice against an AI opponent"
+  },
+  "game": {
+    "loading": "Loading match...",
+    "error": "Connection Error"
+  },
+  "matchmaking": {
+    "searching": "Searching for opponents...",
+    "wait": "This may take up to 30 seconds",
+    "found": "Opponent found! Starting match...",
+    "error": "Matchmaking Error"
+  },
+  "results": {
+    "victory": "Victory!",
+    "defeat": "Defeat",
+    "victoryMsg": "You won the match!",
+    "defeatMsg": "Better luck next time!",
+    "newMatch": "New Match",
+    "calculating": "Calculating ELO..."
+  },
+  "private": {
+    "createTitle": "Create Private Match",
+    "lobbyTitle": "Private Lobby",
+    "waitingOpponent": "Waiting for Opponent",
+    "shareCode": "Share your invite code with a friend to start playing",
+    "inviteCode": "INVITE CODE",
+    "selectDifficulty": "Select Difficulty",
+    "creating": "Creating match...",
+    "createButton": "Create Match",
+    "shareInvite": "Share Invite",
+    "copyCode": "Copy Code",
+    "cancelMatch": "Cancel Match",
+    "joinTitle": "Join Private Match",
+    "joining": "Joining...",
+    "waitingStart": "Waiting for match to start...",
+    "codeInvalid": "Invalid invite code",
+    "codeCopied": "Copied!",
+    "codeCopiedMsg": "Invite code copied to clipboard"
+  },
+  "ai": {
+    "thinking": "Thinking...",
+    "generating": "Generating puzzle...",
+    "errors": "Errors",
+    "moves": "Moves",
+    "aiMoves": "AI Moves",
+    "selectNumber": "Select Number",
+    "personality": {
+      "methodical": "Methodical",
+      "balanced": "Balanced",
+      "speedster": "Speedster"
+    }
+  }
+}

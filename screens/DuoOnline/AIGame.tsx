@@ -359,7 +359,7 @@ export default function AIGame() {
         <View style={styles.gameContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={[styles.statLabel, { marginTop: theme.spacing.md }]}>
-            Generating puzzle...
+            {t('duoOnline.ai.generating', 'Generating puzzle...')}
           </Text>
         </View>
       </SafeAreaView>
@@ -380,7 +380,7 @@ export default function AIGame() {
           {isAIThinking && (
             <>
               <View style={styles.aiDot} />
-              <Text style={styles.aiText}>Thinking...</Text>
+              <Text style={styles.aiText}>{t('duoOnline.ai.thinking', 'Thinking...')}</Text>
             </>
           )}
         </View>
@@ -390,11 +390,11 @@ export default function AIGame() {
         {/* Player stats */}
         <View style={styles.playerStats}>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Errors</Text>
+            <Text style={styles.statLabel}>{t('duoOnline.ai.errors', 'Errors')}</Text>
             <Text style={styles.statValue}>{player1Errors}</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Moves</Text>
+            <Text style={styles.statLabel}>{t('duoOnline.ai.moves', 'Moves')}</Text>
             <Text style={styles.statValue}>{player1Moves}</Text>
           </View>
         </View>
@@ -411,7 +411,7 @@ export default function AIGame() {
         {/* AI stats */}
         <View style={styles.playerStats}>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>AI Moves</Text>
+            <Text style={styles.statLabel}>{t('duoOnline.ai.aiMoves', 'AI Moves')}</Text>
             <Text style={styles.statValue}>{aiMoveCount}</Text>
           </View>
         </View>
@@ -420,7 +420,9 @@ export default function AIGame() {
         {selectedCell && (
           <View style={styles.numberSelector}>
             <View style={styles.numberSelectorHeader}>
-              <Text style={styles.numberSelectorTitle}>Select Number</Text>
+              <Text style={styles.numberSelectorTitle}>
+                {t('duoOnline.ai.selectNumber', 'Select Number')}
+              </Text>
               <TouchableOpacity
                 onPress={() => setSelectedCell(null)}
                 style={styles.closeButton}

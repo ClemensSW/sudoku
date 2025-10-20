@@ -1,0 +1,69 @@
+{
+  "menu": {
+    "subtitle": "Wähle deinen Spielmodus",
+    "local": "Lokal Spielen",
+    "localDesc": "Spiele mit einem Freund auf demselben Gerät",
+    "online": "Online Spielen",
+    "onlineDesc": "Spiele gegen Spieler weltweit"
+  },
+  "play": {
+    "title": "Online Spielen",
+    "subtitle": "Wähle, wie du spielen möchtest",
+    "ranked": "Ranglisten-Match",
+    "rankedDesc": "Tritt gegen Spieler mit ähnlicher Spielstärke an",
+    "private": "Privates Match",
+    "privateDesc": "Erstelle ein privates Spiel mit Freunden",
+    "ai": "Gegen KI Spielen",
+    "aiDesc": "Übe gegen einen KI-Gegner"
+  },
+  "game": {
+    "loading": "Match wird geladen...",
+    "error": "Verbindungsfehler"
+  },
+  "matchmaking": {
+    "searching": "Suche nach Gegnern...",
+    "wait": "Dies kann bis zu 30 Sekunden dauern",
+    "found": "Gegner gefunden! Match startet...",
+    "error": "Matchmaking-Fehler"
+  },
+  "results": {
+    "victory": "Sieg!",
+    "defeat": "Niederlage",
+    "victoryMsg": "Du hast das Match gewonnen!",
+    "defeatMsg": "Viel Glück beim nächsten Mal!",
+    "newMatch": "Neues Match",
+    "calculating": "Berechne ELO..."
+  },
+  "private": {
+    "createTitle": "Privates Match Erstellen",
+    "lobbyTitle": "Private Lobby",
+    "waitingOpponent": "Warte auf Gegner",
+    "shareCode": "Teile deinen Einladungscode mit einem Freund, um zu spielen",
+    "inviteCode": "EINLADUNGSCODE",
+    "selectDifficulty": "Schwierigkeit Wählen",
+    "creating": "Erstelle Match...",
+    "createButton": "Match Erstellen",
+    "shareInvite": "Einladung Teilen",
+    "copyCode": "Code Kopieren",
+    "cancelMatch": "Match Abbrechen",
+    "joinTitle": "Privates Match Beitreten",
+    "joining": "Trete bei...",
+    "waitingStart": "Warte auf Match-Start...",
+    "codeInvalid": "Ungültiger Einladungscode",
+    "codeCopied": "Kopiert!",
+    "codeCopiedMsg": "Einladungscode in Zwischenablage kopiert"
+  },
+  "ai": {
+    "thinking": "Denkt nach...",
+    "generating": "Generiere Puzzle...",
+    "errors": "Fehler",
+    "moves": "Züge",
+    "aiMoves": "KI-Züge",
+    "selectNumber": "Zahl Wählen",
+    "personality": {
+      "methodical": "Methodisch",
+      "balanced": "Ausgewogen",
+      "speedster": "Schnell"
+    }
+  }
+}

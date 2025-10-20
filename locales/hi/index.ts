@@ -8,6 +8,7 @@ import alerts from './alerts.json';
 import gameCompletion from './gameCompletion.json';
 import duo from './duo.json';
 import duoGame from './duoGame.json';
+import duoOnline from './duoOnline.json';
 import gallery from './gallery.json';
 import tutorial from './tutorial.json';
 import supportShop from './supportShop.json';
@@ -25,6 +26,7 @@ export default {
   gameCompletion,
   duo,
   duoGame,
+  duoOnline,
   gallery,
   tutorial,
   supportShop,

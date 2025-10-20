@@ -19,6 +19,7 @@ import { AuthProvider } from "@/contexts/AuthProvider";
 import { configureGoogleSignIn } from "@/utils/auth/googleAuth";
 import BillingManager from "@/screens/SupportShop/utils/billing/BillingManager";
 import { processOfflineQueue } from "@/utils/cloudSync/feedbackService";
+import { useDeepLink } from "@/hooks/online/useDeepLink";
 
 /**
  * App Container - Main Layout Component
@@ -27,6 +28,9 @@ import { processOfflineQueue } from "@/utils/cloudSync/feedbackService";
 function AppContainer() {
   const theme = useTheme();
   const { isBottomNavVisible, currentRoute } = useNavigation();
+
+  // Handle deep links for private match invites
+  useDeepLink();
 
   // DEBUG LOG
   console.log('[AppContainer] Rendering with:', {

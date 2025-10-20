@@ -41,6 +41,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'com.yourdomain.sudoku',
       jsEngine: 'hermes',
+      associatedDomains: ['applinks:sudokuduo.com'],
       ...(hasIOSGoogleServices && { googleServicesFile: './GoogleService-Info.plist' }),
     },
     android: {
@@ -56,6 +57,22 @@ export default {
         {
           action: 'MAIN',
           category: ['LAUNCHER', 'DEFAULT'],
+        },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [
+            {
+              scheme: 'sudokuduo',
+              host: '*',
+            },
+            {
+              scheme: 'https',
+              host: 'sudokuduo.com',
+              pathPrefix: '/join',
+            },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
         },
       ],
       ...(hasAndroidGoogleServices && { googleServicesFile: './google-services.json' }),

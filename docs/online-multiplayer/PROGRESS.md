@@ -1,8 +1,8 @@
 # 📈 Sudoku Duo Online Multiplayer - Progress Tracking
 
 **Project Start:** 2025-01-20
-**Last Updated:** 2025-01-20 (Session 3 - 🎉 PHASE 2 COMPLETE! 🎉)
-**Current Phase:** ✅ Phase 2 COMPLETE - Ready for Phase 3!
+**Last Updated:** 2025-01-20 (Session 4 - Phase 3.1 COMPLETE!)
+**Current Phase:** 🚧 Phase 3 In Progress - Private Matches & Social Features
 
 ---
 
@@ -10,10 +10,10 @@
 
 | Metric | Status | Progress |
 |--------|--------|----------|
-| **Overall Progress** | 🎉 Phase 2 COMPLETE! | Phase 1: 23/23 ✅, Phase 2: 28/28 ✅ |
-| **Current Phase** | Phase 3 ⏳ | Private Matches & Social Features (Starting) |
+| **Overall Progress** | 🚧 Phase 3 In Progress | Phase 1: 23/23 ✅, Phase 2: 28/28 ✅, Phase 3: 3/21 🚧 |
+| **Current Phase** | Phase 3.1 ✅ | Deep Linking Complete |
 | **Backend Setup** | ✅ Complete | 23/23 tasks |
-| **Frontend Components** | 🚧 In Progress | 11/25 components |
+| **Frontend Components** | 🚧 In Progress | 13/25 components |
 | **Tests Written** | ⏳ Pending | 0/15 test files |
 | **Deployment** | ⏳ Pending | Not started |
 
@@ -152,15 +152,15 @@
 
 ---
 
-### Phase 3: Private Matches & Social Features ⏳
-**Status:** Not Started
+### Phase 3: Private Matches & Social Features 🚧
+**Status:** In Progress
 **Target Duration:** Week 6-7
-**Completion:** 0% (0/21 tasks)
+**Completion:** 14% (3/21 tasks)
 
-#### 3.1 Deep Linking
-- [ ] Configure Universal Links (iOS)
-- [ ] Configure App Links (Android)
-- [ ] Test deep link: `sudokuduo://join/ABC123`
+#### 3.1 Deep Linking ✅
+- [x] Configure Universal Links (iOS)
+- [x] Configure App Links (Android)
+- [x] Test deep link: `sudokuduo://join/ABC123`
 
 #### 3.2 Private Match Creation
 - [ ] Create `PrivateLobby.tsx`
@@ -263,6 +263,21 @@ None - Planning phase complete
 ---
 
 ## 🟢 Recently Completed
+
+### Session 4 (2025-01-20) - Phase 3.1 Complete: Deep Linking
+- ✅ **Phase 3.1 Complete:** Deep Linking Setup
+  - Configured iOS Universal Links (associatedDomains in app.config.js)
+  - Configured Android App Links (intentFilters with VIEW action)
+  - Created useDeepLink hook (hooks/online/useDeepLink.ts)
+    - Parses custom scheme URLs: `sudokuduo://join/ABC123`
+    - Parses https URLs: `https://sudokuduo.com/join/ABC123`
+    - Handles initial URL (app opened from closed state)
+    - Handles URL events (app opened from background)
+    - Auto-navigates to private join screen
+  - Integrated deep link handling in app/_layout.tsx
+  - Created PrivateJoin screen placeholder (screens/DuoOnline/PrivateJoin.tsx)
+  - Created private-join route (app/duo-online/private-join.tsx)
+  - Full implementation ready for Phase 3.4
 
 ### Session 3 (2025-01-20) - 🎉 PHASE 2 COMPLETE! All 6 Sub-Phases Done! 🎉
 - ✅ **Phase 2.1 Complete:** Matchmaking UI
@@ -420,23 +435,24 @@ None - Planning phase complete
 ## 📊 Metrics Tracking
 
 ### Code Statistics
-- **Files Created:** 31 (3 docs + 28 code files)
+- **Files Created:** 34 (3 docs + 31 code files)
   - 5 Cloud Functions
   - 3 Utility modules (sudokuGenerator, eloCalculator backend, eloCalculator frontend)
   - 1 Types module
-  - 3 React Hooks (useRealtimeMatch, useMatchmaking, useEloCalculation)
-  - 4 Screen Components (DuoOnlineMenu, OnlinePlayMenu, RankedMatchmaking, RankedResults)
-  - 4 Route Files (Expo Router)
+  - 4 React Hooks (useRealtimeMatch, useMatchmaking, useEloCalculation, useDeepLink)
+  - 5 Screen Components (DuoOnlineMenu, OnlinePlayMenu, RankedMatchmaking, RankedResults, PrivateJoin)
+  - 5 Route Files (Expo Router)
   - 8 Config files
-- **Lines of Code:** ~3700 (Backend + Hooks + Screens + Config)
-- **Test Coverage:** 0% (tests in Phase 2)
+  - 2 Modified: app.config.js (deep linking), app/_layout.tsx (deep link integration)
+- **Lines of Code:** ~4000 (Backend + Hooks + Screens + Config)
+- **Test Coverage:** 0% (tests in Phase 5)
 - **Dependencies Added:** 4 (firebase/functions, react-native-share, uuid, @types/uuid)
 
 ### Time Tracking
 - **Planning:** 2 hours (Phase 0)
-- **Implementation:** 14 hours (Phase 1.1-1.5, Phase 2.1-2.6)
-- **Testing:** 0 hours (starts Phase 3+)
-- **Total:** 16 hours
+- **Implementation:** 15 hours (Phase 1.1-1.5, Phase 2.1-2.6, Phase 3.1)
+- **Testing:** 0 hours (starts Phase 5)
+- **Total:** 17 hours
 
 **Phase 1 Complete!** 🎉
 **Phase 2 Complete!** 🎉

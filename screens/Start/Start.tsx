@@ -34,6 +34,7 @@ const Start: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [pausedGame, setPausedGame] = useState<PausedGameState | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const backgroundHeight = getBackgroundHeight();
 
@@ -54,6 +55,10 @@ const Start: React.FC = () => {
         setPausedGame(paused);
       };
       checkPausedGame();
+
+      // Increment refresh key to force DifficultyModal to reload stats
+      // This ensures newly unlocked difficulties are immediately visible
+      setRefreshKey(prev => prev + 1);
     }, [])
   );
 
@@ -120,6 +125,7 @@ const Start: React.FC = () => {
 
       {/* Modals */}
       <DifficultyModal
+        key={`difficulty-modal-${refreshKey}`}
         visible={showDifficultyModal}
         selectedDifficulty={selectedDifficulty}
         onSelectDifficulty={handleDifficultyChange}

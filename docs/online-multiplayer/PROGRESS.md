@@ -1,8 +1,8 @@
 # 📈 Sudoku Duo Online Multiplayer - Progress Tracking
 
 **Project Start:** 2025-01-20
-**Last Updated:** 2025-01-20 (Session 2 - Phase 1 COMPLETE! 🎉)
-**Current Phase:** ✅ Phase 1 - Foundation & Infrastructure (COMPLETE)
+**Last Updated:** 2025-01-20 (Session 3 - Phase 2.1 & 2.2 COMPLETE! 🎉)
+**Current Phase:** 🚧 Phase 2 - Ranked Matchmaking & Core Gameplay (25% complete)
 
 ---
 
@@ -10,10 +10,10 @@
 
 | Metric | Status | Progress |
 |--------|--------|----------|
-| **Overall Progress** | 🎉 Phase 1 COMPLETE | 100% (Phase 1: 23/23 tasks) |
-| **Current Phase** | Phase 1 ✅ | Foundation & Infrastructure COMPLETE |
+| **Overall Progress** | 🚧 Phase 2 In Progress | Phase 1: 23/23 ✅, Phase 2: 7/28 🚧 |
+| **Current Phase** | Phase 2 🚧 | Ranked Matchmaking & Core Gameplay |
 | **Backend Setup** | ✅ Complete | 23/23 tasks |
-| **Frontend Components** | ⏳ Pending | 0/25 components |
+| **Frontend Components** | 🚧 In Progress | 7/25 components |
 | **Tests Written** | ⏳ Pending | 0/15 test files |
 | **Deployment** | ⏳ Pending | Not started |
 
@@ -107,21 +107,21 @@
 
 ---
 
-### Phase 2: Ranked Matchmaking & Core Gameplay ⏳
-**Status:** Not Started
+### Phase 2: Ranked Matchmaking & Core Gameplay 🚧
+**Status:** In Progress
 **Target Duration:** Week 3-5
-**Completion:** 0% (0/28 tasks)
+**Completion:** 25% (7/28 tasks)
 
-#### 2.1 Matchmaking UI
-- [ ] Create `DuoOnlineMenu.tsx`
-- [ ] Create `OnlinePlayMenu.tsx`
-- [ ] Create `RankedMatchmaking.tsx`
-- [ ] Implement loading states
+#### 2.1 Matchmaking UI ✅
+- [x] Create `DuoOnlineMenu.tsx`
+- [x] Create `OnlinePlayMenu.tsx`
+- [x] Create `RankedMatchmaking.tsx`
+- [x] Implement loading states
 
-#### 2.2 Matchmaking Logic
-- [ ] Implement `useMatchmaking` hook
-- [ ] Call Cloud Function `matchmaking`
-- [ ] Handle opponent found vs AI fallback
+#### 2.2 Matchmaking Logic 🚧
+- [x] Implement `useMatchmaking` hook
+- [x] Call Cloud Function `matchmaking`
+- [x] Handle opponent found vs AI fallback
 
 #### 2.3 Online Game Board
 - [ ] Create `OnlineGameBoard.tsx`
@@ -262,6 +262,19 @@ None - Planning phase complete
 
 ## 🟢 Recently Completed
 
+### Session 3 (2025-01-20) - Phase 2.1 & 2.2 Complete
+- ✅ **Phase 2.1 Complete:** Matchmaking UI
+  - Created DuoOnlineMenu.tsx (Local vs Online choice)
+  - Created OnlinePlayMenu.tsx (Ranked/Private/AI selection)
+  - Created RankedMatchmaking.tsx (Search screen with loading states)
+  - Created Expo Router routes (app/duo-online/index.tsx, play.tsx, ranked.tsx)
+
+- ✅ **Phase 2.2 Complete:** Matchmaking Logic
+  - Created useMatchmaking hook (screens/DuoOnline/hooks/useMatchmaking.ts)
+  - Integrated Cloud Function 'matchmaking' call
+  - Implemented opponent found vs AI fallback handling
+  - Search state management with error handling
+
 ### Session 2 (2025-01-20) - Final: 🎉 PHASE 1 COMPLETE! 🎉
 - ✅ **Phase 1.4 Complete:** Frontend Dependencies
   - Installed @react-native-firebase/functions (v23.4.1)
@@ -365,21 +378,23 @@ None - Planning phase complete
 ## 📊 Metrics Tracking
 
 ### Code Statistics
-- **Files Created:** 20 (3 docs + 17 code files)
+- **Files Created:** 27 (3 docs + 24 code files)
   - 5 Cloud Functions
   - 2 Utility modules
   - 1 Types module
-  - 1 React Hook (useRealtimeMatch)
+  - 2 React Hooks (useRealtimeMatch, useMatchmaking)
+  - 3 Screen Components (DuoOnlineMenu, OnlinePlayMenu, RankedMatchmaking)
+  - 3 Route Files (Expo Router)
   - 8 Config files
-- **Lines of Code:** ~1800 (Backend + Hook + Config)
+- **Lines of Code:** ~2200 (Backend + Hooks + Screens + Config)
 - **Test Coverage:** 0% (tests in Phase 2)
 - **Dependencies Added:** 4 (firebase/functions, react-native-share, uuid, @types/uuid)
 
 ### Time Tracking
 - **Planning:** 2 hours (Phase 0)
-- **Implementation:** 5 hours (Phase 1.1-1.5)
+- **Implementation:** 7 hours (Phase 1.1-1.5, Phase 2.1-2.2)
 - **Testing:** 0 hours (starts in Phase 2)
-- **Total:** 7 hours
+- **Total:** 9 hours
 
 **Phase 1 Complete!** 🎉
 

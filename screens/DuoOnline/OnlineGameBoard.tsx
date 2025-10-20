@@ -46,20 +46,34 @@ export default function OnlineGameBoard() {
   // Navigate to results when match completes
   useEffect(() => {
     if (matchState?.status === 'completed' && matchState.result) {
-      // Navigate to results screen with ELO info
-      const player1OldElo = matchState.players[0].elo;
-      const player2OldElo = matchState.players[1].elo;
+      // Check if this is a private match or ranked match
+      const isPrivateMatch = matchState.privateMatch;
 
-      router.replace({
-        pathname: '/duo-online/results',
-        params: {
-          matchId: matchId!,
-          winner: matchState.result.winner.toString(),
-          playerNumber: '1', // TODO: Get from auth context
-          player1Elo: player1OldElo.toString(),
-          player2Elo: player2OldElo.toString(),
-        },
-      });
+      if (isPrivateMatch) {
+        // Navigate to private results (no ELO)
+        router.replace({
+          pathname: '/duo-online/private-results',
+          params: {
+            winner: matchState.result.winner.toString(),
+            playerNumber: '1', // TODO: Get from auth context
+          },
+        });
+      } else {
+        // Navigate to ranked results screen with ELO info
+        const player1OldElo = matchState.players[0].elo;
+        const player2OldElo = matchState.players[1].elo;
+
+        router.replace({
+          pathname: '/duo-online/results',
+          params: {
+            matchId: matchId!,
+            winner: matchState.result.winner.toString(),
+            playerNumber: '1', // TODO: Get from auth context
+            player1Elo: player1OldElo.toString(),
+            player2Elo: player2OldElo.toString(),
+          },
+        });
+      }
     }
   }, [matchState?.status, matchState?.result, matchId, router]);
 

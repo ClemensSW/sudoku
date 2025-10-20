@@ -26,6 +26,8 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { useEloCalculation } from '@/hooks/online/useEloCalculation';
+import { getRankTier, getRankTierName, getRankTierColor } from '@/utils/elo/eloCalculator';
 
 interface EloUpdateResult {
   player1EloChange: number;
@@ -42,6 +44,8 @@ export default function RankedResults() {
     matchId: string;
     winner: string; // "1" or "2"
     playerNumber: string; // "1" or "2" - current user
+    player1Elo?: string;
+    player2Elo?: string;
   }>();
 
   const matchId = params.matchId;
@@ -49,9 +53,15 @@ export default function RankedResults() {
   const playerNumber = parseInt(params.playerNumber) as 1 | 2;
   const didWin = winner === playerNumber;
 
+  const player1Elo = params.player1Elo ? parseInt(params.player1Elo) : 1000;
+  const player2Elo = params.player2Elo ? parseInt(params.player2Elo) : 1000;
+
   const [eloResult, setEloResult] = useState<EloUpdateResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Client-side ELO preview calculation
+  const eloPreview = useEloCalculation(player1Elo, player2Elo, winner);
 
   // Animations
   const scale = useSharedValue(0.8);
@@ -179,6 +189,19 @@ export default function RankedResults() {
       fontSize: 16,
       color: theme.colors.textSecondary,
     },
+    rankBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 20,
+      marginTop: theme.spacing.md,
+    },
+    rankText: {
+      fontSize: 16,
+      fontWeight: '600',
+    },
     buttonsContainer: {
       width: '100%',
       gap: theme.spacing.md,
@@ -285,6 +308,31 @@ export default function RankedResults() {
   const newElo =
     playerNumber === 1 ? eloResult!.player1NewElo : eloResult!.player2NewElo;
 
+  // Rank tier info
+  const newTier = getRankTier(newElo);
+  const tierName = getRankTierName(newTier);
+  const tierColor = getRankTierColor(newTier);
+
+  // Verify client calculation matches server (dev only)
+  useEffect(() => {
+    if (eloResult) {
+      const serverChange = playerNumber === 1
+        ? eloResult.player1EloChange
+        : eloResult.player2EloChange;
+      const clientChange = playerNumber === 1
+        ? eloPreview.player1Change
+        : eloPreview.player2Change;
+
+      if (serverChange !== clientChange) {
+        console.warn(
+          `[RankedResults] ELO Mismatch! Server: ${serverChange}, Client: ${clientChange}`
+        );
+      } else {
+        console.log('[RankedResults] ELO calculation verified ✓');
+      }
+    }
+  }, [eloResult, eloPreview, playerNumber]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
@@ -340,6 +388,12 @@ export default function RankedResults() {
               {eloChange}
             </Text>
             <Text style={styles.eloNewValue}>New Rating: {newElo}</Text>
+
+            {/* Rank Tier Badge */}
+            <View style={[styles.rankBadge, { backgroundColor: tierColor + '20' }]}>
+              <Feather name="award" size={20} color={tierColor} />
+              <Text style={[styles.rankText, { color: tierColor }]}>{tierName}</Text>
+            </View>
           </Animated.View>
 
           {/* Action Buttons */}

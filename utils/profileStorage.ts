@@ -1,5 +1,6 @@
 // utils/profileStorage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setDirty } from "@/utils/cloudSync/dirtyFlags";
 
 const NEW_KEY = "user_profile_v1";
 const OLD_KEY = "@sudoku/user_profile"; // Migration von alt -> neu
@@ -23,6 +24,10 @@ const DEFAULT_PROFILE: UserProfile = {
  */
 async function saveProfile(profile: UserProfile): Promise<UserProfile> {
   await AsyncStorage.setItem(NEW_KEY, JSON.stringify(profile));
+
+  // Cloud Sync: Markiere als dirty für nächsten Sync
+  setDirty('profile').catch(err => console.error('[ProfileStorage] Error setting dirty flag:', err));
+
   return profile;
 }
 

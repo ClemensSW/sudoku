@@ -8,6 +8,7 @@ import {
 import { getDefaultCollectionState } from "./data";
 import { sortLandscapes } from "./sorting";
 import { landscapeCache } from "./storageCache";
+import { setDirty } from "@/utils/cloudSync/dirtyFlags";
 
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
@@ -67,6 +68,9 @@ export const saveLandscapeCollection = async (collection: LandscapeCollection): 
   try {
     // Schreibe in den Cache (debounced AsyncStorage write)
     await landscapeCache.set(collection);
+
+    // Cloud Sync: Markiere als dirty für nächsten Sync
+    setDirty('landscapes').catch(err => console.error('[LandscapeStorage] Error setting dirty flag:', err));
   } catch (error) {
     console.error("Fehler beim Speichern der Landschaftssammlung:", error);
   }

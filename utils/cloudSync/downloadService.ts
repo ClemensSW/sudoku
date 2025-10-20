@@ -18,6 +18,7 @@ import {
   type GameSettings,
   type ColorUnlockData,
 } from '@/utils/storage';
+import { clearDirtyBatch, type DirtyDocument } from './dirtyFlags';
 import {
   loadLandscapeCollection,
   saveLandscapeCollection,
@@ -288,6 +289,19 @@ export async function downloadUserData(userId: string): Promise<DownloadResult> 
     landscapes: landscapes !== null,
     profile: profile !== null,
   });
+
+  // Clear dirty flags for successfully downloaded documents (Cloud is Source of Truth)
+  const downloadedDocs: DirtyDocument[] = [];
+  if (stats !== null) downloadedDocs.push('stats');
+  if (settings !== null) downloadedDocs.push('settings');
+  if (colorUnlock !== null) downloadedDocs.push('colorUnlock');
+  if (landscapes !== null) downloadedDocs.push('landscapes');
+  if (profile !== null) downloadedDocs.push('profile');
+
+  if (downloadedDocs.length > 0) {
+    await clearDirtyBatch(downloadedDocs);
+    console.log('[DownloadService] Dirty flags cleared for downloaded documents:', downloadedDocs);
+  }
 
   return { stats, settings, colorUnlock, landscapes, profile };
 }

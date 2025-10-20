@@ -26,6 +26,7 @@ import { getFirebaseAuth, getFirebaseFirestore } from './firebaseConfig';
 import { downloadUserData } from './downloadService';
 import { uploadUserData } from './uploadService';
 import { mergeAllData } from './mergeService';
+import { hasAnyDirty, clearAllDirty, getDirtyDocuments, clearDirtyBatch } from './dirtyFlags';
 import {
   loadStats,
   loadSettings,
@@ -192,7 +193,21 @@ export async function syncUserData(options: {
       };
     }
 
-    // 3. Mark as syncing
+    // 3. Check if any data is dirty (unless forced)
+    if (!force) {
+      const hasDirty = await hasAnyDirty();
+      if (!hasDirty) {
+        console.log('[SyncService] No dirty data - skipping sync');
+        return {
+          success: false,
+          timestamp: Date.now(),
+          conflictsResolved: 0,
+          errors: ['No dirty data'],
+        };
+      }
+    }
+
+    // 4. Mark as syncing
     syncStatus.isSyncing = true;
     syncStatus.lastError = null;
     notifySyncStatusListeners();
@@ -278,60 +293,100 @@ export async function syncUserData(options: {
 
     await Promise.all(savePromises);
 
-    // 8. Upload merged zurück zu Cloud
-    console.log('[SyncService] Step 5/5: Uploading merged data to cloud...');
-    const firestore = getFirebaseFirestore();
-    const uploadPromises = [
-      firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('data')
-        .doc('stats')
-        .set(gameStatsToFirestore(merged.stats)),
-      firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('data')
-        .doc('settings')
-        .set(gameSettingsToFirestore(merged.settings, mergedTracking)),
-      firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('data')
-        .doc('colorUnlock')
-        .set(colorUnlockToFirestore(merged.colorUnlock)),
-    ];
+    // 8. Upload nur dirty Documents zurück zu Cloud (Conditional Upload)
+    console.log('[SyncService] Step 5/5: Uploading dirty documents to cloud...');
+    const dirtyDocs = await getDirtyDocuments();
+    console.log('[SyncService] Dirty documents:', dirtyDocs);
 
-    // Landscapes optional uploaden (falls vorhanden)
-    if (merged.landscapes) {
-      uploadPromises.push(
-        firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('data')
-          .doc('landscapes')
-          .set(landscapesToFirestore(merged.landscapes))
-      );
+    if (dirtyDocs.length === 0) {
+      console.log('[SyncService] No documents to upload - skipping upload step');
+    } else {
+      const firestore = getFirebaseFirestore();
+      const uploadPromises: Promise<any>[] = [];
+      const uploadedDocs: string[] = [];
+
+      // Stats (TIER 1 - Critical)
+      if (dirtyDocs.includes('stats')) {
+        uploadPromises.push(
+          firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('data')
+            .doc('stats')
+            .set(gameStatsToFirestore(merged.stats))
+            .then(() => uploadedDocs.push('stats'))
+        );
+      }
+
+      // Settings (TIER 2 - Important)
+      if (dirtyDocs.includes('settings')) {
+        uploadPromises.push(
+          firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('data')
+            .doc('settings')
+            .set(gameSettingsToFirestore(merged.settings, mergedTracking))
+            .then(() => uploadedDocs.push('settings'))
+        );
+      }
+
+      // ColorUnlock (TIER 3 - Low Priority)
+      if (dirtyDocs.includes('colorUnlock')) {
+        uploadPromises.push(
+          firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('data')
+            .doc('colorUnlock')
+            .set(colorUnlockToFirestore(merged.colorUnlock))
+            .then(() => uploadedDocs.push('colorUnlock'))
+        );
+      }
+
+      // Landscapes (TIER 3 - Low Priority)
+      if (dirtyDocs.includes('landscapes') && merged.landscapes) {
+        uploadPromises.push(
+          firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('data')
+            .doc('landscapes')
+            .set(landscapesToFirestore(merged.landscapes))
+            .then(() => uploadedDocs.push('landscapes'))
+        );
+      }
+
+      // Profile (TIER 2 - Important)
+      if (dirtyDocs.includes('profile') && merged.profile) {
+        const existingDoc = await firestore.collection('users').doc(user.uid).get();
+        const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
+
+        uploadPromises.push(
+          firestore
+            .collection('users')
+            .doc(user.uid)
+            .set(
+              {
+                profile: userProfileToFirestore(merged.profile, existingProfile),
+              },
+              { merge: true }
+            )
+            .then(() => uploadedDocs.push('profile'))
+        );
+      }
+
+      // Upload all dirty documents
+      await Promise.all(uploadPromises);
+
+      console.log('[SyncService] ✅ Uploaded documents:', uploadedDocs);
+
+      // 9. Clear dirty flags for successfully uploaded documents
+      await clearDirtyBatch(uploadedDocs as any);
+      console.log('[SyncService] Dirty flags cleared for:', uploadedDocs);
     }
 
-    // Profile optional uploaden (falls vorhanden)
-    if (merged.profile) {
-      const existingDoc = await firestore.collection('users').doc(user.uid).get();
-      const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
-
-      uploadPromises.push(
-        firestore.collection('users').doc(user.uid).set(
-          {
-            profile: userProfileToFirestore(merged.profile, existingProfile),
-          },
-          { merge: true }
-        )
-      );
-    }
-
-    await Promise.all(uploadPromises);
-
-    // 9. Update status
+    // 10. Update status
     syncStatus.isSyncing = false;
     syncStatus.lastSync = Date.now();
     notifySyncStatusListeners();

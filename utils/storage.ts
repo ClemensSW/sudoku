@@ -12,6 +12,8 @@ import {
 import { calculateEpWithBonus } from "@/modules/game/epCalculator";
 // PERFORMANCE: In-Memory Cache für AsyncStorage
 import { storageCache, withCache } from "@/utils/storage/cache";
+// Cloud Sync: Dirty Flag Tracking
+import { setDirty } from "@/utils/cloudSync/dirtyFlags";
 
 // Schlüssel für den Storage
 const KEYS = {
@@ -217,6 +219,9 @@ export const saveStats = async (stats: GameStats): Promise<void> => {
 
     // PERFORMANCE: Invalidiere Cache nach dem Speichern
     storageCache.delete(KEYS.STATISTICS);
+
+    // Cloud Sync: Markiere als dirty für nächsten Sync
+    setDirty('stats').catch(err => console.error('[Storage] Error setting dirty flag:', err));
   } catch (error) {
     console.error("Error saving statistics:", error);
   }
@@ -523,6 +528,9 @@ export const saveSettings = async (settings: GameSettings, isAutomatic: boolean 
         console.log("[saveSettings] Dispatched settingsChanged event (with 10ms delay for AsyncStorage commit)");
       }, 10);
     }
+
+    // Cloud Sync: Markiere als dirty für nächsten Sync
+    setDirty('settings').catch(err => console.error('[Storage] Error setting dirty flag:', err));
   } catch (error) {
     console.error("Error saving settings:", error);
   }
@@ -629,6 +637,9 @@ export const loadSettingsTracking = async (): Promise<SettingsModificationTracki
 export const saveSettingsTracking = async (tracking: SettingsModificationTracking): Promise<void> => {
   try {
     await AsyncStorage.setItem(KEYS.SETTINGS_TRACKING, JSON.stringify(tracking));
+
+    // Cloud Sync: Markiere als dirty für nächsten Sync (Tracking ist Teil von Settings)
+    setDirty('settings').catch(err => console.error('[Storage] Error setting dirty flag:', err));
   } catch (error) {
     console.error("Error saving settings tracking:", error);
   }
@@ -753,6 +764,9 @@ export const saveColorUnlock = async (colorData: ColorUnlockData): Promise<void>
     };
 
     await AsyncStorage.setItem(KEYS.COLOR_UNLOCK, JSON.stringify(colorDataWithTimestamp));
+
+    // Cloud Sync: Markiere als dirty für nächsten Sync
+    setDirty('colorUnlock').catch(err => console.error('[Storage] Error setting dirty flag:', err));
   } catch (error) {
     console.error("Error saving color unlock:", error);
   }

@@ -26,7 +26,7 @@ import { getFirebaseAuth, getFirebaseFirestore } from './firebaseConfig';
 import { downloadUserData } from './downloadService';
 import { uploadUserData } from './uploadService';
 import { mergeAllData } from './mergeService';
-import { hasAnyDirty, clearAllDirty, getDirtyDocuments, clearDirtyBatch } from './dirtyFlags';
+import { hasAnyDirty, getDirtyDocuments, clearDirtyBatch } from './dirtyFlags';
 import {
   loadStats,
   loadSettings,

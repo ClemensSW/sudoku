@@ -87,7 +87,7 @@ export type GameSettings = {
   vibration: boolean;
   soundEffects: boolean;
   backgroundMusic: boolean;
-  language: "de" | "en";
+  language: "de" | "en" | "hi";
 
   // Cloud Sync: Timestamp für Conflict Resolution
   updatedAt?: number; // Timestamp in milliseconds (Date.now())

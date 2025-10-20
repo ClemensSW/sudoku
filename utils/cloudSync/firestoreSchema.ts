@@ -30,7 +30,6 @@ import type {
   FirestoreLandscape,
   FirestoreProfile,
   FirestoreMonthlyPlayData,
-  FirestoreUserData,
   ValidationResult,
 } from './types';
 
@@ -43,12 +42,6 @@ import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
  * Bei Download wird null zurück zu Infinity konvertiert
  */
 const INFINITY_PLACEHOLDER = null;
-
-/**
- * Max-Value für Firestore Numbers (statt Infinity)
- * Alternative zu null - kann für Sorting verwendet werden
- */
-const MAX_NUMBER = 999999999;
 
 // ===== Converter: GameStats ↔ FirestoreStats =====
 

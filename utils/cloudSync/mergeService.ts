@@ -12,7 +12,7 @@
 import type { GameStats, GameSettings, ColorUnlockData, DailyStreakData, MonthlyPlayData } from '@/utils/storage';
 import type { LandscapeCollection } from '@/screens/Gallery/utils/landscapes/storage';
 import type { UserProfile } from '@/utils/profileStorage';
-import { isLocalNewer, firestoreToLandscapes, landscapesToFirestore } from './firestoreSchema';
+import { isLocalNewer } from './firestoreSchema';
 
 // ===== Helper: Merge Play History (Union Strategy) =====
 

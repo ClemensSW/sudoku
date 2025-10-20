@@ -11,9 +11,6 @@
 
 import { getFirebaseFirestore } from './firebaseConfig';
 import {
-  saveStats,
-  saveSettings,
-  saveColorUnlock,
   type GameStats,
   type GameSettings,
   type ColorUnlockData,
@@ -21,7 +18,6 @@ import {
 import { clearDirtyBatch, type DirtyDocument } from './dirtyFlags';
 import {
   loadLandscapeCollection,
-  saveLandscapeCollection,
   type LandscapeCollection,
 } from '@/screens/Gallery/utils/landscapes/storage';
 import { type UserProfile } from '@/utils/profileStorage';

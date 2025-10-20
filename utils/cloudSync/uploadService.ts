@@ -34,7 +34,6 @@ import {
   gameSettingsToFirestore,
   colorUnlockToFirestore,
   landscapesToFirestore,
-  createProfileFromFirebaseUser,
   userProfileToFirestore,
   validateGameStats,
   validateGameSettings,
@@ -298,13 +297,13 @@ export async function uploadUserData(
 ): Promise<{
   success: boolean;
   uploadedDocuments: string[];
-  errors: Array<{ document: string; error: string }>;
+  errors: { document: string; error: string }[];
 }> {
   const userId = user.uid;
   console.log('[UploadService] Starting complete user data upload for:', userId);
 
   const uploadedDocuments: string[] = [];
-  const errors: Array<{ document: string; error: string }> = [];
+  const errors: { document: string; error: string }[] = [];
 
   try {
     // Upload in parallelen Batches für bessere Performance

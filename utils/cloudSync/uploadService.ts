@@ -252,7 +252,9 @@ export async function uploadProfile(
     // 2. Hole existierendes Firestore-Profil (für Email + createdAt)
     const firestore = getFirebaseFirestore();
     const existingDoc = await firestore.collection('users').doc(userId).get();
-    const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
+    const existingProfile = (typeof existingDoc.exists === 'function' ? existingDoc.exists() : existingDoc.exists)
+      ? existingDoc.data()?.profile
+      : null;
 
     // 3. Konvertiere lokales Profil zu Firestore-Format
     //    Nutzt Firebase Auth für Email, kombiniert mit lokalem Namen/Avatar
@@ -393,7 +395,7 @@ export async function hasCloudData(userId: string): Promise<boolean> {
       .get();
 
     // Handle both function and boolean forms of exists (API version compatibility)
-    const hasData = typeof statsDoc.exists === 'function' ? statsDoc.exists() : statsDoc.exists;
+    const hasData: boolean = typeof statsDoc.exists === 'function' ? statsDoc.exists() : Boolean(statsDoc.exists);
     console.log('[UploadService] User has cloud data:', hasData);
 
     return hasData;

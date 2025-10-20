@@ -288,7 +288,7 @@ export async function syncUserData(options: {
 
     // Profile optional speichern (falls vorhanden)
     if (merged.profile) {
-      savePromises.push(saveUserProfile(merged.profile));
+      savePromises.push(saveUserProfile(merged.profile).then(() => {}));
     }
 
     await Promise.all(savePromises);
@@ -360,7 +360,9 @@ export async function syncUserData(options: {
       // Profile (TIER 2 - Important)
       if (dirtyDocs.includes('profile') && merged.profile) {
         const existingDoc = await firestore.collection('users').doc(user.uid).get();
-        const existingProfile = existingDoc.exists ? existingDoc.data()?.profile : null;
+        const existingProfile = (typeof existingDoc.exists === 'function' ? existingDoc.exists() : existingDoc.exists)
+          ? existingDoc.data()?.profile
+          : null;
 
         uploadPromises.push(
           firestore

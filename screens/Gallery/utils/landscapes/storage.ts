@@ -10,6 +10,9 @@ import { sortLandscapes } from "./sorting";
 import { landscapeCache } from "./storageCache";
 import { setDirty } from "@/utils/cloudSync/dirtyFlags";
 
+// Re-export types for external use
+export type { LandscapeCollection };
+
 // Storage-Keys
 const LANDSCAPE_COLLECTION_KEY = "@sudoku/landscape_collection";
 const LAST_UNLOCK_KEY = "@sudoku/last_unlock"; // Für Sperre

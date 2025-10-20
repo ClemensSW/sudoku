@@ -37,6 +37,12 @@ export default function OnlineGameBoard() {
     updateMatchStatus,
   } = useRealtimeMatch(matchId);
 
+  // Selected cell state
+  const [selectedCell, setSelectedCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -107,6 +113,89 @@ export default function OnlineGameBoard() {
       fontSize: 12,
       color: theme.colors.textSecondary,
       marginTop: 4,
+    },
+    gameContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: theme.spacing.md,
+    },
+    playerStats: {
+      flexDirection: 'row',
+      gap: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+    },
+    statItem: {
+      alignItems: 'center',
+    },
+    statLabel: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    statValue: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.textPrimary,
+    },
+    board: {
+      width: 324, // 9 cells * 36px
+      height: 324,
+      borderWidth: 2,
+      backgroundColor: theme.colors.surface,
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    cell: {
+      width: 36,
+      height: 36,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 0.5,
+    },
+    cellText: {
+      fontSize: 18,
+      fontWeight: '400',
+    },
+    numberSelector: {
+      marginTop: theme.spacing.lg,
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      width: 324,
+    },
+    numberSelectorHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    numberSelectorTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.textPrimary,
+    },
+    closeButton: {
+      padding: 4,
+    },
+    numberGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    numberButton: {
+      width: 60,
+      height: 60,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.divider,
+    },
+    numberButtonText: {
+      fontSize: 24,
+      fontWeight: '600',
     },
   });
 
@@ -191,7 +280,50 @@ export default function OnlineGameBoard() {
     );
   }
 
-  // Game view (simplified for now)
+  // Render Sudoku cell
+  const renderCell = (row: number, col: number) => {
+    const value = matchState.gameState.board[row][col];
+    const initialValue = matchState.gameState.initialBoard[row][col];
+    const isInitial = initialValue !== 0;
+
+    return (
+      <TouchableOpacity
+        key={`cell-${row}-${col}`}
+        style={[
+          styles.cell,
+          {
+            borderRightWidth: col % 3 === 2 && col !== 8 ? 2 : 0.5,
+            borderBottomWidth: row % 3 === 2 && row !== 8 ? 2 : 0.5,
+            borderColor: theme.colors.divider,
+            backgroundColor: isInitial
+              ? theme.colors.surface
+              : theme.colors.background,
+          },
+        ]}
+        onPress={() => {
+          if (!isInitial) {
+            setSelectedCell({ row, col });
+          }
+        }}
+      >
+        {value !== 0 && (
+          <Text
+            style={[
+              styles.cellText,
+              {
+                color: isInitial ? theme.colors.primary : theme.colors.textPrimary,
+                fontWeight: isInitial ? '700' : '400',
+              },
+            ]}
+          >
+            {value}
+          </Text>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
+  // Game view
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
@@ -199,7 +331,9 @@ export default function OnlineGameBoard() {
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Feather name="arrow-left" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Online Match</Text>
+        <Text style={styles.headerTitle}>
+          {matchState.players[1].displayName}
+        </Text>
         <View style={styles.connectionIndicator}>
           <View
             style={[
@@ -211,28 +345,125 @@ export default function OnlineGameBoard() {
               },
             ]}
           />
-          <Text style={styles.connectionText}>
-            {isConnected ? 'Connected' : 'Disconnected'}
-          </Text>
         </View>
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.headerTitle}>Match Loaded</Text>
-        <Text style={styles.loadingText}>Status: {matchState.status}</Text>
+      <View style={styles.gameContainer}>
+        {/* Player stats */}
+        <View style={styles.playerStats}>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Errors</Text>
+            <Text style={styles.statValue}>
+              {matchState.gameState.player1Errors}
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Progress</Text>
+            <Text style={styles.statValue}>
+              {matchState.gameState.player1Moves.length}/
+              {81 - matchState.gameState.initialBoard.flat().filter((v) => v !== 0).length}
+            </Text>
+          </View>
+        </View>
+
+        {/* Sudoku Board */}
+        <View
+          style={[
+            styles.board,
+            {
+              borderColor: theme.colors.divider,
+            },
+          ]}
+        >
+          {matchState.gameState.board.map((row, rowIndex) => (
+            <View key={`row-${rowIndex}`} style={styles.row}>
+              {row.map((_, colIndex) => renderCell(rowIndex, colIndex))}
+            </View>
+          ))}
+        </View>
+
+        {/* Opponent stats */}
+        <View style={styles.playerStats}>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Errors</Text>
+            <Text style={styles.statValue}>
+              {matchState.gameState.player2Errors}
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Progress</Text>
+            <Text style={styles.statValue}>
+              {matchState.gameState.player2Moves.length}/
+              {81 - matchState.gameState.initialBoard.flat().filter((v) => v !== 0).length}
+            </Text>
+          </View>
+        </View>
+
+        {/* Number Selector */}
+        {selectedCell && (
+          <View style={styles.numberSelector}>
+            <View style={styles.numberSelectorHeader}>
+              <Text style={styles.numberSelectorTitle}>Select Number</Text>
+              <TouchableOpacity
+                onPress={() => setSelectedCell(null)}
+                style={styles.closeButton}
+              >
+                <Feather name="x" size={20} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.numberGrid}>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num) => (
+                <TouchableOpacity
+                  key={num}
+                  style={[
+                    styles.numberButton,
+                    { backgroundColor: theme.colors.surface },
+                  ]}
+                  onPress={async () => {
+                    if (matchState) {
+                      try {
+                        await makeMove(
+                          1, // Player number (TODO: get from auth)
+                          selectedCell.row,
+                          selectedCell.col,
+                          num
+                        );
+                        setSelectedCell(null);
+                      } catch (err) {
+                        console.error('Failed to make move:', err);
+                      }
+                    }
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.numberButtonText,
+                      { color: theme.colors.textPrimary },
+                    ]}
+                  >
+                    {num === 0 ? '✕' : num}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* Debug info */}
         <View style={styles.debugInfo}>
-          <Text style={[styles.debugText, { fontWeight: '600' }]}>Debug Info:</Text>
-          <Text style={styles.debugText}>Match ID: {matchState.id}</Text>
+          <Text style={[styles.debugText, { fontWeight: '600' }]}>Debug:</Text>
           <Text style={styles.debugText}>Status: {matchState.status}</Text>
-          <Text style={styles.debugText}>Type: {matchState.type}</Text>
           <Text style={styles.debugText}>
-            Player 1: {matchState.players.player1.displayName}
+            P1: {matchState.gameState.player1Complete ? '✓' : '○'}
           </Text>
           <Text style={styles.debugText}>
-            Player 2: {matchState.players.player2.displayName}
+            P2: {matchState.gameState.player2Complete ? '✓' : '○'}
           </Text>
+          {selectedCell && (
+            <Text style={styles.debugText}>
+              Selected: [{selectedCell.row}, {selectedCell.col}]
+            </Text>
+          )}
         </View>
       </View>
     </SafeAreaView>

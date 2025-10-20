@@ -55,16 +55,15 @@ const Start: React.FC = () => {
         setPausedGame(paused);
       };
       checkPausedGame();
-
-      // Increment refresh key to force DifficultyModal to reload stats
-      // This ensures newly unlocked difficulties are immediately visible
-      setRefreshKey(prev => prev + 1);
     }, [])
   );
 
   // Game action handlers
   const handleStartGame = () => {
     triggerHaptic("medium");
+    // Increment refresh key to force DifficultyModal to reload stats
+    // This ensures newly unlocked difficulties are immediately visible
+    setRefreshKey(prev => prev + 1);
     setShowDifficultyModal(true);
   };
 

@@ -27,7 +27,6 @@ import { useBackgroundMusic } from "@/contexts/BackgroundMusicProvider";
 import { useNavigation } from "@/contexts/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithGoogle } from "@/utils/auth/googleAuth";
-import { manualSync } from "@/utils/cloudSync/syncService";
 import { deleteUserAccount } from "@/utils/auth/deleteAccount";
 import Header from "@/components/Header/Header";
 import TutorialContainer from "@/screens/Tutorial/TutorialContainer";
@@ -266,17 +265,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
         showAlert(signInSuccessAlert(user.displayName || user.email));
 
-        // Immediate sync after login (non-blocking)
-        console.log('[Settings] Triggering immediate sync after login...');
-        manualSync().then(result => {
-          if (result.success) {
-            console.log('[Settings] ✅ Immediate sync after login successful');
-          } else {
-            console.log('[Settings] ⚠️ Immediate sync after login skipped/failed:', result.errors);
-          }
-        }).catch(error => {
-          console.error('[Settings] ❌ Immediate sync after login error:', error);
-        });
+        // Note: Sync is handled automatically by AuthProvider on login
       } else {
         // User cancelled
         console.log('[Settings] User cancelled Google Sign-In');

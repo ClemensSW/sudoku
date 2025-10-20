@@ -13,6 +13,7 @@ import {
   cloneBoard,
 } from "@/utils/sudoku";
 import { triggerHaptic } from "@/utils/haptics";
+import { syncAfterGameCompletion } from "@/utils/cloudSync/syncService";
 
 // Constants
 const MAX_HINTS = 3;
@@ -371,6 +372,17 @@ export const useDuoGameState = (
       if (onGameComplete) {
         onGameComplete(winner, "errors");
       }
+
+      // Cloud Sync: Trigger sync after game completion (non-blocking)
+      syncAfterGameCompletion().then(result => {
+        if (result.success) {
+          console.log('[DuoGame] ✅ Auto-sync after game completion successful');
+        } else {
+          console.log('[DuoGame] ⚠️ Auto-sync after game completion skipped/failed:', result.errors);
+        }
+      }).catch(error => {
+        console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
+      });
     },
     [onGameComplete]
   );
@@ -898,12 +910,34 @@ const handleNumberPress = useCallback(
         }
         setIsGameRunning(false);
         setIsGameComplete(true);
+
+        // Cloud Sync: Trigger sync after game completion (non-blocking)
+        syncAfterGameCompletion().then(result => {
+          if (result.success) {
+            console.log('[DuoGame] ✅ Auto-sync after game completion successful');
+          } else {
+            console.log('[DuoGame] ⚠️ Auto-sync after game completion skipped/failed:', result.errors);
+          }
+        }).catch(error => {
+          console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
+        });
       } else if (player === 2 && !player1Complete) {
         if (onGameComplete) {
           onGameComplete(2, "completion");
         }
         setIsGameRunning(false);
         setIsGameComplete(true);
+
+        // Cloud Sync: Trigger sync after game completion (non-blocking)
+        syncAfterGameCompletion().then(result => {
+          if (result.success) {
+            console.log('[DuoGame] ✅ Auto-sync after game completion successful');
+          } else {
+            console.log('[DuoGame] ⚠️ Auto-sync after game completion skipped/failed:', result.errors);
+          }
+        }).catch(error => {
+          console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
+        });
       }
       // Otherwise, wait for handleGameComplete to be called when both are complete
     },
@@ -920,6 +954,17 @@ const handleNumberPress = useCallback(
     if (onGameComplete) {
       onGameComplete(0, "completion");
     }
+
+    // Cloud Sync: Trigger sync after game completion (non-blocking)
+    syncAfterGameCompletion().then(result => {
+      if (result.success) {
+        console.log('[DuoGame] ✅ Auto-sync after game completion successful');
+      } else {
+        console.log('[DuoGame] ⚠️ Auto-sync after game completion skipped/failed:', result.errors);
+      }
+    }).catch(error => {
+      console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
+    });
   }, [onGameComplete]);
 
   // Handle back button press

@@ -78,8 +78,8 @@ let syncStatus: SyncStatus = {
 type SyncStatusListener = (status: SyncStatus) => void;
 const syncStatusListeners: Set<SyncStatusListener> = new Set();
 
-// Debounce: Min 5 Minuten zwischen Syncs
-const MIN_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
+// Debounce: Min 15 Minuten zwischen Syncs
+const MIN_SYNC_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 // Retry Config
 const MAX_RETRIES = 3;

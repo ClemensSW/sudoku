@@ -72,7 +72,7 @@ export default function RankedMatchmaking() {
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.textPrimary,
       textAlign: 'center',
     },
     subtitle: {

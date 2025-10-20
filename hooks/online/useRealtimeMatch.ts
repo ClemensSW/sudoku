@@ -118,7 +118,7 @@ export function useRealtimeMatch(matchId: string | null) {
       .onSnapshot(
         (snapshot) => {
           // Success handler
-          if (snapshot.exists) {
+          if (snapshot.exists()) {
             const data = snapshot.data() as MatchState;
             console.log(
               `[useRealtimeMatch] Received update for ${matchId}: status=${data.status}`

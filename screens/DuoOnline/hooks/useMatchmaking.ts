@@ -13,6 +13,11 @@ interface Opponent {
   isAI: boolean;
 }
 
+interface MatchmakingResult {
+  matchId: string;
+  opponent: Opponent;
+}
+
 export function useMatchmaking() {
   const [isSearching, setIsSearching] = useState(false);
   const [matchId, setMatchId] = useState<string | null>(null);
@@ -33,7 +38,10 @@ export function useMatchmaking() {
       try {
         console.log('[useMatchmaking] Searching for match...');
 
-        const result = await functions().httpsCallable('matchmaking')({
+        const result = await functions().httpsCallable<
+          { difficulty: string; elo: number; displayName: string },
+          MatchmakingResult
+        >('matchmaking')({
           difficulty,
           elo,
           displayName,

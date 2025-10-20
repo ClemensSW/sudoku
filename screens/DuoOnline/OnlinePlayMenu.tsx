@@ -34,7 +34,7 @@ export default function OnlinePlayMenu() {
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
     },
     subtitle: {
@@ -71,7 +71,7 @@ export default function OnlinePlayMenu() {
     optionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.textPrimary,
     },
     optionDescription: {
       fontSize: 14,
@@ -108,7 +108,7 @@ export default function OnlinePlayMenu() {
         >
           <View style={styles.optionHeader}>
             <View style={styles.iconContainer}>
-              <Feather name="trophy" size={24} color={theme.colors.primary} />
+              <Feather name="award" size={24} color={theme.colors.primary} />
             </View>
             <Text style={styles.optionTitle}>
               {t('duoOnline.play.ranked', 'Ranked Match')}

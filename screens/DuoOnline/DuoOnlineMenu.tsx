@@ -34,7 +34,7 @@ export default function DuoOnlineMenu() {
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
     },
     subtitle: {
@@ -71,7 +71,7 @@ export default function DuoOnlineMenu() {
     optionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.textPrimary,
       marginBottom: 4,
     },
     optionDescription: {

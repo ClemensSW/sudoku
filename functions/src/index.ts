@@ -21,10 +21,10 @@ export const healthCheck = functions.https.onRequest((req, res) => {
   });
 });
 
-// ===== Future Functions (werden in Phase 1.3 implementiert) =====
+// ===== Cloud Functions (Phase 1.3) =====
 
-// export { matchmaking } from './matchmaking';
-// export { updateElo } from './updateElo';
-// export { createPrivateMatch } from './createPrivateMatch';
-// export { joinPrivateMatch } from './joinPrivateMatch';
-// export { cleanupMatches } from './cleanupMatches';
+export { matchmaking } from "./matchmaking";
+export { updateElo } from "./updateElo";
+export { createPrivateMatch } from "./createPrivateMatch";
+export { joinPrivateMatch } from "./joinPrivateMatch";
+export { cleanupMatches } from "./cleanupMatches";

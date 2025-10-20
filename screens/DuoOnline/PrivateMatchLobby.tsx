@@ -46,7 +46,7 @@ export default function PrivateMatchLobby() {
   const [error, setError] = useState<string | null>(null);
 
   // Listen for match updates (opponent joins)
-  const { matchState, isConnected } = useRealtimeMatch(matchId);
+  const { matchState, isConnected } = useRealtimeMatch(matchId ?? null);
 
   const styles = StyleSheet.create({
     container: {

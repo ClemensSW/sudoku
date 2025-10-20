@@ -258,20 +258,43 @@ export default function OnlineGameBoard() {
             </Text>
             <Text style={styles.errorText}>{error}</Text>
           </View>
-          <TouchableOpacity
-            style={{
-              marginTop: theme.spacing.xl,
-              paddingVertical: theme.spacing.md,
-              paddingHorizontal: theme.spacing.xl,
-              borderRadius: 12,
-              backgroundColor: theme.colors.primary,
-            }}
-            onPress={handleBack}
-          >
-            <Text style={{ color: theme.colors.buttonText, fontWeight: '600' }}>
-              {t('common.back', 'Back')}
-            </Text>
-          </TouchableOpacity>
+
+          <View style={{ flexDirection: 'row', gap: theme.spacing.md, marginTop: theme.spacing.xl }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                paddingVertical: theme.spacing.md,
+                paddingHorizontal: theme.spacing.lg,
+                borderRadius: 12,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.divider,
+              }}
+              onPress={handleBack}
+            >
+              <Text style={{ color: theme.colors.textPrimary, fontWeight: '600', textAlign: 'center' }}>
+                {t('common.back', 'Back')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                paddingVertical: theme.spacing.md,
+                paddingHorizontal: theme.spacing.lg,
+                borderRadius: 12,
+                backgroundColor: theme.colors.primary,
+              }}
+              onPress={() => {
+                // Retry by reloading the screen
+                router.replace({ pathname: '/duo-online/game', params: { matchId: matchId! } });
+              }}
+            >
+              <Text style={{ color: theme.colors.buttonText, fontWeight: '600', textAlign: 'center' }}>
+                {t('common.retry', 'Retry')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -392,6 +415,25 @@ export default function OnlineGameBoard() {
           />
         </View>
       </View>
+
+      {/* Connection Warning Banner */}
+      {!isConnected && (
+        <View style={{
+          backgroundColor: theme.colors.warning + '20',
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.warning,
+          paddingVertical: theme.spacing.sm,
+          paddingHorizontal: theme.spacing.md,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: theme.spacing.sm,
+        }}>
+          <Feather name="wifi-off" size={16} color={theme.colors.warning} />
+          <Text style={{ color: theme.colors.warning, fontSize: 12, flex: 1 }}>
+            {t('duoOnline.game.reconnecting', 'Reconnecting...')}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.gameContainer}>
         {/* Player stats */}

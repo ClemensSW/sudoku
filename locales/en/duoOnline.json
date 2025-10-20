@@ -18,7 +18,8 @@
   },
   "game": {
     "loading": "Loading match...",
-    "error": "Connection Error"
+    "error": "Connection Error",
+    "reconnecting": "Reconnecting..."
   },
   "matchmaking": {
     "searching": "Searching for opponents...",

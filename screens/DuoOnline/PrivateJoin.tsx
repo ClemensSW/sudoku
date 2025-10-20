@@ -192,7 +192,7 @@ export default function PrivateJoin() {
     try {
       console.log('[PrivateJoin] Joining match with code:', inviteCode);
 
-      const result = await functions().httpsCallable<
+      const result = await functions('europe-west3').httpsCallable<
         { inviteCode: string; displayName: string },
         JoinPrivateMatchResult
       >('joinPrivateMatch')({

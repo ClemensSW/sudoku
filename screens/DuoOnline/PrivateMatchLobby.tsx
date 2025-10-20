@@ -237,7 +237,7 @@ export default function PrivateMatchLobby() {
     try {
       console.log('[PrivateLobby] Creating private match with difficulty:', difficulty);
 
-      const result = await functions().httpsCallable<
+      const result = await functions('europe-west3').httpsCallable<
         { difficulty: string; displayName: string },
         CreatePrivateMatchResult
       >('createPrivateMatch')({

@@ -123,7 +123,11 @@ export async function uploadSettings(userId: string): Promise<void> {
     // Falls keine Settings gespeichert, nutze DEFAULT_SETTINGS
     const settings = localSettings || DEFAULT_SETTINGS;
 
-    // 2. Validate Settings
+    // 2. Load Settings Tracking (für Difficulty-Based Settings)
+    const { loadSettingsTracking } = await import('@/utils/storage');
+    const tracking = await loadSettingsTracking();
+
+    // 3. Validate Settings
     const validation = validateGameSettings(settings);
     if (!validation.valid) {
       console.warn('[UploadService] Settings validation failed:', validation.errors);
@@ -133,17 +137,17 @@ export async function uploadSettings(userId: string): Promise<void> {
       );
     }
 
-    // 3. Convert to Firestore format
-    const firestoreSettings: FirestoreSettings = gameSettingsToFirestore(settings);
+    // 4. Convert to Firestore format (inkl. Tracking)
+    const firestoreSettings: FirestoreSettings = gameSettingsToFirestore(settings, tracking);
 
-    // 4. Upload to Firestore
+    // 5. Upload to Firestore
     const firestore = getFirebaseFirestore();
     await firestore.collection('users').doc(userId).collection('data').doc('settings').set(
       firestoreSettings,
       { merge: false } // Overwrite, not merge
     );
 
-    console.log('[UploadService] ✅ Settings uploaded successfully');
+    console.log('[UploadService] ✅ Settings uploaded successfully (including tracking)');
   } catch (error: any) {
     console.error('[UploadService] ❌ Error uploading settings:', error);
     throw new UploadError(

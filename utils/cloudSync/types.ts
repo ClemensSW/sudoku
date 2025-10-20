@@ -153,6 +153,11 @@ export interface FirestoreSettings {
   soundEffects: boolean;
   backgroundMusic: boolean;
 
+  // Settings Modification Tracking (für Difficulty-Based Settings)
+  highlightSameValuesModified: boolean;
+  highlightRelatedCellsModified: boolean;
+  showMistakesModified: boolean;
+
   // Timestamp
   updatedAt: FirestoreTimestamp;
 }

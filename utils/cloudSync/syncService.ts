@@ -211,6 +211,10 @@ export async function syncUserData(options: {
     const localLandscapes = await loadLandscapeCollection();
     const localProfile = await loadUserProfile();
 
+    // Load lokale Settings Tracking (für Difficulty-Based Settings)
+    const { loadSettingsTracking } = await import('@/utils/storage');
+    const localTracking = await loadSettingsTracking();
+
     // 6. Merge mit Conflict Resolution
     console.log('[SyncService] Step 3/5: Merging data...');
     if (!cloudData.stats || !cloudData.settings || !cloudData.colorUnlock) {
@@ -246,12 +250,20 @@ export async function syncUserData(options: {
 
     console.log('[SyncService] Conflicts resolved:', merged.conflictsResolved);
 
+    // Merge Settings Tracking (Cloud-Tracking wurde im downloadUserData lokal gespeichert)
+    const cloudTracking = await loadSettingsTracking();
+    const { mergeSettingsTracking } = await import('./mergeService');
+    const mergedTracking = mergeSettingsTracking(localTracking, cloudTracking);
+    console.log('[SyncService] Settings tracking merged');
+
     // 7. Save merged lokal
     console.log('[SyncService] Step 4/5: Saving merged data locally...');
+    const { saveSettingsTracking } = await import('@/utils/storage');
     const savePromises = [
       saveStats(merged.stats),
       saveSettings(merged.settings),
       saveColorUnlock(merged.colorUnlock),
+      saveSettingsTracking(mergedTracking), // Save merged tracking
     ];
 
     // Landscapes optional speichern (falls vorhanden)
@@ -281,7 +293,7 @@ export async function syncUserData(options: {
         .doc(user.uid)
         .collection('data')
         .doc('settings')
-        .set(gameSettingsToFirestore(merged.settings)),
+        .set(gameSettingsToFirestore(merged.settings, mergedTracking)),
       firestore
         .collection('users')
         .doc(user.uid)

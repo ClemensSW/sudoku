@@ -85,7 +85,10 @@ export async function downloadStats(userId: string): Promise<GameStats | null> {
 /**
  * Download Settings von Firestore
  */
-export async function downloadSettings(userId: string): Promise<GameSettings | null> {
+export async function downloadSettings(userId: string): Promise<{
+  settings: GameSettings;
+  tracking: import('@/utils/storage').SettingsModificationTracking;
+} | null> {
   try {
     console.log('[DownloadService] Downloading settings for user:', userId);
 
@@ -104,10 +107,10 @@ export async function downloadSettings(userId: string): Promise<GameSettings | n
     }
 
     const firestoreSettings = data as FirestoreSettings;
-    const localSettings = firestoreToGameSettings(firestoreSettings);
+    const { settings, tracking } = firestoreToGameSettings(firestoreSettings);
 
-    console.log('[DownloadService] ✅ Settings downloaded successfully');
-    return localSettings;
+    console.log('[DownloadService] ✅ Settings downloaded successfully (including tracking)');
+    return { settings, tracking };
   } catch (error: any) {
     console.error('[DownloadService] ❌ Error downloading settings:', error);
     throw new DownloadError('Failed to download settings', error.code || 'UNKNOWN_ERROR', error);
@@ -244,7 +247,7 @@ export interface DownloadResult {
 export async function downloadUserData(userId: string): Promise<DownloadResult> {
   console.log('[DownloadService] Downloading all user data for:', userId);
 
-  const [stats, settings, colorUnlock, landscapes, profile] = await Promise.all([
+  const [stats, settingsData, colorUnlock, landscapes, profile] = await Promise.all([
     downloadStats(userId).catch(err => {
       console.error('[DownloadService] Stats download failed:', err);
       return null;
@@ -266,6 +269,17 @@ export async function downloadUserData(userId: string): Promise<DownloadResult> 
       return null;
     }),
   ]);
+
+  // Extrahiere Settings und Tracking aus settingsData
+  const settings = settingsData?.settings || null;
+  const tracking = settingsData?.tracking;
+
+  // Speichere Tracking-Daten lokal (für standalone Download ohne Sync)
+  if (tracking) {
+    const { saveSettingsTracking } = await import('@/utils/storage');
+    await saveSettingsTracking(tracking);
+    console.log('[DownloadService] Settings tracking saved locally:', tracking);
+  }
 
   console.log('[DownloadService] Download complete:', {
     stats: stats !== null,

@@ -211,8 +211,13 @@ export function firestoreToDailyStreak(firestoreStreak: FirestoreDailyStreak): D
 
 /**
  * Konvertiert lokale GameSettings → FirestoreSettings
+ * @param settings - GameSettings Objekt
+ * @param tracking - Optional: SettingsModificationTracking (für Difficulty-Based Settings)
  */
-export function gameSettingsToFirestore(settings: GameSettings): FirestoreSettings {
+export function gameSettingsToFirestore(
+  settings: GameSettings,
+  tracking?: import('@/utils/storage').SettingsModificationTracking
+): FirestoreSettings {
   return {
     highlightRelatedCells: settings.highlightRelatedCells ?? true,
     showMistakes: settings.showMistakes ?? true,
@@ -223,15 +228,23 @@ export function gameSettingsToFirestore(settings: GameSettings): FirestoreSettin
     vibration: settings.vibration ?? true,
     soundEffects: settings.soundEffects ?? true,
     backgroundMusic: settings.backgroundMusic ?? false,
+    // Tracking Flags (default: false wenn nicht vorhanden)
+    highlightSameValuesModified: tracking?.highlightSameValuesModified ?? false,
+    highlightRelatedCellsModified: tracking?.highlightRelatedCellsModified ?? false,
+    showMistakesModified: tracking?.showMistakesModified ?? false,
     updatedAt: settings.updatedAt || Date.now(),
   };
 }
 
 /**
- * Konvertiert FirestoreSettings → lokale GameSettings
+ * Konvertiert FirestoreSettings → lokale GameSettings + Tracking
+ * @returns Object mit {settings, tracking}
  */
-export function firestoreToGameSettings(firestoreSettings: FirestoreSettings): GameSettings {
-  return {
+export function firestoreToGameSettings(firestoreSettings: FirestoreSettings): {
+  settings: GameSettings;
+  tracking: import('@/utils/storage').SettingsModificationTracking;
+} {
+  const settings: GameSettings = {
     highlightRelatedCells: firestoreSettings.highlightRelatedCells ?? true,
     showMistakes: firestoreSettings.showMistakes ?? true,
     highlightSameValues: firestoreSettings.highlightSameValues ?? true,
@@ -243,6 +256,14 @@ export function firestoreToGameSettings(firestoreSettings: FirestoreSettings): G
     backgroundMusic: firestoreSettings.backgroundMusic ?? false,
     updatedAt: firestoreSettings.updatedAt || Date.now(),
   };
+
+  const tracking: import('@/utils/storage').SettingsModificationTracking = {
+    highlightSameValuesModified: firestoreSettings.highlightSameValuesModified ?? false,
+    highlightRelatedCellsModified: firestoreSettings.highlightRelatedCellsModified ?? false,
+    showMistakesModified: firestoreSettings.showMistakesModified ?? false,
+  };
+
+  return { settings, tracking };
 }
 
 // ===== Converter: ColorUnlockData ↔ FirestoreColorUnlock =====

@@ -290,6 +290,31 @@ export function mergeSettings(local: GameSettings, cloud: GameSettings): GameSet
   return merged;
 }
 
+/**
+ * Merge Settings Tracking (Union Strategy)
+ * Wenn irgendein Gerät ein Setting als "modified" markiert hat, bleibt es modified
+ */
+export function mergeSettingsTracking(
+  local: import('@/utils/storage').SettingsModificationTracking,
+  cloud: import('@/utils/storage').SettingsModificationTracking
+): import('@/utils/storage').SettingsModificationTracking {
+  console.log('[MergeService] Merging settings tracking (Union Strategy)');
+
+  const merged: import('@/utils/storage').SettingsModificationTracking = {
+    highlightSameValuesModified: local.highlightSameValuesModified || cloud.highlightSameValuesModified,
+    highlightRelatedCellsModified: local.highlightRelatedCellsModified || cloud.highlightRelatedCellsModified,
+    showMistakesModified: local.showMistakesModified || cloud.showMistakesModified,
+  };
+
+  console.log('[MergeService] Settings tracking merged:', {
+    local,
+    cloud,
+    merged,
+  });
+
+  return merged;
+}
+
 // ===== Merge ColorUnlock (Union Strategy) =====
 
 export function mergeColorUnlock(local: ColorUnlockData, cloud: ColorUnlockData): ColorUnlockData {
@@ -522,6 +547,7 @@ export function mergeAllData(
 export default {
   mergeStats,
   mergeSettings,
+  mergeSettingsTracking,
   mergeColorUnlock,
   mergeLandscapes,
   mergeProfile,

@@ -62,11 +62,11 @@ export interface FirestoreStats {
   gamesPlayed: number;
   gamesWon: number;
 
-  // Best Times
-  bestTimeEasy: number;
-  bestTimeMedium: number;
-  bestTimeHard: number;
-  bestTimeExpert: number;
+  // Best Times (null = not achieved yet, converts to Infinity locally)
+  bestTimeEasy: number | null;
+  bestTimeMedium: number | null;
+  bestTimeHard: number | null;
+  bestTimeExpert: number | null;
 
   // DEPRECATED: Win Streak (preserved for backward compatibility)
   currentStreak: number;

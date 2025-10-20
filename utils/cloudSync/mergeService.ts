@@ -197,26 +197,31 @@ export function mergeStats(local: GameStats, cloud: GameStats): GameStats {
   const gamesPlayed = Math.max(local.gamesPlayed || 0, cloud.gamesPlayed || 0);
   const gamesWon = Math.max(local.gamesWon || 0, cloud.gamesWon || 0);
 
-  // Best Times: Nimm bessere Zeiten (MIN, aber Infinity ist schlechter)
-  const bestTimeEasy =
-    local.bestTimeEasy === Infinity ? cloud.bestTimeEasy :
-    cloud.bestTimeEasy === Infinity ? local.bestTimeEasy :
-    Math.min(local.bestTimeEasy, cloud.bestTimeEasy);
+  // Helper: Prüft ob bestTime ungültig ist (Infinity, 0 oder negativ)
+  const isInvalidTime = (time: number): boolean => {
+    return time === Infinity || time <= 0;
+  };
 
-  const bestTimeMedium =
-    local.bestTimeMedium === Infinity ? cloud.bestTimeMedium :
-    cloud.bestTimeMedium === Infinity ? local.bestTimeMedium :
-    Math.min(local.bestTimeMedium, cloud.bestTimeMedium);
+  // Helper: Merged bestTime-Werte sicher (nimm beste gültige Zeit)
+  const mergeBestTime = (localTime: number, cloudTime: number): number => {
+    const localInvalid = isInvalidTime(localTime);
+    const cloudInvalid = isInvalidTime(cloudTime);
 
-  const bestTimeHard =
-    local.bestTimeHard === Infinity ? cloud.bestTimeHard :
-    cloud.bestTimeHard === Infinity ? local.bestTimeHard :
-    Math.min(local.bestTimeHard, cloud.bestTimeHard);
+    // Beide ungültig → Infinity
+    if (localInvalid && cloudInvalid) return Infinity;
+    // Nur local ungültig → nimm cloud
+    if (localInvalid) return cloudTime;
+    // Nur cloud ungültig → nimm local
+    if (cloudInvalid) return localTime;
+    // Beide gültig → nimm bessere Zeit (MIN)
+    return Math.min(localTime, cloudTime);
+  };
 
-  const bestTimeExpert =
-    local.bestTimeExpert === Infinity ? cloud.bestTimeExpert :
-    cloud.bestTimeExpert === Infinity ? local.bestTimeExpert :
-    Math.min(local.bestTimeExpert, cloud.bestTimeExpert);
+  // Best Times: Nimm bessere Zeiten (MIN), ignoriere ungültige Werte (0, negativ, Infinity)
+  const bestTimeEasy = mergeBestTime(local.bestTimeEasy, cloud.bestTimeEasy);
+  const bestTimeMedium = mergeBestTime(local.bestTimeMedium, cloud.bestTimeMedium);
+  const bestTimeHard = mergeBestTime(local.bestTimeHard, cloud.bestTimeHard);
+  const bestTimeExpert = mergeBestTime(local.bestTimeExpert, cloud.bestTimeExpert);
 
   // Completed Games: Nimm höhere Werte
   const completedEasy = Math.max(local.completedEasy || 0, cloud.completedEasy || 0);

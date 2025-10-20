@@ -106,27 +106,24 @@ export function gameStatsToFirestore(stats: GameStats): FirestoreStats {
  * Konvertiert FirestoreStats → lokale GameStats (für Download)
  */
 export function firestoreToGameStats(firestoreStats: FirestoreStats): GameStats {
+  // Helper: Konvertiert bestTime-Werte sicher zu Infinity oder validem Wert
+  const sanitizeBestTime = (time: number | null | undefined): number => {
+    // null, undefined, 0 oder negative Werte → Infinity (nicht gesetzt)
+    if (time === null || time === undefined || time <= 0) {
+      return Infinity;
+    }
+    return time;
+  };
+
   return {
     gamesPlayed: firestoreStats.gamesPlayed || 0,
     gamesWon: firestoreStats.gamesWon || 0,
 
-    // null → Infinity für lokale Verwendung
-    bestTimeEasy:
-      firestoreStats.bestTimeEasy === null || firestoreStats.bestTimeEasy === undefined
-        ? Infinity
-        : firestoreStats.bestTimeEasy,
-    bestTimeMedium:
-      firestoreStats.bestTimeMedium === null || firestoreStats.bestTimeMedium === undefined
-        ? Infinity
-        : firestoreStats.bestTimeMedium,
-    bestTimeHard:
-      firestoreStats.bestTimeHard === null || firestoreStats.bestTimeHard === undefined
-        ? Infinity
-        : firestoreStats.bestTimeHard,
-    bestTimeExpert:
-      firestoreStats.bestTimeExpert === null || firestoreStats.bestTimeExpert === undefined
-        ? Infinity
-        : firestoreStats.bestTimeExpert,
+    // Robuste Konvertierung: null/undefined/0/negativ → Infinity, sonst echter Wert
+    bestTimeEasy: sanitizeBestTime(firestoreStats.bestTimeEasy),
+    bestTimeMedium: sanitizeBestTime(firestoreStats.bestTimeMedium),
+    bestTimeHard: sanitizeBestTime(firestoreStats.bestTimeHard),
+    bestTimeExpert: sanitizeBestTime(firestoreStats.bestTimeExpert),
 
     currentStreak: firestoreStats.currentStreak || 0,
     longestStreak: firestoreStats.longestStreak || 0,
@@ -523,6 +520,13 @@ export function validateColorUnlock(colorData: ColorUnlockData): ValidationResul
  * Entfernt ungültige/unsichere Daten aus GameStats
  */
 export function sanitizeGameStats(stats: GameStats): GameStats {
+  // Helper: Validiert bestTime-Werte (nur > 0 oder Infinity erlaubt)
+  const sanitizeBestTime = (time: number): number => {
+    if (time === Infinity) return Infinity;
+    if (time <= 0) return Infinity; // Ungültige Werte zu Infinity
+    return time;
+  };
+
   return {
     ...stats,
     gamesPlayed: Math.max(0, stats.gamesPlayed || 0),
@@ -533,6 +537,11 @@ export function sanitizeGameStats(stats: GameStats): GameStats {
     completedHard: Math.max(0, stats.completedHard || 0),
     completedExpert: Math.max(0, stats.completedExpert || 0),
     reachedMilestones: Array.isArray(stats.reachedMilestones) ? stats.reachedMilestones : [],
+    // Validiere bestTimes (nur > 0 oder Infinity)
+    bestTimeEasy: sanitizeBestTime(stats.bestTimeEasy),
+    bestTimeMedium: sanitizeBestTime(stats.bestTimeMedium),
+    bestTimeHard: sanitizeBestTime(stats.bestTimeHard),
+    bestTimeExpert: sanitizeBestTime(stats.bestTimeExpert),
   };
 }
 

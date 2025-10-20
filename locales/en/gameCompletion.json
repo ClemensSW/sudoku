@@ -137,8 +137,7 @@
     "noTitle": "No Title",
     "nextLevel": "Next Level",
     "xpToUnlock": "{{count}} XP to unlock",
-    "chooseTitle": "Choose a title",
-    "levelUp": "Level {{level}} reached!"
+    "chooseTitle": "Choose a title"
   },
   "path": {
     "title": "Your Journey",

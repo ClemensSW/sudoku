@@ -137,8 +137,7 @@
     "noTitle": "बिना उपाधि",
     "nextLevel": "अगला स्तर",
     "xpToUnlock": "अनलॉक करने के लिए {{count}} EP",
-    "chooseTitle": "एक उपाधि चुनें",
-    "levelUp": "स्तर {{level}} प्राप्त किया!"
+    "chooseTitle": "एक उपाधि चुनें"
   },
   "path": {
     "title": "आपकी यात्रा",

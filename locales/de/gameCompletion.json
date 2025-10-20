@@ -137,8 +137,7 @@
     "noTitle": "Ohne Titel",
     "nextLevel": "Nächstes Level",
     "xpToUnlock": "{{count}} EP zum Freischalten",
-    "chooseTitle": "Wähle einen Titel",
-    "levelUp": "Level {{level}} erreicht!"
+    "chooseTitle": "Wähle einen Titel"
   },
   "path": {
     "title": "Deine Reise",

@@ -43,6 +43,21 @@ export default function OnlineGameBoard() {
     col: number;
   } | null>(null);
 
+  // Navigate to results when match completes
+  useEffect(() => {
+    if (matchState?.status === 'completed' && matchState.result) {
+      // Navigate to results screen
+      router.replace({
+        pathname: '/duo-online/results',
+        params: {
+          matchId: matchId!,
+          winner: matchState.result.winner.toString(),
+          playerNumber: '1', // TODO: Get from auth context
+        },
+      });
+    }
+  }, [matchState?.status, matchState?.result, matchId, router]);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,

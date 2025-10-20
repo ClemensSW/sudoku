@@ -161,19 +161,24 @@ export function useRealtimeMatch(matchId: string | null) {
         throw new Error("No active match");
       }
 
+      const isCorrect = matchState.gameState.solution[row][col] === value;
+      const isError = value !== 0 && !isCorrect; // Error only if non-zero and wrong
+
       const move: CellMove = {
         timestamp: Date.now(),
         row,
         col,
         value,
-        isCorrect: matchState.gameState.solution[row][col] === value,
+        isCorrect,
       };
 
       const movesField =
         playerNumber === 1 ? "gameState.player1Moves" : "gameState.player2Moves";
+      const errorsField =
+        playerNumber === 1 ? "gameState.player1Errors" : "gameState.player2Errors";
 
       console.log(
-        `[useRealtimeMatch] Player ${playerNumber} making move: (${row}, ${col}) = ${value}`
+        `[useRealtimeMatch] Player ${playerNumber} making move: (${row}, ${col}) = ${value} (${isCorrect ? "✓" : "✗"})`
       );
 
       try {
@@ -181,6 +186,12 @@ export function useRealtimeMatch(matchId: string | null) {
         setMatchState((prev) => {
           if (!prev) return prev;
 
+          // Update board
+          const updatedBoard = prev.gameState.board.map((r, ri) =>
+            r.map((c, ci) => (ri === row && ci === col ? value : c))
+          );
+
+          // Update moves
           const updatedMoves =
             playerNumber === 1
               ? [...prev.gameState.player1Moves, move]
@@ -191,25 +202,45 @@ export function useRealtimeMatch(matchId: string | null) {
               ? [...prev.gameState.player2Moves, move]
               : prev.gameState.player2Moves;
 
+          // Update errors
+          const updatedP1Errors =
+            playerNumber === 1 && isError
+              ? prev.gameState.player1Errors + 1
+              : prev.gameState.player1Errors;
+
+          const updatedP2Errors =
+            playerNumber === 2 && isError
+              ? prev.gameState.player2Errors + 1
+              : prev.gameState.player2Errors;
+
           return {
             ...prev,
             gameState: {
               ...prev.gameState,
+              board: updatedBoard,
               player1Moves: updatedMoves,
               player2Moves: updatedMoves2,
+              player1Errors: updatedP1Errors,
+              player2Errors: updatedP2Errors,
               lastMoveAt: move.timestamp,
             },
           };
         });
 
+        // Prepare Firestore update
+        const updateData: any = {
+          [movesField]: firestore.FieldValue.arrayUnion(move),
+          "gameState.lastMoveAt": move.timestamp,
+          [`gameState.board.${row}.${col}`]: value, // Update specific board cell
+        };
+
+        // Increment error counter if move was wrong
+        if (isError) {
+          updateData[errorsField] = firestore.FieldValue.increment(1);
+        }
+
         // Write to Firestore
-        await firestore()
-          .collection("matches")
-          .doc(matchId)
-          .update({
-            [movesField]: firestore.FieldValue.arrayUnion(move),
-            "gameState.lastMoveAt": move.timestamp,
-          });
+        await firestore().collection("matches").doc(matchId).update(updateData);
 
         // Real-time listener will confirm the update
       } catch (err: any) {
@@ -272,6 +303,107 @@ export function useRealtimeMatch(matchId: string | null) {
     },
     [matchId]
   );
+
+  // Check if player has completed their puzzle
+  const checkPlayerCompletion = useCallback((playerNumber: 1 | 2): boolean => {
+    if (!matchState) return false;
+
+    const { board, solution, initialBoard } = matchState.gameState;
+
+    // Check all cells
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        const initial = initialBoard[row][col];
+        if (initial !== 0) continue; // Skip initial cells
+
+        // Check if player made this move
+        const playerMoves =
+          playerNumber === 1
+            ? matchState.gameState.player1Moves
+            : matchState.gameState.player2Moves;
+
+        const hasMoveHere = playerMoves.some(m => m.row === row && m.col === col);
+
+        if (hasMoveHere) {
+          // Check if cell is correct
+          if (board[row][col] !== solution[row][col]) {
+            return false; // Wrong value
+          }
+        } else {
+          // No move yet for this cell
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }, [matchState]);
+
+  // Auto-detect game completion
+  useEffect(() => {
+    if (!matchState || matchState.status !== "active") return;
+
+    const p1Complete = checkPlayerCompletion(1);
+    const p2Complete = checkPlayerCompletion(2);
+
+    // Update completion status if changed
+    if (
+      p1Complete !== matchState.gameState.player1Complete ||
+      p2Complete !== matchState.gameState.player2Complete
+    ) {
+      console.log(`[useRealtimeMatch] Completion status: P1=${p1Complete}, P2=${p2Complete}`);
+
+      // Update Firestore
+      firestore()
+        .collection("matches")
+        .doc(matchId!)
+        .update({
+          "gameState.player1Complete": p1Complete,
+          "gameState.player2Complete": p2Complete,
+        })
+        .catch((err) => console.error("Failed to update completion status:", err));
+    }
+
+    // Check if match is complete (both players done)
+    if (p1Complete && p2Complete) {
+      // Determine winner (who completed first)
+      const p1LastMove = matchState.gameState.player1Moves[matchState.gameState.player1Moves.length - 1];
+      const p2LastMove = matchState.gameState.player2Moves[matchState.gameState.player2Moves.length - 1];
+
+      const winner = p1LastMove && p2LastMove
+        ? p1LastMove.timestamp < p2LastMove.timestamp ? 1 : 2
+        : p1Complete ? 1 : 2;
+
+      console.log(`[useRealtimeMatch] Match complete! Winner: Player ${winner}`);
+
+      // Update match to completed status
+      updateMatchStatus("completed", {
+        completedAt: Date.now(),
+        result: {
+          winner: winner as 1 | 2,
+          reason: "completion",
+          winnerUid: matchState.players[winner - 1].uid || undefined,
+          finalTime: matchState.gameState.elapsedTime,
+          player1Stats: {
+            cellsSolved: matchState.gameState.player1Moves.length,
+            errors: matchState.gameState.player1Errors,
+            hintsUsed: matchState.gameState.player1Hints,
+            averageTimePerCell: matchState.gameState.player1Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player1Moves.length
+              : 0,
+          },
+          player2Stats: {
+            cellsSolved: matchState.gameState.player2Moves.length,
+            errors: matchState.gameState.player2Errors,
+            hintsUsed: matchState.gameState.player2Hints,
+            averageTimePerCell: matchState.gameState.player2Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player2Moves.length
+              : 0,
+          },
+        },
+      });
+    }
+  }, [matchState, checkPlayerCompletion, updateMatchStatus, matchId]);
 
   return {
     matchState,

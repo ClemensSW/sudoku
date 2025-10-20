@@ -284,7 +284,10 @@ export default function OnlineGameBoard() {
   const renderCell = (row: number, col: number) => {
     const value = matchState.gameState.board[row][col];
     const initialValue = matchState.gameState.initialBoard[row][col];
+    const solution = matchState.gameState.solution[row][col];
     const isInitial = initialValue !== 0;
+    const isError = value !== 0 && !isInitial && value !== solution;
+    const isSelected = selectedCell?.row === row && selectedCell?.col === col;
 
     return (
       <TouchableOpacity
@@ -295,7 +298,11 @@ export default function OnlineGameBoard() {
             borderRightWidth: col % 3 === 2 && col !== 8 ? 2 : 0.5,
             borderBottomWidth: row % 3 === 2 && row !== 8 ? 2 : 0.5,
             borderColor: theme.colors.divider,
-            backgroundColor: isInitial
+            backgroundColor: isError
+              ? theme.colors.error + '20' // Red background for errors
+              : isSelected
+              ? theme.colors.primary + '30' // Blue for selected
+              : isInitial
               ? theme.colors.surface
               : theme.colors.background,
           },
@@ -311,7 +318,11 @@ export default function OnlineGameBoard() {
             style={[
               styles.cellText,
               {
-                color: isInitial ? theme.colors.primary : theme.colors.textPrimary,
+                color: isError
+                  ? theme.colors.error
+                  : isInitial
+                  ? theme.colors.primary
+                  : theme.colors.textPrimary,
                 fontWeight: isInitial ? '700' : '400',
               },
             ]}

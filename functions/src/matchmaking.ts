@@ -12,34 +12,35 @@
  * 6. If still no match: Create AI match
  */
 
-import * as functions from "firebase-functions";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { generateSudokuPuzzle, generateAIName } from "./utils/sudokuGenerator";
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
-export const matchmaking = functions.https.onCall(async (data, context) => {
+export const matchmaking = onCall(async (request) => {
   // Auth check
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!request.auth) {
+    throw new HttpsError(
       "unauthenticated",
       "User must be authenticated"
     );
   }
 
-  const userId = context.auth.uid;
+  const userId = request.auth.uid;
+  const data = request.data;
   const { difficulty, elo, displayName } = data;
 
   // Validation
   const validDifficulties: Difficulty[] = ["easy", "medium", "hard", "expert"];
   if (!validDifficulties.includes(difficulty)) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument",
       "Invalid difficulty. Must be: easy, medium, hard, or expert"
     );
   }
 
   if (typeof elo !== "number" || elo < 0 || elo > 3000) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument",
       "Invalid ELO. Must be between 0 and 3000"
     );

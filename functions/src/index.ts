@@ -4,7 +4,7 @@
  * Entry point for all Cloud Functions
  */
 
-import * as functions from "firebase-functions";
+import {onRequest} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 
 // Initialize Firebase Admin
@@ -13,7 +13,7 @@ admin.initializeApp();
 // ===== Exports =====
 
 // Health Check Function (Test-Funktion)
-export const healthCheck = functions.https.onRequest((req, res) => {
+export const healthCheck = onRequest((req, res) => {
   res.json({
     status: "ok",
     message: "Sudoku Duo Cloud Functions are running!",

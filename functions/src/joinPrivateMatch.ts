@@ -10,33 +10,33 @@
  * 4. Update match status to active
  */
 
-import * as functions from "firebase-functions";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import type { MatchDocument } from "./types/firestore";
 
-export const joinPrivateMatch = functions.https.onCall(
-  async (data, context) => {
+export const joinPrivateMatch = onCall(
+  async (request) => {
     // Auth check
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
+    if (!request.auth) {
+      throw new HttpsError(
         "unauthenticated",
         "User must be authenticated"
       );
     }
 
-    const userId = context.auth.uid;
-    const { inviteCode, elo, displayName } = data;
+    const userId = request.auth.uid;
+    const { inviteCode, elo, displayName } = request.data;
 
     // Validation
     if (!inviteCode || typeof inviteCode !== "string") {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "invalid-argument",
         "Invalid invite code"
       );
     }
 
     if (typeof elo !== "number" || elo < 0 || elo > 3000) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "invalid-argument",
         "Invalid ELO. Must be between 0 and 3000"
       );
@@ -56,7 +56,7 @@ export const joinPrivateMatch = functions.https.onCall(
       .get();
 
     if (matchesSnapshot.empty) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "not-found",
         "Match not found or already started"
       );
@@ -67,14 +67,14 @@ export const joinPrivateMatch = functions.https.onCall(
 
     // 2. Validate match
     if (match.players[0].uid === userId) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "already-exists",
         "You are the host of this match"
       );
     }
 
     if (match.players[1].uid !== null) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "resource-exhausted",
         "Match is already full"
       );

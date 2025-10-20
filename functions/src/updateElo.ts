@@ -11,32 +11,32 @@
  * 5. Add to match history
  */
 
-import * as functions from "firebase-functions";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { calculateEloChanges, getRankTier } from "./utils/eloCalculator";
 import type { MatchDocument } from "./types/firestore";
 
-export const updateElo = functions.https.onCall(async (data, context) => {
+export const updateElo = onCall(async (request) => {
   // Auth check
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!request.auth) {
+    throw new HttpsError(
       "unauthenticated",
       "User must be authenticated"
     );
   }
 
-  const { matchId, winner } = data;
+  const { matchId, winner } = request.data;
 
   // Validation
   if (!matchId || typeof matchId !== "string") {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument",
       "Invalid matchId"
     );
   }
 
   if (![0, 1, 2].includes(winner)) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument",
       "Invalid winner. Must be 0 (tie), 1 (player1), or 2 (player2)"
     );
@@ -48,14 +48,14 @@ export const updateElo = functions.https.onCall(async (data, context) => {
   const matchDoc = await db.collection("matches").doc(matchId).get();
 
   if (!matchDoc.exists) {
-    throw new functions.https.HttpsError("not-found", "Match not found");
+    throw new HttpsError("not-found", "Match not found");
   }
 
   const match = matchDoc.data() as MatchDocument;
 
   // Verify match is completed
   if (match.status !== "completed") {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "failed-precondition",
       "Match is not completed"
     );
@@ -63,11 +63,11 @@ export const updateElo = functions.https.onCall(async (data, context) => {
 
   // Verify caller is a player in the match
   const isPlayer =
-    match.players[0].uid === context.auth.uid ||
-    match.players[1].uid === context.auth.uid;
+    match.players[0].uid === request.auth.uid ||
+    match.players[1].uid === request.auth.uid;
 
   if (!isPlayer) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "permission-denied",
       "You are not a player in this match"
     );

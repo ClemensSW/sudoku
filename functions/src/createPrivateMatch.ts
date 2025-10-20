@@ -9,35 +9,35 @@
  * 3. Return invite code for sharing
  */
 
-import * as functions from "firebase-functions";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { generateSudokuPuzzle, generateInviteCode } from "./utils/sudokuGenerator";
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
-export const createPrivateMatch = functions.https.onCall(
-  async (data, context) => {
+export const createPrivateMatch = onCall(
+  async (request) => {
     // Auth check
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
+    if (!request.auth) {
+      throw new HttpsError(
         "unauthenticated",
         "User must be authenticated"
       );
     }
 
-    const userId = context.auth.uid;
-    const { difficulty, elo, displayName } = data;
+    const userId = request.auth.uid;
+    const { difficulty, elo, displayName } = request.data;
 
     // Validation
     const validDifficulties: Difficulty[] = ["easy", "medium", "hard", "expert"];
     if (!validDifficulties.includes(difficulty)) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "invalid-argument",
         "Invalid difficulty. Must be: easy, medium, hard, or expert"
       );
     }
 
     if (typeof elo !== "number" || elo < 0 || elo > 3000) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "invalid-argument",
         "Invalid ELO. Must be between 0 and 3000"
       );
@@ -70,7 +70,7 @@ export const createPrivateMatch = functions.https.onCall(
     }
 
     if (!isUnique) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "internal",
         "Failed to generate unique invite code"
       );

@@ -9,12 +9,10 @@
  * - Expired matchmaking entries
  */
 
-import * as functions from "firebase-functions";
+import {onSchedule} from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 
-export const cleanupMatches = functions.pubsub
-  .schedule("every 1 hours")
-  .onRun(async (context) => {
+export const cleanupMatches = onSchedule({schedule: "every 1 hours"}, async (event) => {
     const db = admin.firestore();
     const now = Date.now();
 
@@ -103,9 +101,4 @@ export const cleanupMatches = functions.pubsub
     console.log(
       `[CleanupMatches] ✅ Cleanup complete: ${deletedMatches} matches, ${deletedMatchmaking} matchmaking entries`
     );
-
-    return {
-      deletedMatches,
-      deletedMatchmaking,
-    };
-  });
+});

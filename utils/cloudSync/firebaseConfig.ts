@@ -16,6 +16,8 @@
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import functions from '@react-native-firebase/functions';
+import { Platform } from 'react-native';
 
 /**
  * Initialisiert Firebase Services
@@ -36,6 +38,28 @@ export async function initializeFirebase(): Promise<void> {
 
     // Firebase Auth wird automatisch initialisiert - nichts zu tun!
     console.log('[Firebase] ✅ Firebase Auth auto-initialized');
+
+    // ⚠️ DEVELOPMENT ONLY: Connect to Firebase Emulator
+    if (__DEV__) {
+      try {
+        // Use different host for Android emulator vs iOS/web
+        const localhost = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+
+        // Connect to Functions Emulator
+        functions().useEmulator(localhost, 5001);
+        console.log(`[Firebase] ✅ Connected to Functions Emulator at ${localhost}:5001`);
+
+        // Connect to Firestore Emulator
+        firestore().useEmulator(localhost, 8080);
+        console.log(`[Firebase] ✅ Connected to Firestore Emulator at ${localhost}:8080`);
+
+        // Connect to Auth Emulator
+        auth().useEmulator(`http://${localhost}:9099`);
+        console.log(`[Firebase] ✅ Connected to Auth Emulator at ${localhost}:9099`);
+      } catch (error) {
+        console.warn('[Firebase] ⚠️ Could not connect to emulators (might already be connected):', error);
+      }
+    }
 
     // Firestore Offline-Persistenz aktivieren
     try {

@@ -278,10 +278,15 @@ export function useRealtimeMatch(matchId: string | null) {
         });
 
         // Prepare Firestore update
+        // Note: We must update the entire row, not a single cell
+        // Firestore doesn't support updating array elements by index in nested paths
+        const updatedRow = [...matchState.gameState.board[row]];
+        updatedRow[col] = value;
+
         const updateData: any = {
           [movesField]: firestore.FieldValue.arrayUnion(move),
           "gameState.lastMoveAt": move.timestamp,
-          [`gameState.board.${row}.${col}`]: value, // Update specific board cell
+          [`gameState.board.${row}`]: updatedRow, // Update entire row
         };
 
         // Increment error counter if move was wrong

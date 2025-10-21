@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
+import { useAIOpponent } from '@/hooks/online/useAIOpponent';
 
 export default function OnlineGameBoard() {
   const router = useRouter();
@@ -42,6 +43,25 @@ export default function OnlineGameBoard() {
     row: number;
     col: number;
   } | null>(null);
+
+  // AI opponent integration
+  const isAIMatch = matchState?.players[1]?.isAI || false;
+  const isMatchActive = matchState?.status === 'active';
+
+  const { isAIThinking } = useAIOpponent({
+    board: matchState?.gameState.board || [],
+    solution: matchState?.gameState.solution || [],
+    isActive: isAIMatch && isMatchActive,
+    profileType: 'balanced',
+    onAIMove: async (row: number, col: number, value: number) => {
+      console.log(`[OnlineGameBoard] AI making move: [${row}, ${col}] = ${value}`);
+      try {
+        await makeMove(2, row, col, value); // Player 2 (AI)
+      } catch (err) {
+        console.error('[OnlineGameBoard] AI move failed:', err);
+      }
+    },
+  });
 
   // Navigate to results when match completes
   useEffect(() => {
@@ -484,6 +504,13 @@ export default function OnlineGameBoard() {
               {81 - matchState.gameState.initialBoard.flat().filter((v) => v !== 0).length}
             </Text>
           </View>
+          {isAIMatch && isAIThinking && (
+            <View style={styles.statItem}>
+              <Text style={[styles.statLabel, { color: theme.colors.primary }]}>
+                AI Thinking...
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Number Selector */}

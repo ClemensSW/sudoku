@@ -105,9 +105,10 @@ function shuffleArray<T>(array: T[]): void {
  * Generates a complete Sudoku solution
  */
 function generateSolution(): number[][] {
-  const grid: number[][] = Array(BOARD_SIZE)
-    .fill(0)
-    .map(() => Array(BOARD_SIZE).fill(0));
+  // Create 2D array using Array.from for proper deep copy
+  const grid: number[][] = Array.from({ length: BOARD_SIZE }, () =>
+    Array.from({ length: BOARD_SIZE }, () => 0)
+  );
 
   fillGrid(grid);
   return grid;

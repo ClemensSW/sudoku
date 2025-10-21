@@ -217,6 +217,11 @@ export const matchmaking = onCall(options, async (request) => {
   // Generate game board
   const { board, solution } = generateSudokuPuzzle(difficulty);
 
+  // Create deep copies for Firestore (avoid reference issues)
+  const boardCopy = JSON.parse(JSON.stringify(board)) as number[][];
+  const solutionCopy = JSON.parse(JSON.stringify(solution)) as number[][];
+  const initialBoardCopy = JSON.parse(JSON.stringify(board)) as number[][];
+
   // Create AI match
   const matchId = db.collection("matches").doc().id;
   const matchData: Partial<MatchDocument> = {
@@ -237,7 +242,7 @@ export const matchmaking = onCall(options, async (request) => {
         joinedAt: now,
       },
       {
-        uid: null, // AI has no UID
+        uid: "ai", // AI placeholder UID
         playerNumber: 2,
         displayName: aiName,
         elo: aiElo,
@@ -249,9 +254,9 @@ export const matchmaking = onCall(options, async (request) => {
     privateMatch: false,
     hostUid: userId,
     gameState: {
-      board,
-      solution,
-      initialBoard: board.map((row) => [...row]),
+      board: boardCopy,
+      solution: solutionCopy,
+      initialBoard: initialBoardCopy,
       player1Moves: [],
       player2Moves: [],
       player1Complete: false,

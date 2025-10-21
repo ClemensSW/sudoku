@@ -105,8 +105,8 @@ export interface MatchDocument {
   startedAt?: number;
   completedAt?: number;
 
-  // Players
-  players: [PlayerInfo, PlayerInfo];
+  // Players (array of 2 players)
+  players: PlayerInfo[];
 
   // Private Match
   privateMatch: boolean;

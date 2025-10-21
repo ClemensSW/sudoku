@@ -113,6 +113,12 @@ export const matchmaking = onCall(options, async (request) => {
       .doc(opponentData.userId)
       .get();
 
+    const userData = userProfile.data();
+    const opponentDataProfile = opponentProfile.data();
+
+    const userAvatarUri = userData?.profile?.avatarUri;
+    const opponentAvatarUri = opponentDataProfile?.profile?.avatarUri;
+
     // Generate game board
     const { board, solution } = generateSudokuPuzzle(difficulty);
 
@@ -135,9 +141,9 @@ export const matchmaking = onCall(options, async (request) => {
           playerNumber: 1,
           displayName:
             displayName ||
-            userProfile.data()?.profile?.displayName ||
+            userData?.profile?.displayName ||
             "Player 1",
-          avatarUri: userProfile.data()?.profile?.avatarUri, // Load user avatar
+          ...(userAvatarUri && { avatarUri: userAvatarUri }), // Only set if exists
           elo: elo,
           isAI: false,
           isReady: false,
@@ -146,7 +152,8 @@ export const matchmaking = onCall(options, async (request) => {
         {
           uid: opponentData.userId,
           playerNumber: 2,
-          displayName: opponentData.displayName || opponentProfile.data()?.profile?.displayName || "Player 2",
+          displayName: opponentData.displayName || opponentDataProfile?.profile?.displayName || "Player 2",
+          ...(opponentAvatarUri && { avatarUri: opponentAvatarUri }), // Only set if exists
           elo: opponentData.elo,
           isAI: false,
           isReady: false,
@@ -231,6 +238,9 @@ export const matchmaking = onCall(options, async (request) => {
 
   // Load user profile for avatar
   const userProfile = await db.collection("users").doc(userId).get();
+  const userData = userProfile.data();
+  const userAvatarUri = userData?.profile?.avatarUri;
+  const userDisplayName = displayName || userData?.profile?.displayName || "Player 1";
 
   // Generate AI opponent
   const aiElo = elo + Math.floor((Math.random() - 0.5) * 100); // ±50 ELO
@@ -257,8 +267,8 @@ export const matchmaking = onCall(options, async (request) => {
       {
         uid: userId,
         playerNumber: 1,
-        displayName: displayName || userProfile.data()?.profile?.displayName || "Player 1",
-        avatarUri: userProfile.data()?.profile?.avatarUri, // Load user avatar
+        displayName: userDisplayName,
+        ...(userAvatarUri && { avatarUri: userAvatarUri }), // Only set if exists
         elo: elo,
         isAI: false,
         isReady: true,

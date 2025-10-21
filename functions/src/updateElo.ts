@@ -13,6 +13,7 @@
 
 import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { calculateEloChanges, getRankTier } from "./utils/eloCalculator";
 import type { MatchDocument } from "./types/firestore";
 
@@ -105,11 +106,11 @@ export const updateElo = onCall(options, async (request) => {
     batch.set(player1Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer1Elo,
       "onlineStats.currentRank": getRankTier(eloChanges.newPlayer1Elo),
-      "onlineStats.totalMatches": admin.firestore.FieldValue.increment(1),
+      "onlineStats.totalMatches": FieldValue.increment(1),
       "onlineStats.wins":
-        winner === 1 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
+        winner === 1 ? FieldValue.increment(1) : FieldValue.increment(0),
       "onlineStats.losses":
-        winner === 2 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
+        winner === 2 ? FieldValue.increment(1) : FieldValue.increment(0),
       "onlineStats.lastMatchAt": Date.now(),
       "onlineStats.eloLastUpdated": Date.now(),
     }, { merge: true });
@@ -141,11 +142,11 @@ export const updateElo = onCall(options, async (request) => {
     batch.set(player2Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer2Elo,
       "onlineStats.currentRank": getRankTier(eloChanges.newPlayer2Elo),
-      "onlineStats.totalMatches": admin.firestore.FieldValue.increment(1),
+      "onlineStats.totalMatches": FieldValue.increment(1),
       "onlineStats.wins":
-        winner === 2 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
+        winner === 2 ? FieldValue.increment(1) : FieldValue.increment(0),
       "onlineStats.losses":
-        winner === 1 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
+        winner === 1 ? FieldValue.increment(1) : FieldValue.increment(0),
       "onlineStats.lastMatchAt": Date.now(),
       "onlineStats.eloLastUpdated": Date.now(),
     }, { merge: true });

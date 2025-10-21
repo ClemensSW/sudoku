@@ -48,10 +48,10 @@ export async function initializeFirebase(): Promise<void> {
         // iOS Simulator: Use localhost
         const localhost = Platform.OS === 'android' ? '192.168.0.206' : 'localhost';
 
-        // Connect to Functions Emulator (europe-west3 region)
-        const regionalFunctions = functions('europe-west3');
-        regionalFunctions.useEmulator(localhost, 5001);
-        console.log(`[Firebase] ✅ Connected to Functions Emulator (europe-west3) at ${localhost}:5001`);
+        // Connect to Functions Emulator
+        // Note: Emulator serves all functions regardless of their declared region
+        functions().useEmulator(localhost, 5001);
+        console.log(`[Firebase] ✅ Connected to Functions Emulator at ${localhost}:5001`);
 
         // Connect to Firestore Emulator
         firestore().useEmulator(localhost, 8088);
@@ -106,12 +106,14 @@ export function getFirebaseFirestore(): FirebaseFirestoreTypes.Module {
 }
 
 /**
- * Gibt die Firebase Functions Instanz für europe-west3 Region zurück
- * Für Cloud Functions Aufrufe (GDPR-konform in Deutschland)
+ * Gibt die Firebase Functions Instanz zurück
+ *
+ * Note: Functions are deployed to europe-west3 region (Frankfurt, Germany) for GDPR compliance.
+ * The region is specified in the backend function definitions, not in the client call.
+ * React Native Firebase's namespaced API automatically routes to the correct region.
  */
 export function getFirebaseFunctions(): FirebaseFunctionsTypes.Module {
-  // Use europe-west3 region (Frankfurt, Germany) for GDPR compliance
-  return functions('europe-west3');
+  return functions();
 }
 
 /**

@@ -108,6 +108,10 @@ export interface MatchDocument {
   // Players (array of 2 players)
   players: PlayerInfo[];
 
+  // Indexed player UIDs for efficient querying
+  player1Uid: string;
+  player2Uid: string;
+
   // Private Match
   privateMatch: boolean;
   inviteCode?: string;

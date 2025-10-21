@@ -107,6 +107,8 @@ export const createPrivateMatch = onCall(options, async (request) => {
       type: "private",
       difficulty,
       createdAt: now,
+      player1Uid: userId,
+      player2Uid: "waiting", // Will be updated when player joins
       players: [
         {
           uid: userId,

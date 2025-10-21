@@ -135,6 +135,8 @@ export const matchmaking = onCall(options, async (request) => {
       type: "ranked",
       difficulty,
       createdAt: now,
+      player1Uid: userId,
+      player2Uid: opponentData.userId,
       players: [
         {
           uid: userId,
@@ -205,15 +207,35 @@ export const matchmaking = onCall(options, async (request) => {
   const myDoc = await db.collection("matchmaking").doc(userId).get();
   if (!myDoc.exists) {
     // Matched with someone during wait!
+    // Query using indexed player UID fields
     const recentMatches = await db
       .collection("matches")
-      .where("players", "array-contains", { uid: userId })
+      .where("player1Uid", "==", userId)
       .orderBy("createdAt", "desc")
       .limit(1)
       .get();
 
-    if (!recentMatches.empty) {
-      const match = recentMatches.docs[0].data() as MatchDocument;
+    const recentMatchesAsPlayer2 = await db
+      .collection("matches")
+      .where("player2Uid", "==", userId)
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+
+    // Get the most recent match from either query
+    let matchDoc = null;
+    if (!recentMatches.empty && !recentMatchesAsPlayer2.empty) {
+      const match1 = recentMatches.docs[0].data() as MatchDocument;
+      const match2 = recentMatchesAsPlayer2.docs[0].data() as MatchDocument;
+      matchDoc = match1.createdAt > match2.createdAt ? recentMatches.docs[0] : recentMatchesAsPlayer2.docs[0];
+    } else if (!recentMatches.empty) {
+      matchDoc = recentMatches.docs[0];
+    } else if (!recentMatchesAsPlayer2.empty) {
+      matchDoc = recentMatchesAsPlayer2.docs[0];
+    }
+
+    if (matchDoc) {
+      const match = matchDoc.data() as MatchDocument;
       const opponent = match.players.find((p) => p.uid !== userId)!;
 
       console.log(`[Matchmaking] Matched during wait! Match: ${match.matchId}`);
@@ -263,6 +285,8 @@ export const matchmaking = onCall(options, async (request) => {
     difficulty,
     createdAt: now,
     startedAt: now,
+    player1Uid: userId,
+    player2Uid: "ai",
     players: [
       {
         uid: userId,

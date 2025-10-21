@@ -78,7 +78,7 @@ export const joinPrivateMatch = onCall(options, async (request) => {
       );
     }
 
-    if (match.players[1].uid !== null) {
+    if (match.players[1].uid !== "waiting") {
       throw new HttpsError(
         "resource-exhausted",
         "Match is already full"
@@ -91,6 +91,7 @@ export const joinPrivateMatch = onCall(options, async (request) => {
     await matchDoc.ref.update({
       status: "active", // Match starts when guest joins
       startedAt: now,
+      player2Uid: userId, // Update indexed field
       "players.1": {
         uid: userId,
         playerNumber: 2,

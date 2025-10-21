@@ -108,7 +108,7 @@ export default function RankedResults() {
         const result = await functions().httpsCallable<
           { matchId: string },
           EloUpdateResult
-        >('updateElo', { region: 'europe-west3' })({ matchId });
+        >('updateElo')({ matchId });
 
         console.log('[RankedResults] ELO updated:', result.data);
         setEloResult(result.data);

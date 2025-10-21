@@ -41,7 +41,7 @@ export function useMatchmaking() {
         const result = await functions().httpsCallable<
           { difficulty: string; elo: number; displayName: string },
           MatchmakingResult
-        >('matchmaking', { region: 'europe-west3' })({
+        >('matchmaking')({
           difficulty,
           elo,
           displayName,

@@ -195,7 +195,7 @@ export default function PrivateJoin() {
       const result = await functions().httpsCallable<
         { inviteCode: string; displayName: string },
         JoinPrivateMatchResult
-      >('joinPrivateMatch', { region: 'europe-west3' })({
+      >('joinPrivateMatch')({
         inviteCode,
         displayName: 'Guest Player', // TODO: Get from auth context
       });

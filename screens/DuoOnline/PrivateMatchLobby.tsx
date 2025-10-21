@@ -240,7 +240,7 @@ export default function PrivateMatchLobby() {
       const result = await functions().httpsCallable<
         { difficulty: string; displayName: string },
         CreatePrivateMatchResult
-      >('createPrivateMatch', { region: 'europe-west3' })({
+      >('createPrivateMatch')({
         difficulty,
         displayName: 'Host Player', // TODO: Get from auth context
       });

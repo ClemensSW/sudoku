@@ -14,9 +14,46 @@ import { useState, useEffect, useCallback } from "react";
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
+import { firestoreBoardToArray } from "@/utils/firestore/boardConverter";
 
 // ===== Types =====
 
+// Firestore GameState (boards as objects)
+interface FirestoreGameState {
+  board: { [rowIndex: string]: number[] };
+  solution: { [rowIndex: string]: number[] };
+  initialBoard: { [rowIndex: string]: number[] };
+  player1Moves: CellMove[];
+  player2Moves: CellMove[];
+  player1Complete: boolean;
+  player2Complete: boolean;
+  player1Errors: number;
+  player2Errors: number;
+  player1Hints: number;
+  player2Hints: number;
+  elapsedTime: number;
+  lastMoveAt: number;
+}
+
+// Firestore MatchState (as stored in Firestore)
+interface FirestoreMatchState {
+  matchId: string;
+  status: "searching" | "lobby" | "active" | "completed" | "abandoned";
+  type: "ranked" | "private" | "ai";
+  difficulty: "easy" | "medium" | "hard" | "expert";
+  createdAt: number;
+  startedAt?: number;
+  completedAt?: number;
+  players: PlayerInfo[];
+  privateMatch: boolean;
+  inviteCode?: string;
+  hostUid: string;
+  gameState: FirestoreGameState;
+  result?: MatchResult;
+  expireAt?: number;
+}
+
+// Client-side MatchState (boards as 2D arrays)
 export interface MatchState {
   matchId: string;
   status: "searching" | "lobby" | "active" | "completed" | "abandoned";
@@ -38,7 +75,7 @@ export interface MatchState {
 }
 
 export interface PlayerInfo {
-  uid: string | null;
+  uid: string;
   playerNumber: 1 | 2;
   displayName: string;
   elo: number;
@@ -119,11 +156,24 @@ export function useRealtimeMatch(matchId: string | null) {
         (snapshot) => {
           // Success handler
           if (snapshot.exists()) {
-            const data = snapshot.data() as MatchState;
+            const firestoreData = snapshot.data() as FirestoreMatchState;
+
+            // Convert Firestore format (object boards) to client format (2D arrays)
+            const clientData: MatchState = {
+              ...firestoreData,
+              players: firestoreData.players as [PlayerInfo, PlayerInfo],
+              gameState: {
+                ...firestoreData.gameState,
+                board: firestoreBoardToArray(firestoreData.gameState.board),
+                solution: firestoreBoardToArray(firestoreData.gameState.solution),
+                initialBoard: firestoreBoardToArray(firestoreData.gameState.initialBoard),
+              },
+            };
+
             console.log(
-              `[useRealtimeMatch] Received update for ${matchId}: status=${data.status}`
+              `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}`
             );
-            setMatchState(data);
+            setMatchState(clientData);
             setIsConnected(true);
             setError(null);
           } else {

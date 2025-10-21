@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import functions from '@react-native-firebase/functions';
+import { getFirebaseFunctions } from '@/utils/cloudSync/firebaseConfig';
 
 interface Opponent {
   displayName: string;
@@ -38,7 +38,7 @@ export function useMatchmaking() {
       try {
         console.log('[useMatchmaking] Searching for match...');
 
-        const result = await functions().httpsCallable<
+        const result = await getFirebaseFunctions().httpsCallable<
           { difficulty: string; elo: number; displayName: string },
           MatchmakingResult
         >('matchmaking')({

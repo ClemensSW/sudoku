@@ -18,7 +18,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import functions from '@react-native-firebase/functions';
+import { getFirebaseFunctions } from '@/utils/cloudSync/firebaseConfig';
 import Share from 'react-native-share';
 import * as Clipboard from 'expo-clipboard';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
@@ -237,7 +237,7 @@ export default function PrivateMatchLobby() {
     try {
       console.log('[PrivateLobby] Creating private match with difficulty:', difficulty);
 
-      const result = await functions().httpsCallable<
+      const result = await getFirebaseFunctions().httpsCallable<
         { difficulty: string; displayName: string },
         CreatePrivateMatchResult
       >('createPrivateMatch')({

@@ -16,7 +16,8 @@
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import functions from '@react-native-firebase/functions';
+import functions, { FirebaseFunctionsTypes } from '@react-native-firebase/functions';
+import firebase from '@react-native-firebase/app';
 import { Platform } from 'react-native';
 
 /**
@@ -48,9 +49,10 @@ export async function initializeFirebase(): Promise<void> {
         // iOS Simulator: Use localhost
         const localhost = Platform.OS === 'android' ? '192.168.0.206' : 'localhost';
 
-        // Connect to Functions Emulator
-        functions().useEmulator(localhost, 5001);
-        console.log(`[Firebase] ✅ Connected to Functions Emulator at ${localhost}:5001`);
+        // Connect to Functions Emulator (europe-west3 region)
+        const regionalFunctions = firebase.app().functions('europe-west3');
+        regionalFunctions.useEmulator(localhost, 5001);
+        console.log(`[Firebase] ✅ Connected to Functions Emulator (europe-west3) at ${localhost}:5001`);
 
         // Connect to Firestore Emulator
         firestore().useEmulator(localhost, 8088);
@@ -105,6 +107,15 @@ export function getFirebaseFirestore(): FirebaseFirestoreTypes.Module {
 }
 
 /**
+ * Gibt die Firebase Functions Instanz für europe-west3 Region zurück
+ * Für Cloud Functions Aufrufe (GDPR-konform in Deutschland)
+ */
+export function getFirebaseFunctions(): FirebaseFunctionsTypes.Module {
+  // Use europe-west3 region (Frankfurt, Germany) for GDPR compliance
+  return firebase.app().functions('europe-west3');
+}
+
+/**
  * Prüft ob Firebase initialisiert und verfügbar ist
  */
 export function isFirebaseAvailable(): boolean {
@@ -142,6 +153,7 @@ export default {
   initializeFirebase,
   getFirebaseAuth,
   getFirebaseFirestore,
+  getFirebaseFunctions,
   isFirebaseAvailable,
   getCurrentUser,
   isUserLoggedIn,

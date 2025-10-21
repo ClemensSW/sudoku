@@ -18,7 +18,7 @@ import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import functions from '@react-native-firebase/functions';
+import { getFirebaseFunctions } from '@/utils/cloudSync/firebaseConfig';
 import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
 
 interface JoinPrivateMatchResult {
@@ -192,7 +192,7 @@ export default function PrivateJoin() {
     try {
       console.log('[PrivateJoin] Joining match with code:', inviteCode);
 
-      const result = await functions().httpsCallable<
+      const result = await getFirebaseFunctions().httpsCallable<
         { inviteCode: string; displayName: string },
         JoinPrivateMatchResult
       >('joinPrivateMatch')({

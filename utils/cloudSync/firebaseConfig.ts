@@ -17,7 +17,6 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import functions, { FirebaseFunctionsTypes } from '@react-native-firebase/functions';
-import firebase from '@react-native-firebase/app';
 import { Platform } from 'react-native';
 
 /**
@@ -50,7 +49,7 @@ export async function initializeFirebase(): Promise<void> {
         const localhost = Platform.OS === 'android' ? '192.168.0.206' : 'localhost';
 
         // Connect to Functions Emulator (europe-west3 region)
-        const regionalFunctions = firebase.app().functions('europe-west3');
+        const regionalFunctions = functions('europe-west3');
         regionalFunctions.useEmulator(localhost, 5001);
         console.log(`[Firebase] ✅ Connected to Functions Emulator (europe-west3) at ${localhost}:5001`);
 
@@ -112,7 +111,7 @@ export function getFirebaseFirestore(): FirebaseFirestoreTypes.Module {
  */
 export function getFirebaseFunctions(): FirebaseFunctionsTypes.Module {
   // Use europe-west3 region (Frankfurt, Germany) for GDPR compliance
-  return firebase.app().functions('europe-west3');
+  return functions('europe-west3');
 }
 
 /**

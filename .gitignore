@@ -46,4 +46,8 @@ firestore-debug.log
 ui-debug.log
 *.log.txt
 
+# Firebase Emulator data
+emulator-data/
+functions/firebase-export-*/
+
 app-example

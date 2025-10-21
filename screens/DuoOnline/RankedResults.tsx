@@ -123,6 +123,26 @@ export default function RankedResults() {
     updateElo();
   }, [matchId]);
 
+  // Verify client calculation matches server (dev only)
+  useEffect(() => {
+    if (eloResult) {
+      const serverChange = playerNumber === 1
+        ? eloResult.player1EloChange
+        : eloResult.player2EloChange;
+      const clientChange = playerNumber === 1
+        ? eloPreview.player1Change
+        : eloPreview.player2Change;
+
+      if (serverChange !== clientChange) {
+        console.warn(
+          `[RankedResults] ELO Mismatch! Server: ${serverChange}, Client: ${clientChange}`
+        );
+      } else {
+        console.log('[RankedResults] ELO calculation verified ✓');
+      }
+    }
+  }, [eloResult, eloPreview, playerNumber]);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -312,26 +332,6 @@ export default function RankedResults() {
   const newTier = getRankTier(newElo);
   const tierName = getRankTierName(newTier);
   const tierColor = getRankTierColor(newTier);
-
-  // Verify client calculation matches server (dev only)
-  useEffect(() => {
-    if (eloResult) {
-      const serverChange = playerNumber === 1
-        ? eloResult.player1EloChange
-        : eloResult.player2EloChange;
-      const clientChange = playerNumber === 1
-        ? eloPreview.player1Change
-        : eloPreview.player2Change;
-
-      if (serverChange !== clientChange) {
-        console.warn(
-          `[RankedResults] ELO Mismatch! Server: ${serverChange}, Client: ${clientChange}`
-        );
-      } else {
-        console.log('[RankedResults] ELO calculation verified ✓');
-      }
-    }
-  }, [eloResult, eloPreview, playerNumber]);
 
   return (
     <SafeAreaView style={styles.container}>

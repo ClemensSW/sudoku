@@ -21,6 +21,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
 import { useAIOpponent } from '@/hooks/online/useAIOpponent';
 import OnlineGameHeader from './components/OnlineGameHeader';
+import OnlineGameTopBar from './components/OnlineGameTopBar';
 
 export default function OnlineGameBoard() {
   const router = useRouter();
@@ -417,24 +418,15 @@ export default function OnlineGameBoard() {
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
 
-      {/* Back Button */}
-      <View style={{
-        position: 'absolute',
-        top: 12,
-        left: 12,
-        zIndex: 10,
-        backgroundColor: theme.colors.surface + 'DD',
-        borderRadius: 20,
-      }}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleBack}
-        >
-          <Feather name="arrow-left" size={24} color={theme.colors.textPrimary} />
-        </TouchableOpacity>
-      </View>
+      {/* Top Navigation Bar */}
+      <OnlineGameTopBar
+        onSettingsPress={() => {
+          // TODO: Open settings modal
+          console.log('Settings pressed');
+        }}
+      />
 
-      {/* New Header */}
+      {/* Player Header */}
       <OnlineGameHeader
         player1={matchState.players[0]}
         player2={matchState.players[1]}

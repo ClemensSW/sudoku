@@ -241,6 +241,14 @@ export function useRealtimeMatch(matchId: string | null) {
       );
 
       try {
+        // CRITICAL FIX: Calculate updated row BEFORE optimistic update
+        // Using matchState AFTER setState would cause race conditions where
+        // multiple moves on the same row would overwrite each other
+        const currentRow = matchState.gameState.board[row];
+        const updatedRowForFirestore = currentRow.map((cell, colIndex) =>
+          colIndex === col ? value : cell
+        );
+
         // Optimistic update (instant UI)
         setMatchState((prev) => {
           if (!prev) return prev;
@@ -286,16 +294,14 @@ export function useRealtimeMatch(matchId: string | null) {
           };
         });
 
-        // Prepare Firestore update
+        // Prepare Firestore update with pre-calculated row
         // Note: We must update the entire row, not a single cell
         // Firestore doesn't support updating array elements by index in nested paths
-        const updatedRow = [...matchState.gameState.board[row]];
-        updatedRow[col] = value;
 
         const updateData: any = {
           [movesField]: firestore.FieldValue.arrayUnion(move),
           "gameState.lastMoveAt": move.timestamp,
-          [`gameState.board.${row}`]: updatedRow, // Update entire row
+          [`gameState.board.${row}`]: updatedRowForFirestore, // Update entire row
         };
 
         // Increment error counter if move was wrong
@@ -402,6 +408,74 @@ export function useRealtimeMatch(matchId: string | null) {
 
     return true;
   }, [matchState]);
+
+  // Auto-detect game over on 3 errors (hearts lost)
+  useEffect(() => {
+    if (!matchState || matchState.status !== "active") return;
+
+    const maxErrors = 3;
+    const p1Errors = matchState.gameState.player1Errors;
+    const p2Errors = matchState.gameState.player2Errors;
+
+    // Check if anyone lost all hearts (3 errors)
+    if (p1Errors >= maxErrors) {
+      console.log(`[useRealtimeMatch] Player 1 lost all hearts (${p1Errors} errors). Player 2 wins!`);
+
+      updateMatchStatus("completed", {
+        completedAt: Date.now(),
+        result: {
+          winner: 2,
+          reason: "errors",
+          winnerUid: matchState.players[1].uid,
+          finalTime: matchState.gameState.elapsedTime,
+          player1Stats: {
+            cellsSolved: matchState.gameState.player1Moves.filter(m => m.isCorrect).length,
+            errors: p1Errors,
+            hintsUsed: matchState.gameState.player1Hints,
+            averageTimePerCell: matchState.gameState.player1Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player1Moves.length
+              : 0,
+          },
+          player2Stats: {
+            cellsSolved: matchState.gameState.player2Moves.filter(m => m.isCorrect).length,
+            errors: p2Errors,
+            hintsUsed: matchState.gameState.player2Hints,
+            averageTimePerCell: matchState.gameState.player2Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player2Moves.length
+              : 0,
+          },
+        },
+      });
+    } else if (p2Errors >= maxErrors) {
+      console.log(`[useRealtimeMatch] Player 2 lost all hearts (${p2Errors} errors). Player 1 wins!`);
+
+      updateMatchStatus("completed", {
+        completedAt: Date.now(),
+        result: {
+          winner: 1,
+          reason: "errors",
+          winnerUid: matchState.players[0].uid,
+          finalTime: matchState.gameState.elapsedTime,
+          player1Stats: {
+            cellsSolved: matchState.gameState.player1Moves.filter(m => m.isCorrect).length,
+            errors: p1Errors,
+            hintsUsed: matchState.gameState.player1Hints,
+            averageTimePerCell: matchState.gameState.player1Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player1Moves.length
+              : 0,
+          },
+          player2Stats: {
+            cellsSolved: matchState.gameState.player2Moves.filter(m => m.isCorrect).length,
+            errors: p2Errors,
+            hintsUsed: matchState.gameState.player2Hints,
+            averageTimePerCell: matchState.gameState.player2Moves.length > 0
+              ? matchState.gameState.elapsedTime / matchState.gameState.player2Moves.length
+              : 0,
+          },
+        },
+      });
+    }
+  }, [matchState?.gameState.player1Errors, matchState?.gameState.player2Errors, matchState?.status, updateMatchStatus]);
 
   // Auto-detect game completion
   useEffect(() => {

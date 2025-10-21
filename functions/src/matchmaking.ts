@@ -137,6 +137,7 @@ export const matchmaking = onCall(options, async (request) => {
             displayName ||
             userProfile.data()?.profile?.displayName ||
             "Player 1",
+          avatarUri: userProfile.data()?.profile?.avatarUri, // Load user avatar
           elo: elo,
           isAI: false,
           isReady: false,
@@ -228,6 +229,9 @@ export const matchmaking = onCall(options, async (request) => {
   // Remove from queue
   await db.collection("matchmaking").doc(userId).delete();
 
+  // Load user profile for avatar
+  const userProfile = await db.collection("users").doc(userId).get();
+
   // Generate AI opponent
   const aiElo = elo + Math.floor((Math.random() - 0.5) * 100); // ±50 ELO
   const aiName = generateAIName();
@@ -253,7 +257,8 @@ export const matchmaking = onCall(options, async (request) => {
       {
         uid: userId,
         playerNumber: 1,
-        displayName: displayName || "Player 1",
+        displayName: displayName || userProfile.data()?.profile?.displayName || "Player 1",
+        avatarUri: userProfile.data()?.profile?.avatarUri, // Load user avatar
         elo: elo,
         isAI: false,
         isReady: true,

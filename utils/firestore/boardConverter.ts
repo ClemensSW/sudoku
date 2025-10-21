@@ -12,15 +12,26 @@
  * @returns 2D array: [[...], [...], ...]
  */
 export function firestoreBoardToArray(
-  firestoreBoard: { [rowIndex: string]: number[] }
+  firestoreBoard: { [rowIndex: string]: number[] } | any
 ): number[][] {
-  const rows = Object.keys(firestoreBoard).length;
+  // Handle null/undefined
+  if (!firestoreBoard) {
+    return [];
+  }
+
+  // Convert to plain object if needed (Firestore returns special objects)
+  const plainBoard = JSON.parse(JSON.stringify(firestoreBoard));
+
   const board: number[][] = [];
 
-  for (let i = 0; i < rows; i++) {
-    const row = firestoreBoard[i.toString()];
-    if (row) {
+  // Assume 9x9 Sudoku board
+  for (let i = 0; i < 9; i++) {
+    const row = plainBoard[i.toString()];
+    if (row && Array.isArray(row)) {
       board.push([...row]); // Create a copy of the row
+    } else {
+      // Fallback: empty row
+      board.push(Array(9).fill(0));
     }
   }
 

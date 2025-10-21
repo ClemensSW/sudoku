@@ -20,6 +20,7 @@ import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
 import { useAIOpponent } from '@/hooks/online/useAIOpponent';
+import OnlineGameHeader from './components/OnlineGameHeader';
 
 export default function OnlineGameBoard() {
   const router = useRouter();
@@ -415,26 +416,33 @@ export default function OnlineGameBoard() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+
+      {/* Back Button */}
+      <View style={{
+        position: 'absolute',
+        top: 12,
+        left: 12,
+        zIndex: 10,
+        backgroundColor: theme.colors.surface + 'DD',
+        borderRadius: 20,
+      }}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBack}
+        >
           <Feather name="arrow-left" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          {matchState.players[1].displayName}
-        </Text>
-        <View style={styles.connectionIndicator}>
-          <View
-            style={[
-              styles.connectionDot,
-              {
-                backgroundColor: isConnected
-                  ? theme.colors.success
-                  : theme.colors.error,
-              },
-            ]}
-          />
-        </View>
       </View>
+
+      {/* New Header */}
+      <OnlineGameHeader
+        player1={matchState.players[0]}
+        player2={matchState.players[1]}
+        player1Moves={matchState.gameState.player1Moves}
+        player2Moves={matchState.gameState.player2Moves}
+        player1Errors={matchState.gameState.player1Errors}
+        player2Errors={matchState.gameState.player2Errors}
+      />
 
       {/* Connection Warning Banner */}
       {!isConnected && (
@@ -456,23 +464,6 @@ export default function OnlineGameBoard() {
       )}
 
       <View style={styles.gameContainer}>
-        {/* Player stats */}
-        <View style={styles.playerStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Errors</Text>
-            <Text style={styles.statValue}>
-              {matchState.gameState.player1Errors}
-            </Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Progress</Text>
-            <Text style={styles.statValue}>
-              {matchState.gameState.player1Moves.length}/
-              {81 - matchState.gameState.initialBoard.flat().filter((v) => v !== 0).length}
-            </Text>
-          </View>
-        </View>
-
         {/* Sudoku Board */}
         <View
           style={[
@@ -489,29 +480,20 @@ export default function OnlineGameBoard() {
           ))}
         </View>
 
-        {/* Opponent stats */}
-        <View style={styles.playerStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Errors</Text>
-            <Text style={styles.statValue}>
-              {matchState.gameState.player2Errors}
+        {/* AI Thinking Indicator */}
+        {isAIMatch && isAIThinking && (
+          <View style={{
+            marginTop: theme.spacing.md,
+            padding: theme.spacing.sm,
+            backgroundColor: theme.colors.primary + '20',
+            borderRadius: 8,
+            alignItems: 'center',
+          }}>
+            <Text style={{ color: theme.colors.primary, fontSize: 14, fontWeight: '600' }}>
+              AI Thinking...
             </Text>
           </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Progress</Text>
-            <Text style={styles.statValue}>
-              {matchState.gameState.player2Moves.length}/
-              {81 - matchState.gameState.initialBoard.flat().filter((v) => v !== 0).length}
-            </Text>
-          </View>
-          {isAIMatch && isAIThinking && (
-            <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: theme.colors.primary }]}>
-                AI Thinking...
-              </Text>
-            </View>
-          )}
-        </View>
+        )}
 
         {/* Number Selector */}
         {selectedCell && (

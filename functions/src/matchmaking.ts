@@ -15,6 +15,7 @@
 import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { generateSudokuPuzzle, generateAIName } from "./utils/sudokuGenerator";
+import { getRandomAIAvatar } from "./utils/aiAvatar";
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
 /**
@@ -262,6 +263,7 @@ export const matchmaking = onCall(options, async (request) => {
         uid: "ai", // AI placeholder UID
         playerNumber: 2,
         displayName: aiName,
+        avatarUri: getRandomAIAvatar(), // Random avatar to appear human-like
         elo: aiElo,
         isAI: true,
         isReady: true,

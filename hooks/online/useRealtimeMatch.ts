@@ -78,6 +78,7 @@ export interface PlayerInfo {
   uid: string;
   playerNumber: 1 | 2;
   displayName: string;
+  avatarUri?: string; // Profile picture URI (e.g., "default://avatar17")
   elo: number;
   isAI: boolean;
   isReady: boolean;
@@ -171,9 +172,17 @@ export function useRealtimeMatch(matchId: string | null) {
             };
 
             console.log(
-              `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}`
+              `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}, lastMoveAt=${clientData.gameState.lastMoveAt}`
             );
-            setMatchState(clientData);
+
+            // Race Condition Fix: Ignore older updates to prevent overwriting optimistic updates
+            setMatchState((prev) => {
+              if (prev && clientData.gameState.lastMoveAt < prev.gameState.lastMoveAt) {
+                console.log(`[useRealtimeMatch] Ignoring older update (${clientData.gameState.lastMoveAt} < ${prev.gameState.lastMoveAt})`);
+                return prev; // Keep current state
+              }
+              return clientData; // Update to new state
+            });
             setIsConnected(true);
             setError(null);
           } else {

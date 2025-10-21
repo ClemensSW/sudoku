@@ -127,6 +127,7 @@ export interface PlayerInfo {
   uid: string; // "ai" for AI, "waiting" for empty slot, or user ID
   playerNumber: 1 | 2;
   displayName: string;
+  avatarUri?: string; // Profile picture URI (e.g., "default://avatar17")
   elo: number;
   isAI: boolean;
   isReady: boolean;

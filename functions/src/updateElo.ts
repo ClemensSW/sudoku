@@ -31,20 +31,13 @@ export const updateElo = onCall(options, async (request) => {
     );
   }
 
-  const { matchId, winner } = request.data;
+  const { matchId } = request.data;
 
   // Validation
   if (!matchId || typeof matchId !== "string") {
     throw new HttpsError(
       "invalid-argument",
       "Invalid matchId"
-    );
-  }
-
-  if (![0, 1, 2].includes(winner)) {
-    throw new HttpsError(
-      "invalid-argument",
-      "Invalid winner. Must be 0 (tie), 1 (player1), or 2 (player2)"
     );
   }
 
@@ -64,6 +57,16 @@ export const updateElo = onCall(options, async (request) => {
     throw new HttpsError(
       "failed-precondition",
       "Match is not completed"
+    );
+  }
+
+  // Get winner from match result
+  const winner = match.result?.winner;
+
+  if (!winner || ![0, 1, 2].includes(winner)) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Invalid or missing winner in match result. Must be 0 (tie), 1 (player1), or 2 (player2)"
     );
   }
 
@@ -97,7 +100,7 @@ export const updateElo = onCall(options, async (request) => {
   const batch = db.batch();
 
   // Update Player 1 (if not AI)
-  if (player1.uid) {
+  if (player1.uid && !player1.isAI) {
     const player1Ref = db.collection("users").doc(player1.uid);
     batch.update(player1Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer1Elo,
@@ -133,7 +136,7 @@ export const updateElo = onCall(options, async (request) => {
   }
 
   // Update Player 2 (if not AI)
-  if (player2.uid) {
+  if (player2.uid && !player2.isAI) {
     const player2Ref = db.collection("users").doc(player2.uid);
     batch.update(player2Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer2Elo,

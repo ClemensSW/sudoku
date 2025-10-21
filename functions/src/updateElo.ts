@@ -102,7 +102,7 @@ export const updateElo = onCall(options, async (request) => {
   // Update Player 1 (if not AI)
   if (player1.uid && !player1.isAI) {
     const player1Ref = db.collection("users").doc(player1.uid);
-    batch.update(player1Ref, {
+    batch.set(player1Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer1Elo,
       "onlineStats.currentRank": getRankTier(eloChanges.newPlayer1Elo),
       "onlineStats.totalMatches": admin.firestore.FieldValue.increment(1),
@@ -112,7 +112,7 @@ export const updateElo = onCall(options, async (request) => {
         winner === 2 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
       "onlineStats.lastMatchAt": Date.now(),
       "onlineStats.eloLastUpdated": Date.now(),
-    });
+    }, { merge: true });
 
     // Add to match history
     const historyRef = player1Ref.collection("matches").doc(matchId);
@@ -138,7 +138,7 @@ export const updateElo = onCall(options, async (request) => {
   // Update Player 2 (if not AI)
   if (player2.uid && !player2.isAI) {
     const player2Ref = db.collection("users").doc(player2.uid);
-    batch.update(player2Ref, {
+    batch.set(player2Ref, {
       "onlineStats.currentElo": eloChanges.newPlayer2Elo,
       "onlineStats.currentRank": getRankTier(eloChanges.newPlayer2Elo),
       "onlineStats.totalMatches": admin.firestore.FieldValue.increment(1),
@@ -148,7 +148,7 @@ export const updateElo = onCall(options, async (request) => {
         winner === 1 ? admin.firestore.FieldValue.increment(1) : admin.firestore.FieldValue.increment(0),
       "onlineStats.lastMatchAt": Date.now(),
       "onlineStats.eloLastUpdated": Date.now(),
-    });
+    }, { merge: true });
 
     // Add to match history
     const historyRef = player2Ref.collection("matches").doc(matchId);

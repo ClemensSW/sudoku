@@ -124,7 +124,7 @@ export interface MatchDocument {
 }
 
 export interface PlayerInfo {
-  uid: string | null; // null = anonymous
+  uid: string; // "ai" for AI, "waiting" for empty slot, or user ID
   playerNumber: 1 | 2;
   displayName: string;
   elo: number;
@@ -134,10 +134,11 @@ export interface PlayerInfo {
 }
 
 export interface GameState {
-  // Board
-  board: number[][]; // 9x9 Grid (0 = empty)
-  solution: number[][]; // 9x9 Grid (correct answers)
-  initialBoard: number[][]; // Starting state (for restart)
+  // Board - stored as object with row keys (Firestore doesn't support nested arrays)
+  // { "0": [1,2,3...], "1": [4,5,6...], ... "8": [7,8,9...] }
+  board: { [rowIndex: string]: number[] };
+  solution: { [rowIndex: string]: number[] };
+  initialBoard: { [rowIndex: string]: number[] };
 
   // Player Progress
   player1Moves: CellMove[];

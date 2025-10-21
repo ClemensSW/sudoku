@@ -13,11 +13,18 @@ admin.initializeApp();
 // ===== Exports =====
 
 // Health Check Function (Test-Funktion)
-export const healthCheck = onRequest({region: "europe-west3"}, (req, res) => {
+// Use europe-west3 region only in production (for GDPR compliance)
+// Emulator ignores region and uses default us-central1
+const healthCheckOptions = process.env.FUNCTIONS_EMULATOR
+  ? {}
+  : { region: "europe-west3" as const };
+
+export const healthCheck = onRequest(healthCheckOptions, (req, res) => {
   res.json({
     status: "ok",
     message: "Sudoku Duo Cloud Functions are running!",
     timestamp: Date.now(),
+    emulator: !!process.env.FUNCTIONS_EMULATOR,
   });
 });
 

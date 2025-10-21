@@ -12,10 +12,13 @@
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 
-export const cleanupMatches = onSchedule({
-  schedule: "every 1 hours",
-  region: "europe-west3",
-}, async (event) => {
+// Use europe-west3 region only in production (for GDPR compliance)
+// Emulator ignores region and uses default us-central1
+const options = process.env.FUNCTIONS_EMULATOR
+  ? { schedule: "every 1 hours" }
+  : { schedule: "every 1 hours", region: "europe-west3" as const };
+
+export const cleanupMatches = onSchedule(options, async (event) => {
     const db = admin.firestore();
     const now = Date.now();
 

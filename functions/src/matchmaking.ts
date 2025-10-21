@@ -17,7 +17,13 @@ import * as admin from "firebase-admin";
 import { generateSudokuPuzzle, generateAIName } from "./utils/sudokuGenerator";
 import type { Difficulty, MatchDocument } from "./types/firestore";
 
-export const matchmaking = onCall({region: "europe-west3"}, async (request) => {
+// Use europe-west3 region only in production (for GDPR compliance)
+// Emulator ignores region and uses default us-central1
+const options = process.env.FUNCTIONS_EMULATOR
+  ? {}
+  : { region: "europe-west3" as const };
+
+export const matchmaking = onCall(options, async (request) => {
   // Auth check
   if (!request.auth) {
     throw new HttpsError(

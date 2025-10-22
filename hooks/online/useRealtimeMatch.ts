@@ -6,8 +6,13 @@
  * Features:
  * - Real-time match state updates
  * - Connection status tracking
- * - Optimistic updates for moves
- * - Error handling & retry
+ * - Optimistic updates for moves (with race condition protection)
+ * - Error handling & complete rollback
+ *
+ * Bug Fixes (2025):
+ * - Fixed race condition: updatedRowForFirestore now calculated from latest state
+ * - Fixed incomplete rollback: now restores board, errors, and lastMoveAt
+ * - Fixed over-aggressive filtering: uses 2-second threshold instead of strict comparison
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -175,11 +180,22 @@ export function useRealtimeMatch(matchId: string | null) {
               `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}, lastMoveAt=${clientData.gameState.lastMoveAt}`
             );
 
-            // Race Condition Fix: Ignore older updates to prevent overwriting optimistic updates
+            // Optimistic update protection: Only ignore updates that are significantly older
+            // This prevents race conditions while still accepting recent updates that may
+            // contain changes from other players or the server
             setMatchState((prev) => {
-              if (prev && clientData.gameState.lastMoveAt < prev.gameState.lastMoveAt) {
-                console.log(`[useRealtimeMatch] Ignoring older update (${clientData.gameState.lastMoveAt} < ${prev.gameState.lastMoveAt})`);
-                return prev; // Keep current state
+              if (prev) {
+                const timeDiff = prev.gameState.lastMoveAt - clientData.gameState.lastMoveAt;
+
+                // Ignore only if update is more than 2 seconds older than current state
+                // This allows recent updates to come through even if slightly out of order
+                if (timeDiff > 2000) {
+                  console.log(
+                    `[useRealtimeMatch] Ignoring stale update (${timeDiff}ms old): ` +
+                    `${clientData.gameState.lastMoveAt} < ${prev.gameState.lastMoveAt}`
+                  );
+                  return prev; // Keep current state
+                }
               }
               return clientData; // Update to new state
             });
@@ -241,17 +257,30 @@ export function useRealtimeMatch(matchId: string | null) {
       );
 
       try {
-        // CRITICAL FIX: Calculate updated row BEFORE optimistic update
-        // Using matchState AFTER setState would cause race conditions where
-        // multiple moves on the same row would overwrite each other
-        const currentRow = matchState.gameState.board[row];
-        const updatedRowForFirestore = currentRow.map((cell, colIndex) =>
-          colIndex === col ? value : cell
-        );
+        // FIX: Calculate updated row INSIDE setState callback to use the LATEST state
+        // This prevents race conditions where multiple quick moves on the same row
+        // would overwrite each other because they were based on stale state
+        let updatedRowForFirestore: number[] = [];
+        let previousBoardState: number[][] = [];
+        let previousP1Errors = 0;
+        let previousP2Errors = 0;
+        let previousLastMoveAt = 0;
 
         // Optimistic update (instant UI)
         setMatchState((prev) => {
           if (!prev) return prev;
+
+          // Store previous state for potential rollback
+          previousBoardState = prev.gameState.board.map(r => [...r]);
+          previousP1Errors = prev.gameState.player1Errors;
+          previousP2Errors = prev.gameState.player2Errors;
+          previousLastMoveAt = prev.gameState.lastMoveAt;
+
+          // Calculate updated row using LATEST state from prev
+          const currentRow = prev.gameState.board[row];
+          updatedRowForFirestore = currentRow.map((cell, colIndex) =>
+            colIndex === col ? value : cell
+          );
 
           // Update board
           const updatedBoard = prev.gameState.board.map((r, ri) =>
@@ -294,7 +323,7 @@ export function useRealtimeMatch(matchId: string | null) {
           };
         });
 
-        // Prepare Firestore update with pre-calculated row
+        // Prepare Firestore update with row calculated from latest state
         // Note: We must update the entire row, not a single cell
         // Firestore doesn't support updating array elements by index in nested paths
 
@@ -316,10 +345,11 @@ export function useRealtimeMatch(matchId: string | null) {
       } catch (err: any) {
         console.error(`[useRealtimeMatch] Move failed:`, err);
 
-        // Rollback optimistic update on error
+        // Rollback optimistic update on error - restore ALL changed state
         setMatchState((prev) => {
           if (!prev) return prev;
 
+          // Rollback moves
           const rollbackMoves =
             playerNumber === 1
               ? prev.gameState.player1Moves.slice(0, -1)
@@ -330,12 +360,36 @@ export function useRealtimeMatch(matchId: string | null) {
               ? prev.gameState.player2Moves.slice(0, -1)
               : prev.gameState.player2Moves;
 
+          // Rollback board (restore entire board from previous state)
+          const rollbackBoard = prev.gameState.board.map((r, ri) =>
+            r.map((c, ci) =>
+              (ri === row && ci === col)
+                ? (previousBoardState[ri]?.[ci] ?? c) // Restore previous value
+                : c
+            )
+          );
+
+          // Rollback errors
+          const rollbackP1Errors =
+            playerNumber === 1 && isError
+              ? Math.max(0, prev.gameState.player1Errors - 1)
+              : prev.gameState.player1Errors;
+
+          const rollbackP2Errors =
+            playerNumber === 2 && isError
+              ? Math.max(0, prev.gameState.player2Errors - 1)
+              : prev.gameState.player2Errors;
+
           return {
             ...prev,
             gameState: {
               ...prev.gameState,
+              board: rollbackBoard,
               player1Moves: rollbackMoves,
               player2Moves: rollbackMoves2,
+              player1Errors: rollbackP1Errors,
+              player2Errors: rollbackP2Errors,
+              lastMoveAt: previousLastMoveAt,
             },
           };
         });

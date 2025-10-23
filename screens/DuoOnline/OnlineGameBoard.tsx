@@ -2,9 +2,10 @@
  * OnlineGameBoard Screen
  *
  * Online multiplayer game screen with real-time synchronization
+ * Includes local notes support (not synced with opponent)
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -12,16 +13,23 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRealtimeMatch } from '@/hooks/online/useRealtimeMatch';
 import { useAIOpponent } from '@/hooks/online/useAIOpponent';
 import OnlineGameHeader from './components/OnlineGameHeader';
 import OnlineGameTopBar from './components/OnlineGameTopBar';
+import OnlineSudokuCell from './components/OnlineSudokuCell';
+import OnlineNumberPad from './components/OnlineNumberPad';
+
+// Type for local notes storage
+type LocalNotesMap = { [key: string]: number[] };
 
 export default function OnlineGameBoard() {
   const router = useRouter();
@@ -46,6 +54,12 @@ export default function OnlineGameBoard() {
     col: number;
   } | null>(null);
 
+  // Local notes state (player-specific, NOT synchronized)
+  const [localNotes, setLocalNotes] = useState<LocalNotesMap>({});
+
+  // Note mode state
+  const [noteModeActive, setNoteModeActive] = useState(false);
+
   // AI opponent integration
   const isAIMatch = matchState?.players[1]?.isAI || false;
   const isMatchActive = matchState?.status === 'active';
@@ -64,6 +78,47 @@ export default function OnlineGameBoard() {
       }
     },
   });
+
+  // Load notes from AsyncStorage on mount
+  useEffect(() => {
+    const loadNotes = async () => {
+      if (!matchId) return;
+      try {
+        const saved = await AsyncStorage.getItem(`online-notes-${matchId}`);
+        if (saved) {
+          setLocalNotes(JSON.parse(saved));
+          console.log('[OnlineGameBoard] Notes loaded from storage');
+        }
+      } catch (err) {
+        console.error('[OnlineGameBoard] Failed to load notes:', err);
+      }
+    };
+    loadNotes();
+  }, [matchId]);
+
+  // Auto-save notes to AsyncStorage
+  useEffect(() => {
+    const saveNotes = async () => {
+      if (!matchId) return;
+      try {
+        await AsyncStorage.setItem(
+          `online-notes-${matchId}`,
+          JSON.stringify(localNotes)
+        );
+      } catch (err) {
+        console.error('[OnlineGameBoard] Failed to save notes:', err);
+      }
+    };
+    saveNotes();
+  }, [localNotes, matchId]);
+
+  // Clear notes when match completes
+  useEffect(() => {
+    if (matchState?.status === 'completed' && matchId) {
+      AsyncStorage.removeItem(`online-notes-${matchId}`);
+      console.log('[OnlineGameBoard] Notes cleared for completed match');
+    }
+  }, [matchState?.status, matchId]);
 
   // Navigate to results when match completes
   useEffect(() => {
@@ -99,6 +154,142 @@ export default function OnlineGameBoard() {
     }
   }, [matchState?.status, matchState?.result, matchId, router]);
 
+  // Helper: Toggle note for a cell
+  const toggleNote = useCallback((row: number, col: number, number: number) => {
+    const key = `${row}-${col}`;
+    setLocalNotes((prev) => {
+      const currentNotes = prev[key] || [];
+      if (currentNotes.includes(number)) {
+        // Remove note
+        const newNotes = currentNotes.filter((n) => n !== number);
+        if (newNotes.length === 0) {
+          const { [key]: _, ...rest } = prev;
+          return rest;
+        }
+        return { ...prev, [key]: newNotes };
+      } else {
+        // Add note
+        return { ...prev, [key]: [...currentNotes, number].sort() };
+      }
+    });
+  }, []);
+
+  // Helper: Clear notes for a cell
+  const clearNotes = useCallback((row: number, col: number) => {
+    const key = `${row}-${col}`;
+    setLocalNotes((prev) => {
+      const { [key]: _, ...rest } = prev;
+      return rest;
+    });
+  }, []);
+
+  // Helper: Check if cell is related (same row, col, or 3x3 box)
+  const isRelatedCell = useCallback(
+    (targetRow: number, targetCol: number): boolean => {
+      if (!selectedCell) return false;
+
+      const sameRow = targetRow === selectedCell.row;
+      const sameCol = targetCol === selectedCell.col;
+      const sameBox =
+        Math.floor(targetRow / 3) === Math.floor(selectedCell.row / 3) &&
+        Math.floor(targetCol / 3) === Math.floor(selectedCell.col / 3);
+
+      return sameRow || sameCol || sameBox;
+    },
+    [selectedCell]
+  );
+
+  // Helper: Check if cell has same value as selected
+  const hasSameValue = useCallback(
+    (row: number, col: number): boolean => {
+      if (!selectedCell || !matchState) return false;
+      const selectedValue =
+        matchState.gameState.board[selectedCell.row][selectedCell.col];
+      const currentValue = matchState.gameState.board[row][col];
+      return selectedValue !== 0 && selectedValue === currentValue;
+    },
+    [selectedCell, matchState]
+  );
+
+  // Helper: Get used numbers (all 9 complete)
+  const getUsedNumbers = useCallback((): number[] => {
+    if (!matchState) return [];
+    const counts: { [key: number]: number } = {};
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        const val = matchState.gameState.board[row][col];
+        if (val !== 0) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+      }
+    }
+    return Object.keys(counts)
+      .filter((key) => counts[parseInt(key)] >= 9)
+      .map((key) => parseInt(key));
+  }, [matchState]);
+
+  // Handler: Cell press
+  const handleCellPress = useCallback(
+    (row: number, col: number) => {
+      if (!matchState) return;
+      const isInitial = matchState.gameState.initialBoard[row][col] !== 0;
+      if (isInitial) return; // Can't select initial cells
+
+      setSelectedCell({ row, col });
+    },
+    [matchState]
+  );
+
+  // Handler: Number press
+  const handleNumberPress = useCallback(
+    async (number: number) => {
+      if (!selectedCell || !matchState) return;
+
+      const { row, col } = selectedCell;
+      const isInitial = matchState.gameState.initialBoard[row][col] !== 0;
+
+      if (isInitial) return;
+
+      if (noteModeActive) {
+        // Toggle note
+        toggleNote(row, col, number);
+      } else {
+        // Clear notes for this cell
+        clearNotes(row, col);
+
+        // Make move
+        try {
+          await makeMove(1, row, col, number); // Player 1 (TODO: get from auth)
+        } catch (err) {
+          console.error('[OnlineGameBoard] Failed to make move:', err);
+        }
+      }
+    },
+    [selectedCell, noteModeActive, matchState, toggleNote, clearNotes, makeMove]
+  );
+
+  // Handler: Erase press
+  const handleErase = useCallback(() => {
+    if (!selectedCell || !matchState) return;
+
+    const { row, col } = selectedCell;
+    const isInitial = matchState.gameState.initialBoard[row][col] !== 0;
+
+    if (isInitial) return;
+
+    if (noteModeActive) {
+      // Clear all notes for this cell
+      clearNotes(row, col);
+    } else {
+      // Clear value (set to 0)
+      try {
+        makeMove(1, row, col, 0); // Player 1
+      } catch (err) {
+        console.error('[OnlineGameBoard] Failed to erase:', err);
+      }
+    }
+  }, [selectedCell, noteModeActive, matchState, clearNotes, makeMove]);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -120,20 +311,6 @@ export default function OnlineGameBoard() {
       fontSize: 18,
       fontWeight: '600',
       color: theme.colors.textPrimary,
-    },
-    connectionIndicator: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-    },
-    connectionDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-    },
-    connectionText: {
-      fontSize: 12,
-      color: theme.colors.textSecondary,
     },
     content: {
       flex: 1,
@@ -158,100 +335,36 @@ export default function OnlineGameBoard() {
       textAlign: 'center',
       marginTop: theme.spacing.sm,
     },
-    debugInfo: {
-      marginTop: theme.spacing.xl,
-      padding: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
-      borderRadius: 8,
-      maxWidth: 300,
-    },
-    debugText: {
-      fontSize: 12,
-      color: theme.colors.textSecondary,
-      marginTop: 4,
+    scrollContent: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.lg,
     },
     gameContainer: {
-      flex: 1,
+      width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: theme.spacing.md,
     },
-    playerStats: {
-      flexDirection: 'row',
-      gap: theme.spacing.lg,
-      marginBottom: theme.spacing.md,
-    },
-    statItem: {
-      alignItems: 'center',
-    },
-    statLabel: {
-      fontSize: 12,
-      color: theme.colors.textSecondary,
-      marginBottom: 4,
-    },
-    statValue: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: theme.colors.textPrimary,
+    boardWrapper: {
+      borderRadius: 16,
+      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 5,
+      marginBottom: theme.spacing.lg,
     },
     board: {
-      width: 324, // 9 cells * 36px
-      height: 324,
+      backgroundColor: '#1E2233',
       borderWidth: 2,
-      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.divider,
+      borderRadius: 8,
     },
     row: {
       flexDirection: 'row',
-    },
-    cell: {
-      width: 36,
-      height: 36,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 0.5,
-    },
-    cellText: {
-      fontSize: 18,
-      fontWeight: '400',
-    },
-    numberSelector: {
-      marginTop: theme.spacing.lg,
-      padding: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
-      borderRadius: 12,
-      width: 324,
-    },
-    numberSelectorHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: theme.spacing.md,
-    },
-    numberSelectorTitle: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: theme.colors.textPrimary,
-    },
-    closeButton: {
-      padding: 4,
-    },
-    numberGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-    },
-    numberButton: {
-      width: 60,
-      height: 60,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.colors.divider,
-    },
-    numberButtonText: {
-      fontSize: 24,
-      fontWeight: '600',
     },
   });
 
@@ -308,7 +421,6 @@ export default function OnlineGameBoard() {
                 backgroundColor: theme.colors.primary,
               }}
               onPress={() => {
-                // Retry by reloading the screen
                 router.replace({ pathname: '/duo-online/game', params: { matchId: matchId! } });
               }}
             >
@@ -332,21 +444,7 @@ export default function OnlineGameBoard() {
             <Feather name="arrow-left" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Online Match</Text>
-          <View style={styles.connectionIndicator}>
-            <View
-              style={[
-                styles.connectionDot,
-                {
-                  backgroundColor: isConnected
-                    ? theme.colors.success
-                    : theme.colors.error,
-                },
-              ]}
-            />
-            <Text style={styles.connectionText}>
-              {isConnected ? 'Connected' : 'Connecting...'}
-            </Text>
-          </View>
+          <View style={{ width: 40 }} />
         </View>
 
         <View style={styles.content}>
@@ -358,60 +456,6 @@ export default function OnlineGameBoard() {
       </SafeAreaView>
     );
   }
-
-  // Render Sudoku cell
-  const renderCell = (row: number, col: number) => {
-    const value = matchState.gameState.board[row][col];
-    const initialValue = matchState.gameState.initialBoard[row][col];
-    const solution = matchState.gameState.solution[row][col];
-    const isInitial = initialValue !== 0;
-    const isError = value !== 0 && !isInitial && value !== solution;
-    const isSelected = selectedCell?.row === row && selectedCell?.col === col;
-
-    return (
-      <TouchableOpacity
-        key={`cell-${row}-${col}`}
-        style={[
-          styles.cell,
-          {
-            borderRightWidth: col % 3 === 2 && col !== 8 ? 2 : 0.5,
-            borderBottomWidth: row % 3 === 2 && row !== 8 ? 2 : 0.5,
-            borderColor: theme.colors.divider,
-            backgroundColor: isError
-              ? theme.colors.error + '20' // Red background for errors
-              : isSelected
-              ? theme.colors.primary + '30' // Blue for selected
-              : isInitial
-              ? theme.colors.surface
-              : theme.colors.background,
-          },
-        ]}
-        onPress={() => {
-          if (!isInitial) {
-            setSelectedCell({ row, col });
-          }
-        }}
-      >
-        {value !== 0 && (
-          <Text
-            style={[
-              styles.cellText,
-              {
-                color: isError
-                  ? theme.colors.error
-                  : isInitial
-                  ? theme.colors.primary
-                  : theme.colors.textPrimary,
-                fontWeight: isInitial ? '700' : '400',
-              },
-            ]}
-          >
-            {value}
-          </Text>
-        )}
-      </TouchableOpacity>
-    );
-  };
 
   // Game view
   return (
@@ -438,16 +482,18 @@ export default function OnlineGameBoard() {
 
       {/* Connection Warning Banner */}
       {!isConnected && (
-        <View style={{
-          backgroundColor: theme.colors.warning + '20',
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.warning,
-          paddingVertical: theme.spacing.sm,
-          paddingHorizontal: theme.spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: theme.spacing.sm,
-        }}>
+        <View
+          style={{
+            backgroundColor: theme.colors.warning + '20',
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.warning,
+            paddingVertical: theme.spacing.sm,
+            paddingHorizontal: theme.spacing.md,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: theme.spacing.sm,
+          }}
+        >
           <Feather name="wifi-off" size={16} color={theme.colors.warning} />
           <Text style={{ color: theme.colors.warning, fontSize: 12, flex: 1 }}>
             {t('duoOnline.game.reconnecting', 'Reconnecting...')}
@@ -455,105 +501,72 @@ export default function OnlineGameBoard() {
         </View>
       )}
 
-      <View style={styles.gameContainer}>
-        {/* Sudoku Board */}
-        <View
-          style={[
-            styles.board,
-            {
-              borderColor: theme.colors.divider,
-            },
-          ]}
-        >
-          {matchState.gameState.board.map((row, rowIndex) => (
-            <View key={`row-${rowIndex}`} style={styles.row}>
-              {row.map((_, colIndex) => renderCell(rowIndex, colIndex))}
-            </View>
-          ))}
-        </View>
-
-        {/* AI Thinking Indicator */}
-        {isAIMatch && isAIThinking && (
-          <View style={{
-            marginTop: theme.spacing.md,
-            padding: theme.spacing.sm,
-            backgroundColor: theme.colors.primary + '20',
-            borderRadius: 8,
-            alignItems: 'center',
-          }}>
-            <Text style={{ color: theme.colors.primary, fontSize: 14, fontWeight: '600' }}>
-              AI Thinking...
-            </Text>
-          </View>
-        )}
-
-        {/* Number Selector */}
-        {selectedCell && (
-          <View style={styles.numberSelector}>
-            <View style={styles.numberSelectorHeader}>
-              <Text style={styles.numberSelectorTitle}>Select Number</Text>
-              <TouchableOpacity
-                onPress={() => setSelectedCell(null)}
-                style={styles.closeButton}
-              >
-                <Feather name="x" size={20} color={theme.colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.numberGrid}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num) => (
-                <TouchableOpacity
-                  key={num}
-                  style={[
-                    styles.numberButton,
-                    { backgroundColor: theme.colors.surface },
-                  ]}
-                  onPress={async () => {
-                    if (matchState) {
-                      try {
-                        await makeMove(
-                          1, // Player number (TODO: get from auth)
-                          selectedCell.row,
-                          selectedCell.col,
-                          num
-                        );
-                        setSelectedCell(null);
-                      } catch (err) {
-                        console.error('Failed to make move:', err);
+      {/* Scrollable Game Area */}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.gameContainer}>
+          {/* Sudoku Board */}
+          <View style={styles.boardWrapper}>
+            <View style={styles.board}>
+              {matchState.gameState.board.map((row, rowIndex) => (
+                <View key={`row-${rowIndex}`} style={styles.row}>
+                  {row.map((_, colIndex) => (
+                    <OnlineSudokuCell
+                      key={`cell-${rowIndex}-${colIndex}`}
+                      value={matchState.gameState.board[rowIndex][colIndex]}
+                      initialValue={matchState.gameState.initialBoard[rowIndex][colIndex]}
+                      solution={matchState.gameState.solution[rowIndex][colIndex]}
+                      notes={localNotes[`${rowIndex}-${colIndex}`] || []}
+                      row={rowIndex}
+                      col={colIndex}
+                      isSelected={
+                        selectedCell?.row === rowIndex &&
+                        selectedCell?.col === colIndex
                       }
-                    }
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.numberButtonText,
-                      { color: theme.colors.textPrimary },
-                    ]}
-                  >
-                    {num === 0 ? '✕' : num}
-                  </Text>
-                </TouchableOpacity>
+                      isRelated={isRelatedCell(rowIndex, colIndex)}
+                      sameValueHighlight={hasSameValue(rowIndex, colIndex)}
+                      onPress={handleCellPress}
+                      showErrors={true}
+                    />
+                  ))}
+                </View>
               ))}
             </View>
           </View>
-        )}
 
-        {/* Debug info */}
-        <View style={styles.debugInfo}>
-          <Text style={[styles.debugText, { fontWeight: '600' }]}>Debug:</Text>
-          <Text style={styles.debugText}>Status: {matchState.status}</Text>
-          <Text style={styles.debugText}>
-            P1: {matchState.gameState.player1Complete ? '✓' : '○'}
-          </Text>
-          <Text style={styles.debugText}>
-            P2: {matchState.gameState.player2Complete ? '✓' : '○'}
-          </Text>
-          {selectedCell && (
-            <Text style={styles.debugText}>
-              Selected: [{selectedCell.row}, {selectedCell.col}]
-            </Text>
+          {/* AI Thinking Indicator */}
+          {isAIMatch && isAIThinking && (
+            <View
+              style={{
+                marginTop: theme.spacing.md,
+                padding: theme.spacing.sm,
+                backgroundColor: theme.colors.primary + '20',
+                borderRadius: 8,
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.colors.primary,
+                  fontSize: 14,
+                  fontWeight: '600',
+                }}
+              >
+                AI Thinking...
+              </Text>
+            </View>
           )}
         </View>
-      </View>
+      </ScrollView>
+
+      {/* Number Pad at Bottom */}
+      <OnlineNumberPad
+        onNumberPress={handleNumberPress}
+        onErasePress={handleErase}
+        onNoteToggle={() => setNoteModeActive(!noteModeActive)}
+        noteModeActive={noteModeActive}
+        disabledNumbers={getUsedNumbers()}
+        isGameComplete={matchState.status === 'completed'}
+      />
     </SafeAreaView>
   );
 }

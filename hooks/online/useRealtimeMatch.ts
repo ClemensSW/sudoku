@@ -165,19 +165,31 @@ export function useRealtimeMatch(matchId: string | null) {
             const firestoreData = snapshot.data() as FirestoreMatchState;
 
             // Convert Firestore format (object boards) to client format (2D arrays)
+            const board = firestoreBoardToArray(firestoreData.gameState.board);
+            const solution = firestoreBoardToArray(firestoreData.gameState.solution);
+            const initialBoard = firestoreBoardToArray(firestoreData.gameState.initialBoard);
+
+            // Validate boards are complete (9x9)
+            if (board.length !== 9 || solution.length !== 9 || initialBoard.length !== 9) {
+              console.error(
+                `[useRealtimeMatch] Invalid board dimensions: board=${board.length}, solution=${solution.length}, initialBoard=${initialBoard.length}`
+              );
+              return; // Skip this update if boards are incomplete
+            }
+
             const clientData: MatchState = {
               ...firestoreData,
               players: firestoreData.players as [PlayerInfo, PlayerInfo],
               gameState: {
                 ...firestoreData.gameState,
-                board: firestoreBoardToArray(firestoreData.gameState.board),
-                solution: firestoreBoardToArray(firestoreData.gameState.solution),
-                initialBoard: firestoreBoardToArray(firestoreData.gameState.initialBoard),
+                board,
+                solution,
+                initialBoard,
               },
             };
 
             console.log(
-              `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}, lastMoveAt=${clientData.gameState.lastMoveAt}`
+              `[useRealtimeMatch] Received update for ${matchId}: status=${clientData.status}, lastMoveAt=${clientData.gameState.lastMoveAt}, board size=${board.length}x${board[0]?.length || 0}`
             );
 
             // Optimistic update protection: Only ignore updates that are significantly older

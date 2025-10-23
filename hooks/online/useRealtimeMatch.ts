@@ -301,16 +301,23 @@ export function useRealtimeMatch(matchId: string | null) {
           // Calculate updated row using LATEST state from prev
           const currentRow = prev.gameState.board[row];
 
+          // DEBUG: Log the current row BEFORE validation
+          console.log(`[useRealtimeMatch] currentRow[${row}] BEFORE map:`, currentRow);
+          console.log(`[useRealtimeMatch] currentRow type:`, typeof currentRow, 'isArray:', Array.isArray(currentRow), 'length:', currentRow?.length);
+
           // CRITICAL: Validate currentRow before using it
           if (!currentRow || !Array.isArray(currentRow) || currentRow.length !== 9) {
             console.error(`[useRealtimeMatch] ERROR: Invalid currentRow at index ${row}:`, currentRow);
             console.error(`[useRealtimeMatch] Full board:`, prev.gameState.board);
+            console.error(`[useRealtimeMatch] Board lengths:`, prev.gameState.board.map((r, i) => `Row ${i}: ${r?.length || 'undefined'}`));
             throw new Error(`Invalid board state: row ${row} is corrupted`);
           }
 
           updatedRowForFirestore = currentRow.map((cell, colIndex) =>
             colIndex === col ? value : cell
           );
+
+          console.log(`[useRealtimeMatch] updatedRowForFirestore AFTER map:`, updatedRowForFirestore);
 
           // CRITICAL: Validate the updated row
           if (updatedRowForFirestore.length !== 9) {

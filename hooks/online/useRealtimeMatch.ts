@@ -292,9 +292,23 @@ export function useRealtimeMatch(matchId: string | null) {
 
           // Calculate updated row using LATEST state from prev
           const currentRow = prev.gameState.board[row];
+
+          // CRITICAL: Validate currentRow before using it
+          if (!currentRow || !Array.isArray(currentRow) || currentRow.length !== 9) {
+            console.error(`[useRealtimeMatch] ERROR: Invalid currentRow at index ${row}:`, currentRow);
+            console.error(`[useRealtimeMatch] Full board:`, prev.gameState.board);
+            throw new Error(`Invalid board state: row ${row} is corrupted`);
+          }
+
           updatedRowForFirestore = currentRow.map((cell, colIndex) =>
             colIndex === col ? value : cell
           );
+
+          // CRITICAL: Validate the updated row
+          if (updatedRowForFirestore.length !== 9) {
+            console.error(`[useRealtimeMatch] ERROR: updatedRowForFirestore has wrong length:`, updatedRowForFirestore.length);
+            throw new Error(`Failed to create valid row update`);
+          }
 
           // Update board
           const updatedBoard = prev.gameState.board.map((r, ri) =>
@@ -341,6 +355,9 @@ export function useRealtimeMatch(matchId: string | null) {
         // Note: We must update the entire row, not a single cell
         // Firestore doesn't support updating array elements by index in nested paths
 
+        // DEBUG: Log the row being updated
+        console.log(`[useRealtimeMatch] Updating row ${row}:`, updatedRowForFirestore);
+
         const updateData: any = {
           [movesField]: firestore.FieldValue.arrayUnion(move),
           "gameState.lastMoveAt": move.timestamp,
@@ -351,6 +368,8 @@ export function useRealtimeMatch(matchId: string | null) {
         if (isError) {
           updateData[errorsField] = firestore.FieldValue.increment(1);
         }
+
+        console.log(`[useRealtimeMatch] Update data keys:`, Object.keys(updateData));
 
         // Write to Firestore
         await firestore().collection("matches").doc(matchId).update(updateData);

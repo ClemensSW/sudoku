@@ -20,6 +20,11 @@ export function firestoreBoardToArray(
     return Array(9).fill(null).map(() => Array(9).fill(0));
   }
 
+  // DEBUG: Log the type and keys of the firestoreBoard
+  console.log('[boardConverter] firestoreBoard type:', typeof firestoreBoard);
+  console.log('[boardConverter] firestoreBoard keys:', Object.keys(firestoreBoard));
+  console.log('[boardConverter] Sample row (0):', firestoreBoard[0] || firestoreBoard['0']);
+
   const board: number[][] = [];
 
   // Assume 9x9 Sudoku board

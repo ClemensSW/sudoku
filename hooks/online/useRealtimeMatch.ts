@@ -169,12 +169,20 @@ export function useRealtimeMatch(matchId: string | null) {
             const solution = firestoreBoardToArray(firestoreData.gameState.solution);
             const initialBoard = firestoreBoardToArray(firestoreData.gameState.initialBoard);
 
-            // Validate boards are complete (9x9)
-            if (board.length !== 9 || solution.length !== 9 || initialBoard.length !== 9) {
+            // Validate boards are complete (9x9) AND have valid content
+            const isBoardValid = board.length === 9 && board.every(row => row && row.length === 9);
+            const isSolutionValid = solution.length === 9 && solution.every(row => row && row.length === 9);
+            const isInitialBoardValid = initialBoard.length === 9 && initialBoard.every(row => row && row.length === 9);
+
+            if (!isBoardValid || !isSolutionValid || !isInitialBoardValid) {
               console.error(
-                `[useRealtimeMatch] Invalid board dimensions: board=${board.length}, solution=${solution.length}, initialBoard=${initialBoard.length}`
+                `[useRealtimeMatch] Invalid board data detected:`,
+                `board=${isBoardValid ? 'OK' : 'INVALID (empty rows)'}`,
+                `solution=${isSolutionValid ? 'OK' : 'INVALID'}`,
+                `initialBoard=${isInitialBoardValid ? 'OK' : 'INVALID'}`
               );
-              return; // Skip this update if boards are incomplete
+              console.error(`[useRealtimeMatch] Board rows:`, board.map(r => r?.length || 0));
+              return; // Skip this update if boards have empty/invalid rows
             }
 
             const clientData: MatchState = {
@@ -357,6 +365,12 @@ export function useRealtimeMatch(matchId: string | null) {
 
         // DEBUG: Log the row being updated
         console.log(`[useRealtimeMatch] Updating row ${row}:`, updatedRowForFirestore);
+
+        // CRITICAL: Validate we're not sending empty rows to Firestore!
+        if (!updatedRowForFirestore || updatedRowForFirestore.length === 0) {
+          console.error(`[useRealtimeMatch] CRITICAL: Attempted to send empty row ${row} to Firestore!`);
+          throw new Error(`Cannot update Firestore with empty row`);
+        }
 
         const updateData: any = {
           [movesField]: firestore.FieldValue.arrayUnion(move),

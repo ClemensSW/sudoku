@@ -357,6 +357,10 @@ export function useRealtimeMatch(matchId: string | null) {
               ? prev.gameState.player2Errors + 1
               : prev.gameState.player2Errors;
 
+          // DEBUG: Log value before returning from setState
+          console.log(`[useRealtimeMatch] updatedRowForFirestore RIGHT BEFORE return:`, updatedRowForFirestore);
+          console.log(`[useRealtimeMatch] Length before return:`, updatedRowForFirestore.length);
+
           return {
             ...prev,
             gameState: {
@@ -370,6 +374,10 @@ export function useRealtimeMatch(matchId: string | null) {
             },
           };
         });
+
+        // DEBUG: Log value IMMEDIATELY after setState completes
+        console.log(`[useRealtimeMatch] updatedRowForFirestore AFTER setState callback:`, updatedRowForFirestore);
+        console.log(`[useRealtimeMatch] Length after setState:`, updatedRowForFirestore.length);
 
         // Prepare Firestore update with row calculated from latest state
         // Note: We must update the entire row, not a single cell

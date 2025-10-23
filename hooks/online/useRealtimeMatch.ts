@@ -307,10 +307,13 @@ export function useRealtimeMatch(matchId: string | null) {
 
           // CRITICAL: Validate currentRow before using it
           if (!currentRow || !Array.isArray(currentRow) || currentRow.length !== 9) {
-            console.error(`[useRealtimeMatch] ERROR: Invalid currentRow at index ${row}:`, currentRow);
+            console.error(`[useRealtimeMatch] FATAL ERROR: Invalid currentRow at index ${row}:`, currentRow);
             console.error(`[useRealtimeMatch] Full board:`, prev.gameState.board);
             console.error(`[useRealtimeMatch] Board lengths:`, prev.gameState.board.map((r, i) => `Row ${i}: ${r?.length || 'undefined'}`));
-            throw new Error(`Invalid board state: row ${row} is corrupted`);
+            console.error(`[useRealtimeMatch] This indicates corrupted Firestore data or listener issue!`);
+            // Don't throw inside setState - return prev to abort update gracefully
+            updatedRowForFirestore = []; // Mark as invalid for later check
+            return prev; // Abort state update, keep previous state
           }
 
           updatedRowForFirestore = currentRow.map((cell, colIndex) =>
@@ -319,10 +322,12 @@ export function useRealtimeMatch(matchId: string | null) {
 
           console.log(`[useRealtimeMatch] updatedRowForFirestore AFTER map:`, updatedRowForFirestore);
 
-          // CRITICAL: Validate the updated row
+          // Sanity check - this should never fail if currentRow was valid
           if (updatedRowForFirestore.length !== 9) {
-            console.error(`[useRealtimeMatch] ERROR: updatedRowForFirestore has wrong length:`, updatedRowForFirestore.length);
-            throw new Error(`Failed to create valid row update`);
+            console.error(`[useRealtimeMatch] IMPOSSIBLE ERROR: updatedRowForFirestore has wrong length after map:`, updatedRowForFirestore.length);
+            console.error(`[useRealtimeMatch] This should never happen if currentRow was valid!`);
+            updatedRowForFirestore = []; // Mark as invalid
+            return prev; // Abort state update
           }
 
           // Update board
@@ -373,10 +378,12 @@ export function useRealtimeMatch(matchId: string | null) {
         // DEBUG: Log the row being updated
         console.log(`[useRealtimeMatch] Updating row ${row}:`, updatedRowForFirestore);
 
-        // CRITICAL: Validate we're not sending empty rows to Firestore!
-        if (!updatedRowForFirestore || updatedRowForFirestore.length === 0) {
-          console.error(`[useRealtimeMatch] CRITICAL: Attempted to send empty row ${row} to Firestore!`);
-          throw new Error(`Cannot update Firestore with empty row`);
+        // CRITICAL: Validate we're not sending invalid rows to Firestore!
+        if (!updatedRowForFirestore || !Array.isArray(updatedRowForFirestore) || updatedRowForFirestore.length !== 9) {
+          console.error(`[useRealtimeMatch] CRITICAL: Invalid row for Firestore!`);
+          console.error(`[useRealtimeMatch] updatedRowForFirestore:`, updatedRowForFirestore);
+          console.error(`[useRealtimeMatch] Type:`, typeof updatedRowForFirestore, 'isArray:', Array.isArray(updatedRowForFirestore), 'length:', updatedRowForFirestore?.length);
+          throw new Error(`Cannot update Firestore with invalid row (expected array of length 9, got ${updatedRowForFirestore?.length})`);
         }
 
         const updateData: any = {

@@ -256,15 +256,17 @@ export function useRealtimeMatch(matchId: string | null) {
         `[useRealtimeMatch] Player ${playerNumber} making move: (${row}, ${col}) = ${value} (${isCorrect ? "✓" : "✗"})`
       );
 
+      // FIX: Declare variables at function scope so they're accessible in error handler
+      let updatedRowForFirestore: number[] = [];
+      let previousBoardState: number[][] = [];
+      let previousP1Errors = 0;
+      let previousP2Errors = 0;
+      let previousLastMoveAt = 0;
+
       try {
         // FIX: Calculate updated row INSIDE setState callback to use the LATEST state
         // This prevents race conditions where multiple quick moves on the same row
         // would overwrite each other because they were based on stale state
-        let updatedRowForFirestore: number[] = [];
-        let previousBoardState: number[][] = [];
-        let previousP1Errors = 0;
-        let previousP2Errors = 0;
-        let previousLastMoveAt = 0;
 
         // Optimistic update (instant UI)
         setMatchState((prev) => {

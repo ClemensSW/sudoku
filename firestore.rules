@@ -70,12 +70,13 @@ service cloud.firestore {
                     && request.resource.data.players[0].uid == request.auth.uid;
 
       // Update: Only players in the match
-      allow update: if isPlayerInMatch(resource.data);
+      allow update: if resource != null && isPlayerInMatch(resource.data);
 
       // Validation: Max 81 moves per player
-      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['gameState.player1Moves', 'gameState.player2Moves'])
+      allow update: if resource != null
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['gameState.player1Moves', 'gameState.player2Moves'])
                     || (request.resource.data.gameState.player1Moves.size() <= 81
-                        && request.resource.data.gameState.player2Moves.size() <= 81);
+                        && request.resource.data.gameState.player2Moves.size() <= 81));
 
       // Delete: Not allowed (match history retention)
       allow delete: if false;

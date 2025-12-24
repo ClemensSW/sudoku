@@ -21,12 +21,14 @@ interface TabNavigatorProps {
   tabs: TabItem[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
+  elevated?: boolean;  // Shadow nur wenn true (für sticky version)
 }
 
 const TabNavigator: React.FC<TabNavigatorProps> = ({
   tabs,
   activeTab,
   onTabChange,
+  elevated = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -79,26 +81,17 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
   return (
     <View
       style={[
-        styles.tabsContainerWrapper,
-        {
-          backgroundColor: colors.background,
+        styles.tabsContainer,
+        { backgroundColor: colors.background },
+        elevated && styles.elevated,
+        elevated && {
           borderBottomColor: theme.isDark
             ? "rgba(255,255,255,0.1)"
             : "rgba(0,0,0,0.05)",
         },
       ]}
     >
-      <View
-        style={[
-          styles.tabsContainer,
-          {
-            borderBottomColor: theme.isDark
-              ? "rgba(255,255,255,0.1)"
-              : "rgba(0,0,0,0.05)",
-          },
-        ]}
-      >
-        {tabs.map((tab) => {
+      {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
 
           return (
@@ -131,30 +124,21 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
           );
         })}
 
-        {/* Animated indicator */}
-        <Animated.View
-          style={[
-            styles.tabIndicator,
-            { backgroundColor: progressColor },
-            indicatorStyle,
-          ]}
-        />
-      </View>
+      {/* Animated indicator */}
+      <Animated.View
+        style={[
+          styles.tabIndicator,
+          { backgroundColor: progressColor },
+          indicatorStyle,
+        ]}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  tabsContainerWrapper: {
-    width: "100%",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 4,
-    zIndex: 10,
-    borderBottomWidth: 1,
-  },
   tabsContainer: {
+    width: "100%",
     paddingTop: 12,
     paddingBottom: 12,
     paddingHorizontal: 8,
@@ -162,6 +146,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     position: "relative",
+    // Keine shadows/borders by default - clean inline look
+  },
+  elevated: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 4,
     borderBottomWidth: 1,
   },
   tabButton: {

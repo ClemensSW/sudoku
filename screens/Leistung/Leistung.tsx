@@ -401,7 +401,7 @@ const Leistung: React.FC = () => {
         ]}
         pointerEvents="box-none"
       >
-        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} elevated />
       </Animated.View>
 
       {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}

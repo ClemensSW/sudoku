@@ -53,17 +53,17 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
     <View
       style={[
         styles.bottomContainer,
-        { paddingBottom: Math.max(insets.bottom + 60, 76), zIndex: 15 },
+        { paddingBottom: Math.max(insets.bottom + 90, 100), zIndex: 15 },
       ]}
     >
       <LinearGradient
         colors={
           isDark
-            ? ["rgba(32, 33, 36, 0.8)", "rgba(41, 42, 45, 1)", "#35363A"]
-            : ["rgba(248, 249, 250, 0.8)", "rgba(255, 255, 255, 1)", "#FFFFFF"]
+            ? [`${colors.background}CC`, colors.background, colors.background]
+            : [`${colors.background}CC`, colors.background, colors.background]
         }
         style={styles.bottomOverlay}
-        locations={[0, 0.19, 1.0]}
+        locations={[0, 0.2, 1.0]}
       />
 
       <View style={styles.buttonsContainer}>

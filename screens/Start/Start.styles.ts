@@ -59,17 +59,17 @@ export const styles = StyleSheet.create({
     width: "100%", // Volle Breite des buttonWrapper (maxWidth: 300)
     // height: 56 vom Button Component (gleich wie resumeButton)
   },
-  howToPlayButton: {
-    marginBottom: 20,
-    marginTop: -15,
-    alignSelf: "center", // Zentriert den Button
-    // Button component übernimmt: padding, borderRadius
-  },
-  howToPlayText: {
-    fontSize: 16,
-    fontWeight: "600",
-    letterSpacing: 0.2,
-    // Wird mit Button textStyle gemerged
+  helpButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.5,
+    backgroundColor: 'transparent',
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: 'hidden',
+    marginBottom: 16,
+    marginTop: -8,
   },
   resumeButton: {
     width: "100%",

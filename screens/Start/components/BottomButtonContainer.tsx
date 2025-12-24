@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import Animated from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { Theme } from "@/utils/theme/ThemeProvider";
 import { PausedGameState } from "@/utils/storage";
@@ -64,18 +64,29 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
       />
 
       <View style={styles.buttonsContainer}>
-        {/* "Wie spielt man?" nur anzeigen wenn kein pausiertes Spiel vorhanden */}
+        {/* Help Button - runder Glaseffekt-Button mit Fragezeichen */}
         {!pausedGame && (
-          <Button
-            title={t('buttons.howToPlay')}
+          <TouchableOpacity
             onPress={onHowToPlayPress}
-            variant="ghost"
-            style={styles.howToPlayButton}
-            textStyle={[
-              styles.howToPlayText,
-              { color: isDark ? "#FFFFFF" : "#1A2C42" },
+            activeOpacity={0.8}
+            style={[
+              styles.helpButton,
+              {
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.1)',
+              }
             ]}
-          />
+          >
+            <BlurView
+              intensity={isDark ? 40 : 60}
+              tint={isDark ? 'dark' : 'light'}
+              style={StyleSheet.absoluteFill}
+            />
+            <Ionicons
+              name="help-outline"
+              size={26}
+              color={isDark ? '#E2E8F0' : '#334155'}
+            />
+          </TouchableOpacity>
         )}
 
         {/* Resume Game Button - nur wenn pausiertes Spiel vorhanden */}

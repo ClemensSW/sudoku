@@ -40,6 +40,9 @@ export async function initializeFirebase(): Promise<void> {
     console.log('[Firebase] ✅ Firebase Auth auto-initialized');
 
     // ⚠️ DEVELOPMENT ONLY: Connect to Firebase Emulator
+    // DISABLED: Use production Firebase directly for development
+    // To enable emulators, uncomment this block and run: firebase emulators:start
+    /*
     if (__DEV__) {
       try {
         // Use different host depending on platform and device type
@@ -64,6 +67,7 @@ export async function initializeFirebase(): Promise<void> {
         console.warn('[Firebase] ⚠️ Could not connect to emulators (might already be connected):', error);
       }
     }
+    */
 
     // Firestore Offline-Persistenz aktivieren
     try {

@@ -307,6 +307,46 @@ npx expo run:ios
 - `eas.json` - EAS Build configuration (build profiles)
 - `app.config.js` - Expo app configuration
 
+### Firebase Configuration (google-services.json)
+
+Die App nutzt Firebase für Authentication und Cloud Sync. Die Konfigurationsdatei `google-services.json` verbindet die App mit dem Firebase-Projekt.
+
+#### Was ist das?
+- Enthält Firebase Project ID, API Keys und OAuth Client IDs
+- Enthält den **SHA-1 Fingerprint** des Keystores (wichtig für Google Sign-In!)
+- Wird beim EAS Build automatisch von `./google-services.json` (Root) nach `android/app/` kopiert
+
+#### Wann muss ich es aktualisieren?
+
+| Situation | Aktion erforderlich |
+|-----------|---------------------|
+| Neuer EAS Keystore | SHA-1 in Firebase Console hinzufügen, neue `google-services.json` downloaden |
+| Anderer Rechner/CI | SHA-1 prüfen und ggf. hinzufügen |
+| `DEVELOPER_ERROR` bei Google Sign-In | SHA-1 Mismatch → siehe unten |
+| Firebase-Projekt geändert | Neue `google-services.json` downloaden |
+
+#### Wie aktualisiere ich es?
+
+1. **SHA-1 des EAS Keystores finden:**
+   - Gehe zu [expo.dev](https://expo.dev) → Dein Projekt → **Credentials** → Android → Keystore
+   - Kopiere den **SHA-1 Fingerprint**
+
+2. **SHA-1 zu Firebase hinzufügen:**
+   - [Firebase Console](https://console.firebase.google.com/) öffnen
+   - Project Settings → Deine Android App
+   - "Add fingerprint" → SHA-1 einfügen → Speichern
+
+3. **Neue google-services.json downloaden:**
+   - In Firebase Console: Download `google-services.json`
+   - Datei ins **Root-Verzeichnis** des Projekts legen (nicht in `android/app/`!)
+
+4. **Neuen Build erstellen:**
+   ```bash
+   eas build --profile development --platform android
+   ```
+
+> **Tipp:** Die Datei im Root wird beim Build automatisch nach `android/app/` kopiert (siehe `app.config.js` Zeile 78).
+
 <br>
 
 ## 🏛️ Architecture

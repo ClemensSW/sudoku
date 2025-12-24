@@ -6,9 +6,9 @@
   **A revolutionary Sudoku experience combining classic gameplay with innovative two-player mode**
   
   [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue.svg)](https://github.com/yourusername/sudoku-duo)
-  [![React Native](https://img.shields.io/badge/React%20Native-0.79.2-61DAFB.svg)](https://reactnative.dev/)
-  [![Expo](https://img.shields.io/badge/Expo-53.0.7-000020.svg)](https://expo.dev/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6.svg)](https://www.typescriptlang.org/)
+  [![React Native](https://img.shields.io/badge/React%20Native-0.81.4-61DAFB.svg)](https://reactnative.dev/)
+  [![Expo](https://img.shields.io/badge/Expo-54.0.12-000020.svg)](https://expo.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-3178C6.svg)](https://www.typescriptlang.org/)
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
@@ -156,11 +156,11 @@ Sudoku Duo is a hobby project with heart and attention to detail – developed t
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
-- Expo CLI
-- EAS CLI (for building)
-- Android Studio / Xcode (for local development)
+- EAS CLI (`npm install -g eas-cli`)
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
 
 ### Installation
 
@@ -175,15 +175,19 @@ Sudoku Duo is a hobby project with heart and attention to detail – developed t
    npm install
    ```
 
-3. **Start the development server**
+3. **Create a development build** (required - Expo Go does NOT work!)
    ```bash
-   npx expo start
+   eas build --profile development --platform android
    ```
 
-4. **Run on device/simulator**
-   - Press `a` for Android
-   - Press `i` for iOS
-   - Scan QR code with Expo Go app
+4. **Install the development build on your device/emulator**
+
+5. **Start the development server**
+   ```bash
+   npx expo start --dev-client
+   ```
+
+> **Note:** This app uses native modules (Firebase, RevenueCat) that are not compatible with Expo Go. You must use a development build.
 
 <br>
 
@@ -224,7 +228,21 @@ npm test -- --watch     # Watch mode
 
 ## 🏗️ Building
 
-### Development Build
+This project uses [EAS Build](https://docs.expo.dev/build/introduction/) for creating app builds.
+
+### Build Profiles Overview
+
+| Profile | Command | Output | Use Case |
+|---------|---------|--------|----------|
+| `development` | `eas build --profile development --platform android` | APK | Development with hot reload |
+| `preview` | `eas build --profile preview --platform android` | APK | Testing, share with friends |
+| `production` | `eas build --platform android` | AAB | Google Play Store upload |
+
+### Detailed Build Commands
+
+#### Development Build
+Creates a development client with debugging tools, hot reload, and dev menu.
+
 ```bash
 # Android
 eas build --profile development --platform android
@@ -233,27 +251,61 @@ eas build --profile development --platform android
 eas build --profile development --platform ios
 ```
 
-### Production Build
+After building, install the APK on your device and run:
 ```bash
-# Android
+npx expo start --dev-client
+```
+
+#### Preview Build (APK for Testing)
+Creates a standalone APK that you can install directly on any Android device. Perfect for:
+- Testing before release
+- Sharing with beta testers
+- Installing on devices without Play Store access
+
+```bash
+eas build --profile preview --platform android
+```
+
+The resulting APK can be downloaded from the EAS dashboard and installed via:
+- Direct download link
+- ADB: `adb install sudoku-duo.apk`
+- File transfer to device
+
+#### Production Build (Store Release)
+Creates an optimized AAB (Android App Bundle) for Google Play Store submission.
+
+```bash
+# Android (AAB for Play Store)
 eas build --platform android
 
-# iOS
+# iOS (for App Store)
 eas build --platform ios
 
 # Both platforms
 eas build --platform all
 ```
 
-### Local Build (Android)
+### APK vs AAB - What's the Difference?
+
+| Format | Description |
+|--------|-------------|
+| **APK** | Single installable file. Can be shared and installed directly on any Android device. |
+| **AAB** | App Bundle for Play Store. Google creates optimized APKs for each device type. Cannot be installed directly. |
+
+### Local Development Build
+For faster iteration during development (requires local toolchain):
+
 ```bash
+# Android (requires Android Studio)
 npx expo run:android
+
+# iOS (requires Xcode, macOS only)
+npx expo run:ios
 ```
 
-### Configuration
-- EAS configuration: `eas.json`
-- App configuration: `app.json`
-- Environment variables: Create `.env` file (see `.env.example`)
+### Configuration Files
+- `eas.json` - EAS Build configuration (build profiles)
+- `app.config.js` - Expo app configuration
 
 <br>
 

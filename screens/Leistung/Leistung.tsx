@@ -58,6 +58,12 @@ const Leistung: React.FC = () => {
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("level");
+  const [visitedTabs, setVisitedTabs] = useState<Record<TabId, boolean>>({
+    level: true,  // Initial-Tab ist immer besucht
+    gallery: false,
+    streak: false,
+    times: false,
+  });
   const [profile, setProfile] = useState<UserProfile>({ name: "User", title: null });
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [showTitleModal, setShowTitleModal] = useState(false);
@@ -173,7 +179,13 @@ const Leistung: React.FC = () => {
   ];
 
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId as TabId);
+    const id = tabId as TabId;
+    setActiveTab(id);
+
+    // Tab als besucht markieren (lazy loading)
+    if (!visitedTabs[id]) {
+      setVisitedTabs(prev => ({ ...prev, [id]: true }));
+    }
 
     // Clear previous timeout to prevent memory leaks
     if (tabChangeTimeoutRef.current) {
@@ -282,34 +294,6 @@ const Leistung: React.FC = () => {
     return allLevels[profile.titleLevelIndex]?.name || null;
   };
 
-  const renderTabContent = () => {
-    if (!stats) return null;
-    switch (activeTab) {
-      case "level":
-        return (
-          <LevelTab
-            stats={stats}
-            selectedTitleIndex={profile.titleLevelIndex ?? null}
-            onTitleSelect={handleTitleChange}
-          />
-        );
-      case "gallery":
-        return <GalleryTab stats={stats} />;
-      case "streak":
-        return <StreakTab stats={stats} onOpenSupportShop={handleOpenSupportShop} />;
-      case "times":
-        return <TimeTab stats={stats} />;
-      default:
-        return (
-          <LevelTab
-            stats={stats}
-            selectedTitleIndex={profile.titleLevelIndex ?? null}
-            onTitleSelect={handleTitleChange}
-          />
-        );
-    }
-  };
-
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -376,12 +360,34 @@ const Leistung: React.FC = () => {
         </View>
 
         <View style={styles.tabContentContainer}>
-          {activeTab === "gallery" ? (
-            <GalleryTab stats={stats} />
-          ) : activeTab === "times" ? (
-            <TimeTab stats={stats} />
-          ) : (
-            renderTabContent()
+          {/* Level Tab - immer gemounted (Initial-Tab) */}
+          <View style={{ display: activeTab === 'level' ? 'flex' : 'none' }}>
+            <LevelTab
+              stats={stats}
+              selectedTitleIndex={profile.titleLevelIndex ?? null}
+              onTitleSelect={handleTitleChange}
+            />
+          </View>
+
+          {/* Gallery Tab - lazy gemounted */}
+          {visitedTabs.gallery && (
+            <View style={{ display: activeTab === 'gallery' ? 'flex' : 'none' }}>
+              <GalleryTab stats={stats} />
+            </View>
+          )}
+
+          {/* Streak Tab - lazy gemounted */}
+          {visitedTabs.streak && (
+            <View style={{ display: activeTab === 'streak' ? 'flex' : 'none' }}>
+              <StreakTab stats={stats} onOpenSupportShop={handleOpenSupportShop} />
+            </View>
+          )}
+
+          {/* Times Tab - lazy gemounted */}
+          {visitedTabs.times && (
+            <View style={{ display: activeTab === 'times' ? 'flex' : 'none' }}>
+              <TimeTab stats={stats} />
+            </View>
           )}
         </View>
       </Animated.ScrollView>

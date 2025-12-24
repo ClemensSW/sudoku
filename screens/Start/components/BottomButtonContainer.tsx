@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import Animated from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -57,13 +58,9 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
       ]}
     >
       <LinearGradient
-        colors={
-          isDark
-            ? [`${colors.background}CC`, colors.background, colors.background]
-            : [`${colors.background}CC`, colors.background, colors.background]
-        }
+        colors={[`${colors.background}00`, colors.background, colors.background]}
         style={styles.bottomOverlay}
-        locations={[0, 0.2, 1.0]}
+        locations={[0, 0.3, 1.0]}
       />
 
       <View style={styles.buttonsContainer}>
@@ -85,15 +82,21 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
         {pausedGame && onResumeGamePress && (
           <Animated.View style={[styles.buttonWrapper, { marginBottom: 14 }]}>
             <TouchableOpacity
+              onPress={onResumeGamePress}
+              activeOpacity={0.8}
               style={[
                 styles.resumeButton,
                 {
-                  borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
+                  borderColor: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.1)',
+                  overflow: 'hidden',
                 }
               ]}
-              onPress={onResumeGamePress}
-              activeOpacity={0.7}
             >
+              <BlurView
+                intensity={isDark ? 40 : 60}
+                tint={isDark ? 'dark' : 'light'}
+                style={StyleSheet.absoluteFill}
+              />
               <View style={{ alignItems: 'center', width: '100%' }}>
                 <Text style={[
                   styles.resumeButtonText,

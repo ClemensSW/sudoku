@@ -31,8 +31,6 @@ export const styles = StyleSheet.create({
     left: 0,
     right: 0,
     overflow: "hidden",
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.25,
@@ -42,8 +40,6 @@ export const styles = StyleSheet.create({
   },
   bottomOverlay: {
     ...StyleSheet.absoluteFillObject,
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36
   },
   buttonsContainer: {
     paddingTop: 32,

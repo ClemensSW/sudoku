@@ -53,8 +53,8 @@ const BottomNavigation: React.FC = () => {
           height: NAV_HEIGHT + Math.max(insets.bottom, 8),
           paddingBottom: Math.max(insets.bottom, 8),
           borderTopColor: theme.isDark
-            ? "rgba(255,255,255,0.08)"
-            : "rgba(0,0,0,0.06)",
+            ? "rgba(255,255,255,0.15)"
+            : "rgba(0,0,0,0.12)",
         },
       ]}
       entering={FadeIn.duration(300)}

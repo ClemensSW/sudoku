@@ -49,28 +49,11 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
 
   const maxTime = validTimes.length > 0 ? Math.max(...validTimes) : 900; // 15 minutes default
 
-  console.log("Raw best times:", {
-    easy: stats.bestTimeEasy,
-    medium: stats.bestTimeMedium,
-    hard: stats.bestTimeHard,
-    expert: stats.bestTimeExpert,
-  });
-
-  console.log("Max time for scaling:", maxTime);
-
   // Calculate percentage directly - now returns a number between 0 and 1
   const getBarPercentage = (time: number): number => {
     if (time <= 0 || time === Infinity) return 0;
     return time / maxTime;
   };
-
-  // Debugging percent values
-  console.log("Calculated percentages:", {
-    easy: getBarPercentage(stats.bestTimeEasy),
-    medium: getBarPercentage(stats.bestTimeMedium),
-    hard: getBarPercentage(stats.bestTimeHard),
-    expert: getBarPercentage(stats.bestTimeExpert),
-  });
 
   // Bar data with numeric percentages - using path colors
   const difficulties: {

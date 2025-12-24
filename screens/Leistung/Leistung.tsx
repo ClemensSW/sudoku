@@ -49,6 +49,7 @@ const Leistung: React.FC = () => {
   const { showAlert } = useAlert();
 
   const scrollViewRef = useRef<Animated.ScrollView>(null);
+  const tabChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabSectionPosition = useSharedValue(0);
   const [tabSectionY, setTabSectionY] = useState<number>(0); // Regular state for scroll logic
   const [headerHeight, setHeaderHeight] = useState<number>(60);
@@ -155,6 +156,15 @@ const Leistung: React.FC = () => {
     }, [])
   );
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (tabChangeTimeoutRef.current) {
+        clearTimeout(tabChangeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const tabs: TabItem[] = [
     { id: "level", label: t('tabs.level') },
     { id: "gallery", label: t('tabs.collection') },
@@ -165,8 +175,13 @@ const Leistung: React.FC = () => {
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as TabId);
 
+    // Clear previous timeout to prevent memory leaks
+    if (tabChangeTimeoutRef.current) {
+      clearTimeout(tabChangeTimeoutRef.current);
+    }
+
     // Scroll to tab navigation if it's below the header
-    setTimeout(() => {
+    tabChangeTimeoutRef.current = setTimeout(() => {
       if (scrollViewRef.current && tabSectionY > 0) {
         scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY, animated: true });
       }

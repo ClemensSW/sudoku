@@ -36,20 +36,30 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   useEffect(() => {
     if (!isFocused) return;
 
+    let cancelled = false;
+
     (async () => {
       try {
         const status = await getSupporterStatus();
+        if (cancelled) return;
+
         setIsPremium(status.isPremiumSubscriber);
         setSupporterStatus(status.supportType || 'none');
 
         // Dynamische Shield-Berechnung: Yearly=4, Monthly=3, Free=2
         const { getMaxWeeklyShields } = await import('@/modules/subscriptions/entitlements');
         const maxShields = await getMaxWeeklyShields(status);
+        if (cancelled) return;
+
         setMaxRegularShields(maxShields);
       } catch (error) {
         console.error('[StreakTab] Error checking premium status:', error);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [stats, isFocused]);
 
   // Safety check: dailyStreak must exist

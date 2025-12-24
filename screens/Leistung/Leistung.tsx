@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContainer: { flex: 1 },
   scrollContent: {},
-  profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 16 },
+  profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 8 },
   tabSection: {
     width: "100%",
   },

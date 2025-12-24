@@ -124,14 +124,16 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
           );
         })}
 
-      {/* Animated indicator */}
-      <Animated.View
-        style={[
-          styles.tabIndicator,
-          { backgroundColor: progressColor },
-          indicatorStyle,
-        ]}
-      />
+      {/* Animated indicator - nur bei elevated (sticky) Version */}
+      {elevated && (
+        <Animated.View
+          style={[
+            styles.tabIndicator,
+            { backgroundColor: progressColor },
+            indicatorStyle,
+          ]}
+        />
+      )}
     </View>
   );
 };

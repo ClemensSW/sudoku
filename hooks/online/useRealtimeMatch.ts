@@ -13,6 +13,7 @@
  * - Fixed race condition: updatedRowForFirestore now calculated from latest state
  * - Fixed incomplete rollback: now restores board, errors, and lastMoveAt
  * - Fixed over-aggressive filtering: uses 2-second threshold instead of strict comparison
+ * - Fixed state closure bug: calculate row before setState to prevent null values sent to Firestore
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -274,9 +275,7 @@ export function useRealtimeMatch(matchId: string | null) {
         `[useRealtimeMatch] Player ${playerNumber} making move: (${row}, ${col}) = ${value} (${isCorrect ? "✓" : "✗"})`
       );
 
-      // Variables to track state changes and computed values
-      // These are scoped per function invocation to prevent race conditions
-      let updatedRowForFirestore: number[] | null = null; // null = not yet computed
+      // Variables to track state for rollback
       const previousState = {
         boardState: [] as number[][],
         p1Errors: 0,
@@ -285,11 +284,31 @@ export function useRealtimeMatch(matchId: string | null) {
       };
 
       try {
-        // FIX: Calculate updated row INSIDE setState callback to use the LATEST state
-        // This prevents race conditions where multiple quick moves on the same row
-        // would overwrite each other because they were based on stale state
+        // FIX: Calculate updated row BEFORE setState from current matchState
+        // This prevents closure scope issues while still allowing optimistic updates
+        const currentRow = matchState.gameState.board[row];
 
-        // Optimistic update (instant UI)
+        // Validate current row
+        if (!currentRow || !Array.isArray(currentRow) || currentRow.length !== 9) {
+          console.error(`[useRealtimeMatch] FATAL ERROR: Invalid currentRow at index ${row}:`, currentRow);
+          console.error(`[useRealtimeMatch] Full board:`, matchState.gameState.board);
+          throw new Error(`Invalid board state at row ${row}: expected array of length 9, got ${currentRow?.length || 'undefined'}`);
+        }
+
+        // Calculate the updated row for Firestore (from current state)
+        const updatedRowForFirestore = currentRow.map((cell, colIndex) =>
+          colIndex === col ? value : cell
+        );
+
+        // Sanity check
+        if (!Array.isArray(updatedRowForFirestore) || updatedRowForFirestore.length !== 9) {
+          console.error(`[useRealtimeMatch] IMPOSSIBLE ERROR: Failed to create valid updated row`);
+          throw new Error(`Failed to calculate valid row update`);
+        }
+
+        console.log(`[useRealtimeMatch] Calculated updatedRowForFirestore:`, updatedRowForFirestore);
+
+        // Optimistic update (instant UI) - recalculate from prev for race condition protection
         setMatchState((prev) => {
           if (!prev) return prev;
 
@@ -299,39 +318,7 @@ export function useRealtimeMatch(matchId: string | null) {
           previousState.p2Errors = prev.gameState.player2Errors;
           previousState.lastMoveAt = prev.gameState.lastMoveAt;
 
-          // Calculate updated row using LATEST state from prev
-          const currentRow = prev.gameState.board[row];
-
-          // DEBUG: Log the current row BEFORE validation
-          console.log(`[useRealtimeMatch] currentRow[${row}] BEFORE map:`, currentRow);
-          console.log(`[useRealtimeMatch] currentRow type:`, typeof currentRow, 'isArray:', Array.isArray(currentRow), 'length:', currentRow?.length);
-
-          // CRITICAL: Validate currentRow before using it
-          if (!currentRow || !Array.isArray(currentRow) || currentRow.length !== 9) {
-            console.error(`[useRealtimeMatch] FATAL ERROR: Invalid currentRow at index ${row}:`, currentRow);
-            console.error(`[useRealtimeMatch] Full board:`, prev.gameState.board);
-            console.error(`[useRealtimeMatch] Board lengths:`, prev.gameState.board.map((r, i) => `Row ${i}: ${r?.length || 'undefined'}`));
-            console.error(`[useRealtimeMatch] This indicates corrupted Firestore data or listener issue!`);
-            // Don't throw inside setState - return prev to abort update gracefully
-            updatedRowForFirestore = null; // Mark as invalid for later check
-            return prev; // Abort state update, keep previous state
-          }
-
-          updatedRowForFirestore = currentRow.map((cell, colIndex) =>
-            colIndex === col ? value : cell
-          );
-
-          console.log(`[useRealtimeMatch] updatedRowForFirestore AFTER map:`, updatedRowForFirestore);
-
-          // Sanity check - this should never fail if currentRow was valid
-          if (updatedRowForFirestore.length !== 9) {
-            console.error(`[useRealtimeMatch] IMPOSSIBLE ERROR: updatedRowForFirestore has wrong length after map:`, updatedRowForFirestore.length);
-            console.error(`[useRealtimeMatch] This should never happen if currentRow was valid!`);
-            updatedRowForFirestore = null; // Mark as invalid
-            return prev; // Abort state update
-          }
-
-          // Update board
+          // Update board using latest state from prev
           const updatedBoard = prev.gameState.board.map((r, ri) =>
             r.map((c, ci) => (ri === row && ci === col ? value : c))
           );
@@ -358,10 +345,6 @@ export function useRealtimeMatch(matchId: string | null) {
               ? prev.gameState.player2Errors + 1
               : prev.gameState.player2Errors;
 
-          // DEBUG: Log value before returning from setState
-          console.log(`[useRealtimeMatch] updatedRowForFirestore RIGHT BEFORE return:`, updatedRowForFirestore);
-          console.log(`[useRealtimeMatch] Length before return:`, updatedRowForFirestore.length);
-
           return {
             ...prev,
             gameState: {
@@ -376,38 +359,16 @@ export function useRealtimeMatch(matchId: string | null) {
           };
         });
 
-        // DEBUG: Log value IMMEDIATELY after setState completes
-        console.log(`[useRealtimeMatch] updatedRowForFirestore AFTER setState callback:`, updatedRowForFirestore);
-
-        // CRITICAL: Validate we're not sending invalid rows to Firestore!
-        // This check should never fail if setState succeeded, but protects against race conditions
-        if (
-          updatedRowForFirestore === null ||
-          !Array.isArray(updatedRowForFirestore) ||
-          (updatedRowForFirestore as any).length !== 9
-        ) {
-          console.error(`[useRealtimeMatch] CRITICAL: Invalid row for Firestore!`);
-          console.error(`[useRealtimeMatch] updatedRowForFirestore:`, updatedRowForFirestore);
-          const lengthInfo = updatedRowForFirestore === null
-            ? 'null'
-            : (Array.isArray(updatedRowForFirestore) ? (updatedRowForFirestore as any).length : 'not-array');
-          throw new Error(`Cannot update Firestore with invalid row (expected array of length 9, got ${lengthInfo})`);
-        }
-
-        // TypeScript type assertion: we've validated it's a number[] of length 9
-        const validatedRow = updatedRowForFirestore as number[];
-
-        // Prepare Firestore update with row calculated from latest state
+        // Prepare Firestore update with row calculated from current state
         // Note: We must update the entire row, not a single cell
         // Firestore doesn't support updating array elements by index in nested paths
 
-        // DEBUG: Log the row being updated
-        console.log(`[useRealtimeMatch] Updating row ${row}:`, validatedRow);
+        console.log(`[useRealtimeMatch] Updating row ${row} in Firestore:`, updatedRowForFirestore);
 
         const updateData: any = {
           [movesField]: firestore.FieldValue.arrayUnion(move),
           "gameState.lastMoveAt": move.timestamp,
-          [`gameState.board.${row}`]: validatedRow, // Update entire row
+          [`gameState.board.${row}`]: updatedRowForFirestore, // Update entire row
         };
 
         // Increment error counter if move was wrong

@@ -571,6 +571,10 @@ const Settings: React.FC<SettingsScreenProps> = ({
           settings={settings}
           onSettingChange={handleSettingChange}
           isDuoMode={isDuoMode}
+          onHowToPlay={!showGameFeatures ? () => {
+            setShowGameModal(false);
+            setShowHowToPlay(true);
+          } : undefined}
         />
       )}
 

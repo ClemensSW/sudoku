@@ -112,9 +112,9 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);
     } else {
-      // Normal: Anzeige > Spiel > Hilfe > Community > Konto & Daten > Info
-      // (Profil inline above)
-      const order = ["design", "game", "help", "community", "accountData", "info"];
+      // Normal: Anzeige > Spiel > Community > Konto & Daten > Info
+      // (Profil inline above, Hilfe ist jetzt in Spiel integriert)
+      const order = ["design", "game", "community", "accountData", "info"];
       return order
         .map((id) => allCategories.find((cat) => cat.id === id))
         .filter((cat): cat is Category => cat !== undefined);

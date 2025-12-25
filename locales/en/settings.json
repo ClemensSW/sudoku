@@ -219,7 +219,8 @@
       "loginTitle": "Welcome Back!",
       "loginMessage": "You are now signed in. Your progress will sync automatically.",
       "registerTitle": "Account Created!",
-      "registerMessage": "Your account was created successfully. Your progress will now be synced."
+      "registerMessage": "Your account was created successfully. Your progress will now be synced.",
+      "registerMessageVerify": "We've sent you a verification email. Please check your inbox and verify your email address."
     },
     "errors": {
       "title": "Error",

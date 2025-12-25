@@ -219,7 +219,8 @@
       "loginTitle": "Willkommen zurück!",
       "loginMessage": "Du bist jetzt angemeldet. Dein Fortschritt wird automatisch synchronisiert.",
       "registerTitle": "Konto erstellt!",
-      "registerMessage": "Dein Konto wurde erfolgreich erstellt. Dein Fortschritt wird nun synchronisiert."
+      "registerMessage": "Dein Konto wurde erfolgreich erstellt. Dein Fortschritt wird nun synchronisiert.",
+      "registerMessageVerify": "Wir haben dir eine Bestätigungsmail gesendet. Bitte überprüfe dein Postfach und bestätige deine E-Mail-Adresse."
     },
     "errors": {
       "title": "Fehler",

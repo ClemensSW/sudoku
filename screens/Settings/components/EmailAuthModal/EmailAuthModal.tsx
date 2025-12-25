@@ -13,7 +13,7 @@ import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import BottomSheetModal from '@/components/BottomSheetModal';
 import { spacing, radius } from '@/utils/theme';
 import { triggerHaptic } from '@/utils/haptics';
-import { signInWithEmail, signUpWithEmail, getEmailAuthErrorKey } from '@/utils/auth/emailAuth';
+import { signInWithEmail, signUpWithEmail, sendEmailVerification, getEmailAuthErrorKey } from '@/utils/auth/emailAuth';
 
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
@@ -99,11 +99,15 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
     setIsLoading(true);
     try {
       await signUpWithEmail(email, password);
+
+      // Send verification email
+      await sendEmailVerification();
+
       triggerHaptic('success');
 
       showAlert({
         title: t('emailAuth.success.registerTitle'),
-        message: t('emailAuth.success.registerMessage'),
+        message: t('emailAuth.success.registerMessageVerify'),
         type: 'success',
         buttons: [{ text: 'OK', style: 'primary', onPress: () => {} }],
       });
@@ -234,6 +238,7 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
             <ForgotPasswordForm
               onSuccess={handleForgotPasswordSuccess}
               onBack={() => setActiveView('login')}
+              onShowAlert={showAlert}
             />
           )}
         </View>

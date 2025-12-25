@@ -12,7 +12,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { useProgressColor } from '@/contexts/color/ColorContext';
-import { useAlert } from '@/components/CustomAlert/AlertProvider';
+import { AlertOptions } from '@/components/CustomAlert/AlertProvider';
 import { spacing, radius } from '@/utils/theme';
 import { triggerHaptic } from '@/utils/haptics';
 import { sendPasswordReset, isValidEmail, getEmailAuthErrorKey } from '@/utils/auth/emailAuth';
@@ -20,16 +20,17 @@ import { sendPasswordReset, isValidEmail, getEmailAuthErrorKey } from '@/utils/a
 interface ForgotPasswordFormProps {
   onSuccess: () => void;
   onBack: () => void;
+  onShowAlert: (options: AlertOptions) => void;
 }
 
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onSuccess,
   onBack,
+  onShowAlert,
 }) => {
   const { t } = useTranslation('settings');
   const { colors, isDark } = useTheme();
   const progressColor = useProgressColor();
-  const { showAlert } = useAlert();
 
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -48,7 +49,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
       await sendPasswordReset(email);
       triggerHaptic('success');
 
-      showAlert({
+      onShowAlert({
         title: t('emailAuth.forgotPassword.successTitle'),
         message: t('emailAuth.forgotPassword.success'),
         type: 'success',
@@ -65,7 +66,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
     } catch (error: any) {
       triggerHaptic('error');
       const errorKey = getEmailAuthErrorKey(error.code);
-      showAlert({
+      onShowAlert({
         title: t('emailAuth.errors.title'),
         message: t(`emailAuth.errors.${errorKey}`),
         type: 'error',

@@ -12,7 +12,7 @@ interface AlertContextType {
 }
 
 // Define options for showing an alert
-interface AlertOptions {
+export interface AlertOptions {
   title: string;
   message: string;
   type?: AlertType;

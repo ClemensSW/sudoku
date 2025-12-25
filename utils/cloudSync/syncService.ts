@@ -293,6 +293,15 @@ export async function syncUserData(options: {
 
     await Promise.all(savePromises);
 
+    // 7.5 Nach Sync die Streak-Logik ausführen um Shields retroaktiv anzuwenden
+    console.log('[SyncService] Step 4.5/5: Processing streak data after sync...');
+    const { checkWeeklyShieldReset, applyShieldsAfterSync } = await import('@/utils/dailyStreak');
+    await checkWeeklyShieldReset();
+    await applyShieldsAfterSync();
+
+    // 7.6 Stats neu laden nach Shield-Anwendung (damit Upload aktuelle Daten hat)
+    const updatedStats = await loadStats();
+
     // 8. Upload nur dirty Documents zurück zu Cloud (Conditional Upload)
     console.log('[SyncService] Step 5/5: Uploading dirty documents to cloud...');
     const dirtyDocs = await getDirtyDocuments();
@@ -305,7 +314,7 @@ export async function syncUserData(options: {
       const uploadPromises: Promise<any>[] = [];
       const uploadedDocs: string[] = [];
 
-      // Stats (TIER 1 - Critical)
+      // Stats (TIER 1 - Critical) - Verwende updatedStats nach Shield-Anwendung!
       if (dirtyDocs.includes('stats')) {
         uploadPromises.push(
           firestore
@@ -313,7 +322,7 @@ export async function syncUserData(options: {
             .doc(user.uid)
             .collection('data')
             .doc('stats')
-            .set(gameStatsToFirestore(merged.stats))
+            .set(gameStatsToFirestore(updatedStats))
             .then(() => uploadedDocs.push('stats'))
         );
       }

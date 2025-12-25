@@ -80,6 +80,37 @@ export function formatDate(date: Date, locale: string = 'de-DE'): string {
   });
 }
 
+/**
+ * Addiert Tage zu einem Datum und gibt ISO-String zurück
+ */
+function addDaysToDate(dateString: string, days: number): string {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split('T')[0];
+}
+
+/**
+ * Fügt einen Shield-Tag zur History hinzu (ohne als Spieltag zu zählen)
+ */
+async function addShieldDayToHistory(stats: GameStats, dateString: string): Promise<void> {
+  if (!stats.dailyStreak) return;
+
+  const date = new Date(dateString);
+  const yearMonth = getYearMonth(date);
+  const day = date.getDate();
+
+  // Initialisiere Monat wenn nicht vorhanden
+  if (!stats.dailyStreak.playHistory[yearMonth]) {
+    stats.dailyStreak.playHistory[yearMonth] = { days: [], shieldDays: [] };
+  }
+
+  // Füge nur zu shieldDays hinzu (nicht zu days - wurde nicht gespielt!)
+  if (!stats.dailyStreak.playHistory[yearMonth].shieldDays.includes(day)) {
+    stats.dailyStreak.playHistory[yearMonth].shieldDays.push(day);
+    stats.dailyStreak.playHistory[yearMonth].shieldDays.sort((a, b) => a - b);
+  }
+}
+
 // ===== Streak Logic =====
 
 /**
@@ -87,8 +118,8 @@ export function formatDate(date: Date, locale: string = 'de-DE'): string {
  *
  * Wird bei jedem Spielstart aufgerufen und entscheidet:
  * - Streak +1 wenn gestern gespielt
- * - Schutzschild einsetzen wenn 1 Tag verpasst
- * - Streak reset wenn 2+ Tage verpasst
+ * - Schutzschilder einsetzen für verpasste Tage (bis keine mehr da)
+ * - Streak reset wenn nicht genug Schutzschilder
  *
  * @returns Object mit Änderungsstatus für UI
  */
@@ -96,6 +127,7 @@ export async function updateDailyStreak(): Promise<{
   changed: boolean;
   newStreak: number;
   shieldUsed: boolean;
+  shieldsUsedCount?: number;
 }> {
   try {
     let stats = await loadStats();
@@ -161,8 +193,8 @@ export async function updateDailyStreak(): Promise<{
     const daysMissed = getDaysBetween(lastPlayed, today);
     console.log('[Daily Streak] Days missed:', daysMissed);
 
-    // Fall 3a: Erster Spieltag ever (lastPlayed ist leer oder sehr alt)
-    if (!lastPlayed || lastPlayed === '' || daysMissed > 30) {
+    // Fall 3a: Erster Spieltag ever (lastPlayed ist leer)
+    if (!lastPlayed || lastPlayed === '') {
       console.log('[Daily Streak] ✅ First day playing or long break → Starting new streak');
       stats.dailyStreak.currentStreak = 1;
       stats.dailyStreak.lastPlayedDate = today;
@@ -183,11 +215,25 @@ export async function updateDailyStreak(): Promise<{
       };
     }
 
-    if (daysMissed === 2) {
-      // Genau 1 Tag verpasst → Versuche Schutzschild einzusetzen
-      if (canUseShield(stats)) {
+    // Multi-Shield Logik: Verwende so viele Shields wie nötig/verfügbar
+    if (daysMissed >= 2) {
+      const daysToShield = daysMissed - 1; // z.B. 3 Tage seit letztem Spiel → 2 Tage verpasst
+      const availableShields = stats.dailyStreak.shieldsAvailable + stats.dailyStreak.bonusShields;
+      const shieldsToUse = Math.min(availableShields, daysToShield);
+
+      console.log(`[Daily Streak] Days to shield: ${daysToShield}, Available shields: ${availableShields}, Using: ${shieldsToUse}`);
+
+      // Shield-Tage zur History hinzufügen (retroaktiv)
+      for (let i = 1; i <= shieldsToUse; i++) {
         useShield(stats);
-        stats.dailyStreak.currentStreak++; // Streak bleibt bestehen
+        const shieldDate = addDaysToDate(lastPlayed, i);
+        await addShieldDayToHistory(stats, shieldDate);
+        console.log(`[Daily Streak] Shield #${i} applied to ${shieldDate}`);
+      }
+
+      if (shieldsToUse >= daysToShield) {
+        // ✅ Alle verpassten Tage abgedeckt → Streak weiter
+        stats.dailyStreak.currentStreak++;
         stats.dailyStreak.lastPlayedDate = today;
 
         // Update longest streak if new record
@@ -195,37 +241,37 @@ export async function updateDailyStreak(): Promise<{
           stats.dailyStreak.longestDailyStreak = stats.dailyStreak.currentStreak;
         }
 
-        await addToPlayHistory(stats, today, { shieldUsed: true });
+        await addToPlayHistory(stats, today);
         await saveStats(stats);
 
-        console.log(`[Daily Streak] Shield used! Streak preserved: ${stats.dailyStreak.currentStreak} days`);
-        // TODO: Show notification to user ("Schutzschild aktiviert!")
+        console.log(`[Daily Streak] ✅ ${shieldsToUse} shield(s) used! Streak preserved: ${stats.dailyStreak.currentStreak} days`);
         return {
           changed: true,
           newStreak: stats.dailyStreak.currentStreak,
           shieldUsed: true,
+          shieldsUsedCount: shieldsToUse,
         };
       } else {
-        // Kein Schutzschild verfügbar → Streak verloren
-        await resetStreak(stats, today);
-        console.log('[Daily Streak] No shield available, streak reset');
-        // TODO: Show notification ("Streak verloren - kein Schutzschild verfügbar")
+        // ❌ Nicht genug Shields → Streak verloren, aber neuer Streak startet heute
+        // Update longest streak bevor reset
+        if (stats.dailyStreak.currentStreak > stats.dailyStreak.longestDailyStreak) {
+          stats.dailyStreak.longestDailyStreak = stats.dailyStreak.currentStreak;
+        }
+
+        // Neuer Streak startet mit 1 (User spielt HEUTE!)
+        stats.dailyStreak.currentStreak = 1;
+        stats.dailyStreak.lastPlayedDate = today;
+        await addToPlayHistory(stats, today);
+        await saveStats(stats);
+
+        console.log(`[Daily Streak] ❌ Not enough shields (needed ${daysToShield}, had ${availableShields}). ${shieldsToUse} used, new streak started.`);
         return {
           changed: true,
-          newStreak: 0,
-          shieldUsed: false,
+          newStreak: 1,
+          shieldUsed: shieldsToUse > 0,
+          shieldsUsedCount: shieldsToUse,
         };
       }
-    } else if (daysMissed > 2) {
-      // 2+ Tage verpasst → Streak verloren (auch mit Schutzschild)
-      await resetStreak(stats, today);
-      console.log(`[Daily Streak] ${daysMissed - 1} days missed, streak reset`);
-      // TODO: Show notification ("Streak verloren")
-      return {
-        changed: true,
-        newStreak: 0,
-        shieldUsed: false,
-      };
     }
   } catch (error) {
     console.error('[Daily Streak] Error updating daily streak:', error);
@@ -234,6 +280,164 @@ export async function updateDailyStreak(): Promise<{
       newStreak: 0,
       shieldUsed: false,
     };
+  }
+}
+
+/**
+ * Findet alle Spieltage aus playHistory als sortierte ISO-Strings
+ */
+function getAllPlayDatesFromHistory(stats: GameStats): string[] {
+  if (!stats.dailyStreak?.playHistory) return [];
+
+  const dates: string[] = [];
+
+  for (const [yearMonth, data] of Object.entries(stats.dailyStreak.playHistory)) {
+    const [year, month] = yearMonth.split('-').map(Number);
+    for (const day of data.days) {
+      const dateStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      dates.push(dateStr);
+    }
+  }
+
+  return dates.sort(); // Chronologisch sortieren
+}
+
+/**
+ * Findet den letzten Spieltag VOR einem bestimmten Datum
+ */
+function findLastPlayDateBefore(stats: GameStats, beforeDate: string): string | null {
+  const allDates = getAllPlayDatesFromHistory(stats);
+  const filtered = allDates.filter(d => d < beforeDate);
+  return filtered.length > 0 ? filtered[filtered.length - 1] : null;
+}
+
+/**
+ * Prüft ob für einen Tag bereits ein Shield eingetragen ist
+ */
+function isShieldDayRecorded(stats: GameStats, dateString: string): boolean {
+  if (!stats.dailyStreak?.playHistory) return false;
+
+  const date = new Date(dateString);
+  const yearMonth = getYearMonth(date);
+  const day = date.getDate();
+
+  const monthData = stats.dailyStreak.playHistory[yearMonth];
+  return monthData?.shieldDays?.includes(day) ?? false;
+}
+
+/**
+ * Wendet Shields retroaktiv nach Cloud-Sync an
+ *
+ * Analysiert playHistory um Lücken zu finden und füllt sie mit Shields.
+ * Funktioniert auch wenn User vor dem Sync bereits gespielt hat.
+ */
+export async function applyShieldsAfterSync(): Promise<void> {
+  try {
+    const stats = await loadStats();
+    if (!stats.dailyStreak) return;
+
+    const today = getTodayDate();
+
+    console.log('[Streak Sync] === APPLY SHIELDS AFTER SYNC ===');
+    console.log('[Streak Sync] Today:', today);
+
+    // Finde alle Spieltage aus playHistory
+    const allPlayDates = getAllPlayDatesFromHistory(stats);
+    console.log('[Streak Sync] All play dates from history:', allPlayDates);
+
+    if (allPlayDates.length < 2) {
+      console.log('[Streak Sync] Less than 2 play dates - no gaps to fill');
+      return;
+    }
+
+    // Finde den neuesten Spieltag (könnte heute oder früher sein)
+    const mostRecentPlayDate = allPlayDates[allPlayDates.length - 1];
+    // Finde den zweit-neuesten Spieltag
+    const secondMostRecentPlayDate = allPlayDates[allPlayDates.length - 2];
+
+    console.log('[Streak Sync] Most recent play:', mostRecentPlayDate);
+    console.log('[Streak Sync] Second most recent play:', secondMostRecentPlayDate);
+
+    // Berechne Lücke zwischen den letzten beiden Spieltagen
+    const daysMissed = getDaysBetween(secondMostRecentPlayDate, mostRecentPlayDate);
+    console.log('[Streak Sync] Gap between last two plays:', daysMissed, 'days');
+
+    if (daysMissed < 2) {
+      console.log('[Streak Sync] No gap to fill (consecutive days)');
+      return;
+    }
+
+    // Prüfe wie viele Shield-Tage bereits eingetragen sind
+    let existingShieldCount = 0;
+    for (let i = 1; i < daysMissed; i++) {
+      const checkDate = addDaysToDate(secondMostRecentPlayDate, i);
+      if (isShieldDayRecorded(stats, checkDate)) {
+        existingShieldCount++;
+      }
+    }
+
+    const daysToShield = daysMissed - 1;
+    const remainingToShield = daysToShield - existingShieldCount;
+
+    console.log(`[Streak Sync] Days to shield: ${daysToShield}, Already shielded: ${existingShieldCount}, Remaining: ${remainingToShield}`);
+
+    if (remainingToShield <= 0) {
+      console.log('[Streak Sync] Gap already filled with shields');
+      return;
+    }
+
+    // Wende Shields an
+    const availableShields = stats.dailyStreak.shieldsAvailable + stats.dailyStreak.bonusShields;
+    const shieldsToUse = Math.min(availableShields, remainingToShield);
+
+    console.log(`[Streak Sync] Available shields: ${availableShields}, Using: ${shieldsToUse}`);
+
+    let shieldsApplied = 0;
+    for (let i = 1; i < daysMissed && shieldsApplied < shieldsToUse; i++) {
+      const shieldDate = addDaysToDate(secondMostRecentPlayDate, i);
+
+      // Nur wenn noch nicht als Shield eingetragen
+      if (!isShieldDayRecorded(stats, shieldDate)) {
+        useShield(stats);
+        await addShieldDayToHistory(stats, shieldDate);
+        shieldsApplied++;
+        console.log(`[Streak Sync] Shield ${shieldsApplied} applied to ${shieldDate}`);
+      }
+    }
+
+    // Aktualisiere lastPlayedDate auf den letzten geschützten Tag (falls Shields verwendet)
+    if (shieldsApplied > 0) {
+      // Finde den letzten geschützten Tag
+      let lastShieldedDay = secondMostRecentPlayDate;
+      for (let i = daysToShield; i >= 1; i--) {
+        const checkDate = addDaysToDate(secondMostRecentPlayDate, i);
+        if (isShieldDayRecorded(stats, checkDate)) {
+          lastShieldedDay = checkDate;
+          break;
+        }
+      }
+
+      // Wenn nicht genug Shields und mostRecentPlayDate ist nicht heute,
+      // setze lastPlayedDate auf letzten geschützten Tag
+      if (shieldsApplied + existingShieldCount < daysToShield) {
+        stats.dailyStreak.lastPlayedDate = lastShieldedDay;
+        console.log(`[Streak Sync] lastPlayedDate updated to ${lastShieldedDay}`);
+
+        // Streak gebrochen
+        if (stats.dailyStreak.currentStreak > stats.dailyStreak.longestDailyStreak) {
+          stats.dailyStreak.longestDailyStreak = stats.dailyStreak.currentStreak;
+        }
+        stats.dailyStreak.currentStreak = 0;
+        console.log('[Streak Sync] Not enough shields - streak broken');
+      } else {
+        console.log('[Streak Sync] All days covered - streak preserved');
+      }
+    }
+
+    await saveStats(stats);
+    console.log('[Streak Sync] Stats saved');
+  } catch (error) {
+    console.error('[Streak Sync] Error applying shields after sync:', error);
   }
 }
 

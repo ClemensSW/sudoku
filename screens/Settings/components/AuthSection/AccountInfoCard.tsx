@@ -1,16 +1,30 @@
 // screens/Settings/components/AuthSection/AccountInfoCard.tsx
 /**
- * AccountInfoCard
+ * AccountInfoCard - Premium Design
  *
  * Zeigt Account-Informationen wenn User eingeloggt ist:
- * - User Email/Name mit Google Profilbild
- * - Auto-Sync Info mit Last Sync Zeitstempel
- * - Manual Sync Button
+ * - User Email/Name mit Google Profilbild (mit Glow-Effekt)
+ * - Auto-Sync Info mit Cloud-Icon
+ * - Manual Sync Button mit Shimmer-Animation
+ *
+ * Premium-Elemente:
+ * - Gradient Border
+ * - Decorative Glow Orb
+ * - Enhanced Shadows
+ * - Shimmer Animation auf Button
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
@@ -21,7 +35,6 @@ import { useProgressColor } from '@/hooks/useProgressColor';
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
 import { syncSuccessAlert } from '@/components/CustomAlert/AlertHelpers';
 import { triggerHaptic } from '@/utils/haptics';
-import Button from '@/components/Button/Button';
 import CloudsIcon from '@/assets/svg/clouds.svg';
 
 interface AccountInfoCardProps {
@@ -38,6 +51,22 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
   const [isSyncing, setIsSyncing] = useState(false);
+
+  // Shimmer animation
+  const shimmerPosition = useSharedValue(-1);
+
+  useEffect(() => {
+    shimmerPosition.value = withRepeat(
+      withTiming(2, { duration: 2500, easing: Easing.linear }),
+      -1,
+      false
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const shimmerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shimmerPosition.value * 150 }],
+  }));
 
   // Subscribe to sync status updates (event-based, no polling!)
   useEffect(() => {
@@ -67,6 +96,8 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
   // Handle manual sync
   const handleManualSync = async () => {
+    if (isSyncing) return;
+
     try {
       setIsSyncing(true);
       triggerHaptic("light");
@@ -75,11 +106,11 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
       const result = await manualSync();
 
       if (result.success) {
-        console.log('[AccountInfoCard] ✅ Manual sync successful');
+        console.log('[AccountInfoCard] Manual sync successful');
         triggerHaptic("success");
         showAlert(syncSuccessAlert());
       } else {
-        console.error('[AccountInfoCard] ⚠️ Manual sync failed:', result.errors);
+        console.error('[AccountInfoCard] Manual sync failed:', result.errors);
         triggerHaptic("error");
         showAlert({
           title: t('authSection.syncError'),
@@ -98,7 +129,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
       // Update sync status
       setSyncStatus(getSyncStatus());
     } catch (error: any) {
-      console.error('[AccountInfoCard] ❌ Manual sync error:', error);
+      console.error('[AccountInfoCard] Manual sync error:', error);
       triggerHaptic("error");
       showAlert({
         title: t('authSection.syncError'),
@@ -126,84 +157,172 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   return (
     <Animated.View
       entering={FadeInDown.delay(100).duration(500)}
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surface,
-          shadowColor: theme.isDark ? '#000' : '#000',
-        },
-      ]}
+      style={styles.outerContainer}
     >
-      {/* User Info Header */}
-      <View style={styles.header}>
-        {/* Profile Photo */}
-        <View style={[styles.avatarContainer, { borderColor: progressColor }]}>
-          {photoURL ? (
-            <Image source={{ uri: photoURL }} style={styles.avatarImage} />
-          ) : (
-            <View style={[styles.avatarFallback, { backgroundColor: progressColor + '20' }]}>
-              <Feather name="user" size={36} color={progressColor} />
-            </View>
-          )}
-        </View>
-
-        {/* User Details */}
-        <View style={styles.userInfo}>
-          <Text style={[styles.displayName, { color: colors.textPrimary }]} numberOfLines={1}>
-            {displayName}
-          </Text>
-          <Text style={[styles.email, { color: colors.textSecondary }]} numberOfLines={1}>
-            {email}
-          </Text>
-        </View>
-      </View>
-
-      {/* Auto-Sync Info with Last Sync */}
-      <View style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}>
-        <View style={styles.syncInfoHeader}>
-          <CloudsIcon width={64} height={64} />
-          <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
-            {t('authSection.autoSyncInfo')}
-          </Text>
-        </View>
-        <View style={styles.syncStatusRow}>
-          <Feather
-            name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
-            size={14}
-            color={syncStatus.lastError ? colors.error : progressColor}
+      {/* Gradient Border */}
+      <LinearGradient
+        colors={[
+          progressColor,
+          `${progressColor}60`,
+          `${progressColor}20`,
+          'transparent',
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientBorder}
+      >
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: colors.surface,
+              shadowColor: progressColor,
+            },
+          ]}
+        >
+          {/* Decorative Glow Orb */}
+          <View
+            style={[
+              styles.glowOrb,
+              { backgroundColor: progressColor },
+            ]}
           />
-          <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
-            {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
-          </Text>
-        </View>
-      </View>
 
-      {/* Manual Sync Button */}
-      <Button
-        title={isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
-        onPress={handleManualSync}
-        disabled={isSyncing}
-        loading={isSyncing}
-        variant="primary"
-        customColor={progressColor}
-        icon={!isSyncing ? <Feather name="refresh-cw" size={18} color={colors.buttonText} /> : undefined}
-        iconPosition="left"
-        style={styles.syncButton}
-      />
+          {/* User Info Header */}
+          <Animated.View
+            entering={FadeInDown.delay(200).duration(400)}
+            style={styles.header}
+          >
+            {/* Profile Photo with Glow */}
+            <View
+              style={[
+                styles.avatarGlow,
+                {
+                  shadowColor: progressColor,
+                },
+              ]}
+            >
+              <View style={[styles.avatarContainer, { borderColor: progressColor }]}>
+                {photoURL ? (
+                  <Image source={{ uri: photoURL }} style={styles.avatarImage} />
+                ) : (
+                  <View style={[styles.avatarFallback, { backgroundColor: progressColor + '20' }]}>
+                    <Feather name="user" size={36} color={progressColor} />
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* User Details */}
+            <View style={styles.userInfo}>
+              <Text style={[styles.displayName, { color: colors.textPrimary }]} numberOfLines={1}>
+                {displayName}
+              </Text>
+              <Text style={[styles.email, { color: colors.textSecondary }]} numberOfLines={1}>
+                {email}
+              </Text>
+            </View>
+          </Animated.View>
+
+          {/* Auto-Sync Info with Last Sync */}
+          <Animated.View
+            entering={FadeInDown.delay(300).duration(400)}
+            style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}
+          >
+            <View style={styles.syncInfoHeader}>
+              <CloudsIcon width={64} height={64} />
+              <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
+                {t('authSection.autoSyncInfo')}
+              </Text>
+            </View>
+            <View style={styles.syncStatusRow}>
+              <Feather
+                name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
+                size={14}
+                color={syncStatus.lastError ? colors.error : progressColor}
+              />
+              <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
+                {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
+              </Text>
+            </View>
+          </Animated.View>
+
+          {/* Manual Sync Button with Shimmer */}
+          <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+            <TouchableOpacity
+              style={[
+                styles.syncButton,
+                {
+                  backgroundColor: progressColor,
+                  shadowColor: progressColor,
+                  opacity: isSyncing ? 0.7 : 1,
+                },
+              ]}
+              onPress={handleManualSync}
+              disabled={isSyncing}
+              activeOpacity={0.8}
+            >
+              {!isSyncing && (
+                <Feather name="refresh-cw" size={18} color="#FFFFFF" />
+              )}
+              <Text style={styles.syncButtonText}>
+                {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
+              </Text>
+
+              {/* Shimmer Effect */}
+              {!isSyncing && (
+                <Animated.View style={[styles.shimmerContainer, shimmerStyle]}>
+                  <LinearGradient
+                    colors={[
+                      'transparent',
+                      'rgba(255, 255, 255, 0.35)',
+                      'transparent',
+                    ]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.shimmerGradient}
+                  />
+                </Animated.View>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </LinearGradient>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    marginBottom: spacing.xxl,
+  },
+
+  gradientBorder: {
+    borderRadius: radius.xl + 1.5,
+    padding: 1.5,
+  },
+
   container: {
     borderRadius: radius.xl,
-    padding: spacing.md,
-    marginBottom: spacing.xxl,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    padding: spacing.xl,
     gap: spacing.lg,
+    overflow: 'hidden',
+    // Enhanced shadow
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+
+  // Decorative Glow Orb
+  glowOrb: {
+    position: 'absolute',
+    top: -40,
+    right: -40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    opacity: 0.12,
   },
 
   // Header
@@ -212,33 +331,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.lg,
   },
+
+  avatarGlow: {
+    // Glow effect around avatar
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+
   avatarContainer: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    borderWidth: 2,
+    borderWidth: 2.5,
     overflow: 'hidden',
   },
+
   avatarImage: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
   },
+
   avatarFallback: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   userInfo: {
     flex: 1,
     gap: 6,
   },
+
   displayName: {
     fontSize: 19,
     fontWeight: '700',
     letterSpacing: 0.3,
   },
+
   email: {
     fontSize: 14,
     fontWeight: '500',
@@ -250,10 +383,12 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     gap: spacing.md,
   },
+
   syncInfoHeader: {
     alignItems: 'center',
     gap: spacing.md,
   },
+
   syncInfoText: {
     fontSize: 15,
     fontWeight: '600',
@@ -261,21 +396,55 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingHorizontal: spacing.sm,
   },
+
   syncStatusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
   },
+
   lastSyncText: {
     fontSize: 12,
     fontWeight: '500',
   },
 
-  // Manual Sync Button
+  // Sync Button with Shimmer
   syncButton: {
-    width: "100%",
-    // Button component übernimmt: backgroundColor, padding, borderRadius, text styling
+    width: '100%',
+    height: 56,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    overflow: 'hidden',
+    // Enhanced shadow
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+
+  syncButtonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+
+  // Shimmer Effect
+  shimmerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
+  shimmerGradient: {
+    width: 80,
+    height: '100%',
   },
 });
 

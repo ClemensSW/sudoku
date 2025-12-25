@@ -200,10 +200,12 @@
       "emailPlaceholder": "deine@email.de",
       "password": "Passwort",
       "passwordPlaceholder": "Passwort wählen",
-      "passwordHint": "Mind. 6 Zeichen",
-      "confirmPassword": "Passwort bestätigen",
-      "confirmPasswordPlaceholder": "Passwort wiederholen",
-      "submit": "Registrieren"
+      "submit": "Registrieren",
+      "strength": {
+        "weak": "Schwach",
+        "medium": "Mittel",
+        "strong": "Stark"
+      }
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",

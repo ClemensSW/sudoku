@@ -200,10 +200,12 @@
       "emailPlaceholder": "your@email.com",
       "password": "पासवर्ड",
       "passwordPlaceholder": "पासवर्ड चुनें",
-      "passwordHint": "कम से कम 6 वर्ण",
-      "confirmPassword": "पासवर्ड पुष्टि करें",
-      "confirmPasswordPlaceholder": "पासवर्ड दोहराएं",
-      "submit": "साइन अप करें"
+      "submit": "साइन अप करें",
+      "strength": {
+        "weak": "कमज़ोर",
+        "medium": "मध्यम",
+        "strong": "मज़बूत"
+      }
     },
     "forgotPassword": {
       "title": "पासवर्ड रीसेट करें",

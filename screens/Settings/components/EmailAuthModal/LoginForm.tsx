@@ -1,5 +1,5 @@
 // screens/Settings/components/EmailAuthModal/LoginForm.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -42,7 +42,53 @@ const LoginForm: React.FC<LoginFormProps> = ({
   }, [initialEmail]);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [tempShowPassword, setTempShowPassword] = useState(false);
+  const hidePasswordTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [emailError, setEmailError] = useState('');
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hidePasswordTimeout.current) {
+        clearTimeout(hidePasswordTimeout.current);
+      }
+    };
+  }, []);
+
+  // Get masked password display (dots + last char visible)
+  const getMaskedDisplay = (): string => {
+    if (password.length === 0) return '';
+    if (showPassword) return password;
+    if (tempShowPassword && password.length > 0) {
+      // Show dots for all except last character
+      return '•'.repeat(password.length - 1) + password.slice(-1);
+    }
+    return '•'.repeat(password.length);
+  };
+
+  // Handle password change with temporary reveal
+  const handlePasswordChange = (text: string) => {
+    // Clear any existing timeout
+    if (hidePasswordTimeout.current) {
+      clearTimeout(hidePasswordTimeout.current);
+    }
+
+    const isAdding = text.length > password.length;
+    setPassword(text);
+
+    // Only show last char temporarily when adding characters (not deleting)
+    if (isAdding && !showPassword) {
+      setTempShowPassword(true);
+
+      // Hide after 2 seconds
+      hidePasswordTimeout.current = setTimeout(() => {
+        setTempShowPassword(false);
+      }, 2000);
+    } else if (!isAdding) {
+      // When deleting, hide immediately
+      setTempShowPassword(false);
+    }
+  };
 
   const handleSubmit = async () => {
     // Validate email
@@ -109,19 +155,35 @@ const LoginForm: React.FC<LoginFormProps> = ({
           ]}
         >
           <Feather name="lock" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
-            placeholder={t('emailAuth.login.passwordPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!isLoading}
-          />
+          <View style={styles.passwordInputWrapper}>
+            <BottomSheetTextInput
+              style={[
+                styles.input,
+                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary }
+              ]}
+              placeholder={t('emailAuth.login.passwordPlaceholder')}
+              placeholderTextColor={colors.textSecondary}
+              value={password}
+              onChangeText={handlePasswordChange}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isLoading}
+            />
+            {tempShowPassword && !showPassword && password.length > 0 && (
+              <Text style={[styles.maskedOverlay, { color: colors.textPrimary }]}>
+                {getMaskedDisplay()}
+              </Text>
+            )}
+          </View>
           <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
+            onPress={() => {
+              setShowPassword(!showPassword);
+              setTempShowPassword(false);
+              if (hidePasswordTimeout.current) {
+                clearTimeout(hidePasswordTimeout.current);
+              }
+            }}
             style={styles.eyeButton}
             disabled={isLoading}
           >
@@ -197,6 +259,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     paddingVertical: 0,
+  },
+  passwordInputWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  maskedOverlay: {
+    position: 'absolute',
+    fontSize: 16,
+    left: 0,
+    right: 0,
   },
   eyeButton: {
     padding: spacing.xs,

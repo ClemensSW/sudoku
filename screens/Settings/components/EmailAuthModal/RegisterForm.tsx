@@ -1,5 +1,5 @@
 // screens/Settings/components/EmailAuthModal/RegisterForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,34 @@ interface RegisterFormProps {
   isLoading: boolean;
 }
 
+// Password strength helper
+type PasswordStrength = 'weak' | 'medium' | 'strong';
+
+const getPasswordStrength = (password: string): PasswordStrength => {
+  if (password.length < 6) return 'weak';
+  const hasNumber = /\d/.test(password);
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  if (password.length >= 8 && hasNumber && hasSpecial) return 'strong';
+  if (password.length >= 6) return 'medium';
+  return 'weak';
+};
+
+const getStrengthColor = (strength: PasswordStrength): string => {
+  switch (strength) {
+    case 'weak': return '#FF3B30';
+    case 'medium': return '#FF9500';
+    case 'strong': return '#34C759';
+  }
+};
+
+const getStrengthWidth = (strength: PasswordStrength): `${number}%` => {
+  switch (strength) {
+    case 'weak': return '33%';
+    case 'medium': return '66%';
+    case 'strong': return '100%';
+  }
+};
+
 const RegisterForm: React.FC<RegisterFormProps> = ({
   onSubmit,
   isLoading,
@@ -30,13 +58,59 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [tempShowPassword, setTempShowPassword] = useState(false);
+  const hidePasswordTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [confirmError, setConfirmError] = useState('');
+
+  const passwordStrength = getPasswordStrength(password);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hidePasswordTimeout.current) {
+        clearTimeout(hidePasswordTimeout.current);
+      }
+    };
+  }, []);
+
+  // Get masked password display (dots + last char visible)
+  const getMaskedDisplay = (): string => {
+    if (password.length === 0) return '';
+    if (showPassword) return password;
+    if (tempShowPassword && password.length > 0) {
+      // Show dots for all except last character
+      return '•'.repeat(password.length - 1) + password.slice(-1);
+    }
+    return '•'.repeat(password.length);
+  };
+
+  // Handle password change with temporary reveal of last char
+  const handlePasswordChange = (text: string) => {
+    // Clear any existing timeout
+    if (hidePasswordTimeout.current) {
+      clearTimeout(hidePasswordTimeout.current);
+    }
+
+    const isAdding = text.length > password.length;
+    setPassword(text);
+    if (passwordError) setPasswordError('');
+
+    // Only show last char temporarily when adding characters (not deleting)
+    if (isAdding && !showPassword) {
+      setTempShowPassword(true);
+
+      // Hide after 2 seconds
+      hidePasswordTimeout.current = setTimeout(() => {
+        setTempShowPassword(false);
+      }, 2000);
+    } else if (!isAdding) {
+      // When deleting, hide immediately
+      setTempShowPassword(false);
+    }
+  };
 
   const handleSubmit = async () => {
     let hasError = false;
@@ -57,24 +131,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       setPasswordError('');
     }
 
-    // Validate confirm password
-    if (password !== confirmPassword) {
-      setConfirmError(t('emailAuth.errors.passwordMismatch'));
-      hasError = true;
-    } else {
-      setConfirmError('');
-    }
-
     if (hasError) return;
 
     await onSubmit(email, password);
   };
 
-  const isFormValid =
-    email.length > 0 &&
-    password.length >= 6 &&
-    confirmPassword.length > 0 &&
-    password === confirmPassword;
+  const isFormValid = email.length > 0 && password.length >= 6;
 
   return (
     <View style={styles.container}>
@@ -128,22 +190,35 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           ]}
         >
           <Feather name="lock" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
-            placeholder={t('emailAuth.register.passwordPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (passwordError) setPasswordError('');
-            }}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!isLoading}
-          />
+          <View style={styles.passwordInputWrapper}>
+            <BottomSheetTextInput
+              style={[
+                styles.input,
+                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary }
+              ]}
+              placeholder={t('emailAuth.register.passwordPlaceholder')}
+              placeholderTextColor={colors.textSecondary}
+              value={password}
+              onChangeText={handlePasswordChange}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isLoading}
+            />
+            {tempShowPassword && !showPassword && password.length > 0 && (
+              <Text style={[styles.maskedOverlay, { color: colors.textPrimary }]}>
+                {getMaskedDisplay()}
+              </Text>
+            )}
+          </View>
           <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
+            onPress={() => {
+              setShowPassword(!showPassword);
+              setTempShowPassword(false);
+              if (hidePasswordTimeout.current) {
+                clearTimeout(hidePasswordTimeout.current);
+              }
+            }}
             style={styles.eyeButton}
             disabled={isLoading}
           >
@@ -154,57 +229,27 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             />
           </TouchableOpacity>
         </View>
-        <Text style={[styles.hintText, { color: colors.textSecondary }]}>
-          {t('emailAuth.register.passwordHint')}
-        </Text>
+        {/* Password Strength Indicator */}
+        {password.length > 0 && (
+          <View style={styles.strengthContainer}>
+            <View style={styles.strengthBarBackground}>
+              <View
+                style={[
+                  styles.strengthBar,
+                  {
+                    width: getStrengthWidth(passwordStrength),
+                    backgroundColor: getStrengthColor(passwordStrength),
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[styles.strengthText, { color: getStrengthColor(passwordStrength) }]}>
+              {t(`emailAuth.register.strength.${passwordStrength}`)}
+            </Text>
+          </View>
+        )}
         {passwordError ? (
           <Text style={styles.errorText}>{passwordError}</Text>
-        ) : null}
-      </View>
-
-      {/* Confirm Password Input */}
-      <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
-          {t('emailAuth.register.confirmPassword')}
-        </Text>
-        <View
-          style={[
-            styles.inputContainer,
-            {
-              backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-              borderColor: confirmError ? '#FF3B30' : colors.border,
-            },
-          ]}
-        >
-          <Feather name="lock" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
-            placeholder={t('emailAuth.register.confirmPasswordPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              if (confirmError) setConfirmError('');
-            }}
-            secureTextEntry={!showConfirmPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!isLoading}
-          />
-          <TouchableOpacity
-            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            style={styles.eyeButton}
-            disabled={isLoading}
-          >
-            <Feather
-              name={showConfirmPassword ? 'eye-off' : 'eye'}
-              size={20}
-              color={colors.textSecondary}
-            />
-          </TouchableOpacity>
-        </View>
-        {confirmError ? (
-          <Text style={styles.errorText}>{confirmError}</Text>
         ) : null}
       </View>
 
@@ -261,12 +306,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 0,
   },
+  passwordInputWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  maskedOverlay: {
+    position: 'absolute',
+    fontSize: 16,
+    left: 0,
+    right: 0,
+  },
   eyeButton: {
     padding: spacing.xs,
   },
-  hintText: {
+  strengthContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  strengthBarBackground: {
+    flex: 1,
+    height: 4,
+    backgroundColor: 'rgba(128, 128, 128, 0.2)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  strengthBar: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  strengthText: {
     fontSize: 12,
-    marginLeft: spacing.xs,
+    fontWeight: '600',
+    minWidth: 50,
   },
   errorText: {
     color: '#FF3B30',

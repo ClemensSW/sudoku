@@ -200,10 +200,12 @@
       "emailPlaceholder": "your@email.com",
       "password": "Password",
       "passwordPlaceholder": "Choose a password",
-      "passwordHint": "At least 6 characters",
-      "confirmPassword": "Confirm Password",
-      "confirmPasswordPlaceholder": "Repeat password",
-      "submit": "Sign Up"
+      "submit": "Sign Up",
+      "strength": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      }
     },
     "forgotPassword": {
       "title": "Reset Password",

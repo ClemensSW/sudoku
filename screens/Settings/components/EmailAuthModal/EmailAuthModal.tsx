@@ -37,7 +37,7 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
   const progressColor = useProgressColor();
   const { showAlert } = useAlert();
 
-  const [activeView, setActiveView] = useState<AuthView>('login');
+  const [activeView, setActiveView] = useState<AuthView>('register');
   const [isLoading, setIsLoading] = useState(false);
   const [lastEmail, setLastEmail] = useState<string>('');
 

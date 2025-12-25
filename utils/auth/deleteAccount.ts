@@ -14,15 +14,17 @@
 import { getFirebaseAuth, getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
 import { revokeGoogleAccess } from './googleAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Updates from 'expo-updates';
 
 /**
  * Delete user account and all associated data
  *
  * Steps:
- * 1. Delete Firestore user document
- * 2. Delete Firebase Auth account
- * 3. Revoke Google access
+ * 1. Delete Firestore user document and sub-collections
+ * 2. Revoke Google access
+ * 3. Delete Firebase Auth account
  * 4. Clear local AsyncStorage
+ * 5. Restart app to reset all in-memory state
  *
  * @returns Promise<void>
  * @throws Error if deletion fails
@@ -99,6 +101,16 @@ export async function deleteUserAccount(): Promise<void> {
     console.log('[DeleteAccount] ✅ Local data cleared');
 
     console.log('[DeleteAccount] ✅ Account deletion completed successfully');
+
+    // Step 5: Restart app to reset all in-memory state
+    // This ensures React Contexts (ColorProvider, etc.) don't restore deleted data
+    console.log('[DeleteAccount] Restarting app...');
+    if (Updates.isEnabled) {
+      await Updates.reloadAsync();
+    } else {
+      // In development, we can't use Updates.reloadAsync()
+      console.log('[DeleteAccount] ⚠️ Development mode - please restart the app manually');
+    }
   } catch (error: any) {
     console.error('[DeleteAccount] ❌ Account deletion failed:', error);
 

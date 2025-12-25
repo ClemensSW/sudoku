@@ -21,6 +21,7 @@ import { downloadUserData } from '@/utils/cloudSync/downloadService';
 import { mergeAllData } from '@/utils/cloudSync/mergeService';
 import { syncOnAppLaunch, syncOnAppPause, updateSyncTimestamp } from '@/utils/cloudSync/syncService';
 import { loadStats, loadSettings, loadColorUnlock, saveStats, saveSettings, saveColorUnlock, DEFAULT_SETTINGS } from '@/utils/storage';
+import { loadUserProfile, saveUserProfile } from '@/utils/profileStorage';
 import { gameStatsToFirestore, gameSettingsToFirestore, colorUnlockToFirestore } from '@/utils/cloudSync/firestoreSchema';
 import { getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
 
@@ -158,6 +159,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const localStats = await loadStats();
           const localSettings = (await loadSettings()) || DEFAULT_SETTINGS;
           const localColorUnlock = await loadColorUnlock();
+          const localProfile = await loadUserProfile();
 
           // 3. Merge mit Conflict Resolution
           if (cloudData.stats && cloudData.settings && cloudData.colorUnlock) {
@@ -167,7 +169,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
               localSettings,
               cloudData.settings,
               localColorUnlock,
-              cloudData.colorUnlock
+              cloudData.colorUnlock,
+              null,  // landscapes local (optional)
+              null,  // landscapes cloud (optional)
+              localProfile,
+              cloudData.profile
             );
 
             console.log('[AuthProvider] Data merged, conflicts resolved:', merged.conflictsResolved);
@@ -178,6 +184,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
               saveSettings(merged.settings),
               saveColorUnlock(merged.colorUnlock),
             ]);
+
+            // 4.1 Save merged profile (if available)
+            if (merged.profile) {
+              await saveUserProfile(merged.profile);
+              console.log('[AuthProvider] Profile saved:', merged.profile.name, merged.profile.titleLevelIndex);
+            }
 
             // 5. Upload merged data zurück zu Cloud
             const firestore = getFirebaseFirestore();

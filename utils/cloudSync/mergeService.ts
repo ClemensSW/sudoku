@@ -465,7 +465,10 @@ export function mergeProfile(
 
   // Wenn beide existieren: Prefer Cloud (typischerweise neuer bei Device-Wechsel)
   // Außer Local hat nicht-Default-Werte (bedeutet User hat lokal geändert)
-  const hasLocalChanges = local.name !== 'User' || local.avatarUri !== null;
+  const hasLocalChanges =
+    local.name !== 'User' ||
+    local.avatarUri !== null ||
+    local.titleLevelIndex !== null;
 
   if (hasLocalChanges) {
     console.log('[MergeService] Using local profile (has local changes)');

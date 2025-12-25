@@ -37,7 +37,7 @@ const GameSettingsModal: React.FC<GameSettingsModalProps> = ({
       textPrimaryColor={colors.textPrimary}
       surfaceColor={colors.surface}
       borderColor={colors.border}
-      snapPoints={['75%', '90%']}
+      snapPoints={['60%', '90%']}
       managesBottomNav={false}
     >
       <GameSettings

@@ -93,7 +93,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
       textPrimaryColor={textPrimaryColor}
       surfaceColor={surfaceColor}
       borderColor={borderColor}
-      snapPoints={['40%', '90%']}
+      snapPoints={['55%', '90%']}
       managesBottomNav={managesBottomNav}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
   pathContainer: {
     alignItems: "center",
     paddingVertical: 8,
+    paddingBottom: 40,
   },
   sectionTitle: {
     fontSize: 13,

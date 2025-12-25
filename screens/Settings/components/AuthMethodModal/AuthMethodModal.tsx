@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: spacing.xl,
+    marginBottom: spacing.xxl * 2,
   },
   buttonsContainer: {
     gap: spacing.md,

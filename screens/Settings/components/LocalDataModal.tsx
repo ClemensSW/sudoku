@@ -28,7 +28,7 @@ const LocalDataModal: React.FC<LocalDataModalProps> = ({
       textPrimaryColor={colors.textPrimary}
       surfaceColor={colors.surface}
       borderColor={colors.border}
-      snapPoints={['40%', '50%']}
+      snapPoints={['50%', '60%']}
       managesBottomNav={false}
     >
       <LocalDataSection

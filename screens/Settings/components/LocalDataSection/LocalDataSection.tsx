@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 1,
     overflow: 'hidden',
+    marginBottom: spacing.xxl * 2,
   },
 
   // Info Container

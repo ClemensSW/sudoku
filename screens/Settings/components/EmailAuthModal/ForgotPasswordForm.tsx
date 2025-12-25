@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
@@ -100,7 +100,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           ]}
         >
           <Feather name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <TextInput
+          <BottomSheetTextInput
             style={[styles.input, { color: colors.textPrimary }]}
             placeholder={t('emailAuth.forgotPassword.emailPlaceholder')}
             placeholderTextColor={colors.textSecondary}

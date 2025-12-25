@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
@@ -74,7 +74,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           ]}
         >
           <Feather name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <TextInput
+          <BottomSheetTextInput
             style={[styles.input, { color: colors.textPrimary }]}
             placeholder={t('emailAuth.login.emailPlaceholder')}
             placeholderTextColor={colors.textSecondary}
@@ -109,7 +109,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           ]}
         >
           <Feather name="lock" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-          <TextInput
+          <BottomSheetTextInput
             style={[styles.input, { color: colors.textPrimary }]}
             placeholder={t('emailAuth.login.passwordPlaceholder')}
             placeholderTextColor={colors.textSecondary}

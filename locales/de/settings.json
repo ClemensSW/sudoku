@@ -143,7 +143,7 @@
   },
   "authSection": {
     "title": "Spielstand sichern",
-    "description": "Synchronisiere deinen Fortschritt automatisch über alle Geräte",
+    "description": "Synchronisiere deinen Fortschritt über alle Geräte",
     "inDevelopment": "In Entwicklung",
     "googleSignIn": "Mit Google fortfahren",
     "appleSignIn": "Mit Apple fortfahren",
@@ -177,5 +177,61 @@
     "autoSyncDetails": "Beim Spielen, App-Start und im Hintergrund",
     "signInSuccess": "Erfolgreich angemeldet!",
     "signInError": "Anmeldung fehlgeschlagen"
+  },
+  "emailAuth": {
+    "signInWithEmail": "Per E-Mail",
+    "or": "oder",
+    "tabs": {
+      "login": "Anmelden",
+      "register": "Registrieren"
+    },
+    "login": {
+      "title": "Willkommen zurück",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "deine@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Dein Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "deine@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Passwort wählen",
+      "passwordHint": "Mind. 6 Zeichen",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Passwort wiederholen",
+      "submit": "Registrieren"
+    },
+    "forgotPassword": {
+      "title": "Passwort zurücksetzen",
+      "description": "Gib deine E-Mail-Adresse ein, um einen Link zum Zurücksetzen zu erhalten.",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "deine@email.de",
+      "submit": "Link senden",
+      "successTitle": "E-Mail gesendet",
+      "success": "Überprüfe deinen Posteingang. Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet.",
+      "backToLogin": "Zurück zur Anmeldung"
+    },
+    "success": {
+      "loginTitle": "Willkommen zurück!",
+      "loginMessage": "Du bist jetzt angemeldet. Dein Fortschritt wird automatisch synchronisiert.",
+      "registerTitle": "Konto erstellt!",
+      "registerMessage": "Dein Konto wurde erfolgreich erstellt. Dein Fortschritt wird nun synchronisiert."
+    },
+    "errors": {
+      "title": "Fehler",
+      "invalidEmail": "Ungültige E-Mail-Adresse",
+      "weakPassword": "Passwort muss mind. 6 Zeichen haben",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "emailInUse": "Diese E-Mail ist bereits registriert",
+      "userNotFound": "Kein Konto mit dieser E-Mail gefunden",
+      "wrongPassword": "Falsches Passwort",
+      "tooManyRequests": "Zu viele Versuche. Bitte später erneut versuchen.",
+      "networkError": "Netzwerkfehler. Bitte überprüfe deine Internetverbindung.",
+      "generic": "Ein Fehler ist aufgetreten. Bitte versuche es erneut."
+    }
   }
 }

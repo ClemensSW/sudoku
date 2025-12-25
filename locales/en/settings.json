@@ -143,7 +143,7 @@
   },
   "authSection": {
     "title": "Save Your Progress",
-    "description": "Synchronize your progress automatically across all devices",
+    "description": "Synchronize your progress across all devices",
     "inDevelopment": "In Development",
     "googleSignIn": "Continue with Google",
     "appleSignIn": "Continue with Apple",
@@ -177,5 +177,61 @@
     "autoSyncDetails": "While playing, on app launch, and in background",
     "signInSuccess": "Successfully signed in!",
     "signInError": "Sign in failed"
+  },
+  "emailAuth": {
+    "signInWithEmail": "Continue with Email",
+    "or": "or",
+    "tabs": {
+      "login": "Sign In",
+      "register": "Sign Up"
+    },
+    "login": {
+      "title": "Welcome Back",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In"
+    },
+    "register": {
+      "title": "Create Account",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Choose a password",
+      "passwordHint": "At least 6 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Repeat password",
+      "submit": "Sign Up"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "description": "Enter your email address to receive a password reset link.",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "submit": "Send Link",
+      "successTitle": "Email Sent",
+      "success": "Check your inbox. We've sent you a link to reset your password.",
+      "backToLogin": "Back to Sign In"
+    },
+    "success": {
+      "loginTitle": "Welcome Back!",
+      "loginMessage": "You are now signed in. Your progress will sync automatically.",
+      "registerTitle": "Account Created!",
+      "registerMessage": "Your account was created successfully. Your progress will now be synced."
+    },
+    "errors": {
+      "title": "Error",
+      "invalidEmail": "Invalid email address",
+      "weakPassword": "Password must be at least 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "emailInUse": "This email is already registered",
+      "userNotFound": "No account found with this email",
+      "wrongPassword": "Incorrect password",
+      "tooManyRequests": "Too many attempts. Please try again later.",
+      "networkError": "Network error. Please check your internet connection.",
+      "generic": "An error occurred. Please try again."
+    }
   }
 }

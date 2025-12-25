@@ -10,11 +10,13 @@ import AuthButton from './AuthButton';
 import ShieldIcon from '@/assets/svg/shield.svg';
 
 interface AuthSectionProps {
+  onEmailPress?: () => void;
   onGooglePress?: () => void;
   onApplePress?: () => void;
 }
 
 const AuthSection: React.FC<AuthSectionProps> = ({
+  onEmailPress,
   onGooglePress,
   onApplePress,
 }) => {
@@ -56,21 +58,41 @@ const AuthSection: React.FC<AuthSectionProps> = ({
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
+        {/* Email Button - Primary option */}
+        <AuthButton
+          provider="email"
+          label={t('emailAuth.signInWithEmail')}
+          onPress={onEmailPress || (() => {})}
+          disabled={false}
+        />
+
+        {/* Divider */}
+        {(showGoogleButton || showAppleButton) && (
+          <View style={styles.dividerContainer}>
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+            <Text style={[styles.dividerText, { color: colors.textSecondary }]}>
+              {t('emailAuth.or')}
+            </Text>
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+          </View>
+        )}
+
+        {/* OAuth Buttons - Icon only, full width */}
         {showGoogleButton && (
           <AuthButton
             provider="google"
-            label={t('authSection.googleSignIn')}
             onPress={onGooglePress || (() => {})}
-            disabled={false} // ✅ ENABLED - Works in Development Build
+            disabled={false}
+            iconOnly
           />
         )}
 
         {showAppleButton && (
           <AuthButton
             provider="apple"
-            label={t('authSection.appleSignIn')}
             onPress={onApplePress || (() => {})}
-            disabled={true} // ❌ DISABLED - Apple Sign-In later
+            disabled={true}
+            iconOnly
           />
         )}
 
@@ -126,7 +148,23 @@ const styles = StyleSheet.create({
 
   // Buttons
   buttonsContainer: {
-    gap: spacing.sm,
+    gap: spacing.md,
+  },
+
+  // Divider
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 
   // Info Box (Fallback)

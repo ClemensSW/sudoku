@@ -143,7 +143,7 @@
   },
   "authSection": {
     "title": "प्रगति सहेजें",
-    "description": "अपनी प्रगति को सभी उपकरणों पर स्वचालित रूप से सिंक करें",
+    "description": "अपनी प्रगति को सभी उपकरणों पर सिंक करें",
     "inDevelopment": "विकास में",
     "googleSignIn": "Google के साथ जारी रखें",
     "appleSignIn": "Apple के साथ जारी रखें",
@@ -177,5 +177,61 @@
     "autoSyncDetails": "खेलते समय, ऐप लॉन्च पर और बैकग्राउंड में",
     "signInSuccess": "सफलतापूर्वक साइन इन किया गया!",
     "signInError": "साइन इन विफल"
+  },
+  "emailAuth": {
+    "signInWithEmail": "ईमेल से जारी रखें",
+    "or": "या",
+    "tabs": {
+      "login": "साइन इन",
+      "register": "साइन अप"
+    },
+    "login": {
+      "title": "वापस स्वागत है",
+      "email": "ईमेल पता",
+      "emailPlaceholder": "your@email.com",
+      "password": "पासवर्ड",
+      "passwordPlaceholder": "आपका पासवर्ड",
+      "forgotPassword": "पासवर्ड भूल गए?",
+      "submit": "साइन इन करें"
+    },
+    "register": {
+      "title": "खाता बनाएं",
+      "email": "ईमेल पता",
+      "emailPlaceholder": "your@email.com",
+      "password": "पासवर्ड",
+      "passwordPlaceholder": "पासवर्ड चुनें",
+      "passwordHint": "कम से कम 6 वर्ण",
+      "confirmPassword": "पासवर्ड पुष्टि करें",
+      "confirmPasswordPlaceholder": "पासवर्ड दोहराएं",
+      "submit": "साइन अप करें"
+    },
+    "forgotPassword": {
+      "title": "पासवर्ड रीसेट करें",
+      "description": "पासवर्ड रीसेट लिंक प्राप्त करने के लिए अपना ईमेल पता दर्ज करें।",
+      "email": "ईमेल पता",
+      "emailPlaceholder": "your@email.com",
+      "submit": "लिंक भेजें",
+      "successTitle": "ईमेल भेजा गया",
+      "success": "अपना इनबॉक्स जांचें। हमने आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजा है।",
+      "backToLogin": "साइन इन पर वापस जाएं"
+    },
+    "success": {
+      "loginTitle": "वापस स्वागत है!",
+      "loginMessage": "आप अब साइन इन हैं। आपकी प्रगति स्वचालित रूप से सिंक होगी।",
+      "registerTitle": "खाता बनाया गया!",
+      "registerMessage": "आपका खाता सफलतापूर्वक बनाया गया। आपकी प्रगति अब सिंक होगी।"
+    },
+    "errors": {
+      "title": "त्रुटि",
+      "invalidEmail": "अमान्य ईमेल पता",
+      "weakPassword": "पासवर्ड कम से कम 6 वर्ण का होना चाहिए",
+      "passwordMismatch": "पासवर्ड मेल नहीं खाते",
+      "emailInUse": "यह ईमेल पहले से पंजीकृत है",
+      "userNotFound": "इस ईमेल के साथ कोई खाता नहीं मिला",
+      "wrongPassword": "गलत पासवर्ड",
+      "tooManyRequests": "बहुत सारे प्रयास। कृपया बाद में पुनः प्रयास करें।",
+      "networkError": "नेटवर्क त्रुटि। कृपया अपना इंटरनेट कनेक्शन जांचें।",
+      "generic": "एक त्रुटि हुई। कृपया पुनः प्रयास करें।"
+    }
   }
 }

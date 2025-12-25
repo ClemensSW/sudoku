@@ -23,6 +23,7 @@ const KEYS = {
   PAUSED_GAME: "@sudoku/paused_game",
   COLOR_UNLOCK: "@sudoku/color_unlock",
   SETTINGS_TRACKING: "@sudoku/settings_tracking",
+  LAST_EMAIL: "@sudoku/last_email",
 };
 
 // Spielzustand Typ
@@ -949,3 +950,45 @@ async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
 
   return migratedStats;
 }
+
+// ===== Last Email Management (für Login-Formular) =====
+
+/**
+ * Speichert die zuletzt verwendete E-Mail-Adresse für das Login-Formular.
+ * Wird nach erfolgreichem Login aufgerufen.
+ */
+export const saveLastEmail = async (email: string): Promise<void> => {
+  try {
+    const trimmedEmail = email.trim().toLowerCase();
+    await AsyncStorage.setItem(KEYS.LAST_EMAIL, trimmedEmail);
+    console.log('[Storage] Last email saved');
+  } catch (error) {
+    console.error("Error saving last email:", error);
+  }
+};
+
+/**
+ * Lädt die zuletzt verwendete E-Mail-Adresse für das Login-Formular.
+ * Wird beim Öffnen des Login-Modals aufgerufen.
+ */
+export const loadLastEmail = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem(KEYS.LAST_EMAIL);
+  } catch (error) {
+    console.error("Error loading last email:", error);
+    return null;
+  }
+};
+
+/**
+ * Löscht die zuletzt verwendete E-Mail-Adresse.
+ * Optional für Datenschutz-Einstellungen.
+ */
+export const clearLastEmail = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(KEYS.LAST_EMAIL);
+    console.log('[Storage] Last email cleared');
+  } catch (error) {
+    console.error("Error clearing last email:", error);
+  }
+};

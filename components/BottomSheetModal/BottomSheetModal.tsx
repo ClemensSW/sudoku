@@ -23,6 +23,10 @@ export interface BottomSheetModalProps {
   enableScroll?: boolean;
   /** Ob das Modal die Bottom Navigation verwalten soll. Default: true (für Rückwärtskompatibilität) */
   managesBottomNav?: boolean;
+  /** Keyboard behavior. Default: 'interactive'. Use 'fillParent' for forms. */
+  keyboardBehavior?: 'interactive' | 'extend' | 'fillParent';
+  /** Android keyboard input mode. Default: 'adjustPan'. Use 'adjustResize' for forms. */
+  android_keyboardInputMode?: 'adjustPan' | 'adjustResize';
 }
 
 /**
@@ -50,6 +54,8 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   initialSnapIndex = 0,
   enableScroll = true,
   managesBottomNav = true,
+  keyboardBehavior = 'interactive',
+  android_keyboardInputMode = 'adjustPan',
 }) => {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
@@ -114,6 +120,9 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       enablePanDownToClose
       handleComponent={renderHandle}
       backdropComponent={renderBackdrop}
+      keyboardBehavior={keyboardBehavior}
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode={android_keyboardInputMode}
       backgroundStyle={{
         backgroundColor: surfaceColor,
         borderWidth: 1,

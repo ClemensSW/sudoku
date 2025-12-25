@@ -1,18 +1,21 @@
 // screens/Settings/components/AuthSection/AuthButton.tsx
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Platform } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { useProgressColor } from '@/contexts/color/ColorContext';
 import { spacing, radius } from '@/utils/theme';
 import GoogleLogo from '@/assets/svg/google-logo.svg';
 import AppleLogo from '@/assets/svg/apple-logo.svg';
 
-type AuthProvider = 'google' | 'apple';
+type AuthProvider = 'google' | 'apple' | 'email';
 
 interface AuthButtonProps {
   provider: AuthProvider;
   onPress: () => void;
   disabled?: boolean;
-  label: string;
+  label?: string;
+  iconOnly?: boolean;
 }
 
 const AuthButton: React.FC<AuthButtonProps> = ({
@@ -20,15 +23,21 @@ const AuthButton: React.FC<AuthButtonProps> = ({
   onPress,
   disabled = false,
   label,
+  iconOnly = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   const getProviderIcon = () => {
     if (provider === 'google') {
-      return <GoogleLogo width={18} height={18} />;
+      return <GoogleLogo width={iconOnly ? 24 : 18} height={iconOnly ? 24 : 18} />;
     }
-    return <AppleLogo width={16} height={20} fill={theme.isDark ? '#000000' : '#FFFFFF'} />;
+    if (provider === 'apple') {
+      return <AppleLogo width={16} height={20} fill={theme.isDark ? '#000000' : '#FFFFFF'} />;
+    }
+    // Email
+    return <Feather name="mail" size={20} color={theme.isDark ? '#FFFFFF' : '#FFFFFF'} />;
   };
 
   const getButtonStyle = () => {
@@ -38,10 +47,17 @@ const AuthButton: React.FC<AuthButtonProps> = ({
         borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.12)',
       };
     }
-    // Apple
+    if (provider === 'apple') {
+      return {
+        backgroundColor: theme.isDark ? '#FFFFFF' : '#000000',
+        borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.9)',
+      };
+    }
+    // Email - uses progress color (theme-aware)
     return {
-      backgroundColor: theme.isDark ? '#FFFFFF' : '#000000',
-      borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.9)',
+      backgroundColor: progressColor,
+      borderColor: progressColor,
+      shadowColor: progressColor,
     };
   };
 
@@ -51,9 +67,14 @@ const AuthButton: React.FC<AuthButtonProps> = ({
         color: '#3C4043',
       };
     }
-    // Apple
+    if (provider === 'apple') {
+      return {
+        color: theme.isDark ? '#000000' : '#FFFFFF',
+      };
+    }
+    // Email
     return {
-      color: theme.isDark ? '#000000' : '#FFFFFF',
+      color: '#FFFFFF',
     };
   };
 
@@ -64,12 +85,17 @@ const AuthButton: React.FC<AuthButtonProps> = ({
       disabled={disabled}
       style={[
         styles.button,
+        iconOnly && styles.iconOnlyButton,
         getButtonStyle(),
         disabled && styles.disabled,
       ]}
     >
-      <View style={styles.iconContainer}>{getProviderIcon()}</View>
-      <Text style={[styles.label, getTextStyle()]}>{label}</Text>
+      <View style={[styles.iconContainer, iconOnly && styles.iconOnlyContainer]}>
+        {getProviderIcon()}
+      </View>
+      {!iconOnly && label && (
+        <Text style={[styles.label, getTextStyle()]}>{label}</Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -79,16 +105,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: radius.lg,
+    height: 56,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     borderWidth: 1,
     gap: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  iconOnlyButton: {
+    height: 56,
+    gap: 0,
   },
   disabled: {
     opacity: 0.6,
@@ -99,10 +129,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  iconOnlyContainer: {
+    width: 24,
+    height: 24,
+  },
   label: {
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });
 

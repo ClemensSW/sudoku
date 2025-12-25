@@ -144,6 +144,13 @@
   "authSection": {
     "title": "Save Your Progress",
     "description": "Synchronize your progress across all devices",
+    "benefits": {
+      "sync": "Save your progress",
+      "devices": "Play on all devices",
+      "leaderboards": "Unlock leaderboards"
+    },
+    "getStarted": "Get Started",
+    "alreadyHaveAccount": "I already have an account",
     "inDevelopment": "In Development",
     "googleSignIn": "Continue with Google",
     "appleSignIn": "Continue with Apple",
@@ -178,6 +185,19 @@
     "signInSuccess": "Successfully signed in!",
     "signInError": "Sign in failed"
   },
+  "authMethodModal": {
+    "createAccount": "Create Account",
+    "signIn": "Sign In",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "continueWithEmail": "Continue with Email",
+    "or": "or",
+    "legalPrefix": "By registering you accept our ",
+    "privacy": "Privacy Policy",
+    "legalAnd": " and ",
+    "terms": "Terms of Service",
+    "legalSuffix": "."
+  },
   "emailAuth": {
     "signInWithEmail": "Continue with Email",
     "or": "or",
@@ -205,7 +225,17 @@
         "weak": "Weak",
         "medium": "Medium",
         "strong": "Strong"
-      }
+      },
+      "benefits": {
+        "sync": "Save your progress",
+        "devices": "Play on all devices",
+        "leaderboards": "Unlock leaderboards"
+      },
+      "legalPrefix": "By registering you accept our ",
+      "privacy": "Privacy Policy",
+      "legalAnd": " and ",
+      "terms": "Terms of Service",
+      "legalSuffix": "."
     },
     "forgotPassword": {
       "title": "Reset Password",

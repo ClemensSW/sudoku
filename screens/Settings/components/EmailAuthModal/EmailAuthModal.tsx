@@ -1,17 +1,10 @@
 // screens/Settings/components/EmailAuthModal/EmailAuthModal.tsx
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
-import { useProgressColor } from '@/contexts/color/ColorContext';
 import { useAlert } from '@/components/CustomAlert/AlertProvider';
 import BottomSheetModal from '@/components/BottomSheetModal';
-import { spacing, radius } from '@/utils/theme';
 import { triggerHaptic } from '@/utils/haptics';
 import { signInWithEmail, signUpWithEmail, sendEmailVerification, getEmailAuthErrorKey } from '@/utils/auth/emailAuth';
 
@@ -19,25 +12,26 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
-type AuthView = 'login' | 'register' | 'forgotPassword';
+type AuthMode = 'login' | 'register';
 
 interface EmailAuthModalProps {
   visible: boolean;
+  mode: AuthMode;
   onClose: () => void;
   onSuccess: () => void;
 }
 
 const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
   visible,
+  mode,
   onClose,
   onSuccess,
 }) => {
   const { t } = useTranslation('settings');
   const { colors, isDark } = useTheme();
-  const progressColor = useProgressColor();
   const { showAlert } = useAlert();
 
-  const [activeView, setActiveView] = useState<AuthView>('register');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [lastEmail, setLastEmail] = useState<string>('');
 
@@ -52,9 +46,9 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
     }
   }, [visible]);
 
-  // Reset view when modal closes
+  // Reset state when modal closes
   const handleClose = useCallback(() => {
-    setActiveView('login');
+    setShowForgotPassword(false);
     setIsLoading(false);
     onClose();
   }, [onClose]);
@@ -130,74 +124,17 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
 
   // Handle forgot password success
   const handleForgotPasswordSuccess = useCallback(() => {
-    setActiveView('login');
+    setShowForgotPassword(false);
   }, []);
 
-  // Render tab buttons
-  const renderTabs = () => {
-    if (activeView === 'forgotPassword') return null;
-
-    return (
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[
-            styles.tab,
-            activeView === 'login' && styles.activeTab,
-            { borderColor: activeView === 'login' ? progressColor : 'transparent' },
-          ]}
-          onPress={() => {
-            triggerHaptic('light');
-            setActiveView('login');
-          }}
-          disabled={isLoading}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { color: activeView === 'login' ? progressColor : colors.textSecondary },
-            ]}
-          >
-            {t('emailAuth.tabs.login')}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.tab,
-            activeView === 'register' && styles.activeTab,
-            { borderColor: activeView === 'register' ? progressColor : 'transparent' },
-          ]}
-          onPress={() => {
-            triggerHaptic('light');
-            setActiveView('register');
-          }}
-          disabled={isLoading}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { color: activeView === 'register' ? progressColor : colors.textSecondary },
-            ]}
-          >
-            {t('emailAuth.tabs.register')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  // Get modal title based on current view
+  // Get modal title
   const getTitle = () => {
-    switch (activeView) {
-      case 'login':
-        return t('emailAuth.login.title');
-      case 'register':
-        return t('emailAuth.register.title');
-      case 'forgotPassword':
-        return t('emailAuth.forgotPassword.title');
-      default:
-        return '';
+    if (showForgotPassword) {
+      return t('emailAuth.forgotPassword.title');
     }
+    return mode === 'login'
+      ? t('emailAuth.login.title')
+      : t('emailAuth.register.title');
   };
 
   return (
@@ -209,39 +146,38 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
       textPrimaryColor={colors.textPrimary}
       surfaceColor={colors.surface}
       borderColor={colors.border}
-      snapPoints={['85%']}
+      snapPoints={['70%']}
       managesBottomNav={false}
       keyboardBehavior="fillParent"
       android_keyboardInputMode="adjustResize"
     >
       <View style={styles.container}>
-        {renderTabs()}
+        {/* Forgot Password View */}
+        {showForgotPassword && (
+          <ForgotPasswordForm
+            onSuccess={handleForgotPasswordSuccess}
+            onBack={() => setShowForgotPassword(false)}
+            onShowAlert={showAlert}
+          />
+        )}
 
-        <View style={styles.formContainer}>
-          {activeView === 'login' && (
-            <LoginForm
-              onSubmit={handleLogin}
-              onForgotPassword={() => setActiveView('forgotPassword')}
-              isLoading={isLoading}
-              initialEmail={lastEmail}
-            />
-          )}
+        {/* Login Form */}
+        {!showForgotPassword && mode === 'login' && (
+          <LoginForm
+            onSubmit={handleLogin}
+            onForgotPassword={() => setShowForgotPassword(true)}
+            isLoading={isLoading}
+            initialEmail={lastEmail}
+          />
+        )}
 
-          {activeView === 'register' && (
-            <RegisterForm
-              onSubmit={handleRegister}
-              isLoading={isLoading}
-            />
-          )}
-
-          {activeView === 'forgotPassword' && (
-            <ForgotPasswordForm
-              onSuccess={handleForgotPasswordSuccess}
-              onBack={() => setActiveView('login')}
-              onShowAlert={showAlert}
-            />
-          )}
-        </View>
+        {/* Register Form */}
+        {!showForgotPassword && mode === 'register' && (
+          <RegisterForm
+            onSubmit={handleRegister}
+            isLoading={isLoading}
+          />
+        )}
       </View>
     </BottomSheetModal>
   );
@@ -249,27 +185,6 @@ const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: spacing.lg,
-    gap: spacing.md,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-  },
-  activeTab: {
-    // Border color set dynamically
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  formContainer: {
     flex: 1,
   },
 });

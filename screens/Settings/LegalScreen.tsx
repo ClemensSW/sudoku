@@ -23,13 +23,14 @@ type LegalDocType = "impressum" | "datenschutz" | "agb" | "widerruf";
 interface LegalScreenProps {
   visible: boolean;
   onClose: () => void;
+  initialDoc?: LegalDocType;
 }
 
-const LegalScreen: React.FC<LegalScreenProps> = ({ visible, onClose }) => {
+const LegalScreen: React.FC<LegalScreenProps> = ({ visible, onClose, initialDoc }) => {
   const { t, i18n } = useTranslation("settings");
   const { colors, isDark } = useTheme();
   const { hideBottomNav, resetBottomNav } = useNavigation();
-  const [selectedDoc, setSelectedDoc] = useState<LegalDocType | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<LegalDocType | null>(initialDoc || null);
   const [docContent, setDocContent] = useState<string>("");
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
 
@@ -563,6 +564,16 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
       bottomSheetRef.current?.dismiss();
     }
   }, [visible]);
+
+  // Sync initialDoc with selectedDoc when modal opens
+  useEffect(() => {
+    if (visible && initialDoc) {
+      setSelectedDoc(initialDoc);
+    } else if (!visible) {
+      // Reset when modal closes
+      setSelectedDoc(initialDoc || null);
+    }
+  }, [visible, initialDoc]);
 
   // Hide BottomNav when modal is visible
   useEffect(() => {

@@ -1,31 +1,36 @@
 // screens/Settings/components/AuthSection/AuthSection.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { useProgressColor } from '@/contexts/color/ColorContext';
 import { spacing, radius } from '@/utils/theme';
-import AuthButton from './AuthButton';
-import ShieldIcon from '@/assets/svg/shield.svg';
+import { triggerHaptic } from '@/utils/haptics';
 
 interface AuthSectionProps {
-  onEmailPress?: () => void;
-  onGooglePress?: () => void;
-  onApplePress?: () => void;
+  onGetStarted: () => void;
+  onAlreadyHaveAccount: () => void;
 }
 
 const AuthSection: React.FC<AuthSectionProps> = ({
-  onEmailPress,
-  onGooglePress,
-  onApplePress,
+  onGetStarted,
+  onAlreadyHaveAccount,
 }) => {
   const { t } = useTranslation('settings');
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
-  const showGoogleButton = Platform.OS === 'android';
-  const showAppleButton = Platform.OS === 'ios';
+  const handleGetStarted = () => {
+    triggerHaptic('light');
+    onGetStarted();
+  };
+
+  const handleAlreadyHaveAccount = () => {
+    triggerHaptic('light');
+    onAlreadyHaveAccount();
+  };
 
   return (
     <Animated.View
@@ -38,73 +43,57 @@ const AuthSection: React.FC<AuthSectionProps> = ({
         },
       ]}
     >
-      {/* Header - Centered Layout */}
-      <View style={styles.header}>
-        {/* Shield Icon - Large & Centered */}
-        <View style={styles.iconContainer}>
-          <ShieldIcon width={64} height={64} fill="#4A90E2" />
+      {/* Benefits Section */}
+      <View style={styles.benefitsContainer}>
+        <View style={styles.benefitRow}>
+          <Text style={styles.benefitIcon}>☁️</Text>
+          <Text style={[styles.benefitText, { color: colors.textPrimary }]}>
+            {t('authSection.benefits.sync')}
+          </Text>
         </View>
-
-        {/* Title - Centered */}
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
-          {t('authSection.title')}
-        </Text>
-
-        {/* Description */}
-        <Text style={[styles.description, { color: colors.textSecondary }]}>
-          {t('authSection.description')}
-        </Text>
+        <View style={styles.benefitRow}>
+          <Text style={styles.benefitIcon}>📱</Text>
+          <Text style={[styles.benefitText, { color: colors.textPrimary }]}>
+            {t('authSection.benefits.devices')}
+          </Text>
+        </View>
+        <View style={styles.benefitRow}>
+          <Text style={styles.benefitIcon}>🏆</Text>
+          <Text style={[styles.benefitText, { color: colors.textPrimary }]}>
+            {t('authSection.benefits.leaderboards')}
+          </Text>
+        </View>
       </View>
 
-      {/* Buttons */}
-      <View style={styles.buttonsContainer}>
-        {/* Email Button - Primary option */}
-        <AuthButton
-          provider="email"
-          label={t('emailAuth.signInWithEmail')}
-          onPress={onEmailPress || (() => {})}
-          disabled={false}
-        />
+      {/* CTA Section */}
+      <View style={styles.ctaContainer}>
+        {/* Primary Button - Get Started */}
+        <TouchableOpacity
+          style={[
+            styles.primaryButton,
+            {
+              backgroundColor: progressColor,
+              shadowColor: progressColor,
+            },
+          ]}
+          onPress={handleGetStarted}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.primaryButtonText}>
+            {t('authSection.getStarted')}
+          </Text>
+        </TouchableOpacity>
 
-        {/* Divider */}
-        {(showGoogleButton || showAppleButton) && (
-          <View style={styles.dividerContainer}>
-            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-            <Text style={[styles.dividerText, { color: colors.textSecondary }]}>
-              {t('emailAuth.or')}
-            </Text>
-            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-          </View>
-        )}
-
-        {/* OAuth Buttons - Icon only, full width */}
-        {showGoogleButton && (
-          <AuthButton
-            provider="google"
-            onPress={onGooglePress || (() => {})}
-            disabled={false}
-            iconOnly
-          />
-        )}
-
-        {showAppleButton && (
-          <AuthButton
-            provider="apple"
-            onPress={onApplePress || (() => {})}
-            disabled={true}
-            iconOnly
-          />
-        )}
-
-        {/* Fallback für Web/andere Plattformen */}
-        {!showGoogleButton && !showAppleButton && (
-          <View style={styles.infoBox}>
-            <Feather name="info" size={16} color={colors.textSecondary} />
-            <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-              {t('authSection.platformNote')}
-            </Text>
-          </View>
-        )}
+        {/* Secondary Link - Already have account */}
+        <TouchableOpacity
+          style={styles.secondaryLink}
+          onPress={handleAlreadyHaveAccount}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.secondaryLinkText, { color: colors.textSecondary }]}>
+            {t('authSection.alreadyHaveAccount')}
+          </Text>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );
@@ -119,67 +108,57 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 4,
-    gap: spacing.lg,
+    gap: spacing.xl,
   },
 
-  // Header - Centered Vertical Layout
-  header: {
+  // Benefits Section
+  benefitsContainer: {
+    gap: spacing.md,
+  },
+  benefitRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
   },
-  iconContainer: {
+  benefitIcon: {
+    fontSize: 20,
+    width: 32,
+    textAlign: 'center',
+  },
+  benefitText: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+  },
+
+  // CTA Section
+  ctaContainer: {
+    gap: spacing.md,
+    alignItems: 'center',
+  },
+  primaryButton: {
+    width: '100%',
+    height: 56,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xs,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  title: {
-    fontSize: 22,
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
-    textAlign: 'center',
   },
-  description: {
+  secondaryLink: {
+    paddingVertical: spacing.sm,
+  },
+  secondaryLinkText: {
     fontSize: 14,
-    lineHeight: 20,
     fontWeight: '500',
-    textAlign: 'center',
-    paddingHorizontal: spacing.sm,
-  },
-
-  // Buttons
-  buttonsContainer: {
-    gap: spacing.md,
-  },
-
-  // Divider
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-
-  // Info Box (Fallback)
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.md,
-    backgroundColor: 'rgba(66, 133, 244, 0.08)',
-    borderRadius: radius.md,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
   },
 });
 

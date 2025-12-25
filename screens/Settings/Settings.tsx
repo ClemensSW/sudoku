@@ -56,6 +56,7 @@ import AccountDataModal from "./components/AccountDataModal";
 import LocalDataModal from "./components/LocalDataModal";
 import InfoSettingsModal from "./components/InfoSettingsModal";
 import { EmailAuthModal } from "./components/EmailAuthModal";
+import AuthMethodModal from "./components/AuthMethodModal";
 
 import styles from "./Settings.styles";
 
@@ -107,6 +108,8 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showAccountDataModal, setShowAccountDataModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showEmailAuthModal, setShowEmailAuthModal] = useState(false);
+  const [showAuthMethodModal, setShowAuthMethodModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
   const [isChangingTheme, setIsChangingTheme] = useState(false);
 
   // Determine if we should show game-specific features
@@ -252,9 +255,33 @@ const Settings: React.FC<SettingsScreenProps> = ({
     triggerHaptic("success");
   };
 
-  const handleEmailPress = () => {
+  // Auth flow handlers
+  const handleGetStarted = () => {
     triggerHaptic("light");
+    setAuthMode('register');
+    setShowAuthMethodModal(true);
+  };
+
+  const handleAlreadyHaveAccount = () => {
+    triggerHaptic("light");
+    setAuthMode('login');
+    setShowAuthMethodModal(true);
+  };
+
+  const handleAuthMethodEmailPress = () => {
+    setShowAuthMethodModal(false);
     setShowEmailAuthModal(true);
+  };
+
+  const handleAuthMethodGooglePress = async () => {
+    setShowAuthMethodModal(false);
+    await handleGoogleSignIn();
+  };
+
+  const handleOpenLegalFromAuth = (docType: 'datenschutz' | 'agb') => {
+    triggerHaptic("light");
+    setShowLegalScreen(true);
+    // Note: LegalScreen will show the list, user can select the document
   };
 
   const handleGoogleSignIn = async () => {
@@ -484,9 +511,8 @@ const Settings: React.FC<SettingsScreenProps> = ({
         {/* Auth Section - Only show if not logged in */}
         {!showGameFeatures && !isLoggedIn && (
           <AuthSection
-            onEmailPress={handleEmailPress}
-            onGooglePress={handleGoogleSignIn}
-            onApplePress={handleAppleSignIn}
+            onGetStarted={handleGetStarted}
+            onAlreadyHaveAccount={handleAlreadyHaveAccount}
           />
         )}
 
@@ -656,10 +682,24 @@ const Settings: React.FC<SettingsScreenProps> = ({
         <LegalScreen visible={showLegalScreen} onClose={() => setShowLegalScreen(false)} />
       )}
 
+      {/* Auth Method Modal - Choose between Google/Email */}
+      {showAuthMethodModal && (
+        <AuthMethodModal
+          visible={showAuthMethodModal}
+          mode={authMode}
+          onClose={() => setShowAuthMethodModal(false)}
+          onEmailPress={handleAuthMethodEmailPress}
+          onGooglePress={handleAuthMethodGooglePress}
+          onApplePress={handleAppleSignIn}
+          onOpenLegal={handleOpenLegalFromAuth}
+        />
+      )}
+
       {/* Email Auth Modal */}
       {showEmailAuthModal && (
         <EmailAuthModal
           visible={showEmailAuthModal}
+          mode={authMode}
           onClose={() => setShowEmailAuthModal(false)}
           onSuccess={() => {
             // Auth state change is handled by AuthProvider

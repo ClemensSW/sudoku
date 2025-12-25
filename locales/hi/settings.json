@@ -144,6 +144,13 @@
   "authSection": {
     "title": "प्रगति सहेजें",
     "description": "अपनी प्रगति को सभी उपकरणों पर सिंक करें",
+    "benefits": {
+      "sync": "प्रगति सहेजें",
+      "devices": "सभी उपकरणों पर खेलें",
+      "leaderboards": "लीडरबोर्ड अनलॉक करें"
+    },
+    "getStarted": "शुरू करें",
+    "alreadyHaveAccount": "मेरे पास पहले से खाता है",
     "inDevelopment": "विकास में",
     "googleSignIn": "Google के साथ जारी रखें",
     "appleSignIn": "Apple के साथ जारी रखें",
@@ -178,6 +185,19 @@
     "signInSuccess": "सफलतापूर्वक साइन इन किया गया!",
     "signInError": "साइन इन विफल"
   },
+  "authMethodModal": {
+    "createAccount": "खाता बनाएं",
+    "signIn": "साइन इन करें",
+    "continueWithGoogle": "Google के साथ जारी रखें",
+    "continueWithApple": "Apple के साथ जारी रखें",
+    "continueWithEmail": "ईमेल से जारी रखें",
+    "or": "या",
+    "legalPrefix": "पंजीकरण करके आप हमारी ",
+    "privacy": "गोपनीयता नीति",
+    "legalAnd": " और ",
+    "terms": "उपयोग की शर्तें",
+    "legalSuffix": " स्वीकार करते हैं।"
+  },
   "emailAuth": {
     "signInWithEmail": "ईमेल से जारी रखें",
     "or": "या",
@@ -205,7 +225,17 @@
         "weak": "कमज़ोर",
         "medium": "मध्यम",
         "strong": "मज़बूत"
-      }
+      },
+      "benefits": {
+        "sync": "प्रगति सहेजें",
+        "devices": "सभी डिवाइस पर खेलें",
+        "leaderboards": "लीडरबोर्ड अनलॉक करें"
+      },
+      "legalPrefix": "पंजीकरण करके आप हमारी ",
+      "privacy": "गोपनीयता नीति",
+      "legalAnd": " और ",
+      "terms": "उपयोग की शर्तें",
+      "legalSuffix": " स्वीकार करते हैं।"
     },
     "forgotPassword": {
       "title": "पासवर्ड रीसेट करें",

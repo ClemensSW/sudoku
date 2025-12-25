@@ -144,6 +144,13 @@
   "authSection": {
     "title": "Spielstand sichern",
     "description": "Synchronisiere deinen Fortschritt über alle Geräte",
+    "benefits": {
+      "sync": "Fortschritt sichern",
+      "devices": "Auf allen Geräten spielen",
+      "leaderboards": "Ranglisten freischalten"
+    },
+    "getStarted": "Anfangen",
+    "alreadyHaveAccount": "Ich hab schon ein Konto",
     "inDevelopment": "In Entwicklung",
     "googleSignIn": "Mit Google fortfahren",
     "appleSignIn": "Mit Apple fortfahren",
@@ -178,6 +185,19 @@
     "signInSuccess": "Erfolgreich angemeldet!",
     "signInError": "Anmeldung fehlgeschlagen"
   },
+  "authMethodModal": {
+    "createAccount": "Konto erstellen",
+    "signIn": "Anmelden",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "continueWithApple": "Mit Apple fortfahren",
+    "continueWithEmail": "Per E-Mail",
+    "or": "oder",
+    "legalPrefix": "Mit der Registrierung akzeptierst du unsere ",
+    "privacy": "Datenschutzerklärung",
+    "legalAnd": " und ",
+    "terms": "Nutzungsbedingungen",
+    "legalSuffix": "."
+  },
   "emailAuth": {
     "signInWithEmail": "Per E-Mail",
     "or": "oder",
@@ -205,7 +225,17 @@
         "weak": "Schwach",
         "medium": "Mittel",
         "strong": "Stark"
-      }
+      },
+      "benefits": {
+        "sync": "Fortschritt sichern",
+        "devices": "Auf allen Geräten spielen",
+        "leaderboards": "Ranglisten freischalten"
+      },
+      "legalPrefix": "Mit der Registrierung akzeptierst du unsere ",
+      "privacy": "Datenschutzerklärung",
+      "legalAnd": " und ",
+      "terms": "Nutzungsbedingungen",
+      "legalSuffix": "."
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",

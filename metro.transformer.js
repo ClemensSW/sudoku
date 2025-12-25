@@ -2,16 +2,20 @@
 const upstreamTransformer = require('@expo/metro-config/babel-transformer');
 const svgTransformer = require('react-native-svg-transformer');
 
-module.exports.transform = function({ src, filename, options }) {
-  // Handle .md files as raw text
+module.exports.transform = async function({ src, filename, options }) {
+  // Handle .md files as raw text - return directly without Babel
   if (filename.endsWith('.md')) {
-    // Escape the content properly for JavaScript
-    const escapedContent = JSON.stringify(src);
-
+    // Return the markdown content as a CommonJS module export
+    // Using module.exports for compatibility with require()
     return upstreamTransformer.transform({
-      src: `module.exports = ${escapedContent};`,
-      filename,
-      options,
+      src: `module.exports = ${JSON.stringify(src)};`,
+      filename: filename.replace('.md', '.js'), // Treat as JS to avoid complex transformations
+      options: {
+        ...options,
+        // Minimal Babel config to avoid transformation issues
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
     });
   }
 

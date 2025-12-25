@@ -327,7 +327,7 @@ const Leistung: React.FC = () => {
       <Animated.ScrollView
         ref={scrollViewRef}
         style={styles.scrollContainer}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator
         onScroll={scrollHandler}
         scrollEventThrottle={32}
@@ -352,11 +352,6 @@ const Leistung: React.FC = () => {
         {/* Tab Navigation - normal position */}
         <View style={styles.tabSection} onLayout={handleTabSectionLayout}>
           <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
-        </View>
-
-        {/* Support Banner - unterhalb der Tabs */}
-        <View style={styles.bannerContainer}>
-          <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
         </View>
 
         <View style={styles.tabContentContainer}>
@@ -389,6 +384,11 @@ const Leistung: React.FC = () => {
               <TimeTab stats={stats} />
             </View>
           )}
+        </View>
+
+        {/* Support Banner - unterhalb der Tab-Inhalte */}
+        <View style={styles.bannerContainer}>
+          <SupportBanner onOpenSupportShop={handleOpenSupportShop} />
         </View>
       </Animated.ScrollView>
 
@@ -444,8 +444,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
-  bannerContainer: { paddingHorizontal: 16, marginTop: 20, marginBottom: 16 },
-  tabContentContainer: {paddingBottom: 64 },
+  tabContentContainer: { marginTop: 8 },
+  bannerContainer: { paddingHorizontal: 16, marginTop: 8 },
 });
 
 export default Leistung;

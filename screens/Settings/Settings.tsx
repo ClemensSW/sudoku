@@ -98,6 +98,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
   const [showSupportShop, setShowSupportShop] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showLegalScreen, setShowLegalScreen] = useState(false);
+  const [legalDocToOpen, setLegalDocToOpen] = useState<'datenschutz' | 'agb' | 'impressum' | 'widerruf' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Modal states for Level-2 navigation
@@ -280,8 +281,8 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
   const handleOpenLegalFromAuth = (docType: 'datenschutz' | 'agb') => {
     triggerHaptic("light");
+    setLegalDocToOpen(docType);
     setShowLegalScreen(true);
-    // Note: LegalScreen will show the list, user can select the document
   };
 
   const handleGoogleSignIn = async () => {
@@ -679,7 +680,14 @@ const Settings: React.FC<SettingsScreenProps> = ({
 
       {/* Legal Screen Modal */}
       {showLegalScreen && (
-        <LegalScreen visible={showLegalScreen} onClose={() => setShowLegalScreen(false)} />
+        <LegalScreen
+          visible={showLegalScreen}
+          onClose={() => {
+            setShowLegalScreen(false);
+            setLegalDocToOpen(null);
+          }}
+          initialDoc={legalDocToOpen || undefined}
+        />
       )}
 
       {/* Auth Method Modal - Choose between Google/Email */}

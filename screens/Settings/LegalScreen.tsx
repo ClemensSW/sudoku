@@ -565,15 +565,16 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
     }
   }, [visible]);
 
-  // Sync initialDoc with selectedDoc when modal opens
+  // Sync initialDoc with selectedDoc when modal opens and load content
   useEffect(() => {
     if (visible && initialDoc) {
-      setSelectedDoc(initialDoc);
+      loadDocument(initialDoc);  // Load document content, not just set selectedDoc
     } else if (!visible) {
       // Reset when modal closes
       setSelectedDoc(initialDoc || null);
+      setDocContent("");
     }
-  }, [visible, initialDoc]);
+  }, [visible, initialDoc, loadDocument]);
 
   // Hide BottomNav when modal is visible
   useEffect(() => {

@@ -17,12 +17,14 @@ import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils
 import { loadStats } from "@/utils/storage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProfileGroup: React.FC = () => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
   const colors = theme.colors;
   const progressColor = useProgressColor();
+  const { user } = useAuth();
 
   // State for AvatarPicker
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
@@ -37,7 +39,7 @@ const ProfileGroup: React.FC = () => {
   const [userName, setUserName] = useState<string>("User");
   const [isEditingName, setIsEditingName] = useState(false);
 
-  // Load data on mount
+  // Load data on mount and when user changes (login/logout)
   useEffect(() => {
     const loadData = async () => {
       const stats = await loadStats();
@@ -67,7 +69,7 @@ const ProfileGroup: React.FC = () => {
       }
     };
     loadData();
-  }, []);
+  }, [user?.uid]);
 
   // Avatar handler
   const handleAvatarChange = async (uri: string | null) => {

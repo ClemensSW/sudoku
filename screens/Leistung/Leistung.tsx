@@ -24,6 +24,7 @@ import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 import { useAlert } from "@/components/CustomAlert/AlertProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
 
 // Components
 import ProfileHeader from "./components/ProfileHeader";
@@ -47,6 +48,7 @@ const Leistung: React.FC = () => {
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
+  const { user } = useAuth();
 
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const tabChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -98,7 +100,7 @@ const Leistung: React.FC = () => {
     }));
   }, [stats?.totalXP]);
 
-  // Initial-Load
+  // Initial-Load and when user changes (login/logout)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -124,7 +126,7 @@ const Leistung: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [user?.uid]);
 
   // **NEU**: Refresh bei Fokus (Titel/Avatar/Stats nach Modal-Änderungen oder Käufen)
   useFocusEffect(

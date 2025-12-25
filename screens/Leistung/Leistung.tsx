@@ -173,7 +173,7 @@ const Leistung: React.FC = () => {
 
   const tabs: TabItem[] = [
     { id: "level", label: t('tabs.level') },
-    { id: "gallery", label: t('tabs.collection') },
+    { id: "gallery", label: t('tabs.gallery') },
     { id: "streak", label: t('tabs.streak') },
     { id: "times", label: t('tabs.times') },
   ];

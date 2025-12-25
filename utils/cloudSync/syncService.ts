@@ -525,11 +525,11 @@ export async function syncOnAppPause(): Promise<SyncResult> {
 
 /**
  * Sync nach Game Completion
- * Respektiert Debounce
+ * Ignoriert Debounce (force: true), da Spielfortschritt wichtig ist
  */
 export async function syncAfterGameCompletion(): Promise<SyncResult> {
   console.log('[SyncService] Auto-sync triggered: Game Completion');
-  return syncUserData({ force: false });
+  return syncUserData({ force: true });
 }
 
 // ===== Export =====

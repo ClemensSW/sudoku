@@ -5,25 +5,17 @@
  * Zeigt Account-Informationen wenn User eingeloggt ist:
  * - User Email/Name mit Google Profilbild (mit Glow-Effekt)
  * - Auto-Sync Info mit Cloud-Icon
- * - Manual Sync Button mit Shimmer-Animation
+ * - Manual Sync Button (dezent, da Sync automatisch passiert)
  *
  * Premium-Elemente:
  * - Gradient Border
  * - Decorative Glow Orb
  * - Enhanced Shadows
- * - Shimmer Animation auf Button
  */
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import Animated, {
-  FadeInDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +27,6 @@ import { useProgressColor } from '@/hooks/useProgressColor';
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from '@/utils/cloudSync/syncService';
 import { syncSuccessAlert } from '@/components/CustomAlert/AlertHelpers';
 import { triggerHaptic } from '@/utils/haptics';
-import CloudsIcon from '@/assets/svg/clouds.svg';
 
 interface AccountInfoCardProps {
   onSignOut?: () => void;
@@ -51,22 +42,6 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
   const [isSyncing, setIsSyncing] = useState(false);
-
-  // Shimmer animation
-  const shimmerPosition = useSharedValue(-1);
-
-  useEffect(() => {
-    shimmerPosition.value = withRepeat(
-      withTiming(2, { duration: 2500, easing: Easing.linear }),
-      -1,
-      false
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const shimmerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shimmerPosition.value * 150 }],
-  }));
 
   // Subscribe to sync status updates (event-based, no polling!)
   useEffect(() => {
@@ -226,15 +201,12 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
           {/* Auto-Sync Info with Last Sync */}
           <Animated.View
-            entering={FadeInDown.delay(300).duration(400)}
+            entering={FadeInDown.delay(250).duration(400)}
             style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}
           >
-            <View style={styles.syncInfoHeader}>
-              <CloudsIcon width={64} height={64} />
-              <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
-                {t('authSection.autoSyncInfo')}
-              </Text>
-            </View>
+            <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
+              {t('authSection.autoSyncInfo')}
+            </Text>
             <View style={styles.syncStatusRow}>
               <Feather
                 name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
@@ -247,43 +219,30 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
             </View>
           </Animated.View>
 
-          {/* Manual Sync Button with Shimmer */}
-          <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+          {/* Manual Sync Button - Dezent (da Sync automatisch passiert) */}
+          <Animated.View entering={FadeInDown.delay(300).duration(400)}>
             <TouchableOpacity
               style={[
                 styles.syncButton,
                 {
-                  backgroundColor: progressColor,
-                  shadowColor: progressColor,
+                  backgroundColor: progressColor + '15',
+                  borderColor: progressColor + '30',
                   opacity: isSyncing ? 0.7 : 1,
                 },
               ]}
               onPress={handleManualSync}
               disabled={isSyncing}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              {!isSyncing && (
-                <Feather name="refresh-cw" size={18} color="#FFFFFF" />
-              )}
-              <Text style={styles.syncButtonText}>
+              <Feather
+                name="refresh-cw"
+                size={16}
+                color={progressColor}
+                style={isSyncing ? { opacity: 0.5 } : undefined}
+              />
+              <Text style={[styles.syncButtonText, { color: progressColor }]}>
                 {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
               </Text>
-
-              {/* Shimmer Effect */}
-              {!isSyncing && (
-                <Animated.View style={[styles.shimmerContainer, shimmerStyle]}>
-                  <LinearGradient
-                    colors={[
-                      'transparent',
-                      'rgba(255, 255, 255, 0.35)',
-                      'transparent',
-                    ]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.shimmerGradient}
-                  />
-                </Animated.View>
-              )}
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -381,12 +340,7 @@ const styles = StyleSheet.create({
   syncInfo: {
     padding: spacing.lg,
     borderRadius: radius.md,
-    gap: spacing.md,
-  },
-
-  syncInfoHeader: {
-    alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
 
   syncInfoText: {
@@ -409,42 +363,21 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // Sync Button with Shimmer
+  // Sync Button - Dezent (optional, nicht prominent)
   syncButton: {
     width: '100%',
-    height: 56,
-    borderRadius: 16,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    overflow: 'hidden',
-    // Enhanced shadow
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 10,
   },
 
   syncButtonText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-  },
-
-  // Shimmer Effect
-  shimmerContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-
-  shimmerGradient: {
-    width: 80,
-    height: '100%',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
 

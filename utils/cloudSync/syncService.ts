@@ -481,6 +481,17 @@ export function getLastSyncError(): string | null {
   return syncStatus.lastError;
 }
 
+/**
+ * Aktualisiert den lastSync Timestamp manuell
+ * Wird verwendet nach initialem Login/Registration Sync in AuthProvider
+ */
+export function updateSyncTimestamp(): void {
+  syncStatus.lastSync = Date.now();
+  syncStatus.lastError = null;
+  notifySyncStatusListeners();
+  console.log('[SyncService] Sync timestamp updated manually');
+}
+
 // ===== Manual Sync =====
 
 /**
@@ -534,4 +545,5 @@ export default {
   isSyncing,
   getLastSyncTimestamp,
   getLastSyncError,
+  updateSyncTimestamp,
 };

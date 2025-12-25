@@ -117,7 +117,7 @@
   },
   "accountData": {
     "title": "Konto & Daten",
-    "syncSection": "Synchronisierung & Backup",
+    "syncSection": "Synchronisierung",
     "accountSection": "Kontoverwaltung",
     "deleteAccount": "Konto löschen",
     "deleteAccountConfirmTitle": "Konto wirklich löschen?",

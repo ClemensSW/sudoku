@@ -19,7 +19,7 @@ import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { uploadUserData, hasCloudData } from '@/utils/cloudSync/uploadService';
 import { downloadUserData } from '@/utils/cloudSync/downloadService';
 import { mergeAllData } from '@/utils/cloudSync/mergeService';
-import { syncOnAppLaunch, syncOnAppPause } from '@/utils/cloudSync/syncService';
+import { syncOnAppLaunch, syncOnAppPause, updateSyncTimestamp } from '@/utils/cloudSync/syncService';
 import { loadStats, loadSettings, loadColorUnlock, saveStats, saveSettings, saveColorUnlock, DEFAULT_SETTINGS } from '@/utils/storage';
 import { gameStatsToFirestore, gameSettingsToFirestore, colorUnlockToFirestore } from '@/utils/cloudSync/firestoreSchema';
 import { getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
@@ -134,6 +134,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             console.log('[AuthProvider] ✅ Initial upload successful');
             console.log('  Uploaded:', result.uploadedDocuments.join(', '));
 
+            // Update sync timestamp so UI shows "Gerade eben"
+            updateSyncTimestamp();
+
             // TODO: Show success message to user
             // Alert.alert('Erfolg', 'Deine Daten wurden erfolgreich gesichert!');
           } else {
@@ -185,6 +188,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             ]);
 
             console.log('[AuthProvider] ✅ Sync complete (Download + Merge)');
+
+            // Update sync timestamp so UI shows "Gerade eben"
+            updateSyncTimestamp();
 
             // TODO: Show sync summary to user
           } else {

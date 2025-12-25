@@ -117,7 +117,7 @@
   },
   "accountData": {
     "title": "Account & Data",
-    "syncSection": "Sync & Backup",
+    "syncSection": "Sync",
     "accountSection": "Account Management",
     "deleteAccount": "Delete Account",
     "deleteAccountConfirmTitle": "Delete Account?",

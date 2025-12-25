@@ -1,6 +1,21 @@
 // screens/Settings/components/AccountDataSection/AccountDataSection.tsx
+/**
+ * AccountDataSection - Premium Design
+ *
+ * Konto & Daten Bereich mit:
+ * - Synchronisierung (Auto-Sync Info + manueller Sync)
+ * - Kontoverwaltung (Abmelden, Konto löschen)
+ *
+ * Premium-Elemente:
+ * - Gradient Border
+ * - Decorative Glow Orb
+ * - Enhanced Shadows
+ */
+
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -9,8 +24,6 @@ import { triggerHaptic } from "@/utils/haptics";
 import { spacing, radius } from "@/utils/theme";
 import { manualSync, getSyncStatus, subscribeSyncStatus, SyncStatus } from "@/utils/cloudSync/syncService";
 import { syncSuccessAlert } from "@/components/CustomAlert/AlertHelpers";
-import Button from "@/components/Button/Button";
-import CloudsIcon from "@/assets/svg/clouds.svg";
 
 interface AccountDataSectionProps {
   onSignOut: () => void;
@@ -59,6 +72,8 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
 
   // Handle manual sync
   const handleManualSync = async () => {
+    if (isSyncing) return;
+
     try {
       setIsSyncing(true);
       triggerHaptic("light");
@@ -67,11 +82,11 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
       const result = await manualSync();
 
       if (result.success) {
-        console.log('[AccountDataSection] ✅ Manual sync successful');
+        console.log('[AccountDataSection] Manual sync successful');
         triggerHaptic("success");
         showAlert(syncSuccessAlert());
       } else {
-        console.error('[AccountDataSection] ⚠️ Manual sync failed:', result.errors);
+        console.error('[AccountDataSection] Manual sync failed:', result.errors);
         triggerHaptic("error");
         showAlert({
           title: t('authSection.syncError'),
@@ -90,7 +105,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
       // Update sync status
       setSyncStatus(getSyncStatus());
     } catch (error: any) {
-      console.error('[AccountDataSection] ❌ Manual sync error:', error);
+      console.error('[AccountDataSection] Manual sync error:', error);
       triggerHaptic("error");
       showAlert({
         title: t('authSection.syncError'),
@@ -121,52 +136,99 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Sync & Backup Section */}
-      <View style={styles.section}>
+      {/* Sync Section - Premium Design */}
+      <Animated.View
+        entering={FadeInDown.delay(100).duration(500)}
+        style={styles.section}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t("accountData.syncSection")}
         </Text>
 
-        <View style={[styles.settingsGroup, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          {/* Auto-Sync Info */}
-          <View style={[styles.syncInfoContainer, { backgroundColor: progressColor + '10' }]}>
-            <View style={styles.syncInfoHeader}>
-              <CloudsIcon width={64} height={64} />
+        {/* Premium Gradient Border Container */}
+        <LinearGradient
+          colors={[
+            progressColor,
+            `${progressColor}60`,
+            `${progressColor}20`,
+            'transparent',
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientBorder}
+        >
+          <View
+            style={[
+              styles.premiumContainer,
+              {
+                backgroundColor: colors.surface,
+                shadowColor: progressColor,
+              },
+            ]}
+          >
+            {/* Decorative Glow Orb */}
+            <View
+              style={[
+                styles.glowOrb,
+                { backgroundColor: progressColor },
+              ]}
+            />
+
+            {/* Auto-Sync Info */}
+            <Animated.View
+              entering={FadeInDown.delay(200).duration(400)}
+              style={[styles.syncInfoContainer, { backgroundColor: progressColor + '10' }]}
+            >
               <Text style={[styles.syncInfoTitle, { color: colors.textPrimary }]}>
                 {t('authSection.autoSyncInfo')}
               </Text>
-            </View>
-            <View style={styles.syncStatusRow}>
-              <Feather
-                name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
-                size={14}
-                color={syncStatus.lastError ? colors.error : progressColor}
-              />
-              <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
-                {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
-              </Text>
-            </View>
-          </View>
+              <View style={styles.syncStatusRow}>
+                <Feather
+                  name={syncStatus.lastError ? 'alert-circle' : 'check-circle'}
+                  size={14}
+                  color={syncStatus.lastError ? colors.error : progressColor}
+                />
+                <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
+                  {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
+                </Text>
+              </View>
+            </Animated.View>
 
-          {/* Manual Sync Button */}
-          <View style={styles.syncButtonContainer}>
-            <Button
-              title={isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
-              onPress={handleManualSync}
-              disabled={isSyncing}
-              loading={isSyncing}
-              variant="primary"
-              customColor={progressColor}
-              icon={!isSyncing ? <Feather name="refresh-cw" size={18} color={colors.buttonText} /> : undefined}
-              iconPosition="left"
-              style={styles.syncButton}
-            />
+            {/* Manual Sync Button - Dezent */}
+            <Animated.View entering={FadeInDown.delay(250).duration(400)}>
+              <TouchableOpacity
+                style={[
+                  styles.syncButton,
+                  {
+                    backgroundColor: progressColor + '15',
+                    borderColor: progressColor + '30',
+                    opacity: isSyncing ? 0.7 : 1,
+                  },
+                ]}
+                onPress={handleManualSync}
+                disabled={isSyncing}
+                activeOpacity={0.7}
+              >
+                <Feather
+                  name="refresh-cw"
+                  size={16}
+                  color={progressColor}
+                  style={isSyncing ? { opacity: 0.5 } : undefined}
+                />
+                <Text style={[styles.syncButtonText, { color: progressColor }]}>
+                  {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
           </View>
-        </View>
-      </View>
+        </LinearGradient>
+      </Animated.View>
 
       {/* Account Management Section */}
-      <View style={styles.section}>
+      <Animated.View
+        entering={FadeInDown.delay(300).duration(500)}
+        style={styles.section}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t("accountData.accountSection")}
         </Text>
@@ -198,7 +260,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
             <Feather name="chevron-right" size={20} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -217,20 +279,38 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     paddingHorizontal: spacing.xs,
   },
-  settingsGroup: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
+
+  // Premium Container
+  gradientBorder: {
+    borderRadius: radius.xl + 1.5,
+    padding: 1.5,
+  },
+  premiumContainer: {
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    gap: spacing.md,
     overflow: 'hidden',
+    // Enhanced shadow
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  glowOrb: {
+    position: 'absolute',
+    top: -40,
+    right: -40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    opacity: 0.12,
   },
 
   // Sync Info
   syncInfoContainer: {
     padding: spacing.lg,
-    gap: spacing.md,
-  },
-  syncInfoHeader: {
-    alignItems: 'center',
-    gap: spacing.md,
+    borderRadius: radius.md,
+    gap: spacing.sm,
   },
   syncInfoTitle: {
     fontSize: 15,
@@ -250,16 +330,28 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // Sync Button
-  syncButtonContainer: {
-    margin: spacing.md,
-  },
+  // Sync Button - Dezent
   syncButton: {
-    width: "100%",
-    // Button component übernimmt: backgroundColor, padding, borderRadius, text styling
+    width: '100%',
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  syncButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
   },
 
-  // Action Buttons
+  // Account Management Section
+  settingsGroup: {
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',

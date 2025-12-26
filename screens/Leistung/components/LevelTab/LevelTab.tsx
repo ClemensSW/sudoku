@@ -41,7 +41,6 @@ const LevelTab: React.FC<LevelTabProps> = ({
           previousXp={stats.totalXP}
           justCompleted={false}
           xpGain={0}
-          showPathDescription={true}
         />
       </View>
     </Animated.View>

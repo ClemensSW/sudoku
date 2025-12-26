@@ -1,8 +1,7 @@
 // components/GameCompletion/components/PathCard/PathCard.tsx
 import React, { useState, useCallback, useEffect } from "react";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -38,7 +37,6 @@ interface PathCardProps {
   stats?: GameStats;
   justCompleted?: boolean;
   xpGain?: number;
-  showPathDescription?: boolean;
 }
 
 const PathCard: React.FC<PathCardProps> = ({
@@ -47,14 +45,12 @@ const PathCard: React.FC<PathCardProps> = ({
   stats,
   justCompleted = false,
   xpGain,
-  showPathDescription = true,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const { t } = useTranslation('gameCompletion');
 
   // State
-  const [pathDescExpanded, setPathDescExpanded] = useState(false);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [colorUnlockData, setColorUnlockData] = useState<ColorUnlockData | null>(null);
 
@@ -117,11 +113,6 @@ const PathCard: React.FC<PathCardProps> = ({
     loadColorData();
   }, [levelInfo.currentLevel, refreshColor]);
 
-  const togglePathDescription = useCallback(() => {
-    setPathDescExpanded((s) => !s);
-    triggerHaptic("light");
-  }, []);
-
   const openColorPicker = useCallback(() => {
     setColorPickerVisible(true);
     triggerHaptic("light");
@@ -133,10 +124,6 @@ const PathCard: React.FC<PathCardProps> = ({
     setColorUnlockData(updatedData);
     triggerHaptic("success");
   }, [updateColor]);
-
-  // Check if description needs fade gradient
-  const pathDescription = levelInfo.currentPath.description;
-  const needsFade = pathDescription.length > 200;
 
   return (
     <Animated.View
@@ -181,150 +168,45 @@ const PathCard: React.FC<PathCardProps> = ({
         </Animated.View>
       </View>
 
-      {/* Path Details Section - wie "Dein Titel" */}
-      {showPathDescription && (
-        <View style={styles.pathSection}>
-          <Pressable
-            onPress={togglePathDescription}
-            style={({ pressed }) => [
-              styles.pathPressable,
-              {
-                backgroundColor: pressed
-                  ? theme.isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "rgba(0,0,0,0.04)"
-                  : "transparent",
-              },
-            ]}
-          >
-            {/* Content Column (Label + Path Name) */}
-            <View style={{ flex: 1 }}>
-              {/* Header: Label + Icon */}
-              <View style={styles.pathHeaderLeft}>
-                <Feather name="compass" size={16} color={displayColor} />
-                <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
-                  {t('path.currentPath')}
-                </Text>
-              </View>
-
-              {/* Path Name */}
-              <Text
-                style={[styles.pathName, { color: colors.textPrimary }]}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {levelInfo.currentPath.name}
+      {/* Path Section - wie "Dein Titel" */}
+      <View style={styles.pathSection}>
+        <Pressable
+          onPress={openColorPicker}
+          style={({ pressed }) => [
+            styles.pathPressable,
+            {
+              backgroundColor: pressed
+                ? theme.isDark
+                  ? "rgba(255,255,255,0.06)"
+                  : "rgba(0,0,0,0.04)"
+                : "transparent",
+            },
+          ]}
+        >
+          {/* Content Column (Label + Path Name) */}
+          <View style={{ flex: 1 }}>
+            {/* Header: Label + Icon */}
+            <View style={styles.pathHeaderLeft}>
+              <Feather name="compass" size={16} color={displayColor} />
+              <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
+                {t('path.currentPath')}
               </Text>
             </View>
 
-            {/* Chevron - Center Aligned (only when collapsed) */}
-            {!pathDescExpanded && (
-              <Feather name="chevron-right" size={18} color={displayColor} style={{ alignSelf: 'center' }} />
-            )}
-          </Pressable>
-
-          {/* Description - expandable with fade (outside of row layout) */}
-          {pathDescExpanded && (
-            <Animated.View
-              style={[styles.pathDescriptionWrapper, { paddingHorizontal: 12 }]}
-              entering={FadeIn.duration(200)}
+            {/* Path Name */}
+            <Text
+              style={[styles.pathName, { color: colors.textPrimary }]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
-              <Text
-                style={[styles.pathDescription, { color: colors.textSecondary }]}
-                numberOfLines={5}
-                ellipsizeMode="tail"
-              >
-                {pathDescription}
-              </Text>
+              {levelInfo.currentPath.name}
+            </Text>
+          </View>
 
-              {/* Fade gradient for long texts */}
-              {needsFade && (
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    theme.isDark ? "#1a1a1a" : "#ffffff",
-                  ]}
-                  style={styles.descriptionFade}
-                  pointerEvents="none"
-                />
-              )}
-            </Animated.View>
-          )}
-        </View>
-      )}
-
-      {/* Rewards Section - eigene Section mit voller Breite */}
-      {showPathDescription && pathDescExpanded && (
-        <View style={styles.rewardsSection}>
-          <Animated.View entering={FadeIn.duration(200)}>
-            {/* Color Picker Section */}
-            <TouchableOpacity
-              style={[
-                styles.colorPickerSection,
-                {
-                  borderColor: theme.isDark
-                    ? "rgba(255,255,255,0.15)"
-                    : "rgba(0,0,0,0.15)",
-                  backgroundColor: theme.isDark
-                    ? "rgba(255,255,255,0.03)"
-                    : "rgba(0,0,0,0.02)",
-                  borderLeftColor: displayColor,
-                },
-              ]}
-              onPress={openColorPicker}
-              activeOpacity={0.7}
-            >
-              <View style={styles.colorPickerHeader}>
-                <Feather name="droplet" size={16} color={displayColor} />
-                <Text
-                  style={[
-                    styles.colorPickerLabel,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  {t('path.colorPicker.label')}
-                </Text>
-              </View>
-
-              {/* Selected Color Preview */}
-              <View style={styles.selectedColorPreview}>
-                <View
-                  style={[
-                    styles.colorPreviewSquare,
-                    { backgroundColor: displayColor },
-                  ]}
-                />
-                <Text
-                  style={[styles.colorPreviewText, { color: colors.textPrimary }]}
-                >
-                  {t('path.colorPicker.current')}
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Weitere Rewards Placeholder (für Zukunft) */}
-            <View
-              style={[
-                styles.rewardsPlaceholder,
-                {
-                  borderColor: theme.isDark
-                    ? "rgba(255,255,255,0.15)"
-                    : "rgba(0,0,0,0.15)",
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.comingSoonText,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                {t('path.moreRewards')}
-              </Text>
-            </View>
-          </Animated.View>
-        </View>
-      )}
+          {/* Chevron - Center Aligned */}
+          <Feather name="chevron-right" size={18} color={displayColor} style={{ alignSelf: 'center' }} />
+        </Pressable>
+      </View>
 
       {/* Milestone Notification */}
       {showMilestone && (

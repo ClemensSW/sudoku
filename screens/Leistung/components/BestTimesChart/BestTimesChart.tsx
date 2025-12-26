@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useTranslation } from "react-i18next";
@@ -31,6 +32,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Max time for scaling (use largest non-infinity time or default to 15 minutes)
   const validTimes = [
@@ -94,6 +96,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
           backgroundColor: colors.surface,
           borderColor: colors.border,
           elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? 'transparent' : progressColor,
         },
       ]}
       entering={FadeInDown.delay(400).duration(400)}

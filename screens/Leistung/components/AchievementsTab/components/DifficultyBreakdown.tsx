@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { useProgressColor } from '@/hooks/useProgressColor';
 import { getPathColor } from '@/utils/pathColors';
 import { difficultyStyles as styles } from '../AchievementsTab.styles';
 
@@ -37,6 +38,7 @@ const DifficultyBreakdown: React.FC<DifficultyBreakdownProps> = ({
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Animation values for progress bars
   const easyWidth = useSharedValue(0);
@@ -103,6 +105,7 @@ const DifficultyBreakdown: React.FC<DifficultyBreakdownProps> = ({
           backgroundColor: colors.surface,
           borderColor: colors.border,
           elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? 'transparent' : progressColor,
         },
       ]}
       entering={FadeInDown.delay(200).duration(400)}

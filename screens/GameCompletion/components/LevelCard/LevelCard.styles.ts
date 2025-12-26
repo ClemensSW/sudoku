@@ -20,9 +20,8 @@ export default StyleSheet.create({
   heroHeader: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: spacing.xxl * 1.6,
-    paddingBottom: spacing.xxl * 2.2,
     paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl * 1.5,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     position: "relative",
@@ -31,8 +30,9 @@ export default StyleSheet.create({
 
   // Badge Container (with glow)
   badgeContainer: {
-    marginBottom: spacing.lg,
     position: "relative",
+    marginTop: spacing.lg,
+    marginBottom: spacing.xxl,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 999, // Above all content during animation
@@ -143,7 +143,8 @@ export default StyleSheet.create({
   // Progress Section
   progressSection: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xl,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
     borderBottomWidth: 1,
   },
 
@@ -153,7 +154,6 @@ export default StyleSheet.create({
     alignItems: "flex-start",
     gap: spacing.md,
     marginBottom: spacing.sm,
-    marginTop: spacing.md,
   },
 
   // EP Info Column: Text + Progress Bar (vertical unit)

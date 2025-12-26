@@ -11,11 +11,9 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { useProgressColor } from '@/hooks/useProgressColor';
 import { heroStyles as styles } from '../AchievementsTab.styles';
 import ZielIcon from '@/assets/svg/ziel.svg';
-
-// Rot-Coral color from ziel.svg
-const ERFOLGE_COLOR = '#FE646F';
 
 interface GamesHeroProps {
   gamesPlayed: number;
@@ -34,6 +32,7 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
+  const progressColor = useProgressColor();
 
   // Animation values
   const counterScale = useSharedValue(1);
@@ -115,7 +114,7 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 8,
-          shadowColor: theme.isDark ? 'transparent' : ERFOLGE_COLOR,
+          shadowColor: theme.isDark ? 'transparent' : progressColor,
         },
       ]}
       entering={FadeIn.duration(400)}
@@ -123,8 +122,8 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
       <LinearGradient
         colors={
           theme.isDark
-            ? [hexToRGBA(ERFOLGE_COLOR, 0.15), hexToRGBA(ERFOLGE_COLOR, 0.08), hexToRGBA(ERFOLGE_COLOR, 0)]
-            : [hexToRGBA(ERFOLGE_COLOR, 0.20), hexToRGBA(ERFOLGE_COLOR, 0.10), hexToRGBA(ERFOLGE_COLOR, 0)]
+            ? [hexToRGBA(progressColor, 0.15), hexToRGBA(progressColor, 0.08), hexToRGBA(progressColor, 0)]
+            : [hexToRGBA(progressColor, 0.20), hexToRGBA(progressColor, 0.10), hexToRGBA(progressColor, 0)]
         }
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
@@ -137,8 +136,8 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
               styles.iconGlow,
               {
                 backgroundColor: theme.isDark
-                  ? hexToRGBA(ERFOLGE_COLOR, 0.15)
-                  : hexToRGBA(ERFOLGE_COLOR, 0.35),
+                  ? hexToRGBA(progressColor, 0.15)
+                  : hexToRGBA(progressColor, 0.35),
               },
             ]}
           />
@@ -161,7 +160,7 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
         <View
           style={[
             styles.separator,
-            { backgroundColor: hexToRGBA(ERFOLGE_COLOR, 0.3) },
+            { backgroundColor: hexToRGBA(progressColor, 0.3) },
           ]}
         />
 
@@ -173,7 +172,7 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
           <Text style={[styles.dotSeparator, { color: colors.textSecondary }]}>
             ·
           </Text>
-          <Text style={[styles.winRateText, { color: ERFOLGE_COLOR }]}>
+          <Text style={[styles.winRateText, { color: progressColor }]}>
             {winRate}%
           </Text>
         </View>

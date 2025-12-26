@@ -79,6 +79,7 @@ const StreakStats: React.FC<StreakStatsProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? 'transparent' : '#FFC850',
         },
       ]}
       entering={FadeIn.duration(350).delay(200)}

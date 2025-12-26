@@ -1,0 +1,4 @@
+// screens/Leistung/components/AchievementsTab/index.ts
+export { default } from './AchievementsTab';
+export { default as GamesHero } from './components/GamesHero';
+export { default as DifficultyBreakdown } from './components/DifficultyBreakdown';

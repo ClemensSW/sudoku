@@ -33,7 +33,7 @@ import type { TabItem } from "./components/TabNavigator";
 import LevelTab from "./components/LevelTab";
 import GalleryTab from "./components/GalleryTab";
 import StreakTab from "./components/StreakTab";
-import TimeTab from "./components/TimeTab";
+import AchievementsTab from "./components/AchievementsTab";
 
 // Support
 import SupportBanner from "./components/SupportBanner/SupportBanner";
@@ -74,7 +74,7 @@ const Leistung: React.FC = () => {
   const { landscapes } = useLandscapes("completed");
 
   // Progress color for title modal
-  const progressColor = useProgressColor(stats?.totalXP || 0);
+  const progressColor = useProgressColor();
 
   // Calculate title options - memoized for performance
   const titleOptions = useMemo(() => {
@@ -380,10 +380,10 @@ const Leistung: React.FC = () => {
             </View>
           )}
 
-          {/* Times Tab - lazy gemounted */}
+          {/* Achievements Tab - lazy gemounted */}
           {visitedTabs.times && (
             <View style={{ display: activeTab === 'times' ? 'flex' : 'none' }}>
-              <TimeTab stats={stats} />
+              <AchievementsTab stats={stats} />
             </View>
           )}
         </View>

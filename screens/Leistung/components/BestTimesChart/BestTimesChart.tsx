@@ -1,17 +1,11 @@
 // screens/LeistungScreen/components/BestTimesChart/BestTimesChart.tsx
 import React from "react";
 import { View, Text } from "react-native";
-import Animated, {
-  FadeIn,
-  FadeInUp,
-  FadeInDown,
-} from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Difficulty } from "@/utils/sudoku";
 import { GameStats } from "@/utils/storage";
 import { useTranslation } from "react-i18next";
-import { useProgressColor } from "@/hooks/useProgressColor";
 import { getPathColor } from "@/utils/pathColors";
 import styles from "./BestTimesChart.styles";
 
@@ -37,7 +31,6 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
-  const progressColor = useProgressColor();
 
   // Max time for scaling (use largest non-infinity time or default to 15 minutes)
   const validTimes = [
@@ -58,113 +51,103 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   // Bar data with numeric percentages - using path colors
   const difficulties: {
     key: Difficulty;
-    name: string;
+    label: string;
     color: string;
     time: number;
     percentage: number;
   }[] = [
     {
       key: "easy",
-      name: t('bestTimes.difficulties.easy'),
+      label: t('bestTimes.difficulties.easy'),
       color: getPathColor('blue', theme.isDark),
       time: stats.bestTimeEasy,
       percentage: getBarPercentage(stats.bestTimeEasy),
     },
     {
       key: "medium",
-      name: t('bestTimes.difficulties.medium'),
+      label: t('bestTimes.difficulties.medium'),
       color: getPathColor('green', theme.isDark),
       time: stats.bestTimeMedium,
       percentage: getBarPercentage(stats.bestTimeMedium),
     },
     {
       key: "hard",
-      name: t('bestTimes.difficulties.hard'),
+      label: t('bestTimes.difficulties.hard'),
       color: getPathColor('yellow', theme.isDark),
       time: stats.bestTimeHard,
       percentage: getBarPercentage(stats.bestTimeHard),
     },
     {
       key: "expert",
-      name: t('bestTimes.difficulties.expert'),
+      label: t('bestTimes.difficulties.expert'),
       color: getPathColor('purple', theme.isDark),
       time: stats.bestTimeExpert,
       percentage: getBarPercentage(stats.bestTimeExpert),
     },
   ];
 
-  // Berechne die maximale Breite für die Skalierung
-  const MAX_BAR_WIDTH = 200;
-
   return (
     <Animated.View
       style={[
-        styles.bestTimesContainer,
+        styles.card,
         {
           backgroundColor: colors.surface,
-          elevation: theme.isDark ? 0 : 4, // Elevation nur im Light Mode (wie ShieldIndicator)
+          borderColor: colors.border,
+          elevation: theme.isDark ? 0 : 4,
         },
       ]}
-      entering={FadeInUp.delay(300).duration(500)}
+      entering={FadeInDown.delay(400).duration(400)}
     >
-      {/* Header with Icon */}
-      <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <Feather name="clock" size={20} color={progressColor} />
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {t('bestTimes.title')}
+      {/* Section Title */}
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+        {t('bestTimes.title')}
+      </Text>
+
+      {/* Time Rows */}
+      {difficulties.map((diff, index) => (
+        <Animated.View
+          key={diff.key}
+          style={[
+            styles.row,
+            index === difficulties.length - 1 && styles.rowLast,
+          ]}
+          entering={FadeInDown.delay(500 + index * 80).duration(300)}
+        >
+          {/* Label */}
+          <Text style={[styles.difficultyLabel, { color: colors.textPrimary }]}>
+            {diff.label}
           </Text>
-        </View>
-      </View>
 
-      <View style={styles.chartContainer}>
-        {difficulties.map((diff, index) => {
-          // Berechne die reale Breite basierend auf dem Prozentsatz
-          const barWidth = diff.percentage * MAX_BAR_WIDTH;
-
-          return (
-            <Animated.View
-              key={diff.key}
-              style={styles.chartRow}
-              entering={FadeInDown.delay(400 + index * 100).duration(400)}
+          {/* Progress Bar */}
+          <View style={styles.progressBarContainer}>
+            <View
+              style={[
+                styles.progressBar,
+                {
+                  backgroundColor: theme.isDark
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'rgba(0,0,0,0.05)',
+                },
+              ]}
             >
-              <View style={styles.chartLabelContainer}>
-                <Text
-                  style={[styles.chartLabel, { color: colors.textPrimary }]}
-                >
-                  {diff.name}
-                </Text>
-              </View>
-
               <View
                 style={[
-                  styles.chartBarBackground,
+                  styles.progressFill,
                   {
-                    backgroundColor: theme.isDark
-                      ? "rgba(255,255,255,0.1)"
-                      : "rgba(0,0,0,0.05)",
+                    backgroundColor: diff.color,
+                    width: `${diff.percentage * 100}%`,
                   },
                 ]}
-              >
-                {/* Verwende reguläre View mit fester Anzahl an Pixeln */}
-                <View
-                  style={[
-                    styles.chartBar,
-                    {
-                      backgroundColor: diff.color,
-                      width: barWidth,
-                    },
-                  ]}
-                />
-              </View>
+              />
+            </View>
+          </View>
 
-              <Text style={[styles.chartValue, { color: colors.textPrimary }]}>
-                {getBestTime(diff.time)}
-              </Text>
-            </Animated.View>
-          );
-        })}
-      </View>
+          {/* Time */}
+          <Text style={[styles.timeText, { color: colors.textPrimary }]}>
+            {getBestTime(diff.time)}
+          </Text>
+        </Animated.View>
+      ))}
     </Animated.View>
   );
 };

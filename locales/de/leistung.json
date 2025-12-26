@@ -20,7 +20,7 @@
     "streak": "Serie",
     "gallery": "Galerie",
     "collection": "Sammlung",
-    "times": "Zeiten"
+    "times": "Erfolge"
   },
   "errors": {
     "avatarSave": {
@@ -217,5 +217,28 @@
       "december": "Dezember"
     },
     "recordBadge": "Rekord!"
+  },
+  "achievementsTab": {
+    "hero": {
+      "games": "Spiele",
+      "game": "Spiel",
+      "won": "gewonnen"
+    },
+    "difficulty": {
+      "title": "Nach Schwierigkeit",
+      "easy": "Leicht",
+      "medium": "Mittel",
+      "hard": "Schwer",
+      "expert": "Experte"
+    },
+    "motivation": {
+      "masterful": { "emoji": "🏆", "text": "Meisterhaft!" },
+      "strong": { "emoji": "⭐", "text": "Starke Leistung!" },
+      "good": { "emoji": "💪", "text": "Gut gemacht!" },
+      "keepGoing": { "emoji": "🎯", "text": "Weiter so!" },
+      "improving": { "emoji": "🌱", "text": "Du wirst besser!" },
+      "practice": { "emoji": "🎮", "text": "Übung macht den Meister!" },
+      "start": { "emoji": "🚀", "text": "Los geht's!" }
+    }
   }
 }

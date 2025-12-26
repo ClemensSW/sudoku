@@ -20,7 +20,7 @@
     "streak": "Streak",
     "gallery": "Gallery",
     "collection": "Collection",
-    "times": "Times"
+    "times": "Stats"
   },
   "errors": {
     "avatarSave": {
@@ -217,5 +217,28 @@
       "december": "December"
     },
     "recordBadge": "Record!"
+  },
+  "achievementsTab": {
+    "hero": {
+      "games": "Games",
+      "game": "Game",
+      "won": "won"
+    },
+    "difficulty": {
+      "title": "By Difficulty",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "expert": "Expert"
+    },
+    "motivation": {
+      "masterful": { "emoji": "🏆", "text": "Masterful!" },
+      "strong": { "emoji": "⭐", "text": "Great Performance!" },
+      "good": { "emoji": "💪", "text": "Well Done!" },
+      "keepGoing": { "emoji": "🎯", "text": "Keep Going!" },
+      "improving": { "emoji": "🌱", "text": "Getting Better!" },
+      "practice": { "emoji": "🎮", "text": "Practice Makes Perfect!" },
+      "start": { "emoji": "🚀", "text": "Let's Go!" }
+    }
   }
 }

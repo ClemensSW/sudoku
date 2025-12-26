@@ -3,70 +3,65 @@ import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  bestTimesContainer: {
-    width: "100%",
+  // Card Container - matching DifficultyBreakdown
+  card: {
     borderRadius: radius.xl,
+    borderWidth: 1,
     padding: spacing.lg,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
   },
 
-  // Header
-  header: {
-    marginBottom: spacing.md,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-
+  // Section Title - centered, uppercase
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    letterSpacing: 0.3,
+    fontSize: 13,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: spacing.lg,
+    textAlign: 'center',
   },
 
-  chartContainer: {
-    marginTop: spacing.sm,
-  },
-
-  chartRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  // Difficulty Row
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: spacing.md,
-    height: 36,
+  },
+  rowLast: {
+    marginBottom: 0,
   },
 
-  chartLabelContainer: {
-    width: 65,
-  },
-
-  chartLabel: {
+  // Difficulty Label
+  difficultyLabel: {
+    width: 70,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
-  chartBarBackground: {
+  // Progress Bar
+  progressBarContainer: {
     flex: 1,
+    marginHorizontal: spacing.sm,
+  },
+  progressBar: {
     height: 12,
-    borderRadius: radius.md,
-    marginRight: spacing.md,
-    overflow: "hidden",
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 6,
   },
 
-  chartBar: {
-    height: "100%",
-    borderRadius: radius.md,
-  },
-
-  chartValue: {
-    fontSize: 14,
-    fontWeight: "600",
+  // Time Value
+  timeText: {
     width: 50,
-    textAlign: "right",
-    fontVariant: ["tabular-nums"],
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
   },
 });

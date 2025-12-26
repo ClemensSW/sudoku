@@ -68,10 +68,6 @@ export interface FirestoreStats {
   bestTimeHard: number | null;
   bestTimeExpert: number | null;
 
-  // DEPRECATED: Win Streak (preserved for backward compatibility)
-  currentStreak: number;
-  longestStreak: number;
-
   // XP & Progression
   totalXP: number;
   reachedMilestones: number[];

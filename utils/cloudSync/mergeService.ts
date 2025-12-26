@@ -229,10 +229,6 @@ export function mergeStats(local: GameStats, cloud: GameStats): GameStats {
   const completedHard = Math.max(local.completedHard || 0, cloud.completedHard || 0);
   const completedExpert = Math.max(local.completedExpert || 0, cloud.completedExpert || 0);
 
-  // Streaks: Nimm höhere Werte
-  const currentStreak = Math.max(local.currentStreak || 0, cloud.currentStreak || 0);
-  const longestStreak = Math.max(local.longestStreak || 0, cloud.longestStreak || 0);
-
   // Milestones: Union (alle erreichten kombinieren)
   const reachedMilestones = Array.from(
     new Set([...(local.reachedMilestones || []), ...(cloud.reachedMilestones || [])])
@@ -251,8 +247,6 @@ export function mergeStats(local: GameStats, cloud: GameStats): GameStats {
     bestTimeMedium,
     bestTimeHard,
     bestTimeExpert,
-    currentStreak,
-    longestStreak,
     totalXP,
     reachedMilestones,
     completedEasy,

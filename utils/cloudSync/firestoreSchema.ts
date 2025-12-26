@@ -54,7 +54,7 @@ export function gameStatsToFirestore(stats: GameStats): FirestoreStats {
     ? dailyStreakToFirestore(stats.dailyStreak)
     : {
         currentStreak: 0,
-        longestDailyStreak: stats.longestStreak || 0,
+        longestDailyStreak: 0,
         lastPlayedDate: '',
         firstLaunchDate: new Date().toISOString().split('T')[0],
         shieldsAvailable: 2,
@@ -77,9 +77,6 @@ export function gameStatsToFirestore(stats: GameStats): FirestoreStats {
     bestTimeMedium: stats.bestTimeMedium === Infinity ? INFINITY_PLACEHOLDER : stats.bestTimeMedium,
     bestTimeHard: stats.bestTimeHard === Infinity ? INFINITY_PLACEHOLDER : stats.bestTimeHard,
     bestTimeExpert: stats.bestTimeExpert === Infinity ? INFINITY_PLACEHOLDER : stats.bestTimeExpert,
-
-    currentStreak: stats.currentStreak || 0,
-    longestStreak: stats.longestStreak || 0,
 
     totalXP: stats.totalXP || 0,
     reachedMilestones: stats.reachedMilestones || [],
@@ -117,9 +114,6 @@ export function firestoreToGameStats(firestoreStats: FirestoreStats): GameStats 
     bestTimeMedium: sanitizeBestTime(firestoreStats.bestTimeMedium),
     bestTimeHard: sanitizeBestTime(firestoreStats.bestTimeHard),
     bestTimeExpert: sanitizeBestTime(firestoreStats.bestTimeExpert),
-
-    currentStreak: firestoreStats.currentStreak || 0,
-    longestStreak: firestoreStats.longestStreak || 0,
 
     totalXP: firestoreStats.totalXP || 0,
     reachedMilestones: firestoreStats.reachedMilestones || [],

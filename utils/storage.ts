@@ -57,11 +57,6 @@ export type GameStats = {
   bestTimeHard: number;
   bestTimeExpert: number;
 
-  // DEPRECATED: Win-Streak (wird durch dailyStreak ersetzt)
-  // Behalten für Rückwärtskompatibilität
-  currentStreak: number;
-  longestStreak: number;
-
   totalXP: number;
   reachedMilestones: number[];
 
@@ -154,8 +149,6 @@ const DEFAULT_STATS: GameStats = {
   bestTimeMedium: Infinity,
   bestTimeHard: Infinity,
   bestTimeExpert: Infinity,
-  currentStreak: 0,
-  longestStreak: 0,
   totalXP: 0,
   reachedMilestones: [],
   // NEU: Standardwerte für die gelösten Sudokus
@@ -383,12 +376,7 @@ export const updateStatsAfterGame = async (
       ...currentStats,
       gamesPlayed: currentStats.gamesPlayed + 1,
       gamesWon: won ? currentStats.gamesWon + 1 : currentStats.gamesWon,
-      // Streak nur erhöhen, wenn Spiel gewonnen, sonst auf 0 zurücksetzen
-      currentStreak: won ? currentStats.currentStreak + 1 : 0,
-      longestStreak: won
-        ? Math.max(currentStats.longestStreak, currentStats.currentStreak + 1)
-        : currentStats.longestStreak,
-      // NEU: XP direkt addieren
+      // XP addieren
       totalXP: currentStats.totalXP + xpGain,
       // Behalte die erreichten Meilensteine (werden in LevelProgress aktualisiert)
       reachedMilestones: currentStats.reachedMilestones || [],
@@ -920,8 +908,8 @@ async function migrateToDailyStreak(stats: GameStats): Promise<GameStats> {
     ...stats,
     dailyStreak: {
       // Streak Status
-      currentStreak: 0, // Neues System startet bei 0
-      longestDailyStreak: stats.longestStreak || 0, // Historischer Win-Streak als Basis
+      currentStreak: 0,
+      longestDailyStreak: 0,
       lastPlayedDate: '', // Leer, damit erstes Spiel gezählt wird
       firstLaunchDate: getTodayDate(), // Setze heutiges Datum als ersten App-Start
 

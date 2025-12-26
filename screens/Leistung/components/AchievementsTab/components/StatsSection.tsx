@@ -1,8 +1,7 @@
-// screens/Leistung/components/AchievementsTab/components/StatsCard.tsx
+// screens/Leistung/components/AchievementsTab/components/StatsSection.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import Animated, {
-  FadeInDown,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -11,12 +10,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
-import { statsStyles as styles } from '../AchievementsTab.styles';
+import { statsSectionStyles as styles } from '../AchievementsTab.styles';
 
 // Erfolge Container Color - Deep Wine (matches GamesHero)
 const ERFOLGE_COLOR = '#8B4F56';
 
-interface StatsCardProps {
+interface StatsSectionProps {
   // Games stats
   easy: number;
   medium: number;
@@ -39,7 +38,7 @@ const formatTime = (seconds: number): string => {
     .padStart(2, '0')}`;
 };
 
-const StatsCard: React.FC<StatsCardProps> = ({
+const StatsSection: React.FC<StatsSectionProps> = ({
   easy,
   medium,
   hard,
@@ -73,7 +72,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   ].filter((time) => time > 0);
   const maxTime = validTimes.length > 0 ? Math.max(...validTimes) : 900;
 
-  // Get bar percentage for times (inverted - shorter time = longer bar)
+  // Get bar percentage for times
   const getTimeBarPercentage = (time: number): number => {
     if (time <= 0 || time === Infinity) return 0;
     return time / maxTime;
@@ -126,23 +125,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   };
 
   return (
-    <Animated.View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          elevation: theme.isDark ? 0 : 4,
-          shadowColor: theme.isDark ? 'transparent' : ERFOLGE_COLOR,
-        },
-      ]}
-      entering={FadeInDown.delay(200).duration(400)}
-    >
-      {/* Section Title */}
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-        {t('achievementsTab.stats.title')}
-      </Text>
-
+    <View style={styles.container}>
       {/* Tab Toggle */}
       <View style={styles.tabRow}>
         <Pressable
@@ -198,13 +181,12 @@ const StatsCard: React.FC<StatsCardProps> = ({
 
       {/* Stats Rows */}
       {difficulties.map((diff, index) => (
-        <Animated.View
+        <View
           key={diff.key}
           style={[
             styles.row,
             index === difficulties.length - 1 && styles.rowLast,
           ]}
-          entering={FadeInDown.delay(300 + index * 80).duration(300)}
         >
           {/* Label */}
           <Text style={[styles.difficultyLabel, { color: colors.textPrimary }]}>
@@ -237,10 +219,10 @@ const StatsCard: React.FC<StatsCardProps> = ({
           <Text style={[styles.valueText, { color: colors.textPrimary }]}>
             {getDisplayValue(index)}
           </Text>
-        </Animated.View>
+        </View>
       ))}
-    </Animated.View>
+    </View>
   );
 };
 
-export default StatsCard;
+export default StatsSection;

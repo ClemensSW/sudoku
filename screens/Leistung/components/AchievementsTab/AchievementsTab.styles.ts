@@ -175,27 +175,13 @@ export const difficultyStyles = StyleSheet.create({
   },
 });
 
-// StatsCard Styles (Toggle Container)
-export const statsStyles = StyleSheet.create({
-  // Card Container
-  card: {
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    padding: spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-  },
-
-  // Section Title
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: spacing.md,
-    textAlign: 'center',
+// StatsSection Styles (embedded in GamesHero, like calendar in StreakCard)
+export const statsSectionStyles = StyleSheet.create({
+  // Container - no card, just padding like calendarSection in Serie
+  container: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.lg,
   },
 
   // Tab Row

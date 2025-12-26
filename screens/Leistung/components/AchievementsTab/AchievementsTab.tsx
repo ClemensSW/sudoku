@@ -7,7 +7,6 @@ import { styles } from './AchievementsTab.styles';
 
 // Components
 import GamesHero from './components/GamesHero';
-import StatsCard from './components/StatsCard';
 
 interface AchievementsTabProps {
   stats: GameStats;
@@ -20,18 +19,14 @@ const AchievementsTab: React.FC<AchievementsTabProps> = ({ stats }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* 1. Hero: Games Played & Win Rate */}
+        {/* GamesHero with integrated Stats (like Serie with Calendar) */}
         <GamesHero
           gamesPlayed={stats.gamesPlayed}
           gamesWon={stats.gamesWon}
-        />
-
-        {/* 2. Stats Card with Toggle (Games/Times) */}
-        <StatsCard
-          easy={stats.completedEasy}
-          medium={stats.completedMedium}
-          hard={stats.completedHard}
-          expert={stats.completedExpert}
+          completedEasy={stats.completedEasy}
+          completedMedium={stats.completedMedium}
+          completedHard={stats.completedHard}
+          completedExpert={stats.completedExpert}
           bestTimeEasy={stats.bestTimeEasy}
           bestTimeMedium={stats.bestTimeMedium}
           bestTimeHard={stats.bestTimeHard}

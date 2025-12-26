@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
 import { heroStyles as styles } from '../AchievementsTab.styles';
+import StatsSection from './StatsSection';
 
 import ZielIcon from '@/assets/svg/ziel.svg';
 
@@ -21,6 +22,15 @@ const ERFOLGE_COLOR = '#8B4F56';
 interface GamesHeroProps {
   gamesPlayed: number;
   gamesWon: number;
+  // Stats props (integrated like calendar in Serie)
+  completedEasy: number;
+  completedMedium: number;
+  completedHard: number;
+  completedExpert: number;
+  bestTimeEasy: number;
+  bestTimeMedium: number;
+  bestTimeHard: number;
+  bestTimeExpert: number;
 }
 
 // Helper to convert hex to rgba
@@ -31,7 +41,18 @@ const hexToRGBA = (hex: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
+const GamesHero: React.FC<GamesHeroProps> = ({
+  gamesPlayed,
+  gamesWon,
+  completedEasy,
+  completedMedium,
+  completedHard,
+  completedExpert,
+  bestTimeEasy,
+  bestTimeMedium,
+  bestTimeHard,
+  bestTimeExpert,
+}) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const colors = theme.colors;
@@ -187,6 +208,18 @@ const GamesHero: React.FC<GamesHeroProps> = ({ gamesPlayed, gamesWon }) => {
           </Text>
         </View>
       </LinearGradient>
+
+      {/* Stats Section (integrated like calendar in Serie) */}
+      <StatsSection
+        easy={completedEasy}
+        medium={completedMedium}
+        hard={completedHard}
+        expert={completedExpert}
+        bestTimeEasy={bestTimeEasy}
+        bestTimeMedium={bestTimeMedium}
+        bestTimeHard={bestTimeHard}
+        bestTimeExpert={bestTimeExpert}
+      />
     </Animated.View>
   );
 };

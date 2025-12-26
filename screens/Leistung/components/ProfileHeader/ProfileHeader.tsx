@@ -8,9 +8,10 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from "
 import { GameStats } from "@/utils/storage";
 import AvatarPicker from "../AvatarPicker";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "../../utils/defaultAvatars";
-import HikingIcon from "@/assets/svg/hiking.svg";
+import LeistungIcon from "@/assets/svg/leistung.svg";
 import LightningIcon from "@/assets/svg/lightning.svg";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { useLevelInfo } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/useLevelInfo";
 
 interface ProfileHeaderProps {
   stats: GameStats;
@@ -48,6 +49,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const progressColor = useProgressColor();
+  const levelInfo = useLevelInfo(stats.totalXP);
 
   // Name
   const isDefaultName = !name || name === "User" || name === "Jerome";
@@ -154,8 +156,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
         <View style={styles.statsRow}>
           <StatTile
-            customIcon={<HikingIcon width={40} height={40} />}
-            value={formatNumber(stats.totalXP)}
+            customIcon={<LeistungIcon width={40} height={40} />}
+            value={levelInfo.currentLevel + 1}
             label={t("profile.xp")}
             description={t("profile.xpDescription")}
             colors={{

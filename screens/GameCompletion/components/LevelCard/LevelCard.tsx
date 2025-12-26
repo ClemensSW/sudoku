@@ -17,6 +17,7 @@ import { hexToRGBA } from "@/screens/GameCompletion/shared/utils/colorUtils";
 import LevelBadge from "./components/LevelBadge";
 import TitlePickerModal from "./components/TitlePickerModal";
 import LevelUpOverlay from "./components/LevelUpOverlay";
+import LeistungIcon from "@/assets/svg/leistung.svg";
 
 // Hooks
 import { useLevelAnimations } from "./hooks/useLevelAnimations";
@@ -183,25 +184,32 @@ const LevelCard: React.FC<LevelCardProps> = ({
         end={{ x: 0, y: 1 }}
         style={styles.heroHeader}
       >
-        {/* Badge (no glow - removed) */}
-        <View style={styles.badgeContainer}>
-          <Animated.View style={badgeAnimatedStyle}>
-            <LevelBadge
-              levelInfo={levelInfo}
-              size={72}
-              showAnimation={showLevelUpOverlay}
-            />
-          </Animated.View>
-        </View>
+        {/* Icon with Glow */}
+        <Animated.View style={[styles.badgeContainer, badgeAnimatedStyle]}>
+          <View
+            style={[
+              styles.badgeGlow,
+              {
+                backgroundColor: theme.isDark
+                  ? hexToRGBA(progressColor, 0.15)
+                  : hexToRGBA(progressColor, 0.35),
+              },
+            ]}
+          />
+          <LeistungIcon width={56} height={56} />
+        </Animated.View>
 
-        {/* Title */}
-        <Text style={[styles.levelTitle, { color: colors.textPrimary }]}>
-          {levelInfo.levelData.name}
+        {/* Big Level Number (StreakHero style) */}
+        <Text style={[styles.levelNumber, { color: colors.textPrimary }]}>
+          {levelInfo.currentLevel + 1}
+        </Text>
+        <Text style={[styles.levelLabel, { color: colors.textSecondary }]}>
+          {t('level.title').toUpperCase()}
         </Text>
 
-        {/* Subtitle - Nur Level-Nummer */}
-        <Text style={[styles.levelSubtitle, { color: colors.textSecondary }]}>
-          {t('level.title')} {levelInfo.currentLevel + 1}
+        {/* Title as Motivation */}
+        <Text style={[styles.levelTitle, { color: colors.textSecondary }]}>
+          {levelInfo.levelData.name}
         </Text>
       </LinearGradient>
 

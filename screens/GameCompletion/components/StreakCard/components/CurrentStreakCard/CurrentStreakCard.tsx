@@ -69,6 +69,7 @@ const CurrentStreakCard: React.FC<CurrentStreakCardProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 4,
+          shadowColor: theme.isDark ? 'transparent' : '#FFC850',
         },
       ]}
       entering={FadeIn.duration(350)}

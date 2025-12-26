@@ -40,19 +40,36 @@ export default StyleSheet.create({
 
   badgeGlow: {
     position: "absolute",
-    width: 200, // Large enough for 2.5x scale
-    height: 200,
-    borderRadius: 100,
-    opacity: 0.35,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    opacity: 0.4,
   },
 
-  // Title Text
-  levelTitle: {
-    fontSize: 24,
+  // Big Level Number (StreakHero style)
+  levelNumber: {
+    fontSize: 64,
     fontWeight: "900",
-    letterSpacing: -0.5,
+    fontVariant: ["tabular-nums"],
+    letterSpacing: -2,
     textAlign: "center",
-    marginTop: spacing.sm,
+  },
+
+  levelLabel: {
+    fontSize: 16,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 2,
+    textAlign: "center",
+    marginTop: -4,
+  },
+
+  // Title Text (now used as motivation)
+  levelTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: spacing.md,
   },
 
   levelSubtitle: {

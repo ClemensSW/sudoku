@@ -36,7 +36,7 @@ const GalleryAction: React.FC<GalleryActionProps> = ({
 const styles = StyleSheet.create({
   actionSection: {
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.xl,  // Increased to match LevelCard titleSection
   },
 
   galleryButton: {

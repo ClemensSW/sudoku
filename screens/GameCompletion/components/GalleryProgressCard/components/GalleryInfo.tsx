@@ -55,7 +55,8 @@ const GalleryInfo: React.FC<GalleryInfoProps> = ({ landscape }) => {
 const styles = StyleSheet.create({
   infoSection: {
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
+    paddingTop: spacing.xxxl,      // 48px - matches gap between motivation and calendar in Serie
+    paddingBottom: spacing.xxxl,    // 32px
     borderBottomWidth: 1,
     alignItems: "center",
   },

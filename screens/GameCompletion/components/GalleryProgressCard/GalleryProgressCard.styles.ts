@@ -47,6 +47,15 @@ export default StyleSheet.create({
     padding: 3,
   },
 
+  // Bottom Fade Gradient
+  bottomFadeGradient: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "60%",
+    bottom: -20,
+  },
+
   segment: {
     width: "33.33%",
     height: "33.33%",

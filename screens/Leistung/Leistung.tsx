@@ -54,7 +54,6 @@ const Leistung: React.FC = () => {
   const tabChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabSectionPosition = useSharedValue(0);
   const [tabSectionY, setTabSectionY] = useState<number>(0); // Regular state for scroll logic
-  const [headerHeight, setHeaderHeight] = useState<number>(60);
   const scrollY = useSharedValue(0);
 
   const [stats, setStats] = useState<GameStats | null>(null);
@@ -194,10 +193,10 @@ const Leistung: React.FC = () => {
       clearTimeout(tabChangeTimeoutRef.current);
     }
 
-    // Scroll to tab navigation if it's below the header
+    // Scroll so tab nav is at top (below safe area)
     tabChangeTimeoutRef.current = setTimeout(() => {
       if (scrollViewRef.current && tabSectionY > 0) {
-        scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY, animated: true });
+        scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY - insets.top, animated: true });
       }
     }, 100);
   };
@@ -215,8 +214,9 @@ const Leistung: React.FC = () => {
   });
 
   // Animated style for sticky tab overlay
+  // Threshold accounts for safe area since header is now in scroll content
   const stickyTabAnimatedStyle = useAnimatedStyle(() => {
-    const threshold = tabSectionPosition.value - 10;
+    const threshold = tabSectionPosition.value - insets.top - 10;
     const shouldBeVisible = scrollY.value >= threshold && tabSectionPosition.value > 0;
     return {
       transform: [
@@ -319,12 +319,6 @@ const Leistung: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
-      <View onLayout={(e) => {
-        const height = e.nativeEvent.layout.height;
-        setHeaderHeight(height);
-      }}>
-        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
-      </View>
 
       <Animated.ScrollView
         ref={scrollViewRef}
@@ -334,6 +328,9 @@ const Leistung: React.FC = () => {
         onScroll={scrollHandler}
         scrollEventThrottle={32}
       >
+        {/* Header - now scrolls with content */}
+        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+
         {/* Profile Header */}
         <View style={styles.profileContainer}>
           <ProfileHeader
@@ -394,11 +391,11 @@ const Leistung: React.FC = () => {
         </View>
       </Animated.ScrollView>
 
-      {/* Sticky Tab Navigation Overlay */}
+      {/* Sticky Tab Navigation Overlay - now at top with safe area padding */}
       <Animated.View
         style={[
           styles.stickyTabOverlay,
-          { backgroundColor: colors.background, top: headerHeight },
+          { backgroundColor: colors.background, top: 0, paddingTop: insets.top },
           stickyTabAnimatedStyle,
         ]}
         pointerEvents="box-none"
@@ -436,7 +433,7 @@ const styles = StyleSheet.create({
   },
   stickyTabOverlay: {
     position: "absolute",
-    // top is set dynamically based on headerHeight
+    // top: 0 with paddingTop for safe area (set dynamically)
     left: 0,
     right: 0,
     zIndex: 10,

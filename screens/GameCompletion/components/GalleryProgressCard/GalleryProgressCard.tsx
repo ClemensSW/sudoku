@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text } from "react-native";
 import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { GameStats } from "@/utils/storage";
@@ -128,6 +129,15 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
               />
             ))}
           </View>
+
+          {/* Bottom Fade Gradient */}
+          <LinearGradient
+            colors={['transparent', colors.surface]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.bottomFadeGradient}
+            pointerEvents="none"
+          />
 
           {/* Completion Glow */}
           {isComplete && (

@@ -2,11 +2,12 @@ import { StyleSheet } from "react-native";
 import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  // Main Card - konsistent mit LevelCard/PathCard
+  // Main Card - Edge-to-Edge Bild Design
   container: {
     width: "100%",
     borderRadius: radius.xl,
-    padding: 0, // Sections handle their own padding
+    overflow: "hidden", // Wichtig für Edge-to-Edge Bild Clipping
+    padding: 0,
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
@@ -14,51 +15,16 @@ export default StyleSheet.create({
     shadowRadius: 16,
   },
 
-  // Header Section - minimalistisch
-  headerSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-
-  headerLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    opacity: 0.7,
-  },
-
-  badge: {
-    marginLeft: "auto",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
-
-  // Puzzle Section - luftig
+  // Puzzle Section - Edge-to-Edge (kein Padding)
   puzzleSection: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.lg,
-    borderBottomWidth: 1,
+    // Kein Padding - Bild füllt volle Breite
   },
 
   puzzleContainer: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 16,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
     overflow: "hidden",
     position: "relative",
   },
@@ -180,7 +146,7 @@ export default StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 16,
+    // Keine Rundung nötig - vom puzzleContainer geerbt
   },
 
   completionText: {

@@ -41,8 +41,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
   const { colors } = theme;
 
   // Get custom progress color
-  const calculatedXp = stats ? stats.totalXP : 0;
-  const progressColor = useProgressColor(calculatedXp);
+  const progressColor = useProgressColor();
 
   // Track visibility for animation
   const [isVisible, setIsVisible] = useState(false);
@@ -56,16 +55,17 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
           {
             backgroundColor: colors.surface,
             elevation: theme.isDark ? 0 : 4,
+            justifyContent: 'center',
+            alignItems: 'center',
+            aspectRatio: 1, // Quadratisch wie das Bild
           },
         ]}
         entering={FadeIn.duration(500)}
       >
-        <View style={styles.headerSection}>
-          <Feather name="image" size={16} color={colors.textSecondary} />
-          <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
-            {t('gallery.loading')}
-          </Text>
-        </View>
+        <Feather name="image" size={48} color={colors.textSecondary} />
+        <Text style={{ color: colors.textSecondary, marginTop: 12, fontSize: 14 }}>
+          {t('gallery.loading')}
+        </Text>
       </Animated.View>
     );
   }
@@ -104,25 +104,8 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
       entering={FadeIn.duration(350)}
       onLayout={handleLayout}
     >
-      {/* Header Section - minimalistisch */}
-      <View style={styles.headerSection}>
-        <Feather name="image" size={16} color={progressColor} />
-        <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
-          {t('gallery.title')}
-        </Text>
-      </View>
-
-      {/* Puzzle Section - luftig */}
-      <View
-        style={[
-          styles.puzzleSection,
-          {
-            borderBottomColor: theme.isDark
-              ? "rgba(255,255,255,0.08)"
-              : "rgba(0,0,0,0.06)",
-          },
-        ]}
-      >
+      {/* Puzzle Section - Edge-to-Edge */}
+      <View style={styles.puzzleSection}>
         <View style={styles.puzzleContainer}>
           <Animated.Image
             source={landscape.previewSource}

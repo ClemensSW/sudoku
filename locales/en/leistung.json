@@ -224,6 +224,11 @@
       "game": "Game",
       "won": "won"
     },
+    "stats": {
+      "title": "Statistics",
+      "games": "Games",
+      "times": "Times"
+    },
     "difficulty": {
       "title": "By Difficulty",
       "easy": "Easy",

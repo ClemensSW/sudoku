@@ -174,3 +174,88 @@ export const difficultyStyles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
 });
+
+// StatsCard Styles (Toggle Container)
+export const statsStyles = StyleSheet.create({
+  // Card Container
+  card: {
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    padding: spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+
+  // Section Title
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+
+  // Tab Row
+  tabRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabText: {
+    fontSize: 14,
+    letterSpacing: 0.3,
+  },
+
+  // Stats Row
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  rowLast: {
+    marginBottom: 0,
+  },
+
+  // Difficulty Label
+  difficultyLabel: {
+    width: 70,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // Progress Bar
+  progressBarContainer: {
+    flex: 1,
+    marginHorizontal: spacing.sm,
+  },
+  progressBar: {
+    height: 12,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 6,
+  },
+
+  // Value Text (wider for time format)
+  valueText: {
+    width: 50,
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+});

@@ -224,6 +224,11 @@
       "game": "Spiel",
       "won": "gewonnen"
     },
+    "stats": {
+      "title": "Statistik",
+      "games": "Spiele",
+      "times": "Zeiten"
+    },
     "difficulty": {
       "title": "Nach Schwierigkeit",
       "easy": "Leicht",

@@ -7,8 +7,7 @@ import { styles } from './AchievementsTab.styles';
 
 // Components
 import GamesHero from './components/GamesHero';
-import DifficultyBreakdown from './components/DifficultyBreakdown';
-import BestTimesChart from '@/screens/Leistung/components/BestTimesChart/BestTimesChart';
+import StatsCard from './components/StatsCard';
 
 interface AchievementsTabProps {
   stats: GameStats;
@@ -27,16 +26,17 @@ const AchievementsTab: React.FC<AchievementsTabProps> = ({ stats }) => {
           gamesWon={stats.gamesWon}
         />
 
-        {/* 2. Difficulty Breakdown */}
-        <DifficultyBreakdown
+        {/* 2. Stats Card with Toggle (Games/Times) */}
+        <StatsCard
           easy={stats.completedEasy}
           medium={stats.completedMedium}
           hard={stats.completedHard}
           expert={stats.completedExpert}
+          bestTimeEasy={stats.bestTimeEasy}
+          bestTimeMedium={stats.bestTimeMedium}
+          bestTimeHard={stats.bestTimeHard}
+          bestTimeExpert={stats.bestTimeExpert}
         />
-
-        {/* 3. Best Times Chart */}
-        <BestTimesChart stats={stats} />
       </ScrollView>
     </Animated.View>
   );

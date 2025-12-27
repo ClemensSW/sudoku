@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { loadStats, GameStats } from "@/utils/storage";
@@ -44,6 +44,7 @@ type TabId = "level" | "gallery" | "streak" | "times";
 const Leistung: React.FC = () => {
   const { t } = useTranslation('leistung');
   const router = useRouter();
+  const { tab } = useLocalSearchParams<{ tab?: string }>();
   const theme = useTheme();
   const colors = theme.colors;
   const insets = useSafeAreaInsets();
@@ -171,6 +172,25 @@ const Leistung: React.FC = () => {
       }
     };
   }, []);
+
+  // Handle tab parameter from URL (e.g., /leistung?tab=streak)
+  useEffect(() => {
+    if (tab === "streak" || tab === "level" || tab === "gallery" || tab === "times") {
+      setActiveTab(tab);
+      setVisitedTabs(prev => ({ ...prev, [tab]: true }));
+
+      // Scroll to tab section (like handleTabChange)
+      setTimeout(() => {
+        if (scrollViewRef.current && tabSectionY > 0) {
+          scrollViewRef.current.scrollTo({
+            x: 0,
+            y: tabSectionY - insets.top,
+            animated: true,
+          });
+        }
+      }, 150);
+    }
+  }, [tab, tabSectionY, insets.top]);
 
   const tabs: TabItem[] = [
     { id: "level", label: t('tabs.level') },

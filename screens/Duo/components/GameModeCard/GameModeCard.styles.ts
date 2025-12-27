@@ -1,28 +1,35 @@
 // screens/Duo/components/GameModeCard/GameModeCard.styles.ts
 import { StyleSheet } from "react-native";
-import { spacing, radius } from "@/utils/theme";
 
 export default StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: spacing.lg,
-    borderRadius: radius.xl,
+  // Outer container with shadow and border
+  cardShadow: {
+    borderRadius: 16,
     borderWidth: 1.5,
-    marginBottom: spacing.md,
+    marginBottom: 12,
+    overflow: "hidden",
+    // Shadow & elevation
     elevation: 4,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 12,
+    shadowRadius: 10,
+  },
+
+  // Inner gradient with content
+  cardGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 20,
   },
 
   iconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: spacing.lg,
+    marginRight: 16,
   },
 
   content: {
@@ -30,19 +37,12 @@ export default StyleSheet.create({
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "700",
-    marginBottom: 4,
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
 
-  description: {
-    fontSize: 14,
-    fontWeight: "500",
-    opacity: 0.8,
-  },
-
-  chevron: {
-    marginLeft: spacing.sm,
+  playIcon: {
+    marginLeft: "auto",
   },
 });

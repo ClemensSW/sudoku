@@ -6,7 +6,8 @@
   "stats": {
     "elo": "ELO",
     "record": "W - N",
-    "streak": "Serie",
+    "day": "Tag",
+    "days": "Tage",
     "loginPrompt": "Melde dich an um deine Stats zu sehen"
   },
   "rank": {

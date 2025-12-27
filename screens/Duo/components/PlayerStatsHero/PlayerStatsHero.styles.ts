@@ -2,30 +2,35 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  // Card container
+  // Card container with glowing shadow (like LevelCard)
   card: {
     marginHorizontal: 20,
     marginBottom: 16,
     borderRadius: 20,
-    overflow: "hidden",
-    // Shadow for light mode
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
+    overflow: "hidden", // Clips shadow to rounded corners
+    // iOS Shadow (glowing effect)
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
   },
 
   // Hero header with gradient
   heroHeader: {
     paddingTop: 24,
-    paddingBottom: 20,
+    paddingBottom: 24,
     paddingHorizontal: 20,
     alignItems: "center",
+  },
+
+  // Battle icon - Duo Mode identifier (like LevelCard badge)
+  battleIconContainer: {
+    marginBottom: 24,
   },
 
   // Title section
   titleSection: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   subtitle: {
     fontSize: 12,
@@ -44,47 +49,54 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 20,
+    alignItems: "flex-start",
+    marginBottom: 24,
+    gap: 16,
   },
 
-  // Individual stat tile
+  // Individual stat tile - clean, no background
   statTile: {
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    minWidth: 85,
+    paddingVertical: 8,
+    flex: 1,
   },
-  statIcon: {
-    marginBottom: 4,
+
+  // Circular icon container (like StreakCard)
+  statIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
   },
+
   statValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 2,
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 4,
+    letterSpacing: 0.5,
   },
   statLabel: {
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: "600",
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
 
-  // Rank badge section
+  // Rank badge section - horizontal layout with icon circle
   rankBadge: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 12,
-    gap: 10,
+    borderRadius: 14,
+    gap: 12,
   },
-  rankIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  rankIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
   },

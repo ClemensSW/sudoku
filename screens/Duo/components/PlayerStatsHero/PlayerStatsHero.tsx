@@ -1,6 +1,6 @@
 // screens/Duo/components/PlayerStatsHero/PlayerStatsHero.tsx
-import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,8 +10,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { loadStats } from "@/utils/storage";
+import { triggerHaptic } from "@/utils/haptics";
 import {
   getRankTier,
   getRankTierName,
@@ -19,6 +22,12 @@ import {
   getRankTierIcon,
   RankTier,
 } from "@/utils/elo/eloCalculator";
+
+// SVG Icons
+import BattleIcon from "@/assets/svg/battle.svg";
+import ZielIcon from "@/assets/svg/ziel.svg";
+import LightningIcon from "@/assets/svg/lightning.svg";
+
 import styles from "./PlayerStatsHero.styles";
 
 // Duo Color - Professional Blue
@@ -50,7 +59,6 @@ interface PlayerStatsHeroProps {
   elo: number;
   wins: number;
   losses: number;
-  winStreak: number;
   isLoggedIn?: boolean;
 }
 
@@ -66,12 +74,27 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   elo,
   wins,
   losses,
-  winStreak,
   isLoggedIn = true,
 }) => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
+  const router = useRouter();
+
+  // Load real streak value from storage
+  const [currentStreak, setCurrentStreak] = useState(0);
+
+  useEffect(() => {
+    const loadStreak = async () => {
+      try {
+        const stats = await loadStats();
+        setCurrentStreak(stats.dailyStreak?.currentStreak || 0);
+      } catch (error) {
+        console.error("Failed to load streak:", error);
+      }
+    };
+    loadStreak();
+  }, []);
 
   // Animation values
   const statsScale = useSharedValue(1);
@@ -88,12 +111,24 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     transform: [{ scale: statsScale.value }],
   }));
 
+  // Navigate to Serie tab on streak press
+  const handleStreakPress = useCallback(() => {
+    triggerHaptic("light");
+    router.push("/leistung?tab=streak");
+  }, [router]);
+
   // Calculate rank info
   const tier = getRankTier(elo);
   const tierName = getRankTierName(tier);
   const tierColor = getRankTierColor(tier);
   const tierIcon = getRankTierIcon(tier) as keyof typeof Feather.glyphMap;
   const nextTier = NEXT_TIER[tier];
+
+  // Streak label (Tag/Tage)
+  const streakLabel =
+    currentStreak === 1
+      ? t("stats.day", { defaultValue: "Tag" })
+      : t("stats.days", { defaultValue: "Tage" });
 
   // Calculate progress to next tier
   const getProgressText = (): string => {
@@ -102,7 +137,9 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     }
     const nextThreshold = TIER_THRESHOLDS[nextTier];
     const pointsNeeded = nextThreshold - elo;
-    const nextTierName = t(`rank.${nextTier}`, { defaultValue: getRankTierName(nextTier) });
+    const nextTierName = t(`rank.${nextTier}`, {
+      defaultValue: getRankTierName(nextTier),
+    });
     return t("rank.nextTier", {
       points: pointsNeeded,
       tier: nextTierName,
@@ -111,9 +148,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   };
 
   // Colors
-  const tileBg = theme.isDark
-    ? "rgba(255,255,255,0.08)"
-    : hexToRGBA(DUO_COLOR, 0.1);
   const badgeBg = theme.isDark
     ? "rgba(255,255,255,0.06)"
     : hexToRGBA(tierColor, 0.15);
@@ -148,6 +182,11 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
         end={{ x: 0, y: 1 }}
         style={styles.heroHeader}
       >
+        {/* Battle Icon - Duo Mode Identifier */}
+        <View style={styles.battleIconContainer}>
+          <BattleIcon width={56} height={56} />
+        </View>
+
         {/* Title Section */}
         <View style={styles.titleSection}>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
@@ -162,60 +201,52 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
           <>
             {/* Stats Row */}
             <Animated.View style={[styles.statsRow, statsAnimatedStyle]}>
-              {/* ELO Stat */}
-              <View style={[styles.statTile, { backgroundColor: tileBg }]}>
-                <Feather
-                  name="star"
-                  size={18}
-                  color={tierColor}
-                  style={styles.statIcon}
-                />
-                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {elo}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  {t("stats.elo", { defaultValue: "ELO" })}
-                </Text>
-              </View>
-
               {/* W-L Record */}
-              <View style={[styles.statTile, { backgroundColor: tileBg }]}>
-                <Feather
-                  name="award"
-                  size={18}
-                  color={DUO_COLOR}
-                  style={styles.statIcon}
-                />
+              <View style={styles.statTile}>
+                <View
+                  style={[
+                    styles.statIconCircle,
+                    { backgroundColor: hexToRGBA(DUO_COLOR, 0.2) },
+                  ]}
+                >
+                  <ZielIcon width={22} height={22} />
+                </View>
                 <Text style={[styles.statValue, { color: colors.textPrimary }]}>
                   {wins}-{losses}
                 </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                <Text
+                  style={[styles.statLabel, { color: colors.textSecondary }]}
+                >
                   {t("stats.record", { defaultValue: "W - N" })}
                 </Text>
               </View>
 
-              {/* Win Streak */}
-              <View style={[styles.statTile, { backgroundColor: tileBg }]}>
-                <Feather
-                  name="zap"
-                  size={18}
-                  color="#FF9500"
-                  style={styles.statIcon}
-                />
+              {/* Daily Streak (clickable) */}
+              <Pressable onPress={handleStreakPress} style={styles.statTile}>
+                <View
+                  style={[
+                    styles.statIconCircle,
+                    { backgroundColor: "rgba(255, 184, 0, 0.2)" },
+                  ]}
+                >
+                  <LightningIcon width={22} height={22} />
+                </View>
                 <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                  {winStreak}
+                  {currentStreak}
                 </Text>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                  {t("stats.streak", { defaultValue: "Serie" })}
+                <Text
+                  style={[styles.statLabel, { color: colors.textSecondary }]}
+                >
+                  {streakLabel}
                 </Text>
-              </View>
+              </Pressable>
             </Animated.View>
 
             {/* Rank Badge */}
             <View style={[styles.rankBadge, { backgroundColor: badgeBg }]}>
               <View
                 style={[
-                  styles.rankIconContainer,
+                  styles.rankIconCircle,
                   { backgroundColor: hexToRGBA(tierColor, 0.2) },
                 ]}
               >
@@ -225,7 +256,9 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                 <Text style={[styles.rankName, { color: tierColor }]}>
                   {t(`rank.${tier}`, { defaultValue: tierName })}
                 </Text>
-                <Text style={[styles.rankProgress, { color: colors.textSecondary }]}>
+                <Text
+                  style={[styles.rankProgress, { color: colors.textSecondary }]}
+                >
                   {getProgressText()}
                 </Text>
               </View>

@@ -14,7 +14,9 @@ export default StyleSheet.create({
   // Game Mode Cards Section
   gameModeSection: {
     paddingHorizontal: 20,
-    gap: 12,
+    marginTop: 8,      // Total zu Hero: 16 + 8 = 24px
+    marginBottom: 8,   // Total zu Leaderboard: 12 + 8 = 20px
+    gap: 12,           // Zwischen den Buttons
   },
 
   // Scroll Indicator Wrapper

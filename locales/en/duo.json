@@ -32,6 +32,17 @@
     "viewAll": "View All",
     "you": "YOU"
   },
+  "league": {
+    "novice": "Novice League",
+    "bronze": "Bronze League",
+    "silver": "Silver League",
+    "gold": "Gold League",
+    "diamond": "Diamond League",
+    "master": "Master League",
+    "grandmaster": "Grandmaster League",
+    "promotionZone": "Promotion Zone",
+    "demotionZone": "Demotion Zone"
+  },
   "history": {
     "title": "Recent Games",
     "win": "Win",

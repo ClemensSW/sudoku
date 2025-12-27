@@ -32,6 +32,17 @@
     "viewAll": "Alle anzeigen",
     "you": "DU"
   },
+  "league": {
+    "novice": "Anfänger Liga",
+    "bronze": "Bronze Liga",
+    "silver": "Silber Liga",
+    "gold": "Gold Liga",
+    "diamond": "Diamant Liga",
+    "master": "Meister Liga",
+    "grandmaster": "Großmeister Liga",
+    "promotionZone": "Aufstiegszone",
+    "demotionZone": "Abstiegszone"
+  },
   "history": {
     "title": "Letzte Spiele",
     "win": "Sieg",

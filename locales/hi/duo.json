@@ -32,6 +32,17 @@
     "viewAll": "सभी देखें",
     "you": "आप"
   },
+  "league": {
+    "novice": "नौसिखिया लीग",
+    "bronze": "कांस्य लीग",
+    "silver": "रजत लीग",
+    "gold": "स्वर्ण लीग",
+    "diamond": "हीरा लीग",
+    "master": "मास्टर लीग",
+    "grandmaster": "ग्रैंडमास्टर लीग",
+    "promotionZone": "उन्नयन क्षेत्र",
+    "demotionZone": "अवनति क्षेत्र"
+  },
   "history": {
     "title": "हाल के खेल",
     "win": "जीत",

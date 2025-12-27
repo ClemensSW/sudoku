@@ -5,150 +5,139 @@ const styles = StyleSheet.create({
   // Card container
   card: {
     marginHorizontal: 20,
+    marginTop: 8,
     marginBottom: 16,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden",
     // Shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
   },
 
-  // Header
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  // Liga Header (Hero-Style)
+  leagueHeader: {
     alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 20,
     paddingHorizontal: 16,
-    paddingVertical: 14,
   },
-  headerLeft: {
+  leagueIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    // Shadow for icon
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  leagueName: {
+    fontSize: 18,
+    fontWeight: "800",
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginTop: 12,
+  },
+
+  // Zone Header (Aufstieg/Abstieg)
+  zoneHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    gap: 6,
   },
-  headerTitle: {
-    fontSize: 16,
+  zoneText: {
+    fontSize: 11,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+
+  // Player list container
+  playerList: {
+    paddingVertical: 4,
+  },
+
+  // Player Row
+  playerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  currentUserRow: {
+    borderRadius: 14,
+    marginHorizontal: 8,
+    marginVertical: 4,
+    paddingHorizontal: 12,
+  },
+
+  // Rank number
+  rankNumber: {
+    width: 28,
+    fontSize: 15,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+
+  // Avatar
+  avatarContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    overflow: "hidden",
+    marginLeft: 8,
+    marginRight: 12,
+  },
+  avatar: {
+    width: "100%",
+    height: "100%",
+  },
+  currentUserBadge: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+  },
+
+  // Player name
+  playerName: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  currentUserName: {
     fontWeight: "700",
   },
-  comingSoonBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  comingSoonText: {
-    fontSize: 11,
-    fontWeight: "600",
+
+  // Points
+  playerPoints: {
+    fontSize: 15,
+    fontWeight: "700",
+    minWidth: 55,
+    textAlign: "right",
   },
 
-  // Divider
-  divider: {
+  // Divider between zones
+  zoneDivider: {
     height: 1,
     marginHorizontal: 16,
   },
 
-  // Entries container
-  entries: {
-    paddingVertical: 8,
-  },
-
-  // Entry row
-  entryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  entryLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    gap: 10,
-  },
-
-  // Medal
-  medal: {
-    fontSize: 18,
-    width: 28,
-    textAlign: "center",
-  },
-
-  // Rank number
-  rank: {
-    fontSize: 13,
-    fontWeight: "600",
-    width: 32,
-  },
-
-  // Tier badge (small colored badge with icon)
-  tierBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    gap: 4,
-    marginRight: 8,
-  },
-  tierText: {
-    fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-
-  // Player name
-  name: {
-    fontSize: 14,
-    fontWeight: "500",
-    flex: 1,
-  },
-
-  // Rating
-  rating: {
-    fontSize: 14,
-    fontWeight: "600",
-    minWidth: 50,
-    textAlign: "right",
-  },
-
-  // Dotted separator
-  dottedSeparator: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-  dots: {
-    fontSize: 14,
-    letterSpacing: 4,
-  },
-
-  // User position row (highlighted)
-  userRow: {
-    marginTop: 4,
-    marginHorizontal: 12,
-    marginBottom: 12,
-    borderRadius: 12,
-    borderWidth: 2,
-  },
-  userRowContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  youBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    marginLeft: 8,
-  },
-  youText: {
-    fontSize: 10,
-    fontWeight: "700",
+  // Bottom padding
+  bottomPadding: {
+    height: 8,
   },
 });
 

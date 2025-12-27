@@ -16,7 +16,6 @@ import {
   getAvatarSourceFromUri,
   DEFAULT_AVATAR,
 } from "@/screens/Leistung/utils/defaultAvatars";
-import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
 import { loadUserProfile } from "@/utils/profileStorage";
 import styles from "./LeaderboardCard.styles";
 
@@ -76,13 +75,10 @@ const LeaderboardCard: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       const loadUserData = async () => {
-        // Load avatar
-        const avatarUri = await getAvatarUri();
-        setCurrentUserAvatar(avatarUri);
-
-        // Load profile (name)
+        // Load profile (name + avatar)
         const profile = await loadUserProfile();
         setCurrentUserName(profile.name || "User");
+        setCurrentUserAvatar(profile.avatarUri || null);
       };
       loadUserData();
     }, [])

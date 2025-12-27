@@ -1,5 +1,5 @@
 // screens/Duo/components/LeaderboardCard/LeaderboardCard.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
@@ -15,6 +15,7 @@ import {
   getAvatarSourceFromUri,
   DEFAULT_AVATAR,
 } from "@/screens/Leistung/utils/defaultAvatars";
+import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
 import styles from "./LeaderboardCard.styles";
 
 // Duo Color
@@ -65,6 +66,17 @@ const LeaderboardCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
+
+  // Load current user's avatar
+  const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUserAvatar = async () => {
+      const avatarUri = await getAvatarUri();
+      setCurrentUserAvatar(avatarUri);
+    };
+    loadUserAvatar();
+  }, []);
 
   // League colors
   const leagueColor = getRankTierColor(CURRENT_LEAGUE);
@@ -124,7 +136,10 @@ const LeaderboardCard: React.FC = () => {
       {/* Avatar */}
       <View style={styles.avatarContainer}>
         <Image
-          source={getAvatarSourceFromUri(player.avatarUri, DEFAULT_AVATAR)}
+          source={getAvatarSourceFromUri(
+            player.isCurrentUser ? currentUserAvatar : player.avatarUri,
+            DEFAULT_AVATAR
+          )}
           style={styles.avatar}
           resizeMode="cover"
         />

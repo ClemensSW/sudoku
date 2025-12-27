@@ -1,9 +1,10 @@
 // screens/Duo/components/LeaderboardCard/LeaderboardCard.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Image } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import {
   getRankTierColor,
@@ -67,16 +68,18 @@ const LeaderboardCard: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Load current user's avatar
+  // Load current user's avatar (reload on screen focus)
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadUserAvatar = async () => {
-      const avatarUri = await getAvatarUri();
-      setCurrentUserAvatar(avatarUri);
-    };
-    loadUserAvatar();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const loadUserAvatar = async () => {
+        const avatarUri = await getAvatarUri();
+        setCurrentUserAvatar(avatarUri);
+      };
+      loadUserAvatar();
+    }, [])
+  );
 
   // League colors
   const leagueColor = getRankTierColor(CURRENT_LEAGUE);

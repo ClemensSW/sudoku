@@ -17,6 +17,7 @@ import {
   DEFAULT_AVATAR,
 } from "@/screens/Leistung/utils/defaultAvatars";
 import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
+import { loadUserProfile } from "@/utils/profileStorage";
 import styles from "./LeaderboardCard.styles";
 
 // Duo Color
@@ -68,16 +69,22 @@ const LeaderboardCard: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
 
-  // Load current user's avatar (reload on screen focus)
+  // Load current user's profile data (reload on screen focus)
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
+  const [currentUserName, setCurrentUserName] = useState<string>("User");
 
   useFocusEffect(
     useCallback(() => {
-      const loadUserAvatar = async () => {
+      const loadUserData = async () => {
+        // Load avatar
         const avatarUri = await getAvatarUri();
         setCurrentUserAvatar(avatarUri);
+
+        // Load profile (name)
+        const profile = await loadUserProfile();
+        setCurrentUserName(profile.name || "User");
       };
-      loadUserAvatar();
+      loadUserData();
     }, [])
   );
 
@@ -167,7 +174,7 @@ const LeaderboardCard: React.FC = () => {
         ]}
         numberOfLines={1}
       >
-        {player.name}
+        {player.isCurrentUser ? currentUserName : player.name}
       </Text>
 
       {/* Points */}

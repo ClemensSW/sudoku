@@ -99,17 +99,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  currentUserBadge: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-  },
 
   // Player name
   playerName: {

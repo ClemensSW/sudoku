@@ -149,16 +149,6 @@ const LeaderboardCard: React.FC = () => {
           style={styles.avatar}
           resizeMode="cover"
         />
-        {player.isCurrentUser && (
-          <View
-            style={[
-              styles.currentUserBadge,
-              { backgroundColor: DUO_COLOR, borderColor: cardBg },
-            ]}
-          >
-            <Feather name="star" size={8} color="#FFFFFF" />
-          </View>
-        )}
       </View>
 
       {/* Name */}

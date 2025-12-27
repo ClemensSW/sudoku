@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 
   // Hero header with gradient
   heroHeader: {
-    paddingTop: 32,
+    paddingTop: 48,
     paddingBottom: 24,
     paddingHorizontal: 16,
     alignItems: "center",
@@ -24,13 +24,14 @@ const styles = StyleSheet.create({
 
   // Battle icon - Duo Mode identifier (hero-sized)
   battleIconContainer: {
+    marginTop: 24,
     marginBottom: 16,
   },
 
   // Title section
   titleSection: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 72,
   },
   subtitle: {
     fontSize: 12,

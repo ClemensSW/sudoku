@@ -17,12 +17,15 @@ const styles = StyleSheet.create({
     // elevation is set dynamically in component
   },
 
-  // Hero-Style Header (matching LeaderboardCard spacing)
+  // Hero-Style Header - 48px spacing to icon (matching LeaderboardCard)
   header: {
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingTop: 32,
+    paddingBottom: 24,
     paddingHorizontal: 16,
+  },
+  headerIconContainer: {
+    marginTop: 16,
   },
   headerTitle: {
     fontSize: 18,

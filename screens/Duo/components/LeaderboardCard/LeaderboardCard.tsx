@@ -19,6 +19,9 @@ import {
 import { loadUserProfile } from "@/utils/profileStorage";
 import styles from "./LeaderboardCard.styles";
 
+// SVG Icon
+import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
+
 // Duo Color
 const DUO_COLOR = "#4A6FA5";
 
@@ -191,13 +194,8 @@ const LeaderboardCard: React.FC = () => {
     >
       {/* League Header */}
       <View style={styles.leagueHeader}>
-        <View
-          style={[
-            styles.leagueIconContainer,
-            { backgroundColor: leagueColor, shadowColor: leagueColor },
-          ]}
-        >
-          <Feather name={leagueIcon} size={32} color="#FFFFFF" />
+        <View style={styles.leagueIconContainer}>
+          <SilverBadgeIcon width={64} height={64} />
         </View>
         <Text style={[styles.leagueName, { color: colors.textPrimary }]}>
           {leagueName}

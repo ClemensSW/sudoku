@@ -82,7 +82,9 @@ const MatchHistoryCard: React.FC = () => {
         style={styles.header}
         entering={FadeInDown.duration(400).delay(300)}
       >
-        <HourglassIcon width={64} height={64} />
+        <View style={styles.headerIconContainer}>
+          <HourglassIcon width={64} height={64} />
+        </View>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           {t("history.title", { defaultValue: "Letzte Spiele" })}
         </Text>

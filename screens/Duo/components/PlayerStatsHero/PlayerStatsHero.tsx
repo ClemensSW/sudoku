@@ -21,7 +21,6 @@ import {
   getRankTier,
   getRankTierName,
   getRankTierColor,
-  getRankTierIcon,
   RankTier,
 } from "@/utils/elo/eloCalculator";
 
@@ -29,6 +28,7 @@ import {
 import BattleIcon from "@/assets/svg/battle.svg";
 import ZielIcon from "@/assets/svg/ziel.svg";
 import LightningIcon from "@/assets/svg/lightning.svg";
+import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
 import styles from "./PlayerStatsHero.styles";
 
@@ -143,7 +143,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   const tier = getRankTier(elo);
   const tierName = getRankTierName(tier);
   const tierColor = getRankTierColor(tier);
-  const tierIcon = getRankTierIcon(tier) as keyof typeof Feather.glyphMap;
   const nextTier = NEXT_TIER[tier];
 
   // Calculate progress percentage
@@ -199,7 +198,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   const streakIconGlow = theme.isDark
     ? hexToRGBA(STREAK_COLOR, 0.15)
     : hexToRGBA(STREAK_COLOR, 0.12);
-  const rankIconGlow = hexToRGBA(tierColor, theme.isDark ? 0.15 : 0.12);
 
   return (
     <Animated.View
@@ -314,12 +312,9 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                 ]}
                 entering={FadeInDown.duration(400).delay(300)}
               >
-                {/* Icon with Glow */}
-                <View style={styles.rankIconGlowContainer}>
-                  <View style={[styles.rankIconGlow, { backgroundColor: rankIconGlow }]} />
-                  <View style={[styles.rankIconCircle, { backgroundColor: iconCircleBg }]}>
-                    <Feather name={tierIcon} size={22} color={tierColor} />
-                  </View>
+                {/* Icon */}
+                <View style={styles.rankIconContainer}>
+                  <SilverBadgeIcon width={44} height={44} />
                 </View>
 
                 {/* Text and Progress */}

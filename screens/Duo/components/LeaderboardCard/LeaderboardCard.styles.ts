@@ -17,24 +17,15 @@ const styles = StyleSheet.create({
     // elevation is set dynamically in component
   },
 
-  // Liga Header (Hero-Style)
+  // Liga Header (Hero-Style) - 48px spacing to icon
   leagueHeader: {
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingTop: 32,
+    paddingBottom: 24,
     paddingHorizontal: 16,
   },
   leagueIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    // Shadow for icon
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    marginTop: 16,
   },
   leagueName: {
     fontSize: 18,

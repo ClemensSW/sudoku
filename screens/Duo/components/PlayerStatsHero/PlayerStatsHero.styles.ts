@@ -126,30 +126,10 @@ const styles = StyleSheet.create({
     gap: 14,
   },
 
-  // Rank icon glow container
-  rankIconGlowContainer: {
-    position: "relative",
+  // Rank icon container (for SVG badge)
+  rankIconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    width: 48,
-    height: 48,
-  },
-
-  // Rank icon glow (very subtle, 4px larger than icon)
-  rankIconGlow: {
-    position: "absolute",
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-
-  // Rank icon circle
-  rankIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
   },
 
   // Rank text container

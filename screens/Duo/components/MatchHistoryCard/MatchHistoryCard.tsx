@@ -1,12 +1,21 @@
 // screens/Duo/components/MatchHistoryCard/MatchHistoryCard.tsx
 import React from "react";
 import { View, Text } from "react-native";
-import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, SlideInRight } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useProgressColor } from "@/hooks/useProgressColor";
 import styles from "./MatchHistoryCard.styles";
+
+// SVG Icon
+import HourglassIcon from "@/assets/svg/hourglass.svg";
+
+// Duo Color - Professional Blue (matching LeaderboardCard)
+const DUO_COLOR = "#4A6FA5";
+
+// Zone Colors (matching LeaderboardCard)
+const PROMOTION_COLOR = "#4CAF50"; // Grün - für Siege
+const DEMOTION_COLOR = "#E57373";  // Rot - für Niederlagen
 
 interface MatchEntry {
   id: string;
@@ -23,10 +32,6 @@ const DUMMY_MATCHES: MatchEntry[] = [
   { id: "3", won: true, opponent: "Anfänger123", eloChange: 24, timeAgo: "1d" },
 ];
 
-// Colors for win/loss
-const WIN_COLOR = "#34C759"; // Green
-const LOSS_COLOR = "#FF3B30"; // Red
-
 // Helper to convert hex to rgba
 const hexToRGBA = (hex: string, alpha: number): string => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -39,9 +44,8 @@ const MatchHistoryCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
-  const progressColor = useProgressColor();
 
-  // Colors
+  // Theme-aware colors
   const cardBg = theme.isDark ? colors.surface : "#FFFFFF";
   const cardBorder = theme.isDark
     ? "rgba(255,255,255,0.08)"
@@ -67,18 +71,22 @@ const MatchHistoryCard: React.FC = () => {
         {
           backgroundColor: cardBg,
           borderColor: cardBorder,
-          shadowColor: theme.isDark ? "transparent" : progressColor,
+          shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+          elevation: theme.isDark ? 0 : 8,
         },
       ]}
       entering={FadeIn.duration(400).delay(200)}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Feather name="clock" size={18} color={progressColor} />
+      {/* Hero-Style Header */}
+      <Animated.View
+        style={styles.header}
+        entering={FadeInDown.duration(400).delay(300)}
+      >
+        <HourglassIcon width={64} height={64} />
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           {t("history.title", { defaultValue: "Letzte Spiele" })}
         </Text>
-      </View>
+      </Animated.View>
 
       {/* Divider */}
       <View style={[styles.divider, { backgroundColor: dividerColor }]} />
@@ -86,7 +94,7 @@ const MatchHistoryCard: React.FC = () => {
       {hasMatches ? (
         <View style={styles.matches}>
           {DUMMY_MATCHES.map((match, index) => {
-            const resultColor = match.won ? WIN_COLOR : LOSS_COLOR;
+            const resultColor = match.won ? PROMOTION_COLOR : DEMOTION_COLOR;
 
             return (
               <Animated.View

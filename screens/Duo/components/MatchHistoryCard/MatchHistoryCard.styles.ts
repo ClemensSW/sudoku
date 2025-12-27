@@ -2,31 +2,34 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  // Card container
+  // Card container (shadow like LeaderboardCard)
   card: {
     marginHorizontal: 20,
+    marginTop: 8, // Extra spacing after LeaderboardCard (total 24px)
     marginBottom: 16,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden",
-    // Shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    // Shadow (matching LeaderboardCard glow effect)
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    // elevation is set dynamically in component
   },
 
-  // Header
+  // Hero-Style Header (matching LeaderboardCard spacing)
   header: {
-    flexDirection: "row",
     alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 20,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 8,
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "800",
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginTop: 12,
   },
 
   // Divider

@@ -1,5 +1,5 @@
 // screens/Duo/Duo.tsx
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -15,9 +15,8 @@ import DevBanner from "./components/DevBanner";
 import PlayerStatsHero from "./components/PlayerStatsHero";
 import GameModeCard from "./components/GameModeCard";
 import LeaderboardCard from "./components/LeaderboardCard";
-import ScrollIndicator from "./components/ScrollIndicator";
 import MatchHistoryCard from "./components/MatchHistoryCard";
-import DuoFeatures from "./components/DuoFeatures";
+import DuoTutorialOverlay from "./components/DuoTutorialOverlay";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 
 import styles from "./Duo.styles";
@@ -27,7 +26,6 @@ const DUMMY_STATS = {
   elo: 1247,
   wins: 12,
   losses: 3,
-  winStreak: 5,
 };
 
 const Duo: React.FC = () => {
@@ -36,16 +34,22 @@ const Duo: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
-  const scrollViewRef = useRef<ScrollView>(null);
 
   // State
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("medium");
+  const [showTutorialOverlay, setShowTutorialOverlay] = useState(false);
 
-  // Scroll to features section
-  const scrollToFeatures = useCallback(() => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
+  // Handler: Tutorial-Overlay öffnen
+  const handleTutorialPress = useCallback(() => {
+    triggerHaptic("light");
+    setShowTutorialOverlay(true);
+  }, []);
+
+  // Handler: Tutorial-Overlay schließen
+  const handleCloseTutorial = useCallback(() => {
+    setShowTutorialOverlay(false);
   }, []);
 
   // Handler: Lokal spielen → DifficultyModal öffnen
@@ -99,7 +103,6 @@ const Duo: React.FC = () => {
       )}
 
       <ScrollView
-        ref={scrollViewRef}
         contentContainerStyle={[
           styles.scrollContent,
           { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
@@ -111,7 +114,7 @@ const Duo: React.FC = () => {
           elo={DUMMY_STATS.elo}
           wins={DUMMY_STATS.wins}
           losses={DUMMY_STATS.losses}
-          winStreak={DUMMY_STATS.winStreak}
+          onTutorialPress={handleTutorialPress}
         />
 
         {/* Game Mode Cards */}
@@ -123,19 +126,15 @@ const Duo: React.FC = () => {
         {/* Leaderboard Card */}
         <LeaderboardCard />
 
-        {/* Scroll Indicator */}
-        <View style={styles.scrollIndicatorWrapper}>
-          <ScrollIndicator onPress={scrollToFeatures} />
-        </View>
-
         {/* Match History */}
         <MatchHistoryCard />
-
-        {/* Features / How It Works */}
-        <View style={styles.featuresSection}>
-          <DuoFeatures />
-        </View>
       </ScrollView>
+
+      {/* Tutorial Overlay */}
+      <DuoTutorialOverlay
+        visible={showTutorialOverlay}
+        onClose={handleCloseTutorial}
+      />
 
       {/* Difficulty Modal */}
       <DifficultyModal

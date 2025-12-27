@@ -66,6 +66,7 @@ interface PlayerStatsHeroProps {
   losses: number;
   isLoggedIn?: boolean;
   onTutorialPress?: () => void;
+  onLeaderboardPress?: () => void;
 }
 
 // Helper to convert hex to rgba
@@ -82,6 +83,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   losses,
   isLoggedIn = true,
   onTutorialPress,
+  onLeaderboardPress,
 }) => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
@@ -119,11 +121,23 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     transform: [{ scale: statsScale.value }],
   }));
 
+  // Navigate to Erfolge tab on record press
+  const handleRecordPress = useCallback(() => {
+    triggerHaptic("light");
+    router.push("/leistung?tab=times");
+  }, [router]);
+
   // Navigate to Serie tab on streak press
   const handleStreakPress = useCallback(() => {
     triggerHaptic("light");
     router.push("/leistung?tab=streak");
   }, [router]);
+
+  // Handle leaderboard press (scroll to LeaderboardCard)
+  const handleLeaderboardPress = useCallback(() => {
+    triggerHaptic("light");
+    onLeaderboardPress?.();
+  }, [onLeaderboardPress]);
 
   // Calculate rank info
   const tier = getRankTier(elo);
@@ -236,8 +250,8 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
           <>
             {/* Stats Row - Premium Cards */}
             <Animated.View style={[styles.statsRow, statsAnimatedStyle]}>
-              {/* W-L Record Card */}
-              <View style={styles.statCardWrapper}>
+              {/* W-L Record Card (clickable -> Erfolge Tab) */}
+              <Pressable onPress={handleRecordPress} style={styles.statCardWrapper}>
                 <Animated.View
                   style={[
                     styles.statCard,
@@ -259,7 +273,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     {t("stats.record", { defaultValue: "Bilanz" })}
                   </Text>
                 </Animated.View>
-              </View>
+              </Pressable>
 
               {/* Daily Streak Card (clickable) */}
               <Pressable onPress={handleStreakPress} style={styles.statCardWrapper}>
@@ -287,47 +301,53 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               </Pressable>
             </Animated.View>
 
-            {/* Rank Card with Progress Bar */}
-            <Animated.View
-              style={[
-                styles.rankCard,
-                { backgroundColor: cardBg, borderColor: cardBorder },
-              ]}
-              entering={FadeInDown.duration(400).delay(300)}
+            {/* Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
+            <Pressable
+              onPress={handleLeaderboardPress}
+              disabled={!onLeaderboardPress}
+              style={{ width: "100%" }}
             >
-              {/* Icon with Glow */}
-              <View style={styles.rankIconGlowContainer}>
-                <View style={[styles.rankIconGlow, { backgroundColor: rankIconGlow }]} />
-                <View style={[styles.rankIconCircle, { backgroundColor: iconCircleBg }]}>
-                  <Feather name={tierIcon} size={22} color={tierColor} />
-                </View>
-              </View>
-
-              {/* Text and Progress */}
-              <View style={styles.rankTextContainer}>
-                <Text style={[styles.rankName, { color: tierColor }]}>
-                  {t(`rank.${tier}`, { defaultValue: tierName })}
-                </Text>
-
-                {/* Progress Bar */}
-                <View style={styles.progressContainer}>
-                  <View style={[styles.progressTrack, { backgroundColor: progressTrackBg }]}>
-                    <Animated.View
-                      style={[
-                        styles.progressFill,
-                        { backgroundColor: tierColor },
-                        progressAnimatedStyle,
-                      ]}
-                    />
+              <Animated.View
+                style={[
+                  styles.rankCard,
+                  { backgroundColor: cardBg, borderColor: cardBorder },
+                ]}
+                entering={FadeInDown.duration(400).delay(300)}
+              >
+                {/* Icon with Glow */}
+                <View style={styles.rankIconGlowContainer}>
+                  <View style={[styles.rankIconGlow, { backgroundColor: rankIconGlow }]} />
+                  <View style={[styles.rankIconCircle, { backgroundColor: iconCircleBg }]}>
+                    <Feather name={tierIcon} size={22} color={tierColor} />
                   </View>
-                  <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-                    {nextTier
-                      ? `${pointsToNext} ELO → ${nextTierName}`
-                      : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
-                  </Text>
                 </View>
-              </View>
-            </Animated.View>
+
+                {/* Text and Progress */}
+                <View style={styles.rankTextContainer}>
+                  <Text style={[styles.rankName, { color: tierColor }]}>
+                    {t(`rank.${tier}`, { defaultValue: tierName })}
+                  </Text>
+
+                  {/* Progress Bar */}
+                  <View style={styles.progressContainer}>
+                    <View style={[styles.progressTrack, { backgroundColor: progressTrackBg }]}>
+                      <Animated.View
+                        style={[
+                          styles.progressFill,
+                          { backgroundColor: tierColor },
+                          progressAnimatedStyle,
+                        ]}
+                      />
+                    </View>
+                    <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+                      {nextTier
+                        ? `${pointsToNext} ELO → ${nextTierName}`
+                        : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
+                    </Text>
+                  </View>
+                </View>
+              </Animated.View>
+            </Pressable>
           </>
         ) : (
           <View style={styles.loginPrompt}>

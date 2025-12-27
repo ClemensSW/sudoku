@@ -2,7 +2,7 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  // Card container
+  // Card container (shadow like PlayerStatsHero)
   card: {
     marginHorizontal: 20,
     marginTop: 8,
@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden",
-    // Shadow
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
+    // Shadow (matching PlayerStatsHero glow effect)
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    // elevation is set dynamically in component
   },
 
   // Liga Header (Hero-Style)

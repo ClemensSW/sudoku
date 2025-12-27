@@ -1,5 +1,5 @@
 // screens/Duo/Duo.tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -34,12 +34,14 @@ const Duo: React.FC = () => {
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // State
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("medium");
   const [showTutorialOverlay, setShowTutorialOverlay] = useState(false);
+  const [leaderboardY, setLeaderboardY] = useState(0);
 
   // Handler: Tutorial-Overlay öffnen
   const handleTutorialPress = useCallback(() => {
@@ -51,6 +53,16 @@ const Duo: React.FC = () => {
   const handleCloseTutorial = useCallback(() => {
     setShowTutorialOverlay(false);
   }, []);
+
+  // Handler: Scroll to LeaderboardCard
+  const handleLeaderboardPress = useCallback(() => {
+    if (scrollViewRef.current && leaderboardY > 0) {
+      scrollViewRef.current.scrollTo({
+        y: leaderboardY - 16, // Small offset for better visibility
+        animated: true,
+      });
+    }
+  }, [leaderboardY]);
 
   // Handler: Lokal spielen → DifficultyModal öffnen
   const handleLocalPlay = useCallback(() => {
@@ -103,6 +115,7 @@ const Duo: React.FC = () => {
       )}
 
       <ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={[
           styles.scrollContent,
           { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
@@ -115,6 +128,7 @@ const Duo: React.FC = () => {
           wins={DUMMY_STATS.wins}
           losses={DUMMY_STATS.losses}
           onTutorialPress={handleTutorialPress}
+          onLeaderboardPress={handleLeaderboardPress}
         />
 
         {/* Game Mode Cards */}
@@ -124,7 +138,9 @@ const Duo: React.FC = () => {
         </View>
 
         {/* Leaderboard Card */}
-        <LeaderboardCard />
+        <View onLayout={(e) => setLeaderboardY(e.nativeEvent.layout.y)}>
+          <LeaderboardCard />
+        </View>
 
         {/* Match History */}
         <MatchHistoryCard />

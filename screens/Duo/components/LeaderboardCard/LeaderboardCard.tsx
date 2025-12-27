@@ -182,7 +182,9 @@ const LeaderboardCard: React.FC = () => {
         {
           backgroundColor: cardBg,
           borderColor: cardBorder,
-          shadowColor: theme.isDark ? "transparent" : leagueColor,
+          // Shadow like PlayerStatsHero (DUO_COLOR glow)
+          shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+          elevation: theme.isDark ? 0 : 8,
         },
       ]}
       entering={FadeIn.duration(400).delay(100)}

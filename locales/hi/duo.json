@@ -3,6 +3,43 @@
     "subtitle": "दो खिलाड़ी मोड",
     "title": "सुडोकू डुओ"
   },
+  "stats": {
+    "elo": "ELO",
+    "record": "जीत - हार",
+    "streak": "लय",
+    "loginPrompt": "अपने आँकड़े देखने के लिए साइन इन करें"
+  },
+  "rank": {
+    "current": "वर्तमान रैंक",
+    "maxRank": "अधिकतम रैंक प्राप्त!",
+    "nextTier": "{{tier}} तक {{points}} ELO",
+    "novice": "नौसिखिया",
+    "bronze": "कांस्य",
+    "silver": "रजत",
+    "gold": "स्वर्ण",
+    "diamond": "हीरा",
+    "master": "मास्टर",
+    "grandmaster": "ग्रैंडमास्टर"
+  },
+  "leaderboard": {
+    "title": "लीडरबोर्ड",
+    "comingSoon": "जल्द आ रहा है",
+    "rank": "रैंक",
+    "player": "खिलाड़ी",
+    "rating": "रेटिंग",
+    "yourPosition": "आपकी स्थिति",
+    "viewAll": "सभी देखें",
+    "you": "आप"
+  },
+  "history": {
+    "title": "हाल के खेल",
+    "win": "जीत",
+    "loss": "हार",
+    "vs": "बनाम",
+    "noGames": "अभी तक कोई खेल नहीं",
+    "yesterday": "कल",
+    "ago": "{{time}} पहले"
+  },
   "startSection": {
     "title": "नया खेल",
     "subtitle": "मिलकर कठिनाई स्तर चुनें"

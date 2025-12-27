@@ -1,10 +1,8 @@
-// screens/DuoScreen/components/index.ts
-export { default as DuoBoard } from "./DuoBoard";
-export { default as DuoControls } from "./DuoControls";
-
-// screens/DuoScreen/components/index.ts
-export { default as DuoBoardVisualizer } from "./DuoBoardVisualizer";
+// screens/Duo/components/index.ts
+export { default as DevBanner } from "./DevBanner";
 export { default as DuoFeatures } from "./DuoFeatures";
-export { default as DuoHeader } from "./DuoHeader";
+export { default as GameModeCard } from "./GameModeCard";
+export { default as LeaderboardCard } from "./LeaderboardCard";
+export { default as MatchHistoryCard } from "./MatchHistoryCard";
+export { default as PlayerStatsHero } from "./PlayerStatsHero";
 export { default as ScrollIndicator } from "./ScrollIndicator";
-export { default as DifficultyModal } from "../../../components/DifficultyModal";

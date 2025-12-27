@@ -1,16 +1,6 @@
-// screens/DuoScreen/DuoScreen.tsx
+// screens/Duo/Duo.tsx
 import React, { useState, useRef, useCallback } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Dimensions,
-  StyleSheet,
-  InteractionManager,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-} from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,200 +9,85 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import { Difficulty } from "@/utils/sudoku";
-import { useFocusEffect } from "@react-navigation/native";
 
-import DuoBoardVisualizer from "./components/DuoBoardVisualizer/DuoBoardVisualizer";
-import ScrollIndicator from "./components/ScrollIndicator/ScrollIndicator";
-import DuoFeatures from "./components/DuoFeatures/DuoFeatures";
-import DifficultyModal from "../../components/DifficultyModal/DifficultyModal";
-import GameModeModal, { GameMode } from "./components/GameModeModal";
+// Components
 import DevBanner from "./components/DevBanner";
-import { useProgressColor } from "@/hooks/useProgressColor";
+import PlayerStatsHero from "./components/PlayerStatsHero";
+import GameModeCard from "./components/GameModeCard";
+import LeaderboardCard from "./components/LeaderboardCard";
+import ScrollIndicator from "./components/ScrollIndicator";
+import MatchHistoryCard from "./components/MatchHistoryCard";
+import DuoFeatures from "./components/DuoFeatures";
+import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 
 import styles from "./Duo.styles";
 
-const { height, width } = Dimensions.get("window");
-
-const SimpleDuoHeader = ({ paddingTop = 0 }) => {
-  const { t } = useTranslation('duo');
-  const theme = useTheme();
-  const colors = theme.colors;
-
-  return (
-    <View style={[headerStyles.header, { paddingTop }]}>
-      <View style={headerStyles.titleContainer}>
-        <Text style={[headerStyles.subTitle, { color: colors.textSecondary }]}>
-          {t('header.subtitle')}
-        </Text>
-        <Text style={[headerStyles.title, { color: colors.textPrimary }]}>
-          {t('header.title')}
-        </Text>
-      </View>
-    </View>
-  );
+// Dummy stats for display (later: real stats from Firestore)
+const DUMMY_STATS = {
+  elo: 1247,
+  wins: 12,
+  losses: 3,
+  winStreak: 5,
 };
 
-const headerStyles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  titleContainer: { alignItems: "flex-start" },
-  title: { fontSize: 28, fontWeight: "800" },
-  subTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    marginBottom: 4,
-  },
-});
-
 const Duo: React.FC = () => {
-  const { t } = useTranslation('duo');
+  const { t } = useTranslation("duo");
   const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
-  const themeColor = useProgressColor(); // Dynamic path color
 
-  const [showGameModeModal, setShowGameModeModal] = useState(false);
+  // State
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("medium");
-  const [selectedMode, setSelectedMode] = useState<GameMode>("local");
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
-  // Performance-Optimierung States
-  const [visualizerReady, setVisualizerReady] = useState(false);
-  const [scrollPerformanceMode, setScrollPerformanceMode] = useState<
-    "low" | "balanced"
-  >("balanced");
-  const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastScrollY = useRef(0);
-
-  const maxVisualizer = Math.min(width * 0.88, 340);
-  const visualizerSize = Math.max(260, Math.round(maxVisualizer));
-
-  const navHeight = 56;
-  const mainScreenHeight = height - insets.top - insets.bottom - navHeight;
-
-  // Visualizer erst nach Navigation laden
-  useFocusEffect(
-    useCallback(() => {
-      InteractionManager.runAfterInteractions(() => {
-        setVisualizerReady(true);
-      });
-
-      return () => {
-        setVisualizerReady(false);
-        // Cleanup beim Verlassen
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-          scrollTimeoutRef.current = null;
-        }
-      };
-    }, [])
-  );
-
-  // Optimiertes Scroll-Handling
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const currentScrollY = event.nativeEvent.contentOffset.y;
-      const scrollDelta = Math.abs(currentScrollY - lastScrollY.current);
-
-      // Nur bei signifikanten Scrolls reagieren (mehr als 5px)
-      if (scrollDelta > 5) {
-        if (!isScrolling) {
-          setIsScrolling(true);
-          setScrollPerformanceMode("low");
-        }
-
-        lastScrollY.current = currentScrollY;
-
-        // Clear previous timeout
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-        }
-
-        // Performance Mode nach Scroll-Ende zurücksetzen
-        scrollTimeoutRef.current = setTimeout(() => {
-          setIsScrolling(false);
-          setScrollPerformanceMode("balanced");
-        }, 250); // Etwas länger warten für smootheres Erlebnis
-      }
-    },
-    [isScrolling]
-  );
-
+  // Scroll to features section
   const scrollToFeatures = useCallback(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({
-        y: height - navHeight - 100,
-        animated: true,
-      });
-    }
+    scrollViewRef.current?.scrollToEnd({ animated: true });
   }, []);
 
+  // Handler: Lokal spielen → DifficultyModal öffnen
+  const handleLocalPlay = useCallback(() => {
+    triggerHaptic("medium");
+    setShowDifficultyModal(true);
+  }, []);
+
+  // Handler: Online spielen → zur OnlinePlayMenu navigieren
+  const handleOnlinePlay = useCallback(() => {
+    triggerHaptic("medium");
+    router.push("/duo-online/play");
+  }, [router]);
+
+  // Handler: Difficulty ändern
   const handleDifficultyChange = useCallback((difficulty: Difficulty) => {
     setSelectedDifficulty(difficulty);
   }, []);
 
+  // Handler: Spiel starten
   const handleStartGame = useCallback(() => {
-    setIsAnyModalOpen(true);
-    setShowGameModeModal(true);
-    triggerHaptic("medium");
-  }, []);
-
-  const handleModeSelection = useCallback(
-    (mode: GameMode) => {
-      setSelectedMode(mode);
-      triggerHaptic("medium");
-      if (mode === "local") {
-        setShowGameModeModal(false);
-        setTimeout(() => setShowDifficultyModal(true), 100);
-      }
-    },
-    []
-  );
-
-  const handleStartWithDifficulty = useCallback(() => {
     setShowDifficultyModal(false);
-    setIsAnyModalOpen(false);
     router.replace({
       pathname: "/duo-game",
       params: { difficulty: selectedDifficulty },
     });
   }, [selectedDifficulty, router]);
 
-  const handleCloseGameModeModal = useCallback(() => {
-    setShowGameModeModal(false);
-    setIsAnyModalOpen(false);
-  }, []);
-
+  // Handler: Modal schließen
   const handleCloseDifficultyModal = useCallback(() => {
     setShowDifficultyModal(false);
-    setIsAnyModalOpen(false);
   }, []);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background },
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       {/* Dev Banner */}
       <DevBanner />
 
-      {isAnyModalOpen && (
+      {/* Backdrop für Modal */}
+      {showDifficultyModal && (
         <Animated.View
           style={[
             StyleSheet.absoluteFill,
@@ -223,85 +98,57 @@ const Duo: React.FC = () => {
         />
       )}
 
-      <View style={{ flex: 1 }}>
-        <SimpleDuoHeader paddingTop={insets.top} />
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section with Player Stats */}
+        <PlayerStatsHero
+          elo={DUMMY_STATS.elo}
+          wins={DUMMY_STATS.wins}
+          losses={DUMMY_STATS.losses}
+          winStreak={DUMMY_STATS.winStreak}
+        />
 
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={100} // Optimiert für Performance
-          removeClippedSubviews={true} // Wichtig für Android
-          decelerationRate="fast" // Schnelleres Scroll-Ende
-          overScrollMode="never" // Kein Overscroll-Effekt auf Android
-          bounces={true} // iOS bounce behalten
-        >
-          <View
-            style={[
-              styles.mainScreen,
-              { height: mainScreenHeight, justifyContent: "space-between" },
-            ]}
-          >
-            {/* Overlay-Visualizer mit Performance-Optimierungen */}
-            <View style={styles.overlayLayer}>
-              {visualizerReady && (
-                <DuoBoardVisualizer
-                  size={visualizerSize}
-                  stageWidth={width}
-                  stageHeight={mainScreenHeight}
-                  noAnimation={isAnyModalOpen || isScrolling} // Animation beim Scrollen pausieren
-                  interactive={!isAnyModalOpen && !isScrolling}
-                  renderTopVignette={!theme.isDark}
-                  isDark={theme.isDark}
-                  onLogoPress={handleStartGame}
-                  performance={scrollPerformanceMode} // Dynamische Performance
-                  themeColor={themeColor} // Dynamic theme color
-                />
-              )}
-            </View>
+        {/* Game Mode Cards */}
+        <View style={styles.gameModeSection}>
+          <GameModeCard mode="local" onPress={handleLocalPlay} />
+          <GameModeCard mode="online" onPress={handleOnlinePlay} />
+        </View>
 
-            {/* spacer */}
-            <View style={{ height: 20 }} />
+        {/* Leaderboard Card */}
+        <LeaderboardCard />
 
-            {/* Kein Button mehr; Logo tappt sich durch */}
-            <View style={styles.centralContentContainer} />
+        {/* Scroll Indicator */}
+        <View style={styles.scrollIndicatorWrapper}>
+          <ScrollIndicator onPress={scrollToFeatures} />
+        </View>
 
-            <View style={styles.scrollIndicatorContainer}>
-              <ScrollIndicator
-                onPress={scrollToFeatures}
-                noAnimation={isScrolling} // Auch Indikator beim Scrollen pausieren
-              />
-            </View>
-          </View>
+        {/* Match History */}
+        <MatchHistoryCard />
 
-          <View style={styles.featuresScreen}>
-            <DuoFeatures
-              onStartGame={handleStartGame}
-              noAnimation={isScrolling} // Features-Animationen auch pausieren
-            />
-          </View>
-        </ScrollView>
-      </View>
+        {/* Features / How It Works */}
+        <View style={styles.featuresSection}>
+          <DuoFeatures />
+        </View>
+      </ScrollView>
 
+      {/* Difficulty Modal */}
       <DifficultyModal
         visible={showDifficultyModal}
         selectedDifficulty={selectedDifficulty}
         onSelectDifficulty={handleDifficultyChange}
         onClose={handleCloseDifficultyModal}
-        onConfirm={handleStartWithDifficulty}
+        onConfirm={handleStartGame}
         noBackdrop
         isTransition
         isDuoMode
-        title={t('duo:startSection.title')}
-        subtitle={t('duo:startSection.subtitle')}
-      />
-
-      <GameModeModal
-        visible={showGameModeModal}
-        onClose={handleCloseGameModeModal}
-        onSelectMode={handleModeSelection}
-        noBackdrop
+        title={t("startSection.title")}
+        subtitle={t("startSection.subtitle")}
       />
     </View>
   );

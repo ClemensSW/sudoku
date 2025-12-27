@@ -3,6 +3,43 @@
     "subtitle": "TWO PLAYER MODE",
     "title": "Sudoku Duo"
   },
+  "stats": {
+    "elo": "ELO",
+    "record": "W - L",
+    "streak": "Streak",
+    "loginPrompt": "Sign in to see your stats"
+  },
+  "rank": {
+    "current": "Current Rank",
+    "maxRank": "Maximum rank reached!",
+    "nextTier": "{{points}} ELO to {{tier}}",
+    "novice": "Novice",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "diamond": "Diamond",
+    "master": "Master",
+    "grandmaster": "Grandmaster"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "comingSoon": "Coming Soon",
+    "rank": "Rank",
+    "player": "Player",
+    "rating": "Rating",
+    "yourPosition": "Your Position",
+    "viewAll": "View All",
+    "you": "YOU"
+  },
+  "history": {
+    "title": "Recent Games",
+    "win": "Win",
+    "loss": "Loss",
+    "vs": "vs",
+    "noGames": "No games yet",
+    "yesterday": "yesterday",
+    "ago": "{{time}} ago"
+  },
   "startSection": {
     "title": "New Game",
     "subtitle": "Choose difficulty together"

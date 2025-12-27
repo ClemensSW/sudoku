@@ -1,11 +1,10 @@
-// screens/DuoScreen/components/DuoFeatures/DuoFeatures.tsx
+// screens/Duo/components/DuoFeatures/DuoFeatures.tsx
 import React from "react";
 import { View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { getPathColor } from "@/utils/pathColors";
-import Button from "@/components/Button/Button";
 import styles from "./DuoFeatures.styles";
 
 // SVG Icons
@@ -20,15 +19,7 @@ interface Feature {
   color: string;
 }
 
-interface DuoFeaturesProps {
-  onStartGame: () => void;
-  noAnimation?: boolean;
-}
-
-const DuoFeatures: React.FC<DuoFeaturesProps> = ({
-  onStartGame,
-  noAnimation = false
-}) => {
+const DuoFeatures: React.FC = () => {
   const { t } = useTranslation('duo');
   const theme = useTheme();
   const colors = theme.colors;
@@ -89,16 +80,6 @@ const DuoFeatures: React.FC<DuoFeaturesProps> = ({
           </View>
         );
       })}
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title={t('features.startButton')}
-          onPress={onStartGame}
-          variant="primary"
-          customColor={primaryColor}
-          style={styles.startButton}
-        />
-      </View>
     </View>
   );
 };

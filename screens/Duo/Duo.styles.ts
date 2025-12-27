@@ -1,58 +1,32 @@
-// screens/DuoScreen/DuoScreen.styles.ts
-import { StyleSheet, Dimensions } from "react-native";
-
-const { width, height } = Dimensions.get("window");
+// screens/Duo/Duo.styles.ts
+import { StyleSheet } from "react-native";
+import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
-  container: { flex: 1 },
-
-  backgroundImage: {
-    position: "absolute",
-    width: width,
-    height: height,
-    opacity: 0.2,
+  container: {
+    flex: 1,
   },
 
   scrollContent: {
-    paddingBottom: 100, // Space for bottom navigation
+    // Components handle their own horizontal margins
   },
 
-  // FULL-WIDTH STAGE CONTAINER (kein Padding!)
-  mainScreen: {
-    alignItems: "center",
-    justifyContent: "space-between",
-    position: "relative",
-    overflow: "hidden", // schneidet Effekte sauber am Rand ab
-  },
-
-  // absoluter Overlay-Layer für den Visualizer
-  overlayLayer: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1,
-    pointerEvents: "box-none",
-  },
-
-  // Content-Container bekommt das Padding (nicht der Parent!)
-  centralContentContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    paddingTop: 60,
-    paddingBottom: 20,
+  // Game Mode Cards Section
+  gameModeSection: {
     paddingHorizontal: 20,
-    zIndex: 2, // über dem Overlay
+    gap: 12,
   },
 
-  // Scroll-Indicator sichtbar über Overlay
-  scrollIndicatorContainer: {
-    marginBottom: 40,
-    width: "100%",
+  // Scroll Indicator Wrapper
+  scrollIndicatorWrapper: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.lg,
     alignItems: "center",
-    zIndex: 2, // über dem Overlay
   },
 
-  featuresScreen: {
-    minHeight: height * 0.9,
+  // Features Section
+  featuresSection: {
+    marginTop: spacing.md,
     paddingHorizontal: 20,
   },
 });

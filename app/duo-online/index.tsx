@@ -1,7 +1,6 @@
 // app/duo-online/index.tsx
-import React from "react";
-import DuoOnlineMenu from "@/screens/DuoOnline/DuoOnlineMenu";
+import { Redirect } from "expo-router";
 
 export default function DuoOnlineRoute() {
-  return <DuoOnlineMenu />;
+  return <Redirect href="/duo-online/play" />;
 }

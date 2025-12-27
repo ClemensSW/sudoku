@@ -11,7 +11,7 @@ export const NAV_TABS: NavTab[] = [
   },
   {
     key: "duo",
-    path: "/duo-online",
+    path: "/duo",
     labelKey: "navigation.duo",
     iconOutline: "people-outline",
     iconFilled: "people",

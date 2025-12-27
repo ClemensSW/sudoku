@@ -1,4 +1,4 @@
-// screens/DuoScreen/components/DuoFeatures/DuoFeatures.styles.ts
+// screens/Duo/components/DuoFeatures/DuoFeatures.styles.ts
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -42,15 +42,5 @@ export default StyleSheet.create({
   featureDescription: {
     fontSize: 14,
     lineHeight: 20,
-  },
-  buttonContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  startButton: {
-    width: "100%", // Gleiche Breite wie featureCard oben
-    // Button component übernimmt: backgroundColor, padding, borderRadius, shadow, text styling
   },
 });

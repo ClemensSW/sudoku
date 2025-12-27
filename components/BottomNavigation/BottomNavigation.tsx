@@ -23,8 +23,8 @@ const BottomNavigation: React.FC = () => {
       if (tabPath === "/") {
         return pathname === "/" || pathname === "/index";
       }
-      if (tabPath === "/duo-online") {
-        return pathname.startsWith("/duo-online") || pathname === "/duo";
+      if (tabPath === "/duo") {
+        return pathname === "/duo" || pathname.startsWith("/duo-online") || pathname === "/duo-game";
       }
       return pathname === tabPath;
     },

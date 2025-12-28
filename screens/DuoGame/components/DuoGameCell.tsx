@@ -36,6 +36,9 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 }) => {
   const { isDark } = useTheme();
   const pathColorHex = useStoredColorHex();
+
+  // Mittlere Zelle (4,4) - der neutrale Treffpunkt
+  const isMiddleCell = row === 4 && col === 4;
   // Row/Col für Schachbrett-Berechnung übergeben
   const theme = React.useMemo(
     () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark, row, col),
@@ -57,7 +60,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     transform: [{ scale: scale.value }],
   }));
 
-  // Colors (computed via simple branching to keep render cheap)
+  // Colors für normale Zellen (mittlere Zelle hat eigene Multi-Layer Struktur)
   const getCellBackgroundColor = () => {
     if (isSelected && !cell.isValid && showErrors) {
       return theme.error.selectedBackground;
@@ -150,6 +153,118 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     return style;
   };
 
+  // Multi-Layer Mulden-Styles für intensive Tiefe (5 Ringe)
+  // Light Mode: Hellere Grautöne oben/links, Path Color Töne unten/rechts
+  const getMiddleCellRing1Style = () => ({
+    flex: 1,
+    borderWidth: 2,
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(0, 0, 0, 0.40)', // Helleres Grau
+    borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(0, 0, 0, 0.40)',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.12)' : pathColorHex + '18', // 9% Path Color
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.12)' : pathColorHex + '18',
+  });
+
+  const getMiddleCellRing2Style = () => ({
+    flex: 1,
+    borderWidth: 1,
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.32)', // Helleres Grau
+    borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.32)',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.1)' : pathColorHex + '12', // 7% Path Color
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.1)' : pathColorHex + '12',
+  });
+
+  const getMiddleCellRing3Style = () => ({
+    flex: 1,
+    borderWidth: 1,
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.24)', // Helleres Grau
+    borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.24)',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : pathColorHex + '0D', // 5% Path Color
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.08)' : pathColorHex + '0D',
+  });
+
+  const getMiddleCellRing4Style = () => ({
+    flex: 1,
+    borderWidth: 1,
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.18)', // Helleres Grau
+    borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.18)',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.05)' : pathColorHex + '08', // 3% Path Color
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.05)' : pathColorHex + '08',
+  });
+
+  const getMiddleCellRing5Style = () => ({
+    flex: 1,
+    borderWidth: 1,
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.12)', // Helleres Grau
+    borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.12)',
+    borderBottomColor: 'transparent',
+    borderRightColor: 'transparent',
+    // Hellerer Boden: Dark Mode 50%, Light Mode 25%
+    backgroundColor: isDark ? getDividerColor(pathColorHex) : pathColorHex + '40',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  });
+
+  // Render-Content für Zelle (wiederverwendbar)
+  const renderCellContent = () => (
+    <Animated.View
+      style={[
+        styles.cellContent,
+        animatedStyle,
+        shouldRotateContent && styles.rotatedContent,
+      ]}
+    >
+      {cell.value !== 0 ? (
+        <Text
+          style={[
+            styles.cellText,
+            { color: getTextColor() },
+            cell.isInitial && styles.initialText,
+            shouldRotateContent && styles.rotatedText,
+            shouldUnderlineNumber(cell.value) && styles.underlinedNumber,
+          ]}
+        >
+          {cell.value}
+        </Text>
+      ) : (
+        renderNotes()
+      )}
+    </Animated.View>
+  );
+
+  // Mittlere Zelle: Multi-Layer Mulden-Struktur
+  if (isMiddleCell) {
+    return (
+      <TouchableOpacity
+        style={[
+          styles.cellContainer,
+          {
+            backgroundColor: 'transparent',
+            // Zentrierung aufheben damit flex: 1 der Ringe funktioniert
+            justifyContent: 'flex-start',
+            alignItems: 'stretch',
+          },
+        ]}
+        onPress={() => onPress(row, col)}
+        disabled={cell.isInitial}
+        activeOpacity={1}
+      >
+        {/* 5 verschachtelte Ringe für tiefe Mulde */}
+        <View style={getMiddleCellRing1Style()}>
+          <View style={getMiddleCellRing2Style()}>
+            <View style={getMiddleCellRing3Style()}>
+              <View style={getMiddleCellRing4Style()}>
+                <View style={getMiddleCellRing5Style()}>
+                  {renderCellContent()}
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  // Normale Zellen
   return (
     <TouchableOpacity
       style={[
@@ -165,29 +280,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
       disabled={cell.isInitial}
       activeOpacity={cell.isInitial ? 1 : 0.7}
     >
-      <Animated.View
-        style={[
-          styles.cellContent,
-          animatedStyle,
-          shouldRotateContent && styles.rotatedContent,
-        ]}
-      >
-        {cell.value !== 0 ? (
-          <Text
-            style={[
-              styles.cellText,
-              { color: getTextColor() },
-              cell.isInitial && styles.initialText,
-              shouldRotateContent && styles.rotatedText,
-              shouldUnderlineNumber(cell.value) && styles.underlinedNumber,
-            ]}
-          >
-            {cell.value}
-          </Text>
-        ) : (
-          renderNotes()
-        )}
-      </Animated.View>
+      {renderCellContent()}
     </TouchableOpacity>
   );
 };

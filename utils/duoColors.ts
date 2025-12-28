@@ -72,9 +72,9 @@ export function getDividerColor(pathColorHex: string): string {
 /**
  * Berechnet ob und welche Borders eine Zelle für die Zonen-Trennlinie braucht
  * Die Trennlinie verläuft stufenförmig durch die Mitte des Spielfelds:
- * - Unter Row 4: cols 0-4 (einschließlich neutrale Zelle)
- * - Unter Row 3: cols 4-8 (einschließlich Spalte 4)
- * - Bei Spalte 4 überlappen sich beide Linien vertikal
+ * - Unter Row 4: cols 0-3 (STOPPT vor neutraler Zelle)
+ * - Unter Row 3: cols 5-8 (BEGINNT nach neutraler Zelle)
+ * - Die neutrale Zelle (4,4) bleibt frei als "Insel"
  */
 export function getZoneDividerBorders(row: number, col: number): {
   top?: boolean;
@@ -82,12 +82,12 @@ export function getZoneDividerBorders(row: number, col: number): {
   bottom?: boolean;
   left?: boolean;
 } {
-  // Unter Row 4: cols 0-4 (linke Linie bis einschließlich neutrale Zelle)
-  if (row === 4 && col >= 0 && col <= 4) {
+  // Unter Row 4: cols 0-3 (linke Linie stoppt VOR der neutralen Zelle)
+  if (row === 4 && col >= 0 && col <= 3) {
     return { bottom: true };
   }
-  // Unter Row 3: cols 4-8 (rechte Linie ab Spalte 4 - überlappt bei col 4)
-  if (row === 3 && col >= 4 && col <= 8) {
+  // Unter Row 3: cols 5-8 (rechte Linie beginnt NACH der neutralen Zelle)
+  if (row === 3 && col >= 5 && col <= 8) {
     return { bottom: true };
   }
   return {};

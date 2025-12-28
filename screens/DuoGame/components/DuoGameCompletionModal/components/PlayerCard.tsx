@@ -45,8 +45,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
     transform: [{ scale: trophyScale.value }],
   }));
 
-  // Determine if trophy should be shown
-  const showTrophy = isWinner || isTie;
+  // Trophy nur bei Unentschieden anzeigen (nicht beim Gewinner - der hat schon den Badge)
+  const showTrophy = isTie;
 
   // Determine border color (Winner gets Path Color with glow)
   const borderColor = isWinner ? progressColor : colors.border;

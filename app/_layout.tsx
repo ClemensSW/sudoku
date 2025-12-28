@@ -16,6 +16,7 @@ import BottomNavigation from "@/components/BottomNavigation/BottomNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { initializeFirebase } from "@/utils/cloudSync/firebaseConfig";
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { DevLeagueProvider } from "@/contexts/DevLeagueContext";
 import { configureGoogleSignIn } from "@/utils/auth/googleAuth";
 import BillingManager from "@/screens/SupportShop/utils/billing/BillingManager";
 import { processOfflineQueue } from "@/utils/cloudSync/feedbackService";
@@ -145,9 +146,11 @@ export default function AppLayout() {
                 <NavigationProvider>
                   <AuthProvider>
                     <BottomSheetModalProvider>
-                      <AlertProvider>
-                        <AppContainer />
-                      </AlertProvider>
+                      <DevLeagueProvider>
+                        <AlertProvider>
+                          <AppContainer />
+                        </AlertProvider>
+                      </DevLeagueProvider>
                     </BottomSheetModalProvider>
                   </AuthProvider>
                 </NavigationProvider>

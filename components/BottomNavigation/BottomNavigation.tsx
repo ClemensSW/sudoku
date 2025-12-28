@@ -6,12 +6,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { triggerHaptic } from "@/utils/haptics";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import NavItem from "./NavItem";
 import { NAV_TABS, NAV_HEIGHT } from "./constants";
 import { styles } from "./BottomNavigation.styles";
-
-// Duo Color - Darkened Silver (matches current league, more visible than pure silver)
-const DUO_COLOR = "#989898";
 
 const BottomNavigation: React.FC = () => {
   const router = useRouter();
@@ -20,6 +18,7 @@ const BottomNavigation: React.FC = () => {
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const progressColor = useProgressColor();
+  const { colors: leagueColors } = useCurrentLeague();
 
   const isTabActive = useCallback(
     (tabPath: string): boolean => {
@@ -63,9 +62,9 @@ const BottomNavigation: React.FC = () => {
       entering={FadeIn.duration(300)}
     >
       {NAV_TABS.map((tab) => {
-        // Use fixed DUO_COLOR for Duo tab
-        const tabActiveColor = tab.key === "duo" ? DUO_COLOR : progressColor;
-        const tabIndicatorColor = tab.key === "duo" ? `${DUO_COLOR}1F` : indicatorColor;
+        // Use league accent color for Duo tab
+        const tabActiveColor = tab.key === "duo" ? leagueColors.accent : progressColor;
+        const tabIndicatorColor = tab.key === "duo" ? `${leagueColors.accent}1F` : indicatorColor;
 
         return (
           <NavItem

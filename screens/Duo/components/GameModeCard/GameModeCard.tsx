@@ -10,10 +10,8 @@ import Animated, {
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import styles from "./GameModeCard.styles";
-
-// Duo Color - Darkened Silver (matches current league)
-const DUO_COLOR = "#989898";
 
 export type GameMode = "local" | "online";
 
@@ -31,6 +29,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
+  const { colors: leagueColors } = useCurrentLeague();
 
   // Animation
   const scale = useSharedValue(1);
@@ -59,7 +58,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   const iconBg = theme.isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.04)";
-  const iconColor = theme.isDark ? "#FFFFFF" : DUO_COLOR;
+  const iconColor = theme.isDark ? "#FFFFFF" : leagueColors.accent;
 
   return (
     <Pressable
@@ -78,7 +77,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
           {
             backgroundColor: cardBg,
             borderColor: cardBorder,
-            shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+            shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
           },
           animatedStyle,
         ]}

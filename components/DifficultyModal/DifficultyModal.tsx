@@ -18,20 +18,9 @@ import {
   getProgressValue
 } from "@/utils/storage";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import Button from "@/components/Button/Button";
 import styles from "./DifficultyModal.styles";
-
-// Duo Color - Darkened Silver (matches current league in navigation)
-const DUO_COLOR = "#989898";
-
-// Helper to darken a hex color
-const darkenColor = (hex: string, amount: number): string => {
-  const color = hex.replace("#", "");
-  const r = Math.max(0, parseInt(color.substring(0, 2), 16) - amount);
-  const g = Math.max(0, parseInt(color.substring(2, 4), 16) - amount);
-  const b = Math.max(0, parseInt(color.substring(4, 6), 16) - amount);
-  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-};
 
 interface DifficultyModalProps {
   visible: boolean;
@@ -64,8 +53,9 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const progressColor = useProgressColor();
-  // Use fixed DUO_COLOR for Duo mode, otherwise use user's path color
-  const accentColor = isDuoMode ? DUO_COLOR : progressColor;
+  const { colors: leagueColors } = useCurrentLeague();
+  // Use league accent color for Duo mode, otherwise use user's path color
+  const accentColor = isDuoMode ? leagueColors.accent : progressColor;
   const [stats, setStats] = useState<GameStats | null>(null);
   const [unlockedDifficulties, setUnlockedDifficulties] = useState<Difficulty[]>(["easy"]);
   const [isLoading, setIsLoading] = useState(true);
@@ -295,7 +285,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
             ]}
           >
             <LinearGradient
-              colors={[accentColor, darkenColor(accentColor, 30)]}
+              colors={leagueColors.gradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.duoButtonGradient}

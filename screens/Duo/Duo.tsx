@@ -17,6 +17,7 @@ import GameModeCard from "./components/GameModeCard";
 import LeaderboardCard from "./components/LeaderboardCard";
 import MatchHistoryCard from "./components/MatchHistoryCard";
 import DuoTutorialOverlay from "./components/DuoTutorialOverlay";
+import DevLeagueToggle from "./components/DevLeagueToggle";
 import DifficultyModal from "@/components/DifficultyModal/DifficultyModal";
 
 import styles from "./Duo.styles";
@@ -144,6 +145,9 @@ const Duo: React.FC = () => {
 
         {/* Match History */}
         <MatchHistoryCard />
+
+        {/* Dev League Toggle (only in DEV mode) */}
+        <DevLeagueToggle />
       </ScrollView>
 
       {/* Tutorial Overlay */}

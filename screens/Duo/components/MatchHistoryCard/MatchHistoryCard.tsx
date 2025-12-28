@@ -5,13 +5,11 @@ import Animated, { FadeIn, FadeInDown, SlideInRight } from "react-native-reanima
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import styles from "./MatchHistoryCard.styles";
 
 // SVG Icon
 import HourglassIcon from "@/assets/svg/hourglass.svg";
-
-// Duo Color - Deep Teal (matching PlayerStatsHero header)
-const DUO_COLOR = "#2E6B7B";
 
 // Zone Colors (matching LeaderboardCard)
 const PROMOTION_COLOR = "#4CAF50"; // Grün - für Siege
@@ -44,6 +42,7 @@ const MatchHistoryCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
+  const { colors: leagueColors } = useCurrentLeague();
 
   // Theme-aware colors
   const cardBg = theme.isDark ? colors.surface : "#FFFFFF";
@@ -71,7 +70,7 @@ const MatchHistoryCard: React.FC = () => {
         {
           backgroundColor: cardBg,
           borderColor: cardBorder,
-          shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+          shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
           elevation: theme.isDark ? 0 : 8,
         },
       ]}

@@ -12,6 +12,7 @@
   "completion": {
     "tie": "बराबरी!",
     "winnerTitle": "{{player}} जीते!",
+    "winnerTitleDynamic": "{{name}} जीते!",
     "bothCompleted": "दोनों ने अपना क्षेत्र पूरा किया",
     "reasonFaster": "तेज़ी से पूरा किया",
     "reasonErrors": "प्रतिद्वंद्वी ने बहुत अधिक गलतियाँ कीं",

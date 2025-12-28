@@ -1,25 +1,23 @@
 // screens/DuoGame/components/DuoGameCompletionModal/components/PlayerCard.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image, ImageSourcePropType } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import DuoCircularProgress from "../../DuoCircularProgress";
-import PlayerStats from "./PlayerStats";
+import DuoProgressBar from "./DuoProgressBar";
 
 interface PlayerCardProps {
   player: 1 | 2;
   isWinner: boolean;
   isTie: boolean;
   completionPercentage: number;
-  errorsRemaining: number;
-  hintsRemaining: number;
-  maxErrors: number;
-  maxHints: number;
   progressColor: string;
   playerScale: Animated.SharedValue<number>;
   trophyScale: Animated.SharedValue<number>;
+  // Neue Props für Avatar und Name
+  playerName: string;
+  avatarSource: ImageSourcePropType;
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -27,13 +25,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   isWinner,
   isTie,
   completionPercentage,
-  errorsRemaining,
-  hintsRemaining,
-  maxErrors,
-  maxHints,
   progressColor,
   playerScale,
   trophyScale,
+  playerName,
+  avatarSource,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -49,20 +45,32 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   // Determine if trophy should be shown
   const showTrophy = isWinner || isTie;
 
-  // Determine border color (Winner gets Path Color)
+  // Determine border color (Winner gets Path Color with glow)
   const borderColor = isWinner ? progressColor : colors.border;
 
   // Determine opacity (loser is slightly faded)
   const opacity = !isTie && !isWinner ? 0.7 : 1;
+
+  // Glow-Effekt für Gewinner
+  const glowStyle = isWinner
+    ? {
+        shadowColor: progressColor,
+        shadowOpacity: isDark ? 0.5 : 0.3,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 0 },
+        elevation: isDark ? 8 : 6,
+      }
+    : {};
 
   return (
     <Animated.View
       style={[
         styles.playerPanel,
         {
-          backgroundColor: colors.numberPadButton, // Neutral (beide identisch!)
+          backgroundColor: colors.numberPadButton,
           borderColor,
           opacity,
+          ...glowStyle,
         },
         playerStyle,
       ]}
@@ -81,16 +89,30 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         </View>
       )}
 
-      {/* Player Header */}
+      {/* Player Header mit Avatar und Name */}
       <View style={styles.playerHeader}>
-        <Text
-          style={[
-            styles.playerName,
-            { color: isDark ? "#FFFFFF" : "#202124" },
-          ]}
-        >
-          {t(`players.player${player}`)}
-        </Text>
+        {/* Avatar */}
+        <View style={styles.avatarContainer}>
+          <Image
+            source={avatarSource}
+            style={styles.avatar}
+            resizeMode="cover"
+          />
+        </View>
+
+        {/* Name */}
+        <View style={styles.nameContainer}>
+          <Text
+            style={[
+              styles.playerName,
+              { color: isDark ? "#FFFFFF" : "#202124" },
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {playerName}
+          </Text>
+        </View>
 
         {/* Trophy for winner or tie */}
         {showTrophy && (
@@ -100,7 +122,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
                 styles.trophyCircle,
                 {
                   backgroundColor: isWinner
-                    ? `${progressColor}20` // 20% opacity
+                    ? `${progressColor}20`
                     : isDark
                     ? "rgba(255,255,255,0.1)"
                     : "rgba(0,0,0,0.05)",
@@ -109,7 +131,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
             >
               <Feather
                 name={isWinner ? "award" : "star"}
-                size={isWinner ? 20 : 16}
+                size={isWinner ? 18 : 14}
                 color={isWinner ? progressColor : colors.textSecondary}
               />
             </View>
@@ -117,40 +139,14 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         )}
       </View>
 
-      {/* Performance Container */}
-      <View style={styles.performanceContainer}>
-        {/* Circular Progress */}
-        <View style={styles.progressCircleContainer}>
-          <DuoCircularProgress
-            percentage={completionPercentage}
-            size={90}
-            strokeWidth={8}
-            color={isWinner ? progressColor : colors.textSecondary}
-            bgColor={
-              isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"
-            }
-            textColor={isWinner ? progressColor : colors.textPrimary}
-          />
-
-          {/* Status text below the circle */}
-          <Text
-            style={[
-              styles.progressStatusText,
-              { color: isDark ? colors.textSecondary : "#5F6368" },
-            ]}
-          >
-            {completionPercentage === 100
-              ? t("completion.complete")
-              : t("completion.filled")}
-          </Text>
-        </View>
-
-        {/* Stats Row */}
-        <PlayerStats
-          errorsRemaining={errorsRemaining}
-          hintsRemaining={hintsRemaining}
-          maxErrors={maxErrors}
-          maxHints={maxHints}
+      {/* Progress Bar */}
+      <View style={styles.progressContainer}>
+        <DuoProgressBar
+          percentage={completionPercentage}
+          color={isWinner || isTie ? progressColor : colors.textSecondary}
+          height={10}
+          showLabel={true}
+          animated={true}
         />
       </View>
     </Animated.View>
@@ -159,12 +155,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
 const styles = StyleSheet.create({
   playerPanel: {
-    width: "45%",
-    height: "100%",
+    width: "100%",
     borderRadius: 16,
     padding: 16,
     borderWidth: 2,
-    justifyContent: "flex-start",
     position: "relative",
   },
   winnerBadge: {
@@ -186,10 +180,25 @@ const styles = StyleSheet.create({
   },
   playerHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
-    minHeight: 28,
+    minHeight: 56,
+  },
+  avatarContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.1)",
+  },
+  avatar: {
+    width: 56,
+    height: 56,
+  },
+  nameContainer: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 8,
   },
   playerName: {
     fontSize: 18,
@@ -201,27 +210,14 @@ const styles = StyleSheet.create({
     right: 0,
   },
   trophyCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },
-  performanceContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 140,
+  progressContainer: {
     width: "100%",
-  },
-  progressCircleContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  progressStatusText: {
-    fontSize: 14,
-    fontWeight: "500",
-    textAlign: "center",
   },
 });
 

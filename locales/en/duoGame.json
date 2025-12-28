@@ -12,6 +12,7 @@
   "completion": {
     "tie": "It's a Tie!",
     "winnerTitle": "{{player}} wins!",
+    "winnerTitleDynamic": "{{name}} wins!",
     "bothCompleted": "Both completed their field",
     "reasonFaster": "Finished faster",
     "reasonErrors": "Opponent made too many errors",

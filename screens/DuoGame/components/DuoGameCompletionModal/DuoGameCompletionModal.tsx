@@ -1,6 +1,6 @@
 // screens/DuoGame/components/DuoGameCompletionModal/DuoGameCompletionModal.tsx
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ImageSourcePropType } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
@@ -38,6 +38,11 @@ interface DuoGameCompletionModalProps {
   player1SolvedCells: number;
   player2InitialEmptyCells: number;
   player2SolvedCells: number;
+  // Neue Props für Spieler-Daten
+  ownerName: string;
+  ownerAvatarSource: ImageSourcePropType;
+  opponentName: string;
+  opponentAvatarSource: ImageSourcePropType;
 }
 
 const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
@@ -61,6 +66,10 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   player1SolvedCells,
   player2InitialEmptyCells,
   player2SolvedCells,
+  ownerName,
+  ownerAvatarSource,
+  opponentName,
+  opponentAvatarSource,
 }) => {
   const { colors, isDark } = useTheme();
   const progressColor = useProgressColor(); // Theme-aware path color
@@ -94,6 +103,13 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
     }
   };
 
+  // Bestimme den Namen des Gewinners für den Header
+  const getWinnerName = (): string => {
+    if (winner === 0) return ""; // Tie - kein Gewinner
+    // Player 1 = Handybesitzer (unten), Player 2 = Gegner (oben)
+    return winner === 1 ? ownerName : opponentName;
+  };
+
   // Don't render when not visible
   if (!visible) return null;
 
@@ -117,47 +133,44 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         {/* Confetti effect for visual excitement */}
         <ConfettiEffect isActive={visible} density={winner === 0 ? 3 : 2} />
 
-        {/* Header */}
+        {/* Header mit dynamischem Gewinner-Namen */}
         <CompletionHeader
           gameTime={gameTime}
           winner={winner}
           winReason={winReason}
           progressColor={progressColor}
+          winnerName={getWinnerName()}
         />
 
-        {/* Battle Container */}
+        {/* Battle Container - Vertikales Layout */}
         <View style={styles.battleContainer}>
-          {/* Player 1 Card */}
-          <PlayerCard
-            player={1}
-            isWinner={winner === 1}
-            isTie={winner === 0}
-            completionPercentage={getCellCompletionPercentage(1)}
-            errorsRemaining={maxErrors - player1Errors}
-            hintsRemaining={maxHints - player1Hints}
-            maxErrors={maxErrors}
-            maxHints={maxHints}
-            progressColor={progressColor}
-            playerScale={player1Scale}
-            trophyScale={trophy1Scale}
-          />
-
-          {/* VS Divider */}
-          <VSDivider vsScale={vsScale} />
-
-          {/* Player 2 Card */}
+          {/* Gegner Card (Player 2 - oben, hat Top-Controls im Spiel) */}
           <PlayerCard
             player={2}
             isWinner={winner === 2}
             isTie={winner === 0}
             completionPercentage={getCellCompletionPercentage(2)}
-            errorsRemaining={maxErrors - player2Errors}
-            hintsRemaining={maxHints - player2Hints}
-            maxErrors={maxErrors}
-            maxHints={maxHints}
             progressColor={progressColor}
             playerScale={player2Scale}
             trophyScale={trophy2Scale}
+            playerName={opponentName}
+            avatarSource={opponentAvatarSource}
+          />
+
+          {/* VS Divider */}
+          <VSDivider vsScale={vsScale} />
+
+          {/* Handybesitzer Card (Player 1 - unten, hat Bottom-Controls im Spiel) */}
+          <PlayerCard
+            player={1}
+            isWinner={winner === 1}
+            isTie={winner === 0}
+            completionPercentage={getCellCompletionPercentage(1)}
+            progressColor={progressColor}
+            playerScale={player1Scale}
+            trophyScale={trophy1Scale}
+            playerName={ownerName}
+            avatarSource={ownerAvatarSource}
           />
         </View>
 
@@ -191,15 +204,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingTop: 40,
-    borderRadius: 24, // Rounded corners für Modal
+    borderRadius: 24,
   },
   battleContainer: {
     width: "90%",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column", // Vertikales Layout
+    justifyContent: "center",
     alignItems: "center",
-    height: 220,
-    position: "relative",
+    gap: 16, // Abstand zwischen den Elementen
     marginTop: 0,
   },
 });

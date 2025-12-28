@@ -12,6 +12,7 @@
   "completion": {
     "tie": "Unentschieden!",
     "winnerTitle": "{{player}} gewinnt!",
+    "winnerTitleDynamic": "{{name}} gewinnt!",
     "bothCompleted": "Beide haben ihr Feld vervollständigt",
     "reasonFaster": "Schneller fertig",
     "reasonErrors": "Gegner hat zu viele Fehler",

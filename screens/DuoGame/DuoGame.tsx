@@ -1,6 +1,6 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler, ImageSourcePropType } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -25,6 +25,11 @@ import { useDuoGameState } from "./hooks/useDuoGameState";
 // Import settings hook
 import { useGameSettings } from "../Game/hooks/useGameSettings";
 
+// Profile und Gegner-Daten
+import { loadUserProfile, UserProfile } from "@/utils/profileStorage";
+import { generateOpponentData } from "./utils/opponentNames";
+import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
+
 // Constants
 const MAX_HINTS = 3;
 
@@ -40,7 +45,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   const { colors } = theme;
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
-  const { t } = useTranslation('duoGame');
+  const { t, i18n } = useTranslation('duoGame');
 
   // States for game initialization
   const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +61,15 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   // Add this state for settings panel
   const [showSettings, setShowSettings] = useState(false);
 
+  // Spieler-Profil und Gegner-Daten
+  const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null);
+
+  // Gegner-Daten werden einmal pro Spiel generiert (useMemo mit gameInitialized)
+  const [opponentData, setOpponentData] = useState<{
+    name: string;
+    avatarSource: ImageSourcePropType;
+  } | null>(null);
+
   // Add game settings hook
   const gameSettings = useGameSettings();
 
@@ -70,6 +84,19 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
     gameSettings.showMistakes // Pass the showMistakes setting to useDuoGameState
   );
 
+  // Lade Spieler-Profil beim Mount
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profile = await loadUserProfile();
+        setOwnerProfile(profile);
+      } catch (error) {
+        console.error("Error loading user profile:", error);
+      }
+    };
+    loadProfile();
+  }, []);
+
   // In DuoGameScreen.tsx, update this useEffect
   useEffect(() => {
     if (!gameInitialized) {
@@ -78,6 +105,8 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
       const timer = setTimeout(() => {
         try {
           gameActions.startNewGame();
+          // Generiere zufällige Gegner-Daten für dieses Spiel
+          setOpponentData(generateOpponentData(i18n.language));
           setGameInitialized(true);
           // Add extra delay before showing content
           setTimeout(() => {
@@ -90,7 +119,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [gameInitialized]); // Only depend on gameInitialized
+  }, [gameInitialized, i18n.language]); // Only depend on gameInitialized
 
   // Handle Android back button
   useEffect(() => {
@@ -309,6 +338,11 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
         player1SolvedCells={gameState.player1SolvedCells}
         player2InitialEmptyCells={gameState.player2InitialEmptyCells}
         player2SolvedCells={gameState.player2SolvedCells}
+        // Neue Props für Spieler-Daten
+        ownerName={ownerProfile?.name || "User"}
+        ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
+        opponentName={opponentData?.name || "Gegner"}
+        opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
       />
 
       {/* Settings Panel */}

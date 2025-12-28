@@ -10,6 +10,7 @@ interface CompletionHeaderProps {
   winner: 0 | 1 | 2;
   winReason: "completion" | "errors";
   progressColor: string;
+  winnerName: string; // Dynamischer Gewinner-Name
 }
 
 const CompletionHeader: React.FC<CompletionHeaderProps> = ({
@@ -17,6 +18,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
   winner,
   winReason,
   progressColor,
+  winnerName,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -28,12 +30,11 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  // Get result text based on winner
+  // Get result text based on winner - jetzt mit dynamischem Namen
   const getResultText = (): string => {
     if (winner === 0) return t("completion.tie");
-    // Winner text mit Spieler-Name
-    const playerName = t(`players.player${winner}`);
-    return t("completion.winnerTitle", { player: playerName });
+    // Dynamischer Gewinner-Titel mit echtem Namen
+    return t("completion.winnerTitleDynamic", { name: winnerName });
   };
 
   // Get subtext based on win reason

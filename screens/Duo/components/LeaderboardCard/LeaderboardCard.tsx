@@ -6,12 +6,8 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import {
-  getRankTierColor,
-  getRankTierIcon,
-  getRankTierName,
-  RankTier,
-} from "@/utils/elo/eloCalculator";
+import { getRankTierName } from "@/utils/elo/eloCalculator";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import {
   getAvatarSourceFromUri,
   DEFAULT_AVATAR,
@@ -43,9 +39,6 @@ interface LeaguePlayer {
   isCurrentUser?: boolean;
 }
 
-// Current league for preview
-const CURRENT_LEAGUE: RankTier = "silver";
-
 // Dummy players for design preview
 const DUMMY_PLAYERS: LeaguePlayer[] = [
   // Promotion zone (Top 3)
@@ -67,6 +60,7 @@ const LeaderboardCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
+  const { tier, colors: leagueColors } = useCurrentLeague();
 
   // Load current user's profile data (reload on screen focus)
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
@@ -84,11 +78,10 @@ const LeaderboardCard: React.FC = () => {
     }, [])
   );
 
-  // League colors
-  const leagueColor = getRankTierColor(CURRENT_LEAGUE);
-  const leagueIcon = getRankTierIcon(CURRENT_LEAGUE) as keyof typeof Feather.glyphMap;
-  const leagueName = t(`league.${CURRENT_LEAGUE}`, {
-    defaultValue: getRankTierName(CURRENT_LEAGUE) + " Liga",
+  // League colors from useCurrentLeague
+  const leagueColor = leagueColors.primary;
+  const leagueName = t(`league.${tier}`, {
+    defaultValue: getRankTierName(tier) + " Liga",
   });
 
   // Card colors

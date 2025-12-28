@@ -24,7 +24,7 @@ const DevLeagueToggle: React.FC = () => {
   if (!devLeague) return null;
 
   const { overrideLeague, cycleLeague, resetLeague } = devLeague;
-  const colors = overrideLeague ? getLeagueColors(overrideLeague) : null;
+  const colors = overrideLeague ? getLeagueColors(overrideLeague, theme.isDark) : null;
   const currentIndex = overrideLeague ? LEAGUE_ORDER.indexOf(overrideLeague) : -1;
 
   return (
@@ -97,7 +97,7 @@ const DevLeagueToggle: React.FC = () => {
         {/* Liga-Dots */}
         <View style={styles.dotsContainer}>
           {LEAGUE_ORDER.map((tier, index) => {
-            const tierColors = getLeagueColors(tier);
+            const tierColors = getLeagueColors(tier, theme.isDark);
             const isActive = tier === overrideLeague;
             return (
               <View

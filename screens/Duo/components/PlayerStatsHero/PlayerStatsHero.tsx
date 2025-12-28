@@ -18,12 +18,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { loadStats } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
-import {
-  getRankTier,
-  getRankTierName,
-  getRankTierColor,
-  RankTier,
-} from "@/utils/elo/eloCalculator";
+import { getRankTierName, RankTier } from "@/utils/elo/eloCalculator";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 
 // SVG Icons
 import BattleIcon from "@/assets/svg/battle.svg";
@@ -32,9 +28,6 @@ import LightningIcon from "@/assets/svg/lightning.svg";
 import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
 import styles from "./PlayerStatsHero.styles";
-
-// Header Color - Deep Teal (elegant, harmonizes with gold and red)
-const HEADER_COLOR = "#2E6B7B";
 
 // Erfolge Color - Deep Wine (matches Leistungsscreen)
 const ERFOLGE_COLOR = "#8B4F56";
@@ -101,15 +94,6 @@ const getTierGradientColors = (
   ];
 };
 
-// Helper to darken color for gradient
-const darkenColor = (hex: string, amount: number): string => {
-  const color = hex.replace("#", "");
-  const r = Math.max(0, parseInt(color.substring(0, 2), 16) - amount);
-  const g = Math.max(0, parseInt(color.substring(2, 4), 16) - amount);
-  const b = Math.max(0, parseInt(color.substring(4, 6), 16) - amount);
-  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-};
-
 const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   elo,
   wins,
@@ -122,6 +106,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
+  const { tier, colors: leagueColors } = useCurrentLeague();
 
   // Load real streak value from storage
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -196,10 +181,8 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     onLeaderboardPress?.();
   }, [onLeaderboardPress]);
 
-  // Calculate rank info
-  const tier = getRankTier(elo);
+  // Calculate rank info - tier comes from useCurrentLeague
   const tierName = getRankTierName(tier);
-  const tierColor = getRankTierColor(tier);
   const nextTier = NEXT_TIER[tier];
 
   // Calculate progress percentage
@@ -245,7 +228,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 8,
-          shadowColor: theme.isDark ? "transparent" : HEADER_COLOR,
+          shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
         },
       ]}
       entering={FadeIn.duration(400)}
@@ -254,14 +237,14 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
         colors={
           theme.isDark
             ? [
-                hexToRGBA(HEADER_COLOR, 0.15),
-                hexToRGBA(HEADER_COLOR, 0.08),
-                hexToRGBA(HEADER_COLOR, 0),
+                hexToRGBA(leagueColors.accent, 0.15),
+                hexToRGBA(leagueColors.accent, 0.08),
+                hexToRGBA(leagueColors.accent, 0),
               ]
             : [
-                hexToRGBA(HEADER_COLOR, 0.2),
-                hexToRGBA(HEADER_COLOR, 0.1),
-                hexToRGBA(HEADER_COLOR, 0),
+                hexToRGBA(leagueColors.accent, 0.2),
+                hexToRGBA(leagueColors.accent, 0.1),
+                hexToRGBA(leagueColors.accent, 0),
               ]
         }
         start={{ x: 0, y: 0 }}
@@ -367,8 +350,8 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                   styles.rankCard,
                   {
                     backgroundColor: colors.surface,
-                    borderColor: hexToRGBA(tierColor, theme.isDark ? 0.3 : 0.4),
-                    shadowColor: tierColor,
+                    borderColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.3 : 0.4),
+                    shadowColor: leagueColors.primary,
                     elevation: theme.isDark ? 0 : 4,
                   },
                 ]}
@@ -376,7 +359,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               >
                 {/* Subtle Tier-tinted Gradient Background */}
                 <LinearGradient
-                  colors={getTierGradientColors(tierColor, theme.isDark)}
+                  colors={getTierGradientColors(leagueColors.primary, theme.isDark)}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.rankCardGradient}
@@ -399,7 +382,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     <View
                       style={[
                         styles.rankBadgeGlow,
-                        { backgroundColor: hexToRGBA(tierColor, theme.isDark ? 0.3 : 0.4) },
+                        { backgroundColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.3 : 0.4) },
                       ]}
                     />
                     <SilverBadgeIcon width={52} height={52} />
@@ -411,7 +394,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     <Text
                       style={[
                         styles.rankName,
-                        { color: theme.isDark ? tierColor : darkenColor(tierColor, 30) },
+                        { color: theme.isDark ? leagueColors.primary : leagueColors.accent },
                       ]}
                     >
                       {t(`rank.${tier}`, { defaultValue: tierName })}
@@ -439,7 +422,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                       >
                         <Animated.View style={[{ height: "100%" }, progressAnimatedStyle]}>
                           <LinearGradient
-                            colors={[tierColor, darkenColor(tierColor, 40)]}
+                            colors={leagueColors.gradient}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.progressFillGradient}

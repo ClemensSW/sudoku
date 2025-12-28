@@ -19,10 +19,17 @@ export type DuoPlayerId = 0 | 1 | 2;
  * Player 1: 4% Path Color Tint (farbig, aber sehr dezent)
  * Player 2: Neutral grau (keine Farbe)
  * Dark Mode: Path Color wird aufgehellt für freundlicheren, wärmeren Look
+ *
+ * Schachbrettmuster: Einheitlich 3% schwarz/weiß für ALLE Blöcke (wie Single-Player)
  */
 function getZoneColors(isDark: boolean, pathColorHex: string) {
   const baseLight = colors.light.surface;    // #FFFFFF
   const baseDark = colors.dark.surface;      // #292A2D
+
+  // Einheitliche Schachbrettfarbe für ALLE Blöcke (identisch zu Single-Player)
+  const checkerboardColor = isDark
+    ? 'rgba(255, 255, 255, 0.03)'  // 3% weiß im Dark Mode
+    : 'rgba(0, 0, 0, 0.03)';       // 3% schwarz im Light Mode
 
   if (isDark) {
     // Path Color im Dark Mode aufhellen für freundlichen Glow-Effekt
@@ -35,6 +42,8 @@ function getZoneColors(isDark: boolean, pathColorHex: string) {
       player2Background: baseDark,  // #292A2D
       // Middle/Neutral: Zwischen beiden
       neutralBackground: mixColors(lightenedPathColor, baseDark, 98), // 2% helle Path Color
+      // Schachbrett: Einheitlich für alle Zonen
+      checkerboardColor,
     };
   } else {
     // Light Mode bleibt unverändert - originale Path Color
@@ -45,31 +54,80 @@ function getZoneColors(isDark: boolean, pathColorHex: string) {
       player2Background: baseLight, // #FFFFFF
       // Middle/Neutral: Zwischen beiden
       neutralBackground: mixColors(pathColorHex, baseLight, 98), // 2% Path Color
+      // Schachbrett: Einheitlich für alle Zonen
+      checkerboardColor,
     };
   }
+}
+
+/**
+ * Berechnet ob und welche Borders eine Zelle für die Zonen-Trennlinie braucht
+ * Die Trennlinie verläuft stufenförmig durch die Mitte des Spielfelds:
+ * - Unter Row 4: cols 0-4 (einschließlich neutrale Zelle)
+ * - Unter Row 3: cols 4-8 (einschließlich Spalte 4)
+ * - Bei Spalte 4 überlappen sich beide Linien vertikal
+ */
+export function getZoneDividerBorders(row: number, col: number): {
+  top?: boolean;
+  right?: boolean;
+  bottom?: boolean;
+  left?: boolean;
+} {
+  // Unter Row 4: cols 0-4 (linke Linie bis einschließlich neutrale Zelle)
+  if (row === 4 && col >= 0 && col <= 4) {
+    return { bottom: true };
+  }
+  // Unter Row 3: cols 4-8 (rechte Linie ab Spalte 4 - überlappt bei col 4)
+  if (row === 3 && col >= 4 && col <= 8) {
+    return { bottom: true };
+  }
+  return {};
 }
 
 /**
  * Cell Colors - nutzt Theme Colors + Path Color für Selection & Zone Tint
  * Player 1 Zone: Subtiler Path Color Tint (4%)
  * Player 2 Zone: Neutral grau
+ * Schachbrett: Einheitlich 3% schwarz/weiß für ALLE Zonen (wie Single-Player)
+ *
+ * @param row - Zeile der Zelle (0-8), optional für Schachbrett-Berechnung
+ * @param col - Spalte der Zelle (0-8), optional für Schachbrett-Berechnung
  */
 export const getPlayerCellColors = (
   player: DuoPlayerId,
   pathColorHex: string,
-  isDark: boolean
+  isDark: boolean,
+  row?: number,
+  col?: number
 ) => {
   const zoneColors = getZoneColors(isDark, pathColorHex);
   const themeColors = isDark ? colors.dark : colors.light;
 
-  // Basis: Zone-abhängiger Background mit Path Color Tint für P1
-  const cellBackground =
-    player === 1 ? zoneColors.player1Background :   // Mit Path Color Tint
-    player === 2 ? zoneColors.player2Background :   // Neutral
-    zoneColors.neutralBackground;                   // Zwischen beiden
+  // Schachbrett-Logik: (boxRow + boxCol) % 2 === 1
+  const isCheckerboardBlock = row !== undefined && col !== undefined
+    ? (Math.floor(row / 3) + Math.floor(col / 3)) % 2 === 1
+    : false;
+
+  // Basis: Zone-abhängiger Background
+  // Schachbrett wird als Overlay über der Zone-Farbe angewendet
+  let cellBackground: string;
+  if (player === 1) {
+    // Player 1 Zone (unten): Path Color Tint + optionales Schachbrett-Overlay
+    cellBackground = isCheckerboardBlock
+      ? zoneColors.checkerboardColor  // Schachbrett überschreibt Zone-Farbe
+      : zoneColors.player1Background; // 4% Path Color
+  } else if (player === 2) {
+    // Player 2 Zone (oben): Neutral + optionales Schachbrett
+    cellBackground = isCheckerboardBlock
+      ? zoneColors.checkerboardColor  // 3% schwarz/weiß
+      : zoneColors.player2Background; // Neutral
+  } else {
+    // Mittlere Zelle (neutral)
+    cellBackground = zoneColors.neutralBackground;
+  }
 
   return {
-    // Cell backgrounds - P1 mit Path Color Tint, P2 neutral
+    // Cell backgrounds - mit einheitlichem Schachbrett
     cellBackground,
     // Selected state nutzt Path Color für BEIDE Spieler (gleichwertig!)
     selectedBackground: pathColorHex,

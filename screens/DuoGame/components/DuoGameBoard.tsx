@@ -123,8 +123,41 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     [player1Cell, player2Cell]
   );
 
+  // Berechnung der Positionen für die Trennlinien-Extensions
+  const gridOffset = (BOARD_SIZE - GRID_SIZE) / 2 + GRID_BORDER_WIDTH;
+  const leftExtensionY = gridOffset + CELL_SIZE * 5 - 1; // Unterkante Row 4
+  const rightExtensionY = gridOffset + CELL_SIZE * 4 - 1; // Unterkante Row 3
+
   return (
     <View style={styles.boardContainer}>
+      {/* Linke Trennlinien-Extension (unter Row 4, zum linken Bildschirmrand) */}
+      <View
+        style={[
+          styles.dividerExtension,
+          {
+            left: 0,
+            right: '50%',
+            marginRight: BOARD_SIZE / 2,
+            top: leftExtensionY,
+            backgroundColor: pathColorHex,
+          },
+        ]}
+      />
+
+      {/* Rechte Trennlinien-Extension (unter Row 3, zum rechten Bildschirmrand) */}
+      <View
+        style={[
+          styles.dividerExtension,
+          {
+            right: 0,
+            left: '50%',
+            marginLeft: BOARD_SIZE / 2,
+            top: rightExtensionY,
+            backgroundColor: pathColorHex,
+          },
+        ]}
+      />
+
       <Animated.View style={[
         styles.boardWrapper,
         animatedStyle,
@@ -161,19 +194,6 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
               style={[
                 styles.playerAreaBackground,
                 { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: boardColors.player1Background },
-              ]}
-            />
-            {/* Middle cell - neutraler Hintergrund (zwischen Zonen) */}
-            <View
-              style={[
-                styles.middleCellBackground,
-                {
-                  left: CELL_SIZE * 4,
-                  top: BOARD_SIZE * 0.47 + BOARD_SIZE * 0.15 / 2 - CELL_SIZE / 2,
-                  width: CELL_SIZE,
-                  height: CELL_SIZE,
-                  backgroundColor: boardColors.neutralBackground,
-                },
               ]}
             />
           </View>
@@ -274,16 +294,6 @@ const styles = StyleSheet.create({
     width: "100%",
     zIndex: 1,
   },
-  middleCellBackground: {
-    position: "absolute",
-    // backgroundColor is set dynamically in the component based on theme
-    zIndex: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
@@ -302,7 +312,7 @@ const styles = StyleSheet.create({
   gridLine: {
     position: "absolute",
     // backgroundColor dynamisch gesetzt (theme-aware)
-    zIndex: 10, // Hoch genug, um klar über allen Zellen zu liegen
+    zIndex: 15, // Höher als Trennlinien-Zellen (z-Index 10), um nicht verdeckt zu werden
   },
   horizontalGridLine: {
     width: GRID_SIZE,
@@ -325,6 +335,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 10,
     borderRadius: 8,
+  },
+  dividerExtension: {
+    position: "absolute",
+    height: 2,
+    zIndex: 20, // Über allen anderen Elementen
   },
 });
 

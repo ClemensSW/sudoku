@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getPlayerCellColors, type DuoPlayerId } from "@/utils/duoColors";
+import { getPlayerCellColors, getZoneDividerBorders, type DuoPlayerId } from "@/utils/duoColors";
 import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DuoGameCellProps {
@@ -36,9 +36,10 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 }) => {
   const { isDark } = useTheme();
   const pathColorHex = useStoredColorHex();
+  // Row/Col für Schachbrett-Berechnung übergeben
   const theme = React.useMemo(
-    () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark),
-    [player, pathColorHex, isDark]
+    () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark, row, col),
+    [player, pathColorHex, isDark, row, col]
   );
 
   // Pulse animation only when *filled* by the player
@@ -114,17 +115,6 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   };
 
   const shouldRotateContent = player === 2 && rotateForPlayer2;
-  const middleCellShadow =
-    player === 0
-      ? {
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.2,
-          shadowRadius: 2,
-          elevation: 3,
-          zIndex: 5,
-        }
-      : null;
 
   // Intelligente Border-Logik: An 3×3 Grenzen keinen Border, dort ist Grid-Linie
   const getBorderWidths = () => {
@@ -139,16 +129,36 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     };
   };
 
+  // Zonen-Trennlinie in Path Color (zwei separate horizontale Linien)
+  const dividerBorders = getZoneDividerBorders(row, col);
+  const dividerBorderWidth = 2;
+  const getDividerBorderStyle = () => {
+    const style: any = {};
+    const hasDivider = dividerBorders.bottom; // Nur bottom-Borders für die horizontalen Linien
+
+    // Höherer z-Index für Zellen mit Trennlinie
+    if (hasDivider) {
+      style.zIndex = 10;
+    }
+
+    if (dividerBorders.bottom) {
+      style.borderBottomWidth = dividerBorderWidth;
+      style.borderBottomColor = pathColorHex;
+    }
+
+    return style;
+  };
+
   return (
     <TouchableOpacity
       style={[
         styles.cellContainer,
         { backgroundColor: getCellBackgroundColor() },
-        middleCellShadow as any,
         {
           ...getBorderWidths(),
-          borderColor: player === 0 ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.2)",
+          borderColor: "rgba(0, 0, 0, 0.2)",
         },
+        getDividerBorderStyle(),
       ]}
       onPress={() => onPress(row, col)}
       disabled={cell.isInitial}

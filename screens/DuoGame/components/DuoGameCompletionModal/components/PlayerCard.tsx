@@ -18,6 +18,8 @@ interface PlayerCardProps {
   // Neue Props für Avatar und Name
   playerName: string;
   avatarSource: ImageSourcePropType;
+  // Position des Containers (für Badge-Platzierung)
+  isBottomPlayer?: boolean;
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -30,6 +32,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   trophyScale,
   playerName,
   avatarSource,
+  isBottomPlayer = false,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -75,9 +78,14 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         playerStyle,
       ]}
     >
-      {/* Winner Badge */}
+      {/* Winner Badge - Position abhängig von isBottomPlayer */}
       {isWinner && (
-        <View style={styles.winnerBadge}>
+        <View
+          style={[
+            styles.winnerBadge,
+            isBottomPlayer ? styles.winnerBadgeBottom : styles.winnerBadgeTop,
+          ]}
+        >
           <Text
             style={[
               styles.winnerText,
@@ -163,11 +171,16 @@ const styles = StyleSheet.create({
   },
   winnerBadge: {
     position: "absolute",
-    top: -12,
     left: 0,
     right: 0,
     alignItems: "center",
     zIndex: 10,
+  },
+  winnerBadgeTop: {
+    top: -12,
+  },
+  winnerBadgeBottom: {
+    bottom: -12,
   },
   winnerText: {
     fontSize: 12,

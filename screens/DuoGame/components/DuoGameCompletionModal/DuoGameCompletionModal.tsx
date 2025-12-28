@@ -155,6 +155,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             trophyScale={trophy2Scale}
             playerName={opponentName}
             avatarSource={opponentAvatarSource}
+            isBottomPlayer={false}
           />
 
           {/* VS Divider */}
@@ -171,6 +172,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             trophyScale={trophy1Scale}
             playerName={ownerName}
             avatarSource={ownerAvatarSource}
+            isBottomPlayer={true}
           />
         </View>
 

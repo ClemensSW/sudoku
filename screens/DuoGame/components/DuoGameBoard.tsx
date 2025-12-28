@@ -16,7 +16,7 @@ import {
   CELL_SIZE as SHARED_CELL_SIZE,
 } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getDuoBoardColors } from "@/utils/duoColors";
+import { getDuoBoardColors, getDividerColor } from "@/utils/duoColors";
 import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 // Use the same board size as regular SudokuBoard
@@ -124,36 +124,40 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   );
 
   // Berechnung der Positionen für die Trennlinien-Extensions
+  // Die Zell-Borders sind INNERHALB der Zellen (2px hoch), daher -2 um mit dem Border zu überlappen
   const gridOffset = (BOARD_SIZE - GRID_SIZE) / 2 + GRID_BORDER_WIDTH;
-  const leftExtensionY = gridOffset + CELL_SIZE * 5 - 1; // Unterkante Row 4
-  const rightExtensionY = gridOffset + CELL_SIZE * 4 - 1; // Unterkante Row 3
+  const leftExtensionY = gridOffset + CELL_SIZE * 5 - 2; // Oberkante des Bottom-Borders von Row 4
+  const rightExtensionY = gridOffset + CELL_SIZE * 4 - 2; // Oberkante des Bottom-Borders von Row 3
+  const dividerColor = getDividerColor(pathColorHex); // 70% Opacity für dezentere Linie
 
   return (
     <View style={styles.boardContainer}>
-      {/* Linke Trennlinien-Extension (unter Row 4, zum linken Bildschirmrand) */}
+      {/* Linke Trennlinien-Extension (unter Row 4, von Bildschirmrand bis Grid-Rand) */}
       <View
         style={[
           styles.dividerExtension,
           {
             left: 0,
             right: '50%',
-            marginRight: BOARD_SIZE / 2,
+            // Endet am linken Grid-Rand (nicht in der Mitte, um Überlappung mit Cell-Borders zu vermeiden)
+            marginRight: GRID_SIZE / 2,
             top: leftExtensionY,
-            backgroundColor: pathColorHex,
+            backgroundColor: dividerColor,
           },
         ]}
       />
 
-      {/* Rechte Trennlinien-Extension (unter Row 3, zum rechten Bildschirmrand) */}
+      {/* Rechte Trennlinien-Extension (unter Row 3, von Grid-Rand bis Bildschirmrand) */}
       <View
         style={[
           styles.dividerExtension,
           {
             right: 0,
             left: '50%',
-            marginLeft: BOARD_SIZE / 2,
+            // Beginnt am rechten Grid-Rand
+            marginLeft: GRID_SIZE / 2,
             top: rightExtensionY,
-            backgroundColor: pathColorHex,
+            backgroundColor: dividerColor,
           },
         ]}
       />
@@ -260,6 +264,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
+    overflow: "visible", // Damit die Trennlinien-Extensions nicht abgeschnitten werden
   },
   boardWrapper: {
     borderRadius: 16,

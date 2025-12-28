@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getPlayerCellColors, getZoneDividerBorders, type DuoPlayerId } from "@/utils/duoColors";
+import { getPlayerCellColors, getZoneDividerBorders, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
 import { useStoredColorHex } from "@/contexts/color/ColorContext";
 
 interface DuoGameCellProps {
@@ -129,12 +129,13 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     };
   };
 
-  // Zonen-Trennlinie in Path Color (zwei separate horizontale Linien)
+  // Zonen-Trennlinie in Path Color mit leichter Transparenz
   const dividerBorders = getZoneDividerBorders(row, col);
   const dividerBorderWidth = 2;
+  const dividerColor = getDividerColor(pathColorHex); // 70% Opacity
   const getDividerBorderStyle = () => {
     const style: any = {};
-    const hasDivider = dividerBorders.bottom; // Nur bottom-Borders für die horizontalen Linien
+    const hasDivider = dividerBorders.bottom;
 
     // Höherer z-Index für Zellen mit Trennlinie
     if (hasDivider) {
@@ -143,7 +144,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 
     if (dividerBorders.bottom) {
       style.borderBottomWidth = dividerBorderWidth;
-      style.borderBottomColor = pathColorHex;
+      style.borderBottomColor = dividerColor;
     }
 
     return style;

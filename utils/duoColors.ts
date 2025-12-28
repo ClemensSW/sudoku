@@ -37,7 +37,7 @@ function getZoneColors(isDark: boolean, pathColorHex: string) {
 
     return {
       // Player 1 (unten): Dark Background + 4% aufgehellte Path Color
-      player1Background: mixColors(lightenedPathColor, baseDark, 96), // 4% helle Path Color
+      player1Background: mixColors(lightenedPathColor, baseDark, 90), // 4% helle Path Color
       // Player 2 (oben): Neutral Dark Background (keine Farbe)
       player2Background: baseDark,  // #292A2D
       // Middle/Neutral: Zwischen beiden
@@ -58,6 +58,15 @@ function getZoneColors(isDark: boolean, pathColorHex: string) {
       checkerboardColor,
     };
   }
+}
+
+/**
+ * Gibt die Trennlinien-Farbe mit leichter Transparenz zurück
+ * Damit die Linie nicht zu dominant wirkt
+ */
+export function getDividerColor(pathColorHex: string): string {
+  // 70% Opacity (B3 in Hex) für dezentere Trennlinie
+  return pathColorHex + '80';
 }
 
 /**

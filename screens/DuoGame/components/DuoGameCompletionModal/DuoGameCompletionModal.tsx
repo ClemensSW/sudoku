@@ -4,6 +4,7 @@ import { View, StyleSheet, ImageSourcePropType } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import { Difficulty } from "@/utils/sudoku";
 import ConfettiEffect from "@/screens/GameCompletion/components/ConfettiEffect/ConfettiEffect";
 
@@ -77,6 +78,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
 }) => {
   const { colors, isDark } = useTheme();
   const progressColor = useProgressColor(); // Theme-aware path color
+  const { colors: leagueColors } = useCurrentLeague(); // Liga-Farben
 
   // Animations
   const {
@@ -159,6 +161,8 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             playerName={opponentName}
             avatarSource={opponentAvatarSource}
             playerTitle={opponentTitle}
+            leagueGradient={leagueColors.gradient}
+            leaguePrimary={leagueColors.primary}
           />
 
           {/* VS Divider */}
@@ -176,6 +180,8 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             playerName={ownerName}
             avatarSource={ownerAvatarSource}
             playerTitle={ownerTitle}
+            leagueGradient={leagueColors.gradient}
+            leaguePrimary={leagueColors.primary}
           />
         </View>
 
@@ -183,7 +189,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
         <ActionButtons
           onRematch={onRevanche}
           onBackToMenu={onClose}
-          progressColor={progressColor}
+          leaguePrimary={leagueColors.primary}
           buttonOpacity={buttonOpacity}
         />
       </Animated.View>
@@ -213,10 +219,10 @@ const styles = StyleSheet.create({
   },
   battleContainer: {
     width: "90%",
-    flexDirection: "column", // Vertikales Layout
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    gap: 16, // Abstand zwischen den Elementen
+    gap: 20,
     marginTop: 0,
   },
 });

@@ -22,7 +22,8 @@ function darkenColor(hex: string, percent: number): string {
 
 interface DuoProgressBarProps {
   percentage: number;
-  color: string;
+  color?: string;
+  gradient?: [string, string]; // Liga-Gradient [primary, accent]
   height?: number;
   showLabel?: boolean;
   animated?: boolean;
@@ -30,7 +31,8 @@ interface DuoProgressBarProps {
 
 const DuoProgressBar: React.FC<DuoProgressBarProps> = ({
   percentage,
-  color,
+  color = "#888888",
+  gradient,
   height = 10,
   showLabel = true,
   animated = true,
@@ -53,7 +55,8 @@ const DuoProgressBar: React.FC<DuoProgressBarProps> = ({
     width: `${progress.value * 100}%`,
   }));
 
-  const darkerColor = darkenColor(color, 30);
+  // Use gradient if provided, otherwise fallback to color with darkening
+  const gradientColors: [string, string] = gradient ?? [color, darkenColor(color, 30)];
 
   return (
     <View style={styles.container}>
@@ -81,7 +84,7 @@ const DuoProgressBar: React.FC<DuoProgressBarProps> = ({
             ]}
           >
             <LinearGradient
-              colors={[color, darkerColor]}
+              colors={gradientColors}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.gradient, { borderRadius: height / 2 }]}

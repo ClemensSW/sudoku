@@ -20,6 +20,9 @@ interface PlayerCardProps {
   avatarSource: ImageSourcePropType;
   // Titel des Spielers (optional)
   playerTitle?: string | null;
+  // Liga-Farben
+  leagueGradient: [string, string];
+  leaguePrimary: string;
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -33,6 +36,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   playerName,
   avatarSource,
   playerTitle,
+  leagueGradient,
+  leaguePrimary,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -48,16 +53,16 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   // Trophy nur bei Unentschieden anzeigen (nicht beim Gewinner - der hat schon den Badge)
   const showTrophy = isTie;
 
-  // Determine border color (Winner gets Path Color with glow)
-  const borderColor = isWinner ? progressColor : colors.border;
+  // Determine border color (Winner gets League Color with glow)
+  const borderColor = isWinner ? leaguePrimary : colors.border;
 
   // Determine opacity (loser is slightly faded)
   const opacity = !isTie && !isWinner ? 0.7 : 1;
 
-  // Glow-Effekt für Gewinner
+  // Glow-Effekt für Gewinner (mit Liga-Farbe)
   const glowStyle = isWinner
     ? {
-        shadowColor: progressColor,
+        shadowColor: leaguePrimary,
         shadowOpacity: isDark ? 0.5 : 0.3,
         shadowRadius: 12,
         shadowOffset: { width: 0, height: 0 },
@@ -84,7 +89,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           <Text
             style={[
               styles.winnerText,
-              { backgroundColor: progressColor },
+              { backgroundColor: leaguePrimary },
             ]}
           >
             {t("completion.winner")}
@@ -143,7 +148,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
                 styles.trophyCircle,
                 {
                   backgroundColor: isWinner
-                    ? `${progressColor}20`
+                    ? `${leaguePrimary}20`
                     : isDark
                     ? "rgba(255,255,255,0.1)"
                     : "rgba(0,0,0,0.05)",
@@ -153,18 +158,19 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
               <Feather
                 name={isWinner ? "award" : "star"}
                 size={isWinner ? 18 : 14}
-                color={isWinner ? progressColor : colors.textSecondary}
+                color={isWinner ? leaguePrimary : colors.textSecondary}
               />
             </View>
           </Animated.View>
         )}
       </View>
 
-      {/* Progress Bar */}
+      {/* Progress Bar mit Liga-Gradient */}
       <View style={styles.progressContainer}>
         <DuoProgressBar
           percentage={completionPercentage}
-          color={isWinner || isTie ? progressColor : colors.textSecondary}
+          gradient={isWinner || isTie ? leagueGradient : undefined}
+          color={isWinner || isTie ? undefined : colors.textSecondary}
           height={10}
           showLabel={true}
           animated={true}

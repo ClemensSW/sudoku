@@ -437,15 +437,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     </View>
                   </View>
 
-                  {/* Chevron Indicator */}
-                  {onLeaderboardPress && (
-                    <Feather
-                      name="chevron-right"
-                      size={20}
-                      color={colors.textSecondary}
-                      style={styles.rankChevron}
-                    />
-                  )}
                 </LinearGradient>
               </Animated.View>
             </Pressable>

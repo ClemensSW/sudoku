@@ -2,12 +2,18 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  // Outer container with shadow and border
-  cardShadow: {
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 16,
     borderWidth: 1.5,
     marginBottom: 12,
     overflow: "hidden",
+    // Original height restored
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    minHeight: 84,
     // Shadow & elevation
     elevation: 4,
     shadowOffset: { width: 0, height: 4 },
@@ -15,34 +21,16 @@ export default StyleSheet.create({
     shadowRadius: 10,
   },
 
-  // Inner gradient with content
-  cardGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-  },
-
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-
-  content: {
-    flex: 1,
-  },
-
   title: {
     fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.3,
+    fontWeight: "600",
+    letterSpacing: 0.2,
+    textAlign: "center",
   },
 
-  playIcon: {
-    marginLeft: "auto",
+  playIconContainer: {
+    position: "absolute",
+    right: 20,
+    opacity: 0.6,
   },
 });

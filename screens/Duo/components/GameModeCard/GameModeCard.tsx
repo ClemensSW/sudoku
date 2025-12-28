@@ -45,20 +45,16 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   }));
 
   const isLocal = mode === "local";
-  const icon = isLocal ? "users" : "wifi";
   const title = isLocal
     ? t("gameModeModal.local.title")
     : t("gameModeModal.online.title");
 
-  // Colors - matching other Duo containers (neutral, surface-based)
+  // Colors
   const cardBg = colors.surface;
   const cardBorder = theme.isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.06)";
-  const iconBg = theme.isDark
-    ? "rgba(255,255,255,0.08)"
-    : "rgba(0,0,0,0.04)";
-  const iconColor = theme.isDark ? "#FFFFFF" : leagueColors.accent;
+  const iconColor = theme.isDark ? colors.textSecondary : leagueColors.accent;
 
   return (
     <Pressable
@@ -72,8 +68,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
     >
       <Animated.View
         style={[
-          styles.cardShadow,
-          styles.cardGradient,
+          styles.card,
           {
             backgroundColor: cardBg,
             borderColor: cardBorder,
@@ -82,29 +77,15 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
           animatedStyle,
         ]}
       >
-        {/* Icon Container */}
-        <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
-          <Feather
-            name={icon}
-            size={24}
-            color={iconColor}
-          />
-        </View>
+        {/* Centered Title */}
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          {title}
+        </Text>
 
-        {/* Title */}
-        <View style={styles.content}>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
-            {title}
-          </Text>
+        {/* Play Icon - Right aligned */}
+        <View style={styles.playIconContainer}>
+          <Feather name="chevron-right" size={22} color={iconColor} />
         </View>
-
-        {/* Play Icon */}
-        <Feather
-          name="play-circle"
-          size={24}
-          color={iconColor}
-          style={styles.playIcon}
-        />
       </Animated.View>
     </Pressable>
   );

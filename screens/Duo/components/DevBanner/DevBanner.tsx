@@ -8,11 +8,15 @@ import styles from "./DevBanner.styles";
 
 interface DevBannerProps {
   text?: string;
+  visible?: boolean;
 }
 
 const DevBanner: React.FC<DevBannerProps> = ({
-  text = "IN ENTWICKLUNG"
+  text = "IN ENTWICKLUNG",
+  visible = true,
 }) => {
+  // Hide if not visible
+  if (!visible) return null;
   const theme = useTheme();
 
   // Farben basierend auf Theme - Deep Teal (matching Duo theme)

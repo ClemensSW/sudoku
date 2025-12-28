@@ -43,6 +43,7 @@ const Duo: React.FC = () => {
     useState<Difficulty>("medium");
   const [showTutorialOverlay, setShowTutorialOverlay] = useState(false);
   const [leaderboardY, setLeaderboardY] = useState(0);
+  const [showDevBanner, setShowDevBanner] = useState(true);
 
   // Handler: Tutorial-Overlay öffnen
   const handleTutorialPress = useCallback(() => {
@@ -101,7 +102,7 @@ const Duo: React.FC = () => {
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
       {/* Dev Banner */}
-      <DevBanner />
+      <DevBanner visible={showDevBanner} />
 
       {/* Backdrop für Modal */}
       {showDifficultyModal && (
@@ -147,7 +148,10 @@ const Duo: React.FC = () => {
         <MatchHistoryCard />
 
         {/* Dev League Toggle (only in DEV mode) */}
-        <DevLeagueToggle />
+        <DevLeagueToggle
+          showDevBanner={showDevBanner}
+          onToggleDevBanner={() => setShowDevBanner((prev) => !prev)}
+        />
       </ScrollView>
 
       {/* Tutorial Overlay */}

@@ -13,7 +13,15 @@ import { useDevLeague, LEAGUE_ORDER } from '@/contexts/DevLeagueContext';
 import { getLeagueColors } from '@/utils/elo/leagueColors';
 import { getRankTierName } from '@/utils/elo/eloCalculator';
 
-const DevLeagueToggle: React.FC = () => {
+interface DevLeagueToggleProps {
+  showDevBanner?: boolean;
+  onToggleDevBanner?: () => void;
+}
+
+const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
+  showDevBanner = true,
+  onToggleDevBanner,
+}) => {
   // Nur im DEV-Modus anzeigen
   if (!__DEV__) return null;
 
@@ -117,6 +125,45 @@ const DevLeagueToggle: React.FC = () => {
             );
           })}
         </View>
+
+        {/* Banner Toggle */}
+        {onToggleDevBanner && (
+          <Pressable
+            onPress={onToggleDevBanner}
+            style={({ pressed }) => [
+              styles.bannerToggle,
+              {
+                backgroundColor: showDevBanner
+                  ? theme.isDark
+                    ? 'rgba(46,107,123,0.3)'
+                    : 'rgba(46,107,123,0.15)'
+                  : theme.isDark
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'rgba(0,0,0,0.05)',
+                borderColor: showDevBanner
+                  ? 'rgba(46,107,123,0.5)'
+                  : theme.isDark
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'rgba(0,0,0,0.08)',
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Feather
+              name={showDevBanner ? 'eye' : 'eye-off'}
+              size={14}
+              color={showDevBanner ? '#2E6B7B' : theme.colors.textSecondary}
+            />
+            <Text
+              style={[
+                styles.bannerToggleText,
+                { color: showDevBanner ? '#2E6B7B' : theme.colors.textSecondary },
+              ]}
+            >
+              {showDevBanner ? 'Banner sichtbar' : 'Banner versteckt'}
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -182,6 +229,21 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
+  },
+  bannerToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  bannerToggleText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
 

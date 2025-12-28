@@ -218,9 +218,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     ? t(`rank.${nextTier}`, { defaultValue: getRankTierName(nextTier) })
     : "";
 
-  // Icon colors - solid backgrounds to avoid elevation artifacts
-  const iconCircleBg = theme.isDark ? colors.surface : "#FFFFFF";
-
   return (
     <Animated.View
       style={[
@@ -268,77 +265,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
 
         {isLoggedIn ? (
           <>
-            {/* Stats Row - Premium Cards */}
-            <Animated.View style={[styles.statsRow, statsAnimatedStyle]}>
-              {/* W-L Record Card (clickable -> Erfolge Tab) */}
-              <Pressable onPress={handleRecordPress} style={styles.statCardWrapper}>
-                <Animated.View
-                  style={[
-                    styles.statCard,
-                    {
-                      backgroundColor: colors.surface,
-                      borderColor: hexToRGBA(ERFOLGE_COLOR, theme.isDark ? 0.3 : 0.4),
-                      shadowColor: ERFOLGE_COLOR,
-                      elevation: theme.isDark ? 0 : 4,
-                    },
-                  ]}
-                  entering={FadeInDown.duration(400).delay(100)}
-                >
-                  <LinearGradient
-                    colors={getTierGradientColors(ERFOLGE_COLOR, theme.isDark)}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.statCardGradient}
-                  >
-                    {/* Icon (no glow for stat cards) */}
-                    <View style={[styles.statIconCircle, { backgroundColor: iconCircleBg }]}>
-                      <ZielIcon width={28} height={28} />
-                    </View>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {wins}-{losses}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      {t("stats.record", { defaultValue: "Bilanz" })}
-                    </Text>
-                  </LinearGradient>
-                </Animated.View>
-              </Pressable>
-
-              {/* Daily Streak Card (clickable) */}
-              <Pressable onPress={handleStreakPress} style={styles.statCardWrapper}>
-                <Animated.View
-                  style={[
-                    styles.statCard,
-                    {
-                      backgroundColor: colors.surface,
-                      borderColor: hexToRGBA(SERIEN_COLOR, theme.isDark ? 0.5 : 0.6),
-                      shadowColor: SERIEN_COLOR,
-                      elevation: theme.isDark ? 0 : 4,
-                    },
-                  ]}
-                  entering={FadeInDown.duration(400).delay(200)}
-                >
-                  <LinearGradient
-                    colors={getTierGradientColors(SERIEN_COLOR, theme.isDark)}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.statCardGradient}
-                  >
-                    {/* Icon (no glow for stat cards) */}
-                    <View style={[styles.statIconCircle, { backgroundColor: iconCircleBg }]}>
-                      <LightningIcon width={28} height={28} />
-                    </View>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {currentStreak}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      {streakLabel}
-                    </Text>
-                  </LinearGradient>
-                </Animated.View>
-              </Pressable>
-            </Animated.View>
-
             {/* Metallic Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
             <Pressable
               onPress={handleLeaderboardPress}
@@ -355,7 +281,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     elevation: theme.isDark ? 0 : 4,
                   },
                 ]}
-                entering={FadeInDown.duration(400).delay(300)}
+                entering={FadeInDown.duration(400).delay(100)}
               >
                 {/* Subtle Tier-tinted Gradient Background */}
                 <LinearGradient
@@ -440,6 +366,81 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                 </LinearGradient>
               </Animated.View>
             </Pressable>
+
+            {/* Stats Row - Neutral Cards with Colored Icons */}
+            <Animated.View style={[styles.statsRow, statsAnimatedStyle]}>
+              {/* W-L Record Card (clickable -> Erfolge Tab) */}
+              <Pressable onPress={handleRecordPress} style={styles.statCardWrapper}>
+                <Animated.View
+                  style={[
+                    styles.statCard,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: theme.isDark
+                        ? "rgba(255,255,255,0.08)"
+                        : "rgba(0,0,0,0.06)",
+                      shadowColor: theme.isDark ? "transparent" : "rgba(0,0,0,0.1)",
+                      elevation: theme.isDark ? 0 : 2,
+                    },
+                  ]}
+                  entering={FadeInDown.duration(400).delay(200)}
+                >
+                  <View style={styles.statCardContent}>
+                    {/* Icon with accent color background */}
+                    <View
+                      style={[
+                        styles.statIconCircle,
+                        { backgroundColor: hexToRGBA(ERFOLGE_COLOR, theme.isDark ? 0.2 : 0.15) },
+                      ]}
+                    >
+                      <ZielIcon width={28} height={28} />
+                    </View>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {wins}-{losses}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                      {t("stats.record", { defaultValue: "Bilanz" })}
+                    </Text>
+                  </View>
+                </Animated.View>
+              </Pressable>
+
+              {/* Daily Streak Card (clickable) */}
+              <Pressable onPress={handleStreakPress} style={styles.statCardWrapper}>
+                <Animated.View
+                  style={[
+                    styles.statCard,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: theme.isDark
+                        ? "rgba(255,255,255,0.08)"
+                        : "rgba(0,0,0,0.06)",
+                      shadowColor: theme.isDark ? "transparent" : "rgba(0,0,0,0.1)",
+                      elevation: theme.isDark ? 0 : 2,
+                    },
+                  ]}
+                  entering={FadeInDown.duration(400).delay(300)}
+                >
+                  <View style={styles.statCardContent}>
+                    {/* Icon with accent color background */}
+                    <View
+                      style={[
+                        styles.statIconCircle,
+                        { backgroundColor: hexToRGBA(SERIEN_COLOR, theme.isDark ? 0.2 : 0.15) },
+                      ]}
+                    >
+                      <LightningIcon width={28} height={28} />
+                    </View>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {currentStreak}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                      {streakLabel}
+                    </Text>
+                  </View>
+                </Animated.View>
+              </Pressable>
+            </Animated.View>
           </>
         ) : (
           <View style={styles.loginPrompt}>

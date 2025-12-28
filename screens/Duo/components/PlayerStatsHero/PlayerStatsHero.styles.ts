@@ -46,12 +46,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
-  // Stats row - contains stat cards
+  // Stats row - contains stat cards (now below rank card)
   statsRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "stretch",
-    marginBottom: 16,
+    marginTop: 0,
     gap: 12,
     width: "100%",
   },
@@ -73,8 +73,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
 
-  // Inner gradient container for stat cards
+  // Inner gradient container for stat cards (legacy)
   statCardGradient: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+  },
+
+  // Content container for neutral stat cards
+  statCardContent: {
     flex: 1,
     alignItems: "center",
     paddingVertical: 20,
@@ -130,6 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1.5,
     width: "100%",
+    marginBottom: 16,
     overflow: "hidden",
     // iOS Shadow
     shadowOffset: { width: 0, height: 4 },

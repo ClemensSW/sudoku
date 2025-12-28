@@ -22,9 +22,6 @@ import styles from "./LeaderboardCard.styles";
 // SVG Icon
 import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
-// Duo Color - Deep Teal (matching PlayerStatsHero header)
-const DUO_COLOR = "#2E6B7B";
-
 // Zone Colors
 const PROMOTION_COLOR = "#4CAF50"; // Grün
 const DEMOTION_COLOR = "#E57373"; // Rot
@@ -111,8 +108,8 @@ const LeaderboardCard: React.FC = () => {
     ? hexToRGBA(DEMOTION_COLOR, 0.15)
     : hexToRGBA(DEMOTION_COLOR, 0.08);
   const currentUserBg = theme.isDark
-    ? hexToRGBA(DUO_COLOR, 0.2)
-    : hexToRGBA(DUO_COLOR, 0.1);
+    ? hexToRGBA(leagueColor, 0.2)
+    : hexToRGBA(leagueColor, 0.1);
 
   // Split players into zones
   const promotionPlayers = DUMMY_PLAYERS.slice(0, 3);
@@ -136,7 +133,7 @@ const LeaderboardCard: React.FC = () => {
       <Text
         style={[
           styles.rankNumber,
-          { color: player.isCurrentUser ? DUO_COLOR : colors.textSecondary },
+          { color: player.isCurrentUser ? leagueColor : colors.textSecondary },
         ]}
       >
         {player.rank}.
@@ -170,7 +167,7 @@ const LeaderboardCard: React.FC = () => {
       <Text
         style={[
           styles.playerPoints,
-          { color: player.isCurrentUser ? DUO_COLOR : colors.textSecondary },
+          { color: player.isCurrentUser ? leagueColor : colors.textSecondary },
         ]}
       >
         {player.points.toLocaleString("de-DE")}
@@ -185,8 +182,8 @@ const LeaderboardCard: React.FC = () => {
         {
           backgroundColor: cardBg,
           borderColor: cardBorder,
-          // Shadow like PlayerStatsHero (DUO_COLOR glow)
-          shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+          // Shadow with league color glow
+          shadowColor: theme.isDark ? "transparent" : leagueColor,
           elevation: theme.isDark ? 0 : 8,
         },
       ]}

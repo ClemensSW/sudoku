@@ -87,5 +87,35 @@ export default StyleSheet.create({
   progressBarFill: {
     height: "100%",
     borderRadius: 3,
-  }
+  },
+
+  // Premium Duo Button Styles
+  duoButton: {
+    width: "100%",
+    borderRadius: 12,
+    marginTop: 0,
+    overflow: "hidden",
+    // Shadow wird dynamisch gesetzt
+  },
+  duoButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    gap: 8,
+    overflow: "hidden",
+  },
+  duoButtonShine: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    width: 60,
+  },
+  duoButtonText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    letterSpacing: 0.5,
+  },
 });

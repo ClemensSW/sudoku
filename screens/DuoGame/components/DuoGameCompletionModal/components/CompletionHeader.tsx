@@ -1,12 +1,11 @@
 // screens/DuoGame/components/DuoGameCompletionModal/components/CompletionHeader.tsx
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import BattleIcon from "@/assets/svg/battle.svg";
 
 interface CompletionHeaderProps {
-  gameTime: number;
   winner: 0 | 1 | 2;
   winReason: "completion" | "errors";
   progressColor: string;
@@ -14,7 +13,6 @@ interface CompletionHeaderProps {
 }
 
 const CompletionHeader: React.FC<CompletionHeaderProps> = ({
-  gameTime,
   winner,
   winReason,
   progressColor,
@@ -22,13 +20,6 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
-
-  // Format time as MM:SS
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
 
   // Get result text based on winner - jetzt mit dynamischem Namen
   const getResultText = (): string => {
@@ -50,17 +41,23 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Time Badge */}
-      <View
-        style={[
-          styles.timeContainer,
-          {
-            backgroundColor: winner !== 0 ? progressColor : colors.primary,
-          },
-        ]}
-      >
-        <Feather name="clock" size={18} color="#FFFFFF" />
-        <Text style={styles.timeText}>{formatTime(gameTime)}</Text>
+      {/* Battle Icon mit Glow */}
+      <View style={styles.iconWrapper}>
+        {/* Outer Glow */}
+        <View
+          style={[
+            styles.iconGlowOuter,
+            { backgroundColor: `${progressColor}15` },
+          ]}
+        />
+        {/* Inner Glow */}
+        <View
+          style={[
+            styles.iconGlow,
+            { backgroundColor: `${progressColor}30` },
+          ]}
+        />
+        <BattleIcon width={72} height={72} />
       </View>
 
       {/* Result Text */}
@@ -89,24 +86,28 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginBottom: 36,
+    marginBottom: 24,
     zIndex: 1,
   },
-  timeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 24,
-    justifyContent: "center",
+  iconWrapper: {
+    position: "relative",
+    width: 72,
+    height: 72,
     marginBottom: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  timeText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 8,
-    fontVariant: ["tabular-nums"],
+  iconGlow: {
+    position: "absolute",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+  },
+  iconGlowOuter: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
   },
   resultText: {
     fontSize: 32,

@@ -139,7 +139,6 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
 
         {/* Header mit dynamischem Gewinner-Namen */}
         <CompletionHeader
-          gameTime={gameTime}
           winner={winner}
           winReason={winReason}
           progressColor={progressColor}

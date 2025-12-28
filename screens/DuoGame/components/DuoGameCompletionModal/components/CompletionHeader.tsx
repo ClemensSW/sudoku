@@ -43,7 +43,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
     <View style={styles.container}>
       {/* Battle Icon */}
       <View style={styles.iconWrapper}>
-        <BattleIcon width={88} height={88} />
+        <BattleIcon width={100} height={100} />
       </View>
 
       {/* Result Text */}
@@ -72,12 +72,12 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 40,
     zIndex: 1,
   },
   iconWrapper: {
-    width: 88,
-    height: 88,
+    width: 100,
+    height: 100,
     marginTop: 48,
     marginBottom: 80,
     alignItems: "center",

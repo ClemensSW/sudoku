@@ -23,8 +23,6 @@ export default StyleSheet.create({
   puzzleContainer: {
     width: "100%",
     aspectRatio: 1,
-    borderBottomLeftRadius: radius.xl,
-    borderBottomRightRadius: radius.xl,
     overflow: "hidden",
     position: "relative",
   },
@@ -52,7 +50,7 @@ export default StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    top: "60%",
+    top: "45%",
     bottom: -20,
   },
 

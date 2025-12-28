@@ -132,7 +132,8 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
 
           {/* Bottom Fade Gradient */}
           <LinearGradient
-            colors={['transparent', colors.surface]}
+            colors={['transparent', `${colors.surface}80`, colors.surface, colors.surface]}
+            locations={[0, 0.5, 0.85, 1]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.bottomFadeGradient}

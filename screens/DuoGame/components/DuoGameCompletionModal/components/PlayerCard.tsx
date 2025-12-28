@@ -18,8 +18,8 @@ interface PlayerCardProps {
   // Neue Props für Avatar und Name
   playerName: string;
   avatarSource: ImageSourcePropType;
-  // Position des Containers (für Badge-Platzierung)
-  isBottomPlayer?: boolean;
+  // Titel des Spielers (optional)
+  playerTitle?: string | null;
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -32,7 +32,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   trophyScale,
   playerName,
   avatarSource,
-  isBottomPlayer = false,
+  playerTitle,
 }) => {
   const { t } = useTranslation("duoGame");
   const { colors, isDark } = useTheme();
@@ -78,14 +78,9 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         playerStyle,
       ]}
     >
-      {/* Winner Badge - Position abhängig von isBottomPlayer */}
+      {/* Winner Badge - Innerhalb des Containers oben rechts */}
       {isWinner && (
-        <View
-          style={[
-            styles.winnerBadge,
-            isBottomPlayer ? styles.winnerBadgeBottom : styles.winnerBadgeTop,
-          ]}
-        >
+        <View style={styles.winnerBadge}>
           <Text
             style={[
               styles.winnerText,
@@ -108,7 +103,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           />
         </View>
 
-        {/* Name */}
+        {/* Name und Titel */}
         <View style={styles.nameContainer}>
           <Text
             style={[
@@ -120,6 +115,24 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           >
             {playerName}
           </Text>
+          {/* Titel unter dem Namen */}
+          {playerTitle && (
+            <View style={styles.titleRow}>
+              <Feather
+                name="award"
+                size={14}
+                color={colors.textSecondary}
+                style={styles.titleIcon}
+              />
+              <Text
+                style={[styles.playerTitle, { color: colors.textSecondary }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {playerTitle}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Trophy for winner or tie */}
@@ -171,25 +184,19 @@ const styles = StyleSheet.create({
   },
   winnerBadge: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    alignItems: "center",
+    top: 10,
+    right: 10,
     zIndex: 10,
   },
-  winnerBadgeTop: {
-    top: -12,
-  },
-  winnerBadgeBottom: {
-    bottom: -12,
-  },
   winnerText: {
-    fontSize: 12,
-    fontWeight: "900",
+    fontSize: 11,
+    fontWeight: "800",
     color: "#FFFFFF",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
     overflow: "hidden",
+    letterSpacing: 0.5,
   },
   playerHeader: {
     flexDirection: "row",
@@ -216,6 +223,19 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 18,
     fontWeight: "700",
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  titleIcon: {
+    marginRight: 5,
+  },
+  playerTitle: {
+    fontSize: 14,
+    fontWeight: "500",
+    flex: 1,
   },
   trophyContainer: {
     position: "absolute",

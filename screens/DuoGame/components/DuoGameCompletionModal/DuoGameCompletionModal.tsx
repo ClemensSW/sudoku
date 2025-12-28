@@ -41,8 +41,10 @@ interface DuoGameCompletionModalProps {
   // Neue Props für Spieler-Daten
   ownerName: string;
   ownerAvatarSource: ImageSourcePropType;
+  ownerTitle?: string | null;
   opponentName: string;
   opponentAvatarSource: ImageSourcePropType;
+  opponentTitle?: string | null;
 }
 
 const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
@@ -68,8 +70,10 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   player2SolvedCells,
   ownerName,
   ownerAvatarSource,
+  ownerTitle,
   opponentName,
   opponentAvatarSource,
+  opponentTitle,
 }) => {
   const { colors, isDark } = useTheme();
   const progressColor = useProgressColor(); // Theme-aware path color
@@ -155,7 +159,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             trophyScale={trophy2Scale}
             playerName={opponentName}
             avatarSource={opponentAvatarSource}
-            isBottomPlayer={false}
+            playerTitle={opponentTitle}
           />
 
           {/* VS Divider */}
@@ -172,7 +176,7 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
             trophyScale={trophy1Scale}
             playerName={ownerName}
             avatarSource={ownerAvatarSource}
-            isBottomPlayer={true}
+            playerTitle={ownerTitle}
           />
         </View>
 

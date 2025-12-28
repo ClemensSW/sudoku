@@ -4,6 +4,7 @@ import {
   defaultAvatars,
   DEFAULT_AVATAR,
 } from "@/screens/Leistung/utils/defaultAvatars";
+import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 
 /**
  * Fun-Namen für lokale Gegner nach Sprache
@@ -94,17 +95,32 @@ export function getRandomOpponentAvatar(): ImageSourcePropType {
 }
 
 /**
- * Generiert komplette Gegnerdaten (Name + Avatar)
+ * Gibt einen zufälligen Titel für den lokalen Gegner zurück
+ * Wählt aus den verfügbaren Level-Titeln
+ * @returns Zufälliger Titel-Name
+ */
+export function getRandomOpponentTitle(): string {
+  const levels = getLevels();
+  // Wähle aus den ersten 25 Levels (Haupttitel)
+  const availableLevels = levels.slice(0, 25);
+  const randomIndex = Math.floor(Math.random() * availableLevels.length);
+  return availableLevels[randomIndex].name;
+}
+
+/**
+ * Generiert komplette Gegnerdaten (Name + Avatar + Titel)
  * Sollte einmal pro Spiel aufgerufen werden, nicht bei jedem Render
  * @param language Aktuelle Sprache
- * @returns Objekt mit name und avatarSource
+ * @returns Objekt mit name, avatarSource und title
  */
 export function generateOpponentData(language: string): {
   name: string;
   avatarSource: ImageSourcePropType;
+  title: string;
 } {
   return {
     name: getRandomOpponentName(language),
     avatarSource: getRandomOpponentAvatar(),
+    title: getRandomOpponentTitle(),
   };
 }

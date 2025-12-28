@@ -29,6 +29,7 @@ import { useGameSettings } from "../Game/hooks/useGameSettings";
 import { loadUserProfile, UserProfile } from "@/utils/profileStorage";
 import { generateOpponentData } from "./utils/opponentNames";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
+import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 
 // Constants
 const MAX_HINTS = 3;
@@ -68,6 +69,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   const [opponentData, setOpponentData] = useState<{
     name: string;
     avatarSource: ImageSourcePropType;
+    title: string;
   } | null>(null);
 
   // Add game settings hook
@@ -341,8 +343,14 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
         // Neue Props für Spieler-Daten
         ownerName={ownerProfile?.name || "User"}
         ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
+        ownerTitle={
+          ownerProfile?.titleLevelIndex != null
+            ? getLevels()[ownerProfile.titleLevelIndex]?.name
+            : null
+        }
         opponentName={opponentData?.name || "Gegner"}
         opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
+        opponentTitle={opponentData?.title}
       />
 
       {/* Settings Panel */}

@@ -120,7 +120,7 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
     if (monthData?.days.includes(day)) return 'played';
 
     // 5. Shield wurde eingesetzt
-    if (monthData?.shieldDays.includes(day)) return 'shield';
+    if (monthData?.shieldDays?.includes(day)) return 'shield';
 
     // 6. Streak-Break Detection (wenn Streak = 0)
     if (currentStreak === 0 && dayDate < now) {

@@ -104,6 +104,11 @@ async function addShieldDayToHistory(stats: GameStats, dateString: string): Prom
     stats.dailyStreak.playHistory[yearMonth] = { days: [], shieldDays: [] };
   }
 
+  // Sicherstellen dass shieldDays existiert (für alte Daten ohne shieldDays)
+  if (!stats.dailyStreak.playHistory[yearMonth].shieldDays) {
+    stats.dailyStreak.playHistory[yearMonth].shieldDays = [];
+  }
+
   // Füge nur zu shieldDays hinzu (nicht zu days - wurde nicht gespielt!)
   if (!stats.dailyStreak.playHistory[yearMonth].shieldDays.includes(day)) {
     stats.dailyStreak.playHistory[yearMonth].shieldDays.push(day);
@@ -513,6 +518,11 @@ async function addToPlayHistory(
   }
 
   const monthData = stats.dailyStreak.playHistory[yearMonth];
+
+  // Sicherstellen dass shieldDays existiert (für alte Daten ohne shieldDays)
+  if (!monthData.shieldDays) {
+    monthData.shieldDays = [];
+  }
 
   // Füge Tag hinzu wenn noch nicht vorhanden
   if (!monthData.days.includes(day)) {

@@ -22,8 +22,8 @@ import styles from "./LeaderboardCard.styles";
 // SVG Icon
 import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
-// Duo Color
-const DUO_COLOR = "#4A6FA5";
+// Duo Color - Deep Teal (matching PlayerStatsHero header)
+const DUO_COLOR = "#2E6B7B";
 
 // Zone Colors
 const PROMOTION_COLOR = "#4CAF50"; // Grün
@@ -194,7 +194,16 @@ const LeaderboardCard: React.FC = () => {
     >
       {/* League Header */}
       <View style={styles.leagueHeader}>
-        <View style={styles.leagueIconContainer}>
+        <View
+          style={[
+            styles.leagueIconContainer,
+            {
+              backgroundColor: theme.isDark
+                ? hexToRGBA(leagueColor, 0.25)
+                : hexToRGBA(leagueColor, 0.15),
+            },
+          ]}
+        >
           <SilverBadgeIcon width={64} height={64} />
         </View>
         <Text style={[styles.leagueName, { color: colors.textPrimary }]}>

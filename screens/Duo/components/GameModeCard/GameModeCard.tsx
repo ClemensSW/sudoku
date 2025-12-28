@@ -13,8 +13,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./GameModeCard.styles";
 
-// Duo Color - Professional Blue (matching PlayerStatsHero)
-const DUO_COLOR = "#4A6FA5";
+// Duo Color - Deep Teal (matching PlayerStatsHero header)
+const DUO_COLOR = "#2E6B7B";
 
 export type GameMode = "local" | "online";
 
@@ -58,11 +58,11 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
     ? ["#2A3A4D", "#1E2A38"] as const  // Dark blue-gray gradient
     : ["#FFFFFF", "#F0F4F8"] as const; // White to light blue-gray
   const cardBorder = theme.isDark
-    ? "rgba(74, 111, 165, 0.4)"
-    : "rgba(74, 111, 165, 0.25)";
+    ? "rgba(46, 107, 123, 0.4)"
+    : "rgba(46, 107, 123, 0.25)";
   const iconBg = theme.isDark
-    ? "rgba(74, 111, 165, 0.3)"
-    : "rgba(74, 111, 165, 0.15)";
+    ? "rgba(46, 107, 123, 0.3)"
+    : "rgba(46, 107, 123, 0.15)";
 
   return (
     <Pressable

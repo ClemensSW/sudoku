@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
   },
   leagueIconContainer: {
     marginTop: 16,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    justifyContent: "center",
+    alignItems: "center",
   },
   leagueName: {
     fontSize: 18,

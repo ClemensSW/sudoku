@@ -7,6 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
+  Easing,
   FadeIn,
   FadeInDown,
 } from "react-native-reanimated";
@@ -32,11 +33,14 @@ import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
 import styles from "./PlayerStatsHero.styles";
 
-// Duo Color - Professional Blue
-const DUO_COLOR = "#4A6FA5";
+// Header Color - Deep Teal (elegant, harmonizes with gold and red)
+const HEADER_COLOR = "#2E6B7B";
 
-// Streak Color - Golden Yellow
-const STREAK_COLOR = "#FFB800";
+// Erfolge Color - Deep Wine (matches Leistungsscreen)
+const ERFOLGE_COLOR = "#8B4F56";
+
+// Serien Color - Golden Amber (matches Leistungsscreen Streak section)
+const SERIEN_COLOR = "#FFC850";
 
 // ELO thresholds for each tier
 const TIER_THRESHOLDS: Record<RankTier, number> = {
@@ -77,6 +81,35 @@ const hexToRGBA = (hex: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+// Subtle tier gradient - uses tier color as a hint, keeps cohesive with DUO theme
+const getTierGradientColors = (
+  tierColor: string,
+  isDark: boolean
+): [string, string, string] => {
+  // Very subtle tier color overlay - blends with the card background
+  if (isDark) {
+    return [
+      hexToRGBA(tierColor, 0.12),
+      hexToRGBA(tierColor, 0.06),
+      "transparent",
+    ];
+  }
+  return [
+    hexToRGBA(tierColor, 0.15),
+    hexToRGBA(tierColor, 0.08),
+    "transparent",
+  ];
+};
+
+// Helper to darken color for gradient
+const darkenColor = (hex: string, amount: number): string => {
+  const color = hex.replace("#", "");
+  const r = Math.max(0, parseInt(color.substring(0, 2), 16) - amount);
+  const g = Math.max(0, parseInt(color.substring(2, 4), 16) - amount);
+  const b = Math.max(0, parseInt(color.substring(4, 6), 16) - amount);
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+};
+
 const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   elo,
   wins,
@@ -108,6 +141,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   // Animation values
   const statsScale = useSharedValue(1);
   const progressWidth = useSharedValue(0);
+  const shinePosition = useSharedValue(-150);
 
   // Pop animation on mount
   useEffect(() => {
@@ -116,6 +150,29 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
       withTiming(1, { duration: 200 })
     );
   }, []);
+
+  // Shine animation for RankCard (periodic metallic gleam)
+  useEffect(() => {
+    const animateShine = () => {
+      shinePosition.value = -150;
+      shinePosition.value = withDelay(
+        2000 + Math.random() * 3000,
+        withTiming(400, {
+          duration: 1200,
+          easing: Easing.out(Easing.ease),
+        })
+      );
+      // Schedule next animation
+      const timeoutId = setTimeout(animateShine, 6000 + Math.random() * 3000);
+      return timeoutId;
+    };
+    const timeoutId = animateShine();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const shineAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shinePosition.value }, { rotate: "25deg" }],
+  }));
 
   const statsAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: statsScale.value }],
@@ -178,26 +235,8 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     ? t(`rank.${nextTier}`, { defaultValue: getRankTierName(nextTier) })
     : "";
 
-  // Theme-aware colors
-  const cardBg = theme.isDark
-    ? "rgba(255,255,255,0.04)"
-    : "rgba(0,0,0,0.02)";
-  const cardBorder = theme.isDark
-    ? "rgba(255,255,255,0.08)"
-    : "rgba(0,0,0,0.06)";
-  const progressTrackBg = theme.isDark
-    ? "rgba(255,255,255,0.1)"
-    : "rgba(0,0,0,0.08)";
-
   // Icon colors - solid backgrounds to avoid elevation artifacts
   const iconCircleBg = theme.isDark ? colors.surface : "#FFFFFF";
-  // Very subtle glow effect (minimal opacity)
-  const duoIconGlow = theme.isDark
-    ? hexToRGBA(DUO_COLOR, 0.15)
-    : hexToRGBA(DUO_COLOR, 0.12);
-  const streakIconGlow = theme.isDark
-    ? hexToRGBA(STREAK_COLOR, 0.15)
-    : hexToRGBA(STREAK_COLOR, 0.12);
 
   return (
     <Animated.View
@@ -206,7 +245,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
         {
           backgroundColor: colors.surface,
           elevation: theme.isDark ? 0 : 8,
-          shadowColor: theme.isDark ? "transparent" : DUO_COLOR,
+          shadowColor: theme.isDark ? "transparent" : HEADER_COLOR,
         },
       ]}
       entering={FadeIn.duration(400)}
@@ -215,14 +254,14 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
         colors={
           theme.isDark
             ? [
-                hexToRGBA(DUO_COLOR, 0.15),
-                hexToRGBA(DUO_COLOR, 0.08),
-                hexToRGBA(DUO_COLOR, 0),
+                hexToRGBA(HEADER_COLOR, 0.15),
+                hexToRGBA(HEADER_COLOR, 0.08),
+                hexToRGBA(HEADER_COLOR, 0),
               ]
             : [
-                hexToRGBA(DUO_COLOR, 0.2),
-                hexToRGBA(DUO_COLOR, 0.1),
-                hexToRGBA(DUO_COLOR, 0),
+                hexToRGBA(HEADER_COLOR, 0.2),
+                hexToRGBA(HEADER_COLOR, 0.1),
+                hexToRGBA(HEADER_COLOR, 0),
               ]
         }
         start={{ x: 0, y: 0 }}
@@ -253,23 +292,32 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                 <Animated.View
                   style={[
                     styles.statCard,
-                    { backgroundColor: cardBg, borderColor: cardBorder },
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: hexToRGBA(ERFOLGE_COLOR, theme.isDark ? 0.3 : 0.4),
+                      shadowColor: ERFOLGE_COLOR,
+                      elevation: theme.isDark ? 0 : 4,
+                    },
                   ]}
                   entering={FadeInDown.duration(400).delay(100)}
                 >
-                  {/* Icon with Glow */}
-                  <View style={styles.iconGlowContainer}>
-                    <View style={[styles.iconGlow, { backgroundColor: duoIconGlow }]} />
+                  <LinearGradient
+                    colors={getTierGradientColors(ERFOLGE_COLOR, theme.isDark)}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.statCardGradient}
+                  >
+                    {/* Icon (no glow for stat cards) */}
                     <View style={[styles.statIconCircle, { backgroundColor: iconCircleBg }]}>
                       <ZielIcon width={28} height={28} />
                     </View>
-                  </View>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                    {wins}-{losses}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                    {t("stats.record", { defaultValue: "Bilanz" })}
-                  </Text>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {wins}-{losses}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                      {t("stats.record", { defaultValue: "Bilanz" })}
+                    </Text>
+                  </LinearGradient>
                 </Animated.View>
               </Pressable>
 
@@ -278,28 +326,37 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                 <Animated.View
                   style={[
                     styles.statCard,
-                    { backgroundColor: cardBg, borderColor: cardBorder },
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: hexToRGBA(SERIEN_COLOR, theme.isDark ? 0.5 : 0.6),
+                      shadowColor: SERIEN_COLOR,
+                      elevation: theme.isDark ? 0 : 4,
+                    },
                   ]}
                   entering={FadeInDown.duration(400).delay(200)}
                 >
-                  {/* Icon with Glow */}
-                  <View style={styles.iconGlowContainer}>
-                    <View style={[styles.iconGlow, { backgroundColor: streakIconGlow }]} />
+                  <LinearGradient
+                    colors={getTierGradientColors(SERIEN_COLOR, theme.isDark)}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.statCardGradient}
+                  >
+                    {/* Icon (no glow for stat cards) */}
                     <View style={[styles.statIconCircle, { backgroundColor: iconCircleBg }]}>
                       <LightningIcon width={28} height={28} />
                     </View>
-                  </View>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                    {currentStreak}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                    {streakLabel}
-                  </Text>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {currentStreak}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                      {streakLabel}
+                    </Text>
+                  </LinearGradient>
                 </Animated.View>
               </Pressable>
             </Animated.View>
 
-            {/* Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
+            {/* Metallic Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
             <Pressable
               onPress={handleLeaderboardPress}
               disabled={!onLeaderboardPress}
@@ -308,39 +365,105 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               <Animated.View
                 style={[
                   styles.rankCard,
-                  { backgroundColor: cardBg, borderColor: cardBorder },
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: hexToRGBA(tierColor, theme.isDark ? 0.3 : 0.4),
+                    shadowColor: tierColor,
+                    elevation: theme.isDark ? 0 : 4,
+                  },
                 ]}
                 entering={FadeInDown.duration(400).delay(300)}
               >
-                {/* Icon */}
-                <View style={styles.rankIconContainer}>
-                  <SilverBadgeIcon width={44} height={44} />
-                </View>
+                {/* Subtle Tier-tinted Gradient Background */}
+                <LinearGradient
+                  colors={getTierGradientColors(tierColor, theme.isDark)}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.rankCardGradient}
+                >
+                  {/* Animated Shine Effect */}
+                  <Animated.View
+                    style={[
+                      styles.shine,
+                      shineAnimatedStyle,
+                      {
+                        backgroundColor: theme.isDark
+                          ? "rgba(255,255,255,0.08)"
+                          : "rgba(255,255,255,0.4)",
+                      },
+                    ]}
+                  />
 
-                {/* Text and Progress */}
-                <View style={styles.rankTextContainer}>
-                  <Text style={[styles.rankName, { color: tierColor }]}>
-                    {t(`rank.${tier}`, { defaultValue: tierName })}
-                  </Text>
-
-                  {/* Progress Bar */}
-                  <View style={styles.progressContainer}>
-                    <View style={[styles.progressTrack, { backgroundColor: progressTrackBg }]}>
-                      <Animated.View
-                        style={[
-                          styles.progressFill,
-                          { backgroundColor: tierColor },
-                          progressAnimatedStyle,
-                        ]}
-                      />
-                    </View>
-                    <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-                      {nextTier
-                        ? `${pointsToNext} ELO → ${nextTierName}`
-                        : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
-                    </Text>
+                  {/* Badge with Glow */}
+                  <View style={styles.rankBadgeContainer}>
+                    <View
+                      style={[
+                        styles.rankBadgeGlow,
+                        { backgroundColor: hexToRGBA(tierColor, theme.isDark ? 0.3 : 0.4) },
+                      ]}
+                    />
+                    <SilverBadgeIcon width={52} height={52} />
                   </View>
-                </View>
+
+                  {/* Text and Progress */}
+                  <View style={styles.rankTextContainer}>
+                    {/* Tier Name */}
+                    <Text
+                      style={[
+                        styles.rankName,
+                        { color: theme.isDark ? tierColor : darkenColor(tierColor, 30) },
+                      ]}
+                    >
+                      {t(`rank.${tier}`, { defaultValue: tierName })}
+                    </Text>
+
+                    {/* ELO Value - Prominent Display */}
+                    <Text style={[styles.eloValue, { color: colors.textPrimary }]}>
+                      {elo.toLocaleString()}
+                      <Text style={[styles.eloLabel, { color: colors.textSecondary }]}>
+                        {" "}ELO
+                      </Text>
+                    </Text>
+
+                    {/* Progress Bar with Gradient Fill */}
+                    <View style={styles.progressContainer}>
+                      <View
+                        style={[
+                          styles.progressTrack,
+                          {
+                            backgroundColor: theme.isDark
+                              ? "rgba(255,255,255,0.15)"
+                              : "rgba(0,0,0,0.1)",
+                          },
+                        ]}
+                      >
+                        <Animated.View style={[{ height: "100%" }, progressAnimatedStyle]}>
+                          <LinearGradient
+                            colors={[tierColor, darkenColor(tierColor, 40)]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.progressFillGradient}
+                          />
+                        </Animated.View>
+                      </View>
+                      <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+                        {nextTier
+                          ? `${pointsToNext} → ${nextTierName}`
+                          : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Chevron Indicator */}
+                  {onLeaderboardPress && (
+                    <Feather
+                      name="chevron-right"
+                      size={20}
+                      color={colors.textSecondary}
+                      style={styles.rankChevron}
+                    />
+                  )}
+                </LinearGradient>
               </Animated.View>
             </Pressable>
           </>

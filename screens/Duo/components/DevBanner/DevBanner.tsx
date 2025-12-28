@@ -15,10 +15,10 @@ const DevBanner: React.FC<DevBannerProps> = ({
 }) => {
   const theme = useTheme();
 
-  // Farben basierend auf Theme
+  // Farben basierend auf Theme - Deep Teal (matching Duo theme)
   const gradientColors: readonly [string, string] = theme.isDark
-    ? ["rgba(255,152,0,0.85)", "rgba(255,193,7,0.75)"] // Gedämpftes Orange/Gelb für Dark Mode
-    : ["rgba(255,152,0,0.95)", "rgba(255,193,7,0.90)"]; // Kräftiges Orange/Gelb für Light Mode
+    ? ["rgba(46,107,123,0.9)", "rgba(60,130,145,0.85)"] // Petrol für Dark Mode
+    : ["rgba(46,107,123,0.95)", "rgba(60,130,145,0.9)"]; // Petrol für Light Mode
 
   const textColor = "#FFFFFF";
   const iconColor = "#FFFFFF";

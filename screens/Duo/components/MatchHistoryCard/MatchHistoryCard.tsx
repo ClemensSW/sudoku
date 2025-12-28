@@ -10,8 +10,8 @@ import styles from "./MatchHistoryCard.styles";
 // SVG Icon
 import HourglassIcon from "@/assets/svg/hourglass.svg";
 
-// Duo Color - Professional Blue (matching LeaderboardCard)
-const DUO_COLOR = "#4A6FA5";
+// Duo Color - Deep Teal (matching PlayerStatsHero header)
+const DUO_COLOR = "#2E6B7B";
 
 // Zone Colors (matching LeaderboardCard)
 const PROMOTION_COLOR = "#4CAF50"; // Grün - für Siege

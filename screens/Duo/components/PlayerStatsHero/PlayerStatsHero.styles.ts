@@ -64,11 +64,21 @@ const styles = StyleSheet.create({
   // Premium stat card with border and background
   statCard: {
     flex: 1,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    overflow: "hidden",
+    // iOS Shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+
+  // Inner gradient container for stat cards
+  statCardGradient: {
+    flex: 1,
     alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 12,
-    borderRadius: 16,
-    borderWidth: 1,
   },
 
   // Icon glow container for positioning
@@ -96,6 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 14,
   },
 
   // Larger, bolder stat value
@@ -114,58 +125,110 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // Rank card - full width with progress bar
+  // Rank card - full width with metallic effect
   rankCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
     borderRadius: 16,
-    borderWidth: 1,
+    borderWidth: 1.5,
     width: "100%",
-    gap: 14,
+    overflow: "hidden",
+    // iOS Shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
 
-  // Rank icon container (for SVG badge)
-  rankIconContainer: {
+  // Inner gradient container
+  rankCardGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    gap: 14,
+    overflow: "hidden",
+  },
+
+  // Animated shine effect (gleaming metallic strip)
+  shine: {
+    position: "absolute",
+    width: 60,
+    height: 200,
+    top: -50,
+    left: 0,
+  },
+
+  // Badge container with glow
+  rankBadgeContainer: {
+    position: "relative",
     alignItems: "center",
     justifyContent: "center",
+    width: 60,
+    height: 60,
+  },
+
+  // Glow effect behind badge
+  rankBadgeGlow: {
+    position: "absolute",
+    width: 64,
+    height: 64,
+    borderRadius: 32,
   },
 
   // Rank text container
   rankTextContainer: {
     flex: 1,
+    gap: 2,
   },
 
-  // Rank name
+  // Rank tier name (e.g., "Silver", "Gold")
   rankName: {
-    fontSize: 17,
+    fontSize: 13,
     fontWeight: "700",
-    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+
+  // Large ELO value display
+  eloValue: {
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: -0.5,
+  },
+
+  // ELO label (smaller suffix)
+  eloLabel: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 
   // Progress container
   progressContainer: {
     gap: 4,
+    marginTop: 4,
   },
 
-  // Progress track (background)
+  // Progress track (background) - taller for better visibility
   progressTrack: {
-    height: 6,
-    borderRadius: 3,
+    height: 8,
+    borderRadius: 4,
     overflow: "hidden",
   },
 
-  // Progress fill (foreground)
-  progressFill: {
+  // Gradient progress fill
+  progressFillGradient: {
+    width: "100%",
     height: "100%",
-    borderRadius: 3,
+    borderRadius: 4,
   },
 
   // Progress text
   progressText: {
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: "600",
+  },
+
+  // Chevron indicator for clickable card
+  rankChevron: {
+    marginLeft: 4,
   },
 
   // Login prompt (when not logged in)

@@ -1,15 +1,10 @@
 // components/DifficultyModal/DifficultyModal.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import Animated, {
   ZoomIn,
   FadeIn,
   FadeInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-  Easing,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -74,33 +69,6 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
   const [stats, setStats] = useState<GameStats | null>(null);
   const [unlockedDifficulties, setUnlockedDifficulties] = useState<Difficulty[]>(["easy"]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Shine animation for Duo button
-  const shinePosition = useSharedValue(-80);
-  const shineTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (visible && isDuoMode) {
-      const animateShine = () => {
-        shinePosition.value = -80;
-        shinePosition.value = withDelay(
-          500,
-          withTiming(400, { duration: 800, easing: Easing.inOut(Easing.ease) })
-        );
-        shineTimeoutRef.current = setTimeout(animateShine, 3500);
-      };
-      shineTimeoutRef.current = setTimeout(animateShine, 800);
-      return () => {
-        if (shineTimeoutRef.current) {
-          clearTimeout(shineTimeoutRef.current);
-        }
-      };
-    }
-  }, [visible, isDuoMode]);
-
-  const shineStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shinePosition.value }, { skewX: "-20deg" }],
-  }));
 
   // Use translations as defaults if not provided
   const modalTitle = title || t('difficultyModal.title');
@@ -332,25 +300,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
               end={{ x: 1, y: 0 }}
               style={styles.duoButtonGradient}
             >
-              {/* Shine Effect */}
-              <Animated.View style={[styles.duoButtonShine, shineStyle]}>
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    "rgba(255,255,255,0.25)",
-                    "rgba(255,255,255,0.4)",
-                    "rgba(255,255,255,0.25)",
-                    "transparent",
-                  ]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={{ flex: 1 }}
-                />
-              </Animated.View>
-
-              {/* Button Content */}
               <Text style={styles.duoButtonText}>{modalConfirmText}</Text>
-              <Feather name="play" size={20} color="#FFFFFF" />
             </LinearGradient>
           </Pressable>
         ) : (

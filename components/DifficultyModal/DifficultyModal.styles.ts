@@ -98,19 +98,10 @@ export default StyleSheet.create({
     // Shadow wird dynamisch gesetzt
   },
   duoButtonGradient: {
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 16,
     paddingHorizontal: 24,
-    gap: 8,
-    overflow: "hidden",
-  },
-  duoButtonShine: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    width: 60,
   },
   duoButtonText: {
     fontSize: 17,

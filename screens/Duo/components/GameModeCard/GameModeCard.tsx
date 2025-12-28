@@ -7,7 +7,6 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -52,17 +51,15 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
     ? t("gameModeModal.local.title")
     : t("gameModeModal.online.title");
 
-  // Colors - DUO_COLOR theme with solid backgrounds for elevation
-  const cardBg = theme.isDark ? "#2A3A4D" : "#FFFFFF"; // Solid for Android elevation
-  const gradientColors = theme.isDark
-    ? ["#2A3A4D", "#1E2A38"] as const  // Dark blue-gray gradient
-    : ["#FFFFFF", "#F0F4F8"] as const; // White to light blue-gray
+  // Colors - matching other Duo containers (neutral, surface-based)
+  const cardBg = colors.surface;
   const cardBorder = theme.isDark
-    ? "rgba(46, 107, 123, 0.4)"
-    : "rgba(46, 107, 123, 0.25)";
+    ? "rgba(255,255,255,0.08)"
+    : "rgba(0,0,0,0.06)";
   const iconBg = theme.isDark
-    ? "rgba(46, 107, 123, 0.3)"
-    : "rgba(46, 107, 123, 0.15)";
+    ? "rgba(255,255,255,0.08)"
+    : "rgba(0,0,0,0.04)";
+  const iconColor = theme.isDark ? "#FFFFFF" : DUO_COLOR;
 
   return (
     <Pressable
@@ -77,6 +74,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
       <Animated.View
         style={[
           styles.cardShadow,
+          styles.cardGradient,
           {
             backgroundColor: cardBg,
             borderColor: cardBorder,
@@ -85,36 +83,29 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
           animatedStyle,
         ]}
       >
-        <LinearGradient
-          colors={gradientColors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.cardGradient}
-        >
-          {/* Icon Container */}
-          <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
-            <Feather
-              name={icon}
-              size={24}
-              color={DUO_COLOR}
-            />
-          </View>
-
-          {/* Title */}
-          <View style={styles.content}>
-            <Text style={[styles.title, { color: colors.textPrimary }]}>
-              {title}
-            </Text>
-          </View>
-
-          {/* Play Icon */}
+        {/* Icon Container */}
+        <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
           <Feather
-            name="play-circle"
+            name={icon}
             size={24}
-            color={DUO_COLOR}
-            style={styles.playIcon}
+            color={iconColor}
           />
-        </LinearGradient>
+        </View>
+
+        {/* Title */}
+        <View style={styles.content}>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>
+            {title}
+          </Text>
+        </View>
+
+        {/* Play Icon */}
+        <Feather
+          name="play-circle"
+          size={24}
+          color={iconColor}
+          style={styles.playIcon}
+        />
       </Animated.View>
     </Pressable>
   );

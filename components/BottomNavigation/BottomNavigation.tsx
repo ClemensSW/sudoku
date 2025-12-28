@@ -10,6 +10,9 @@ import NavItem from "./NavItem";
 import { NAV_TABS, NAV_HEIGHT } from "./constants";
 import { styles } from "./BottomNavigation.styles";
 
+// Duo Color - Deep Teal (fixed, independent of path color)
+const DUO_COLOR = "#2E6B7B";
+
 const BottomNavigation: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -59,17 +62,23 @@ const BottomNavigation: React.FC = () => {
       ]}
       entering={FadeIn.duration(300)}
     >
-      {NAV_TABS.map((tab) => (
-        <NavItem
-          key={tab.key}
-          tab={tab}
-          isActive={isTabActive(tab.path)}
-          activeColor={progressColor}
-          inactiveColor={colors.textSecondary}
-          indicatorColor={indicatorColor}
-          onPress={() => handleTabPress(tab.path)}
-        />
-      ))}
+      {NAV_TABS.map((tab) => {
+        // Use fixed DUO_COLOR for Duo tab
+        const tabActiveColor = tab.key === "duo" ? DUO_COLOR : progressColor;
+        const tabIndicatorColor = tab.key === "duo" ? `${DUO_COLOR}1F` : indicatorColor;
+
+        return (
+          <NavItem
+            key={tab.key}
+            tab={tab}
+            isActive={isTabActive(tab.path)}
+            activeColor={tabActiveColor}
+            inactiveColor={colors.textSecondary}
+            indicatorColor={tabIndicatorColor}
+            onPress={() => handleTabPress(tab.path)}
+          />
+        );
+      })}
     </Animated.View>
   );
 };

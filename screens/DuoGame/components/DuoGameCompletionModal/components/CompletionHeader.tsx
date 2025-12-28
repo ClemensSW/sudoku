@@ -41,23 +41,9 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Battle Icon mit Glow */}
+      {/* Battle Icon */}
       <View style={styles.iconWrapper}>
-        {/* Outer Glow */}
-        <View
-          style={[
-            styles.iconGlowOuter,
-            { backgroundColor: `${progressColor}15` },
-          ]}
-        />
-        {/* Inner Glow */}
-        <View
-          style={[
-            styles.iconGlow,
-            { backgroundColor: `${progressColor}30` },
-          ]}
-        />
-        <BattleIcon width={72} height={72} />
+        <BattleIcon width={88} height={88} />
       </View>
 
       {/* Result Text */}
@@ -90,24 +76,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   iconWrapper: {
-    position: "relative",
-    width: 72,
-    height: 72,
-    marginBottom: 24,
+    width: 88,
+    height: 88,
+    marginTop: 48,
+    marginBottom: 80,
     alignItems: "center",
     justifyContent: "center",
-  },
-  iconGlow: {
-    position: "absolute",
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-  },
-  iconGlowOuter: {
-    position: "absolute",
-    width: 140,
-    height: 140,
-    borderRadius: 70,
   },
   resultText: {
     fontSize: 32,

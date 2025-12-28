@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 40,
+    paddingTop: 48,
     borderRadius: 24,
   },
   battleContainer: {

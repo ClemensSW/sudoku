@@ -7,6 +7,8 @@ import Animated, {
   useSharedValue,
   withTiming,
   withSequence,
+  withRepeat,
+  Easing,
 } from "react-native-reanimated";
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -231,8 +233,52 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     </Animated.View>
   );
 
+  // Pulsierende Animation für Flusslinien (nur für mittlere Zelle relevant)
+  const flowOpacity1 = useSharedValue(0.5);
+  const flowOpacity2 = useSharedValue(0.5);
+
+  React.useEffect(() => {
+    if (!isMiddleCell) return;
+
+    // Erste Linie pulsiert
+    flowOpacity1.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.5, { duration: 1200, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      false
+    );
+
+    // Zweite Linie mit Versatz
+    const timeout = setTimeout(() => {
+      flowOpacity2.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.5, { duration: 1200, easing: Easing.inOut(Easing.ease) })
+        ),
+        -1,
+        false
+      );
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [isMiddleCell, flowOpacity1, flowOpacity2]);
+
+  const flowLine1Style = useAnimatedStyle(() => ({
+    opacity: flowOpacity1.value,
+  }));
+
+  const flowLine2Style = useAnimatedStyle(() => ({
+    opacity: flowOpacity2.value,
+  }));
+
   // Mittlere Zelle: Multi-Layer Mulden-Struktur
   if (isMiddleCell) {
+    // Diagonale "Fluss"-Linien die in die Mulde fließen
+    const ringWidth = 6; // 2px + 1px + 1px + 1px + 1px
+    const diagonalLength = ringWidth * Math.SQRT2;
+
     return (
       <TouchableOpacity
         style={[
@@ -248,12 +294,37 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
         disabled={cell.isInitial}
         activeOpacity={1}
       >
+        {/* Diagonale Flusslinie links-unten → Mitte (animiert) */}
+        <Animated.View style={[{
+          position: 'absolute',
+          width: diagonalLength,
+          height: 2,
+          backgroundColor: dividerColor,
+          bottom: ringWidth / 2 - 1,
+          left: -1,
+          transform: [{ rotate: '-45deg' }],
+          zIndex: 5,
+        }, flowLine1Style]} />
+
+        {/* Diagonale Flusslinie rechts-oben → Mitte (animiert) */}
+        <Animated.View style={[{
+          position: 'absolute',
+          width: diagonalLength,
+          height: 2,
+          backgroundColor: dividerColor,
+          top: ringWidth / 2 - 1,
+          right: -1,
+          transform: [{ rotate: '-45deg' }],
+          zIndex: 5,
+        }, flowLine2Style]} />
+
         {/* 5 verschachtelte Ringe für tiefe Mulde */}
         <View style={getMiddleCellRing1Style()}>
           <View style={getMiddleCellRing2Style()}>
             <View style={getMiddleCellRing3Style()}>
               <View style={getMiddleCellRing4Style()}>
                 <View style={getMiddleCellRing5Style()}>
+                  {/* Zell-Content (Zahl/Notizen) */}
                   {renderCellContent()}
                 </View>
               </View>

@@ -12,8 +12,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import styles from "./GameModeCard.styles";
 
-// Duo Color - Deep Teal (matching PlayerStatsHero header)
-const DUO_COLOR = "#2E6B7B";
+// Duo Color - Darkened Silver (matches current league)
+const DUO_COLOR = "#989898";
 
 export type GameMode = "local" | "online";
 

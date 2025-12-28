@@ -10,8 +10,8 @@ import NavItem from "./NavItem";
 import { NAV_TABS, NAV_HEIGHT } from "./constants";
 import { styles } from "./BottomNavigation.styles";
 
-// Duo Color - Deep Teal (fixed, independent of path color)
-const DUO_COLOR = "#2E6B7B";
+// Duo Color - Darkened Silver (matches current league, more visible than pure silver)
+const DUO_COLOR = "#989898";
 
 const BottomNavigation: React.FC = () => {
   const router = useRouter();

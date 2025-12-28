@@ -20,8 +20,8 @@ import { useProgressColor } from "@/hooks/useProgressColor";
 import Button from "@/components/Button/Button";
 import styles from "./DifficultyModal.styles";
 
-// Duo Color - Deep Teal (fixed for Duo mode)
-const DUO_COLOR = "#2E6B7B";
+// Duo Color - Darkened Silver (matches current league in navigation)
+const DUO_COLOR = "#989898";
 
 interface DifficultyModalProps {
   visible: boolean;

@@ -36,7 +36,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
 }) => {
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Ein gültiges Sudoku mit eindeutiger Lösung in der Mitte (nur 5 passt)
@@ -194,7 +194,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
                 >
                   <Text
                     style={{
-                      fontSize: 24,
+                      fontSize: typography.size.xxl,
                       fontWeight: "600",
                       color: colors.buttonText, // Theme-Farbe für den Text
                     }}
@@ -236,7 +236,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
           style={styles.instructionContainer}
           entering={FadeIn.delay(300).duration(500)}
         >
-          <Text style={[styles.instruction, { color: colors.textPrimary }]}>
+          <Text style={[styles.instruction, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {getInstructionText()}
           </Text>
         </Animated.View>
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   instruction: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
     lineHeight: 22,

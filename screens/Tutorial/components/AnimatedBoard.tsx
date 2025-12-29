@@ -45,7 +45,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   animationDelay = 0,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Standardfarben für Hervorhebungen, wenn nicht explizit angegeben
@@ -260,12 +260,13 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
                       {/* Cell content */}
                       {isInitial ? (
                         <Text style={[
-                          styles.cellText, 
-                          { 
+                          styles.cellText,
+                          {
                             // KORRIGIERT: Textfarbe basierend auf Auswahlstatus
-                            color: isSelected 
-                              ? colors.cellSelectedTextColor  // Weiß für ausgewählte Zellen 
-                              : colors.cellInitialTextColor   // Theme-Farbe für initiale Zahlen
+                            color: isSelected
+                              ? colors.cellSelectedTextColor  // Weiß für ausgewählte Zellen
+                              : colors.cellInitialTextColor,   // Theme-Farbe für initiale Zahlen
+                            fontSize: typography.size.lg,
                           },
                           styles.initialText
                         ]}>
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   cellText: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   initialText: {

@@ -27,7 +27,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
 }) => {
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Example grid
@@ -134,7 +134,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
           >
             <PencilIcon width={32} height={32} color={progressColor} />
           </TouchableOpacity>
-          <Text style={[styles.buttonLabel, { color: colors.textPrimary }]}>
+          <Text style={[styles.buttonLabel, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t('pages.notes.buttonLabel')}
           </Text>
         </View>
@@ -143,7 +143,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
           style={styles.explanationContainer}
           entering={FadeIn.delay(300).duration(500)}
         >
-          <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
+          <Text style={[styles.explanationText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t('pages.notes.explanation')}
           </Text>
         </Animated.View>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   buttonLabel: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginTop: spacing.xs,
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   explanationText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     lineHeight: 24,
     textAlign: "center",
   },

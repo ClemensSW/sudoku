@@ -34,7 +34,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
 }) => {
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const insets = useSafeAreaInsets();
   const progressColor = useProgressColor();
 
@@ -50,7 +50,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
           <View style={{ width: 24 }} />
         </View>
 
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
           {title}
         </Text>
 
@@ -83,7 +83,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
             ]}
             onPress={onBack}
           >
-            <Text style={[styles.buttonText, { color: colors.textPrimary }]}>
+            <Text style={[styles.buttonText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {defaultBackText}
             </Text>
           </TouchableOpacity>
@@ -97,7 +97,7 @@ const TutorialPage: React.FC<TutorialPageProps> = ({
           ]}
           onPress={onNext}
         >
-          <Text style={[styles.buttonText, { color: colors.buttonText }]}>
+          <Text style={[styles.buttonText, { color: colors.buttonText, fontSize: typography.size.md }]}>
             {isLastPage ? t('navigation.understood') : defaultNextText}
           </Text>
           {!isLastPage && (
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
   },
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginRight: spacing.xs,
   },

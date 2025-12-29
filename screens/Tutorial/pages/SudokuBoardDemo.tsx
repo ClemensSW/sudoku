@@ -23,7 +23,7 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
   onCellPress,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   const renderCell = (row: number, col: number) => {
@@ -74,10 +74,10 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
         )}
 
         {/* Zelleninhalt */}
-        <Text 
+        <Text
           style={[
-            styles.cellText, 
-            { color: textColor },
+            styles.cellText,
+            { color: textColor, fontSize: typography.size.lg },
             isInitial && styles.initialCellText
           ]}
         >
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   cellText: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     zIndex: 2,
   },
   initialCellText: {

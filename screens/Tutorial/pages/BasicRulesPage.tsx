@@ -33,7 +33,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
 }) => {
   const { t } = useTranslation('tutorial');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   // Empty grid as a base
   const emptyGrid = Array(9)
@@ -211,7 +211,7 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
           style={styles.explanationContainer}
           entering={FadeIn.delay(300).duration(500)}
         >
-          <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
+          <Text style={[styles.explanationText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t('pages.basicRules.explanation.part1')}
           </Text>
 
@@ -219,40 +219,40 @@ const BasicRulesPage: React.FC<BasicRulesPageProps> = ({
             <Text
               style={[
                 styles.highlightText,
-                { color: getPathColor('blue', theme.isDark) }
+                { color: getPathColor('blue', theme.isDark), fontSize: typography.size.lg }
               ]}
             >
               {t('pages.basicRules.explanation.row')}
             </Text>
             <Text
-              style={[styles.explanationText, { color: colors.textPrimary }]}
+              style={[styles.explanationText, { color: colors.textPrimary, fontSize: typography.size.md }]}
             >
               {t('pages.basicRules.explanation.part2')}
             </Text>
             <Text
               style={[
                 styles.highlightText,
-                { color: getPathColor('green', theme.isDark) }
+                { color: getPathColor('green', theme.isDark), fontSize: typography.size.lg }
               ]}
             >
               {t('pages.basicRules.explanation.column')}
             </Text>
             <Text
-              style={[styles.explanationText, { color: colors.textPrimary }]}
+              style={[styles.explanationText, { color: colors.textPrimary, fontSize: typography.size.md }]}
             >
               {t('pages.basicRules.explanation.part3')}
             </Text>
             <Text
               style={[
                 styles.highlightText,
-                { color: getPathColor('yellow', theme.isDark) }
+                { color: getPathColor('yellow', theme.isDark), fontSize: typography.size.lg }
               ]}
             >
               {t('pages.basicRules.explanation.block')}
             </Text>
           </View>
 
-          <Text style={[styles.explanationText, { color: colors.textPrimary }]}>
+          <Text style={[styles.explanationText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t('pages.basicRules.explanation.part4')}
           </Text>
         </Animated.View>
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   explanationText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     lineHeight: 24,
     textAlign: "center",
     marginBottom: spacing.xs,
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     marginVertical: spacing.xs,
   },
   highlightText: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginHorizontal: 4,
   },

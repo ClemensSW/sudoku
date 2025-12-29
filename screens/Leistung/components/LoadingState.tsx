@@ -1,41 +1,42 @@
 // screens/LeistungScreen/components/LoadingState.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { useTheme } from "@/utils/theme/ThemeProvider";
+import { View, StyleSheet } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { ProfileHeaderSkeleton, TabContentSkeleton } from "./skeletons";
+import { SkeletonBox } from "@/components/Skeleton";
 
 const LoadingState: React.FC = () => {
-  const theme = useTheme();
-  const colors = theme.colors;
-  const { t } = useTranslation('leistung');
-
   return (
-    <Animated.View 
-      style={styles.loadingContainer}
-      entering={FadeIn.duration(400)}
+    <Animated.View
+      style={styles.container}
+      entering={FadeIn.duration(300)}
+      accessibilityLabel="Inhalte werden geladen"
     >
-      <Feather name="loader" size={32} color={colors.primary} />
-      <Text
-        style={[styles.loadingText, { color: colors.textSecondary }]}
-      >
-        {t('loading')}
-      </Text>
+      <ProfileHeaderSkeleton />
+
+      {/* Tab Navigator Skeleton */}
+      <View style={styles.tabNavigator}>
+        <SkeletonBox width="23%" height={40} borderRadius={8} />
+        <SkeletonBox width="23%" height={40} borderRadius={8} />
+        <SkeletonBox width="23%" height={40} borderRadius={8} />
+        <SkeletonBox width="23%" height={40} borderRadius={8} />
+      </View>
+
+      <TabContentSkeleton />
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 64,
+    paddingHorizontal: 16,
   },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
+  tabNavigator: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    paddingVertical: 12,
   },
 });
 

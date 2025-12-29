@@ -19,7 +19,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 const BenefitsCard: React.FC = () => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   return (
     <Animated.View
@@ -38,7 +38,7 @@ const BenefitsCard: React.FC = () => {
     >
       {/* Title */}
       <View style={styles.titleRow}>
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.md }]}>
           🎁 {t('benefits.title', 'Unterstütze mich und erhalte:')}
         </Text>
       </View>
@@ -59,13 +59,13 @@ const BenefitsCard: React.FC = () => {
           >
             <Feather name="zap" size={16} color={colors.primary} />
           </View>
-          <Text style={[styles.benefitText, { color: colors.textSecondary }]}>
+          <Text style={[styles.benefitText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t('benefits.doubleEp', '2× EP')}
           </Text>
         </View>
 
         {/* Separator */}
-        <Text style={[styles.separator, { color: colors.textSecondary }]}>
+        <Text style={[styles.separator, { color: colors.textSecondary, fontSize: typography.size.md }]}>
           |
         </Text>
 
@@ -83,7 +83,7 @@ const BenefitsCard: React.FC = () => {
           >
             <Feather name="image" size={16} color={colors.primary} />
           </View>
-          <Text style={[styles.benefitText, { color: colors.textSecondary }]}>
+          <Text style={[styles.benefitText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t('benefits.imagePerMonth', '1 Bild/Monat')}
           </Text>
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   benefitText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
   separator: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     marginHorizontal: 12,
     opacity: 0.3,
   },

@@ -29,7 +29,7 @@ export default StyleSheet.create({
     gap: 4,
   },
   badgeText: {
-    fontSize: 10,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
   },
@@ -42,10 +42,10 @@ export default StyleSheet.create({
     marginBottom: 12,
   },
   icon: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
   },
   title: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 10,
   },
@@ -60,7 +60,7 @@ export default StyleSheet.create({
     gap: 6,
   },
   benefitText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   priceRow: {
@@ -69,11 +69,11 @@ export default StyleSheet.create({
     marginBottom: 12,
   },
   price: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
   },
   period: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginLeft: 4,
   },
@@ -86,7 +86,7 @@ export default StyleSheet.create({
     gap: 6,
   },
   buttonText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
   },

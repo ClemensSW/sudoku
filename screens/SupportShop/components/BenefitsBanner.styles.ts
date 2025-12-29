@@ -39,13 +39,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: '800',
     marginBottom: 6,
     letterSpacing: 0.3,
   },
   subtitle: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     letterSpacing: 0.2,
   },

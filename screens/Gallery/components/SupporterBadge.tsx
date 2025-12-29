@@ -16,7 +16,7 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
   compact = false,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const { t } = useTranslation('gallery');
 
   // Premium gold color
@@ -36,7 +36,7 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
         ]}
       >
         <Feather name="award" size={12} color={premiumColor} />
-        <Text style={[styles.compactText, { color: premiumColor }]}>
+        <Text style={[styles.compactText, { color: premiumColor, fontSize: typography.size.xs }]}>
           {t('supporterBadge.premium')}
         </Text>
       </View>
@@ -62,11 +62,11 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
         <GiftIcon width={20} height={20} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: premiumColor }]}>
+        <Text style={[styles.title, { color: premiumColor, fontSize: typography.size.xs }]}>
           {t('supporterBadge.supporter')}
         </Text>
         {remainingUnlocks !== undefined && (
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text style={[styles.subtitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {t('supporterBadge.remaining', { count: remainingUnlocks })}
           </Text>
         )}

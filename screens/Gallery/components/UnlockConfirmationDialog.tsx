@@ -28,7 +28,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
   loading = false,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const { t } = useTranslation('gallery');
 
@@ -65,12 +65,12 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
           </View>
 
           {/* Title */}
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
             {t('unlockDialog.title', { name: imageName })}
           </Text>
 
           {/* Message */}
-          <Text style={[styles.message, { color: colors.textSecondary }]}>
+          <Text style={[styles.message, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t('unlockDialog.message', { count: remainingUnlocks })}
           </Text>
 
@@ -90,7 +90,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
               disabled={loading}
               activeOpacity={0.7}
             >
-              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                 {t('unlockDialog.cancel')}
               </Text>
             </TouchableOpacity>
@@ -108,12 +108,12 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
                 style={styles.gradientButton}
               >
                 {loading ? (
-                  <Text style={styles.confirmButtonText}>
+                  <Text style={[styles.confirmButtonText, { fontSize: typography.size.sm }]}>
                     {t('unlockDialog.unlocking')}
                   </Text>
                 ) : (
                   <>
-                    <Text style={styles.confirmButtonText}>
+                    <Text style={[styles.confirmButtonText, { fontSize: typography.size.sm }]}>
                       {t('unlockDialog.confirm')}
                     </Text>
                     <Feather name="check" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />

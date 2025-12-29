@@ -26,7 +26,7 @@ export default StyleSheet.create({
     borderBottomColor: "rgba(0,0,0,0.05)",
   },
   headerTitle: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   closeButton: {
@@ -49,12 +49,12 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 6,
   },
   sectionSubtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     opacity: 0.7,
     lineHeight: 20,
@@ -78,7 +78,7 @@ export default StyleSheet.create({
   },
   loadingText: {
     marginTop: 16,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
   },
   // Thank you section at bottom
   thanksContainer: {
@@ -92,13 +92,13 @@ export default StyleSheet.create({
     borderStyle: "dashed",
   },
   thanksText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     textAlign: "center",
     lineHeight: 22,
   },
   thanksEmoji: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     marginTop: 8,
   },
   // Success message container that slides in from bottom
@@ -125,11 +125,11 @@ export default StyleSheet.create({
     flex: 1,
   },
   successTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   successSubtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     opacity: 0.7,
   },
 });

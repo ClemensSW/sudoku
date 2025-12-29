@@ -32,13 +32,13 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 12,
   },
   message: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 24,
@@ -75,11 +75,11 @@ export default StyleSheet.create({
     borderRadius: 12,
   },
   cancelButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   confirmButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
   },

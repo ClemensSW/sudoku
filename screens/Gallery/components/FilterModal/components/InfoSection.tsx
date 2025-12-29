@@ -16,8 +16,8 @@ interface InfoItemProps {
 
 const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor }) => {
   const theme = useTheme();
-  const { colors } = theme;
-  
+  const { colors, typography } = theme;
+
   return (
     <View style={styles.infoItem}>
       <View style={[
@@ -31,10 +31,10 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor
         />
       </View>
       <View style={styles.textContainer}>
-        <Text style={[styles.infoTitle, { color: colors.textPrimary }]}>
+        <Text style={[styles.infoTitle, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
           {title}
         </Text>
-        <Text style={[styles.infoDescription, { color: colors.textSecondary }]}>
+        <Text style={[styles.infoDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {description}
         </Text>
       </View>
@@ -45,12 +45,12 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor
 const InfoSection: React.FC = () => {
   const { t } = useTranslation('gallery');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   return (
     <View>
-      <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+      <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
         {t('filterModal.infoSection.title')}
       </Text>
 
@@ -82,7 +82,7 @@ const InfoSection: React.FC = () => {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: spacing.md,
   },
@@ -110,13 +110,13 @@ const styles = StyleSheet.create({
   },
   
   infoTitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },
-  
+
   infoDescription: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     lineHeight: 18,
   },
 });

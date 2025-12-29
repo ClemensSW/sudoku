@@ -34,6 +34,7 @@ interface LandscapeCardProps {
   shouldAnimate?: boolean;
   colors: any; // Theme colors passed from parent
   isDark: boolean; // Theme mode passed from parent
+  typography: any; // Theme typography passed from parent
   t: (key: string, options?: any) => string; // Translation function from parent
 }
 
@@ -65,6 +66,7 @@ const LandscapeCard = React.memo(
     shouldAnimate,
     colors,
     isDark,
+    typography,
     t,
   }: LandscapeCardProps) => {
 
@@ -193,6 +195,7 @@ const LandscapeCard = React.memo(
                             ? "rgba(255,255,255,0.6)"
                             : "rgba(0,0,0,0.5)",
                           opacity: Math.min(0.6 + item.progress * 0.07, 1),
+                          fontSize: typography.size.sm,
                         },
                       ]}
                     >
@@ -227,7 +230,7 @@ const LandscapeCard = React.memo(
                   color="#FFFFFF"
                   style={{ marginRight: 4 }}
                 />
-                <Text style={styles.badgeText}>{t('badges.active')}</Text>
+                <Text style={[styles.badgeText, { fontSize: typography.size.xs }]}>{t('badges.active')}</Text>
               </View>
             )}
 
@@ -246,15 +249,15 @@ const LandscapeCard = React.memo(
                   getBadgeText() ? styles.badgeIcon : styles.badgeIconNoText
                 }
               />
-              <Text style={styles.badgeText}>{getBadgeText()}</Text>
+              <Text style={[styles.badgeText, { fontSize: typography.size.xs }]}>{getBadgeText()}</Text>
             </View>
 
             {/* Infobereich für Titel und Kategorie */}
             <View style={styles.infoContainer}>
-              <Text style={styles.title} numberOfLines={1}>
+              <Text style={[styles.title, { fontSize: typography.size.sm }]} numberOfLines={1}>
                 {getLandscapeName(item.id)}
               </Text>
-              <Text style={styles.category}>
+              <Text style={[styles.category, { fontSize: typography.size.xs }]}>
                 {getCategoryName(item.category)}
               </Text>
             </View>
@@ -288,7 +291,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
   refreshKey = 0,
 }, ref) => {
   const theme = useTheme();
-  const { colors, isDark } = theme;
+  const { colors, isDark, typography } = theme;
   const { t } = useTranslation('gallery');
 
   // getItemLayout for better scrolling performance with numColumns=2
@@ -313,7 +316,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
           color={colors.textSecondary}
           style={{ opacity: 0.5 }}
         />
-        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+        <Text style={[styles.emptyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
           {t('emptyState.all.message')}
         </Text>
       </View>
@@ -345,6 +348,7 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
             shouldAnimate={shouldAnimate}
             colors={colors}
             isDark={isDark}
+            typography={typography}
             t={t}
           />
         )}

@@ -23,7 +23,7 @@ const CategoryChip: React.FC<{
   onPress: () => void;
 }> = ({ category, isSelected, onPress }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   
   // Animation values
@@ -60,7 +60,7 @@ const CategoryChip: React.FC<{
         <Text
           style={[
             styles.chipText,
-            { color: isSelected ? "#FFFFFF" : colors.textPrimary },
+            { color: isSelected ? "#FFFFFF" : colors.textPrimary, fontSize: typography.size.sm },
           ]}
         >
           {getCategoryName(category)}
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   
   chipText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 });

@@ -29,13 +29,13 @@ export default StyleSheet.create({
     marginBottom: spacing.lg,
   },
   title: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     marginBottom: spacing.sm,
   },
   message: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     opacity: 0.7,
     lineHeight: 22,
@@ -46,7 +46,7 @@ export default StyleSheet.create({
     justifyContent: "center",
   },
   purchasingText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginTop: spacing.md,
   },
@@ -58,7 +58,7 @@ export default StyleSheet.create({
     maxWidth: 250,
   },
   funFactText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontStyle: "italic",
     textAlign: "center",
     opacity: 0.7,

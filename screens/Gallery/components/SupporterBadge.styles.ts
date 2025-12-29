@@ -16,11 +16,11 @@ export default StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   subtitle: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginTop: 2,
     opacity: 0.7,
@@ -34,7 +34,7 @@ export default StyleSheet.create({
     gap: 4,
   },
   compactText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
 });

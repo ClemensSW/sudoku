@@ -48,7 +48,7 @@ interface SupportShopScreenProps {
 const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose = false }) => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const insets = useSafeAreaInsets();
   const progressColor = useProgressColor(); // Dynamic path color
 
@@ -466,14 +466,14 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             />
             <View style={{ flex: 1 }}>
               <Text style={{
-                fontSize: 18,
+                fontSize: typography.size.lg,
                 fontWeight: '600',
                 color: colors.textPrimary,
               }}>
                 Clemens
               </Text>
               <Text style={{
-                fontSize: 14,
+                fontSize: typography.size.sm,
                 color: colors.textSecondary,
                 marginTop: 2,
               }}>
@@ -484,7 +484,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
           {/* Personal Message */}
           <Text style={{
-            fontSize: 14,
+            fontSize: typography.size.sm,
             lineHeight: 20,
             color: colors.textSecondary,
             textAlign: 'left',
@@ -558,7 +558,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             <Feather name="chevron-down" size={16} color={progressColor} />
             <Text
               style={{
-                fontSize: 13,
+                fontSize: typography.size.xs,
                 fontWeight: '600',
                 color: progressColor,
                 marginLeft: 6,

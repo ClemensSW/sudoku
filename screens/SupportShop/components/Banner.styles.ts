@@ -34,7 +34,7 @@ export default StyleSheet.create({
     paddingRight: 40, // Platz für Emoji
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     color: "#FFFFFF",
     marginBottom: 8, // Mehr Abstand zum Subtitle
@@ -43,7 +43,7 @@ export default StyleSheet.create({
     textShadowRadius: 3,
   },
   subtitle: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     color: "rgba(255,255,255,0.95)",
     lineHeight: 22,
     textShadowColor: "rgba(0,0,0,0.3)", // Angepasster Schatten
@@ -62,6 +62,6 @@ export default StyleSheet.create({
     position: "absolute",
     right: 20,
     bottom: 20,
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
   },
 });

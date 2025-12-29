@@ -102,18 +102,18 @@ export default StyleSheet.create({
   },
   
   headerTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
   },
-  
+
   resetButton: {
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
   },
-  
+
   resetText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   
@@ -139,13 +139,13 @@ export default StyleSheet.create({
   },
   
   sectionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: spacing.xxs,
   },
-  
+
   sectionSubtitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "400",
   },
   
@@ -166,7 +166,7 @@ export default StyleSheet.create({
   },
   
   allButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   
@@ -195,7 +195,7 @@ export default StyleSheet.create({
   },
   
   footerInfoText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   
@@ -220,7 +220,7 @@ export default StyleSheet.create({
   
   applyButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
 });

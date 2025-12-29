@@ -77,7 +77,7 @@ export default StyleSheet.create({
   
   placeholderText: {
     marginTop: spacing.sm,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
   },
@@ -119,7 +119,7 @@ export default StyleSheet.create({
   
   badgeText: {
     color: "#FFFFFF",
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   
@@ -134,7 +134,7 @@ export default StyleSheet.create({
   },
   
   title: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
     marginBottom: 2,
@@ -142,9 +142,9 @@ export default StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  
+
   category: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     color: "rgba(255, 255, 255, 0.8)",
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
@@ -160,7 +160,7 @@ export default StyleSheet.create({
   },
   
   emptyText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     marginTop: spacing.md,
     paddingHorizontal: spacing.xl,

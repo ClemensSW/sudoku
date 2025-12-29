@@ -42,7 +42,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
 }) => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor(); // Dynamic path color
 
   // Animation values
@@ -221,7 +221,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                         textShadowColor: isActive ? 'rgba(0, 0, 0, 0.3)' : undefined,
                         textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                         textShadowRadius: isActive ? 2 : undefined,
-                        fontSize: 18,
+                        fontSize: typography.size.lg,
                         fontWeight: '700',
                         marginBottom: 10,
                       }
@@ -241,7 +241,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 14,
+                          fontSize: typography.size.sm,
                           fontWeight: '600',
                         }
                       ]}>
@@ -257,7 +257,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 14,
+                          fontSize: typography.size.sm,
                           fontWeight: '600',
                         }
                       ]}>
@@ -276,7 +276,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 14,
+                          fontSize: typography.size.sm,
                           fontWeight: '600',
                         }
                       ]}>
@@ -292,7 +292,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                           textShadowColor: isActive ? 'rgba(0, 0, 0, 0.2)' : undefined,
                           textShadowOffset: isActive ? { width: 0, height: 1 } : undefined,
                           textShadowRadius: isActive ? 1 : undefined,
-                          fontSize: 14,
+                          fontSize: typography.size.sm,
                           fontWeight: '600',
                         }
                       ]}>
@@ -474,7 +474,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                   elevation: 0,
                 }}
                 textStyle={{
-                  fontSize: 14,
+                  fontSize: typography.size.sm,
                   fontWeight: '700',
                 }}
               />

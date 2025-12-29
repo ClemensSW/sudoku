@@ -56,7 +56,7 @@ const ThankYouModal: React.FC<ThankYouModalProps> = ({
 }) => {
   const { t } = useTranslation('supportShop');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   // Animation values
   const checkScale = useSharedValue(0);
@@ -148,12 +148,12 @@ const ThankYouModal: React.FC<ThankYouModalProps> = ({
           </Animated.View>
 
           {/* Title */}
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
             {displayTitle}
           </Text>
 
           {/* Message */}
-          <Text style={[styles.message, { color: colors.textSecondary }]}>
+          <Text style={[styles.message, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {displayMessage}
           </Text>
 
@@ -172,7 +172,7 @@ const ThankYouModal: React.FC<ThankYouModalProps> = ({
                 }}
                 activeOpacity={0.8}
               >
-                <Text style={styles.primaryButtonText}>
+                <Text style={[styles.primaryButtonText, { fontSize: typography.size.md }]}>
                   {t('thankYou.exploreGallery', 'Galerie erkunden')}
                 </Text>
                 <Feather name="arrow-right" size={18} color="#FFFFFF" />
@@ -196,7 +196,7 @@ const ThankYouModal: React.FC<ThankYouModalProps> = ({
               activeOpacity={0.7}
             >
               <Text
-                style={[styles.secondaryButtonText, { color: colors.textPrimary }]}
+                style={[styles.secondaryButtonText, { color: colors.textPrimary, fontSize: typography.size.sm }]}
               >
                 {t('thankYou.close', 'Schließen')}
               </Text>
@@ -239,13 +239,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     lineHeight: 24,
     textAlign: 'center',
     marginBottom: 32,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   secondaryButton: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 });

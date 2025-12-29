@@ -95,7 +95,7 @@ export default StyleSheet.create({
   },
   
   headerTitle: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     color: "#FFFFFF",
     textAlign: "center",
@@ -148,7 +148,7 @@ export default StyleSheet.create({
   
   // Landscape Info
   description: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     color: "rgba(255, 255, 255, 0.85)",
     marginBottom: spacing.md,
     lineHeight: 22,
@@ -181,7 +181,7 @@ export default StyleSheet.create({
   },
   
   tagText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   
@@ -227,7 +227,7 @@ export default StyleSheet.create({
   // Progress Indicators
   progressText: {
     marginTop: spacing.lg,
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     color: "#FFFFFF",
     textAlign: "center",
@@ -270,7 +270,7 @@ export default StyleSheet.create({
 
   selectButtonText: {
     color: "#FFFFFF",
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 });

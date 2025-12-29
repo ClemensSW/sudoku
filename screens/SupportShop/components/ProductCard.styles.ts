@@ -36,16 +36,16 @@ export default StyleSheet.create({
     shadowRadius: 3,
   },
   icon: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
   },
   title: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 10, // Mehr Abstand zur Beschreibung
   },
   description: {
-    fontSize: 14, // Größer für bessere Lesbarkeit
+    // fontSize set dynamically via theme.typography
     lineHeight: 18,
     textAlign: "center",
     marginBottom: 8,
@@ -65,7 +65,7 @@ export default StyleSheet.create({
     elevation: 1,
   },
   price: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   popularBadge: {
@@ -80,7 +80,7 @@ export default StyleSheet.create({
   },
   popularText: {
     color: "white",
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   shine: {

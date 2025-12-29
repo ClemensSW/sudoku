@@ -50,7 +50,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 }) => {
   const { t } = useTranslation('gallery');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { hideBottomNav, resetBottomNav } = useNavigation();
@@ -159,7 +159,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             ]}
           >
             <Feather name="filter" size={18} color="#FFFFFF" />
-            <Text style={styles.applyButtonText}>
+            <Text style={[styles.applyButtonText, { fontSize: typography.size.md }]}>
               {t('filterModal.applyFilter')}
             </Text>
             <Feather name="arrow-right" size={18} color="#FFFFFF" />
@@ -167,7 +167,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </View>
       </BottomSheetFooter>
     ),
-    [colors.surface, theme.isDark, insets.bottom, handleApply, progressColor, t]
+    [colors.surface, theme.isDark, insets.bottom, handleApply, progressColor, t, typography]
   );
 
   if (!visible) return null;
@@ -192,7 +192,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       >
         {/* Header: Title */}
         <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
             {t('filterModal.title')}
           </Text>
         </View>
@@ -228,6 +228,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     color: allCategoriesSelected
                       ? "#FFFFFF"
                       : colors.textPrimary,
+                    fontSize: typography.size.md,
                   },
                 ]}
               >
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textAlign: 'center',
   },
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   allButtonText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   footer: {
@@ -310,7 +311,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   applyButtonText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     color: '#FFFFFF',
   },

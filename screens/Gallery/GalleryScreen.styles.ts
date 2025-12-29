@@ -52,7 +52,7 @@ export default StyleSheet.create({
   },
   
   filterBadgeText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginLeft: spacing.xs,
     flex: 1,
@@ -120,7 +120,7 @@ export default StyleSheet.create({
   },
   
   smallTabText: {
-    fontSize: 12, // Smaller font for small screens
+    // fontSize set dynamically via theme.typography (smaller for small screens)
   },
   
   tabIcon: {
@@ -132,7 +132,7 @@ export default StyleSheet.create({
   },
   
   tabText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     textAlign: 'center',
   },
@@ -169,7 +169,7 @@ export default StyleSheet.create({
   },
   
   emptyText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     marginTop: spacing.md,
   },

@@ -32,19 +32,19 @@ export default StyleSheet.create({
     shadowRadius: 3,
   },
   icon: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
   },
   contentContainer: {
     flex: 1,
     paddingRight: 8, // Verhindert Textabschneidung
   },
   title: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 4, // Etwas mehr Abstand
   },
   description: {
-    fontSize: 13, // Etwas größer für bessere Lesbarkeit
+    // fontSize set dynamically via theme.typography
     lineHeight: 18,
     opacity: 0.8,
   },
@@ -56,11 +56,11 @@ export default StyleSheet.create({
     justifyContent: "space-between",
   },
   price: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   savings: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     paddingHorizontal: 10,
     paddingVertical: 4, // Mehr Platz für den Text
@@ -74,7 +74,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   subscribeText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginRight: 6, // Mehr Abstand zum Icon
     color: "white",
@@ -94,7 +94,7 @@ export default StyleSheet.create({
     transform: [{ rotate: "6deg" }],
   },
   bestValueText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "white",
   },
@@ -112,7 +112,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   benefitsText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     opacity: 0.7,
   },

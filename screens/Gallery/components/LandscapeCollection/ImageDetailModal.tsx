@@ -83,7 +83,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   onOpenSupportShop,
 }) => {
   const theme = useTheme();
-  const { colors: themeColors } = theme;
+  const { colors: themeColors, typography } = theme;
   const insets = useSafeAreaInsets();
   const { t } = useTranslation('gallery');
   const navigation = useReactNavigation();
@@ -377,10 +377,10 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
         {/* Text content */}
         <View style={{ flex: 1 }}>
-          <Text style={{ color: premiumColor, fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: premiumColor, fontSize: typography.size.sm, fontWeight: '600' }}>
             {bannerContent.title}
           </Text>
-          <Text style={{ color: themeColors.textSecondary, fontSize: 13, marginTop: 2 }}>
+          <Text style={{ color: themeColors.textSecondary, fontSize: typography.size.xs, marginTop: 2 }}>
             {bannerContent.subtitle}
           </Text>
         </View>
@@ -627,7 +627,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                         color="#FFFFFF"
                         style={{ marginRight: 6 }}
                       />
-                      <Text style={[styles.selectButtonText, { fontWeight: '700', fontSize: 13 }]} numberOfLines={1} adjustsFontSizeToFit>
+                      <Text style={[styles.selectButtonText, { fontWeight: '700', fontSize: typography.size.xs }]} numberOfLines={1} adjustsFontSizeToFit>
                         {t('detailModal.supporterUnlockButton')}
                       </Text>
                     </TouchableOpacity>
@@ -674,7 +674,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                         color="#FFFFFF"
                         style={{ marginRight: 6 }}
                       />
-                      <Text style={[styles.selectButtonText, { fontWeight: '600', fontSize: 13 }]} numberOfLines={1} adjustsFontSizeToFit>
+                      <Text style={[styles.selectButtonText, { fontWeight: '600', fontSize: typography.size.xs }]} numberOfLines={1} adjustsFontSizeToFit>
                         {t('detailModal.unlockButton')}
                       </Text>
                     </TouchableOpacity>

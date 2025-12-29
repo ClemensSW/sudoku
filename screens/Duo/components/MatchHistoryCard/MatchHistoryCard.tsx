@@ -40,16 +40,15 @@ const hexToRGBA = (hex: string, alpha: number): string => {
 
 const MatchHistoryCard: React.FC = () => {
   const { t } = useTranslation("duo");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
   const { colors: leagueColors } = useCurrentLeague();
 
   // Theme-aware colors
-  const cardBg = theme.isDark ? colors.surface : "#FFFFFF";
-  const cardBorder = theme.isDark
+  const cardBg = isDark ? colors.surface : "#FFFFFF";
+  const cardBorder = isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.06)";
-  const dividerColor = theme.isDark
+  const dividerColor = isDark
     ? "rgba(255,255,255,0.10)"
     : "rgba(0,0,0,0.08)";
 
@@ -70,8 +69,8 @@ const MatchHistoryCard: React.FC = () => {
         {
           backgroundColor: cardBg,
           borderColor: cardBorder,
-          shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
-          elevation: theme.isDark ? 0 : 8,
+          shadowColor: isDark ? "transparent" : leagueColors.accent,
+          elevation: isDark ? 0 : 8,
         },
       ]}
       entering={FadeIn.duration(400).delay(200)}
@@ -79,7 +78,7 @@ const MatchHistoryCard: React.FC = () => {
       {/* Header - zentriert wie Liga Header */}
       <View style={styles.header}>
         <HourglassIcon width={64} height={64} />
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
           {t("history.title", { defaultValue: "Letzte Spiele" })}
         </Text>
       </View>
@@ -122,24 +121,24 @@ const MatchHistoryCard: React.FC = () => {
                   {/* Match Info */}
                   <View style={styles.matchInfo}>
                     <View style={styles.opponentRow}>
-                      <Text style={[styles.vsText, { color: colors.textSecondary }]}>
+                      <Text style={[styles.vsText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                         {t("history.vs", { defaultValue: "vs" })}
                       </Text>
                       <Text
-                        style={[styles.opponentName, { color: colors.textPrimary }]}
+                        style={[styles.opponentName, { color: colors.textPrimary, fontSize: typography.size.sm }]}
                         numberOfLines={1}
                       >
                         {match.opponent}
                       </Text>
                     </View>
-                    <Text style={[styles.timeText, { color: colors.textSecondary }]}>
+                    <Text style={[styles.timeText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                       {formatTimeAgo(match.timeAgo)}
                     </Text>
                   </View>
                 </View>
 
                 {/* ELO Change */}
-                <Text style={[styles.eloChange, { color: resultColor }]}>
+                <Text style={[styles.eloChange, { color: resultColor, fontSize: typography.size.sm }]}>
                   {match.eloChange > 0 ? "+" : ""}
                   {match.eloChange} ELO
                 </Text>
@@ -155,7 +154,7 @@ const MatchHistoryCard: React.FC = () => {
             color={colors.textSecondary}
             style={{ marginBottom: 8 }}
           />
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+          <Text style={[styles.emptyText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t("history.noGames", { defaultValue: "Noch keine Spiele" })}
           </Text>
         </View>

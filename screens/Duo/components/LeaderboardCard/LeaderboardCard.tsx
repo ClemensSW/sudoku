@@ -58,8 +58,7 @@ const DUMMY_PLAYERS: LeaguePlayer[] = [
 
 const LeaderboardCard: React.FC = () => {
   const { t } = useTranslation("duo");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
   const { tier, colors: leagueColors } = useCurrentLeague();
 
   // Load current user's profile data (reload on screen focus)
@@ -85,22 +84,22 @@ const LeaderboardCard: React.FC = () => {
   });
 
   // Card colors
-  const cardBg = theme.isDark ? colors.surface : "#FFFFFF";
-  const cardBorder = theme.isDark
+  const cardBg = isDark ? colors.surface : "#FFFFFF";
+  const cardBorder = isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.06)";
-  const dividerColor = theme.isDark
+  const dividerColor = isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.06)";
 
   // Zone colors
-  const promotionBg = theme.isDark
+  const promotionBg = isDark
     ? hexToRGBA(PROMOTION_COLOR, 0.15)
     : hexToRGBA(PROMOTION_COLOR, 0.08);
-  const demotionBg = theme.isDark
+  const demotionBg = isDark
     ? hexToRGBA(DEMOTION_COLOR, 0.15)
     : hexToRGBA(DEMOTION_COLOR, 0.08);
-  const currentUserBg = theme.isDark
+  const currentUserBg = isDark
     ? hexToRGBA(leagueColor, 0.2)
     : hexToRGBA(leagueColor, 0.1);
 
@@ -126,7 +125,7 @@ const LeaderboardCard: React.FC = () => {
       <Text
         style={[
           styles.rankNumber,
-          { color: player.isCurrentUser ? leagueColor : colors.textSecondary },
+          { color: player.isCurrentUser ? leagueColor : colors.textSecondary, fontSize: typography.size.md },
         ]}
       >
         {player.rank}.
@@ -148,7 +147,7 @@ const LeaderboardCard: React.FC = () => {
       <Text
         style={[
           styles.playerName,
-          { color: colors.textPrimary },
+          { color: colors.textPrimary, fontSize: typography.size.md },
           player.isCurrentUser && styles.currentUserName,
         ]}
         numberOfLines={1}
@@ -160,7 +159,7 @@ const LeaderboardCard: React.FC = () => {
       <Text
         style={[
           styles.playerPoints,
-          { color: player.isCurrentUser ? leagueColor : colors.textSecondary },
+          { color: player.isCurrentUser ? leagueColor : colors.textSecondary, fontSize: typography.size.md },
         ]}
       >
         {player.points.toLocaleString("de-DE")}
@@ -176,8 +175,8 @@ const LeaderboardCard: React.FC = () => {
           backgroundColor: cardBg,
           borderColor: cardBorder,
           // Shadow with league color glow
-          shadowColor: theme.isDark ? "transparent" : leagueColor,
-          elevation: theme.isDark ? 0 : 8,
+          shadowColor: isDark ? "transparent" : leagueColor,
+          elevation: isDark ? 0 : 8,
         },
       ]}
       entering={FadeIn.duration(400).delay(100)}
@@ -188,7 +187,7 @@ const LeaderboardCard: React.FC = () => {
           style={[
             styles.leagueIconContainer,
             {
-              backgroundColor: theme.isDark
+              backgroundColor: isDark
                 ? hexToRGBA(leagueColor, 0.25)
                 : hexToRGBA(leagueColor, 0.15),
             },
@@ -196,7 +195,7 @@ const LeaderboardCard: React.FC = () => {
         >
           <SilverBadgeIcon width={48} height={48} />
         </View>
-        <Text style={[styles.leagueName, { color: colors.textPrimary }]}>
+        <Text style={[styles.leagueName, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
           {leagueName}
         </Text>
       </View>
@@ -207,7 +206,7 @@ const LeaderboardCard: React.FC = () => {
       {/* Promotion Zone Header */}
       <View style={[styles.zoneHeader, { backgroundColor: promotionBg }]}>
         <Feather name="arrow-up" size={14} color={PROMOTION_COLOR} />
-        <Text style={[styles.zoneText, { color: PROMOTION_COLOR }]}>
+        <Text style={[styles.zoneText, { color: PROMOTION_COLOR, fontSize: typography.size.xs }]}>
           {t("league.promotionZone", { defaultValue: "Aufstiegszone" })}
         </Text>
       </View>
@@ -235,7 +234,7 @@ const LeaderboardCard: React.FC = () => {
       {/* Demotion Zone Header */}
       <View style={[styles.zoneHeader, { backgroundColor: demotionBg }]}>
         <Feather name="arrow-down" size={14} color={DEMOTION_COLOR} />
-        <Text style={[styles.zoneText, { color: DEMOTION_COLOR }]}>
+        <Text style={[styles.zoneText, { color: DEMOTION_COLOR, fontSize: typography.size.xs }]}>
           {t("league.demotionZone", { defaultValue: "Abstiegszone" })}
         </Text>
       </View>

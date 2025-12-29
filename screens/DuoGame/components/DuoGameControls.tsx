@@ -75,7 +75,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
-  const { isDark } = useTheme(); // Get dark mode state
+  const { isDark, typography } = useTheme(); // Get dark mode state and typography
   const pathColorHex = useStoredColorHex();
   const theme = React.useMemo(
     () => getPlayerControlColors(player as DuoPlayerId, pathColorHex, isDark),
@@ -240,6 +240,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   color: disabled
                     ? theme.actionButton.disabledIconColor
                     : theme.actionButton.textColor,       // Neutral text color
+                  fontSize: typography.size.xs,
                 },
               ]}
             >
@@ -302,6 +303,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                     color: disabled
                       ? theme.actionButton.disabledIconColor
                       : theme.actionButton.textColor,           // Neutral text
+                    fontSize: typography.size.xs,
                   },
                 ]}
               >
@@ -353,6 +355,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                     hintDisabled || disabled
                       ? theme.actionButton.disabledIconColor
                       : theme.actionButton.textColor,         // Neutral text
+                  fontSize: typography.size.xs,
                 },
               ]}
             >
@@ -426,7 +429,7 @@ const styles = StyleSheet.create({
   },
   // Text für die Action Buttons
   actionButtonText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginLeft: 5,
   },

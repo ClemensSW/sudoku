@@ -51,8 +51,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   initialDifficulty = "medium",
 }) => {
   const router = useRouter();
-  const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = useTheme();
   const insets = useSafeAreaInsets();
   const { showAlert } = useAlert();
   const { t, i18n } = useTranslation('duoGame');
@@ -376,7 +375,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
       >
         <StatusBar hidden={true} />
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.textPrimary }]}>
+          <Text style={[styles.loadingText, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
             {t('loading')}
           </Text>
         </View>
@@ -502,7 +501,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   content: {

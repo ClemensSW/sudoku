@@ -19,7 +19,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
   winnerName,
 }) => {
   const { t } = useTranslation("duoGame");
-  const { colors, isDark } = useTheme();
+  const { colors, typography, isDark } = useTheme();
 
   // Get result text based on winner - jetzt mit dynamischem Namen
   const getResultText = (): string => {
@@ -50,7 +50,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
       <Text
         style={[
           styles.resultText,
-          { color: isDark ? "#FFFFFF" : "#202124" },
+          { color: isDark ? "#FFFFFF" : "#202124", fontSize: typography.size.xxxl },
         ]}
       >
         {getResultText()}
@@ -60,7 +60,7 @@ const CompletionHeader: React.FC<CompletionHeaderProps> = ({
       <Text
         style={[
           styles.resultSubtext,
-          { color: isDark ? colors.textSecondary : "#5F6368" },
+          { color: isDark ? colors.textSecondary : "#5F6368", fontSize: typography.size.md },
         ]}
       >
         {getResultSubtext()}
@@ -84,13 +84,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   resultText: {
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     marginBottom: 12,
     textAlign: "center",
   },
   resultSubtext: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     opacity: 0.7,
   },

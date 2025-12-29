@@ -25,8 +25,7 @@ const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
   label,
   noAnimation = false
 }) => {
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = useTheme();
   const { t } = useTranslation('duo');
   const scrollHintOpacity = useSharedValue(1);
 
@@ -57,7 +56,7 @@ const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({
       style={[styles.scrollIndicator, scrollHintStyle]}
     >
       <TouchableOpacity onPress={onPress} style={styles.scrollButton}>
-        <Text style={[styles.scrollText, { color: colors.textSecondary }]}>
+        <Text style={[styles.scrollText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {label || t('scrollIndicator.label')}
         </Text>
         <Feather name="chevron-down" size={24} color={colors.textSecondary} />

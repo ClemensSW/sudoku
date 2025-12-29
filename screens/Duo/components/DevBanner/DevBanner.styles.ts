@@ -35,7 +35,7 @@ export default StyleSheet.create({
     marginRight: 6,
   },
   text: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
     letterSpacing: 2,
     textTransform: "uppercase",

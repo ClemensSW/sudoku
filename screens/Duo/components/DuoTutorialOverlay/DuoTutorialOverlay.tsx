@@ -97,8 +97,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
   elo = 1247,
 }) => {
   const { t } = useTranslation("duo");
-  const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const { hideBottomNav, resetBottomNav } = useNavigation();
   const { tier, colors: leagueColors } = useCurrentLeague();
@@ -185,7 +184,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
               styles.featureCard,
               {
                 backgroundColor: colors.surface,
-                borderColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.15 : 0.1),
+                borderColor: hexToRGBA(leagueColors.primary, isDark ? 0.15 : 0.1),
                 borderWidth: 1,
               },
             ]}
@@ -194,16 +193,16 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
             <View
               style={[
                 styles.featureIconContainer,
-                { backgroundColor: hexToRGBA(leagueColors.accent, theme.isDark ? 0.2 : 0.12) },
+                { backgroundColor: hexToRGBA(leagueColors.accent, isDark ? 0.2 : 0.12) },
               ]}
             >
               <IconComponent width={32} height={32} fill={leagueColors.accent} />
             </View>
             <View style={styles.featureContent}>
-              <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.featureTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {t(feature.titleKey)}
               </Text>
-              <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
+              <Text style={[styles.featureDescription, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                 {t(feature.descriptionKey)}
               </Text>
             </View>
@@ -221,7 +220,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
       showsVerticalScrollIndicator={false}
     >
       {/* Intro text */}
-      <Text style={[styles.leagueIntro, { color: colors.textSecondary }]}>
+      <Text style={[styles.leagueIntro, { color: colors.textSecondary, fontSize: typography.size.md }]}>
         {t("tutorial.leagues.intro", { defaultValue: "Steige durch 7 Ränge auf:" })}
       </Text>
 
@@ -231,13 +230,13 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
           styles.ranksContainer,
           {
             backgroundColor: colors.surface,
-            borderColor: theme.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
           },
         ]}
       >
         {ALL_RANKS.map((rankTier, index) => {
           const isCurrentTier = tier === rankTier;
-          const rankColors = getLeagueColors(rankTier, theme.isDark);
+          const rankColors = getLeagueColors(rankTier, isDark);
           const threshold = TIER_THRESHOLDS[rankTier];
           const icon = getRankIcon(rankTier);
 
@@ -247,14 +246,14 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
               style={[
                 styles.rankRow,
                 isCurrentTier && {
-                  backgroundColor: hexToRGBA(rankColors.primary, theme.isDark ? 0.15 : 0.1),
+                  backgroundColor: hexToRGBA(rankColors.primary, isDark ? 0.15 : 0.1),
                   borderRadius: 12,
                   marginHorizontal: -8,
                   paddingHorizontal: 8,
                 },
                 index < ALL_RANKS.length - 1 && !isCurrentTier && {
                   borderBottomWidth: 1,
-                  borderBottomColor: theme.isDark
+                  borderBottomColor: isDark
                     ? "rgba(255,255,255,0.05)"
                     : "rgba(0,0,0,0.04)",
                 },
@@ -265,7 +264,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
               <View
                 style={[
                   styles.rankIconContainer,
-                  { backgroundColor: hexToRGBA(rankColors.primary, theme.isDark ? 0.2 : 0.12) },
+                  { backgroundColor: hexToRGBA(rankColors.primary, isDark ? 0.2 : 0.12) },
                 ]}
               >
                 {icon.type === "svg" && icon.component ? (
@@ -286,6 +285,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
                   {
                     color: isCurrentTier ? rankColors.primary : colors.textPrimary,
                     fontWeight: isCurrentTier ? "700" : "500",
+                    fontSize: typography.size.md,
                   },
                 ]}
               >
@@ -296,7 +296,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
               <Text
                 style={[
                   styles.rankElo,
-                  { color: isCurrentTier ? rankColors.accent : colors.textSecondary },
+                  { color: isCurrentTier ? rankColors.accent : colors.textSecondary, fontSize: typography.size.sm },
                 ]}
               >
                 {threshold}+ ELO
@@ -318,8 +318,8 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
         style={[
           styles.currentRankCard,
           {
-            backgroundColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.12 : 0.08),
-            borderColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.25 : 0.2),
+            backgroundColor: hexToRGBA(leagueColors.primary, isDark ? 0.12 : 0.08),
+            borderColor: hexToRGBA(leagueColors.primary, isDark ? 0.25 : 0.2),
           },
         ]}
         entering={FadeInDown.duration(300).delay(400)}
@@ -328,19 +328,19 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
           <SilverBadgeIcon width={36} height={36} />
         </View>
         <View style={styles.currentRankText}>
-          <Text style={[styles.currentRankLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.currentRankLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t("tutorial.leagues.currentRank", { defaultValue: "Dein aktueller Rang:" })}
           </Text>
           <Text
             style={[
               styles.currentRankValue,
-              { color: theme.isDark ? leagueColors.primary : leagueColors.accent },
+              { color: isDark ? leagueColors.primary : leagueColors.accent, fontSize: typography.size.lg },
             ]}
           >
             {t(`rank.${tier}`, { defaultValue: getRankTierName(tier) }).toUpperCase()}
           </Text>
           {nextTier && (
-            <Text style={[styles.pointsToNext, { color: colors.textSecondary }]}>
+            <Text style={[styles.pointsToNext, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
               {t("tutorial.leagues.pointsToNext", {
                 defaultValue: "{{points}} Punkte bis {{rank}}",
                 points: pointsToNext,
@@ -364,7 +364,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
       >
         <View style={styles.headerSpacer} />
 
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
           {pageTitles[currentPage]}
         </Text>
 
@@ -389,7 +389,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
                 backgroundColor:
                   index === currentPage
                     ? leagueColors.accent
-                    : theme.isDark
+                    : isDark
                       ? "rgba(255,255,255,0.2)"
                       : "rgba(0,0,0,0.12)",
                 transform: [{ scale: index === currentPage ? 1.2 : 1 }],
@@ -419,7 +419,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
                 styles.backButton,
                 {
                   backgroundColor: colors.surface,
-                  borderColor: theme.isDark
+                  borderColor: isDark
                     ? "rgba(255,255,255,0.12)"
                     : "rgba(0,0,0,0.1)",
                   opacity: pressed ? 0.7 : 1,
@@ -427,7 +427,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
               ]}
               onPress={goBack}
             >
-              <Text style={[styles.backButtonText, { color: colors.textPrimary }]}>
+              <Text style={[styles.backButtonText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {t("tutorial.back", { defaultValue: "Zurück" })}
               </Text>
             </Pressable>
@@ -445,7 +445,7 @@ const DuoTutorialOverlay: React.FC<DuoTutorialOverlayProps> = ({
             ]}
             onPress={goNext}
           >
-            <Text style={[styles.nextButtonText, { color: leagueColors.text }]}>
+            <Text style={[styles.nextButtonText, { color: leagueColors.text, fontSize: typography.size.md }]}>
               {currentPage === totalPages - 1
                 ? t("tutorial.understood", { defaultValue: "Verstanden" })
                 : t("tutorial.next", { defaultValue: "Weiter" })}

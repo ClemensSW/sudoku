@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     flex: 1,
@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 4,
   },
   featureDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
   },
 
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   // Leagues page
   leagueIntro: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     lineHeight: 22,
     marginBottom: 16,
     textAlign: "center",
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
   },
   rankName: {
     flex: 1,
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
   },
   rankElo: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     marginRight: 8,
   },
   currentIndicator: {
@@ -142,17 +142,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   currentRankLabel: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     marginBottom: 2,
   },
   currentRankValue: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     letterSpacing: 1,
     marginBottom: 2,
   },
   pointsToNext: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     marginTop: 2,
   },
 
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   backButtonText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   nextButton: {
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nextButtonText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 });

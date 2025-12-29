@@ -98,8 +98,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   isOnlineDisabled = false,
 }) => {
   const { t } = useTranslation("duo");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { tier, colors: leagueColors } = useCurrentLeague();
@@ -209,7 +208,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   return (
     <LinearGradient
       colors={
-        theme.isDark
+        isDark
           ? [
               hexToRGBA(leagueColors.accent, 0.15),
               hexToRGBA(leagueColors.accent, 0.05),
@@ -232,10 +231,10 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
 
       {/* Title Section */}
       <View style={styles.titleSection}>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {t("header.subtitle", { defaultValue: "ZWEI SPIELER MODUS" })}
         </Text>
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
           {t("header.title", { defaultValue: "Sudoku Duo" })}
         </Text>
       </View>
@@ -253,16 +252,16 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                   styles.rankCard,
                   {
                     backgroundColor: colors.surface,
-                    borderColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.3 : 0.4),
+                    borderColor: hexToRGBA(leagueColors.primary, isDark ? 0.3 : 0.4),
                     shadowColor: leagueColors.primary,
-                    elevation: theme.isDark ? 0 : 4,
+                    elevation: isDark ? 0 : 4,
                   },
                 ]}
                 entering={FadeInDown.duration(400).delay(100)}
               >
                 {/* Subtle Tier-tinted Gradient Background */}
                 <LinearGradient
-                  colors={getTierGradientColors(leagueColors.primary, theme.isDark)}
+                  colors={getTierGradientColors(leagueColors.primary, isDark)}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.rankCardGradient}
@@ -273,7 +272,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                       styles.shine,
                       shineAnimatedStyle,
                       {
-                        backgroundColor: theme.isDark
+                        backgroundColor: isDark
                           ? "rgba(255,255,255,0.08)"
                           : "rgba(255,255,255,0.4)",
                       },
@@ -285,7 +284,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     <View
                       style={[
                         styles.rankBadgeGlow,
-                        { backgroundColor: hexToRGBA(leagueColors.primary, theme.isDark ? 0.3 : 0.4) },
+                        { backgroundColor: hexToRGBA(leagueColors.primary, isDark ? 0.3 : 0.4) },
                       ]}
                     />
                     <SilverBadgeIcon width={52} height={52} />
@@ -297,16 +296,16 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                     <Text
                       style={[
                         styles.rankName,
-                        { color: theme.isDark ? leagueColors.primary : leagueColors.accent },
+                        { color: isDark ? leagueColors.primary : leagueColors.accent, fontSize: typography.size.sm },
                       ]}
                     >
                       {t(`rank.${tier}`, { defaultValue: tierName })}
                     </Text>
 
                     {/* ELO Value - Prominent Display */}
-                    <Text style={[styles.eloValue, { color: colors.textPrimary }]}>
+                    <Text style={[styles.eloValue, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
                       {elo.toLocaleString()}
-                      <Text style={[styles.eloLabel, { color: colors.textSecondary }]}>
+                      <Text style={[styles.eloLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                         {" "}ELO
                       </Text>
                     </Text>
@@ -317,7 +316,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                         style={[
                           styles.progressTrack,
                           {
-                            backgroundColor: theme.isDark
+                            backgroundColor: isDark
                               ? "rgba(255,255,255,0.15)"
                               : "rgba(0,0,0,0.1)",
                           },
@@ -332,7 +331,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                           />
                         </Animated.View>
                       </View>
-                      <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+                      <Text style={[styles.progressText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                         {nextTier
                           ? `${pointsToNext} → ${nextTierName}`
                           : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
@@ -352,26 +351,26 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               {/* W-L Record (clickable -> Erfolge Tab) */}
               <Pressable onPress={handleRecordPress} style={styles.statsInlineItem}>
                 <ZielIcon width={20} height={20} />
-                <Text style={[styles.statsInlineValue, { color: colors.textPrimary }]}>
+                <Text style={[styles.statsInlineValue, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                   {gameStats.wins}-{gameStats.losses}
                 </Text>
-                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                   {t("stats.record", { defaultValue: "Bilanz" })}
                 </Text>
               </Pressable>
 
               {/* Divider */}
-              <Text style={[styles.statsInlineDivider, { color: colors.textSecondary }]}>
+              <Text style={[styles.statsInlineDivider, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                 •
               </Text>
 
               {/* Daily Streak (clickable) */}
               <Pressable onPress={handleStreakPress} style={styles.statsInlineItem}>
                 <LightningIcon width={20} height={20} />
-                <Text style={[styles.statsInlineValue, { color: colors.textPrimary }]}>
+                <Text style={[styles.statsInlineValue, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                   {currentStreak}
                 </Text>
-                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                   {streakLabel}
                 </Text>
               </Pressable>
@@ -379,12 +378,12 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               {/* Tutorial Link */}
               {onTutorialPress && (
                 <>
-                  <Text style={[styles.statsInlineDivider, { color: colors.textSecondary }]}>
+                  <Text style={[styles.statsInlineDivider, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                     •
                   </Text>
                   <Pressable onPress={onTutorialPress} style={styles.statsInlineItem}>
                     <Feather name="info" size={18} color={colors.textSecondary} />
-                    <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                    <Text style={[styles.statsInlineLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                       {t("features.short", { defaultValue: "Info" })}
                     </Text>
                   </Pressable>
@@ -402,15 +401,15 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                       styles.actionButton,
                       {
                         backgroundColor: colors.surface,
-                        borderColor: theme.isDark
+                        borderColor: isDark
                           ? "rgba(255,255,255,0.08)"
                           : "rgba(0,0,0,0.06)",
-                        shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
+                        shadowColor: isDark ? "transparent" : leagueColors.accent,
                         opacity: pressed ? 0.9 : 1,
                       },
                     ]}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>
+                    <Text style={[styles.actionButtonText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                       {t("gameModeModal.local.title", { defaultValue: "Lokal spielen" })}
                     </Text>
                   </Pressable>
@@ -423,15 +422,15 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                       styles.actionButton,
                       {
                         backgroundColor: colors.surface,
-                        borderColor: theme.isDark
+                        borderColor: isDark
                           ? "rgba(255,255,255,0.08)"
                           : "rgba(0,0,0,0.06)",
-                        shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
+                        shadowColor: isDark ? "transparent" : leagueColors.accent,
                         opacity: isOnlineDisabled ? 0.5 : pressed ? 0.9 : 1,
                       },
                     ]}
                   >
-                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>
+                    <Text style={[styles.actionButtonText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                       {t("gameModeModal.online.title", { defaultValue: "Online spielen" })}
                     </Text>
                   </Pressable>
@@ -447,7 +446,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               color={colors.textSecondary}
               style={{ marginBottom: 8 }}
             />
-            <Text style={[styles.loginText, { color: colors.textSecondary }]}>
+            <Text style={[styles.loginText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
               {t("stats.loginPrompt", {
                 defaultValue: "Melde dich an um deine Stats zu sehen",
               })}

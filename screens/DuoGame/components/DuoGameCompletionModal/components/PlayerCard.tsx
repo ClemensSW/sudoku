@@ -40,7 +40,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   leaguePrimary,
 }) => {
   const { t } = useTranslation("duoGame");
-  const { colors, isDark } = useTheme();
+  const { colors, typography, isDark } = useTheme();
 
   const playerStyle = useAnimatedStyle(() => ({
     transform: [{ scale: playerScale.value }],
@@ -89,7 +89,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           <Text
             style={[
               styles.winnerText,
-              { backgroundColor: leaguePrimary },
+              { backgroundColor: leaguePrimary, fontSize: typography.size.xs },
             ]}
           >
             {t("completion.winner")}
@@ -113,7 +113,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           <Text
             style={[
               styles.playerName,
-              { color: isDark ? "#FFFFFF" : "#202124" },
+              { color: isDark ? "#FFFFFF" : "#202124", fontSize: typography.size.lg },
             ]}
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -130,7 +130,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
                 style={styles.titleIcon}
               />
               <Text
-                style={[styles.playerTitle, { color: colors.textSecondary }]}
+                style={[styles.playerTitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   winnerText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     color: "#FFFFFF",
     paddingHorizontal: 10,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   playerName: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   titleRow: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   playerTitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     flex: 1,
   },

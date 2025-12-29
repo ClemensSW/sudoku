@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   subtitle: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     letterSpacing: 2,
     textTransform: "uppercase",
     marginBottom: 4,
   },
   title: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     letterSpacing: 0.5,
   },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
 
   // Larger, bolder stat value
   statValue: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
     marginBottom: 4,
     letterSpacing: -0.5,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
 
   // Stat label
   statLabel: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
 
   // Rank tier name (e.g., "Silver", "Gold")
   rankName: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -185,14 +185,14 @@ const styles = StyleSheet.create({
 
   // Large ELO value display
   eloValue: {
-    fontSize: 26,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: -0.5,
   },
 
   // ELO label (smaller suffix)
   eloLabel: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
 
   // Progress text
   progressText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   loginText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     textAlign: "center",
   },
@@ -258,19 +258,19 @@ const styles = StyleSheet.create({
 
   // Stat value in inline display
   statsInlineValue: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
 
   // Stat label in inline display
   statsInlineLabel: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
 
   // Divider between stats
   statsInlineDivider: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     opacity: 0.4,
   },
 
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
 
   // Action button text
   actionButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     letterSpacing: 0.2,
     textAlign: "center",
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tutorialButtonText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
 });

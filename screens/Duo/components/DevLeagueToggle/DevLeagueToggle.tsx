@@ -25,14 +25,14 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
   // Nur im DEV-Modus anzeigen
   if (!__DEV__) return null;
 
-  const theme = useTheme();
+  const { colors, typography, isDark } = useTheme();
   const devLeague = useDevLeague();
 
   // Wenn kein Provider vorhanden
   if (!devLeague) return null;
 
   const { overrideLeague, cycleLeague, resetLeague } = devLeague;
-  const colors = overrideLeague ? getLeagueColors(overrideLeague, theme.isDark) : null;
+  const leagueColors = overrideLeague ? getLeagueColors(overrideLeague, isDark) : null;
   const currentIndex = overrideLeague ? LEAGUE_ORDER.indexOf(overrideLeague) : -1;
 
   return (
@@ -41,10 +41,10 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
         style={[
           styles.card,
           {
-            backgroundColor: theme.isDark
+            backgroundColor: isDark
               ? 'rgba(255,255,255,0.05)'
               : 'rgba(0,0,0,0.03)',
-            borderColor: theme.isDark
+            borderColor: isDark
               ? 'rgba(255,255,255,0.1)'
               : 'rgba(0,0,0,0.06)',
           },
@@ -55,9 +55,9 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
           <Feather
             name="code"
             size={14}
-            color={theme.colors.textSecondary}
+            color={colors.textSecondary}
           />
-          <Text style={[styles.headerText, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.headerText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             DEV: Liga-Test
           </Text>
         </View>
@@ -69,14 +69,14 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
             style={({ pressed }) => [
               styles.leagueButton,
               {
-                backgroundColor: colors?.accent || theme.colors.textSecondary,
+                backgroundColor: leagueColors?.accent || colors.textSecondary,
                 opacity: pressed ? 0.8 : 1,
                 transform: [{ scale: pressed ? 0.98 : 1 }],
               },
             ]}
           >
             <Feather name="refresh-cw" size={16} color="#FFFFFF" />
-            <Text style={styles.leagueText}>
+            <Text style={[styles.leagueText, { fontSize: typography.size.md }]}>
               {overrideLeague
                 ? `${getRankTierName(overrideLeague)} (${currentIndex + 1}/7)`
                 : 'Starten'}
@@ -90,14 +90,14 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
               style={({ pressed }) => [
                 styles.resetButton,
                 {
-                  backgroundColor: theme.isDark
+                  backgroundColor: isDark
                     ? 'rgba(255,255,255,0.1)'
                     : 'rgba(0,0,0,0.05)',
                   opacity: pressed ? 0.7 : 1,
                 },
               ]}
             >
-              <Feather name="x" size={16} color={theme.colors.textSecondary} />
+              <Feather name="x" size={16} color={colors.textSecondary} />
             </Pressable>
           )}
         </View>
@@ -105,7 +105,7 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
         {/* Liga-Dots */}
         <View style={styles.dotsContainer}>
           {LEAGUE_ORDER.map((tier, index) => {
-            const tierColors = getLeagueColors(tier, theme.isDark);
+            const tierColors = getLeagueColors(tier, isDark);
             const isActive = tier === overrideLeague;
             return (
               <View
@@ -115,7 +115,7 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
                   {
                     backgroundColor: isActive
                       ? tierColors.accent
-                      : theme.isDark
+                      : isDark
                         ? 'rgba(255,255,255,0.2)'
                         : 'rgba(0,0,0,0.1)',
                     transform: [{ scale: isActive ? 1.3 : 1 }],
@@ -134,15 +134,15 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
               styles.bannerToggle,
               {
                 backgroundColor: showDevBanner
-                  ? theme.isDark
+                  ? isDark
                     ? 'rgba(46,107,123,0.3)'
                     : 'rgba(46,107,123,0.15)'
-                  : theme.isDark
+                  : isDark
                     ? 'rgba(255,255,255,0.1)'
                     : 'rgba(0,0,0,0.05)',
                 borderColor: showDevBanner
                   ? 'rgba(46,107,123,0.5)'
-                  : theme.isDark
+                  : isDark
                     ? 'rgba(255,255,255,0.1)'
                     : 'rgba(0,0,0,0.08)',
                 opacity: pressed ? 0.7 : 1,
@@ -152,12 +152,12 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
             <Feather
               name={showDevBanner ? 'eye' : 'eye-off'}
               size={14}
-              color={showDevBanner ? '#2E6B7B' : theme.colors.textSecondary}
+              color={showDevBanner ? '#2E6B7B' : colors.textSecondary}
             />
             <Text
               style={[
                 styles.bannerToggleText,
-                { color: showDevBanner ? '#2E6B7B' : theme.colors.textSecondary },
+                { color: showDevBanner ? '#2E6B7B' : colors.textSecondary, fontSize: typography.size.sm },
               ]}
             >
               {showDevBanner ? 'Banner sichtbar' : 'Banner versteckt'}
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   leagueText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     color: '#FFFFFF',
   },
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   bannerToggleText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 });

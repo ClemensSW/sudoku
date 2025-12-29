@@ -27,8 +27,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   disabled = false,
 }) => {
   const { t } = useTranslation("duo");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
   const { colors: leagueColors } = useCurrentLeague();
 
   // Animation
@@ -51,10 +50,10 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
 
   // Colors
   const cardBg = colors.surface;
-  const cardBorder = theme.isDark
+  const cardBorder = isDark
     ? "rgba(255,255,255,0.08)"
     : "rgba(0,0,0,0.06)";
-  const iconColor = theme.isDark ? colors.textSecondary : leagueColors.accent;
+  const iconColor = isDark ? colors.textSecondary : leagueColors.accent;
 
   return (
     <Pressable
@@ -72,13 +71,13 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
           {
             backgroundColor: cardBg,
             borderColor: cardBorder,
-            shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
+            shadowColor: isDark ? "transparent" : leagueColors.accent,
           },
           animatedStyle,
         ]}
       >
         {/* Centered Title */}
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.md }]}>
           {title}
         </Text>
 

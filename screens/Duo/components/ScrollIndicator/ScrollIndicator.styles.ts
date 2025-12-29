@@ -12,7 +12,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   scrollText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: 8,
   },

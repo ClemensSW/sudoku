@@ -37,7 +37,7 @@ const DuoProgressBar: React.FC<DuoProgressBarProps> = ({
   showLabel = true,
   animated = true,
 }) => {
-  const { colors, isDark } = useTheme();
+  const { colors, typography, isDark } = useTheme();
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -96,7 +96,7 @@ const DuoProgressBar: React.FC<DuoProgressBarProps> = ({
         <Text
           style={[
             styles.label,
-            { color: isDark ? colors.textSecondary : "#5F6368" },
+            { color: isDark ? colors.textSecondary : "#5F6368", fontSize: typography.size.sm },
           ]}
         >
           {percentage}%
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginLeft: 12,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
     minWidth: 40,

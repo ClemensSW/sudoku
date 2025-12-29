@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   leagueName: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 2,
     textTransform: "uppercase",
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   zoneText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   // Rank number
   rankNumber: {
     width: 28,
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
   },
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   // Player name
   playerName: {
     flex: 1,
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   currentUserName: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 
   // Points
   playerPoints: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     minWidth: 55,
     textAlign: "right",

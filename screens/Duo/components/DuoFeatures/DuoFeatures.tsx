@@ -21,14 +21,13 @@ interface Feature {
 
 const DuoFeatures: React.FC = () => {
   const { t } = useTranslation('duo');
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
   const primaryColor = useProgressColor(); // Dynamic path color
 
   // Use theme-based colors from path palette
-  const greenColor = getPathColor('green', theme.isDark);
-  const yellowColor = getPathColor('yellow', theme.isDark);
-  const redColor = getPathColor('red', theme.isDark);
+  const greenColor = getPathColor('green', isDark);
+  const yellowColor = getPathColor('yellow', isDark);
+  const redColor = getPathColor('red', isDark);
 
   const features: Feature[] = [
     {
@@ -53,7 +52,7 @@ const DuoFeatures: React.FC = () => {
 
   return (
     <View style={styles.featuresContainer}>
-      <Text style={[styles.featuresTitle, { color: colors.textPrimary }]}>
+      <Text style={[styles.featuresTitle, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
         {t('features.title')}
       </Text>
 
@@ -68,11 +67,11 @@ const DuoFeatures: React.FC = () => {
               <IconComponent width={48} height={48} fill={feature.color} />
             </View>
             <View style={styles.featureContent}>
-              <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.featureTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {feature.title}
               </Text>
               <Text
-                style={[styles.featureDescription, { color: colors.textSecondary }]}
+                style={[styles.featureDescription, { color: colors.textSecondary, fontSize: typography.size.sm }]}
               >
                 {feature.description}
               </Text>

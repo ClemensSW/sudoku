@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 2,
     textTransform: "uppercase",
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resultIcon: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
 
@@ -88,21 +88,21 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   vsText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   opponentName: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   timeText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     marginTop: 2,
   },
 
   // ELO change
   eloChange: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     minWidth: 60,
     textAlign: "right",
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     textAlign: "center",
   },

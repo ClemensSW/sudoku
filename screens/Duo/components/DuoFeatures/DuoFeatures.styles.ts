@@ -7,7 +7,7 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
   featuresTitle: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     marginBottom: 24,
     textAlign: "center",
@@ -35,12 +35,12 @@ export default StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 4,
   },
   featureDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
   },
 });

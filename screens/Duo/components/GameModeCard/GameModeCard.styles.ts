@@ -22,7 +22,7 @@ export default StyleSheet.create({
   },
 
   title: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     letterSpacing: 0.2,
     textAlign: "center",

@@ -9,7 +9,7 @@ interface VSDividerProps {
 }
 
 const VSDivider: React.FC<VSDividerProps> = ({ vsScale }) => {
-  const { isDark } = useTheme();
+  const { isDark, typography } = useTheme();
 
   const vsStyle = useAnimatedStyle(() => ({
     transform: [{ scale: vsScale.value }],
@@ -32,7 +32,7 @@ const VSDivider: React.FC<VSDividerProps> = ({ vsScale }) => {
         <Text
           style={[
             styles.vsText,
-            { color: isDark ? "#FFFFFF" : "#202124" },
+            { color: isDark ? "#FFFFFF" : "#202124", fontSize: typography.size.md },
           ]}
         >
           VS
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   vsText: {
     fontWeight: "900",
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
   },
 });
 

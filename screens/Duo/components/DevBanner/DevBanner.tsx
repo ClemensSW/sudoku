@@ -17,10 +17,10 @@ const DevBanner: React.FC<DevBannerProps> = ({
 }) => {
   // Hide if not visible
   if (!visible) return null;
-  const theme = useTheme();
+  const { typography, isDark } = useTheme();
 
   // Farben basierend auf Theme - Deep Teal (matching Duo theme)
-  const gradientColors: readonly [string, string] = theme.isDark
+  const gradientColors: readonly [string, string] = isDark
     ? ["rgba(46,107,123,0.9)", "rgba(60,130,145,0.85)"] // Petrol für Dark Mode
     : ["rgba(46,107,123,0.95)", "rgba(60,130,145,0.9)"]; // Petrol für Light Mode
 
@@ -37,7 +37,7 @@ const DevBanner: React.FC<DevBannerProps> = ({
           style={styles.banner}
         >
           <Feather name="tool" size={14} color={iconColor} style={styles.icon} />
-          <Text style={[styles.text, { color: textColor }]}>{text}</Text>
+          <Text style={[styles.text, { color: textColor, fontSize: typography.size.sm }]}>{text}</Text>
         </LinearGradient>
       </View>
     </View>

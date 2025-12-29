@@ -29,7 +29,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
   showErrors = true, // Standardwert true
 }) => {
   // Get theme for warning color and dark mode
-  const { colors, isDark } = useTheme();
+  const { colors, typography, isDark } = useTheme();
   const pathColorHex = useStoredColorHex();
   const theme = React.useMemo(
     () => getPlayerErrorIndicatorColors(player as DuoPlayerId, pathColorHex, isDark),
@@ -94,7 +94,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
           <Text
             style={[
               styles.infinityText,
-              { color: theme.heart, marginLeft: 4 },
+              { color: theme.heart, marginLeft: 4, fontSize: typography.size.xl },
             ]}
           >
             ∞
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   // Stil für das Unendlichkeitssymbol
   infinityText: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "bold",
     marginTop: -3, // Leicht angepasst für bessere vertikale Ausrichtung
   },

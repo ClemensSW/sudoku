@@ -35,7 +35,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
   onButtonPressOut,
 }) => {
   const { t } = useTranslation('start');
-  const { colors, isDark } = theme;
+  const { colors, isDark, typography } = theme;
   const progressColor = useProgressColor();
 
   // Helper to format time for display
@@ -111,7 +111,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
               <View style={{ alignItems: 'center', width: '100%' }}>
                 <Text style={[
                   styles.resumeButtonText,
-                  { color: isDark ? '#E2E8F0' : '#334155' }
+                  { color: isDark ? '#E2E8F0' : '#334155', fontSize: typography.size.md }
                 ]}>
                   {t('buttons.resumeGame')}
                 </Text>
@@ -128,7 +128,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
                     style={{ marginRight: 6 }}
                   />
                   <Text style={{
-                    fontSize: 13,
+                    fontSize: typography.size.xs,
                     color: isDark ? '#94A3B8' : '#64748B',
                     fontWeight: '500',
                     marginRight: 8
@@ -136,7 +136,7 @@ export const BottomButtonContainer: React.FC<BottomButtonContainerProps> = ({
                     {formatTime(pausedGame.gameTime)}
                   </Text>
                   <Text style={{
-                    fontSize: 13,
+                    fontSize: typography.size.xs,
                     color: isDark ? '#94A3B8' : '#64748B',
                     fontWeight: '500'
                   }}>

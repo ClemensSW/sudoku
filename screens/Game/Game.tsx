@@ -52,7 +52,7 @@ interface GameScreenProps {
 
 const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = false }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { showAlert } = useAlert();
@@ -332,7 +332,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           >
             <Text
               style={{
-                fontSize: 20,
+                fontSize: typography.size.xl,
                 fontWeight: "600",
                 color: colors.textPrimary,
                 marginBottom: 16,

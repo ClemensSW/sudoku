@@ -7,7 +7,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 
 const EmptyState: React.FC = () => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   return (
     <Animated.View 
@@ -21,7 +21,7 @@ const EmptyState: React.FC = () => {
         style={{ opacity: 0.5 }}
       />
       <Text
-        style={[styles.emptyStateText, { color: colors.textSecondary }]}
+        style={[styles.emptyStateText, { color: colors.textSecondary, fontSize: typography.size.md }]}
       >
         Keine Statistiken verfügbar. Spiele ein paar Runden Sudoku, um
         deine Leistung zu verfolgen!
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     marginTop: 24,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     lineHeight: 24,
   },

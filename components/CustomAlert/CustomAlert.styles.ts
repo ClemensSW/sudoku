@@ -40,14 +40,14 @@ export default StyleSheet.create({
     paddingBottom: 28,
   },
   alertTitle: {
-    fontSize: 18, // Slightly smaller
+    // fontSize set dynamically via theme.typography
     fontWeight: "600", // Semibold instead of bold
     textAlign: "center",
     marginBottom: 8,
     letterSpacing: 0.3, // Airier feel
   },
   alertMessage: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     lineHeight: 22.5, // 1.5 line-height
     letterSpacing: 0.2,

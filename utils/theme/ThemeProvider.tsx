@@ -11,14 +11,14 @@ import React, {
 import { View, useColorScheme as useSystemColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import colors from "./colors";
-import typography from "./typography";
+import typography, { getScaledTypography, FONT_SCALE_OPTIONS } from "./typography";
 import shadows from "./shadows";
 import { spacing, radius, timing } from "./index";
 import { Theme } from "./types";
 
 // Re-export Theme type for convenience
 export type { Theme } from "./types";
-import { loadSettings, saveSettings, DEFAULT_SETTINGS } from "@/utils/storage";
+import { loadSettings, saveSettings, DEFAULT_SETTINGS, GameSettings } from "@/utils/storage";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -30,6 +30,8 @@ interface ThemeContextType extends Theme {
   updateTheme: (mode: "light" | "dark") => Promise<void>;
   resetToSystemTheme: () => Promise<void>;
   isFollowingSystem: boolean;
+  fontScale: number;
+  updateFontScale: (scale: number) => Promise<void>;
 }
 
 // Create a context with a default theme - now with dark as default
@@ -44,6 +46,8 @@ const ThemeContext = createContext<ThemeContextType>({
   updateTheme: async () => {},
   resetToSystemTheme: async () => {},
   isFollowingSystem: false,
+  fontScale: 1.0,
+  updateFontScale: async () => {},
 });
 
 // Provider component
@@ -51,6 +55,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const systemColorScheme = useSystemColorScheme(); // Get device theme
   const [colorScheme, setColorScheme] = useState<"light" | "dark" | null>(null);
   const [userHasSetTheme, setUserHasSetTheme] = useState(false);
+  const [fontScale, setFontScale] = useState<number>(1.0);
   const [appIsReady, setAppIsReady] = useState(false);
 
   // Load saved theme preference on first render
@@ -65,6 +70,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           console.log('[ThemeProvider] First launch detected - using system theme:', systemColorScheme);
           setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
           setUserHasSetTheme(false);
+          setFontScale(1.0);
 
           // Save default settings with system theme
           await saveSettings({
@@ -76,11 +82,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           console.log('[ThemeProvider] User theme preference found:', settings.darkMode);
           setColorScheme(settings.darkMode);
           setUserHasSetTheme(true);
+          setFontScale(settings.fontScale ?? 1.0);
         } else {
           // Settings exist but no manual theme preference - use system theme
           console.log('[ThemeProvider] No theme preference - using system theme:', systemColorScheme);
           setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
           setUserHasSetTheme(false);
+          setFontScale(settings.fontScale ?? 1.0);
         }
 
         // Small delay to ensure everything is applied
@@ -117,7 +125,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
       // Settings speichern für nächsten App-Start
       const currentSettings = await loadSettings();
-      const updatedSettings = {
+      const updatedSettings: GameSettings = {
+        ...DEFAULT_SETTINGS,
         ...currentSettings,
         darkMode: mode,
       };
@@ -136,9 +145,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       // Flag zurücksetzen
       setUserHasSetTheme(false);
 
-      // darkMode aus Settings löschen
+      // darkMode aus Settings löschen (set to undefined to indicate "follow system")
       const currentSettings = await loadSettings();
-      const updatedSettings = { ...currentSettings };
+      const updatedSettings: GameSettings = {
+        ...DEFAULT_SETTINGS,
+        ...currentSettings,
+      };
+      // @ts-ignore - we intentionally delete darkMode to indicate "follow system"
       delete updatedSettings.darkMode;
       await saveSettings(updatedSettings);
     } catch (error) {
@@ -146,15 +159,36 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [systemColorScheme]);
 
+  // Update Font Scale
+  const updateFontScale = useCallback(async (scale: number) => {
+    try {
+      // Font Scale sofort ändern
+      setFontScale(scale);
+
+      // Settings speichern für nächsten App-Start
+      const currentSettings = await loadSettings();
+      const updatedSettings: GameSettings = {
+        ...DEFAULT_SETTINGS,
+        ...currentSettings,
+        fontScale: scale,
+      };
+      await saveSettings(updatedSettings);
+    } catch (error) {
+      console.error("Error updating font scale:", error);
+    }
+  }, []);
+
   // Only calculate theme if colorScheme is set
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];
   const isDark = colorScheme === "dark";
 
+  // Calculate scaled typography based on fontScale
+  const scaledTypography = useMemo(() => getScaledTypography(fontScale), [fontScale]);
+
   // PERFORMANCE OPTIMIERT: Memoize theme object to prevent cascading re-renders
-  // Nur neu erstellen wenn sich colorScheme, updateTheme, resetToSystemTheme oder userHasSetTheme ändern
   const theme: ThemeContextType = useMemo(() => ({
     colors: themeColors,
-    typography,
+    typography: scaledTypography,
     spacing,
     radius,
     shadows,
@@ -163,7 +197,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     updateTheme,
     resetToSystemTheme,
     isFollowingSystem: !userHasSetTheme,
-  }), [themeColors, isDark, updateTheme, resetToSystemTheme, userHasSetTheme]);
+    fontScale,
+    updateFontScale,
+  }), [themeColors, scaledTypography, isDark, updateTheme, resetToSystemTheme, userHasSetTheme, fontScale, updateFontScale]);
 
   // Hide splash screen once app is ready
   useEffect(() => {

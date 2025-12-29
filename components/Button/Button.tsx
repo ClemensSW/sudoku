@@ -64,7 +64,7 @@ const Button: React.FC<ButtonProps> = ({
   customColor,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const scale = useSharedValue(1);
 
   // Backward compatibility: if icon prop is used, map it to iconLeft or iconRight
@@ -167,7 +167,7 @@ const Button: React.FC<ButtonProps> = ({
 
   // Dynamic text styles
   const getTextStyle = () => {
-    const textStyles: TextStyle[] = [styles.buttonText];
+    const textStyles: TextStyle[] = [styles.buttonText, { fontSize: typography.size.md }];
 
     switch (variant) {
       case "primary":

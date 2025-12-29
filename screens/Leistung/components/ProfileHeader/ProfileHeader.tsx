@@ -47,7 +47,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   const { t } = useTranslation("leistung");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const levelInfo = useLevelInfo(stats.totalXP);
 
@@ -111,7 +111,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <Pressable onPress={() => inputRef.current?.focus()}>
             <TextInput
               ref={inputRef}
-              style={[styles.nameInput, { color: colors.textPrimary, borderColor: progressColor }]}
+              style={[styles.nameInput, { color: colors.textPrimary, borderColor: progressColor, fontSize: typography.size.xxl }]}
               value={editedName}
               onChangeText={setEditedName}
               onBlur={handleNameEdit}
@@ -123,7 +123,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Pressable>
         ) : (
           <Pressable onPress={() => setIsEditingName(true)}>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>{isDefaultName ? "" : name}</Text>
+            <Text style={[styles.name, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>{isDefaultName ? "" : name}</Text>
           </Pressable>
         )}
 
@@ -136,7 +136,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             ]}
           >
             <Feather name="award" size={14} color={colors.textSecondary} style={{ marginRight: 6 }} />
-            <Text style={[styles.titleTextStyle, { color: colors.textSecondary }]} numberOfLines={1}>
+            <Text style={[styles.titleTextStyle, { color: colors.textSecondary, fontSize: typography.size.sm }]} numberOfLines={1}>
               {title}
             </Text>
           </Pressable>
@@ -167,6 +167,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               desc: descriptionColor,
             }}
             onPress={onXPPress}
+            typography={typography}
           />
           <HairlineDivider color={dividerColor} />
           <StatTile
@@ -181,6 +182,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               desc: descriptionColor,
             }}
             onPress={onPicturesPress}
+            typography={typography}
           />
           <HairlineDivider color={dividerColor} />
           <StatTile
@@ -195,6 +197,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               desc: descriptionColor,
             }}
             onPress={onStreakPress}
+            typography={typography}
           />
 
         </View>
@@ -222,6 +225,7 @@ const StatTile = ({
   description,
   colors,
   onPress,
+  typography,
 }: {
   customIcon: React.ReactNode;
   value: string | number;
@@ -229,6 +233,7 @@ const StatTile = ({
   description: string;
   colors: { icon: string; valueColor: string; label: string; desc: string };
   onPress?: () => void;
+  typography: { size: { xl: number; xs: number } };
 }) => {
   const scale = useSharedValue(1);
   const rStyle = useAnimatedStyle(() => ({
@@ -248,12 +253,12 @@ const StatTile = ({
           {customIcon}
         </View>
         <Text
-          style={[styles.statValue, { color: colors.valueColor }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
+          style={[styles.statValue, { color: colors.valueColor, fontSize: typography.size.xl }, Platform.OS === "ios" ? { fontVariant: ["tabular-nums"] } : null]}
         >
           {value}
         </Text>
-        <Text style={[styles.statLabel, { color: colors.label }]}>{label}</Text>
-        <Text style={[styles.statDescription, { color: colors.desc }]}>{description}</Text>
+        <Text style={[styles.statLabel, { color: colors.label, fontSize: typography.size.xs }]}>{label}</Text>
+        <Text style={[styles.statDescription, { color: colors.desc, fontSize: typography.size.xs }]}>{description}</Text>
       </Animated.View>
     </Pressable>
   );
@@ -279,9 +284,9 @@ const styles = StyleSheet.create({
 
   /* Name + Titel */
   nameContainer: { marginBottom: 40, alignItems: "center" },
-  name: { fontSize: 24, fontWeight: "700" },
+  name: { fontWeight: "700" }, // fontSize set dynamically via theme.typography
   nameInput: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     borderBottomWidth: 1,
     paddingHorizontal: 4,
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   titleTextStyle: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     maxWidth: 280,
     textAlign: "center",
@@ -337,18 +342,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   statValue: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     marginBottom: 2,
     letterSpacing: 0.2,
   },
   statLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 2,
   },
   statDescription: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "400",
     opacity: 0.9,
   },

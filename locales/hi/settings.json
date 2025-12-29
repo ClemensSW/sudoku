@@ -34,6 +34,14 @@
     "name": "नाम",
     "language": "भाषा",
     "pathColor": "पथ रंग",
+    "fontSize": "फ़ॉन्ट आकार",
+    "fontSizeOptions": {
+      "small": "छोटा",
+      "normal": "सामान्य",
+      "large": "बड़ा",
+      "larger": "बड़ा",
+      "veryLarge": "बहुत बड़ा"
+    },
     "title": "उपाधि",
     "noTitle": "बिना उपाधि",
     "languageModal": {

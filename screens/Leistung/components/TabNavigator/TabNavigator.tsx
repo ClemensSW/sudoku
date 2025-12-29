@@ -31,7 +31,7 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
   elevated = false,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Animated values for tab indicator
@@ -114,7 +114,7 @@ const TabNavigator: React.FC<TabNavigatorProps> = ({
               <Text
                 style={[
                   styles.tabText,
-                  { color: isActive ? progressColor : colors.textSecondary },
+                  { color: isActive ? progressColor : colors.textSecondary, fontSize: typography.size.sm },
                   isActive && styles.activeTabText,
                 ]}
               >
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     // Style for active tab
   },
   tabText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     textAlign: "center",
   },

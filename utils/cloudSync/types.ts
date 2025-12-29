@@ -143,6 +143,7 @@ export interface FirestoreSettings {
   // UI Preferences
   darkMode: 'light' | 'dark';
   language: 'de' | 'en' | 'hi';
+  fontScale: number; // 0.85 | 1.0 | 1.1 | 1.2 | 1.25
 
   // Audio/Haptics
   vibration: boolean;

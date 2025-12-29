@@ -40,8 +40,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
 }) => {
   const { t } = useTranslation(['game', 'start']);
   const theme = useTheme();
-  const colors = theme.colors;
-  const isDarkMode = theme.isDark;
+  const { colors, typography, isDark: isDarkMode } = theme;
 
   // Animation values
   const opacity = useSharedValue(0);
@@ -163,10 +162,10 @@ const PauseModal: React.FC<PauseModalProps> = ({
       ]}>
         <Feather name={tip.icon as any} size={28} color={colors.primary} />
       </View>
-      <Text style={[styles.tipTitle, { color: colors.textPrimary }]}>
+      <Text style={[styles.tipTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
         {tip.title}
       </Text>
-      <Text style={[styles.tipDescription, { color: colors.textSecondary }]}>
+      <Text style={[styles.tipDescription, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
         {tip.description}
       </Text>
     </View>
@@ -217,7 +216,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
           >
             {/* Header */}
             <View style={styles.header}>
-              <Text style={[styles.title, { color: colors.textPrimary }]}>
+              <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xxxl }]}>
                 {t('game:pause.title')}
               </Text>
             </View>
@@ -233,7 +232,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
               <View style={styles.statusRow}>
                 <View style={styles.statusItem}>
                   <Feather name="clock" size={20} color={colors.textSecondary} />
-                  <Text style={[styles.statusValue, { color: colors.textPrimary }]}>
+                  <Text style={[styles.statusValue, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
                     {formatTime(gameTime)}
                   </Text>
                 </View>
@@ -250,7 +249,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
 
                 <View style={styles.statusItem}>
                   <Feather name="trending-up" size={20} color={colors.textSecondary} />
-                  <Text style={[styles.statusValue, { color: colors.textPrimary }]}>
+                  <Text style={[styles.statusValue, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
                     {getDifficultyLabel(difficulty)}
                   </Text>
                 </View>
@@ -260,7 +259,7 @@ const PauseModal: React.FC<PauseModalProps> = ({
             {/* Tips section - nur EIN zufälliger Tipp aus allen Kategorien */}
             <View style={styles.tipsContainer}>
               <View style={styles.tipsSection}>
-                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
                   {t('pause.tipSection')}
                 </Text>
                 {renderTipItem(selectedTip, 0)}

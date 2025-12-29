@@ -28,7 +28,7 @@ interface SupportBannerProps {
 const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   const [purchaseType, setPurchaseType] = useState<PurchaseType>('none');
   const [isLoading, setIsLoading] = useState(true);
@@ -257,10 +257,10 @@ const SupportBanner: React.FC<SupportBannerProps> = ({ onOpenSupportShop }) => {
 
               {/* Text content */}
               <View style={styles.textContainer}>
-                <Text style={[styles.title, { color: colors.textPrimary }]}>
+                <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
                   {bannerText.title}
                 </Text>
-                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+                <Text style={[styles.subtitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                   {bannerText.subtitle}
                 </Text>
               </View>

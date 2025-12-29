@@ -40,7 +40,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
 }) => {
   const { t } = useTranslation('game');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Animation values
   const noteScale = useSharedValue(1);
@@ -117,7 +117,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
             />
           </AnimatedPressable>
           <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
+            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}
           >
             {t('controls.note')}
           </Text>
@@ -149,7 +149,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
             />
           </AnimatedPressable>
           <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
+            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}
           >
             {t('controls.erase')}
           </Text>
@@ -208,6 +208,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                   color: hintDisabled
                     ? colors.buttonTextDisabled
                     : colors.textSecondary,
+                  fontSize: typography.size.xs,
                 },
               ]}
             >
@@ -267,10 +268,10 @@ const NumberPad: React.FC<NumberPadProps> = ({
               >
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: typography.size.xxl,
                     fontWeight: "600",
-                    color: isDisabled 
-                      ? colors.buttonTextDisabled 
+                    color: isDisabled
+                      ? colors.buttonTextDisabled
                       : colors.buttonText,
                   }}
                 >

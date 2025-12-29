@@ -15,7 +15,7 @@ export default StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     letterSpacing: 0.3,
     textAlign: "center",

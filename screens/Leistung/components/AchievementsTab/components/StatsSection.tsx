@@ -50,7 +50,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   const [activeTab, setActiveTab] = useState<'games' | 'times'>('games');
 
@@ -146,6 +146,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
               {
                 color: activeTab === 'games' ? ERFOLGE_COLOR : colors.textSecondary,
                 fontWeight: activeTab === 'games' ? '700' : '500',
+                fontSize: typography.size.sm,
               },
             ]}
           >
@@ -171,6 +172,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
               {
                 color: activeTab === 'times' ? ERFOLGE_COLOR : colors.textSecondary,
                 fontWeight: activeTab === 'times' ? '700' : '500',
+                fontSize: typography.size.sm,
               },
             ]}
           >
@@ -189,7 +191,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
           ]}
         >
           {/* Label */}
-          <Text style={[styles.difficultyLabel, { color: colors.textPrimary }]}>
+          <Text style={[styles.difficultyLabel, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
             {diff.label}
           </Text>
 
@@ -216,7 +218,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
           </View>
 
           {/* Value */}
-          <Text style={[styles.valueText, { color: colors.textPrimary }]}>
+          <Text style={[styles.valueText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {getDisplayValue(index)}
           </Text>
         </View>

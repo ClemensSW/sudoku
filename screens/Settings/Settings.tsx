@@ -497,7 +497,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             style={styles.section}
             entering={FadeInDown.delay(50).duration(500)}
           >
-            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.lg }]}>
               {t("categories.profile")}
             </RNText>
             <ProfileGroup />
@@ -523,7 +523,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             style={styles.section}
             entering={FadeInDown.delay(50).duration(500)}
           >
-            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.lg }]}>
               {t("categories.help")}
             </RNText>
             <HelpSection
@@ -540,7 +540,7 @@ const Settings: React.FC<SettingsScreenProps> = ({
             style={styles.section}
             entering={FadeInDown.delay(100).duration(500)}
           >
-            <RNText style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <RNText style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.lg }]}>
               {isDuoMode || !onPauseGame ? t("sections.action") : t("categories.actions")}
             </RNText>
             <ActionsSection

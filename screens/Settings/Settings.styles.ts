@@ -29,9 +29,9 @@ export default StyleSheet.create({
   },
 
   sectionTitle: {
-    fontSize: 18,
     fontWeight: "700",
     marginBottom: spacing.md,
     paddingHorizontal: spacing.xs,
+    // fontSize set dynamically via theme.typography
   },
 });

@@ -84,6 +84,7 @@ export type GameSettings = {
   soundEffects: boolean;
   backgroundMusic: boolean;
   language: "de" | "en" | "hi";
+  fontScale: number; // 0.85 | 1.0 | 1.1 | 1.2 | 1.25
 
   // Cloud Sync: Timestamp für Conflict Resolution
   updatedAt?: number; // Timestamp in milliseconds (Date.now())
@@ -169,6 +170,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   soundEffects: true,
   backgroundMusic: false,
   language: "de",
+  fontScale: 1.0,
 };
 
 // Speichere den aktuellen Spielstand

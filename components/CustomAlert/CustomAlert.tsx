@@ -84,7 +84,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
   testID,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Local state to control visibility
@@ -331,10 +331,10 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({
 
         {/* Alert Content */}
         <View style={styles.alertContent}>
-          <Text style={[styles.alertTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.alertTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
             {title}
           </Text>
-          <Text style={[styles.alertMessage, { color: colors.textSecondary }]}>
+          <Text style={[styles.alertMessage, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {message}
           </Text>
         </View>

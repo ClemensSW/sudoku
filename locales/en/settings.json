@@ -34,6 +34,14 @@
     "name": "Name",
     "language": "Language",
     "pathColor": "Path Color",
+    "fontSize": "Font Size",
+    "fontSizeOptions": {
+      "small": "Small",
+      "normal": "Normal",
+      "large": "Large",
+      "larger": "Larger",
+      "veryLarge": "Very Large"
+    },
     "title": "Title",
     "noTitle": "No Title",
     "languageModal": {

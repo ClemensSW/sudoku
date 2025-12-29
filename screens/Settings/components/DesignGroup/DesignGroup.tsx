@@ -8,7 +8,9 @@ import * as Localization from "expo-localization";
 import PinselIcon from "@/assets/svg/pinsel.svg";
 import LanguageIcon from "@/assets/svg/language.svg";
 import TagUndNachtIcon from "@/assets/svg/tag-und-nacht.svg";
+import LupeIcon from "@/assets/svg/lupe.svg";
 import { triggerHaptic } from "@/utils/haptics";
+import { FONT_SCALE_OPTIONS } from "@/utils/theme/typography";
 import { spacing } from "@/utils/theme";
 import { useProgressColor, useUpdateProgressColor, useStoredColorHex } from "@/hooks/useProgressColor";
 import { hexToColorId } from "@/utils/pathColors";
@@ -51,6 +53,10 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
 
   // State for System Theme Sync
   const [syncWithSystem, setSyncWithSystem] = useState(theme.isFollowingSystem);
+
+  // State for Font Scale
+  const currentFontScaleIndex = FONT_SCALE_OPTIONS.findIndex(opt => opt.value === theme.fontScale);
+  const [fontScaleIndex, setFontScaleIndex] = useState(currentFontScaleIndex >= 0 ? currentFontScaleIndex : 1);
 
   // Update syncWithSystem when theme.isFollowingSystem changes
   useEffect(() => {
@@ -111,6 +117,12 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
     return t(`pathColor.colors.${colorId}`);
   };
 
+  // Get translated font scale label based on index
+  const getFontScaleLabel = (index: number): string => {
+    const labels = ['small', 'normal', 'large', 'larger', 'veryLarge'];
+    return t(`appearance.fontSizeOptions.${labels[index]}`, { defaultValue: FONT_SCALE_OPTIONS[index].label });
+  };
+
   // Theme Toggle handler - automatically disables sync when manually changed
   const handleThemeToggle = async (value: "light" | "dark") => {
     // If sync is ON, turn it OFF when user manually changes theme
@@ -135,6 +147,16 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
       // Switch OFF → Current theme becomes manual preference
       const currentMode = theme.isDark ? "dark" : "light";
       await theme.updateTheme(currentMode);
+    }
+  };
+
+  // Font Scale handler
+  const handleFontScaleSelect = async (index: number) => {
+    if (index !== fontScaleIndex) {
+      setFontScaleIndex(index);
+      triggerHaptic("light");
+      const newScale = FONT_SCALE_OPTIONS[index].value;
+      await theme.updateFontScale(newScale);
     }
   };
 
@@ -169,10 +191,10 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
             <TagUndNachtIcon width={48} height={48} />
           </View>
           <View style={styles.settingTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.md }]}>
               {t("appearance.theme", { defaultValue: "Theme" })}
             </Text>
-            <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
+            <Text style={[styles.settingSubtext, { color: colors.textSecondary, fontSize: theme.typography.size.xs + 1 }]}>
               {t("appearance.useSystemSettings", { defaultValue: "Geräteeinstellungen verwenden" })}
             </Text>
           </View>
@@ -197,12 +219,12 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
             <PinselIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.md }]}>
               {t("appearance.pathColor")}
             </Text>
             <View style={styles.colorSubtitleContainer}>
               <View style={[styles.colorCircle, { backgroundColor: progressColor }]} />
-              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary, fontSize: theme.typography.size.sm }]}>
                 {getColorName()}
               </Text>
             </View>
@@ -222,15 +244,59 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
             <LanguageIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.md }]}>
               {t("appearance.language")}
             </Text>
-            <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.actionSubtitle, { color: colors.textSecondary, fontSize: theme.typography.size.sm }]}>
               {getLanguageName(currentLanguage)}
             </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
+
+        {/* Font Scale */}
+        <View style={[styles.fontScaleSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+          <View style={styles.fontScaleHeader}>
+            <View style={styles.actionIcon}>
+              <LupeIcon width={48} height={48} />
+            </View>
+            <View style={styles.actionTextContainer}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: theme.typography.size.md }]}>
+                {t("appearance.fontSize", { defaultValue: "Schriftgröße" })}
+              </Text>
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary, fontSize: theme.typography.size.sm }]}>
+                {getFontScaleLabel(fontScaleIndex)}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.fontScaleStepsContainer}>
+            <Text style={[styles.fontScaleIndicator, { color: colors.textSecondary, fontSize: theme.typography.size.sm }]}>
+              Aa
+            </Text>
+            <View style={styles.fontScaleSteps}>
+              {FONT_SCALE_OPTIONS.map((_, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.fontScaleStepTouchable}
+                  onPress={() => handleFontScaleSelect(index)}
+                  activeOpacity={0.7}
+                >
+                  <View
+                    style={[
+                      styles.fontScaleStep,
+                      {
+                        backgroundColor: index <= fontScaleIndex ? progressColor : colors.border,
+                      },
+                    ]}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={[styles.fontScaleIndicator, { color: colors.textSecondary, fontSize: theme.typography.size.xl + 2 }]}>
+              Aa
+            </Text>
+          </View>
+        </View>
       </View>
 
       {/* Color Picker Modal */}
@@ -279,8 +345,8 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
               onPress={() => handleLanguageChange(lang.code)}
             >
               <View style={styles.languageContent}>
-                <Text style={styles.flagEmoji}>{lang.flag}</Text>
-                <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                <Text style={[styles.flagEmoji, { fontSize: theme.typography.size.xxl + 4 }]}>{lang.flag}</Text>
+                <Text style={[styles.languageName, { color: colors.textPrimary, fontSize: theme.typography.size.lg }]}>
                   {lang.name}
                 </Text>
               </View>
@@ -332,15 +398,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
     fontWeight: "600",
   },
   actionSubtitle: {
-    fontSize: 14,
     marginTop: 2,
   },
   settingSubtext: {
-    fontSize: 13,
     marginTop: 2,
     opacity: 0.8,
   },
@@ -374,11 +437,49 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   flagEmoji: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
   },
   languageName: {
-    fontSize: 17,
     fontWeight: "600",
+    // fontSize set dynamically via theme.typography
+  },
+  fontScaleSection: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  fontScaleHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  fontScaleStepsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: spacing.md,
+    paddingLeft: 48 + spacing.md, // Align with text (icon width + margin)
+  },
+  fontScaleSteps: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: spacing.sm,
+    height: 32,
+  },
+  fontScaleStepTouchable: {
+    flex: 1,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 2,
+  },
+  fontScaleStep: {
+    width: "100%",
+    height: 8,
+    borderRadius: 4,
+  },
+  fontScaleIndicator: {
+    fontWeight: "600",
+    // fontSize set dynamically via theme.typography
   },
 });
 

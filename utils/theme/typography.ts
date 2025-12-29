@@ -109,6 +109,55 @@ const typography = {
   },
 };
 
+// Font Scale Options
+export const FONT_SCALE_OPTIONS = [
+  { label: 'Klein', value: 0.85 },
+  { label: 'Normal', value: 1.0 },
+  { label: 'Groß', value: 1.1 },
+  { label: 'Größer', value: 1.2 },
+  { label: 'Sehr groß', value: 1.25 },
+] as const;
+
+export type FontScaleValue = typeof FONT_SCALE_OPTIONS[number]['value'];
+
+/**
+ * Erstellt eine skalierte Version der Typography-Konfiguration
+ * @param scale - Skalierungsfaktor (0.85 - 1.25)
+ */
+export function getScaledTypography(scale: number) {
+  const clampedScale = Math.max(0.85, Math.min(1.25, scale));
+
+  return {
+    ...typography,
+    // Skalierte Font Sizes
+    size: {
+      xs: Math.round(12 * clampedScale),
+      sm: Math.round(14 * clampedScale),
+      md: Math.round(16 * clampedScale),
+      lg: Math.round(18 * clampedScale),
+      xl: Math.round(20 * clampedScale),
+      xxl: Math.round(24 * clampedScale),
+      xxxl: Math.round(32 * clampedScale),
+      huge: Math.round(40 * clampedScale),
+    },
+    // Skalierte Variants
+    variant: {
+      heading1: { ...typography.variant.heading1, fontSize: Math.round(32 * clampedScale) },
+      heading2: { ...typography.variant.heading2, fontSize: Math.round(24 * clampedScale) },
+      heading3: { ...typography.variant.heading3, fontSize: Math.round(20 * clampedScale) },
+      subtitle1: { ...typography.variant.subtitle1, fontSize: Math.round(18 * clampedScale) },
+      subtitle2: { ...typography.variant.subtitle2, fontSize: Math.round(16 * clampedScale) },
+      body1: { ...typography.variant.body1, fontSize: Math.round(16 * clampedScale) },
+      body2: { ...typography.variant.body2, fontSize: Math.round(14 * clampedScale) },
+      button: { ...typography.variant.button, fontSize: Math.round(16 * clampedScale) },
+      caption: { ...typography.variant.caption, fontSize: Math.round(12 * clampedScale) },
+      overline: { ...typography.variant.overline, fontSize: Math.round(12 * clampedScale) },
+      cellValue: { ...typography.variant.cellValue, fontSize: Math.round(20 * clampedScale) },
+      cellNotes: { ...typography.variant.cellNotes, fontSize: Math.round(9 * clampedScale) },
+    },
+  };
+}
+
 // Export als Standard und benannt, um Import-Flexibilität zu bieten
 export default typography;
 export { typography };

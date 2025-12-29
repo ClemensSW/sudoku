@@ -51,14 +51,14 @@ export const heroStyles = StyleSheet.create({
 
   // Main Number
   mainNumber: {
-    fontSize: 64,
+    // fontSize set dynamically via theme.typography
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
     letterSpacing: -2,
     textAlign: 'center',
   },
   mainLabel: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 2,
@@ -81,15 +81,15 @@ export const heroStyles = StyleSheet.create({
     gap: spacing.sm,
   },
   secondaryText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   winRateText: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: '800',
   },
   dotSeparator: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '400',
     opacity: 0.5,
   },
@@ -100,12 +100,12 @@ export const heroStyles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   motivationEmoji: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
   motivationText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -125,7 +125,7 @@ export const difficultyStyles = StyleSheet.create({
 
   // Section Title
   sectionTitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -146,7 +146,7 @@ export const difficultyStyles = StyleSheet.create({
   // Difficulty Label
   difficultyLabel: {
     width: 70,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 
@@ -168,7 +168,7 @@ export const difficultyStyles = StyleSheet.create({
   // Count Text
   countText: {
     width: 40,
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textAlign: 'right',
     fontVariant: ['tabular-nums'],
@@ -200,7 +200,7 @@ export const statsSectionStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     letterSpacing: 0.3,
   },
 
@@ -217,7 +217,7 @@ export const statsSectionStyles = StyleSheet.create({
   // Difficulty Label
   difficultyLabel: {
     width: 70,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 
@@ -239,7 +239,7 @@ export const statsSectionStyles = StyleSheet.create({
   // Value Text (wider for time format)
   valueText: {
     width: 50,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textAlign: 'right',
     fontVariant: ['tabular-nums'],

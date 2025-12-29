@@ -55,7 +55,7 @@ const GamesHero: React.FC<GamesHeroProps> = ({
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Animation values
   const counterScale = useSharedValue(1);
@@ -169,10 +169,10 @@ const GamesHero: React.FC<GamesHeroProps> = ({
 
         {/* Main Counter */}
         <Animated.View style={counterAnimatedStyle}>
-          <Text style={[styles.mainNumber, { color: colors.textPrimary }]}>
+          <Text style={[styles.mainNumber, { color: colors.textPrimary, fontSize: typography.size.huge }]}>
             {gamesPlayed}
           </Text>
-          <Text style={[styles.mainLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.mainLabel, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {gamesPlayed === 1
               ? t('achievementsTab.hero.game')
               : t('achievementsTab.hero.games')}
@@ -189,21 +189,21 @@ const GamesHero: React.FC<GamesHeroProps> = ({
 
         {/* Secondary Stats */}
         <View style={styles.secondaryStats}>
-          <Text style={[styles.secondaryText, { color: colors.textSecondary }]}>
+          <Text style={[styles.secondaryText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {gamesWon} {t('achievementsTab.hero.won')}
           </Text>
-          <Text style={[styles.dotSeparator, { color: colors.textSecondary }]}>
+          <Text style={[styles.dotSeparator, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             ·
           </Text>
-          <Text style={[styles.winRateText, { color: ERFOLGE_COLOR }]}>
+          <Text style={[styles.winRateText, { color: ERFOLGE_COLOR, fontSize: typography.size.lg }]}>
             {winRate}%
           </Text>
         </View>
 
         {/* Motivational Message */}
         <View style={styles.motivationContainer}>
-          <Text style={styles.motivationEmoji}>{motivation.emoji}</Text>
-          <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
+          <Text style={[styles.motivationEmoji, { fontSize: typography.size.xxxl }]}>{motivation.emoji}</Text>
+          <Text style={[styles.motivationText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {motivation.text}
           </Text>
         </View>

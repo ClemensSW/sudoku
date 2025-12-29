@@ -40,7 +40,7 @@ export default StyleSheet.create({
   },
 
   title: {
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     textAlign: "center",
   },
@@ -67,7 +67,7 @@ export default StyleSheet.create({
   },
 
   statusValue: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
   },
@@ -93,7 +93,7 @@ export default StyleSheet.create({
   },
 
   sectionTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: spacing.md,
     textAlign: "center",
@@ -118,14 +118,14 @@ export default StyleSheet.create({
   },
 
   tipTitle: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: spacing.sm,
     textAlign: "center",
   },
 
   tipDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
     textAlign: "center",
   },

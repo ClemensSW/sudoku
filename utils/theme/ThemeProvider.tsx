@@ -72,11 +72,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           setUserHasSetTheme(false);
           setFontScale(DEFAULT_SETTINGS.fontScale);
 
-          // Save default settings with system theme
-          await saveSettings({
-            ...DEFAULT_SETTINGS,
-            // Don't save darkMode - this indicates "follow system"
-          });
+          // Save default settings with system theme (without darkMode to indicate "follow system")
+          const initialSettings = { ...DEFAULT_SETTINGS };
+          // @ts-ignore - we intentionally delete darkMode to indicate "follow system"
+          delete initialSettings.darkMode;
+          await saveSettings(initialSettings);
         } else if (settings.darkMode === "light" || settings.darkMode === "dark") {
           // User has manually set a theme preference
           console.log('[ThemeProvider] User theme preference found:', settings.darkMode);

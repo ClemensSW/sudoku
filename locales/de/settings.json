@@ -193,11 +193,8 @@
     "continueWithApple": "Mit Apple fortfahren",
     "continueWithEmail": "Per E-Mail",
     "or": "oder",
-    "legalPrefix": "Mit der Registrierung akzeptierst du unsere ",
-    "privacy": "Datenschutzerklärung",
-    "legalAnd": " und ",
     "terms": "Nutzungsbedingungen",
-    "legalSuffix": "."
+    "privacy": "Datenschutzerklärung"
   },
   "emailAuth": {
     "signInWithEmail": "Per E-Mail",
@@ -232,11 +229,8 @@
         "devices": "Auf allen Geräten spielen",
         "leaderboards": "Ranglisten freischalten"
       },
-      "legalPrefix": "Mit der Registrierung akzeptierst du unsere ",
-      "privacy": "Datenschutzerklärung",
-      "legalAnd": " und ",
       "terms": "Nutzungsbedingungen",
-      "legalSuffix": "."
+      "privacy": "Datenschutzerklärung"
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",

@@ -193,11 +193,8 @@
     "continueWithApple": "Continue with Apple",
     "continueWithEmail": "Continue with Email",
     "or": "or",
-    "legalPrefix": "By registering you accept our ",
-    "privacy": "Privacy Policy",
-    "legalAnd": " and ",
     "terms": "Terms of Service",
-    "legalSuffix": "."
+    "privacy": "Privacy Policy"
   },
   "emailAuth": {
     "signInWithEmail": "Continue with Email",
@@ -232,11 +229,8 @@
         "devices": "Play on all devices",
         "leaderboards": "Unlock leaderboards"
       },
-      "legalPrefix": "By registering you accept our ",
-      "privacy": "Privacy Policy",
-      "legalAnd": " and ",
       "terms": "Terms of Service",
-      "legalSuffix": "."
+      "privacy": "Privacy Policy"
     },
     "forgotPassword": {
       "title": "Reset Password",

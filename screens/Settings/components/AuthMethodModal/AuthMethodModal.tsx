@@ -3,7 +3,6 @@ import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/utils/theme/ThemeProvider';
-import { useProgressColor } from '@/contexts/color/ColorContext';
 import { spacing, radius } from '@/utils/theme';
 import { triggerHaptic } from '@/utils/haptics';
 import BottomSheetModal from '@/components/BottomSheetModal';
@@ -32,7 +31,6 @@ const AuthMethodModal: React.FC<AuthMethodModalProps> = ({
 }) => {
   const { t } = useTranslation('settings');
   const { colors, isDark } = useTheme();
-  const progressColor = useProgressColor();
 
   const showGoogleButton = Platform.OS === 'android';
   const showAppleButton = Platform.OS === 'ios';
@@ -113,21 +111,19 @@ const AuthMethodModal: React.FC<AuthMethodModalProps> = ({
         {/* Legal Text - Only for Register */}
         {isRegister && (
           <Text style={[styles.legalText, { color: colors.textSecondary }]}>
-            {t('authMethodModal.legalPrefix')}
             <Text
-              style={[styles.legalLink, { color: progressColor }]}
-              onPress={() => onOpenLegal('datenschutz')}
-            >
-              {t('authMethodModal.privacy')}
-            </Text>
-            {t('authMethodModal.legalAnd')}
-            <Text
-              style={[styles.legalLink, { color: progressColor }]}
+              style={styles.legalLink}
               onPress={() => onOpenLegal('agb')}
             >
               {t('authMethodModal.terms')}
             </Text>
-            {t('authMethodModal.legalSuffix')}
+            {' | '}
+            <Text
+              style={styles.legalLink}
+              onPress={() => onOpenLegal('datenschutz')}
+            >
+              {t('authMethodModal.privacy')}
+            </Text>
           </Text>
         )}
       </View>

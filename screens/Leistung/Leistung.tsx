@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -17,7 +17,7 @@ import { getAvatarUri } from "./utils/avatarStorage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
-import Header from "@/components/Header/Header";
+import CogwheelIcon from "@/assets/svg/cogwheel.svg";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
@@ -320,7 +320,13 @@ const Leistung: React.FC = () => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+        <TouchableOpacity
+          style={[styles.settingsButton, { top: insets.top + 8 }]}
+          onPress={handleOpenSettings}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <CogwheelIcon width={28} height={28} fill={colors.textSecondary} />
+        </TouchableOpacity>
         <LoadingState />
       </View>
     );
@@ -330,7 +336,13 @@ const Leistung: React.FC = () => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
+        <TouchableOpacity
+          style={[styles.settingsButton, { top: insets.top + 8 }]}
+          onPress={handleOpenSettings}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <CogwheelIcon width={28} height={28} fill={colors.textSecondary} />
+        </TouchableOpacity>
         <EmptyState />
       </View>
     );
@@ -348,11 +360,16 @@ const Leistung: React.FC = () => {
         onScroll={scrollHandler}
         scrollEventThrottle={32}
       >
-        {/* Header - now scrolls with content */}
-        <Header title={t('headerTitle')} rightAction={{ icon: "settings", onPress: handleOpenSettings }} />
-
         {/* Profile Header */}
         <View style={styles.profileContainer}>
+          {/* Settings Button - inside container, scrolls with content */}
+          <TouchableOpacity
+            style={[styles.settingsButtonScrolling, { top: insets.top }]}
+            onPress={handleOpenSettings}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <CogwheelIcon width={32} height={32} fill={colors.textSecondary} />
+          </TouchableOpacity>
           <ProfileHeader
             stats={stats}
             name={profile.name}
@@ -447,7 +464,17 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContainer: { flex: 1 },
   scrollContent: {},
-  profileContainer: { paddingHorizontal: 16, marginTop: 16, marginBottom: 8 },
+  settingsButton: {
+    position: "absolute",
+    right: 16,
+    zIndex: 20,
+  },
+  settingsButtonScrolling: {
+    position: "absolute",
+    right: 16,
+    zIndex: 10,
+  },
+  profileContainer: { paddingHorizontal: 16, marginTop: 8, marginBottom: 8 },
   tabSection: {
     width: "100%",
   },

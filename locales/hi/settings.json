@@ -193,11 +193,8 @@
     "continueWithApple": "Apple के साथ जारी रखें",
     "continueWithEmail": "ईमेल से जारी रखें",
     "or": "या",
-    "legalPrefix": "पंजीकरण करके आप हमारी ",
-    "privacy": "गोपनीयता नीति",
-    "legalAnd": " और ",
     "terms": "उपयोग की शर्तें",
-    "legalSuffix": " स्वीकार करते हैं।"
+    "privacy": "गोपनीयता नीति"
   },
   "emailAuth": {
     "signInWithEmail": "ईमेल से जारी रखें",
@@ -232,11 +229,8 @@
         "devices": "सभी डिवाइस पर खेलें",
         "leaderboards": "लीडरबोर्ड अनलॉक करें"
       },
-      "legalPrefix": "पंजीकरण करके आप हमारी ",
-      "privacy": "गोपनीयता नीति",
-      "legalAnd": " और ",
       "terms": "उपयोग की शर्तें",
-      "legalSuffix": " स्वीकार करते हैं।"
+      "privacy": "गोपनीयता नीति"
     },
     "forgotPassword": {
       "title": "पासवर्ड रीसेट करें",

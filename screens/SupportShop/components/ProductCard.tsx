@@ -37,8 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   disabled = false,
 }) => {
   const { t } = useTranslation('supportShop');
-  const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography, isDark } = useTheme();
 
   // Animation values
   const scale = useSharedValue(1);
@@ -129,7 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Professionelle Farben für Light Mode
   const getPriceContainerStyle = () => {
-    if (theme.isDark) {
+    if (isDark) {
       return {
         backgroundColor: "rgba(255,255,255,0.15)",
       };
@@ -151,7 +150,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const getPriceTextColor = () => {
-    if (theme.isDark) {
+    if (isDark) {
       return "white";
     } else {
       // Light Mode: Dunklere, lesbare Versionen der Produktfarben
@@ -184,10 +183,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         style={[
           styles.container,
           {
-            borderColor: theme.isDark
+            borderColor: isDark
               ? "rgba(255,255,255,0.15)"
               : "#E8EAED", // Professionelle graue Border im Light Mode
-            backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
+            backgroundColor: isDark ? colors.card : "#FFFFFF",
           },
         ]}
       >
@@ -207,7 +206,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             style={[
               styles.iconContainer,
               {
-                backgroundColor: theme.isDark
+                backgroundColor: isDark
                   ? product.color + "30"
                   : getPriceContainerStyle().backgroundColor // Gleiche dezente Farbe wie Preisschild
               },
@@ -220,7 +219,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Text
             style={[
               styles.title,
-              { color: disabled ? colors.textSecondary : colors.textPrimary },
+              { color: disabled ? colors.textSecondary : colors.textPrimary, fontSize: typography.size.md },
             ]}
           >
             {product.title}
@@ -229,7 +228,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Text
             style={[
               styles.description,
-              { color: disabled ? colors.textSecondary : colors.textSecondary },
+              { color: disabled ? colors.textSecondary : colors.textSecondary, fontSize: typography.size.sm },
             ]}
             numberOfLines={3}
           >
@@ -248,6 +247,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 styles.price,
                 {
                   color: getPriceTextColor(),
+                  fontSize: typography.size.md,
                 },
               ]}
             >
@@ -261,10 +261,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <View style={[
             styles.popularBadge,
             {
-              backgroundColor: theme.isDark ? "#FF6B6B" : "#EA4335", // Professionelleres Rot im Light Mode
+              backgroundColor: isDark ? "#FF6B6B" : "#EA4335", // Professionelleres Rot im Light Mode
             }
           ]}>
-            <Text style={styles.popularText}>{t('product.badge')}</Text>
+            <Text style={[styles.popularText, { fontSize: typography.size.xs }]}>{t('product.badge')}</Text>
           </View>
         )}
       </TouchableOpacity>

@@ -1,5 +1,5 @@
 // screens/SupportShopScreen/SupportShopScreen.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -66,6 +66,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const [activeSubscriptionProductId, setActiveSubscriptionProductId] = useState<string | null>(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Decide which product to mark as popular (typically mid-tier)
   const getPopularProductId = () => {
@@ -256,6 +257,13 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
     }
   };
 
+  // Handle "Mehr Optionen" button press - scroll to subscriptions
+  const handleScrollToSubscriptions = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    scrollViewRef.current?.scrollTo({ y: 400, animated: true });
+    setShowScrollIndicator(false);
+  };
+
   // Handle purchase error
   const handlePurchaseError = (errorData: any) => {
     console.error("Purchase error:", errorData);
@@ -313,7 +321,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         <StatusBar style={theme.isDark ? "light" : "dark"} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          <Text style={[styles.loadingText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {t('loading.text')}
           </Text>
         </View>
@@ -339,7 +347,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Feather name="x" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
           {t('header.title')}
         </Text>
         <View style={{ width: 40 }} />
@@ -347,6 +355,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
       {/* Content */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
@@ -367,10 +376,10 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         {/* One-time support section */}
         <Animated.View entering={SlideInUp.delay(200).duration(500)}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
               {t('sections.oneTime')}
             </Text>
-            <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.sectionSubtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
               {t('sections.oneTimeSubtitle')}
             </Text>
           </View>
@@ -398,14 +407,14 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
           entering={SlideInUp.delay(400).duration(500)}
         >
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
               {activeSubscriptionProductId
                 ? t('sections.activeSubscription')
                 : t('sections.subscription')
               }
             </Text>
             {activeSubscriptionProductId && (
-              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                 {t('sections.activeSubscriptionSubtitle')}
               </Text>
             )}
@@ -519,7 +528,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
         isSupporter={true}
       />
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Clickable "Mehr Optionen" button */}
       {showScrollIndicator && !activeSubscriptionProductId && (
         <Animated.View
           style={{
@@ -528,7 +537,6 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             left: 0,
             right: 0,
             alignItems: 'center',
-            pointerEvents: 'none',
           }}
           entering={FadeIn.delay(800).duration(600)}
           exiting={FadeOut.duration(300)}
@@ -542,8 +550,11 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
               right: 0,
               height: 80,
             }}
+            pointerEvents="none"
           />
-          <View
+          <TouchableOpacity
+            onPress={handleScrollToSubscriptions}
+            activeOpacity={0.8}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -566,7 +577,7 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
             >
               Mehr Optionen
             </Text>
-          </View>
+          </TouchableOpacity>
         </Animated.View>
       )}
     </View>

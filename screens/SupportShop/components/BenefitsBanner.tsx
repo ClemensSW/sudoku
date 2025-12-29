@@ -39,12 +39,12 @@ interface BannerVariant {
 }
 
 const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
-  const theme = useTheme();
+  const { isDark, typography } = useTheme();
   const { t } = useTranslation('supportShop');
   const { isSupporter } = useSupporter();
 
   // Get dynamic gradient colors based on current path color and theme
-  const gradientColors = getPathGradient(primaryColor, theme.isDark);
+  const gradientColors = getPathGradient(primaryColor, isDark);
 
   // Animation values
   const scale = useSharedValue(1);
@@ -150,7 +150,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
           key={`title-${currentVariant.titleKey}`}
           style={[
             styles.title,
-            { color: '#FFFFFF' }, // Always white on colored gradient background
+            { color: '#FFFFFF', fontSize: typography.size.lg }, // Always white on colored gradient background
             isSupporter && {
               textShadowColor: 'rgba(0, 0, 0, 0.2)',
               textShadowOffset: { width: 0, height: 1 },
@@ -166,7 +166,7 @@ const BenefitsBanner: React.FC<BannerProps> = ({ primaryColor }) => {
           key={`subtitle-${currentVariant.subtitleKey}`}
           style={[
             styles.subtitle,
-            { color: '#FFFFFF' }, // Always white on colored gradient background
+            { color: '#FFFFFF', fontSize: typography.size.md }, // Always white on colored gradient background
             isSupporter && {
               textShadowColor: 'rgba(0, 0, 0, 0.15)',
               textShadowOffset: { width: 0, height: 1 },

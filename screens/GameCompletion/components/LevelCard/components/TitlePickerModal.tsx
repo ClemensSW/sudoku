@@ -95,7 +95,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
       textPrimaryColor={textPrimaryColor}
       surfaceColor={surfaceColor}
       borderColor={borderColor}
-      snapPoints={['55%', '90%']}
+      snapPoints={['50%', '90%']}
       managesBottomNav={managesBottomNav}
     >
       <Text style={[styles.subtitle, { color: textSecondaryColor, fontSize: typography.size.sm }]}>

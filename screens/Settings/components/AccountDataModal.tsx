@@ -32,7 +32,7 @@ const AccountDataModal: React.FC<AccountDataModalProps> = ({
       textPrimaryColor={colors.textPrimary}
       surfaceColor={colors.surface}
       borderColor={colors.border}
-      snapPoints={['60%', '80%']}
+      snapPoints={['50%', '80%']}
       managesBottomNav={false}
     >
       <AccountDataSection

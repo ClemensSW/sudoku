@@ -33,7 +33,7 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginBottom: 12,
     textAlign: "center",
@@ -44,7 +44,7 @@ export default StyleSheet.create({
     borderRadius: 20,
   },
   versionText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   scrollView: {
@@ -56,7 +56,7 @@ export default StyleSheet.create({
     paddingBottom: 20,
   },
   greeting: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: 16,
     lineHeight: 26,
@@ -65,7 +65,7 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
   bodyText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     lineHeight: 24,
     letterSpacing: 0.2,
   },
@@ -73,7 +73,7 @@ export default StyleSheet.create({
     marginBottom: 0,
   },
   signature: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginTop: 8,
     lineHeight: 24,
@@ -88,7 +88,7 @@ export default StyleSheet.create({
   },
   closeButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     letterSpacing: 0.3,
   },

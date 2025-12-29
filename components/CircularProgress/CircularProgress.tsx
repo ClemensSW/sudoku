@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   valueText: {
-    fontSize: 18,
+    // fontSize set dynamically via textStyle prop
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
   },

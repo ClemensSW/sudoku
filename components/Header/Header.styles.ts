@@ -40,13 +40,13 @@ export default StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
   },
 
   subtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginTop: spacing.xxs,
     textAlign: "center",

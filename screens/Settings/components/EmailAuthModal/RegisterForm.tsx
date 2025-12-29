@@ -53,7 +53,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   isLoading,
 }) => {
   const { t } = useTranslation('settings');
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, isDark, typography } = theme;
   const progressColor = useProgressColor();
 
   const [email, setEmail] = useState('');
@@ -142,7 +143,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     <View style={styles.container}>
       {/* Email Input */}
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
+        <Text style={[styles.label, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t('emailAuth.register.email')}
         </Text>
         <View
@@ -156,7 +157,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         >
           <Feather name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
           <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
+            style={[styles.input, { color: colors.textPrimary, fontSize: typography.size.md }]}
             placeholder={t('emailAuth.register.emailPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             value={email}
@@ -171,13 +172,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           />
         </View>
         {emailError ? (
-          <Text style={styles.errorText}>{emailError}</Text>
+          <Text style={[styles.errorText, { fontSize: typography.size.xs }]}>{emailError}</Text>
         ) : null}
       </View>
 
       {/* Password Input */}
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
+        <Text style={[styles.label, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t('emailAuth.register.password')}
         </Text>
         <View
@@ -194,7 +195,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             <BottomSheetTextInput
               style={[
                 styles.input,
-                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary }
+                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary, fontSize: typography.size.md }
               ]}
               placeholder={t('emailAuth.register.passwordPlaceholder')}
               placeholderTextColor={colors.textSecondary}
@@ -206,7 +207,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               editable={!isLoading}
             />
             {tempShowPassword && !showPassword && password.length > 0 && (
-              <Text style={[styles.maskedOverlay, { color: colors.textPrimary }]}>
+              <Text style={[styles.maskedOverlay, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {getMaskedDisplay()}
               </Text>
             )}
@@ -243,13 +244,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 ]}
               />
             </View>
-            <Text style={[styles.strengthText, { color: getStrengthColor(passwordStrength) }]}>
+            <Text style={[styles.strengthText, { color: getStrengthColor(passwordStrength), fontSize: typography.size.xs }]}>
               {t(`emailAuth.register.strength.${passwordStrength}`)}
             </Text>
           </View>
         )}
         {passwordError ? (
-          <Text style={styles.errorText}>{passwordError}</Text>
+          <Text style={[styles.errorText, { fontSize: typography.size.xs }]}>{passwordError}</Text>
         ) : null}
       </View>
 
@@ -269,7 +270,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         {isLoading ? (
           <ActivityIndicator color="#FFFFFF" />
         ) : (
-          <Text style={styles.submitButtonText}>
+          <Text style={[styles.submitButtonText, { fontSize: typography.size.md }]}>
             {t('emailAuth.register.submit')}
           </Text>
         )}
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   label: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     marginLeft: spacing.xs,
   },
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     paddingVertical: 0,
   },
   passwordInputWrapper: {
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
   },
   maskedOverlay: {
     position: 'absolute',
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     left: 0,
     right: 0,
   },
@@ -337,13 +338,13 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   strengthText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     minWidth: 50,
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     marginLeft: spacing.xs,
   },
   submitButton: {
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: '#FFFFFF',
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },

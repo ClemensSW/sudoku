@@ -28,7 +28,8 @@ interface LegalScreenProps {
 
 const LegalScreen: React.FC<LegalScreenProps> = ({ visible, onClose, initialDoc }) => {
   const { t, i18n } = useTranslation("settings");
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, isDark, typography } = theme;
   const { hideBottomNav, resetBottomNav } = useNavigation();
   const [selectedDoc, setSelectedDoc] = useState<LegalDocType | null>(initialDoc || null);
   const [docContent, setDocContent] = useState<string>("");
@@ -632,26 +633,26 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
   const markdownStyles = useMemo(() => ({
     body: {
       color: colors.textPrimary,
-      fontSize: 14,
+      fontSize: typography.size.sm,
       lineHeight: 24,
     },
     heading1: {
       color: colors.textPrimary,
-      fontSize: 24,
+      fontSize: typography.size.xxl,
       fontWeight: '700',
       marginTop: 20,
       marginBottom: 12,
     },
     heading2: {
       color: colors.textPrimary,
-      fontSize: 20,
+      fontSize: typography.size.xl,
       fontWeight: '600',
       marginTop: 16,
       marginBottom: 10,
     },
     heading3: {
       color: colors.textPrimary,
-      fontSize: 16,
+      fontSize: typography.size.md,
       fontWeight: '600',
       marginTop: 12,
       marginBottom: 8,
@@ -695,7 +696,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           color={colors.textSecondary}
           style={styles.subtitleIcon}
         />
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t("legal.subtitle")}
         </Text>
       </View>
@@ -705,7 +706,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           style={[styles.docItem, { borderBottomColor: colors.border }]}
           onPress={() => handleDocPress("impressum")}
         >
-          <Text style={[styles.docTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.docTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("legal.impressum")}
           </Text>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -715,7 +716,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           style={[styles.docItem, { borderBottomColor: colors.border }]}
           onPress={() => handleDocPress("datenschutz")}
         >
-          <Text style={[styles.docTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.docTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("legal.datenschutz")}
           </Text>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -725,7 +726,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           style={[styles.docItem, { borderBottomColor: colors.border }]}
           onPress={() => handleDocPress("agb")}
         >
-          <Text style={[styles.docTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.docTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("legal.agb")}
           </Text>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -735,7 +736,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           style={[styles.docItem, { borderBottomWidth: 0 }]}
           onPress={() => handleDocPress("widerruf")}
         >
-          <Text style={[styles.docTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.docTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("legal.widerruf")}
           </Text>
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -780,7 +781,7 @@ This right of withdrawal notice complies with the requirements of § 312g BGB in
           <View style={styles.placeholder} />
         )}
 
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
           {selectedDoc ? t(`legal.${selectedDoc}`) : t("legal.title")}
         </Text>
 
@@ -820,7 +821,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     flex: 1,
     textAlign: "center",
@@ -857,7 +858,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   subtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
     textAlign: "center",
   },
@@ -876,7 +877,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   docTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   documentContainer: {

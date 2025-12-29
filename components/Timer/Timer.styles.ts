@@ -29,7 +29,7 @@ export default StyleSheet.create({
   },
 
   timerText: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     fontVariant: ["tabular-nums"], // Monospace for consistent numbers
   },

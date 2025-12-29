@@ -22,6 +22,8 @@ export interface BottomSheetModalWithFlatListProps<T> {
   textPrimaryColor: string;
   surfaceColor: string;
   borderColor: string;
+  /** Typography size for title. Default: 18 */
+  titleFontSize?: number;
   snapPoints?: (string | number)[];
   initialSnapIndex?: number;
   contentContainerStyle?: any;
@@ -59,6 +61,7 @@ function BottomSheetModalWithFlatList<T>({
   ListFooterComponent,
   ListEmptyComponent,
   managesBottomNav = true,
+  titleFontSize,
 }: BottomSheetModalWithFlatListProps<T>) {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
@@ -145,7 +148,7 @@ function BottomSheetModalWithFlatList<T>({
       }}
     >
       <View style={[styles.stickyHeader, { backgroundColor: surfaceColor, borderColor: borderColor }]}>
-        <Text style={[styles.title, { color: textPrimaryColor }]}>{title}</Text>
+        <Text style={[styles.title, { color: textPrimaryColor, fontSize: titleFontSize || 18 }]}>{title}</Text>
         {ListHeaderComponent && (
           typeof ListHeaderComponent === 'function'
             ? <ListHeaderComponent />
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via prop or default
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 16,

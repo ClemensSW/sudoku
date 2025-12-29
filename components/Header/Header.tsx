@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   skipTopPadding = false, // Default to false
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const insets = useSafeAreaInsets();
 
   // Enhanced container style to ensure visibility
@@ -73,14 +73,14 @@ const Header: React.FC<HeaderProps> = ({
 
       <View style={styles.titleContainer}>
         <Text
-          style={[styles.title, { color: colors.textPrimary }]}
+          style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xl }]}
           numberOfLines={1}
         >
           {title}
         </Text>
         {subtitle && (
           <Text
-            style={[styles.subtitle, { color: colors.textSecondary }]}
+            style={[styles.subtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}
             numberOfLines={1}
           >
             {subtitle}

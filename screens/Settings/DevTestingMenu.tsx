@@ -21,7 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { refillShields, getStreakStats } from '@/utils/dailyStreak';
 
 const DevTestingMenu: React.FC = () => {
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, isDark, typography } = theme;
   const [status, setStatus] = useState<string>('Bereit zum Testen');
 
   const updateStatus = async () => {
@@ -207,7 +208,7 @@ Schutzschilder: ${shieldInfo}
       marginVertical: 12,
     }}>
       <Text style={{
-        fontSize: 18,
+        fontSize: typography.size.lg,
         fontWeight: 'bold',
         color: colors.textPrimary,
         marginBottom: 12,
@@ -222,7 +223,7 @@ Schutzschilder: ${shieldInfo}
         marginBottom: 16,
       }}>
         <Text style={{
-          fontSize: 12,
+          fontSize: typography.size.xs,
           color: colors.textSecondary,
           fontFamily: 'monospace',
         }}>
@@ -293,7 +294,7 @@ Schutzschilder: ${shieldInfo}
         padding: 12,
         marginTop: 12,
       }}>
-        <Text style={{ fontSize: 12, color: colors.textSecondary }}>
+        <Text style={{ fontSize: typography.size.xs, color: colors.textSecondary }}>
           💡 Nach Simulierung:
           {'\n'}• Gehe zur Galerie → Bild öffnen → Unlock-Button testen
           {'\n'}• Spiele Sudoku → EP sollte 2× sein

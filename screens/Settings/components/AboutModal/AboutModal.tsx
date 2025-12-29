@@ -27,7 +27,7 @@ interface AboutModalProps {
 const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
   const version = Constants.expoConfig?.version || "1.0.0";
   const { height: screenHeight } = useWindowDimensions();
 
@@ -81,7 +81,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
               />
             </View>
 
-            <Text style={[styles.title, { color: colors.textPrimary }]}>
+            <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
               {t("about.title")}
             </Text>
 
@@ -99,7 +99,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
               <Text
                 style={[
                   styles.versionText,
-                  { color: theme.isDark ? "#8A78B4" : "#6E5AA0" },
+                  { color: theme.isDark ? "#8A78B4" : "#6E5AA0", fontSize: typography.size.sm },
                 ]}
               >
                 Version {version}
@@ -115,36 +115,36 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
           >
             <View>
               {/* Greeting */}
-              <Text style={[styles.greeting, { color: colors.textPrimary }]}>
+              <Text style={[styles.greeting, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
                 {t("about.greeting") || "Hi! Ich bin Clemens 👋"}
               </Text>
 
               {/* Main Content Sections */}
               <View style={styles.section}>
-                <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bodyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                   {t("about.intro") || "Sudoku Duo ist meine erste selbst entwickelte App."}
                 </Text>
               </View>
 
               <View style={styles.section}>
-                <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bodyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                   {t("about.features") || "Ich liebe Denksport und wollte eine Sudoku-App erschaffen, die nicht nur entspannt und fordert, sondern auch verbindet: Mit dem einzigartigen 2-Spieler-Modus wird Sudoku zum gemeinsamen Erlebnis – ideal für Freunde, Paare oder kleine Wettkämpfe."}
                 </Text>
               </View>
 
               <View style={styles.section}>
-                <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bodyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                   {t("about.support") || "Wenn dir die App gefällt, würde ich mich riesig über deine Unterstützung freuen. Deine Bewertung im Play Store hilft mir, Sudoku Duo und neue Projekte weiterzuentwickeln."}
                 </Text>
               </View>
 
               {/* Closing */}
               <View style={[styles.section, styles.closingSection]}>
-                <Text style={[styles.bodyText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bodyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
                   {t("about.closing") || "Danke, dass du dabei bist."}
                 </Text>
                 <Text
-                  style={[styles.signature, { color: colors.textPrimary }]}
+                  style={[styles.signature, { color: colors.textPrimary, fontSize: typography.size.md }]}
                 >
                   {t("about.signature") || "Happy Puzzling! 🧩"}
                 </Text>
@@ -162,7 +162,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ visible, onClose }) => {
               onPress={onClose}
               activeOpacity={0.8}
             >
-              <Text style={styles.closeButtonText}>
+              <Text style={[styles.closeButtonText, { fontSize: typography.size.md }]}>
                 {t("about.closeButton") || "Schließen"}
               </Text>
             </TouchableOpacity>

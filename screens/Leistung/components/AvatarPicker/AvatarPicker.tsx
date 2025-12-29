@@ -39,7 +39,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<AvatarCategory>('Cartoon');
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -167,6 +167,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
                     ? colors.primary
                     : colors.textSecondary,
                 fontWeight: activeCategory === tab.id ? '600' : '500',
+                fontSize: typography.size.sm,
               },
             ]}
           >
@@ -184,7 +185,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         ]}
       />
     </View>
-  ), [tabs, activeCategory, theme.isDark, colors.primary, colors.textSecondary, tabIndicatorStyle]);
+  ), [tabs, activeCategory, theme.isDark, colors.primary, colors.textSecondary, typography.size.sm, tabIndicatorStyle]);
 
   return (
     <>
@@ -200,6 +201,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
         textPrimaryColor={colors.textPrimary}
         surfaceColor={colors.surface}
         borderColor={colors.border}
+        titleFontSize={typography.size.lg}
         snapPoints={['70%', '90%']}
         initialSnapIndex={0}
         contentContainerStyle={styles.gridContainer}

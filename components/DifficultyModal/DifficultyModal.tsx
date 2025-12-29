@@ -51,7 +51,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
 }) => {
   const { t } = useTranslation('start');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const { colors: leagueColors } = useCurrentLeague();
   // Use league accent color for Duo mode, otherwise use user's path color
@@ -156,11 +156,11 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
         // Verhindere Schließen beim Klicken auf den Inhalt
         onTouchEnd={(e) => e.stopPropagation()}
       >
-        <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+        <Text style={[styles.modalTitle, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
           {modalTitle}
         </Text>
 
-        <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.modalSubtitle, { color: colors.textSecondary, fontSize: typography.size.md }]}>
           {modalSubtitle}
         </Text>
 
@@ -197,6 +197,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                         color: isSelected
                           ? accentColor
                           : colors.textPrimary,
+                        fontSize: typography.size.md,
                       },
                     ]}
                   >
@@ -233,7 +234,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
                   style={[
                     styles.difficultyText,
                     styles.lockedDifficultyText,
-                    { color: colors.buttonDisabled },
+                    { color: colors.buttonDisabled, fontSize: typography.size.md },
                   ]}
                 >
                   {t(`difficultyModal.difficulties.${diff}`)}
@@ -246,7 +247,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
         {/* Fortschrittsnachricht und -balken - nur wenn nicht im Duo-Modus und nicht alle freigeschaltet */}
         {stats && !isDuoMode && !allUnlocked && (
           <View style={styles.progressContainer}>
-            <Text style={[styles.progressMessage, { color: colors.textSecondary }]}>
+            <Text style={[styles.progressMessage, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
               {progressMessage}
             </Text>
             
@@ -290,7 +291,7 @@ const DifficultyModal: React.FC<DifficultyModalProps> = ({
               end={{ x: 1, y: 0 }}
               style={styles.duoButtonGradient}
             >
-              <Text style={styles.duoButtonText}>{modalConfirmText}</Text>
+              <Text style={[styles.duoButtonText, { fontSize: typography.size.md }]}>{modalConfirmText}</Text>
             </LinearGradient>
           </Pressable>
         ) : (

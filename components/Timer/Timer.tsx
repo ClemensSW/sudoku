@@ -29,7 +29,7 @@ const Timer: React.FC<TimerProps> = ({
 }) => {
   const { t } = useTranslation('game');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   const [time, setTime] = useState(initialTime);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -141,7 +141,7 @@ const Timer: React.FC<TimerProps> = ({
         <Animated.Text
           style={[
             styles.timerText,
-            { color: disabled ? colors.textSecondary : colors.textPrimary },
+            { color: disabled ? colors.textSecondary : colors.textPrimary, fontSize: typography.size.xl },
             timerAnimatedStyle,
           ]}
         >

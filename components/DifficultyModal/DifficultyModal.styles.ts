@@ -25,12 +25,12 @@ export default StyleSheet.create({
     elevation: 20,
   },
   modalTitle: {
-    fontSize: 24,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     marginBottom: 8,
   },
   modalSubtitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     marginBottom: 24,
     opacity: 0.7,
@@ -51,7 +51,7 @@ export default StyleSheet.create({
     borderWidth: 1.5,
   },
   difficultyText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   modalButton: {
@@ -73,7 +73,7 @@ export default StyleSheet.create({
     marginTop: 4,
   },
   progressMessage: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     textAlign: "center",
     marginBottom: 10,
     lineHeight: 20,
@@ -104,7 +104,7 @@ export default StyleSheet.create({
     paddingHorizontal: 24,
   },
   duoButtonText: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     color: "#FFFFFF",
     letterSpacing: 0.5,

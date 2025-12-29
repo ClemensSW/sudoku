@@ -15,6 +15,8 @@ export interface BottomSheetModalProps {
   textPrimaryColor: string;
   surfaceColor: string;
   borderColor: string;
+  /** Typography size for title. Default: 22 */
+  titleFontSize?: number;
   /** Snap points als Prozent-Strings oder Pixel-Werte. Default: ['40%', '90%'] */
   snapPoints?: (string | number)[];
   /** Start-Index des Snap Points. Default: 0 (erster Snap Point) */
@@ -56,6 +58,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   managesBottomNav = true,
   keyboardBehavior = 'interactive',
   android_keyboardInputMode = 'adjustPan',
+  titleFontSize,
 }) => {
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { currentRoute, hideBottomNav, resetBottomNav } = useNavigation();
@@ -134,7 +137,7 @@ const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     >
       {/* Header: Title (centered) */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: textPrimaryColor }]}>
+        <Text style={[styles.title, { color: textPrimaryColor, fontSize: titleFontSize || 22 }]}>
           {title}
         </Text>
       </View>
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontSize: 22,
+    // fontSize set dynamically via prop or default
     fontWeight: '700',
     textAlign: 'center',
   },

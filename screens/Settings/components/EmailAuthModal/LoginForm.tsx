@@ -29,7 +29,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
   initialEmail = '',
 }) => {
   const { t } = useTranslation('settings');
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, isDark, typography } = theme;
   const progressColor = useProgressColor();
 
   const [email, setEmail] = useState(initialEmail);
@@ -107,7 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     <View style={styles.container}>
       {/* Email Input */}
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
+        <Text style={[styles.label, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t('emailAuth.login.email')}
         </Text>
         <View
@@ -121,7 +122,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         >
           <Feather name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
           <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
+            style={[styles.input, { color: colors.textPrimary, fontSize: typography.size.md }]}
             placeholder={t('emailAuth.login.emailPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             value={email}
@@ -136,13 +137,13 @@ const LoginForm: React.FC<LoginFormProps> = ({
           />
         </View>
         {emailError ? (
-          <Text style={styles.errorText}>{emailError}</Text>
+          <Text style={[styles.errorText, { fontSize: typography.size.xs }]}>{emailError}</Text>
         ) : null}
       </View>
 
       {/* Password Input */}
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
+        <Text style={[styles.label, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t('emailAuth.login.password')}
         </Text>
         <View
@@ -159,7 +160,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
             <BottomSheetTextInput
               style={[
                 styles.input,
-                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary }
+                { color: tempShowPassword && !showPassword ? 'transparent' : colors.textPrimary, fontSize: typography.size.md }
               ]}
               placeholder={t('emailAuth.login.passwordPlaceholder')}
               placeholderTextColor={colors.textSecondary}
@@ -171,7 +172,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
               editable={!isLoading}
             />
             {tempShowPassword && !showPassword && password.length > 0 && (
-              <Text style={[styles.maskedOverlay, { color: colors.textPrimary }]}>
+              <Text style={[styles.maskedOverlay, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {getMaskedDisplay()}
               </Text>
             )}
@@ -202,7 +203,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         style={styles.forgotPasswordButton}
         disabled={isLoading}
       >
-        <Text style={[styles.forgotPasswordText, { color: progressColor }]}>
+        <Text style={[styles.forgotPasswordText, { color: progressColor, fontSize: typography.size.sm }]}>
           {t('emailAuth.login.forgotPassword')}
         </Text>
       </TouchableOpacity>
@@ -223,7 +224,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         {isLoading ? (
           <ActivityIndicator color="#FFFFFF" />
         ) : (
-          <Text style={styles.submitButtonText}>
+          <Text style={[styles.submitButtonText, { fontSize: typography.size.md }]}>
             {t('emailAuth.login.submit')}
           </Text>
         )}
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   label: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     marginLeft: spacing.xs,
   },
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     paddingVertical: 0,
   },
   passwordInputWrapper: {
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   },
   maskedOverlay: {
     position: 'absolute',
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     left: 0,
     right: 0,
   },
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     marginLeft: spacing.xs,
   },
   forgotPasswordButton: {
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   forgotPasswordText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   submitButton: {
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: '#FFFFFF',
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },

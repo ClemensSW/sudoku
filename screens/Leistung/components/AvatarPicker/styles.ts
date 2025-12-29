@@ -36,7 +36,7 @@ export default StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   closeButton: {
@@ -77,7 +77,7 @@ export default StyleSheet.create({
     minHeight: 44,
   },
   tabButtonText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -109,7 +109,7 @@ export default StyleSheet.create({
     marginRight: 16,
   },
   optionText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
 
@@ -119,7 +119,7 @@ export default StyleSheet.create({
     paddingBottom: 80, // Space for bottom sticky tabs (60px height + 20px margin)
   },
   categoryTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginTop: 8,
     marginBottom: 12,
@@ -152,7 +152,7 @@ export default StyleSheet.create({
     borderWidth: 3,
   },
   avatarName: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     marginTop: 4,
     textAlign: "center",
     height: 16, // Fixed height for text to maintain consistent layouts
@@ -196,7 +196,7 @@ export default StyleSheet.create({
   },
   newBadgeText: {
     color: "white",
-    fontSize: 10,
+    // fontSize set dynamically via theme.typography
     fontWeight: "bold",
   },
 

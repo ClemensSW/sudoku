@@ -321,16 +321,18 @@ const Leistung: React.FC = () => {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <TouchableOpacity
-          style={[styles.settingsButton, { top: insets.top - 10 }]}
-          onPress={handleOpenSettings}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Animated.View style={cogwheelAnimatedStyle}>
-            <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
-          </Animated.View>
-        </TouchableOpacity>
-        <LoadingState />
+        <View style={styles.loadingWrapper}>
+          <TouchableOpacity
+            style={[styles.settingsButtonScrolling, { top: insets.top - 20 }]}
+            onPress={handleOpenSettings}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Animated.View style={cogwheelAnimatedStyle}>
+              <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+            </Animated.View>
+          </TouchableOpacity>
+          <LoadingState />
+        </View>
       </View>
     );
   }
@@ -468,6 +470,7 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 10,
   },
+  loadingWrapper: { flex: 1, marginTop: 24 },
   profileContainer: { paddingHorizontal: 16, marginTop: 24, marginBottom: 8 },
   tabSection: {
     width: "100%",

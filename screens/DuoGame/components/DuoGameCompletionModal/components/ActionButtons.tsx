@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     paddingBottom: 30,
-    zIndex: 5,
+    zIndex: 60,
   },
   primaryButton: {
     width: "100%",

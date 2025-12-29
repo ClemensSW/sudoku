@@ -10,6 +10,7 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     paddingBottom: 30,
+    zIndex: 60,
   },
   primaryButton: {
     width: '100%',

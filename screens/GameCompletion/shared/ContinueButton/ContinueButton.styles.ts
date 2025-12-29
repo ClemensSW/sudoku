@@ -12,6 +12,7 @@ export default StyleSheet.create({
     paddingBottom: 30,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'rgba(0,0,0,0.08)',
+    zIndex: 60,
   },
   button: {
     width: '100%',

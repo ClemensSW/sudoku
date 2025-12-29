@@ -1,6 +1,6 @@
 // components/GameCompletion/components/ConfettiEffect/ConfettiEffect.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import LottieView from "lottie-react-native";
 
 interface ConfettiProps {
@@ -45,27 +45,31 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({
   if (!visible) return null;
 
   return (
-    <LottieView
-      ref={animationRef}
-      source={require("@/assets/animations/confetti.json")}
-      style={styles.animation}
-      autoPlay={true}
-      loop={false}
-      speed={1}
-      resizeMode="cover"
-      pointerEvents="none"
-    />
+    <View style={styles.container} pointerEvents="none">
+      <LottieView
+        ref={animationRef}
+        source={require("@/assets/animations/confetti.json")}
+        style={styles.animation}
+        autoPlay={true}
+        loop={false}
+        speed={1}
+        resizeMode="cover"
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  animation: {
+  container: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     zIndex: 50,
+  },
+  animation: {
+    flex: 1,
   },
 });
 

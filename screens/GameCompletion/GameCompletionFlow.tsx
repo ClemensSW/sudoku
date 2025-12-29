@@ -187,6 +187,9 @@ const GameCompletionFlow: React.FC<GameCompletionFlowProps> = ({
           },
         ]}
       >
+        {/* Confetti nur auf erstem Screen - innerhalb des Containers wie im Duo-Modus */}
+        {currentStep === 0 && <ConfettiEffect isActive={visible} />}
+
         {/* Screen Content mit Slide-Animation */}
         <Animated.View
           key={`screen-${currentStep}`}
@@ -197,9 +200,6 @@ const GameCompletionFlow: React.FC<GameCompletionFlowProps> = ({
           {renderCurrentScreen()}
         </Animated.View>
       </Animated.View>
-
-      {/* Confetti nur auf erstem Screen */}
-      {currentStep === 0 && <ConfettiEffect isActive={visible} />}
     </View>
   );
 };

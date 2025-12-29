@@ -372,7 +372,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
       <View style={{ flex: 1 }}>
         <Animated.View style={headerAnimatedStyle}>
           <Header
-            title="Sudoku"
+            title=""
             onBackPress={handleBackPress}
             rightAction={{
               icon: "settings",

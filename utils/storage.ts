@@ -170,7 +170,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   soundEffects: true,
   backgroundMusic: false,
   language: "de",
-  fontScale: 1.0,
+  fontScale: 1.1, // Default: "Groß" für bessere Lesbarkeit
 };
 
 // Speichere den aktuellen Spielstand

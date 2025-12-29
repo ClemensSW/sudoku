@@ -20,6 +20,7 @@
     "complete": "पूर्ण",
     "filled": "भरा हुआ",
     "buttons": {
+      "continue": "आगे",
       "rematch": "फिर से खेलें",
       "backToMenu": "मेन्यू पर जाएं"
     }

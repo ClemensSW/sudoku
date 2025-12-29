@@ -22,6 +22,8 @@ interface StreakScreenProps {
   } | null;
   onNewGame: () => void;
   onContinue: () => void;
+  // NEU: Optional custom action buttons (z.B. DuoActionButtons für Duo-Modus)
+  customActionButtons?: React.ReactNode;
 }
 
 /**
@@ -37,6 +39,7 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
   streakInfo,
   onNewGame,
   onContinue,
+  customActionButtons,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -90,12 +93,16 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Action Buttons with Streak-themed colors */}
-      <ActionButtons
-        onNewGame={onNewGame}
-        onContinue={onContinue}
-        customColor={streakButtonColor}
-      />
+      {/* Action Buttons - custom or default with Streak-themed colors */}
+      {customActionButtons ? (
+        customActionButtons
+      ) : (
+        <ActionButtons
+          onNewGame={onNewGame}
+          onContinue={onContinue}
+          customColor={streakButtonColor}
+        />
+      )}
     </View>
   );
 };

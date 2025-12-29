@@ -13,6 +13,7 @@ import CompletionHeader from "./components/CompletionHeader";
 import PlayerCard from "./components/PlayerCard";
 import VSDivider from "./components/VSDivider";
 import ActionButtons from "./components/ActionButtons";
+import ContinueOnlyButton from "./components/ContinueOnlyButton";
 
 // Hook
 import { useCompletionAnimations } from "./hooks/useCompletionAnimations";
@@ -46,6 +47,9 @@ interface DuoGameCompletionModalProps {
   opponentName: string;
   opponentAvatarSource: ImageSourcePropType;
   opponentTitle?: string | null;
+  // NEU: Conditional Buttons für Progression Flow
+  showContinueOnly?: boolean; // true = nur "Weiter" Button
+  onContinue?: () => void; // Callback für "Weiter" Button
 }
 
 const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
@@ -75,6 +79,9 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
   opponentName,
   opponentAvatarSource,
   opponentTitle,
+  // NEU: Conditional Buttons
+  showContinueOnly = false,
+  onContinue,
 }) => {
   const { colors, isDark } = useTheme();
   const progressColor = useProgressColor(); // Theme-aware path color
@@ -185,13 +192,21 @@ const DuoGameCompletionModal: React.FC<DuoGameCompletionModalProps> = ({
           />
         </View>
 
-        {/* Action Buttons */}
-        <ActionButtons
-          onRematch={onRevanche}
-          onBackToMenu={onClose}
-          leaguePrimary={leagueColors.primary}
-          buttonOpacity={buttonOpacity}
-        />
+        {/* Action Buttons - Conditional basierend auf showContinueOnly */}
+        {showContinueOnly && onContinue ? (
+          <ContinueOnlyButton
+            onContinue={onContinue}
+            leaguePrimary={leagueColors.primary}
+            buttonOpacity={buttonOpacity}
+          />
+        ) : (
+          <ActionButtons
+            onRematch={onRevanche}
+            onBackToMenu={onClose}
+            leaguePrimary={leagueColors.primary}
+            buttonOpacity={buttonOpacity}
+          />
+        )}
       </Animated.View>
     </View>
   );

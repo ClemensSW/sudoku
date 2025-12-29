@@ -14,6 +14,14 @@ import {
 } from "@/utils/sudoku";
 import { triggerHaptic } from "@/utils/haptics";
 import { syncAfterGameCompletion } from "@/utils/cloudSync/syncService";
+// NEU: Stats & Streak Integration
+import {
+  updateStatsAfterGame,
+  loadStats,
+  incrementGamesPlayed,
+  GameStats,
+} from "@/utils/storage";
+import { updateDailyStreak } from "@/utils/dailyStreak";
 
 // Constants
 const MAX_HINTS = 3;
@@ -28,6 +36,14 @@ export interface CellPosition {
 export interface PlayerArea {
   player: 1 | 2;
   cells: CellPosition[];
+}
+
+// NEU: StreakInfo Typ für Completion Flow
+export interface StreakInfo {
+  changed: boolean;
+  newStreak: number;
+  shieldUsed: boolean;
+  shieldsUsedCount?: number;
 }
 
 export interface DuoGameState {
@@ -53,6 +69,9 @@ export interface DuoGameState {
   player1SolvedCells: number;
   player2InitialEmptyCells: number;
   player2SolvedCells: number;
+  // NEU: Stats & Streak für Completion Flow
+  gameStats: GameStats | null;
+  streakInfo: StreakInfo | null;
 }
 
 export interface DuoGameActions {
@@ -133,6 +152,10 @@ export const useDuoGameState = (
   const [player1SolvedCells, setPlayer1SolvedCells] = useState(0);
   const [player2InitialEmptyCells, setPlayer2InitialEmptyCells] = useState(0);
   const [player2SolvedCells, setPlayer2SolvedCells] = useState(0);
+
+  // NEU: Stats & Streak für Completion Flow
+  const [gameStats, setGameStats] = useState<GameStats | null>(null);
+  const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
 
   // Statisch initialisierte Spielerbereiche
   const [playerAreas] = useState<[PlayerArea, PlayerArea]>(() =>
@@ -355,9 +378,48 @@ export const useDuoGameState = (
     []
   );
 
+  // NEU: Stats-Update-Logik für Spielende
+  const updateStatsForGameEnd = useCallback(
+    async (winner: 0 | 1 | 2) => {
+      try {
+        if (winner === 1 || winner === 0) {
+          // Owner gewinnt (oder Tie) - volle Belohnungen
+          console.log('[DuoGame] Owner won - updating full stats');
+
+          // 1. Stats aktualisieren (XP, completedX, Bestzeit, Landscape)
+          await updateStatsAfterGame(true, initialDifficulty, gameTime, false);
+
+          // 2. Daily Streak aktualisieren
+          const streakUpdate = await updateDailyStreak();
+          if (streakUpdate) {
+            setStreakInfo(streakUpdate);
+            console.log('[DuoGame] Streak updated:', streakUpdate);
+          }
+
+          // 3. Stats neu laden für UI
+          const updatedStats = await loadStats();
+          setGameStats(updatedStats);
+          console.log('[DuoGame] Stats loaded for completion flow');
+        } else {
+          // Gegner gewinnt - nur gamesPlayed++
+          console.log('[DuoGame] Opponent won - only incrementing gamesPlayed');
+          await incrementGamesPlayed();
+
+          // Stats laden für UI (ohne Streak-Info)
+          const updatedStats = await loadStats();
+          setGameStats(updatedStats);
+          setStreakInfo(null);
+        }
+      } catch (error) {
+        console.error('[DuoGame] Error updating stats:', error);
+      }
+    },
+    [initialDifficulty, gameTime]
+  );
+
   // Handle player lost due to too many errors
   const handlePlayerLost = useCallback(
-    (player: 1 | 2) => {
+    async (player: 1 | 2) => {
       // End the game
       setIsGameRunning(false);
       setIsGameComplete(true);
@@ -367,6 +429,9 @@ export const useDuoGameState = (
 
       // Declare the other player as winner
       const winner = player === 1 ? 2 : 1;
+
+      // NEU: Stats aktualisieren basierend auf Gewinner
+      await updateStatsForGameEnd(winner);
 
       // Call the game completion callback if provided
       if (onGameComplete) {
@@ -384,7 +449,7 @@ export const useDuoGameState = (
         console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
       });
     },
-    [onGameComplete]
+    [onGameComplete, updateStatsForGameEnd]
   );
 
   // Start a new game
@@ -900,11 +965,14 @@ const handleNumberPress = useCallback(
 
   // Handle player completion
   const handlePlayerCompleted = useCallback(
-    (player: 1 | 2) => {
+    async (player: 1 | 2) => {
       triggerHaptic("success");
 
       // If the other player's area is not complete, this player wins
       if (player === 1 && !player2Complete) {
+        // NEU: Stats aktualisieren - Owner hat gewonnen
+        await updateStatsForGameEnd(1);
+
         if (onGameComplete) {
           onGameComplete(1, "completion");
         }
@@ -922,6 +990,9 @@ const handleNumberPress = useCallback(
           console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
         });
       } else if (player === 2 && !player1Complete) {
+        // NEU: Stats aktualisieren - Gegner hat gewonnen
+        await updateStatsForGameEnd(2);
+
         if (onGameComplete) {
           onGameComplete(2, "completion");
         }
@@ -941,14 +1012,17 @@ const handleNumberPress = useCallback(
       }
       // Otherwise, wait for handleGameComplete to be called when both are complete
     },
-    [player1Complete, player2Complete, onGameComplete]
+    [player1Complete, player2Complete, onGameComplete, updateStatsForGameEnd]
   );
 
   // Handle game completion
-  const handleGameComplete = useCallback(() => {
+  const handleGameComplete = useCallback(async () => {
     setIsGameRunning(false);
     setIsGameComplete(true);
     triggerHaptic("success");
+
+    // NEU: Stats aktualisieren - Bei Tie behandeln wir es wie Owner-Sieg
+    await updateStatsForGameEnd(0);
 
     // Both players completed their areas - it's a tie
     if (onGameComplete) {
@@ -965,7 +1039,7 @@ const handleNumberPress = useCallback(
     }).catch(error => {
       console.error('[DuoGame] ❌ Auto-sync after game completion error:', error);
     });
-  }, [onGameComplete]);
+  }, [onGameComplete, updateStatsForGameEnd]);
 
   // Handle back button press
   const handleBackPress = useCallback(() => {
@@ -999,6 +1073,9 @@ const handleNumberPress = useCallback(
       player1SolvedCells,
       player2InitialEmptyCells,
       player2SolvedCells,
+      // NEU: Stats & Streak für Completion Flow
+      gameStats,
+      streakInfo,
     },
     {
       startNewGame,

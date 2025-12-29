@@ -22,6 +22,8 @@ interface LandscapeScreenProps {
   isLastScreen?: boolean;
   onNewGame?: () => void;
   onFinalContinue?: () => void; // For final action buttons (back to menu)
+  // NEU: Optional custom action buttons (z.B. DuoActionButtons für Duo-Modus)
+  customActionButtons?: React.ReactNode;
 }
 
 /**
@@ -39,6 +41,7 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
   isLastScreen = false,
   onNewGame,
   onFinalContinue,
+  customActionButtons,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -114,8 +117,11 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
         <View style={isLastScreen ? styles.bottomSpacerLarge : styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Buttons - conditional based on last screen */}
-      {isLastScreen && onNewGame && onFinalContinue ? (
+      {/* Buttons - conditional based on last screen and custom buttons */}
+      {customActionButtons ? (
+        // Custom buttons provided (e.g., DuoActionButtons)
+        customActionButtons
+      ) : isLastScreen && onNewGame && onFinalContinue ? (
         <ActionButtons onNewGame={onNewGame} onContinue={onFinalContinue} />
       ) : (
         <ContinueButton onPress={onContinue} />

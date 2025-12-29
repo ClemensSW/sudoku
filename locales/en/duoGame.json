@@ -20,6 +20,7 @@
     "complete": "Complete",
     "filled": "Filled",
     "buttons": {
+      "continue": "Continue",
       "rematch": "Rematch",
       "backToMenu": "To Menu"
     }

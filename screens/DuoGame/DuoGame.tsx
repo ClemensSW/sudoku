@@ -1,6 +1,7 @@
 // screens/DuoGameScreen/DuoGameScreen.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, BackHandler, ImageSourcePropType } from "react-native";
+import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -11,19 +12,27 @@ import { useTranslation } from "react-i18next";
 import { Difficulty } from "@/utils/sudoku";
 import { GameSettings } from "@/utils/storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-// Import existing components
+
+// Game Components
 import DuoGameBoard from "./components/DuoGameBoard";
 import DuoGameControls from "./components/DuoGameControls";
 import DuoGameCompletionModal from "./components/DuoGameCompletionModal";
 import Timer from "@/components/Timer/Timer";
-
-// Add this import for settings panel
 import DuoGameSettingsPanel from "./components/DuoGameSettingsPanel";
 
-// Game Logic
+// NEU: Progression-Screens
+import LevelPathScreen from "@/screens/GameCompletion/screens/LevelPathScreen";
+import LandscapeScreen from "@/screens/GameCompletion/screens/LandscapeScreen";
+import StreakScreen from "@/screens/GameCompletion/screens/StreakScreen";
+import DuoActionButtons from "./components/DuoActionButtons";
+
+// Game Logic Hooks
 import { useDuoGameState } from "./hooks/useDuoGameState";
-// Import settings hook
+import { useDuoCompletionFlow } from "./hooks/useDuoCompletionFlow";
 import { useGameSettings } from "../Game/hooks/useGameSettings";
+
+// Landscape Integration
+import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
 
 // Profile und Gegner-Daten
 import { loadUserProfile, UserProfile } from "@/utils/profileStorage";
@@ -75,6 +84,9 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
   // Add game settings hook
   const gameSettings = useGameSettings();
 
+  // NEU: Landscape Integration für Completion Flow
+  const { currentLandscape } = useLandscapes();
+
   // Initialize game state with simplified game complete callback
   const [gameState, gameActions] = useDuoGameState(
     initialDifficulty,
@@ -85,6 +97,28 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
     },
     gameSettings.showMistakes // Pass the showMistakes setting to useDuoGameState
   );
+
+  // NEU: Berechne ob Owner (Player 1) gewonnen hat
+  const isOwnerWin = useMemo(() => {
+    // Player 1 = Owner (unten), winner === 1 oder Tie (0) = Owner bekommt Rewards
+    return winnerInfo.winner === 1 || winnerInfo.winner === 0;
+  }, [winnerInfo.winner]);
+
+  // NEU: Completion Flow Hook für Multi-Screen Navigation
+  const {
+    screens,
+    currentStep,
+    currentScreen,
+    handleContinue: handleFlowContinue,
+    isLastScreen,
+    showProgressionScreens,
+    isOnFinalButtons,
+  } = useDuoCompletionFlow({
+    isOwnerWin,
+    streakInfo: gameState.streakInfo,
+    visible: showCompletionModal,
+    hasLandscape: !!currentLandscape,
+  });
 
   // Lade Spieler-Profil beim Mount
   useEffect(() => {
@@ -205,6 +239,135 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
     });
   };
 
+  // NEU: Handler für Gallery-Navigation
+  const handleViewGallery = () => {
+    setShowCompletionModal(false);
+    setTimeout(() => {
+      router.push('/gallery');
+    }, 300);
+  };
+
+  // NEU: Render Completion Flow basierend auf currentScreen
+  const renderCompletionFlow = () => {
+    if (!showCompletionModal) return null;
+
+    switch (currentScreen) {
+      case 'modal':
+        return (
+          <DuoGameCompletionModal
+            visible={showCompletionModal}
+            onClose={handleCloseModal}
+            onNewGame={handleNewGame}
+            onRevanche={handleRematch}
+            winner={winnerInfo.winner}
+            winReason={winnerInfo.reason}
+            gameTime={gameState.gameTime}
+            player1Complete={gameState.player1Complete}
+            player2Complete={gameState.player2Complete}
+            player1Errors={gameState.player1Errors}
+            player2Errors={gameState.player2Errors}
+            player1Hints={MAX_HINTS - gameState.player1Hints}
+            player2Hints={MAX_HINTS - gameState.player2Hints}
+            maxHints={MAX_HINTS}
+            maxErrors={gameState.maxErrors}
+            currentDifficulty={initialDifficulty}
+            player1InitialEmptyCells={gameState.player1InitialEmptyCells}
+            player1SolvedCells={gameState.player1SolvedCells}
+            player2InitialEmptyCells={gameState.player2InitialEmptyCells}
+            player2SolvedCells={gameState.player2SolvedCells}
+            ownerName={ownerProfile?.name || "User"}
+            ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
+            ownerTitle={
+              ownerProfile?.titleLevelIndex != null
+                ? getLevels()[ownerProfile.titleLevelIndex]?.name
+                : null
+            }
+            opponentName={opponentData?.name || "Gegner"}
+            opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
+            opponentTitle={opponentData?.title}
+            // NEU: Conditional Buttons
+            showContinueOnly={isOwnerWin && showProgressionScreens}
+            onContinue={handleFlowContinue}
+          />
+        );
+
+      case 'level-path':
+        return (
+          <View style={styles.progressionOverlay}>
+            <Animated.View
+              key="level-path"
+              entering={SlideInRight.duration(300)}
+              exiting={SlideOutLeft.duration(300)}
+              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
+            >
+              <LevelPathScreen
+                stats={gameState.gameStats}
+                difficulty={initialDifficulty}
+                timeElapsed={gameState.gameTime}
+                autoNotesUsed={false}
+                onContinue={handleFlowContinue}
+              />
+            </Animated.View>
+          </View>
+        );
+
+      case 'landscape':
+        return (
+          <View style={styles.progressionOverlay}>
+            <Animated.View
+              key="landscape"
+              entering={SlideInRight.duration(300)}
+              exiting={SlideOutLeft.duration(300)}
+              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
+            >
+              <LandscapeScreen
+                stats={gameState.gameStats}
+                onContinue={handleFlowContinue}
+                onViewGallery={handleViewGallery}
+                isLastScreen={isLastScreen && !gameState.streakInfo?.changed}
+                customActionButtons={
+                  isOnFinalButtons ? (
+                    <DuoActionButtons
+                      onRematch={handleRematch}
+                      onBackToMenu={handleCloseModal}
+                    />
+                  ) : undefined
+                }
+              />
+            </Animated.View>
+          </View>
+        );
+
+      case 'streak':
+        return (
+          <View style={styles.progressionOverlay}>
+            <Animated.View
+              key="streak"
+              entering={SlideInRight.duration(300)}
+              exiting={SlideOutLeft.duration(300)}
+              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
+            >
+              <StreakScreen
+                stats={gameState.gameStats}
+                streakInfo={gameState.streakInfo}
+                onNewGame={handleRematch}
+                onContinue={handleCloseModal}
+                customActionButtons={
+                  <DuoActionButtons
+                    onRematch={handleRematch}
+                    onBackToMenu={handleCloseModal}
+                  />
+                }
+              />
+            </Animated.View>
+          </View>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   // Loading screen
   if (isLoading || gameState.board.length === 0) {
     return (
@@ -318,40 +481,8 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
         />
       </View>
 
-      {/* Game Completion Modal */}
-      <DuoGameCompletionModal
-        visible={showCompletionModal}
-        onClose={handleCloseModal}
-        onNewGame={handleNewGame}
-        onRevanche={handleRematch}
-        winner={winnerInfo.winner}
-        winReason={winnerInfo.reason}
-        gameTime={gameState.gameTime}
-        player1Complete={gameState.player1Complete}
-        player2Complete={gameState.player2Complete}
-        player1Errors={gameState.player1Errors}
-        player2Errors={gameState.player2Errors}
-        player1Hints={MAX_HINTS - gameState.player1Hints}
-        player2Hints={MAX_HINTS - gameState.player2Hints}
-        maxHints={MAX_HINTS}
-        maxErrors={gameState.maxErrors}
-        currentDifficulty={initialDifficulty}
-        player1InitialEmptyCells={gameState.player1InitialEmptyCells}
-        player1SolvedCells={gameState.player1SolvedCells}
-        player2InitialEmptyCells={gameState.player2InitialEmptyCells}
-        player2SolvedCells={gameState.player2SolvedCells}
-        // Neue Props für Spieler-Daten
-        ownerName={ownerProfile?.name || "User"}
-        ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
-        ownerTitle={
-          ownerProfile?.titleLevelIndex != null
-            ? getLevels()[ownerProfile.titleLevelIndex]?.name
-            : null
-        }
-        opponentName={opponentData?.name || "Gegner"}
-        opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
-        opponentTitle={opponentData?.title}
-      />
+      {/* Game Completion Flow - Modal + Progression Screens */}
+      {renderCompletionFlow()}
 
       {/* Settings Panel */}
       <DuoGameSettingsPanel
@@ -415,6 +546,18 @@ const styles = StyleSheet.create({
     opacity: 0,
     height: 1,
     width: 1,
+  },
+  // NEU: Styles für Progression-Screens
+  progressionOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
+  progressionScreen: {
+    flex: 1,
   },
 });
 

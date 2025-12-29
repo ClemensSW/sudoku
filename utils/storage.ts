@@ -440,6 +440,24 @@ export const updateStatsAfterGame = async (
   }
 };
 
+/**
+ * Erhöht nur gamesPlayed um 1 (für Duo-Niederlagen)
+ * Keine XP, kein Landscape-Unlock, kein Streak-Update
+ */
+export const incrementGamesPlayed = async (): Promise<void> => {
+  try {
+    const currentStats = await loadStats();
+    const updatedStats: GameStats = {
+      ...currentStats,
+      gamesPlayed: currentStats.gamesPlayed + 1,
+    };
+    await saveStats(updatedStats);
+    console.log('[incrementGamesPlayed] gamesPlayed incremented to:', updatedStats.gamesPlayed);
+  } catch (error) {
+    console.error("Error incrementing gamesPlayed:", error);
+  }
+};
+
 // Meilenstein als erreicht markieren
 export const markMilestoneReached = async (
   milestoneLevel: number

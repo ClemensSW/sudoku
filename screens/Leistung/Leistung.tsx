@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
@@ -54,9 +54,7 @@ const Leistung: React.FC = () => {
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const tabChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cameFromSettings = useRef(false);
-  const tabSectionPosition = useSharedValue(0);
-  const [tabSectionY, setTabSectionY] = useState<number>(0); // Regular state for scroll logic
-  const scrollY = useSharedValue(0);
+  const [tabSectionY, setTabSectionY] = useState<number>(0);
   const cogwheelRotation = useSharedValue(0);
 
   // Animated style for cogwheel rotation
@@ -195,18 +193,18 @@ const Leistung: React.FC = () => {
       setActiveTab(tab);
       setVisitedTabs(prev => ({ ...prev, [tab]: true }));
 
-      // Scroll to tab section (like handleTabChange)
+      // Scroll so tab nav scrolls out of view, only content is visible
       setTimeout(() => {
         if (scrollViewRef.current && tabSectionY > 0) {
           scrollViewRef.current.scrollTo({
             x: 0,
-            y: tabSectionY - insets.top,
+            y: tabSectionY + 72,
             animated: true,
           });
         }
       }, 150);
     }
-  }, [tab, tabSectionY, insets.top]);
+  }, [tab, tabSectionY]);
 
   const tabs: TabItem[] = [
     { id: "level", label: t('tabs.level') },
@@ -229,40 +227,20 @@ const Leistung: React.FC = () => {
       clearTimeout(tabChangeTimeoutRef.current);
     }
 
-    // Scroll so tab nav is at top (below safe area)
+    // Scroll so tab nav scrolls out of view, only content is visible
     tabChangeTimeoutRef.current = setTimeout(() => {
       if (scrollViewRef.current && tabSectionY > 0) {
-        scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY - insets.top, animated: true });
+        scrollViewRef.current.scrollTo({ x: 0, y: tabSectionY + 72, animated: true });
       }
     }, 100);
   };
 
   const handleTabSectionLayout = (event: any) => {
     const { y } = event.nativeEvent.layout;
-    tabSectionPosition.value = y;
-    setTabSectionY(y); // Store in state for non-worklet access
+    setTabSectionY(y);
   };
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
 
-  // Animated style for sticky tab overlay
-  // Threshold accounts for safe area since header is now in scroll content
-  const stickyTabAnimatedStyle = useAnimatedStyle(() => {
-    const threshold = tabSectionPosition.value - insets.top - 10;
-    const shouldBeVisible = scrollY.value >= threshold && tabSectionPosition.value > 0;
-    return {
-      transform: [
-        {
-          translateY: shouldBeVisible ? 0 : -200,
-        },
-      ],
-      opacity: shouldBeVisible ? 1 : 0,
-    };
-  });
 
   // Profiländerungen
   const handleNameChange = async (name: string) => {
@@ -384,8 +362,6 @@ const Leistung: React.FC = () => {
         style={styles.scrollContainer}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator
-        onScroll={scrollHandler}
-        scrollEventThrottle={32}
       >
         {/* Profile Header */}
         <View style={styles.profileContainer}>
@@ -457,17 +433,6 @@ const Leistung: React.FC = () => {
         </View>
       </Animated.ScrollView>
 
-      {/* Sticky Tab Navigation Overlay - now at top with safe area padding */}
-      <Animated.View
-        style={[
-          styles.stickyTabOverlay,
-          { backgroundColor: colors.background, top: 0, paddingTop: insets.top },
-          stickyTabAnimatedStyle,
-        ]}
-        pointerEvents="box-none"
-      >
-        <TabNavigator tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} elevated />
-      </Animated.View>
 
       {showSupportShop && <SupportShopScreen onClose={handleCloseSupportShop} />}
 
@@ -506,18 +471,6 @@ const styles = StyleSheet.create({
   profileContainer: { paddingHorizontal: 16, marginTop: 24, marginBottom: 8 },
   tabSection: {
     width: "100%",
-  },
-  stickyTabOverlay: {
-    position: "absolute",
-    // top: 0 with paddingTop for safe area (set dynamically)
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
   tabContentContainer: { marginTop: 8 },
   bannerContainer: { paddingHorizontal: 16, marginTop: 8 },

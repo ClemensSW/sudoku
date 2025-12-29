@@ -20,8 +20,8 @@ interface SuccessViewProps {
 }
 
 const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) => {
-  const theme = useTheme();
-  const themeStyles = getThemeStyles(theme.isDark);
+  const { isDark, typography } = useTheme();
+  const themeStyles = getThemeStyles(isDark);
   const { t } = useTranslation('feedback');
 
   // Animation values
@@ -100,11 +100,11 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) =>
 
       {/* Title & Subtitle */}
       <View style={styles.textContainer}>
-        <Text style={[styles.titleText, { color: themeStyles.text }]}>
+        <Text style={[styles.titleText, { color: themeStyles.text, fontSize: typography.size.xl }]}>
           {queued ? t('queued.title') : t('sent.title')}
         </Text>
 
-        <Text style={[styles.subtitleText, { color: themeStyles.secondaryText }]}>
+        <Text style={[styles.subtitleText, { color: themeStyles.secondaryText, fontSize: typography.size.md }]}>
           {queued ? t('queued.subtitle') : t('sent.subtitle')}
         </Text>
       </View>
@@ -126,6 +126,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ onClose, queued = false }) =>
               styles.buttonText,
               {
                 color: '#1A1A1A',
+                fontSize: typography.size.md,
               },
             ]}
           >

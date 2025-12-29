@@ -34,8 +34,8 @@ const RatingView: React.FC<RatingViewProps> = ({ onRate }) => {
   const heartBeat = useRef(new Animated.Value(1)).current;
   const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const theme = useTheme();
-  const themeStyles = getThemeStyles(theme.isDark);
+  const { isDark, typography } = useTheme();
+  const themeStyles = getThemeStyles(isDark);
   const { t } = useTranslation('feedback');
 
   // Get the appropriate icon component based on rating
@@ -115,7 +115,7 @@ const RatingView: React.FC<RatingViewProps> = ({ onRate }) => {
       const rating = (index + 1) as Rating;
       const isFilled = selectedRating !== null && rating <= selectedRating;
       const StarComponent = isFilled ? StarSvg : StarEmptySvg;
-      const starColor = theme.isDark ? themeStyles.borderColor : '#BCBCBC';
+      const starColor = isDark ? themeStyles.borderColor : '#BCBCBC';
 
       return (
         <Animated.View
@@ -163,7 +163,7 @@ const RatingView: React.FC<RatingViewProps> = ({ onRate }) => {
 
       {/* Title & Subtitle */}
       <View style={styles.textContainer}>
-        <Text style={[styles.titleText, { color: themeStyles.text }]}>
+        <Text style={[styles.titleText, { color: themeStyles.text, fontSize: typography.size.xl }]}>
           {selectedRating === 5
             ? t('fiveStars.title')
             : selectedRating === 4
@@ -177,7 +177,7 @@ const RatingView: React.FC<RatingViewProps> = ({ onRate }) => {
                     : t('rating.title')}
         </Text>
 
-        <Text style={[styles.subtitleText, { color: themeStyles.secondaryText }]}>
+        <Text style={[styles.subtitleText, { color: themeStyles.secondaryText, fontSize: typography.size.md }]}>
           {selectedRating === 5
             ? t('fiveStars.subtitle')
             : selectedRating === 4
@@ -214,7 +214,8 @@ const RatingView: React.FC<RatingViewProps> = ({ onRate }) => {
             styles.buttonText,
             {
               color: '#1A1A1A', // Always dark on yellow button
-              opacity: selectedRating ? 1 : 0.5
+              opacity: selectedRating ? 1 : 0.5,
+              fontSize: typography.size.md
             }
           ]}>
             {selectedRating && selectedRating === 5

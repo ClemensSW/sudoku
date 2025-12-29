@@ -20,8 +20,8 @@ interface CategoryViewProps {
 
 const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<FeedbackCategory | null>(null);
-  const theme = useTheme();
-  const themeStyles = getThemeStyles(theme.isDark);
+  const { isDark, typography } = useTheme();
+  const themeStyles = getThemeStyles(isDark);
   const { t } = useTranslation('feedback');
 
   const FEEDBACK_CATEGORIES: Array<{id: FeedbackCategory, label: string}> = [
@@ -60,7 +60,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
               styles.categoryItem,
               {
                 backgroundColor: selectedCategory === cat.id
-                  ? (theme.isDark ? 'rgba(255, 203, 43, 0.15)' : 'rgba(255, 203, 43, 0.08)')
+                  ? (isDark ? 'rgba(255, 203, 43, 0.15)' : 'rgba(255, 203, 43, 0.08)')
                   : 'transparent',
                 borderWidth: selectedCategory === cat.id ? 1 : 0,
                 borderColor: selectedCategory === cat.id ? '#FFCB2B' : 'transparent',
@@ -90,7 +90,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
             <View style={[
               styles.categoryIconContainer,
               {
-                backgroundColor: theme.isDark
+                backgroundColor: isDark
                   ? 'rgba(255, 203, 43, 0.15)'
                   : 'rgba(255, 203, 43, 0.2)'
               }
@@ -98,14 +98,14 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
               <Feather
                 name={CATEGORY_ICONS[cat.id]}
                 size={20}
-                color={theme.isDark ? '#FFCB2B' : '#B8860B'}
+                color={isDark ? '#FFCB2B' : '#B8860B'}
               />
             </View>
 
             {/* Label */}
             <Text style={[
               styles.categoryLabel,
-              { color: themeStyles.text }
+              { color: themeStyles.text, fontSize: typography.size.md }
             ]}>
               {cat.label}
             </Text>
@@ -130,7 +130,8 @@ const CategoryView: React.FC<CategoryViewProps> = ({ onSelectCategory }) => {
             styles.buttonText,
             {
               color: '#1A1A1A', // Always dark on yellow button
-              opacity: selectedCategory ? 1 : 0.5
+              opacity: selectedCategory ? 1 : 0.5,
+              fontSize: typography.size.md
             }
           ]}>
             {t('category.button')}

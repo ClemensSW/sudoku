@@ -33,8 +33,8 @@ const DetailView: React.FC<DetailViewProps> = ({
   const [details, setDetails] = useState('');
   const [email, setEmail] = useState('');
   const detailsInputRef = useRef<TextInput>(null);
-  const theme = useTheme();
-  const themeStyles = getThemeStyles(theme.isDark);
+  const { isDark, typography } = useTheme();
+  const themeStyles = getThemeStyles(isDark);
 
   // Focus on mount
   useEffect(() => {
@@ -77,7 +77,8 @@ const DetailView: React.FC<DetailViewProps> = ({
               backgroundColor: themeStyles.inputBackground,
               color: themeStyles.text,
               borderColor: themeStyles.borderColor,
-              borderWidth: 1
+              borderWidth: 1,
+              fontSize: typography.size.md
             }
           ]}
           placeholder={t('detail.placeholder')}
@@ -110,7 +111,7 @@ const DetailView: React.FC<DetailViewProps> = ({
                 <ActivityIndicator size="small" color="#1A1A1A" />
                 <Text style={[
                   styles.buttonText,
-                  { color: '#1A1A1A' }
+                  { color: '#1A1A1A', fontSize: typography.size.md }
                 ]}>
                   {t('detail.submitting')}
                 </Text>
@@ -120,7 +121,8 @@ const DetailView: React.FC<DetailViewProps> = ({
                 styles.buttonText,
                 {
                   color: '#1A1A1A',
-                  opacity: details.trim().length > 0 ? 1 : 0.5
+                  opacity: details.trim().length > 0 ? 1 : 0.5,
+                  fontSize: typography.size.md
                 }
               ]}>
                 {t('detail.button')}

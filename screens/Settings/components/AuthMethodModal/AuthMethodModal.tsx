@@ -30,7 +30,7 @@ const AuthMethodModal: React.FC<AuthMethodModalProps> = ({
   onOpenLegal,
 }) => {
   const { t } = useTranslation('settings');
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, typography } = useTheme();
 
   const showGoogleButton = Platform.OS === 'android';
   const showAppleButton = Platform.OS === 'ios';
@@ -93,7 +93,7 @@ const AuthMethodModal: React.FC<AuthMethodModalProps> = ({
           {/* Divider */}
           <View style={styles.dividerContainer}>
             <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-            <Text style={[styles.dividerText, { color: colors.textSecondary }]}>
+            <Text style={[styles.dividerText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
               {t('authMethodModal.or')}
             </Text>
             <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
@@ -110,7 +110,7 @@ const AuthMethodModal: React.FC<AuthMethodModalProps> = ({
 
         {/* Legal Text - Only for Register */}
         {isRegister && (
-          <Text style={[styles.legalText, { color: colors.textSecondary }]}>
+          <Text style={[styles.legalText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             <Text
               style={styles.legalLink}
               onPress={() => onOpenLegal('agb')}
@@ -151,11 +151,11 @@ const styles = StyleSheet.create({
     height: 1,
   },
   dividerText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
   legalText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
     lineHeight: 18,
     paddingHorizontal: spacing.md,

@@ -35,7 +35,7 @@ interface AccountInfoCardProps {
 const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
   const { t } = useTranslation('settings');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const { user } = useAuth();
   const { showAlert } = useAlert();
   const progressColor = useProgressColor();
@@ -190,10 +190,10 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
 
             {/* User Details */}
             <View style={styles.userInfo}>
-              <Text style={[styles.displayName, { color: colors.textPrimary }]} numberOfLines={1}>
+              <Text style={[styles.displayName, { color: colors.textPrimary, fontSize: typography.size.lg }]} numberOfLines={1}>
                 {displayName}
               </Text>
-              <Text style={[styles.email, { color: colors.textSecondary }]} numberOfLines={1}>
+              <Text style={[styles.email, { color: colors.textSecondary, fontSize: typography.size.sm }]} numberOfLines={1}>
                 {email}
               </Text>
             </View>
@@ -204,7 +204,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
             entering={FadeInDown.delay(250).duration(400)}
             style={[styles.syncInfo, { backgroundColor: progressColor + '10' }]}
           >
-            <Text style={[styles.syncInfoText, { color: colors.textPrimary }]}>
+            <Text style={[styles.syncInfoText, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
               {t('authSection.autoSyncInfo')}
             </Text>
             <View style={styles.syncStatusRow}>
@@ -213,7 +213,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
                 size={14}
                 color={syncStatus.lastError ? colors.error : progressColor}
               />
-              <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
+              <Text style={[styles.lastSyncText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                 {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
               </Text>
             </View>
@@ -240,7 +240,7 @@ const AccountInfoCard: React.FC<AccountInfoCardProps> = ({ onSignOut }) => {
                 color={progressColor}
                 style={isSyncing ? { opacity: 0.5 } : undefined}
               />
-              <Text style={[styles.syncButtonText, { color: progressColor }]}>
+              <Text style={[styles.syncButtonText, { color: progressColor, fontSize: typography.size.sm }]}>
                 {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
               </Text>
             </TouchableOpacity>
@@ -326,13 +326,13 @@ const styles = StyleSheet.create({
   },
 
   displayName: {
-    fontSize: 19,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
 
   email: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   },
 
   syncInfoText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
 
   lastSyncText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
 
   syncButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 });

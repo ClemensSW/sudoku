@@ -26,7 +26,7 @@ const GameSettingsModal: React.FC<GameSettingsModalProps> = ({
   onHowToPlay,
 }) => {
   const { t } = useTranslation("settings");
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, typography } = useTheme();
 
   return (
     <BottomSheetModal
@@ -49,7 +49,7 @@ const GameSettingsModal: React.FC<GameSettingsModalProps> = ({
       {/* Hilfe Section - nur wenn onHowToPlay vorhanden */}
       {onHowToPlay && (
         <View style={styles.helpSection}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
             {t("sections.help")}
           </Text>
           <HelpSection
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   sectionTitle: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 16,

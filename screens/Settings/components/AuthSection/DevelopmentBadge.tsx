@@ -9,7 +9,7 @@ import { spacing, radius } from '@/utils/theme';
 const DevelopmentBadge: React.FC = () => {
   const { t } = useTranslation('settings');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   return (
     <View
@@ -35,6 +35,7 @@ const DevelopmentBadge: React.FC = () => {
           styles.badgeText,
           {
             color: theme.isDark ? '#FFD54F' : '#F57C00',
+            fontSize: typography.size.xs,
           },
         ]}
       >
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   badgeText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.6,
     textTransform: 'uppercase',

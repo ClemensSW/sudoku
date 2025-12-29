@@ -31,7 +31,7 @@ const customStyles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: 2,
   },
@@ -48,7 +48,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   const handleAboutPress = () => {
     triggerHaptic("light");
@@ -81,7 +81,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("info.about")}
           </Text>
@@ -110,7 +110,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("info.legal")}
           </Text>

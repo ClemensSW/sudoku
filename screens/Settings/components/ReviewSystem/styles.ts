@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
     marginBottom: 24,
   },
   headerTitle: {
-    fontSize: 20,
+    // fontSize: 20 - should be set dynamically via theme.typography.size.xl
     fontWeight: '600',
     textAlign: 'center',
     flex: 1,
@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   titleText: {
-    fontSize: 26,
+    // fontSize set dynamically via theme.typography
     fontWeight: '800',
     textAlign: 'center',
     marginBottom: 12,
@@ -122,7 +122,7 @@ export const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   subtitleText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
     paddingHorizontal: 20,
     minHeight: 48,
@@ -177,7 +177,7 @@ export const styles = StyleSheet.create({
   },
   categoryLabel: {
     flex: 1,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
   },
   
   // Feedback Form Styles
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.5,
   },

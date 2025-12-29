@@ -237,6 +237,7 @@ Schutzschilder: ${shieldInfo}
         description="2× EP + 1 Bild + Schilder auffüllen"
         onPress={simulateOneTimePurchase}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -245,6 +246,7 @@ Schutzschilder: ${shieldInfo}
         description="3× Kaffee = 3 Unlocks"
         onPress={simulateMultipleCoffeePurchases}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -253,6 +255,7 @@ Schutzschilder: ${shieldInfo}
         description="2× EP + 1 Bild/Monat + 3 Schilder/Woche"
         onPress={simulateMonthlySubscription}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -261,6 +264,7 @@ Schutzschilder: ${shieldInfo}
         description="2× EP + 2 Bilder/Monat + 4 Schilder/Woche 🎉"
         onPress={simulateYearlySubscription}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -269,6 +273,7 @@ Schutzschilder: ${shieldInfo}
         description="Unlock-Limit auffrischen"
         onPress={resetMonthlyQuota}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -277,6 +282,7 @@ Schutzschilder: ${shieldInfo}
         description="Zeigt aktuellen Stand"
         onPress={showCurrentStatus}
         colors={colors}
+        typography={typography}
       />
 
       <TestButton
@@ -285,6 +291,7 @@ Schutzschilder: ${shieldInfo}
         description="Löscht alle Testkäufe"
         onPress={resetAll}
         colors={colors}
+        typography={typography}
         isDestructive
       />
 
@@ -313,6 +320,7 @@ interface TestButtonProps {
   description: string;
   onPress: () => void;
   colors: any;
+  typography: any;
   isDestructive?: boolean;
 }
 
@@ -322,6 +330,7 @@ const TestButton: React.FC<TestButtonProps> = ({
   description,
   onPress,
   colors,
+  typography,
   isDestructive = false,
 }) => {
   return (
@@ -355,14 +364,14 @@ const TestButton: React.FC<TestButtonProps> = ({
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{
-          fontSize: 14,
+          fontSize: typography.size.sm,
           fontWeight: '600',
           color: isDestructive ? '#ff4444' : colors.textPrimary,
           marginBottom: 2,
         }}>
           {label}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textSecondary }}>
+        <Text style={{ fontSize: typography.size.xs, color: colors.textSecondary }}>
           {description}
         </Text>
       </View>

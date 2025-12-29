@@ -37,7 +37,7 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Get dynamic title key for accountData based on login status
   const getAccountDataTitleKey = () => {
@@ -154,7 +154,7 @@ const SettingsCategoryList: React.FC<SettingsCategoryListProps> = ({
                   color={colors.textSecondary}
                 />
               </View>
-              <Text style={[styles.categoryTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.categoryTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {category.id === 'accountData' ? t(getAccountDataTitleKey()) : t(category.titleKey)}
               </Text>
             </View>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   categoryTitle: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 });

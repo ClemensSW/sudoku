@@ -4,6 +4,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { triggerHaptic } from '@/utils/haptics';
+import { useTheme } from '@/utils/theme/ThemeProvider';
 
 interface EditableNameFieldProps {
   name: string;
@@ -25,6 +26,7 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
   progressColor,
 }) => {
   const { t } = useTranslation('settings');
+  const { typography } = useTheme();
 
   const isDefaultName = !name || name === 'User';
   const [editedName, setEditedName] = useState(isDefaultName ? '' : name);
@@ -76,6 +78,7 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
             {
               color: textPrimaryColor,
               borderBottomColor: progressColor, // FIX 3: progressColor (Pfadfarbe)
+              fontSize: typography.size.sm,
             },
           ]}
         />
@@ -84,7 +87,7 @@ const EditableNameField: React.FC<EditableNameFieldProps> = ({
   }
 
   return (
-    <Text style={[styles.nameText, { color: textSecondaryColor }]} numberOfLines={1}>
+    <Text style={[styles.nameText, { color: textSecondaryColor, fontSize: typography.size.sm }]} numberOfLines={1}>
       {name}
     </Text>
   );
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     paddingVertical: 4,
     paddingHorizontal: 4,
@@ -106,7 +109,7 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   nameText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     marginTop: 2,
   },

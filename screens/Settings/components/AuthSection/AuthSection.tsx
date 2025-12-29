@@ -34,7 +34,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
 }) => {
   const { t } = useTranslation('settings');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Shimmer animation
@@ -112,11 +112,11 @@ const AuthSection: React.FC<AuthSectionProps> = ({
                     { backgroundColor: `${benefit.glowColor}20` },
                   ]}
                 >
-                  <Text style={styles.benefitIcon}>{benefit.icon}</Text>
+                  <Text style={[styles.benefitIcon, { fontSize: typography.size.xl }]}>{benefit.icon}</Text>
                 </View>
 
                 {/* Benefit Text */}
-                <Text style={[styles.benefitText, { color: colors.textPrimary }]}>
+                <Text style={[styles.benefitText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                   {t(`authSection.benefits.${benefit.key}`)}
                 </Text>
 
@@ -131,7 +131,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
                       },
                     ]}
                   >
-                    <Text style={[styles.comingSoonText, { color: colors.warning }]}>
+                    <Text style={[styles.comingSoonText, { color: colors.warning, fontSize: typography.size.xs }]}>
                       {t('authSection.comingSoon')}
                     </Text>
                   </View>
@@ -154,7 +154,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
               onPress={handleGetStarted}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryButtonText}>
+              <Text style={[styles.primaryButtonText, { fontSize: typography.size.md }]}>
                 {t('authSection.getStarted')}
               </Text>
 
@@ -179,7 +179,7 @@ const AuthSection: React.FC<AuthSectionProps> = ({
               onPress={handleAlreadyHaveAccount}
               activeOpacity={0.7}
             >
-              <Text style={[styles.secondaryLinkText, { color: colors.textSecondary }]}>
+              <Text style={[styles.secondaryLinkText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                 {t('authSection.alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
@@ -243,11 +243,11 @@ const styles = StyleSheet.create({
   },
 
   benefitIcon: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
   },
 
   benefitText: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     flex: 1,
   },
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
 
   comingSoonText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
 
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
 
   secondaryLinkText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 });

@@ -32,7 +32,7 @@ interface AppearanceGroupProps {
 const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) => {
   const { t, i18n } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const updateColor = useUpdateProgressColor();
 
@@ -199,7 +199,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
               <Image source={getAvatarSource()} style={styles.avatarIcon} />
             </View>
             <View style={styles.actionTextContainer}>
-              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {t("appearance.avatar")}
               </Text>
             </View>
@@ -221,7 +221,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
               <GraduateIcon width={48} height={48} color={colors.textSecondary} />
             </View>
             <View style={styles.actionTextContainer}>
-              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {t("appearance.title")}
               </Text>
             </View>
@@ -239,10 +239,10 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
             <TagUndNachtIcon width={48} height={48} />
           </View>
           <View style={styles.settingTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.theme", { defaultValue: "Theme" })}
             </Text>
-            <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
+            <Text style={[styles.settingSubtext, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
               {t("appearance.useSystemSettings", { defaultValue: "Geräteeinstellungen verwenden" })}
             </Text>
           </View>
@@ -268,7 +268,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
             <PinselIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.pathColor")}
             </Text>
           </View>
@@ -287,7 +287,7 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
             <LanguageIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.language")}
             </Text>
           </View>
@@ -373,8 +373,8 @@ const AppearanceGroup: React.FC<AppearanceGroupProps> = ({ onLanguageChange }) =
                 ]}
               >
                 <View style={styles.languageContent}>
-                  <Text style={styles.flagEmoji}>{language.flag}</Text>
-                  <Text style={[styles.languageName, { color: colors.textPrimary }]}>
+                  <Text style={[styles.flagEmoji, { fontSize: typography.size.xxl }]}>{language.flag}</Text>
+                  <Text style={[styles.languageName, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                     {language.name}
                   </Text>
                 </View>
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   // Switch Row (like GameSettings)
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingSubtext: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     marginTop: 2,
     opacity: 0.8,
   },
@@ -463,10 +463,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   flagEmoji: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
   },
   languageName: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
 });

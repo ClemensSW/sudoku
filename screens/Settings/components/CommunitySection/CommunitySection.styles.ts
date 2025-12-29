@@ -27,7 +27,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },

@@ -22,7 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 const ProfileGroup: React.FC = () => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
   const { user } = useAuth();
 
@@ -122,7 +122,7 @@ const ProfileGroup: React.FC = () => {
             <Image source={getAvatarSource()} style={styles.avatarIcon} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.avatar")}
             </Text>
           </View>
@@ -140,7 +140,7 @@ const ProfileGroup: React.FC = () => {
             <IdCardIcon width={48} height={48} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.name")}
             </Text>
             <EditableNameField
@@ -172,11 +172,11 @@ const ProfileGroup: React.FC = () => {
             <GraduateIcon width={48} height={48} color={colors.textSecondary} />
           </View>
           <View style={styles.actionTextContainer}>
-            <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.title")}
             </Text>
             {selectedTitleIndex !== null && (
-              <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+              <Text style={[styles.actionSubtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                 {allLevels[selectedTitleIndex]?.name || ''}
               </Text>
             )}
@@ -246,11 +246,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
   },
   actionSubtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     marginTop: 2,
   },
 });

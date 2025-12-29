@@ -26,7 +26,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
   iconOnly = false,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   const getProviderIcon = () => {
@@ -94,7 +94,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
         {getProviderIcon()}
       </View>
       {!iconOnly && label && (
-        <Text style={[styles.label, getTextStyle()]}>{label}</Text>
+        <Text style={[styles.label, getTextStyle(), { fontSize: typography.size.md }]}>{label}</Text>
       )}
     </TouchableOpacity>
   );
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   label: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },

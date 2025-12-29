@@ -28,12 +28,12 @@ export default StyleSheet.create({
     paddingRight: spacing.md,
   },
   settingTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },
   settingDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     opacity: 0.8,
   },
 });

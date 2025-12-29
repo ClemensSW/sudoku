@@ -38,7 +38,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
@@ -141,7 +141,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
         entering={FadeInDown.delay(100).duration(500)}
         style={styles.section}
       >
-        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {t("accountData.syncSection")}
         </Text>
 
@@ -179,7 +179,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
               entering={FadeInDown.delay(200).duration(400)}
               style={[styles.syncInfoContainer, { backgroundColor: progressColor + '10' }]}
             >
-              <Text style={[styles.syncInfoTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.syncInfoTitle, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
                 {t('authSection.autoSyncInfo')}
               </Text>
               <View style={styles.syncStatusRow}>
@@ -188,7 +188,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
                   size={14}
                   color={syncStatus.lastError ? colors.error : progressColor}
                 />
-                <Text style={[styles.lastSyncText, { color: colors.textSecondary }]}>
+                <Text style={[styles.lastSyncText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                   {t('authSection.lastSync')}: {formatLastSync(syncStatus.lastSync)}
                 </Text>
               </View>
@@ -215,7 +215,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
                   color={progressColor}
                   style={isSyncing ? { opacity: 0.5 } : undefined}
                 />
-                <Text style={[styles.syncButtonText, { color: progressColor }]}>
+                <Text style={[styles.syncButtonText, { color: progressColor, fontSize: typography.size.sm }]}>
                   {isSyncing ? t('authSection.syncing') : t('authSection.syncNow')}
                 </Text>
               </TouchableOpacity>
@@ -229,7 +229,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
         entering={FadeInDown.delay(300).duration(500)}
         style={styles.section}
       >
-        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {t("accountData.accountSection")}
         </Text>
 
@@ -241,7 +241,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
             activeOpacity={0.7}
           >
             <Feather name="log-out" size={20} color={colors.textPrimary} />
-            <Text style={[styles.actionText, { color: colors.textPrimary }]}>
+            <Text style={[styles.actionText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t('authSection.signOut')}
             </Text>
             <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -254,7 +254,7 @@ const AccountDataSection: React.FC<AccountDataSectionProps> = ({
             activeOpacity={0.7}
           >
             <Feather name="trash-2" size={20} color={colors.error} />
-            <Text style={[styles.actionText, { color: colors.error }]}>
+            <Text style={[styles.actionText, { color: colors.error, fontSize: typography.size.md }]}>
               {t('accountData.deleteAccount')}
             </Text>
             <Feather name="chevron-right" size={20} color={colors.textSecondary} />
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sectionTitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   syncInfoTitle: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   lastSyncText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
   },
 
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   syncButtonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     flex: 1,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 });

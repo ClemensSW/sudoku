@@ -35,12 +35,12 @@ const customStyles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: 2,
   },
   actionDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     opacity: 0.8,
   },
 });
@@ -58,7 +58,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const [showReviewSystem, setShowReviewSystem] = useState(false);
 
   // Feedback-Button Handler
@@ -100,14 +100,14 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("community.supportTitle")}
           </Text>
           <Text
             style={[
               customStyles.actionDescription,
-              { color: colors.textSecondary },
+              { color: colors.textSecondary, fontSize: typography.size.sm },
             ]}
           >
             {t("community.supportDescription")}
@@ -132,7 +132,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("community.feedback")}
           </Text>
@@ -157,7 +157,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
         </View>
         <View style={customStyles.actionTextContainer}>
           <Text
-            style={[customStyles.actionTitle, { color: colors.textPrimary }]}
+            style={[customStyles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("community.share")}
           </Text>

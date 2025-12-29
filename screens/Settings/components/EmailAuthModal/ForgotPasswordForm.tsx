@@ -29,7 +29,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onShowAlert,
 }) => {
   const { t } = useTranslation('settings');
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, typography } = useTheme();
   const progressColor = useProgressColor();
 
   const [email, setEmail] = useState('');
@@ -82,13 +82,13 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   return (
     <View style={styles.container}>
       {/* Description */}
-      <Text style={[styles.description, { color: colors.textSecondary }]}>
+      <Text style={[styles.description, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
         {t('emailAuth.forgotPassword.description')}
       </Text>
 
       {/* Email Input */}
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
+        <Text style={[styles.label, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {t('emailAuth.forgotPassword.email')}
         </Text>
         <View
@@ -102,7 +102,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         >
           <Feather name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
           <BottomSheetTextInput
-            style={[styles.input, { color: colors.textPrimary }]}
+            style={[styles.input, { color: colors.textPrimary, fontSize: typography.size.md }]}
             placeholder={t('emailAuth.forgotPassword.emailPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             value={email}
@@ -117,7 +117,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           />
         </View>
         {emailError ? (
-          <Text style={styles.errorText}>{emailError}</Text>
+          <Text style={[styles.errorText, { fontSize: typography.size.xs }]}>{emailError}</Text>
         ) : null}
       </View>
 
@@ -137,7 +137,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         {isLoading ? (
           <ActivityIndicator color="#FFFFFF" />
         ) : (
-          <Text style={styles.submitButtonText}>
+          <Text style={[styles.submitButtonText, { fontSize: typography.size.md }]}>
             {t('emailAuth.forgotPassword.submit')}
           </Text>
         )}
@@ -150,7 +150,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         disabled={isLoading}
       >
         <Feather name="arrow-left" size={16} color={progressColor} />
-        <Text style={[styles.backButtonText, { color: progressColor }]}>
+        <Text style={[styles.backButtonText, { color: progressColor, fontSize: typography.size.sm }]}>
           {t('emailAuth.forgotPassword.backToLogin')}
         </Text>
       </TouchableOpacity>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   description: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
     textAlign: 'center',
     paddingHorizontal: spacing.sm,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   label: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     marginLeft: spacing.xs,
   },
@@ -190,12 +190,12 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     paddingVertical: 0,
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     marginLeft: spacing.xs,
   },
   submitButton: {
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: '#FFFFFF',
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   backButtonText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 });

@@ -21,7 +21,7 @@ const LocalDataSection: React.FC<LocalDataSectionProps> = ({
 }) => {
   const { t } = useTranslation("settings");
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -101,7 +101,7 @@ const LocalDataSection: React.FC<LocalDataSectionProps> = ({
     <View style={styles.container}>
       {/* Local Data Section */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {t("localData.dataSection")}
         </Text>
 
@@ -111,7 +111,7 @@ const LocalDataSection: React.FC<LocalDataSectionProps> = ({
             <View style={styles.warningHeader}>
               <WarningIcon width={64} height={64} />
             </View>
-            <Text style={[styles.descriptionText, { color: colors.textPrimary }]}>
+            <Text style={[styles.descriptionText, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
               {t('localData.deleteDataDescription')}
             </Text>
           </View>
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   sectionTitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   descriptionText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 22,

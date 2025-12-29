@@ -74,7 +74,7 @@ export default function PrivateJoin() {
       padding: theme.spacing.sm,
     },
     headerTitle: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -107,14 +107,14 @@ export default function PrivateJoin() {
       marginBottom: theme.spacing.lg,
     },
     title: {
-      fontSize: 24,
+      fontSize: theme.typography.size.xxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
       textAlign: 'center',
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.lg,
       textAlign: 'center',
@@ -127,13 +127,13 @@ export default function PrivateJoin() {
       marginBottom: theme.spacing.xl,
     },
     inviteCodeLabel: {
-      fontSize: 12,
+      fontSize: theme.typography.size.xs,
       color: theme.colors.textSecondary,
       marginBottom: 4,
       textAlign: 'center',
     },
     inviteCode: {
-      fontSize: 32,
+      fontSize: theme.typography.size.xxxl,
       fontWeight: 'bold',
       color: theme.colors.primary,
       letterSpacing: 4,
@@ -156,7 +156,7 @@ export default function PrivateJoin() {
       borderColor: theme.colors.divider,
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     primaryButtonText: {
@@ -173,7 +173,7 @@ export default function PrivateJoin() {
       marginTop: theme.spacing.md,
     },
     comingSoonText: {
-      fontSize: 12,
+      fontSize: theme.typography.size.xs,
       color: theme.colors.warning,
       fontWeight: '600',
     },

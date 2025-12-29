@@ -66,7 +66,7 @@ export default function PrivateMatchLobby() {
       padding: theme.spacing.sm,
     },
     headerTitle: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -85,7 +85,7 @@ export default function PrivateMatchLobby() {
       elevation: 5,
     },
     sectionTitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.md,
@@ -106,7 +106,7 @@ export default function PrivateMatchLobby() {
       alignItems: 'center',
     },
     difficultyButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     createButton: {
@@ -118,7 +118,7 @@ export default function PrivateMatchLobby() {
       backgroundColor: theme.colors.primary,
     },
     createButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
       color: theme.colors.buttonText,
     },
@@ -135,14 +135,14 @@ export default function PrivateMatchLobby() {
       marginBottom: theme.spacing.lg,
     },
     lobbyTitle: {
-      fontSize: 24,
+      fontSize: theme.typography.size.xxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
       textAlign: 'center',
     },
     lobbySubtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.xl,
       textAlign: 'center',
@@ -156,13 +156,13 @@ export default function PrivateMatchLobby() {
       width: '100%',
     },
     inviteCodeLabel: {
-      fontSize: 12,
+      fontSize: theme.typography.size.xs,
       color: theme.colors.textSecondary,
       marginBottom: 8,
       textAlign: 'center',
     },
     inviteCode: {
-      fontSize: 36,
+      fontSize: theme.typography.size.xxxl + 4,
       fontWeight: 'bold',
       color: theme.colors.primary,
       letterSpacing: 6,
@@ -190,7 +190,7 @@ export default function PrivateMatchLobby() {
       borderColor: theme.colors.divider,
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     primaryButtonText: {
@@ -200,7 +200,7 @@ export default function PrivateMatchLobby() {
       color: theme.colors.textPrimary,
     },
     errorText: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.error,
       textAlign: 'center',
       marginTop: theme.spacing.md,
@@ -209,7 +209,7 @@ export default function PrivateMatchLobby() {
       alignItems: 'center',
     },
     loadingText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginTop: theme.spacing.md,
     },

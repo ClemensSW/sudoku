@@ -190,7 +190,7 @@ export default function AIGame() {
       padding: theme.spacing.sm,
     },
     headerTitle: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -206,7 +206,7 @@ export default function AIGame() {
       backgroundColor: theme.colors.warning,
     },
     aiText: {
-      fontSize: 12,
+      fontSize: theme.typography.size.xs,
       color: theme.colors.textSecondary,
     },
     gameContainer: {
@@ -224,12 +224,12 @@ export default function AIGame() {
       alignItems: 'center',
     },
     statLabel: {
-      fontSize: 12,
+      fontSize: theme.typography.size.xs,
       color: theme.colors.textSecondary,
       marginBottom: 4,
     },
     statValue: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -250,7 +250,7 @@ export default function AIGame() {
       borderWidth: 0.5,
     },
     cellText: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '400',
     },
     numberSelector: {
@@ -267,7 +267,7 @@ export default function AIGame() {
       marginBottom: theme.spacing.md,
     },
     numberSelectorTitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -289,7 +289,7 @@ export default function AIGame() {
       borderColor: theme.colors.divider,
     },
     numberButtonText: {
-      fontSize: 24,
+      fontSize: theme.typography.size.xxl,
       fontWeight: '600',
     },
   });

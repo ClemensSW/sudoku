@@ -84,13 +84,13 @@ export default function PrivateResults() {
       marginBottom: theme.spacing.lg,
     },
     title: {
-      fontSize: 32,
+      fontSize: theme.typography.size.xxxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.xl,
       textAlign: 'center',
@@ -114,7 +114,7 @@ export default function PrivateResults() {
       borderColor: theme.colors.divider,
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     primaryButtonText: {

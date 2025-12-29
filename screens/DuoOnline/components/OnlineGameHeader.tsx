@@ -136,12 +136,12 @@ const OnlineGameHeader: React.FC<OnlineGameHeaderProps> = ({
       marginBottom: 4,
     },
     correctCount: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '700',
       color: theme.colors.textPrimary,
     },
     playerName: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       fontWeight: '500',
       color: theme.colors.textSecondary,
       marginTop: 4,
@@ -153,7 +153,7 @@ const OnlineGameHeader: React.FC<OnlineGameHeaderProps> = ({
       paddingHorizontal: theme.spacing.md,
     },
     vsText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '700',
       color: theme.colors.textSecondary,
       letterSpacing: 1,

@@ -308,7 +308,7 @@ export default function OnlineGameBoard() {
       padding: theme.spacing.sm,
     },
     headerTitle: {
-      fontSize: 18,
+      fontSize: theme.typography.size.lg,
       fontWeight: '600',
       color: theme.colors.textPrimary,
     },
@@ -319,7 +319,7 @@ export default function OnlineGameBoard() {
       padding: theme.spacing.lg,
     },
     loadingText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginTop: theme.spacing.md,
     },
@@ -330,7 +330,7 @@ export default function OnlineGameBoard() {
       maxWidth: 300,
     },
     errorText: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.error,
       textAlign: 'center',
       marginTop: theme.spacing.sm,
@@ -495,7 +495,7 @@ export default function OnlineGameBoard() {
           }}
         >
           <Feather name="wifi-off" size={16} color={theme.colors.warning} />
-          <Text style={{ color: theme.colors.warning, fontSize: 12, flex: 1 }}>
+          <Text style={{ color: theme.colors.warning, fontSize: theme.typography.size.xs, flex: 1 }}>
             {t('duoOnline.game.reconnecting', 'Reconnecting...')}
           </Text>
         </View>
@@ -547,7 +547,7 @@ export default function OnlineGameBoard() {
               <Text
                 style={{
                   color: theme.colors.primary,
-                  fontSize: 14,
+                  fontSize: theme.typography.size.sm,
                   fontWeight: '600',
                 }}
               >

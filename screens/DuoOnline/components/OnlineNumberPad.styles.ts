@@ -42,7 +42,7 @@ export default StyleSheet.create({
   },
 
   actionButtonLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginTop: 2,
     textAlign: "center",

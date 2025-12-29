@@ -106,7 +106,7 @@ const OnlineNumberPad: React.FC<OnlineNumberPadProps> = ({
             />
           </AnimatedPressable>
           <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
+            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: theme.typography.size.xs }]}
           >
             {t('controls.note')}
           </Text>
@@ -139,7 +139,7 @@ const OnlineNumberPad: React.FC<OnlineNumberPadProps> = ({
             />
           </AnimatedPressable>
           <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary }]}
+            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: theme.typography.size.xs }]}
           >
             {t('controls.erase')}
           </Text>
@@ -196,7 +196,7 @@ const OnlineNumberPad: React.FC<OnlineNumberPadProps> = ({
               >
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: theme.typography.size.xxl,
                     fontWeight: "600",
                     color: isDisabled
                       ? colors.buttonTextDisabled

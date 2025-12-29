@@ -176,13 +176,13 @@ export default function RankedResults() {
       marginBottom: theme.spacing.lg,
     },
     title: {
-      fontSize: 32,
+      fontSize: theme.typography.size.xxxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.xl,
       textAlign: 'center',
@@ -196,17 +196,17 @@ export default function RankedResults() {
       marginBottom: theme.spacing.xl,
     },
     eloLabel: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.textSecondary,
       marginBottom: 8,
     },
     eloChange: {
-      fontSize: 48,
+      fontSize: theme.typography.size.huge,
       fontWeight: 'bold',
       marginBottom: 8,
     },
     eloNewValue: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
     },
     rankBadge: {
@@ -219,7 +219,7 @@ export default function RankedResults() {
       marginTop: theme.spacing.md,
     },
     rankText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     buttonsContainer: {
@@ -241,7 +241,7 @@ export default function RankedResults() {
       borderColor: theme.colors.divider,
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
     },
     primaryButtonText: {
@@ -251,12 +251,12 @@ export default function RankedResults() {
       color: theme.colors.textPrimary,
     },
     loadingText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       marginTop: theme.spacing.md,
     },
     errorText: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.error,
       textAlign: 'center',
       marginTop: theme.spacing.sm,

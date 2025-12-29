@@ -32,13 +32,13 @@ export default function OnlinePlayMenu() {
       marginBottom: theme.spacing.xl,
     },
     title: {
-      fontSize: 32,
+      fontSize: theme.typography.size.xxxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       marginBottom: theme.spacing.sm,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
     },
     optionsContainer: {
@@ -69,12 +69,12 @@ export default function OnlinePlayMenu() {
       alignItems: 'center',
     },
     optionTitle: {
-      fontSize: 20,
+      fontSize: theme.typography.size.xl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
     },
     optionDescription: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.textSecondary,
       lineHeight: 20,
     },
@@ -84,7 +84,7 @@ export default function OnlinePlayMenu() {
       alignItems: 'center',
     },
     backButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.primary,
     },
   });

@@ -70,13 +70,13 @@ export default function RankedMatchmaking() {
       marginBottom: theme.spacing.md,
     },
     title: {
-      fontSize: 24,
+      fontSize: theme.typography.size.xxl,
       fontWeight: 'bold',
       color: theme.colors.textPrimary,
       textAlign: 'center',
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       color: theme.colors.textSecondary,
       textAlign: 'center',
       maxWidth: 300,
@@ -90,7 +90,7 @@ export default function RankedMatchmaking() {
       borderColor: theme.colors.error,
     },
     cancelButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.size.md,
       fontWeight: '600',
       color: theme.colors.error,
     },
@@ -101,7 +101,7 @@ export default function RankedMatchmaking() {
       maxWidth: 300,
     },
     errorText: {
-      fontSize: 14,
+      fontSize: theme.typography.size.sm,
       color: theme.colors.error,
       textAlign: 'center',
     },

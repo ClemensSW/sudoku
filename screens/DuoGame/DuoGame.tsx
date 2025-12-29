@@ -247,125 +247,119 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
     }, 300);
   };
 
-  // NEU: Render Completion Flow basierend auf currentScreen
-  const renderCompletionFlow = () => {
-    if (!showCompletionModal) return null;
-
+  // Helper: Render nur den Screen-Content (ohne Overlay-Wrapper)
+  const renderProgressionScreen = () => {
     switch (currentScreen) {
-      case 'modal':
-        return (
-          <DuoGameCompletionModal
-            visible={showCompletionModal}
-            onClose={handleCloseModal}
-            onNewGame={handleNewGame}
-            onRevanche={handleRematch}
-            winner={winnerInfo.winner}
-            winReason={winnerInfo.reason}
-            gameTime={gameState.gameTime}
-            player1Complete={gameState.player1Complete}
-            player2Complete={gameState.player2Complete}
-            player1Errors={gameState.player1Errors}
-            player2Errors={gameState.player2Errors}
-            player1Hints={MAX_HINTS - gameState.player1Hints}
-            player2Hints={MAX_HINTS - gameState.player2Hints}
-            maxHints={MAX_HINTS}
-            maxErrors={gameState.maxErrors}
-            currentDifficulty={initialDifficulty}
-            player1InitialEmptyCells={gameState.player1InitialEmptyCells}
-            player1SolvedCells={gameState.player1SolvedCells}
-            player2InitialEmptyCells={gameState.player2InitialEmptyCells}
-            player2SolvedCells={gameState.player2SolvedCells}
-            ownerName={ownerProfile?.name || "User"}
-            ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
-            ownerTitle={
-              ownerProfile?.titleLevelIndex != null
-                ? getLevels()[ownerProfile.titleLevelIndex]?.name
-                : null
-            }
-            opponentName={opponentData?.name || "Gegner"}
-            opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
-            opponentTitle={opponentData?.title}
-            // NEU: Conditional Buttons
-            showContinueOnly={isOwnerWin && showProgressionScreens}
-            onContinue={handleFlowContinue}
-          />
-        );
-
       case 'level-path':
         return (
-          <View style={styles.progressionOverlay}>
-            <Animated.View
-              key="level-path"
-              entering={SlideInRight.duration(300)}
-              exiting={SlideOutLeft.duration(300)}
-              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
-            >
-              <LevelPathScreen
-                stats={gameState.gameStats}
-                difficulty={initialDifficulty}
-                timeElapsed={gameState.gameTime}
-                autoNotesUsed={false}
-                onContinue={handleFlowContinue}
-              />
-            </Animated.View>
-          </View>
+          <LevelPathScreen
+            stats={gameState.gameStats}
+            difficulty={initialDifficulty}
+            timeElapsed={gameState.gameTime}
+            autoNotesUsed={false}
+            onContinue={handleFlowContinue}
+            showHeroIcon={false}
+          />
         );
 
       case 'landscape':
         return (
-          <View style={styles.progressionOverlay}>
-            <Animated.View
-              key="landscape"
-              entering={SlideInRight.duration(300)}
-              exiting={SlideOutLeft.duration(300)}
-              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
-            >
-              <LandscapeScreen
-                stats={gameState.gameStats}
-                onContinue={handleFlowContinue}
-                onViewGallery={handleViewGallery}
-                isLastScreen={isLastScreen && !gameState.streakInfo?.changed}
-                customActionButtons={
-                  isOnFinalButtons ? (
-                    <DuoActionButtons
-                      onRematch={handleRematch}
-                      onBackToMenu={handleCloseModal}
-                    />
-                  ) : undefined
-                }
-              />
-            </Animated.View>
-          </View>
+          <LandscapeScreen
+            stats={gameState.gameStats}
+            onContinue={handleFlowContinue}
+            onViewGallery={handleViewGallery}
+            isLastScreen={isLastScreen && !gameState.streakInfo?.changed}
+            customActionButtons={
+              isOnFinalButtons ? (
+                <DuoActionButtons
+                  onRematch={handleRematch}
+                  onBackToMenu={handleCloseModal}
+                />
+              ) : undefined
+            }
+          />
         );
 
       case 'streak':
         return (
-          <View style={styles.progressionOverlay}>
-            <Animated.View
-              key="streak"
-              entering={SlideInRight.duration(300)}
-              exiting={SlideOutLeft.duration(300)}
-              style={[styles.progressionScreen, { backgroundColor: colors.background }]}
-            >
-              <StreakScreen
-                stats={gameState.gameStats}
-                streakInfo={gameState.streakInfo}
-                onNewGame={handleRematch}
-                onContinue={handleCloseModal}
-                customActionButtons={
-                  <DuoActionButtons
-                    onRematch={handleRematch}
-                    onBackToMenu={handleCloseModal}
-                  />
-                }
+          <StreakScreen
+            stats={gameState.gameStats}
+            streakInfo={gameState.streakInfo}
+            onNewGame={handleRematch}
+            onContinue={handleCloseModal}
+            customActionButtons={
+              <DuoActionButtons
+                onRematch={handleRematch}
+                onBackToMenu={handleCloseModal}
               />
-            </Animated.View>
-          </View>
+            }
+          />
         );
 
       default:
         return null;
     }
+  };
+
+  // NEU: Render Completion Flow - Modal separat, Progression-Screens teilen EINEN Overlay
+  const renderCompletionFlow = () => {
+    if (!showCompletionModal) return null;
+
+    // Modal hat eigenen Overlay (unverändert)
+    if (currentScreen === 'modal') {
+      return (
+        <DuoGameCompletionModal
+          visible={showCompletionModal}
+          onClose={handleCloseModal}
+          onNewGame={handleNewGame}
+          onRevanche={handleRematch}
+          winner={winnerInfo.winner}
+          winReason={winnerInfo.reason}
+          gameTime={gameState.gameTime}
+          player1Complete={gameState.player1Complete}
+          player2Complete={gameState.player2Complete}
+          player1Errors={gameState.player1Errors}
+          player2Errors={gameState.player2Errors}
+          player1Hints={MAX_HINTS - gameState.player1Hints}
+          player2Hints={MAX_HINTS - gameState.player2Hints}
+          maxHints={MAX_HINTS}
+          maxErrors={gameState.maxErrors}
+          currentDifficulty={initialDifficulty}
+          player1InitialEmptyCells={gameState.player1InitialEmptyCells}
+          player1SolvedCells={gameState.player1SolvedCells}
+          player2InitialEmptyCells={gameState.player2InitialEmptyCells}
+          player2SolvedCells={gameState.player2SolvedCells}
+          ownerName={ownerProfile?.name || "User"}
+          ownerAvatarSource={getAvatarSourceFromUri(ownerProfile?.avatarUri, DEFAULT_AVATAR)}
+          ownerTitle={
+            ownerProfile?.titleLevelIndex != null
+              ? getLevels()[ownerProfile.titleLevelIndex]?.name
+              : null
+          }
+          opponentName={opponentData?.name || "Gegner"}
+          opponentAvatarSource={opponentData?.avatarSource || DEFAULT_AVATAR}
+          opponentTitle={opponentData?.title}
+          showContinueOnly={isOwnerWin && showProgressionScreens}
+          onContinue={handleFlowContinue}
+        />
+      );
+    }
+
+    // ALLE Progression-Screens teilen sich EINEN Overlay (wie GameCompletionFlow)
+    return (
+      <View style={styles.progressionOverlay}>
+        <View style={[styles.progressionContainer, { backgroundColor: colors.background }]}>
+          <Animated.View
+            key={`screen-${currentStep}`}
+            entering={SlideInRight.duration(300)}
+            exiting={SlideOutLeft.duration(300)}
+            style={styles.progressionScreen}
+          >
+            {renderProgressionScreen()}
+          </Animated.View>
+        </View>
+      </View>
+    );
   };
 
   // Loading screen
@@ -431,8 +425,11 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
         />
       </View>
 
-      {/* Main game content */}
-      <View style={styles.content}>
+      {/* Main game content - disable touch when progression overlay is active */}
+      <View
+        style={styles.content}
+        pointerEvents={showCompletionModal && currentScreen !== 'modal' ? 'none' : 'auto'}
+      >
         {/* Player 2 Controls (Top) */}
         <DuoGameControls
           position="top"
@@ -547,7 +544,7 @@ const styles = StyleSheet.create({
     height: 1,
     width: 1,
   },
-  // NEU: Styles für Progression-Screens
+  // NEU: Styles für Progression-Screens (match SinglePlayer GameCompletionFlow)
   progressionOverlay: {
     position: "absolute",
     top: 0,
@@ -556,8 +553,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 9999,
   },
+  progressionContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   progressionScreen: {
     flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });
 

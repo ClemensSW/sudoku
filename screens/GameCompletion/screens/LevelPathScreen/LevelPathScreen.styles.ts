@@ -9,7 +9,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120, // Space for continue button
+    paddingBottom: 160, // Space for continue button (increased for better scroll)
   },
   heroHeader: {
     width: '100%',

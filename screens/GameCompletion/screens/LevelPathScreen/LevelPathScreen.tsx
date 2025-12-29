@@ -27,6 +27,8 @@ interface LevelPathScreenProps {
   timeElapsed: number;
   autoNotesUsed: boolean;
   onContinue: () => void;
+  /** Hide the hero icon with glow effect (for Duo mode) */
+  showHeroIcon?: boolean;
 }
 
 /**
@@ -44,6 +46,7 @@ const LevelPathScreen: React.FC<LevelPathScreenProps> = ({
   timeElapsed,
   autoNotesUsed,
   onContinue,
+  showHeroIcon = true,
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
@@ -103,22 +106,24 @@ const LevelPathScreen: React.FC<LevelPathScreenProps> = ({
             end={{ x: 0, y: 1 }}
             style={styles.heroGradient}
           >
-            {/* Animated Success Icon with Glow */}
-            <View style={styles.heroIconWrapper}>
-              <View
-                style={[
-                  styles.iconGlow,
-                  { backgroundColor: `${pathColor}40` },
-                ]}
-              />
-              <View
-                style={[
-                  styles.iconGlowOuter,
-                  { backgroundColor: `${pathColor}20` },
-                ]}
-              />
-              <Feather name="check-circle" size={64} color={pathColor} />
-            </View>
+            {/* Animated Success Icon with Glow (hidden in Duo mode) */}
+            {showHeroIcon && (
+              <View style={styles.heroIconWrapper}>
+                <View
+                  style={[
+                    styles.iconGlow,
+                    { backgroundColor: `${pathColor}40` },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.iconGlowOuter,
+                    { backgroundColor: `${pathColor}20` },
+                  ]}
+                />
+                <Feather name="check-circle" size={64} color={pathColor} />
+              </View>
+            )}
 
             {/* Main Title */}
             <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>

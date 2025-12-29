@@ -10,7 +10,28 @@ import { I18nProvider } from "@/utils/i18n/I18nProvider";
 import { ColorProvider } from "@/contexts/color/ColorContext";
 import { BackgroundMusicProvider } from "@/contexts/BackgroundMusicProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Platform, View, StyleSheet } from "react-native";
+import { Platform, View, StyleSheet, Text, TextInput } from "react-native";
+
+// Disable system font scaling - App controls its own font sizes
+// @ts-ignore - defaultProps exists at runtime
+Text.defaultProps = Text.defaultProps || {};
+// @ts-ignore
+Text.defaultProps.allowFontScaling = false;
+// @ts-ignore - defaultProps exists at runtime
+TextInput.defaultProps = TextInput.defaultProps || {};
+// @ts-ignore
+TextInput.defaultProps.allowFontScaling = false;
+
+// Also disable font scaling for Animated.Text (react-native-reanimated)
+import Animated from "react-native-reanimated";
+// @ts-ignore
+if (Animated.Text) {
+  // @ts-ignore
+  Animated.Text.defaultProps = Animated.Text.defaultProps || {};
+  // @ts-ignore
+  Animated.Text.defaultProps.allowFontScaling = false;
+}
+
 import * as NavigationBar from "expo-navigation-bar";
 import BottomNavigation from "@/components/BottomNavigation/BottomNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";

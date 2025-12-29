@@ -12,7 +12,7 @@ interface GalleryInfoProps {
 const GalleryInfo: React.FC<GalleryInfoProps> = ({ landscape }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   // Get motivational text based on progress
   const getProgressText = (): string => {
@@ -35,7 +35,7 @@ const GalleryInfo: React.FC<GalleryInfoProps> = ({ landscape }) => {
     >
       {/* Image Name */}
       <Text
-        style={[styles.imageName, { color: colors.textPrimary }]}
+        style={[styles.imageName, { color: colors.textPrimary, fontSize: typography.size.md }]}
         numberOfLines={1}
       >
         {landscape.name}
@@ -43,7 +43,7 @@ const GalleryInfo: React.FC<GalleryInfoProps> = ({ landscape }) => {
 
       {/* Motivational Progress Text */}
       <Text
-        style={[styles.progressText, { color: colors.textSecondary }]}
+        style={[styles.progressText, { color: colors.textSecondary, fontSize: typography.size.xs }]}
         numberOfLines={2}
       >
         {getProgressText()}
@@ -62,14 +62,14 @@ const styles = StyleSheet.create({
   },
 
   imageName: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
     marginBottom: spacing.sm,
   },
 
   progressText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "400",
     textAlign: "center",
     lineHeight: 18,

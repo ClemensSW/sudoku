@@ -39,7 +39,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   // Get custom progress color
   const progressColor = useProgressColor();
@@ -64,7 +64,7 @@ const GalleryProgressCard: React.FC<GalleryProgressCardProps> = ({
         entering={FadeIn.duration(500)}
       >
         <Feather name="image" size={48} color={colors.textSecondary} />
-        <Text style={{ color: colors.textSecondary, marginTop: 12, fontSize: 14 }}>
+        <Text style={{ color: colors.textSecondary, marginTop: 12, fontSize: typography.size.sm }}>
           {t('gallery.loading')}
         </Text>
       </Animated.View>

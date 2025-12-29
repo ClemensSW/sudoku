@@ -25,7 +25,7 @@ interface StreakHeroProps {
 const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Animation values
   const flameScale = useSharedValue(1);
@@ -184,10 +184,10 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
 
       {/* Streak Counter */}
       <Animated.View style={counterAnimatedStyle}>
-        <Text style={[styles.streakNumber, { color: colors.textPrimary }]}>
+        <Text style={[styles.streakNumber, { color: colors.textPrimary, fontSize: typography.size.huge }]}>
           {currentStreak}
         </Text>
-        <Text style={[styles.streakLabel, { color: colors.textSecondary }]}>
+        <Text style={[styles.streakLabel, { color: colors.textSecondary, fontSize: typography.size.md }]}>
           {currentStreak === 1
             ? t('streakTab.day', { defaultValue: 'Tag' })
             : t('streakTab.days', { defaultValue: 'Tage' })}
@@ -196,8 +196,8 @@ const StreakHero: React.FC<StreakHeroProps> = ({ currentStreak, longestStreak })
 
       {/* Motivational Message - Emoji Centered Above, Text Below */}
       <View style={styles.motivationContainer}>
-        <Text style={styles.motivationEmoji}>{motivation.emoji}</Text>
-        <Text style={[styles.motivationText, { color: colors.textSecondary }]}>
+        <Text style={[styles.motivationEmoji, { fontSize: typography.size.xxl }]}>{motivation.emoji}</Text>
+        <Text style={[styles.motivationText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
           {motivation.text}
         </Text>
       </View>

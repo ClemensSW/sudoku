@@ -30,13 +30,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
   },
   heroSubtitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
   },
   cardsContainer: {
@@ -57,13 +57,13 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   infoTitle: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     marginBottom: 12,
     textAlign: 'center',
   },
   infoMessage: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     lineHeight: 22,
     marginBottom: 20,
     textAlign: 'center',
@@ -79,7 +79,7 @@ export default StyleSheet.create({
     marginRight: 12,
   },
   bulletText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     flex: 1,
   },
   bottomSpacer: {

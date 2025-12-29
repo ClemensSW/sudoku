@@ -50,7 +50,7 @@ const LevelPathScreen: React.FC<LevelPathScreenProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const pathColor = useProgressColor();
   const { epMultiplier } = useSupporter();
 
@@ -126,12 +126,12 @@ const LevelPathScreen: React.FC<LevelPathScreenProps> = ({
             )}
 
             {/* Main Title */}
-            <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.heroTitle, { color: colors.textPrimary, fontSize: typography.size.xxxl }]}>
               {t('header.title')}
             </Text>
 
             {/* Subtitle */}
-            <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.heroSubtitle, { color: colors.textSecondary, fontSize: typography.size.md }]}>
               {t('header.subtitle')}
             </Text>
           </LinearGradient>

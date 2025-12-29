@@ -21,7 +21,7 @@ const GalleryProgress: React.FC<GalleryProgressProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography } = theme;
 
   const remainingSegments = 9 - landscape.progress;
   const isSpecialImage = landscape.progress === 8 || landscape.progress === 6 || landscape.progress === 3;
@@ -37,7 +37,7 @@ const GalleryProgress: React.FC<GalleryProgressProps> = ({
         },
       ]}
     >
-      <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+      <Text style={[styles.progressText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
         {landscape.isComplete
           ? t('gallery.fullyUnlocked')
           : isSpecialImage
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
 
   progressText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
     marginBottom: spacing.md,

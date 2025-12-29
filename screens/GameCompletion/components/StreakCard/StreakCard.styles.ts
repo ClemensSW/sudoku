@@ -22,7 +22,7 @@ export default StyleSheet.create({
   },
   
   headerTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
   
@@ -41,14 +41,14 @@ export default StyleSheet.create({
   
   recordText: {
     color: "#FFF",
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     marginLeft: 4,
   },
   
   // Motivation text - New!
   motivationText: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginBottom: spacing.sm,
   },
@@ -60,13 +60,13 @@ export default StyleSheet.create({
   },
   
   currentStreakValue: {
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     fontVariant: ["tabular-nums"],
   },
   
   currentStreakLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
     marginTop: spacing.xxs,
   },
@@ -112,7 +112,7 @@ export default StyleSheet.create({
   },
   
   streakCountText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
   },
@@ -143,12 +143,12 @@ export default StyleSheet.create({
   },
   
   progressLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   
   streakValue: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     fontVariant: ["tabular-nums"],
   },

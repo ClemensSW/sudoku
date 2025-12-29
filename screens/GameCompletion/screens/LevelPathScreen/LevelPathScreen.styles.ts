@@ -47,13 +47,13 @@ export default StyleSheet.create({
     left: -38,
   },
   heroTitle: {
-    fontSize: 32,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
   },
   heroSubtitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
   },
   cardsContainer: {

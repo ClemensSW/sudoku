@@ -18,13 +18,13 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
   },
   headerSubtitle: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
   },
   bottomSpacer: {

@@ -26,7 +26,7 @@ export default StyleSheet.create({
   },
 
   headerLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -67,7 +67,7 @@ export default StyleSheet.create({
   },
 
   pathLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -75,7 +75,7 @@ export default StyleSheet.create({
   },
 
   pathName: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 0.3,
     marginBottom: spacing.xs,

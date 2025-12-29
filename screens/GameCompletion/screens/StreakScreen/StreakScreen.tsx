@@ -43,7 +43,7 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   if (!stats?.dailyStreak) return null;
 
@@ -71,10 +71,10 @@ const StreakScreen: React.FC<StreakScreenProps> = ({
       >
         {/* Header */}
         <Animated.View entering={FadeInUp.duration(400)} style={styles.header}>
-          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
             {headerText}
           </Text>
-          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {subtitleText}
           </Text>
         </Animated.View>

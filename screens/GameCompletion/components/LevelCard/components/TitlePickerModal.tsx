@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { triggerHaptic } from "@/utils/haptics";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import BottomSheetModal from "@/components/BottomSheetModal";
 
 interface TitleOption {
@@ -44,6 +45,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
   managesBottomNav = true,
 }) => {
   const { t } = useTranslation("gameCompletion");
+  const { typography } = useTheme();
 
   const handleTitleSelect = (levelIndex: number, isUnlocked: boolean) => {
     if (!isUnlocked) {
@@ -96,7 +98,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
       snapPoints={['55%', '90%']}
       managesBottomNav={managesBottomNav}
     >
-      <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
+      <Text style={[styles.subtitle, { color: textSecondaryColor, fontSize: typography.size.sm }]}>
         {t("titlePicker.subtitle")}
       </Text>
 
@@ -118,7 +120,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
             <Text
               style={[
                 styles.currentTitleLabel,
-                { color: textSecondaryColor },
+                { color: textSecondaryColor, fontSize: typography.size.xs },
               ]}
             >
               {t("level.currentTitle")}
@@ -127,7 +129,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
           <Text
             style={[
               styles.currentTitleName,
-              { color: textPrimaryColor },
+              { color: textPrimaryColor, fontSize: typography.size.xl },
             ]}
           >
             {selectedTitle}
@@ -141,7 +143,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
               <Text
                 style={[
                   styles.currentTitleDescription,
-                  { color: textSecondaryColor },
+                  { color: textSecondaryColor, fontSize: typography.size.sm },
                 ]}
               >
                 {selectedTitleDescription}
@@ -176,6 +178,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
             styles.noTitleText,
             {
               color: selectedTitleIndex === null ? "#ffffff" : textPrimaryColor,
+              fontSize: typography.size.sm,
             },
           ]}
         >
@@ -191,7 +194,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
         {/* Freigeschaltete Titel */}
         {unlockedTitles.length > 0 && (
           <>
-            <Text style={[styles.sectionTitle, { color: progressColor }]}>
+            <Text style={[styles.sectionTitle, { color: progressColor, fontSize: typography.size.xs }]}>
               {t("titlePicker.unlocked")}
             </Text>
             {unlockedTitles.map((option, index) => {
@@ -249,7 +252,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
                         <Text
                           style={[
                             styles.titleName,
-                            { color: textPrimaryColor },
+                            { color: textPrimaryColor, fontSize: typography.size.md },
                           ]}
                           numberOfLines={2}
                         >
@@ -258,7 +261,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
                         <Text
                           style={[
                             styles.levelInfo,
-                            { color: textSecondaryColor },
+                            { color: textSecondaryColor, fontSize: typography.size.xs },
                           ]}
                         >
                           {t("level.title")} {option.level + 1}
@@ -287,7 +290,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
                 ]}
               />
             )}
-            <Text style={[styles.sectionTitle, { color: textSecondaryColor, opacity: 0.6 }]}>
+            <Text style={[styles.sectionTitle, { color: textSecondaryColor, opacity: 0.6, fontSize: typography.size.xs }]}>
               {t("titlePicker.locked")}
             </Text>
             {lockedTitles.map((option, index) => {
@@ -349,7 +352,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
                         <Text
                           style={[
                             styles.titleName,
-                            { color: textSecondaryColor, opacity: 0.6 },
+                            { color: textSecondaryColor, opacity: 0.6, fontSize: typography.size.md },
                           ]}
                           numberOfLines={2}
                         >
@@ -358,7 +361,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
                         <Text
                           style={[
                             styles.unlockInfo,
-                            { color: textSecondaryColor },
+                            { color: textSecondaryColor, fontSize: typography.size.xs },
                           ]}
                         >
                           {t("titlePicker.unlockAt", { level: option.level + 1 })}
@@ -378,7 +381,7 @@ const TitlePickerModal: React.FC<TitlePickerModalProps> = ({
 
 const styles = StyleSheet.create({
   subtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     marginBottom: 20,
     lineHeight: 20,
     opacity: 0.8,
@@ -400,14 +403,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   currentTitleLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
     opacity: 0.8,
   },
   currentTitleName: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     lineHeight: 26,
     letterSpacing: 0.3,
@@ -418,7 +421,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   currentTitleDescription: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     lineHeight: 20,
     opacity: 0.8,
   },
@@ -434,7 +437,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   noTitleText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     letterSpacing: 0.2,
   },
@@ -444,7 +447,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sectionTitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -510,19 +513,19 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   titleName: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     lineHeight: 22,
     letterSpacing: 0.3,
   },
   levelInfo: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     opacity: 0.7,
   },
   unlockInfo: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     opacity: 0.6,
     marginTop: 2,

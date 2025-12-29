@@ -35,14 +35,14 @@ export const styles = StyleSheet.create({
     opacity: 0.4,
   },
   streakNumber: {
-    fontSize: 64,
+    // fontSize set dynamically via theme.typography
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
     letterSpacing: -2,
     textAlign: 'center',
   },
   streakLabel: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 2,
@@ -54,12 +54,12 @@ export const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   motivationEmoji: {
-    fontSize: 28,
+    // fontSize set dynamically via theme.typography
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
   motivationText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   recordInfoText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 
@@ -101,7 +101,7 @@ export const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   monthTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -111,7 +111,7 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   weekdayText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     width: 40,
     textAlign: 'center',
@@ -134,7 +134,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   dayText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   progressSection: {
@@ -162,7 +162,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressLabel: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   completedBadge: {
@@ -174,7 +174,7 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
   },
   completedText: {
-    fontSize: 11,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     color: 'white',
   },

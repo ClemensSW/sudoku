@@ -44,7 +44,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   const getDayStyle = (status: string) => {
     switch (status) {
@@ -134,7 +134,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
               {
                 color: theme.isDark ? colors.textPrimary : '#666666',  // Helleres Grau in Light Mode
                 fontWeight: '700',
-                fontSize: 16,
+                fontSize: typography.size.md,
               },
             ]}
           >
@@ -157,6 +157,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
                     ? '#FFFFFF'
                     : colors.textPrimary,
                 fontWeight: status === 'played' ? '700' : '600',
+                fontSize: typography.size.xs,
               },
             ]}
           >
@@ -189,7 +190,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
           ]}
         >
           <Text
-            style={[styles.monthTitle, { color: colors.textPrimary }]}
+            style={[styles.monthTitle, { color: colors.textPrimary, fontSize: typography.size.lg }]}
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.7}
@@ -213,7 +214,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
       {/* Weekday Headers */}
       <View style={styles.weekdayRow}>
         {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-          <Text key={day} style={[styles.weekdayText, { color: colors.textSecondary }]}>
+          <Text key={day} style={[styles.weekdayText, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {t(`streakTab.calendar.weekdays.short.${day}`)}
           </Text>
         ))}
@@ -281,7 +282,7 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
         </View>
 
         <View style={styles.progressLabelRow}>
-          <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.progressLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {t('streakTab.calendar.monthProgress', { count: playedDays, total: daysInMonth })}
           </Text>
         </View>

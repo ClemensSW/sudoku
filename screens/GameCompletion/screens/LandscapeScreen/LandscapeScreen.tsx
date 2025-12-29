@@ -45,7 +45,7 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Landscape Integration
   const { currentLandscape, getLastUnlockEvent } = useLandscapes();
@@ -93,10 +93,10 @@ const LandscapeScreen: React.FC<LandscapeScreenProps> = ({
       >
         {/* Header */}
         <Animated.View entering={FadeInUp.duration(400)} style={styles.header}>
-          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
             {t('gallery.newSegment')}
           </Text>
-          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary, fontSize: typography.size.md }]}>
             {t('gallery.unlocked')}
           </Text>
         </Animated.View>

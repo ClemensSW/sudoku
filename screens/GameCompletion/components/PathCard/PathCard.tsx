@@ -47,7 +47,7 @@ const PathCard: React.FC<PathCardProps> = ({
   xpGain,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const { t } = useTranslation('gameCompletion');
 
   // State
@@ -141,7 +141,7 @@ const PathCard: React.FC<PathCardProps> = ({
       {/* Header Section - minimalistisch */}
       <View style={styles.headerSection}>
         <Feather name="map" size={16} color={displayColor} />
-        <Text style={[styles.headerLabel, { color: colors.textSecondary }]}>
+        <Text style={[styles.headerLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
           {t('path.title')}
         </Text>
       </View>
@@ -188,14 +188,14 @@ const PathCard: React.FC<PathCardProps> = ({
             {/* Header: Label + Icon */}
             <View style={styles.pathHeaderLeft}>
               <Feather name="compass" size={16} color={displayColor} />
-              <Text style={[styles.pathLabel, { color: colors.textSecondary }]}>
+              <Text style={[styles.pathLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                 {t('path.currentPath')}
               </Text>
             </View>
 
             {/* Path Name */}
             <Text
-              style={[styles.pathName, { color: colors.textPrimary }]}
+              style={[styles.pathName, { color: colors.textPrimary, fontSize: typography.size.md }]}
               numberOfLines={1}
               ellipsizeMode="tail"
             >

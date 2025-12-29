@@ -10,8 +10,9 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 
-type MilestoneNotificationProps = {
+interface MilestoneNotificationProps {
   visible: boolean;
   message: string;
   milestoneLevel: number;
@@ -20,7 +21,7 @@ type MilestoneNotificationProps = {
   onClose: () => void;
   textPrimaryColor: string;
   textSecondaryColor: string;
-};
+}
 
 const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
   visible,
@@ -32,6 +33,8 @@ const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
   textPrimaryColor,
   textSecondaryColor,
 }) => {
+  const theme = useTheme();
+  const { typography } = theme;
   const scale = useSharedValue(0.95);
 
   React.useEffect(() => {
@@ -72,7 +75,7 @@ const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Feather name="award" size={18} color={color} style={{ marginRight: 8 }} />
-          <Text style={[styles.title, { color: textPrimaryColor }]}>
+          <Text style={[styles.title, { color: textPrimaryColor, fontSize: typography.size.md }]}>
             Meilenstein erreicht!
           </Text>
         </View>
@@ -94,7 +97,7 @@ const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
         </Pressable>
       </View>
 
-      <Text style={[styles.message, { color: textSecondaryColor }]}>{message}</Text>
+      <Text style={[styles.message, { color: textSecondaryColor, fontSize: typography.size.sm }]}>{message}</Text>
     </Animated.View>
   );
 };
@@ -122,11 +125,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   title: {
-    fontSize: 16.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
   },
   message: {
-    fontSize: 14.5,
+    // fontSize set dynamically via theme.typography
     lineHeight: 22,
   },
 });

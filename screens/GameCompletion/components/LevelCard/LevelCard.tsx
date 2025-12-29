@@ -55,7 +55,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
   onTitleSelect,
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const { t } = useTranslation('gameCompletion');
 
   // State
@@ -200,15 +200,15 @@ const LevelCard: React.FC<LevelCardProps> = ({
         </Animated.View>
 
         {/* Big Level Number (StreakHero style) */}
-        <Text style={[styles.levelNumber, { color: colors.textPrimary }]}>
+        <Text style={[styles.levelNumber, { color: colors.textPrimary, fontSize: typography.size.huge }]}>
           {levelInfo.currentLevel + 1}
         </Text>
-        <Text style={[styles.levelLabel, { color: colors.textSecondary }]}>
+        <Text style={[styles.levelLabel, { color: colors.textSecondary, fontSize: typography.size.md }]}>
           {t('level.title').toUpperCase()}
         </Text>
 
         {/* Title as Motivation */}
-        <Text style={[styles.levelTitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.levelTitle, { color: colors.textSecondary, fontSize: typography.size.lg }]}>
           {levelInfo.levelData.name}
         </Text>
       </LinearGradient>
@@ -229,7 +229,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
           {/* EP Info Column: Text + Progress Bar */}
           <View style={styles.progressInfoColumn}>
             {/* XP Text */}
-            <Text style={[styles.xpValueText, { color: colors.textPrimary }]}>
+            <Text style={[styles.xpValueText, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
               {(currentXp - levelInfo.levelData.xp).toLocaleString()} / {((levelInfo.nextLevelData?.xp ?? levelInfo.levelData.xp) - levelInfo.levelData.xp).toLocaleString()} EP
             </Text>
 
@@ -339,8 +339,8 @@ const LevelCard: React.FC<LevelCardProps> = ({
                 <GiftIcon width={16} height={16} />
               )}
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
-                <Text style={styles.xpGainNumber}>+{finalXp}</Text>
-                <Text style={styles.xpGainLabel}>EP</Text>
+                <Text style={[styles.xpGainNumber, { fontSize: typography.size.xl }]}>+{finalXp}</Text>
+                <Text style={[styles.xpGainLabel, { fontSize: typography.size.xs }]}>EP</Text>
               </View>
               {isPremiumSupporter && (
                 <View style={{
@@ -350,7 +350,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
                   borderRadius: 8,
                   marginLeft: 2
                 }}>
-                  <Text style={styles.xpMultiplier}>×2</Text>
+                  <Text style={[styles.xpMultiplier, { fontSize: typography.size.sm }]}>×2</Text>
                 </View>
               )}
             </Animated.View>
@@ -372,7 +372,7 @@ const LevelCard: React.FC<LevelCardProps> = ({
             },
           ]}
         >
-          <Text style={[styles.nextLevelXp, { color: colors.textSecondary }]}>
+          <Text style={[styles.nextLevelXp, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {levelInfo.levelData.message}
           </Text>
         </View>
@@ -398,14 +398,14 @@ const LevelCard: React.FC<LevelCardProps> = ({
             {/* Header: Label + Icon */}
             <View style={styles.titleHeaderLeft}>
               <Feather name="award" size={16} color={progressColor} />
-              <Text style={[styles.titleLabel, { color: colors.textSecondary }]}>
+              <Text style={[styles.titleLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                 {t('level.yourTitleLabel')}
               </Text>
             </View>
 
             {/* Title Value */}
             <Text
-              style={[styles.titleValue, { color: colors.textPrimary }]}
+              style={[styles.titleValue, { color: colors.textPrimary, fontSize: typography.size.md }]}
               numberOfLines={1}
               ellipsizeMode="tail"
             >

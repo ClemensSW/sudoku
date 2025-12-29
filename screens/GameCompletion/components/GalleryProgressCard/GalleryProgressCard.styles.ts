@@ -101,7 +101,7 @@ export default StyleSheet.create({
   },
 
   progressText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
     marginBottom: spacing.md,
@@ -139,7 +139,7 @@ export default StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     color: "#FFFFFF",
   },
@@ -158,7 +158,7 @@ export default StyleSheet.create({
 
   completionText: {
     color: "#FFFFFF",
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     textShadowColor: "rgba(0, 0, 0, 0.6)",
     textShadowOffset: { width: 0, height: 2 },

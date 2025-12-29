@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import { triggerHaptic } from "@/utils/haptics";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { getColorFromHex } from "@/utils/pathColors";
@@ -54,6 +55,8 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   managesBottomNav = true,
 }) => {
   const { t } = useTranslation("gameCompletion");
+  const theme = useTheme();
+  const { typography } = theme;
 
   const handleColorSelect = (color: string, isUnlocked: boolean) => {
     if (!isUnlocked) {
@@ -78,7 +81,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
       snapPoints={['45%', '75%']}
       managesBottomNav={managesBottomNav}
     >
-      <Text style={[styles.subtitle, { color: textSecondaryColor }]}>
+      <Text style={[styles.subtitle, { color: textSecondaryColor, fontSize: typography.size.sm }]}>
         {t("path.colorPicker.subtitle")}
       </Text>
 
@@ -189,6 +192,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                           ? textPrimaryColor
                           : textSecondaryColor,
                         opacity: isUnlocked ? 1 : 0.6,
+                        fontSize: typography.size.md,
                       },
                     ]}
                     numberOfLines={2}
@@ -198,7 +202,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 
                   {/* Unlock Level Info */}
                   {!isUnlocked && (
-                    <Text style={[styles.unlockInfo, { color: textSecondaryColor }]}>
+                    <Text style={[styles.unlockInfo, { color: textSecondaryColor, fontSize: typography.size.xs }]}>
                       {t("path.colorPicker.unlockAt", { level: option.unlockLevel })}
                     </Text>
                   )}
@@ -214,7 +218,7 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 
 const styles = StyleSheet.create({
   subtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     marginBottom: 32,
     lineHeight: 20,
     opacity: 0.8,
@@ -297,14 +301,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   colorName: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     lineHeight: 22,
     letterSpacing: 0.3,
   },
   unlockInfo: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     textAlign: "center",
     opacity: 0.5,

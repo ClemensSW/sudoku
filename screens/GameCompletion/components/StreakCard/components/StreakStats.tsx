@@ -29,7 +29,7 @@ const StreakStats: React.FC<StreakStatsProps> = ({
 }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Ensure longestStreak is at least as high as currentStreak
   const effectiveLongestStreak = Math.max(longestStreak, currentStreak);
@@ -87,7 +87,7 @@ const StreakStats: React.FC<StreakStatsProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <Feather name="bar-chart-2" size={20} color="#95D6A4" />
-        <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
           {t('streakTab.stats.title', { defaultValue: 'Statistik' })}
         </Text>
       </View>
@@ -147,16 +147,16 @@ const StreakStats: React.FC<StreakStatsProps> = ({
 
               <View style={styles.statContent}>
                 <View style={styles.valueRow}>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  <Text style={[styles.statValue, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
                     {stat.value.toLocaleString('de-DE')}
                   </Text>
                   {stat.suffix && (
-                    <Text style={[styles.statSuffix, { color: colors.textSecondary }]}>
+                    <Text style={[styles.statSuffix, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                       {stat.suffix}
                     </Text>
                   )}
                 </View>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                <Text style={[styles.statLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                   {stat.label}
                 </Text>
               </View>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -219,17 +219,17 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   statValue: {
-    fontSize: 22,
+    // fontSize set dynamically via theme.typography
     fontWeight: '800',
     fontVariant: ['tabular-nums'],
     letterSpacing: 0.3,
   },
   statSuffix: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   statLabel: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 });

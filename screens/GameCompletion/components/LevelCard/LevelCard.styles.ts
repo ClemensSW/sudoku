@@ -48,7 +48,7 @@ export default StyleSheet.create({
 
   // Big Level Number (StreakHero style)
   levelNumber: {
-    fontSize: 64,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
     fontVariant: ["tabular-nums"],
     letterSpacing: -2,
@@ -56,7 +56,7 @@ export default StyleSheet.create({
   },
 
   levelLabel: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 2,
@@ -66,14 +66,14 @@ export default StyleSheet.create({
 
   // Title Text (now used as motivation)
   levelTitle: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
     marginTop: spacing.md,
   },
 
   levelSubtitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     opacity: 0.75,
     textAlign: "center",
@@ -93,7 +93,7 @@ export default StyleSheet.create({
   },
 
   levelName: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 0.3,
     lineHeight: 24,
@@ -118,14 +118,14 @@ export default StyleSheet.create({
   },
 
   xpGainNumber: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
     color: "#FFFFFF",
     letterSpacing: 0.5,
   },
 
   xpGainLabel: {
-    fontSize: 10,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     color: "rgba(255, 255, 255, 0.9)",
     letterSpacing: 1.2,
@@ -133,7 +133,7 @@ export default StyleSheet.create({
   },
 
   xpMultiplier: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: "900",
     color: "#FFFFFF",
     letterSpacing: 0.5,
@@ -164,7 +164,7 @@ export default StyleSheet.create({
   },
 
   xpValueText: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
     letterSpacing: 0.3,
@@ -218,7 +218,7 @@ export default StyleSheet.create({
   },
 
   nextLevelHeaderText: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -226,14 +226,14 @@ export default StyleSheet.create({
   },
 
   nextLevelTitle: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 0.3,
     marginBottom: 4,
   },
 
   nextLevelXp: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     opacity: 0.75,
   },
@@ -265,7 +265,7 @@ export default StyleSheet.create({
   },
 
   titleLabel: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -273,7 +273,7 @@ export default StyleSheet.create({
   },
 
   titleValue: {
-    fontSize: 17,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     letterSpacing: 0.3,
     marginBottom: spacing.xs,
@@ -286,7 +286,7 @@ export default StyleSheet.create({
   },
 
   titleDescription: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     lineHeight: 18,
     opacity: 0.8,
     fontWeight: "500",
@@ -328,7 +328,7 @@ export default StyleSheet.create({
   },
 
   levelDetailsTitle: {
-    fontSize: 15.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
   },
 
@@ -341,7 +341,7 @@ export default StyleSheet.create({
 
   levelMessage: {
     marginTop: 6,
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     lineHeight: 21,
     opacity: 0.95,
   },
@@ -360,7 +360,7 @@ export default StyleSheet.create({
   },
 
   titleCurrentText: {
-    fontSize: 14.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
   },
 
@@ -374,7 +374,7 @@ export default StyleSheet.create({
   },
 
   titlePillText: {
-    fontSize: 12.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
   },
 
@@ -388,7 +388,7 @@ export default StyleSheet.create({
   },
 
   titleHeaderLabel: {
-    fontSize: 13.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     opacity: 0.9,
   },
@@ -403,7 +403,7 @@ export default StyleSheet.create({
   },
 
   titleClearText: {
-    fontSize: 12.5,
+    // fontSize set dynamically via theme.typography
     fontWeight: "700",
     opacity: 0.9,
   },
@@ -427,7 +427,7 @@ export default StyleSheet.create({
   },
 
   titleChipText: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: "800",
     maxWidth: 200,
   },

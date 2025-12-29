@@ -30,7 +30,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 }) => {
   const { t } = useTranslation(['leistung', 'supportShop']);
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const router = useRouter();
 
   // Calculate days until reset
@@ -77,7 +77,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <Feather name="shield" size={20} color="#95D6A4" />
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
             {t('streakTab.shields.title', { defaultValue: 'Schutzschilde' })}
           </Text>
         </View>
@@ -117,10 +117,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
         {/* Counter */}
         <View style={styles.counterSection}>
-          <Text style={[styles.counterNumber, { color: hasNoShields ? colors.error : colors.textPrimary }]}>
+          <Text style={[styles.counterNumber, { color: hasNoShields ? colors.error : colors.textPrimary, fontSize: typography.size.huge }]}>
             {totalShields}
           </Text>
-          <Text style={[styles.counterLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.counterLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t('streakTab.shields.availableLabel', { count: totalShields })}
           </Text>
         </View>
@@ -134,15 +134,15 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
               <Feather name="gift" size={18} color="#FFD700" />
             </View>
             <View style={styles.bonusTextContainer}>
-              <Text style={[styles.bonusTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.bonusTitle, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
                 Bonus-Schutzschilde
               </Text>
-              <Text style={[styles.bonusValue, { color: '#FFD700' }]}>
+              <Text style={[styles.bonusValue, { color: '#FFD700', fontSize: typography.size.md }]}>
                 +{bonusShields} Extra
               </Text>
             </View>
           </View>
-          <Text style={[styles.bonusDescription, { color: colors.textSecondary }]}>
+          <Text style={[styles.bonusDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             Diese Schutzschilde bleiben dauerhaft verfügbar!
           </Text>
         </View>
@@ -152,10 +152,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
       <View style={[styles.infoCard, { backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }]}>
         <View style={styles.infoRow}>
           <Feather name="clock" size={16} color={colors.textSecondary} />
-          <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.infoLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {t('streakTab.shields.nextResetLabel')}
           </Text>
-          <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
+          <Text style={[styles.infoValue, { color: colors.textPrimary, fontSize: typography.size.xs }]}>
             {t('streakTab.shields.nextResetValue', { count: daysUntilReset })}
           </Text>
         </View>
@@ -164,7 +164,7 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
         <View style={styles.infoRow}>
           <Feather name="info" size={16} color={colors.textSecondary} />
-          <Text style={[styles.infoDescription, { color: colors.textSecondary }]}>
+          <Text style={[styles.infoDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
             {t('streakTab.shields.description', { defaultValue: 'Schützt deine Serie automatisch, wenn du einen Tag verpasst' })}
           </Text>
         </View>
@@ -203,10 +203,10 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
               {/* Text content */}
               <View style={styles.premiumTextContainer}>
-                <Text style={[styles.premiumTitle, { color: theme.isDark ? '#D4AF37' : '#C19A2E' }]}>
+                <Text style={[styles.premiumTitle, { color: theme.isDark ? '#D4AF37' : '#C19A2E', fontSize: typography.size.sm }]}>
                   {t(`supportShop:shieldBanner.${bannerKey}.title`)}
                 </Text>
-                <Text style={[styles.premiumSubtitle, { color: colors.textSecondary }]}>
+                <Text style={[styles.premiumSubtitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
                   {t(`supportShop:shieldBanner.${bannerKey}.subtitle`)}
                 </Text>
               </View>
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -270,13 +270,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   counterNumber: {
-    fontSize: 48,
+    // fontSize set dynamically via theme.typography
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
     letterSpacing: -1,
   },
   counterLabel: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -307,18 +307,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bonusTitle: {
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     letterSpacing: 0.2,
   },
   bonusValue: {
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '900',
     letterSpacing: 0.3,
     marginTop: 2,
   },
   bonusDescription: {
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     lineHeight: 16,
     marginLeft: 44,
@@ -336,11 +336,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   infoLabel: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   infoValue: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '800',
     fontVariant: ['tabular-nums'],
   },
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   infoDescription: {
     flex: 1,
-    fontSize: 12,
+    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     lineHeight: 18,
   },
@@ -369,11 +369,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   premiumTitle: {
-    fontSize: 15,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
   premiumSubtitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     marginTop: 2,
   },
 });

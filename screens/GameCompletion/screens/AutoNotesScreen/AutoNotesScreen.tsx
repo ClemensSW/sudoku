@@ -34,7 +34,7 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
 }) => {
   const { t } = useTranslation('gameCompletion');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // AutoNotes Ink-themed colors (based on ink.svg icon colors)
   // Icon colors: #3E3E7A, #51518E, #8888E8, #C5C5FF (Purple/Ink tones)
@@ -76,12 +76,12 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
             </View>
 
             {/* Main Title */}
-            <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.heroTitle, { color: colors.textPrimary, fontSize: typography.size.xxxl }]}>
               {t('header.title')}
             </Text>
 
             {/* Subtitle */}
-            <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.heroSubtitle, { color: colors.textSecondary, fontSize: typography.size.md }]}>
               {t('header.subtitle')}
             </Text>
           </LinearGradient>
@@ -109,12 +109,12 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
             </View>
 
             {/* Info Title */}
-            <Text style={[styles.infoTitle, { color: colors.textPrimary }]}>
+            <Text style={[styles.infoTitle, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
               {t('autoNotes.title')}
             </Text>
 
             {/* Info Message */}
-            <Text style={[styles.infoMessage, { color: colors.textSecondary }]}>
+            <Text style={[styles.infoMessage, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
               {t('autoNotes.message')}
             </Text>
 
@@ -127,7 +127,7 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
                   color={colors.textSecondary}
                   style={styles.bulletIcon}
                 />
-                <Text style={[styles.bulletText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bulletText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                   {t('autoNotes.noXP')}
                 </Text>
               </View>
@@ -138,7 +138,7 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
                   color={colors.textSecondary}
                   style={styles.bulletIcon}
                 />
-                <Text style={[styles.bulletText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bulletText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                   {t('autoNotes.noStreak')}
                 </Text>
               </View>
@@ -149,7 +149,7 @@ const AutoNotesScreen: React.FC<AutoNotesScreenProps> = ({
                   color={colors.textSecondary}
                   style={styles.bulletIcon}
                 />
-                <Text style={[styles.bulletText, { color: colors.textSecondary }]}>
+                <Text style={[styles.bulletText, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
                   {t('autoNotes.noStats')}
                 </Text>
               </View>

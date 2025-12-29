@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/utils/theme/ThemeProvider";
 import { NavItemProps } from "./types";
 import { styles } from "./NavItem.styles";
 import { ICON_SIZE } from "./constants";
@@ -14,6 +15,7 @@ import { ICON_SIZE } from "./constants";
 const NavItem: React.FC<NavItemProps> = memo(
   ({ tab, isActive, activeColor, inactiveColor, indicatorColor, onPress }) => {
     const { t } = useTranslation("common");
+    const { typography } = useTheme();
 
     // M3 Pill Indicator Animation
     const indicatorStyle = useAnimatedStyle(() => ({
@@ -49,6 +51,7 @@ const NavItem: React.FC<NavItemProps> = memo(
             {
               color,
               fontWeight: isActive ? "600" : "400",
+              fontSize: typography.size.xs,
             },
           ]}
         >

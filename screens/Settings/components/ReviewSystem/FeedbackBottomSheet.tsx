@@ -42,7 +42,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
   onPlayStoreRedirect,
 }) => {
   const { t } = useTranslation("feedback");
-  const { colors, isDark } = useTheme();
+  const { colors, typography, isDark } = useTheme();
   const { hideBottomNav, resetBottomNav } = useNavigation();
 
   // Navigation state
@@ -290,7 +290,7 @@ const FeedbackBottomSheet: React.FC<FeedbackBottomSheetProps> = ({
             <View style={styles.placeholder} />
           )}
 
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
             {getTitle()}
           </Text>
 
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   title: {
-    fontSize: 18,
+    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     flex: 1,
     textAlign: "center",

@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     borderRadius: INDICATOR_RADIUS,
   },
   label: {
-    fontSize: LABEL_SIZE,
+    // fontSize set dynamically via theme.typography
     marginTop: 4,
     letterSpacing: 0.2,
   },

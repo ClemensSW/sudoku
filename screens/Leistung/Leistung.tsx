@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 10,
   },
-  loadingWrapper: { flex: 1, marginTop: 24 },
+  loadingWrapper: { flex: 1, marginTop: 16 },
   profileContainer: { paddingHorizontal: 16, marginTop: 24, marginBottom: 8 },
   tabSection: {
     width: "100%",

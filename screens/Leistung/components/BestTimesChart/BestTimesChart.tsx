@@ -31,7 +31,7 @@ const getBestTime = (time: number): string => {
 const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
   const { t } = useTranslation('leistung');
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
   // Max time for scaling (use largest non-infinity time or default to 15 minutes)
@@ -102,7 +102,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
       entering={FadeInDown.delay(400).duration(400)}
     >
       {/* Section Title */}
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
         {t('bestTimes.title')}
       </Text>
 
@@ -117,7 +117,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
           entering={FadeInDown.delay(500 + index * 80).duration(300)}
         >
           {/* Label */}
-          <Text style={[styles.difficultyLabel, { color: colors.textPrimary }]}>
+          <Text style={[styles.difficultyLabel, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
             {diff.label}
           </Text>
 
@@ -146,7 +146,7 @@ const BestTimesChart: React.FC<BestTimesChartProps> = ({ stats }) => {
           </View>
 
           {/* Time */}
-          <Text style={[styles.timeText, { color: colors.textPrimary }]}>
+          <Text style={[styles.timeText, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {getBestTime(diff.time)}
           </Text>
         </Animated.View>

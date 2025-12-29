@@ -40,7 +40,7 @@ export default StyleSheet.create({
 
   // Stil für das Unendlichkeitssymbol
   infinityText: {
-    fontSize: 20,
+    // fontSize set dynamically via theme.typography
     fontWeight: "bold",
     marginTop: -3, // Leicht angepasst für bessere vertikale Ausrichtung
   },

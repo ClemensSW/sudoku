@@ -24,7 +24,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
   showErrors = true, // Standardwert true
 }) => {
   const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = theme;
 
   // Animation für das Fehlerindikator-Pulsieren
   const scale = useSharedValue(1);
@@ -84,7 +84,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({
             <Text
               style={[
                 styles.infinityText,
-                { color: colors.textSecondary, marginLeft: 4 },
+                { color: colors.textSecondary, marginLeft: 4, fontSize: typography.size.xl },
               ]}
             >
               ∞

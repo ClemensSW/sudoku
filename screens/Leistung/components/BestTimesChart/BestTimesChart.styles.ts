@@ -16,7 +16,7 @@ export default StyleSheet.create({
 
   // Section Title - centered, uppercase
   sectionTitle: {
-    fontSize: 13,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -37,7 +37,7 @@ export default StyleSheet.create({
   // Difficulty Label
   difficultyLabel: {
     width: 70,
-    fontSize: 14,
+    // fontSize set dynamically via theme.typography
     fontWeight: '600',
   },
 
@@ -59,7 +59,7 @@ export default StyleSheet.create({
   // Time Value
   timeText: {
     width: 50,
-    fontSize: 16,
+    // fontSize set dynamically via theme.typography
     fontWeight: '700',
     textAlign: 'right',
     fontVariant: ['tabular-nums'],

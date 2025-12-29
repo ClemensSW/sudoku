@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   // Hero section - flows into screen background (paddingTop set inline with safe area)
   heroSection: {
-    paddingBottom: 48,
+    paddingBottom: 24,
     paddingHorizontal: 20,
     alignItems: "center",
   },
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   // Title section
   titleSection: {
     alignItems: "center",
-    marginBottom: 48,
+    marginBottom: 28,
   },
   subtitle: {
     fontSize: 12,

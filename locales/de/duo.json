@@ -5,7 +5,7 @@
   },
   "stats": {
     "elo": "ELO",
-    "record": "W - N",
+    "record": "Bilanz",
     "day": "Tag",
     "days": "Tage",
     "loginPrompt": "Melde dich an um deine Stats zu sehen"
@@ -58,6 +58,7 @@
   },
   "features": {
     "title": "So funktioniert's",
+    "short": "Info",
     "items": {
       "playTogether": {
         "title": "Gemeinsam spielen",

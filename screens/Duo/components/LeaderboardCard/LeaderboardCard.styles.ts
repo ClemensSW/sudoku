@@ -5,8 +5,8 @@ const styles = StyleSheet.create({
   // Card container (shadow like PlayerStatsHero)
   card: {
     marginHorizontal: 20,
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: 0,
+    marginBottom: 24,
     borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden",
@@ -17,18 +17,17 @@ const styles = StyleSheet.create({
     // elevation is set dynamically in component
   },
 
-  // Liga Header (Hero-Style) - 48px spacing to icon
+  // Liga Header - kompakter
   leagueHeader: {
     alignItems: "center",
-    paddingTop: 32,
-    paddingBottom: 24,
+    paddingTop: 20,
+    paddingBottom: 16,
     paddingHorizontal: 16,
   },
   leagueIconContainer: {
-    marginTop: 16,
-    width: 88,
-    height: 88,
-    borderRadius: 44,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
   },

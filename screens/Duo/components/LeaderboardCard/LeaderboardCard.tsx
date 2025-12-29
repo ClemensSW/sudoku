@@ -194,7 +194,7 @@ const LeaderboardCard: React.FC = () => {
             },
           ]}
         >
-          <SilverBadgeIcon width={64} height={64} />
+          <SilverBadgeIcon width={48} height={48} />
         </View>
         <Text style={[styles.leagueName, { color: colors.textPrimary }]}>
           {leagueName}

@@ -58,6 +58,7 @@
   },
   "features": {
     "title": "How it works",
+    "short": "Info",
     "items": {
       "playTogether": {
         "title": "Play together",

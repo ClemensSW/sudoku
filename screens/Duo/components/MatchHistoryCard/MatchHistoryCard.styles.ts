@@ -5,8 +5,8 @@ const styles = StyleSheet.create({
   // Card container (shadow like LeaderboardCard)
   card: {
     marginHorizontal: 20,
-    marginTop: 8, // Extra spacing after LeaderboardCard (total 24px)
-    marginBottom: 16,
+    marginTop: 0,
+    marginBottom: 24,
     borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden",
@@ -17,15 +17,19 @@ const styles = StyleSheet.create({
     // elevation is set dynamically in component
   },
 
-  // Hero-Style Header - 48px spacing to icon (matching LeaderboardCard)
+  // Header - zentriert wie Liga Header
   header: {
     alignItems: "center",
-    paddingTop: 32,
-    paddingBottom: 24,
+    paddingTop: 20,
+    paddingBottom: 16,
     paddingHorizontal: 16,
   },
   headerIconContainer: {
-    marginTop: 16,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 18,

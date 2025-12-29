@@ -375,6 +375,21 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
                   {streakLabel}
                 </Text>
               </Pressable>
+
+              {/* Tutorial Link */}
+              {onTutorialPress && (
+                <>
+                  <Text style={[styles.statsInlineDivider, { color: colors.textSecondary }]}>
+                    •
+                  </Text>
+                  <Pressable onPress={onTutorialPress} style={styles.statsInlineItem}>
+                    <Feather name="info" size={18} color={colors.textSecondary} />
+                    <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                      {t("features.short", { defaultValue: "Info" })}
+                    </Text>
+                  </Pressable>
+                </>
+              )}
             </Animated.View>
 
             {/* Action Buttons Row */}
@@ -440,25 +455,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
           </View>
         )}
 
-        {/* Footer with Tutorial Link */}
-        {onTutorialPress && (
-          <View style={styles.footer}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.tutorialButton,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-              onPress={onTutorialPress}
-            >
-              <Feather name="info" size={16} color={colors.textSecondary} />
-              <Text
-                style={[styles.tutorialButtonText, { color: colors.textSecondary }]}
-              >
-                {t("features.title", { defaultValue: "So funktioniert's" })}
-              </Text>
-            </Pressable>
-          </View>
-        )}
     </LinearGradient>
   );
 };

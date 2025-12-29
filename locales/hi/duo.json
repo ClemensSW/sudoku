@@ -58,6 +58,7 @@
   },
   "features": {
     "title": "यह कैसे काम करता है",
+    "short": "जानकारी",
     "items": {
       "playTogether": {
         "title": "एक साथ खेलें",

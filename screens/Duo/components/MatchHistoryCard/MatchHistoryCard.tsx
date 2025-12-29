@@ -76,18 +76,13 @@ const MatchHistoryCard: React.FC = () => {
       ]}
       entering={FadeIn.duration(400).delay(200)}
     >
-      {/* Hero-Style Header */}
-      <Animated.View
-        style={styles.header}
-        entering={FadeInDown.duration(400).delay(300)}
-      >
-        <View style={styles.headerIconContainer}>
-          <HourglassIcon width={64} height={64} />
-        </View>
+      {/* Header - zentriert wie Liga Header */}
+      <View style={styles.header}>
+        <HourglassIcon width={64} height={64} />
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           {t("history.title", { defaultValue: "Letzte Spiele" })}
         </Text>
-      </Animated.View>
+      </View>
 
       {/* Divider */}
       <View style={[styles.divider, { backgroundColor: dividerColor }]} />

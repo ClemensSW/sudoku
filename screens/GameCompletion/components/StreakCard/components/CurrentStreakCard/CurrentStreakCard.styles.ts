@@ -76,7 +76,9 @@ export const styles = StyleSheet.create({
 
   // Calendar Section
   calendarSection: {
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.lg,
   },
   calendarHeader: {
     flexDirection: 'row',

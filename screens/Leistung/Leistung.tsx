@@ -53,9 +53,16 @@ const Leistung: React.FC = () => {
 
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const tabChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cameFromSettings = useRef(false);
   const tabSectionPosition = useSharedValue(0);
   const [tabSectionY, setTabSectionY] = useState<number>(0); // Regular state for scroll logic
   const scrollY = useSharedValue(0);
+  const cogwheelRotation = useSharedValue(0);
+
+  // Animated style for cogwheel rotation
+  const cogwheelAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${cogwheelRotation.value}deg` }],
+  }));
 
   const [stats, setStats] = useState<GameStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -131,6 +138,15 @@ const Leistung: React.FC = () => {
   // **NEU**: Refresh bei Fokus (Titel/Avatar/Stats nach Modal-Änderungen oder Käufen)
   useFocusEffect(
     React.useCallback(() => {
+      // Reverse cogwheel animation when returning from settings
+      if (cameFromSettings.current) {
+        cogwheelRotation.value = withTiming(cogwheelRotation.value - 360, {
+          duration: 500,
+          easing: Easing.out(Easing.cubic),
+        });
+        cameFromSettings.current = false;
+      }
+
       let cancelled = false;
       (async () => {
         try {
@@ -303,7 +319,14 @@ const Leistung: React.FC = () => {
     handleTabChange("streak");
   };
 
-  const handleOpenSettings = () => router.push("/settings");
+  const handleOpenSettings = () => {
+    cameFromSettings.current = true;
+    cogwheelRotation.value = withTiming(cogwheelRotation.value + 360, {
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    });
+    router.push("/settings");
+  };
   const handleOpenSupportShop = () => setShowSupportShop(true);
   const handleCloseSupportShop = () => setShowSupportShop(false);
 
@@ -321,11 +344,13 @@ const Leistung: React.FC = () => {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
         <TouchableOpacity
-          style={[styles.settingsButton, { top: insets.top + 8 }]}
+          style={[styles.settingsButton, { top: insets.top - 10 }]}
           onPress={handleOpenSettings}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <CogwheelIcon width={28} height={28} fill={colors.textSecondary} />
+          <Animated.View style={cogwheelAnimatedStyle}>
+            <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+          </Animated.View>
         </TouchableOpacity>
         <LoadingState />
       </View>
@@ -337,11 +362,13 @@ const Leistung: React.FC = () => {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
         <TouchableOpacity
-          style={[styles.settingsButton, { top: insets.top + 8 }]}
+          style={[styles.settingsButton, { top: insets.top - 10 }]}
           onPress={handleOpenSettings}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <CogwheelIcon width={28} height={28} fill={colors.textSecondary} />
+          <Animated.View style={cogwheelAnimatedStyle}>
+            <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+          </Animated.View>
         </TouchableOpacity>
         <EmptyState />
       </View>
@@ -364,11 +391,13 @@ const Leistung: React.FC = () => {
         <View style={styles.profileContainer}>
           {/* Settings Button - inside container, scrolls with content */}
           <TouchableOpacity
-            style={[styles.settingsButtonScrolling, { top: insets.top }]}
+            style={[styles.settingsButtonScrolling, { top: insets.top - 20 }]}
             onPress={handleOpenSettings}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <CogwheelIcon width={32} height={32} fill={colors.textSecondary} />
+            <Animated.View style={cogwheelAnimatedStyle}>
+              <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+            </Animated.View>
           </TouchableOpacity>
           <ProfileHeader
             stats={stats}
@@ -474,7 +503,7 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 10,
   },
-  profileContainer: { paddingHorizontal: 16, marginTop: 8, marginBottom: 8 },
+  profileContainer: { paddingHorizontal: 16, marginTop: 24, marginBottom: 8 },
   tabSection: {
     width: "100%",
   },

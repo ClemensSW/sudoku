@@ -120,5 +120,16 @@
       "description": "Flexible on two devices",
       "comingSoon": "Coming Soon"
     }
+  },
+  "tutorial": {
+    "back": "Back",
+    "next": "Next",
+    "understood": "Got it",
+    "leagues": {
+      "title": "The League System",
+      "intro": "Rise through 7 ranks:",
+      "currentRank": "Your current rank:",
+      "pointsToNext": "{{points}} points to {{rank}}"
+    }
   }
 }

@@ -4,17 +4,16 @@ import { View, Text, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSequence,
   withTiming,
   withDelay,
   Easing,
-  FadeIn,
   FadeInDown,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { loadStats } from "@/utils/storage";
 import { triggerHaptic } from "@/utils/haptics";
@@ -28,12 +27,6 @@ import LightningIcon from "@/assets/svg/lightning.svg";
 import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 
 import styles from "./PlayerStatsHero.styles";
-
-// Erfolge Color - Deep Wine (matches Leistungsscreen)
-const ERFOLGE_COLOR = "#8B4F56";
-
-// Serien Color - Golden Amber (matches Leistungsscreen Streak section)
-const SERIEN_COLOR = "#FFC850";
 
 // ELO thresholds for each tier
 const TIER_THRESHOLDS: Record<RankTier, number> = {
@@ -59,11 +52,12 @@ const NEXT_TIER: Record<RankTier, RankTier | null> = {
 
 interface PlayerStatsHeroProps {
   elo: number;
-  wins: number;
-  losses: number;
   isLoggedIn?: boolean;
   onTutorialPress?: () => void;
   onLeaderboardPress?: () => void;
+  onLocalPlay?: () => void;
+  onOnlinePlay?: () => void;
+  isOnlineDisabled?: boolean;
 }
 
 // Helper to convert hex to rgba
@@ -96,45 +90,43 @@ const getTierGradientColors = (
 
 const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
   elo,
-  wins,
-  losses,
   isLoggedIn = true,
   onTutorialPress,
   onLeaderboardPress,
+  onLocalPlay,
+  onOnlinePlay,
+  isOnlineDisabled = false,
 }) => {
   const { t } = useTranslation("duo");
   const theme = useTheme();
   const colors = theme.colors;
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { tier, colors: leagueColors } = useCurrentLeague();
 
-  // Load real streak value from storage
+  // Load real stats from storage
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [gameStats, setGameStats] = useState({ wins: 0, losses: 0 });
 
   useEffect(() => {
-    const loadStreak = async () => {
+    const loadData = async () => {
       try {
         const stats = await loadStats();
         setCurrentStreak(stats.dailyStreak?.currentStreak || 0);
+        setGameStats({
+          wins: stats.gamesWon || 0,
+          losses: (stats.gamesPlayed || 0) - (stats.gamesWon || 0),
+        });
       } catch (error) {
-        console.error("Failed to load streak:", error);
+        console.error("Failed to load stats:", error);
       }
     };
-    loadStreak();
+    loadData();
   }, []);
 
   // Animation values
-  const statsScale = useSharedValue(1);
   const progressWidth = useSharedValue(0);
   const shinePosition = useSharedValue(-150);
-
-  // Pop animation on mount
-  useEffect(() => {
-    statsScale.value = withSequence(
-      withTiming(1.03, { duration: 200 }),
-      withTiming(1, { duration: 200 })
-    );
-  }, []);
 
   // Shine animation for RankCard (periodic metallic gleam)
   useEffect(() => {
@@ -157,10 +149,6 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
 
   const shineAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: shinePosition.value }, { rotate: "25deg" }],
-  }));
-
-  const statsAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: statsScale.value }],
   }));
 
   // Navigate to Erfolge tab on record press
@@ -219,54 +207,43 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
     : "";
 
   return (
-    <Animated.View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surface,
-          elevation: theme.isDark ? 0 : 8,
-          shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
-        },
-      ]}
-      entering={FadeIn.duration(400)}
+    <LinearGradient
+      colors={
+        theme.isDark
+          ? [
+              hexToRGBA(leagueColors.accent, 0.15),
+              hexToRGBA(leagueColors.accent, 0.05),
+              "transparent",
+            ]
+          : [
+              hexToRGBA(leagueColors.accent, 0.2),
+              hexToRGBA(leagueColors.accent, 0.08),
+              "transparent",
+            ]
+      }
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={[styles.heroSection, { paddingTop: insets.top + 40 }]}
     >
-      <LinearGradient
-        colors={
-          theme.isDark
-            ? [
-                hexToRGBA(leagueColors.accent, 0.15),
-                hexToRGBA(leagueColors.accent, 0.08),
-                hexToRGBA(leagueColors.accent, 0),
-              ]
-            : [
-                hexToRGBA(leagueColors.accent, 0.2),
-                hexToRGBA(leagueColors.accent, 0.1),
-                hexToRGBA(leagueColors.accent, 0),
-              ]
-        }
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.heroHeader}
-      >
-        {/* Battle Icon - Duo Mode Identifier */}
-        <View style={styles.battleIconContainer}>
-          <BattleIcon width={88} height={88} />
-        </View>
+      {/* Battle Icon - Duo Mode Identifier */}
+      <View style={styles.battleIconContainer}>
+        <BattleIcon width={120} height={120} />
+      </View>
 
-        {/* Title Section */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            {t("header.subtitle", { defaultValue: "ZWEI SPIELER MODUS" })}
-          </Text>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
-            {t("header.title", { defaultValue: "Sudoku Duo" })}
-          </Text>
-        </View>
+      {/* Title Section */}
+      <View style={styles.titleSection}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          {t("header.subtitle", { defaultValue: "ZWEI SPIELER MODUS" })}
+        </Text>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          {t("header.title", { defaultValue: "Sudoku Duo" })}
+        </Text>
+      </View>
 
-        {isLoggedIn ? (
-          <>
-            {/* Metallic Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
-            <Pressable
+      {isLoggedIn ? (
+        <>
+          {/* Metallic Rank Card with Progress Bar (clickable -> scroll to LeaderboardCard) */}
+          <Pressable
               onPress={handleLeaderboardPress}
               disabled={!onLeaderboardPress}
               style={{ width: "100%" }}
@@ -367,80 +344,85 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
               </Animated.View>
             </Pressable>
 
-            {/* Stats Row - Neutral Cards with Colored Icons */}
-            <Animated.View style={[styles.statsRow, statsAnimatedStyle]}>
-              {/* W-L Record Card (clickable -> Erfolge Tab) */}
-              <Pressable onPress={handleRecordPress} style={styles.statCardWrapper}>
-                <Animated.View
-                  style={[
-                    styles.statCard,
-                    {
-                      backgroundColor: colors.surface,
-                      borderColor: theme.isDark
-                        ? "rgba(255,255,255,0.08)"
-                        : "rgba(0,0,0,0.06)",
-                      shadowColor: theme.isDark ? "transparent" : "rgba(0,0,0,0.1)",
-                      elevation: theme.isDark ? 0 : 2,
-                    },
-                  ]}
-                  entering={FadeInDown.duration(400).delay(200)}
-                >
-                  <View style={styles.statCardContent}>
-                    {/* Icon with accent color background */}
-                    <View
-                      style={[
-                        styles.statIconCircle,
-                        { backgroundColor: hexToRGBA(ERFOLGE_COLOR, theme.isDark ? 0.2 : 0.15) },
-                      ]}
-                    >
-                      <ZielIcon width={28} height={28} />
-                    </View>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {wins}-{losses}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      {t("stats.record", { defaultValue: "Bilanz" })}
-                    </Text>
-                  </View>
-                </Animated.View>
+            {/* Stats Inline - Compact horizontal display */}
+            <Animated.View
+              style={styles.statsInline}
+              entering={FadeInDown.duration(400).delay(200)}
+            >
+              {/* W-L Record (clickable -> Erfolge Tab) */}
+              <Pressable onPress={handleRecordPress} style={styles.statsInlineItem}>
+                <ZielIcon width={20} height={20} />
+                <Text style={[styles.statsInlineValue, { color: colors.textPrimary }]}>
+                  {gameStats.wins}-{gameStats.losses}
+                </Text>
+                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                  {t("stats.record", { defaultValue: "Bilanz" })}
+                </Text>
               </Pressable>
 
-              {/* Daily Streak Card (clickable) */}
-              <Pressable onPress={handleStreakPress} style={styles.statCardWrapper}>
-                <Animated.View
-                  style={[
-                    styles.statCard,
-                    {
-                      backgroundColor: colors.surface,
-                      borderColor: theme.isDark
-                        ? "rgba(255,255,255,0.08)"
-                        : "rgba(0,0,0,0.06)",
-                      shadowColor: theme.isDark ? "transparent" : "rgba(0,0,0,0.1)",
-                      elevation: theme.isDark ? 0 : 2,
-                    },
-                  ]}
-                  entering={FadeInDown.duration(400).delay(300)}
-                >
-                  <View style={styles.statCardContent}>
-                    {/* Icon with accent color background */}
-                    <View
-                      style={[
-                        styles.statIconCircle,
-                        { backgroundColor: hexToRGBA(SERIEN_COLOR, theme.isDark ? 0.2 : 0.15) },
-                      ]}
-                    >
-                      <LightningIcon width={28} height={28} />
-                    </View>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {currentStreak}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      {streakLabel}
-                    </Text>
-                  </View>
-                </Animated.View>
+              {/* Divider */}
+              <Text style={[styles.statsInlineDivider, { color: colors.textSecondary }]}>
+                •
+              </Text>
+
+              {/* Daily Streak (clickable) */}
+              <Pressable onPress={handleStreakPress} style={styles.statsInlineItem}>
+                <LightningIcon width={20} height={20} />
+                <Text style={[styles.statsInlineValue, { color: colors.textPrimary }]}>
+                  {currentStreak}
+                </Text>
+                <Text style={[styles.statsInlineLabel, { color: colors.textSecondary }]}>
+                  {streakLabel}
+                </Text>
               </Pressable>
             </Animated.View>
+
+            {/* Action Buttons Row */}
+            {(onLocalPlay || onOnlinePlay) && (
+              <View style={styles.actionButtonsRow}>
+                {onLocalPlay && (
+                  <Pressable
+                    onPress={onLocalPlay}
+                    style={({ pressed }) => [
+                      styles.actionButton,
+                      {
+                        backgroundColor: colors.surface,
+                        borderColor: theme.isDark
+                          ? "rgba(255,255,255,0.08)"
+                          : "rgba(0,0,0,0.06)",
+                        shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
+                        opacity: pressed ? 0.9 : 1,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>
+                      {t("gameModeModal.local.title", { defaultValue: "Lokal spielen" })}
+                    </Text>
+                  </Pressable>
+                )}
+                {onOnlinePlay && (
+                  <Pressable
+                    onPress={onOnlinePlay}
+                    disabled={isOnlineDisabled}
+                    style={({ pressed }) => [
+                      styles.actionButton,
+                      {
+                        backgroundColor: colors.surface,
+                        borderColor: theme.isDark
+                          ? "rgba(255,255,255,0.08)"
+                          : "rgba(0,0,0,0.06)",
+                        shadowColor: theme.isDark ? "transparent" : leagueColors.accent,
+                        opacity: isOnlineDisabled ? 0.5 : pressed ? 0.9 : 1,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>
+                      {t("gameModeModal.online.title", { defaultValue: "Online spielen" })}
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            )}
           </>
         ) : (
           <View style={styles.loginPrompt}>
@@ -477,8 +459,7 @@ const PlayerStatsHero: React.FC<PlayerStatsHeroProps> = ({
             </Pressable>
           </View>
         )}
-      </LinearGradient>
-    </Animated.View>
+    </LinearGradient>
   );
 };
 

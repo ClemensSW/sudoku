@@ -2,36 +2,23 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  // Card container with glowing shadow (like LevelCard)
-  card: {
-    marginHorizontal: 20,
-    marginBottom: 16,
-    borderRadius: 20,
-    overflow: "hidden", // Clips shadow to rounded corners
-    // iOS Shadow (glowing effect)
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-  },
-
-  // Hero header with gradient
-  heroHeader: {
-    paddingTop: 48,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
+  // Hero section - flows into screen background (paddingTop set inline with safe area)
+  heroSection: {
+    paddingBottom: 48,
+    paddingHorizontal: 20,
     alignItems: "center",
   },
 
-  // Battle icon - Duo Mode identifier (hero-sized)
+  // Battle icon - Duo Mode identifier (hero-sized, larger)
   battleIconContainer: {
-    marginTop: 24,
-    marginBottom: 16,
+    marginTop: 16,
+    marginBottom: 20,
   },
 
   // Title section
   titleSection: {
     alignItems: "center",
-    marginBottom: 72,
+    marginBottom: 48,
   },
   subtitle: {
     fontSize: 12,
@@ -249,6 +236,83 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     textAlign: "center",
+  },
+
+  // Stats inline - compact horizontal display
+  statsInline: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
+    paddingVertical: 8,
+  },
+
+  // Individual stat item in inline row
+  statsInlineItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+
+  // Stat value in inline display
+  statsInlineValue: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+
+  // Stat label in inline display
+  statsInlineLabel: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+
+  // Divider between stats
+  statsInlineDivider: {
+    fontSize: 16,
+    opacity: 0.4,
+  },
+
+  // Action buttons row (Lokal/Online spielen)
+  actionButtonsRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 16,
+    width: "100%",
+  },
+
+  // Individual action button
+  actionButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    borderWidth: 1.5,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    minHeight: 60,
+    // Shadow
+    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+  },
+
+  // Action button text
+  actionButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    letterSpacing: 0.2,
+    textAlign: "center",
+  },
+
+  // Action button icon (chevron)
+  actionButtonIcon: {
+    position: "absolute",
+    right: 16,
+    opacity: 0.6,
   },
 
   // Footer with tutorial link

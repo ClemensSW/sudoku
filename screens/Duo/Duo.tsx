@@ -13,7 +13,6 @@ import { Difficulty } from "@/utils/sudoku";
 // Components
 import DevBanner from "./components/DevBanner";
 import PlayerStatsHero from "./components/PlayerStatsHero";
-import GameModeCard from "./components/GameModeCard";
 import LeaderboardCard from "./components/LeaderboardCard";
 import MatchHistoryCard from "./components/MatchHistoryCard";
 import DuoTutorialOverlay from "./components/DuoTutorialOverlay";
@@ -25,8 +24,6 @@ import styles from "./Duo.styles";
 // Dummy stats for display (later: real stats from Firestore)
 const DUMMY_STATS = {
   elo: 1247,
-  wins: 12,
-  losses: 3,
 };
 
 const Duo: React.FC = () => {
@@ -120,24 +117,18 @@ const Duo: React.FC = () => {
         ref={scrollViewRef}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
+          { paddingBottom: insets.bottom + 100 },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section with Player Stats */}
+        {/* Hero Section with Player Stats and Action Buttons */}
         <PlayerStatsHero
           elo={DUMMY_STATS.elo}
-          wins={DUMMY_STATS.wins}
-          losses={DUMMY_STATS.losses}
           onTutorialPress={handleTutorialPress}
           onLeaderboardPress={handleLeaderboardPress}
+          onLocalPlay={handleLocalPlay}
+          onOnlinePlay={handleOnlinePlay}
         />
-
-        {/* Game Mode Cards */}
-        <View style={styles.gameModeSection}>
-          <GameModeCard mode="local" onPress={handleLocalPlay} />
-          <GameModeCard mode="online" onPress={handleOnlinePlay} />
-        </View>
 
         {/* Leaderboard Card */}
         <View onLayout={(e) => setLeaderboardY(e.nativeEvent.layout.y)}>

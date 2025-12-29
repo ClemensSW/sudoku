@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
 
-  // Feature cards (same as DuoFeatures)
+  // Feature cards
   featureCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -56,9 +56,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 2,
   },
-  featureIcon: {
-    width: 48,
-    height: 48,
+  featureIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -76,22 +77,132 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // Footer with button
+  // Progress indicator (dots under header)
+  progressContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 12,
+    gap: 8,
+  },
+
+  // Leagues page
+  leagueIntro: {
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  ranksContainer: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 12,
+    marginBottom: 16,
+  },
+  rankRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
+  rankIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  rankName: {
+    flex: 1,
+    fontSize: 15,
+  },
+  rankElo: {
+    fontSize: 13,
+    marginRight: 8,
+  },
+  currentIndicator: {
+    width: 20,
+    alignItems: "center",
+  },
+
+  // Current rank card
+  currentRankCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginTop: 8,
+  },
+  currentRankBadge: {
+    marginRight: 14,
+  },
+  currentRankText: {
+    flex: 1,
+  },
+  currentRankLabel: {
+    fontSize: 13,
+    marginBottom: 2,
+  },
+  currentRankValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: 1,
+    marginBottom: 2,
+  },
+  pointsToNext: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+
+  // Footer with navigation
   footer: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
   },
-  understoodButton: {
+
+  // Dot indicators (used by progressContainer)
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+
+  // Navigation buttons
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  backButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    minWidth: 110,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  nextButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     borderRadius: radius.lg,
     minHeight: 52,
+    gap: 6,
   },
-  understoodButtonText: {
+  nextButtonWithBack: {
+    flex: 1,
+  },
+  nextButtonText: {
     fontSize: 16,
     fontWeight: "600",
   },

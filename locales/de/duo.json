@@ -120,5 +120,16 @@
       "description": "Flexibel auf zwei Geräten",
       "comingSoon": "In Planung"
     }
+  },
+  "tutorial": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "understood": "Verstanden",
+    "leagues": {
+      "title": "Das Liga-System",
+      "intro": "Steige durch 7 Ränge auf:",
+      "currentRank": "Dein aktueller Rang:",
+      "pointsToNext": "{{points}} Punkte bis {{rank}}"
+    }
   }
 }

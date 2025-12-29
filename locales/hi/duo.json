@@ -120,5 +120,16 @@
       "description": "दो डिवाइस पर लचीला",
       "comingSoon": "योजनाबद्ध"
     }
+  },
+  "tutorial": {
+    "back": "वापस",
+    "next": "अगला",
+    "understood": "समझ गया",
+    "leagues": {
+      "title": "लीग प्रणाली",
+      "intro": "7 रैंकों में आगे बढ़ें:",
+      "currentRank": "आपकी वर्तमान रैंक:",
+      "pointsToNext": "{{rank}} तक {{points}} अंक"
+    }
   }
 }

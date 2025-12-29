@@ -20,8 +20,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
   onHowToPlay,
 }) => {
   const { t } = useTranslation("settings");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = useTheme();
 
   return (
     <View
@@ -41,7 +40,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           </View>
           <View style={styles.actionTextContainer}>
             <Text
-              style={[styles.actionTitle, { color: colors.textPrimary }]}
+              style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
             >
               {t("help.autoNotes")}
             </Text>
@@ -70,7 +69,7 @@ const HelpSection: React.FC<HelpSectionProps> = ({
         </View>
         <View style={styles.actionTextContainer}>
           <Text
-            style={[styles.actionTitle, { color: colors.textPrimary }]}
+            style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
           >
             {t("help.howToPlay")}
           </Text>

@@ -22,8 +22,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
   isDuoMode = false, // Default to false
 }) => {
   const { t } = useTranslation("settings");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography } = useTheme();
 
   // If not in game context, return nothing
   if (!showGameFeatures || !onQuitGame) return null;
@@ -51,7 +50,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
               <CoffeeBreakIcon width={48} height={48} />
             </View>
             <View style={styles.actionTextContainer}>
-              <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
                 {t("actions.pauseGame")}
               </Text>
             </View>
@@ -76,7 +75,7 @@ const ActionsSection: React.FC<ActionsSectionProps> = ({
           <CloseIcon width={48} height={48} />
         </View>
         <View style={styles.actionTextContainer}>
-          <Text style={[styles.actionTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("actions.quitGame")}
           </Text>
         </View>

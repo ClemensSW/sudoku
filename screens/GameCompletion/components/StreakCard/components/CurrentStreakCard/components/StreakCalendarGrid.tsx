@@ -188,7 +188,12 @@ const StreakCalendarGrid: React.FC<StreakCalendarGridProps> = ({
             { backgroundColor: pressed ? (theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent' },
           ]}
         >
-          <Text style={[styles.monthTitle, { color: colors.textPrimary }]}>
+          <Text
+            style={[styles.monthTitle, { color: colors.textPrimary }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+          >
             {monthNames[month - 1]} {year}
           </Text>
         </Pressable>

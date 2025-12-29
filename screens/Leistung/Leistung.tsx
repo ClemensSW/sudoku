@@ -17,7 +17,7 @@ import { getAvatarUri } from "./utils/avatarStorage";
 import { getLevels } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/levelData";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
-import CogwheelIcon from "@/assets/svg/cogwheel.svg";
+import { Feather } from "@expo/vector-icons";
 import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
 import { useLandscapes } from "@/screens/Gallery/hooks/useLandscapes";
@@ -327,8 +327,14 @@ const Leistung: React.FC = () => {
             onPress={handleOpenSettings}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Animated.View style={cogwheelAnimatedStyle}>
-              <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+            <Animated.View
+              style={[
+                styles.settingsIconButton,
+                cogwheelAnimatedStyle,
+                { backgroundColor: colors.surface, ...theme.shadows.sm },
+              ]}
+            >
+              <Feather name="settings" size={24} color={colors.textPrimary} />
             </Animated.View>
           </TouchableOpacity>
           <LoadingState />
@@ -346,8 +352,14 @@ const Leistung: React.FC = () => {
           onPress={handleOpenSettings}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Animated.View style={cogwheelAnimatedStyle}>
-            <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+          <Animated.View
+            style={[
+              styles.settingsIconButton,
+              cogwheelAnimatedStyle,
+              { backgroundColor: colors.surface, ...theme.shadows.sm },
+            ]}
+          >
+            <Feather name="settings" size={24} color={colors.textPrimary} />
           </Animated.View>
         </TouchableOpacity>
         <EmptyState />
@@ -373,8 +385,14 @@ const Leistung: React.FC = () => {
             onPress={handleOpenSettings}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Animated.View style={cogwheelAnimatedStyle}>
-              <CogwheelIcon width={40} height={40} fill={colors.textSecondary} />
+            <Animated.View
+              style={[
+                styles.settingsIconButton,
+                cogwheelAnimatedStyle,
+                { backgroundColor: colors.surface, ...theme.shadows.sm },
+              ]}
+            >
+              <Feather name="settings" size={24} color={colors.textPrimary} />
             </Animated.View>
           </TouchableOpacity>
           <ProfileHeader
@@ -470,7 +488,14 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 10,
   },
-  loadingWrapper: { flex: 1, marginTop: 16 },
+  settingsIconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingWrapper: { flex: 1, marginTop: 24 },
   profileContainer: { paddingHorizontal: 16, marginTop: 24, marginBottom: 8 },
   tabSection: {
     width: "100%",

@@ -12,17 +12,21 @@ const LoadingState: React.FC = () => {
       entering={FadeIn.duration(300)}
       accessibilityLabel="Inhalte werden geladen"
     >
-      <ProfileHeaderSkeleton />
+      <View style={styles.profileWrapper}>
+        <ProfileHeaderSkeleton />
+      </View>
 
       {/* Tab Navigator Skeleton */}
       <View style={styles.tabNavigator}>
-        <SkeletonBox width="23%" height={40} borderRadius={8} />
-        <SkeletonBox width="23%" height={40} borderRadius={8} />
-        <SkeletonBox width="23%" height={40} borderRadius={8} />
-        <SkeletonBox width="23%" height={40} borderRadius={8} />
+        <SkeletonBox width="23%" height={44} borderRadius={8} />
+        <SkeletonBox width="23%" height={44} borderRadius={8} />
+        <SkeletonBox width="23%" height={44} borderRadius={8} />
+        <SkeletonBox width="23%" height={44} borderRadius={8} />
       </View>
 
-      <TabContentSkeleton />
+      <View style={styles.tabContent}>
+        <TabContentSkeleton />
+      </View>
     </Animated.View>
   );
 };
@@ -31,12 +35,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  profileWrapper: {
+    marginBottom: 8,
   },
   tabNavigator: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
     paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  tabContent: {
+    marginTop: 8,
   },
 });
 

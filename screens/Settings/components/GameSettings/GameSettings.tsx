@@ -26,16 +26,15 @@ const GameSettings: React.FC<GameSettingsProps> = ({
   isDuoMode = false, // Default to false
 }) => {
   const { t } = useTranslation("settings");
-  const theme = useTheme();
-  const colors = theme.colors;
+  const { colors, typography, isDark } = useTheme();
 
   if (!settings) return null;
 
   // iOS-style monochrome switch colors with opacity difference for better visibility
-  const switchTrackColorActive = theme.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
-  const switchTrackColorInactive = theme.isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
+  const switchTrackColorActive = isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.3)";
+  const switchTrackColorInactive = isDark ? "rgba(255,255,255,0.16)" : "rgba(120,120,128,0.16)";
   const switchThumbColorActive = "#FFFFFF";
-  const switchThumbColorInactive = theme.isDark ? "#666666" : "rgba(255,255,255,0.7)";
+  const switchThumbColorInactive = isDark ? "#666666" : "rgba(255,255,255,0.7)";
 
   return (
     <View
@@ -63,7 +62,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
             </View>
             <View style={styles.settingTextContainer}>
               <Text
-                style={[styles.settingTitle, { color: colors.textPrimary }]}
+                style={[styles.settingTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
               >
                 {t("gameSettings.highlightSameValues")}
               </Text>
@@ -92,7 +91,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
             </View>
             <View style={styles.settingTextContainer}>
               <Text
-                style={[styles.settingTitle, { color: colors.textPrimary }]}
+                style={[styles.settingTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}
               >
                 {t("gameSettings.highlightRelated")}
               </Text>
@@ -120,7 +119,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           <SelectionIcon width={48} height={48} />
         </View>
         <View style={styles.settingTextContainer}>
-          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.settingTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("gameSettings.showMistakes")}
           </Text>
         </View>
@@ -143,7 +142,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           <RadioIcon width={48} height={48} />
         </View>
         <View style={styles.settingTextContainer}>
-          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.settingTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("gameSettings.backgroundMusic")}
           </Text>
         </View>
@@ -166,7 +165,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
           <VibrationIcon width={48} height={48} />
         </View>
         <View style={styles.settingTextContainer}>
-          <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>
+          <Text style={[styles.settingTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t("gameSettings.vibration")}
           </Text>
         </View>

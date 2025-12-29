@@ -280,6 +280,7 @@ const DesignGroup: React.FC<DesignGroupProps> = ({
                   style={styles.fontScaleStepTouchable}
                   onPress={() => handleFontScaleSelect(index)}
                   activeOpacity={0.7}
+                  hitSlop={{ top: 12, bottom: 12, left: 6, right: 6 }}
                 >
                   <View
                     style={[
@@ -455,22 +456,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: spacing.md,
-    paddingLeft: 48 + spacing.md, // Align with text (icon width + margin)
+    paddingHorizontal: spacing.sm, // Full width, symmetric padding
   },
   fontScaleSteps: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: spacing.sm,
-    height: 32,
+    marginHorizontal: spacing.xs,
+    height: 44,
   },
   fontScaleStepTouchable: {
     flex: 1,
-    height: 32,
+    height: 44,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 2,
+    paddingHorizontal: 4,
   },
   fontScaleStep: {
     width: "100%",

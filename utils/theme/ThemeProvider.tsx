@@ -55,7 +55,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const systemColorScheme = useSystemColorScheme(); // Get device theme
   const [colorScheme, setColorScheme] = useState<"light" | "dark" | null>(null);
   const [userHasSetTheme, setUserHasSetTheme] = useState(false);
-  const [fontScale, setFontScale] = useState<number>(1.0);
+  const [fontScale, setFontScale] = useState<number>(DEFAULT_SETTINGS.fontScale);
   const [appIsReady, setAppIsReady] = useState(false);
 
   // Load saved theme preference on first render
@@ -70,7 +70,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           console.log('[ThemeProvider] First launch detected - using system theme:', systemColorScheme);
           setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
           setUserHasSetTheme(false);
-          setFontScale(1.0);
+          setFontScale(DEFAULT_SETTINGS.fontScale);
 
           // Save default settings with system theme
           await saveSettings({
@@ -82,13 +82,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           console.log('[ThemeProvider] User theme preference found:', settings.darkMode);
           setColorScheme(settings.darkMode);
           setUserHasSetTheme(true);
-          setFontScale(settings.fontScale ?? 1.0);
+          setFontScale(settings.fontScale ?? DEFAULT_SETTINGS.fontScale);
         } else {
           // Settings exist but no manual theme preference - use system theme
           console.log('[ThemeProvider] No theme preference - using system theme:', systemColorScheme);
           setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
           setUserHasSetTheme(false);
-          setFontScale(settings.fontScale ?? 1.0);
+          setFontScale(settings.fontScale ?? DEFAULT_SETTINGS.fontScale);
         }
 
         // Small delay to ensure everything is applied

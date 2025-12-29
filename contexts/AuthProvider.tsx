@@ -18,12 +18,9 @@ import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { uploadUserData, hasCloudData } from '@/utils/cloudSync/uploadService';
 import { downloadUserData } from '@/utils/cloudSync/downloadService';
-import { mergeAllData } from '@/utils/cloudSync/mergeService';
 import { syncOnAppLaunch, syncOnAppPause, updateSyncTimestamp } from '@/utils/cloudSync/syncService';
-import { loadStats, loadSettings, loadColorUnlock, saveStats, saveSettings, saveColorUnlock, DEFAULT_SETTINGS } from '@/utils/storage';
-import { loadUserProfile, saveUserProfile } from '@/utils/profileStorage';
-import { gameStatsToFirestore, gameSettingsToFirestore, colorUnlockToFirestore } from '@/utils/cloudSync/firestoreSchema';
-import { getFirebaseFirestore } from '@/utils/cloudSync/firebaseConfig';
+import { saveStats, saveSettings, saveColorUnlock } from '@/utils/storage';
+import { saveUserProfile } from '@/utils/profileStorage';
 
 // ===== Types =====
 
@@ -149,62 +146,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
             // Alert.alert('Warnung', 'Einige Daten konnten nicht gesichert werden.');
           }
         } else {
-          // ===== RE-LOGIN: Download + Merge (Sprint 3) =====
+          // ===== RE-LOGIN: Cloud überschreibt lokal =====
           console.log('[AuthProvider] Returning user detected - cloud data exists');
 
-          // 1. Download Cloud-Daten
+          // Download Cloud-Daten
           const cloudData = await downloadUserData(user.uid);
 
-          // 2. Load lokale Daten
-          const localStats = await loadStats();
-          const localSettings = (await loadSettings()) || DEFAULT_SETTINGS;
-          const localColorUnlock = await loadColorUnlock();
-          const localProfile = await loadUserProfile();
-
-          // 3. Merge mit Conflict Resolution
+          // Cloud-Daten direkt speichern (kein Merge - Cloud ist Source of Truth)
           if (cloudData.stats && cloudData.settings && cloudData.colorUnlock) {
-            const merged = mergeAllData(
-              localStats,
-              cloudData.stats,
-              localSettings,
-              cloudData.settings,
-              localColorUnlock,
-              cloudData.colorUnlock,
-              null,  // landscapes local (optional)
-              null,  // landscapes cloud (optional)
-              localProfile,
-              cloudData.profile
-            );
-
-            console.log('[AuthProvider] Data merged, conflicts resolved:', merged.conflictsResolved);
-
-            // 4. Save merged data lokal
             await Promise.all([
-              saveStats(merged.stats),
-              saveSettings(merged.settings),
-              saveColorUnlock(merged.colorUnlock),
+              saveStats(cloudData.stats),
+              saveSettings(cloudData.settings),
+              saveColorUnlock(cloudData.colorUnlock),
             ]);
 
-            // 4.1 Save merged profile (if available)
-            if (merged.profile) {
-              await saveUserProfile(merged.profile);
-              console.log('[AuthProvider] Profile saved:', merged.profile.name, merged.profile.titleLevelIndex);
+            console.log('[AuthProvider] ✅ Cloud data saved locally (stats, settings, colorUnlock)');
+
+            // Landscapes speichern (falls vorhanden)
+            if (cloudData.landscapes) {
+              const { saveLandscapeCollection } = await import('@/screens/Gallery/utils/landscapes/storage');
+              await saveLandscapeCollection(cloudData.landscapes);
+              console.log('[AuthProvider] ✅ Landscapes saved');
             }
 
-            // 5. Upload merged data zurück zu Cloud
-            const firestore = getFirebaseFirestore();
-            await Promise.all([
-              firestore.collection('users').doc(user.uid).collection('data').doc('stats').set(gameStatsToFirestore(merged.stats)),
-              firestore.collection('users').doc(user.uid).collection('data').doc('settings').set(gameSettingsToFirestore(merged.settings)),
-              firestore.collection('users').doc(user.uid).collection('data').doc('colorUnlock').set(colorUnlockToFirestore(merged.colorUnlock)),
-            ]);
-
-            console.log('[AuthProvider] ✅ Sync complete (Download + Merge)');
+            // Profile speichern (falls vorhanden)
+            if (cloudData.profile) {
+              await saveUserProfile(cloudData.profile);
+              console.log('[AuthProvider] ✅ Profile saved:', cloudData.profile.name);
+            }
 
             // Update sync timestamp so UI shows "Gerade eben"
             updateSyncTimestamp();
 
-            // TODO: Show sync summary to user
+            console.log('[AuthProvider] ✅ Sync complete (Cloud → Local)');
           } else {
             console.warn('[AuthProvider] ⚠️ Partial cloud data - using local as fallback');
           }

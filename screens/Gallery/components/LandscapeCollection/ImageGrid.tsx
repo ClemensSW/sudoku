@@ -19,6 +19,7 @@ import { Feather } from "@expo/vector-icons";
 import { Landscape } from "@/screens/Gallery/utils/landscapes/types";
 import { getCategoryName, getLandscapeName } from "@/screens/Gallery/utils/landscapes/data";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import styles from "./ImageGrid.styles";
@@ -334,10 +335,12 @@ const ImageGrid = forwardRef<FlatList, ImageGridProps>(({
 
   // Render grid with FlatList for better performance
   return (
-    <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
+    <Animated.View style={[styles.container, { backgroundColor: colors.background }]} entering={FadeIn.duration(300)}>
       <FlatList
         ref={ref}
         data={landscapes}
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={{ backgroundColor: colors.background, paddingTop: spacing.lg }}
         renderItem={({ item, index }) => (
           <LandscapeCard
             item={item}

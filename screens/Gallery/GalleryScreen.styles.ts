@@ -134,7 +134,7 @@ export default StyleSheet.create({
   // Adjusted gallery content area
   galleryContent: {
     flex: 1,
-    paddingTop: spacing.md, // Add some spacing between tabs and content
+    // paddingTop removed - already applied in ImageGrid.styles.ts container
   },
   
   scrollContent: {

@@ -11,30 +11,47 @@ interface InfoItemProps {
   icon: string;
   title: string;
   description: string;
-  iconColor?: string;
+  iconColor: string;
 }
 
 const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor }) => {
-  const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography } = useTheme();
 
   return (
     <View style={styles.infoItem}>
-      <View style={[
-        styles.iconContainer,
-        { backgroundColor: iconColor ? `${iconColor}20` : `${colors.primary}20` }
-      ]}>
+      <View
+        style={[
+          styles.iconContainer,
+          { backgroundColor: `${iconColor}15` },
+        ]}
+      >
         <Feather
           name={icon as any}
-          size={20}
-          color={iconColor || colors.primary}
+          size={16}
+          color={iconColor}
         />
       </View>
       <View style={styles.textContainer}>
-        <Text style={[styles.infoTitle, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
+        <Text
+          style={[
+            styles.infoTitle,
+            {
+              color: colors.textPrimary,
+              fontSize: typography.size.sm,
+            },
+          ]}
+        >
           {title}
         </Text>
-        <Text style={[styles.infoDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
+        <Text
+          style={[
+            styles.infoDescription,
+            {
+              color: colors.textSecondary,
+              fontSize: typography.size.xs,
+            },
+          ]}
+        >
           {description}
         </Text>
       </View>
@@ -44,17 +61,36 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, title, description, iconColor
 
 const InfoSection: React.FC = () => {
   const { t } = useTranslation('gallery');
-  const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = useTheme();
   const progressColor = useProgressColor();
 
   return (
     <View>
-      <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: colors.textSecondary,
+            fontSize: typography.size.sm,
+          },
+        ]}
+      >
         {t('filterModal.infoSection.title')}
       </Text>
 
-      <View style={styles.infoContainer}>
+      <View
+        style={[
+          styles.infoCard,
+          {
+            backgroundColor: isDark
+              ? 'rgba(255, 255, 255, 0.04)'
+              : 'rgba(0, 0, 0, 0.02)',
+            borderColor: isDark
+              ? 'rgba(255, 255, 255, 0.08)'
+              : 'rgba(0, 0, 0, 0.06)',
+          },
+        ]}
+      >
         <InfoItem
           icon="grid"
           iconColor={progressColor}
@@ -82,42 +118,44 @@ const InfoSection: React.FC = () => {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: "700",
-    marginBottom: spacing.md,
+    fontWeight: "600",
+    marginBottom: spacing.sm,
+    opacity: 0.8,
   },
-  
-  infoContainer: {
+
+  infoCard: {
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    padding: spacing.md,
     gap: spacing.md,
   },
-  
+
   infoItem: {
     flexDirection: "row",
     alignItems: "flex-start",
     gap: spacing.sm,
+    minHeight: 48,
   },
-  
+
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.lg,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   textContainer: {
     flex: 1,
   },
-  
+
   infoTitle: {
-    // fontSize set dynamically via theme.typography
     fontWeight: "600",
     marginBottom: spacing.xxs,
   },
 
   infoDescription: {
-    // fontSize set dynamically via theme.typography
-    lineHeight: 18,
+    lineHeight: 16,
   },
 });
 

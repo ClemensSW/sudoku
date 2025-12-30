@@ -14,7 +14,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
+    // paddingTop moved to FlatList contentContainerStyle for proper scroll clipping
   },
   
   gridContainer: {

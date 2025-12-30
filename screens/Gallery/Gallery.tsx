@@ -607,7 +607,7 @@ const Gallery: React.FC = () => {
 
       {/* Inhalt */}
       <Animated.View
-        style={[styles.content, { paddingBottom: insets.bottom + 60 }]}
+        style={[styles.content, { paddingBottom: insets.bottom + 60, backgroundColor }]}
         entering={FadeIn.duration(400)}
       >
         <View style={styles.galleryContent}>

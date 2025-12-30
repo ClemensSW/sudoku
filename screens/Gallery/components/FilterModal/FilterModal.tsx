@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import {
   View,
   Text,
-  TouchableOpacity,
   Pressable,
   StyleSheet,
 } from "react-native";
@@ -202,44 +201,25 @@ const FilterModal: React.FC<FilterModalProps> = ({
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
         >
-          {/* Filter Section */}
-          <View style={styles.section}>
-            {/* All Categories Button */}
-            <TouchableOpacity
-              style={[
-                styles.allButton,
-                {
-                  borderColor: allCategoriesSelected
-                    ? progressColor
-                    : colors.border,
-                  backgroundColor: allCategoriesSelected
-                    ? progressColor
-                    : "transparent",
-                  borderWidth: 2,
-                },
-              ]}
-              onPress={handleSelectAll}
-            >
-              <Text
-                style={[
-                  styles.allButtonText,
-                  {
-                    color: allCategoriesSelected
-                      ? "#FFFFFF"
-                      : colors.textPrimary,
-                    fontSize: typography.size.md,
-                  },
-                ]}
-              >
-                {t('filterModal.allCategories')}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Category Grid */}
+          {/* Filter Selection Card */}
+          <View
+            style={[
+              styles.filterCard,
+              {
+                backgroundColor: isDark
+                  ? 'rgba(255, 255, 255, 0.04)'
+                  : 'rgba(0, 0, 0, 0.02)',
+                borderColor: isDark
+                  ? 'rgba(255, 255, 255, 0.08)'
+                  : 'rgba(0, 0, 0, 0.06)',
+              },
+            ]}
+          >
             <CategoryGrid
               selectedCategories={tempSelectedCategories}
               onToggleCategory={handleCategoryToggle}
               allSelected={allCategoriesSelected}
+              onSelectAll={handleSelectAll}
             />
           </View>
 
@@ -278,18 +258,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   infoSectionContainer: {
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
   },
-  allButton: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.lg,
-    alignItems: 'center',
+  filterCard: {
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    padding: spacing.md,
     marginBottom: spacing.lg,
-  },
-  allButtonText: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: '600',
   },
   footer: {
     paddingHorizontal: 24,

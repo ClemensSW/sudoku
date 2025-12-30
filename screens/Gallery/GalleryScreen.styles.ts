@@ -84,8 +84,8 @@ export default StyleSheet.create({
   },
   
   tabsContainer: {
-    paddingBottom: 12,
-    paddingTop: 12,
+    paddingBottom: 16,
+    paddingTop: 16,
     paddingHorizontal: spacing.md,
     flexDirection: "row",
     justifyContent: "center", // Zentriert für Shifting Labels

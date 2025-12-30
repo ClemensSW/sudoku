@@ -82,8 +82,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   onImageUnlocked,
   onOpenSupportShop,
 }) => {
-  const theme = useTheme();
-  const { colors: themeColors, typography } = theme;
+  const { colors, typography, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation('gallery');
   const navigation = useReactNavigation();
@@ -347,10 +346,10 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       <TouchableOpacity
         style={{
           marginTop: 12,
-          backgroundColor: theme.isDark
+          backgroundColor: isDark
             ? "rgba(212, 175, 55, 0.12)"
             : "rgba(212, 175, 55, 0.08)",
-          borderColor: theme.isDark
+          borderColor: isDark
             ? "rgba(212, 175, 55, 0.3)"
             : "rgba(212, 175, 55, 0.25)",
           borderWidth: 1,
@@ -380,7 +379,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           <Text style={{ color: premiumColor, fontSize: typography.size.sm, fontWeight: '600' }}>
             {bannerContent.title}
           </Text>
-          <Text style={{ color: themeColors.textSecondary, fontSize: typography.size.xs, marginTop: 2 }}>
+          <Text style={{ color: colors.textSecondary, fontSize: typography.size.xs, marginTop: 2 }}>
             {bannerContent.subtitle}
           </Text>
         </View>
@@ -395,7 +394,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           style={{ padding: 4, marginLeft: 8 }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Feather name="x" size={18} color={themeColors.textSecondary} />
+          <Feather name="x" size={18} color={colors.textSecondary} />
         </TouchableOpacity>
       </TouchableOpacity>
     );
@@ -478,7 +477,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
 
         {/* Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
+          <Text style={[styles.headerTitle, { fontSize: typography.size.lg }]} numberOfLines={1}>
             {getLandscapeName(landscape.id)}
           </Text>
         </View>
@@ -543,7 +542,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         }}
       >
         {/* description */}
-        <Text style={styles.description}>{getLandscapeDescription(landscape.id)}</Text>
+        <Text style={[styles.description, { fontSize: typography.size.sm }]}>{getLandscapeDescription(landscape.id)}</Text>
 
         {/* Tags */}
         <View style={styles.tagsContainer}>
@@ -720,7 +719,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                       color="#FFFFFF"
                       style={{ marginRight: 8 }}
                     />
-                    <Text style={[styles.selectButtonText, { fontWeight: '600' }]}>
+                    <Text style={[styles.selectButtonText, { fontWeight: '600', fontSize: typography.size.md }]}>
                       {t('detailModal.unlockButton')}
                     </Text>
                   </TouchableOpacity>

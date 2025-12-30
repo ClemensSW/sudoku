@@ -27,8 +27,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
   onCancel,
   loading = false,
 }) => {
-  const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = useTheme();
   const progressColor = useProgressColor();
   const { t } = useTranslation('gallery');
 
@@ -45,7 +44,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
         {/* Blur backdrop */}
         <BlurView
           intensity={20}
-          tint={theme.isDark ? "dark" : "light"}
+          tint={isDark ? "dark" : "light"}
           style={styles.blurView}
         />
 
@@ -55,7 +54,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
           style={[
             styles.dialogContainer,
             {
-              backgroundColor: theme.isDark ? colors.card : "#FFFFFF",
+              backgroundColor: isDark ? colors.card : "#FFFFFF",
             },
           ]}
         >
@@ -81,7 +80,7 @@ const UnlockConfirmationDialog: React.FC<UnlockConfirmationDialogProps> = ({
                 styles.button,
                 styles.cancelButton,
                 {
-                  backgroundColor: theme.isDark
+                  backgroundColor: isDark
                     ? "rgba(255,255,255,0.1)"
                     : "rgba(0,0,0,0.05)",
                 },

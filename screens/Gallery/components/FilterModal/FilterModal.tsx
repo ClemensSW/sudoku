@@ -49,8 +49,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   allLandscapes = [],
 }) => {
   const { t } = useTranslation('gallery');
-  const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = useTheme();
   const progressColor = useProgressColor();
   const bottomSheetRef = useRef<GorhomBottomSheetModal>(null);
   const { hideBottomNav, resetBottomNav } = useNavigation();
@@ -114,8 +113,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   // Render custom handle
   const renderHandle = useCallback(
-    (props: any) => <BottomSheetHandle {...props} isDark={theme.isDark} />,
-    [theme.isDark]
+    (props: any) => <BottomSheetHandle {...props} isDark={isDark} />,
+    [isDark]
   );
 
   // Render custom backdrop with blur
@@ -123,13 +122,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
     (props: any) => (
       <CustomBottomSheetBackdrop
         {...props}
-        isDark={theme.isDark}
+        isDark={isDark}
         pressBehavior="close"
         appearsOnIndex={0}
         disappearsOnIndex={-1}
       />
     ),
-    [theme.isDark]
+    [isDark]
   );
 
   // Render footer with Apply button
@@ -141,7 +140,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             styles.footer,
             {
               backgroundColor: colors.surface,
-              borderTopColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+              borderTopColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
               paddingBottom: Math.max(insets.bottom, 16) + 8,
             },
           ]}
@@ -167,7 +166,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </View>
       </BottomSheetFooter>
     ),
-    [colors.surface, theme.isDark, insets.bottom, handleApply, progressColor, t, typography]
+    [colors.surface, isDark, insets.bottom, handleApply, progressColor, t, typography]
   );
 
   if (!visible) return null;

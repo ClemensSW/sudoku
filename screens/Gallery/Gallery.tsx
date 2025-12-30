@@ -57,6 +57,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   colors,
 }) => {
   const { t } = useTranslation('gallery');
+  const { typography } = useTheme();
   const progressColor = useProgressColor();
 
   // Determine empty state key based on active tab
@@ -83,7 +84,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         color={colors.textSecondary}
         style={{ opacity: 0.5 }}
       />
-      <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+      <Text style={[styles.emptyText, { color: colors.textSecondary, fontSize: typography.size.md }]}>
         {t(`emptyState.${emptyStateKey}.message`)}
       </Text>
 
@@ -95,7 +96,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           ]}
           onPress={() => router.push("/game")}
         >
-          <Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+          <Text style={{ color: "#FFFFFF", fontWeight: "bold", fontSize: typography.size.sm }}>
             {t('emptyState.unlockButton')}
           </Text>
         </TouchableOpacity>
@@ -106,8 +107,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
 const Gallery: React.FC = () => {
   const { t } = useTranslation('gallery');
-  const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography, isDark } = useTheme();
   const router = useRouter();
   const { showAlert } = useAlert();
   const insets = useSafeAreaInsets();
@@ -485,11 +485,11 @@ const Gallery: React.FC = () => {
       style={[
         styles.tabsContainerWrapper,
         {
-          backgroundColor: theme.isDark
+          backgroundColor: isDark
             ? "rgba(41, 42, 45, 0.95)"
             : "rgba(255, 255, 255, 0.95)",
           shadowColor: colors.shadow,
-          borderTopColor: theme.isDark
+          borderTopColor: isDark
             ? "rgba(255,255,255,0.1)"
             : "rgba(0,0,0,0.05)",
         },
@@ -499,7 +499,7 @@ const Gallery: React.FC = () => {
         style={[
           styles.tabsContainer,
           {
-            borderTopColor: theme.isDark
+            borderTopColor: isDark
               ? "rgba(255,255,255,0.1)"
               : "rgba(0,0,0,0.05)",
           },
@@ -519,7 +519,7 @@ const Gallery: React.FC = () => {
                 isActive && [
                   styles.activeTabButton,
                   {
-                    backgroundColor: theme.isDark
+                    backgroundColor: isDark
                       ? `${progressColor}1F` // ~12% opacity
                       : `${progressColor}14`, // ~8% opacity
                   },
@@ -539,7 +539,7 @@ const Gallery: React.FC = () => {
                   style={[
                     styles.tabText,
                     isSmallMode && styles.smallTabText,
-                    { color: isActive ? progressColor : colors.textSecondary },
+                    { color: isActive ? progressColor : colors.textSecondary, fontSize: typography.size.sm },
                     isActive && styles.activeTabText,
                   ]}
                   numberOfLines={1}
@@ -590,7 +590,7 @@ const Gallery: React.FC = () => {
       {selectedCategories.length > 0 && (
         <View style={[styles.filterBadge, { backgroundColor: colors.surface }]}>
           <Feather name="filter" size={14} color={progressColor} />
-          <Text style={[styles.filterBadgeText, { color: colors.textPrimary }]}>
+          <Text style={[styles.filterBadgeText, { color: colors.textPrimary, fontSize: typography.size.xs }]}>
             {t('filterBadge.active', { count: selectedCategories.length })}
           </Text>
           <TouchableOpacity

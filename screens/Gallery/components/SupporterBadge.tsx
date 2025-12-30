@@ -15,8 +15,7 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
   remainingUnlocks,
   compact = false,
 }) => {
-  const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = useTheme();
   const { t } = useTranslation('gallery');
 
   // Premium gold color
@@ -29,7 +28,7 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
         style={[
           styles.compactBadge,
           {
-            backgroundColor: theme.isDark
+            backgroundColor: isDark
               ? "rgba(212, 175, 55, 0.15)"
               : "rgba(212, 175, 55, 0.1)",
           },
@@ -49,10 +48,10 @@ const SupporterBadge: React.FC<SupporterBadgeProps> = ({
       style={[
         styles.badge,
         {
-          backgroundColor: theme.isDark
+          backgroundColor: isDark
             ? "rgba(212, 175, 55, 0.12)"
             : "rgba(212, 175, 55, 0.08)",
-          borderColor: theme.isDark
+          borderColor: isDark
             ? "rgba(212, 175, 55, 0.3)"
             : "rgba(212, 175, 55, 0.25)",
         },

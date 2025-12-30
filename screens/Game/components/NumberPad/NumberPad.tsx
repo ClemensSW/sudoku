@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import Animated, {
   FadeInUp,
   useAnimatedStyle,
@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./NumberPad.styles";
 import PencilIcon from "@/assets/svg/pencil.svg";
@@ -41,6 +42,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const { t } = useTranslation('game');
   const theme = useTheme();
   const { colors, typography } = theme;
+  const pathColorHex = useStoredColorHex();
 
   // Animation values
   const noteScale = useSharedValue(1);
@@ -197,63 +199,49 @@ const NumberPad: React.FC<NumberPadProps> = ({
     );
   };
 
-  // Render number buttons in a single row
+  // Render minimalist number items (text only, checkmark when complete)
   const renderNumberButtons = () => {
     return (
       <View style={styles.numbersRow}>
         {Array.from({ length: 9 }, (_, i) => {
           const num = i + 1;
-          const isDisabled = disabledNumbers.includes(num);
+          const isComplete = disabledNumbers.includes(num);
           const delay = 200 + i * 30;
 
           return (
             <Animated.View
               key={`num-${num}`}
-              style={styles.numberButtonContainer}
+              style={styles.numberItem}
               entering={FadeInUp.delay(delay).duration(400)}
             >
               <AnimatedPressable
                 style={[
-                  {
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: isDisabled
-                      ? colors.buttonDisabled
-                      : colors.primary,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.15,
-                    shadowRadius: 3,
-                    elevation: 3,
-                    opacity: isDisabled ? 0.3 : 1,
-                  },
+                  styles.numberPressable,
                   useAnimatedStyle(() => ({
                     transform: [{ scale: numberScales[i].value }],
                   })),
                 ]}
                 onPress={() => {
-                  if (!isDisabled) {
+                  if (!isComplete) {
                     handleButtonPress(numberScales[i], () =>
                       onNumberPress(num)
                     );
                   }
                 }}
-                disabled={isDisabled}
+                disabled={isComplete}
               >
-                <Text
-                  style={{
-                    fontSize: typography.size.xxl,
-                    fontWeight: "600",
-                    color: isDisabled
-                      ? colors.buttonTextDisabled
-                      : colors.buttonText,
-                  }}
-                >
-                  {num}
-                </Text>
+                {isComplete ? (
+                  <Feather
+                    name="check"
+                    size={28}
+                    color={pathColorHex}
+                    style={{ opacity: 0.4 }}
+                  />
+                ) : (
+                  <Text style={[styles.numberText, { color: pathColorHex }]}>
+                    {num}
+                  </Text>
+                )}
               </AnimatedPressable>
             </Animated.View>
           );

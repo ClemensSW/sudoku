@@ -11,23 +11,20 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // Content-Container für festes Layout (ersetzt ScrollView)
+  // Content-Container für festes Layout
   gameContent: {
     flex: 1,
     paddingHorizontal: 8,
-  },
-  // Board-Container für vertikale Zentrierung
-  boardContainer: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    width: "100%",
   },
-  // Controls am unteren Rand
+  // Flexibler Spacer für gleiche Abstände
+  spacer: {
+    flex: 1,
+  },
+  // Controls - natürliche Höhe (kein flex)
   controlsContainer: {
     width: "100%",
     alignItems: "center",
-    paddingBottom: spacing.md,
   },
   // Background decorative elements
   topDecoration: {

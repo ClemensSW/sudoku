@@ -385,20 +385,24 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
         </Animated.View>
 
         <View style={styles.gameContent}>
-          {/* Game Board - vertikal zentriert */}
-          <View style={styles.boardContainer}>
-            <GameBoard
-              board={gameState.board}
-              selectedCell={gameState.selectedCell}
-              onCellPress={showPauseModal ? undefined : gameActions.handleCellPress}
-              isLoading={gameState.isLoading}
-              highlightRelated={gameSettings.highlightRelatedCells}
-              highlightSameValues={gameSettings.highlightSameValues}
-              showErrors={gameSettings.showMistakes}
-            />
-          </View>
+          {/* Spacer 1 - Header zu Board */}
+          <View style={styles.spacer} />
 
-          {/* Game Controls - am unteren Rand */}
+          {/* Game Board */}
+          <GameBoard
+            board={gameState.board}
+            selectedCell={gameState.selectedCell}
+            onCellPress={showPauseModal ? undefined : gameActions.handleCellPress}
+            isLoading={gameState.isLoading}
+            highlightRelated={gameSettings.highlightRelatedCells}
+            highlightSameValues={gameSettings.highlightSameValues}
+            showErrors={gameSettings.showMistakes}
+          />
+
+          {/* Spacer 2 - Board zu Controls */}
+          <View style={styles.spacer} />
+
+          {/* Game Controls */}
           <Animated.View
             style={[styles.controlsContainer, controlsAnimatedStyle]}
           >
@@ -413,6 +417,9 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
               isGameComplete={gameState.isGameComplete}
             />
           </Animated.View>
+
+          {/* Spacer 3 - Controls zu Bottom */}
+          <View style={styles.spacer} />
         </View>
       </View>
 

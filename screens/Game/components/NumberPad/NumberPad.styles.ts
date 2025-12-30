@@ -7,33 +7,31 @@ export default StyleSheet.create({
     alignSelf: "center",
   },
 
-  // Action Buttons Row - DuoGame-Style
+  // Action Buttons Row - Pill-Shape Style
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
+    justifyContent: "space-evenly",
+    alignItems: "center",
     marginBottom: spacing.sm,
     width: "100%",
   },
 
   // Container für jeden ActionButton (ohne Label)
   actionButtonContainer: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 4,
   },
 
   actionButton: {
-    width: "100%",
+    width: 100,
     height: 52,
-    borderRadius: 14,
+    borderRadius: 26,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 3,
     position: "relative",
   },
@@ -58,20 +56,33 @@ export default StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // Zahlen in einer Reihe - kompakter wie DuoGame
+  // Minimalistisches Zahlen-Layout
   numbersRow: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    height: 50,
+    paddingVertical: spacing.sm,
   },
 
-  // Nur der Container für den Button, keine Styles für den Button selbst
-  numberButtonContainer: {
-    flex: 1,
+  // Container für jede Zahl
+  numberItem: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 1,
+  },
+
+  // Pressable-Bereich für Touch-Feedback
+  numberPressable: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+
+  // Minimalistischer Zahlen-Text
+  numberText: {
+    fontSize: 32,
+    fontWeight: "500",
+    // color wird dynamisch mit pathColorHex gesetzt
   },
 });

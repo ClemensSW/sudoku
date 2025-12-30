@@ -102,7 +102,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                   ? colors.surface
                   : colors.numberPadButton,
                 borderWidth: noteModeActive ? 2 : 0,
-                borderColor: colors.primary,
+                borderColor: pathColorHex,
               },
               noteAnimatedStyle,
             ]}
@@ -114,7 +114,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
               width={32}
               height={32}
               color={
-                noteModeActive ? colors.primary : colors.numberPadButtonText
+                noteModeActive ? pathColorHex : colors.numberPadButtonText
               }
             />
           </AnimatedPressable>
@@ -186,7 +186,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 <View
                   style={[
                     styles.hintCountBadge,
-                    { backgroundColor: colors.primary },
+                    { backgroundColor: pathColorHex },
                   ]}
                 >
                   <Text style={styles.hintCountText}>{hintsRemaining}</Text>

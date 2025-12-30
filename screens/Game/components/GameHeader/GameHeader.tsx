@@ -12,6 +12,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 import styles from "./GameHeader.styles";
 
 interface GameHeaderProps {
@@ -46,6 +47,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const { colors, typography, shadows, isDark } = theme;
+  const pathColorHex = useStoredColorHex();
   const insets = useSafeAreaInsets();
 
   // Timer state
@@ -124,7 +126,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   const getHeartColor = () => {
     if (errorsRemaining === 0) return colors.error;
     if (errorsRemaining === 1) return colors.warning;
-    return colors.primary;
+    return pathColorHex;
   };
 
   // Render hearts
@@ -152,7 +154,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   // Render infinity heart (when showErrors is false)
   const renderInfinityHeart = () => (
     <View style={styles.infinityContainer}>
-      <Feather name="heart" size={18} color={colors.primary} />
+      <Feather name="heart" size={18} color={pathColorHex} />
       <Text
         style={[
           styles.infinityText,

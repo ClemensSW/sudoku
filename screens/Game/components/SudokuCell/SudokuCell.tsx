@@ -9,6 +9,7 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
@@ -35,6 +36,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   // Theme für Farben nutzen
   const theme = useTheme();
   const { colors } = theme;
+  const pathColorHex = useStoredColorHex();
 
   // Animation values
   const scale = useSharedValue(1);
@@ -73,9 +75,9 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     } else if (cell.highlight === "success") {
       return { backgroundColor: colors.cellSuccessBackground };
     } else if (isSelected) {
-      return { backgroundColor: colors.cellSelectedBackground };
+      return { backgroundColor: pathColorHex };
     } else if (isRelated) {
-      return { backgroundColor: colors.cellRelatedBackground };
+      return { backgroundColor: `${pathColorHex}14` };
     } else {
       // Schachbrettmuster für 3×3-Boxen
       const boxRow = Math.floor(row / 3);
@@ -112,7 +114,7 @@ const getCellTextStyle = () => {
     }
     // Wenn gleiche Zahlen hervorgehoben werden
     else if (sameValueHighlight) {
-      style.color = colors.cellSameValueTextColor;
+      style.color = pathColorHex;
     }
     // Sonst normale Initial-Farbe
     else {
@@ -121,7 +123,7 @@ const getCellTextStyle = () => {
   }
   // Gleiche Zahlen als zweithöchste Priorität
   else if (sameValueHighlight) {
-    style.color = colors.cellSameValueTextColor;
+    style.color = pathColorHex;
     style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
   }
   // Danach fehlerhafte Zellen

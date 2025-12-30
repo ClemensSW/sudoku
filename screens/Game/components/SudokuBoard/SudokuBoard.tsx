@@ -11,6 +11,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useStoredColorHex } from "@/contexts/color/ColorContext";
 import styles, { CELL_SIZE } from "./SudokuBoard.styles";
 
 interface SudokuBoardProps {
@@ -33,7 +34,8 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   showErrors = true,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, isDark } = theme;
+  const pathColorHex = useStoredColorHex();
 
   const [isReady, setIsReady] = useState(false);
 
@@ -134,7 +136,17 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       <Animated.View
         style={[styles.boardAnimationContainer, boardAnimatedStyle]}
       >
-        <View style={styles.boardWrapper}>
+        <View style={[
+            styles.boardWrapper,
+            {
+              // Farbiger Schatten-Effekt wie im DuoGame
+              shadowColor: pathColorHex,
+              shadowOpacity: isDark ? 0.6 : 0.35,
+              shadowRadius: isDark ? 16 : 12,
+              shadowOffset: { width: 0, height: 4 },
+              elevation: 10,
+            },
+          ]}>
           {/* Hauptbrett mit Theme-Farben */}
           <View style={[styles.board, boardStyle]}>
             {/* Grid-Inhalt */}

@@ -18,7 +18,7 @@ import styles from "./PlayerStatsHero.styles";
 // Height of the DuoStatsBar (to offset content)
 const STATS_BAR_HEIGHT = 52;
 // Extra spacing for Battle Icon from top
-const EXTRA_TOP_SPACING = 40;
+const EXTRA_TOP_SPACING = 52;
 
 // Helper to convert hex to rgba
 const hexToRGBA = (hex: string, alpha: number): string => {

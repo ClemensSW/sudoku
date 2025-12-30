@@ -29,9 +29,8 @@ import {
 import { clearPausedGame } from "@/utils/storage";
 
 import { Difficulty } from "@/utils/sudoku";
-import Header from "@/components/Header/Header";
 import GameCompletionFlow from "@/screens/GameCompletion/GameCompletionFlow";
-import GameStatusBar from "./components/GameStatusBar/GameStatusBar";
+import GameHeader from "./components/GameHeader";
 
 // Import custom hooks
 import { useGameState } from "./hooks/useGameState";
@@ -371,14 +370,17 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
 
       <View style={{ flex: 1 }}>
         <Animated.View style={headerAnimatedStyle}>
-          <Header
-            title=""
+          <GameHeader
             onBackPress={handleBackPress}
-            rightAction={{
-              icon: "settings",
-              onPress: handleSettingsPress,
-            }}
-            skipTopPadding={false}
+            onSettingsPress={handleSettingsPress}
+            errorsRemaining={gameState.errorsRemaining}
+            maxErrors={3}
+            showErrors={gameSettings.showMistakes}
+            isTimerRunning={gameState.isGameRunning && !gameState.isGameComplete && !showSettings && !showPauseModal}
+            initialTime={gameState.gameTime}
+            onTimeUpdate={gameActions.handleTimeUpdate}
+            onPausePress={handlePausePress}
+            pauseDisabled={gameState.isGameComplete}
           />
         </Animated.View>
 
@@ -389,18 +391,6 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           ]}
         >
           <View style={styles.gameContainer}>
-            {/* Game Status Bar */}
-            <GameStatusBar
-              isRunning={gameState.isGameRunning && !gameState.isGameComplete && !showSettings && !showPauseModal}
-              initialTime={gameState.gameTime}
-              onTimeUpdate={gameActions.handleTimeUpdate}
-              errorsRemaining={gameState.errorsRemaining}
-              maxErrors={3}
-              showErrors={gameSettings.showMistakes}
-              onPausePress={handlePausePress}
-              pauseDisabled={gameState.isGameComplete}
-            />
-
             {/* Game Board */}
             <GameBoard
               board={gameState.board}

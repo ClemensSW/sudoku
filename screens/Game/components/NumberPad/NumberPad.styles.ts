@@ -65,8 +65,10 @@ export default StyleSheet.create({
     paddingVertical: spacing.sm,
   },
 
-  // Container für jede Zahl
+  // Container für jede Zahl - FESTE GRÖSSE verhindert Verschiebung
   numberItem: {
+    width: 36,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -272,11 +272,12 @@ export async function syncUserData(options: {
     console.log('[SyncService] Settings tracking merged');
 
     // 7. Save merged lokal
+    // preserveTimestamp: true = Merge hat bereits die korrekten Timestamps bestimmt
     console.log('[SyncService] Step 4/5: Saving merged data locally...');
     const { saveSettingsTracking } = await import('@/utils/storage');
     const savePromises = [
-      saveStats(merged.stats),
-      saveSettings(merged.settings),
+      saveStats(merged.stats, { preserveTimestamp: true }),
+      saveSettings(merged.settings, false, { preserveTimestamp: true }),
       saveColorUnlock(merged.colorUnlock),
       saveSettingsTracking(mergedTracking), // Save merged tracking
     ];

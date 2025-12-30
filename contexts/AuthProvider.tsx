@@ -153,10 +153,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const cloudData = await downloadUserData(user.uid);
 
           // Cloud-Daten direkt speichern (kein Merge - Cloud ist Source of Truth)
+          // preserveTimestamp: true = Cloud-Timestamps beibehalten, nicht mit Date.now() überschreiben
           if (cloudData.stats && cloudData.settings && cloudData.colorUnlock) {
             await Promise.all([
-              saveStats(cloudData.stats),
-              saveSettings(cloudData.settings),
+              saveStats(cloudData.stats, { preserveTimestamp: true }),
+              saveSettings(cloudData.settings, false, { preserveTimestamp: true }),
               saveColorUnlock(cloudData.colorUnlock),
             ]);
 

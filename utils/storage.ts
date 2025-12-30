@@ -203,12 +203,13 @@ export const clearGameState = async (): Promise<void> => {
 };
 
 // Speichere Statistiken
-export const saveStats = async (stats: GameStats): Promise<void> => {
+// preserveTimestamp: true = Cloud-Download (behält Cloud-Timestamp), false = lokales Update (neuer Timestamp)
+export const saveStats = async (stats: GameStats, options?: { preserveTimestamp?: boolean }): Promise<void> => {
   try {
     // Cloud Sync: Setze updatedAt timestamp
     const statsWithTimestamp: GameStats = {
       ...stats,
-      updatedAt: Date.now(),
+      updatedAt: options?.preserveTimestamp ? (stats.updatedAt || Date.now()) : Date.now(),
     };
 
     await AsyncStorage.setItem(KEYS.STATISTICS, JSON.stringify(statsWithTimestamp));
@@ -480,7 +481,8 @@ export const markMilestoneReached = async (
 
 // Speichere Einstellungen
 // isAutomatic: wenn true, werden Tracking-Flags NICHT gesetzt (für automatische Anpassungen)
-export const saveSettings = async (settings: GameSettings, isAutomatic: boolean = false): Promise<void> => {
+// options.preserveTimestamp: true = Cloud-Download (behält Cloud-Timestamp), false = lokales Update (neuer Timestamp)
+export const saveSettings = async (settings: GameSettings, isAutomatic: boolean = false, options?: { preserveTimestamp?: boolean }): Promise<void> => {
   try {
     // Nur Tracking aktualisieren wenn dies eine manuelle Änderung ist
     if (!isAutomatic) {
@@ -520,7 +522,7 @@ export const saveSettings = async (settings: GameSettings, isAutomatic: boolean 
     // Cloud Sync: Setze updatedAt timestamp
     const settingsWithTimestamp: GameSettings = {
       ...settings,
-      updatedAt: Date.now(),
+      updatedAt: options?.preserveTimestamp ? (settings.updatedAt || Date.now()) : Date.now(),
     };
 
     // Speichere die Settings selbst

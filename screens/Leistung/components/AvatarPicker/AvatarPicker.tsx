@@ -14,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { useProgressColor } from "@/hooks/useProgressColor";
 import BottomSheetModalWithFlatList from "@/components/BottomSheetModal/BottomSheetModalWithFlatList";
 import { AvatarCategory } from "./DefaultAvatars";
 import { DefaultAvatar, defaultAvatars } from "../../utils/defaultAvatars";
@@ -40,6 +41,7 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const { t } = useTranslation('leistung');
   const theme = useTheme();
   const { colors, typography } = theme;
+  const progressColor = useProgressColor();
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<AvatarCategory>('Cartoon');
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -142,17 +144,32 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
 
   // Tab Navigation Header (Gallery Style)
   const TabNavigationHeader = useCallback(() => (
-    <View style={styles.tabContainer}>
+    <View
+      style={[
+        styles.tabContainer,
+        {
+          backgroundColor: theme.isDark
+            ? "rgba(41, 42, 45, 0.95)"
+            : "rgba(255, 255, 255, 0.95)",
+          borderTopColor: theme.isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
+        }
+      ]}
+    >
       {tabs.map((tab) => (
         <Pressable
           key={tab.id}
           style={({ pressed }) => [
             styles.tabButton,
-            activeCategory === tab.id && {
-              backgroundColor: theme.isDark
-                ? "rgba(138, 180, 248, 0.12)"
-                : "rgba(66, 133, 244, 0.08)",
-            },
+            activeCategory === tab.id && [
+              styles.activeTabButton,
+              {
+                backgroundColor: theme.isDark
+                  ? `${progressColor}20`
+                  : `${progressColor}15`,
+              },
+            ],
             pressed && { opacity: 0.7 },
           ]}
           onPress={() => setActiveCategory(tab.id)}
@@ -162,10 +179,9 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             style={[
               styles.tabButtonText,
               {
-                color:
-                  activeCategory === tab.id
-                    ? colors.primary
-                    : colors.textSecondary,
+                color: activeCategory === tab.id
+                  ? progressColor
+                  : colors.textSecondary,
                 fontWeight: activeCategory === tab.id ? '600' : '500',
                 fontSize: typography.size.sm,
               },
@@ -180,12 +196,12 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
       <Animated.View
         style={[
           styles.activeTabIndicator,
-          { backgroundColor: colors.primary },
+          { backgroundColor: progressColor },
           tabIndicatorStyle,
         ]}
       />
     </View>
-  ), [tabs, activeCategory, theme.isDark, colors.primary, colors.textSecondary, typography.size.sm, tabIndicatorStyle]);
+  ), [tabs, activeCategory, theme.isDark, progressColor, colors.textSecondary, typography.size.sm, tabIndicatorStyle]);
 
   return (
     <>

@@ -487,8 +487,8 @@ const Gallery: React.FC = () => {
         styles.tabsContainerWrapper,
         {
           backgroundColor: isDark
-            ? "rgba(41, 42, 45, 0.95)"
-            : "rgba(255, 255, 255, 0.95)",
+            ? "rgba(41, 42, 45, 1)"
+            : "rgba(255, 255, 255, 1)",
           shadowColor: colors.shadow,
           borderTopColor: isDark
             ? "rgba(255,255,255,0.1)"

@@ -62,19 +62,25 @@ export default StyleSheet.create({
   // Tab Navigation (Bottom Sticky - Gallery Style)
   tabContainer: {
     flexDirection: "row",
-    paddingHorizontal: 8,
-    paddingVertical: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
     position: "relative",
+    borderTopWidth: 1,
   },
   tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    marginHorizontal: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: 22,
     minHeight: 44,
+  },
+  activeTabButton: {
+    // Background wird inline gesetzt
   },
   tabButtonText: {
     // fontSize set dynamically via theme.typography
@@ -84,9 +90,9 @@ export default StyleSheet.create({
   activeTabIndicator: {
     position: "absolute",
     top: 0,
+    left: 0,
     height: 3,
     borderRadius: 1.5,
-    // No width defined here as it will be determined dynamically
   },
 
   // Option Styles
@@ -116,7 +122,7 @@ export default StyleSheet.create({
   // Avatar Grid Styles
   gridContainer: {
     paddingHorizontal: GRID_SPACING / 2,
-    paddingBottom: 80, // Space for bottom sticky tabs (60px height + 20px margin)
+    paddingBottom: 100, // Space for bottom sticky tabs (~77px height + buffer)
   },
   categoryTitle: {
     // fontSize set dynamically via theme.typography

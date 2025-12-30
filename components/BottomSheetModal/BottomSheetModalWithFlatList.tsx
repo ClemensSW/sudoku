@@ -187,11 +187,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   stickyFooter: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.05)',
+    // Padding wird jetzt vom Footer-Component selbst kontrolliert
   },
 });
 

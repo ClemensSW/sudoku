@@ -1,17 +1,19 @@
 // screens/Duo/Duo.tsx
-import React, { useState, useCallback, useRef } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { View, ScrollView, StyleSheet, Pressable, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, FadeInDown } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
+import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import { triggerHaptic } from "@/utils/haptics";
+import { loadStats } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
 
 // Components
-import DevBanner from "./components/DevBanner";
+import DuoStatsBar from "./components/DuoStatsBar";
 import PlayerStatsHero from "./components/PlayerStatsHero";
 import LeaderboardCard from "./components/LeaderboardCard";
 import MatchHistoryCard from "./components/MatchHistoryCard";
@@ -30,9 +32,10 @@ const Duo: React.FC = () => {
   const { t } = useTranslation("duo");
   const router = useRouter();
   const theme = useTheme();
-  const { colors } = theme;
+  const { colors, typography, isDark } = theme;
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
+  const { colors: leagueColors } = useCurrentLeague();
 
   // State
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
@@ -41,6 +44,27 @@ const Duo: React.FC = () => {
   const [showTutorialOverlay, setShowTutorialOverlay] = useState(false);
   const [leaderboardY, setLeaderboardY] = useState(0);
   const [showDevBanner, setShowDevBanner] = useState(true);
+
+  // Stats for DuoStatsBar
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [gameStats, setGameStats] = useState({ wins: 0, losses: 0 });
+
+  // Load stats
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const stats = await loadStats();
+        setCurrentStreak(stats.dailyStreak?.currentStreak || 0);
+        setGameStats({
+          wins: stats.gamesWon || 0,
+          losses: (stats.gamesPlayed || 0) - (stats.gamesWon || 0),
+        });
+      } catch (error) {
+        console.error("Failed to load stats:", error);
+      }
+    };
+    loadData();
+  }, []);
 
   // Handler: Tutorial-Overlay öffnen
   const handleTutorialPress = useCallback(() => {
@@ -57,11 +81,23 @@ const Duo: React.FC = () => {
   const handleLeaderboardPress = useCallback(() => {
     if (scrollViewRef.current && leaderboardY > 0) {
       scrollViewRef.current.scrollTo({
-        y: leaderboardY - 16, // Small offset for better visibility
+        y: leaderboardY - 16,
         animated: true,
       });
     }
   }, [leaderboardY]);
+
+  // Handler: Navigate to Erfolge tab on record press
+  const handleRecordPress = useCallback(() => {
+    triggerHaptic("light");
+    router.push("/leistung?tab=times");
+  }, [router]);
+
+  // Handler: Navigate to Serie tab on streak press
+  const handleStreakPress = useCallback(() => {
+    triggerHaptic("light");
+    router.push("/leistung?tab=streak");
+  }, [router]);
 
   // Handler: Lokal spielen → DifficultyModal öffnen
   const handleLocalPlay = useCallback(() => {
@@ -98,8 +134,16 @@ const Duo: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} hidden={true} />
 
-      {/* Dev Banner */}
-      <DevBanner visible={showDevBanner} />
+      {/* Pinned Stats Bar - Fixed at top */}
+      <DuoStatsBar
+        elo={DUMMY_STATS.elo}
+        wins={gameStats.wins}
+        losses={gameStats.losses}
+        currentStreak={currentStreak}
+        onEloPress={handleLeaderboardPress}
+        onRecordPress={handleRecordPress}
+        onStreakPress={handleStreakPress}
+      />
 
       {/* Backdrop für Modal */}
       {showDifficultyModal && (
@@ -121,18 +165,69 @@ const Duo: React.FC = () => {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section with Player Stats and Action Buttons */}
-        <PlayerStatsHero
-          elo={DUMMY_STATS.elo}
-          onTutorialPress={handleTutorialPress}
-          onLeaderboardPress={handleLeaderboardPress}
-          onLocalPlay={handleLocalPlay}
-          onOnlinePlay={handleOnlinePlay}
-        />
+        {/* Simplified Hero Section (just icon + title) */}
+        <PlayerStatsHero onTutorialPress={handleTutorialPress} />
 
-        {/* Leaderboard Card */}
+        {/* Game Mode Buttons */}
+        <Animated.View
+          style={styles.actionButtonsRow}
+          entering={FadeInDown.duration(400).delay(200)}
+        >
+          <Pressable
+            onPress={handleLocalPlay}
+            style={({ pressed }) => [
+              styles.actionButton,
+              {
+                backgroundColor: colors.surface,
+                borderColor: isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.06)",
+                shadowColor: isDark ? "transparent" : leagueColors.accent,
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.actionButtonText,
+                { color: colors.textPrimary, fontSize: typography.size.md },
+              ]}
+            >
+              {t("gameModeModal.local.title", { defaultValue: "Lokal spielen" })}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleOnlinePlay}
+            style={({ pressed }) => [
+              styles.actionButton,
+              {
+                backgroundColor: colors.surface,
+                borderColor: isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.06)",
+                shadowColor: isDark ? "transparent" : leagueColors.accent,
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.actionButtonText,
+                { color: colors.textPrimary, fontSize: typography.size.md },
+              ]}
+            >
+              {t("gameModeModal.online.title", { defaultValue: "Online spielen" })}
+            </Text>
+          </Pressable>
+        </Animated.View>
+
+        {/* Leaderboard Card with Progress Bar and Dev Badge */}
         <View onLayout={(e) => setLeaderboardY(e.nativeEvent.layout.y)}>
-          <LeaderboardCard />
+          <LeaderboardCard
+            elo={DUMMY_STATS.elo}
+            showDevBadge={showDevBanner}
+          />
         </View>
 
         {/* Match History */}

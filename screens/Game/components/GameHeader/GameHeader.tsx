@@ -50,7 +50,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
 
   // Timer state
   const [time, setTime] = useState(initialTime);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Animation values
   const heartScale = useSharedValue(1);
@@ -83,7 +83,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, timerScale]);
 
   // Time update callback
   useEffect(() => {
@@ -100,7 +100,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
         withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) })
       );
     }
-  }, [errorsRemaining]);
+  }, [errorsRemaining, maxErrors, heartScale]);
 
   // Animated styles
   const heartAnimatedStyle = useAnimatedStyle(() => ({

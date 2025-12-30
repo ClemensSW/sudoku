@@ -18,9 +18,11 @@ import { getFirebaseAuth } from '@/utils/cloudSync/firebaseConfig';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { uploadUserData, hasCloudData } from '@/utils/cloudSync/uploadService';
 import { downloadUserData } from '@/utils/cloudSync/downloadService';
-import { syncOnAppLaunch, syncOnAppPause, updateSyncTimestamp } from '@/utils/cloudSync/syncService';
-import { saveStats, saveSettings, saveColorUnlock } from '@/utils/storage';
-import { saveUserProfile } from '@/utils/profileStorage';
+import { syncOnAppLaunch, syncOnAppPause, syncUserData, updateSyncTimestamp } from '@/utils/cloudSync/syncService';
+import { saveStats, saveSettings, saveColorUnlock, resetAllLocalData } from '@/utils/storage';
+import { saveUserProfile, resetUserProfile } from '@/utils/profileStorage';
+import { resetLandscapeData } from '@/screens/Gallery/utils/landscapes/storage';
+import { hasAnyDirty, clearAllDirty } from '@/utils/cloudSync/dirtyFlags';
 
 // ===== Types =====
 
@@ -249,20 +251,54 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Sign Out
-   * Meldet den User ab und löscht den Firebase Auth-Token
+   * Meldet den User ab und setzt alle lokalen Daten zurück
+   *
+   * Flow:
+   * 1. Sync dirty data vor Logout (falls vorhanden)
+   * 2. Firebase ausloggen
+   * 3. ALLE lokalen Daten löschen (Clean Slate)
+   * 4. Dirty Flags zurücksetzen
    */
   const signOut = async (): Promise<void> => {
     try {
       setLoading(true);
-      console.log('[AuthProvider] Signing out user...');
+      console.log('[AuthProvider] Starting sign out process...');
 
+      // 1. Sync dirty data vor Logout (falls vorhanden)
+      const hasDirty = await hasAnyDirty();
+      if (hasDirty) {
+        console.log('[AuthProvider] Syncing dirty data before logout...');
+        try {
+          await syncUserData({ force: true });
+          console.log('[AuthProvider] ✅ Pre-logout sync complete');
+        } catch (syncError) {
+          console.warn('[AuthProvider] ⚠️ Pre-logout sync failed:', syncError);
+          // Continue with logout even if sync fails
+        }
+      }
+
+      // 2. Firebase ausloggen
       const auth = getFirebaseAuth();
       await auth.signOut();
+      console.log('[AuthProvider] ✅ Firebase signed out');
+
+      // 3. ALLE lokalen Daten löschen (Clean Slate)
+      console.log('[AuthProvider] Resetting all local data...');
+      await Promise.all([
+        resetAllLocalData(),
+        resetLandscapeData(),
+        resetUserProfile(),
+      ]);
+      console.log('[AuthProvider] ✅ Local data reset complete');
+
+      // 4. Dirty Flags zurücksetzen
+      await clearAllDirty();
+      console.log('[AuthProvider] ✅ Dirty flags cleared');
 
       // Reset sync processed ref
       syncProcessedRef.current = null;
 
-      console.log('[AuthProvider] ✅ User signed out successfully');
+      console.log('[AuthProvider] ✅ Sign out complete - all data reset');
     } catch (error) {
       console.error('[AuthProvider] ❌ Error signing out:', error);
       throw error;

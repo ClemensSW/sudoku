@@ -120,6 +120,113 @@ flowchart TD
 - **Laufende Spiele** - Session-spezifisch
 - **Cache-Daten** - Werden lokal neu generiert
 
+### Detaillierte Datenstruktur
+
+#### 📊 Stats (GameStats)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `gamesPlayed` | number | Gesamtzahl gespielter Spiele |
+| `gamesWon` | number | Gewonnene Spiele |
+| `bestTimeEasy` | number | Bestzeit Easy (Sekunden, `Infinity` wenn ungesetzt) |
+| `bestTimeMedium` | number | Bestzeit Medium |
+| `bestTimeHard` | number | Bestzeit Hard |
+| `bestTimeExpert` | number | Bestzeit Expert |
+| `totalXP` | number | Gesamte Erfahrungspunkte |
+| `reachedMilestones` | number[] | Erreichte Level-Meilensteine (0-24) |
+| `completedEasy` | number | Abgeschlossene Easy-Puzzles |
+| `completedMedium` | number | Abgeschlossene Medium-Puzzles |
+| `completedHard` | number | Abgeschlossene Hard-Puzzles |
+| `completedExpert` | number | Abgeschlossene Expert-Puzzles |
+| `dailyStreak` | DailyStreakData | Streak-Daten (siehe unten) |
+| `updatedAt` | number | Timestamp (Millisekunden) |
+
+#### 🔥 Daily Streak (DailyStreakData)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `currentStreak` | number | Aktuelle Streak-Tage |
+| `longestDailyStreak` | number | Längste Streak (Rekord) |
+| `lastPlayedDate` | string | Letzter Spieltag (YYYY-MM-DD) |
+| `firstLaunchDate` | string | Erster App-Start (YYYY-MM-DD) |
+| `shieldsAvailable` | number | Verfügbare Shields |
+| `shieldsUsedThisWeek` | number | Diese Woche verwendete Shields |
+| `lastShieldResetDate` | string | Letzter Montag (Reset-Datum) |
+| `bonusShields` | number | Bonus-Shields (Lifetime) |
+| `totalShieldsUsed` | number | Gesamt verwendete Shields |
+| `playHistory` | Object | Kalender-Daten pro Monat |
+| `playHistory[YYYY-MM].days` | number[] | Gespielte Tage [1, 3, 5, ...] |
+| `playHistory[YYYY-MM].shieldDays` | number[] | Shield-Tage [2, 4] |
+| `totalDaysPlayed` | number | Gesamte Spieltage |
+| `completedMonths` | string[] | Vollständige Monate ["2024-12", ...] |
+| `updatedAt` | number | Timestamp |
+
+#### ⚙️ Settings (GameSettings)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `highlightRelatedCells` | boolean | Zeile/Spalte/Box hervorheben |
+| `showMistakes` | boolean | Fehler anzeigen |
+| `highlightSameValues` | boolean | Gleiche Zahlen hervorheben |
+| `autoNotes` | boolean | Auto-Notizen aktiviert |
+| `darkMode` | 'light' \| 'dark' | Theme-Einstellung |
+| `language` | 'de' \| 'en' \| 'hi' | Sprache |
+| `fontScale` | number | Schriftgröße (0.85-1.25) |
+| `vibration` | boolean | Haptisches Feedback |
+| `soundEffects` | boolean | Soundeffekte |
+| `backgroundMusic` | boolean | Hintergrundmusik |
+| `highlightSameValuesModified` | boolean | Manuell geändert? (Tracking) |
+| `highlightRelatedCellsModified` | boolean | Manuell geändert? (Tracking) |
+| `showMistakesModified` | boolean | Manuell geändert? (Tracking) |
+| `updatedAt` | number | Timestamp |
+
+#### 🎨 Color Unlock (ColorUnlockData)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `selectedColor` | string | Aktive Pfadfarbe (#RRGGBB) |
+| `unlockedColors` | string[] | Freigeschaltete Farben |
+| `updatedAt` | number | Timestamp |
+
+**Freigeschaltete Farben nach Level:**
+| Level | Farbe | Hex |
+|-------|-------|-----|
+| 1+ | Blau (Fundamentals) | #4285F4 |
+| 5+ | Grün (Insight) | #34A853 |
+| 10+ | Gelb (Mastery) | #F9AB00 |
+| 15+ | Rot (Wisdom) | #EA4335 |
+| 20+ | Lila (Transcendence) | #7C4DFF |
+
+#### 👤 Profile (UserProfile)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `displayName` | string \| null | Anzeigename |
+| `email` | string \| null | E-Mail (nur Firestore) |
+| `photoURL` | string \| null | Avatar-URI |
+| `titleLevelIndex` | number \| null | Zen-Level Index (0-24) |
+| `createdAt` | number | Erstellungsdatum |
+| `updatedAt` | number | Timestamp |
+
+#### 🏞️ Landscapes (LandscapeCollection)
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `currentImageId` | string \| null | Aktuelles Landschafts-Bild |
+| `favorites` | string[] | Favoriten-IDs |
+| `lastUsedFavoriteIndex` | number | Zuletzt verwendeter Favorit |
+| `lastChangedDate` | string | Letzte Änderung (YYYY-MM-DD) |
+
+**Pro Landschaft (`landscapes[id]`):**
+
+| Feld | Typ | Beschreibung |
+|------|-----|--------------|
+| `id` | string | Landschafts-ID |
+| `progress` | number | Freigeschaltete Segmente (0-9) |
+| `isFavorite` | boolean | Als Favorit markiert |
+| `isComplete` | boolean | Vollständig freigeschaltet |
+| `completedAt` | string | Abschlussdatum (ISO) |
+
 ---
 
 ## 🔄 Wie funktioniert der Sync?
@@ -141,15 +248,15 @@ flowchart TD
     E --> F[2. Lade lokale Daten]
     F --> G[3. MERGE mit Strategien]
     G --> H[4. Speichere lokal]
-    H --> I[5. Upload nur Dirty Docs]
-    I --> J[6. Clear Dirty Flags]
-    J --> K[Sync Complete ✓]
+    H --> H2[4.5 Shield Processing]
+    H2 --> I[5. Upload + Clear Flags]
+    I --> K[Sync Complete ✓]
 
     style K fill:#90EE90
     style X fill:#FFB6C1
 ```
 
-### Die 6 Schritte im Detail
+### Die Schritte im Detail
 
 | Schritt | Was passiert | Dauer |
 |---------|--------------|-------|
@@ -157,10 +264,12 @@ flowchart TD
 | 2. Load Local | Lade AsyncStorage-Daten | ~50ms |
 | 3. Merge | Wende Konflikt-Strategien an | ~10ms |
 | 4. Save Local | Speichere gemergtes Ergebnis | ~50ms |
-| 5. Upload | Nur geänderte Dokumente hochladen | ~500ms |
-| 6. Clear Flags | Markiere als synchronisiert | ~10ms |
+| 4.5. Shield Processing | Wende Shields retroaktiv an nach Sync | ~50ms |
+| 5. Upload | Nur geänderte Dokumente hochladen (+ Clear Dirty Flags) | ~500ms |
 
 **Gesamt:** ~1-2 Sekunden (je nach Netzwerk)
+
+**Retry-Logik:** Bei Netzwerkfehlern werden bis zu 3 Versuche mit 2s Verzögerung durchgeführt.
 
 ---
 
@@ -196,6 +305,7 @@ Nach Merge:
 | **Colors** | Union | Alle freigeschalteten Farben kombiniert |
 | **Landscapes** | Max-Fortschritt | Höchster Freischalt-Stand pro Landschaft |
 | **Favoriten** | Union | Alle Favoriten kombiniert |
+| **Profile** | Heuristic | Local gewinnt wenn geändert (name ≠ 'User' ODER avatar ≠ null ODER title ≠ null), sonst Cloud |
 
 ### Daily Streak - Spezialfall
 
@@ -268,13 +378,15 @@ Jedes Dokument hat einen `updatedAt` Timestamp:
 ### Firestore-Struktur
 
 ```
-/users/{userId}/
-├── profile                    (Dokument)
-│   ├── displayName
-│   ├── email
-│   ├── avatarUrl
-│   ├── title
-│   └── updatedAt
+/users/{userId}                (Dokument)
+├── profile: {                 ← Feld im User-Dokument (KEIN Subdokument!)
+│     displayName: string
+│     email: string
+│     photoURL: string         (Avatar-URI)
+│     titleLevelIndex: number  (Zen-Level 0-24)
+│     createdAt: timestamp
+│     updatedAt: timestamp
+│   }
 │
 └── /data/                     (Subcollection)
     ├── stats                  (Dokument)
@@ -301,6 +413,8 @@ Jedes Dokument hat einen `updatedAt` Timestamp:
         ├── landscapes { ... }
         └── updatedAt
 ```
+
+**Hinweis:** Das `profile`-Objekt ist ein Feld im User-Dokument selbst, NICHT ein separates Dokument in einer Subcollection. Es wird mit `{ merge: true }` aktualisiert.
 
 ---
 
@@ -339,6 +453,55 @@ Auto-Sync nur alle 15 Minuten → kurzfristige Änderungen nicht sofort in Cloud
 
 ---
 
+## 🚪 Logout-Verhalten
+
+### Was passiert beim Ausloggen?
+
+```
+┌─────────────────────────────────────────┐
+│ 1. Ungespeicherte Daten syncen          │
+│    ↓                                     │
+│ 2. Firebase ausloggen                   │
+│    ↓                                     │
+│ 3. ALLE lokalen Daten löschen           │
+│    - Stats, Settings, Colors            │
+│    - Landscapes, Profile                │
+│    - Paused Game, Dirty Flags           │
+│    ↓                                     │
+│ 4. App verhält sich wie Neuinstallation │
+└─────────────────────────────────────────┘
+```
+
+### Warum wird zurückgesetzt?
+
+| Grund | Erklärung |
+|-------|-----------|
+| **Datenschutz** | Keine Daten des vorherigen Users bleiben |
+| **Klarheit** | User weiß: Nach Logout = Clean Slate |
+| **Kein Datenverlust** | Sync vor Logout sichert alles in Cloud |
+
+### Wichtig für User
+
+- ✅ Vor Logout werden Daten automatisch synchronisiert
+- ⚠️ Nach Logout: Offline-Spielen startet bei 0
+- ✅ Bei Re-Login: Alle Cloud-Daten werden wiederhergestellt
+
+### Logout-Flow (Technisch)
+
+```typescript
+// contexts/AuthProvider.tsx - signOut()
+
+1. hasAnyDirty() → Prüfe ob ungesyncte Änderungen
+2. syncUserData({ force: true }) → Sync vor Logout
+3. auth.signOut() → Firebase abmelden
+4. resetAllLocalData() → Stats, Settings, Colors löschen
+5. resetLandscapeData() → Gallery-Daten löschen
+6. resetUserProfile() → Profil löschen
+7. clearAllDirty() → Dirty Flags zurücksetzen
+```
+
+---
+
 ## 📁 Relevante Dateien
 
 | Datei | Zweck |
@@ -360,10 +523,11 @@ Auto-Sync nur alle 15 Minuten → kurzfristige Änderungen nicht sofort in Cloud
 ```
 [SyncService] Step 1/5: Downloading cloud data...
 [SyncService] Step 2/5: Loading local data...
-[SyncService] Step 3/5: Merging data with conflict resolution...
+[SyncService] Step 3/5: Merging data...
 [SyncService] Step 4/5: Saving merged data locally...
-[SyncService] Step 5/5: Uploading dirty documents...
-[SyncService] ✅ Sync successful
+[SyncService] Step 4.5/5: Processing streak data after sync...
+[SyncService] Step 5/5: Uploading dirty documents to cloud...
+[SyncService] ✅ Sync complete!
 ```
 
 ### Häufige Probleme
@@ -377,4 +541,4 @@ Auto-Sync nur alle 15 Minuten → kurzfristige Änderungen nicht sofort in Cloud
 
 ---
 
-**Letzte Aktualisierung:** Dezember 2024
+**Letzte Aktualisierung:** Dezember 2024 (Review & Korrekturen)

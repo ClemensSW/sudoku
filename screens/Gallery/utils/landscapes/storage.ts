@@ -412,3 +412,30 @@ export const getAllLandscapes = async (): Promise<Landscape[]> => {
 
 /** Alias für externe Nutzung */
 export const setCurrentProjectAlias = setCurrentProject;
+
+// ===== Logout Reset =====
+
+/**
+ * Setzt alle Landscape-Daten zurück (für Logout)
+ * Löscht AsyncStorage und invalidiert den Cache
+ */
+export const resetLandscapeData = async (): Promise<void> => {
+  console.log('[LandscapeStorage] Resetting landscape data...');
+
+  try {
+    // Invalidiere den Cache zuerst
+    landscapeCache.invalidate();
+
+    // Lösche alle relevanten Keys
+    await AsyncStorage.multiRemove([
+      LANDSCAPE_COLLECTION_KEY,
+      LAST_UNLOCK_KEY,
+      LAST_UNLOCK_EVENT_KEY,
+    ]);
+
+    console.log('[LandscapeStorage] ✅ Landscape data reset complete');
+  } catch (error) {
+    console.error('[LandscapeStorage] ❌ Error resetting landscape data:', error);
+    throw error;
+  }
+};

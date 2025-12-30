@@ -1002,3 +1002,36 @@ export const clearLastEmail = async (): Promise<void> => {
     console.error("Error clearing last email:", error);
   }
 };
+
+// ===== Logout Reset =====
+
+/**
+ * Setzt alle lokalen Daten zurück (für Logout)
+ * Wird aufgerufen nach erfolgreichem Cloud-Sync vor dem Logout
+ *
+ * WICHTIG: Löscht Stats, Settings, Colors, Paused Game, Settings Tracking
+ * Landscapes und Profile werden separat gelöscht (eigene Storage-Module)
+ */
+export const resetAllLocalData = async (): Promise<void> => {
+  console.log('[Storage] Resetting all local data...');
+
+  try {
+    // Lösche alle relevanten Keys
+    await AsyncStorage.multiRemove([
+      KEYS.STATISTICS,
+      KEYS.SETTINGS,
+      KEYS.COLOR_UNLOCK,
+      KEYS.PAUSED_GAME,
+      KEYS.SETTINGS_TRACKING,
+      KEYS.GAME_STATE,
+    ]);
+
+    // Clear in-memory cache
+    storageCache.clear();
+
+    console.log('[Storage] ✅ Local data reset complete');
+  } catch (error) {
+    console.error('[Storage] ❌ Error resetting local data:', error);
+    throw error;
+  }
+};

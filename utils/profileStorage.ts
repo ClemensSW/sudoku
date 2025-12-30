@@ -100,3 +100,21 @@ export async function updateUserTitle(levelIndex: number | null): Promise<UserPr
  * (falls irgendwo noch saveUserProfile importiert wird)
  */
 export const saveUserProfile = saveProfile;
+
+// ===== Logout Reset =====
+
+/**
+ * Setzt das Nutzerprofil zurück (für Logout)
+ * Löscht sowohl neuen als auch alten Key
+ */
+export const resetUserProfile = async (): Promise<void> => {
+  console.log('[ProfileStorage] Resetting user profile...');
+
+  try {
+    await AsyncStorage.multiRemove([NEW_KEY, OLD_KEY]);
+    console.log('[ProfileStorage] ✅ Profile reset complete');
+  } catch (error) {
+    console.error('[ProfileStorage] ❌ Error resetting profile:', error);
+    throw error;
+  }
+};

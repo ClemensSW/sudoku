@@ -10,7 +10,7 @@
  * - Upload merged zurück zu Cloud
  *
  * Features:
- * - Debouncing (max 1 sync alle 5 Minuten)
+ * - Debouncing (max 1 sync alle 15 Minuten)
  * - Retry Logic bei Netzwerkfehlern
  * - Status Tracking (isSyncing, lastSync)
  * - Error Handling

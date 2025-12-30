@@ -25,10 +25,10 @@
   },
   "detailModal": {
     "almostDoneSegment": "Fast fertig! Nur noch 1 Segment",
-    "unlockButton": "Bild freischalten",
-    "currentProjectTag": "Wird gerade freigeschaltet",
+    "unlockButton": "Freispielen",
+    "currentProjectTag": "Wird freigespielt",
     "favoriteTag": "Favorit",
-    "supporterUnlockButton": "Sofort freischalten"
+    "supporterUnlockButton": "Einlösen"
   },
   "unlockDialog": {
     "title": "\"{{name}}\" freischalten?",
@@ -41,7 +41,7 @@
   "supporterBadge": {
     "supporter": "Supporter",
     "premium": "Premium",
-    "remaining": "Noch {{count}} verfügbar"
+    "remaining": "Noch {{count}} Tickets verfügbar"
   },
   "fullscreenBanner": {
     "nonSupporter": {

@@ -25,10 +25,10 @@
   },
   "detailModal": {
     "almostDoneSegment": "लगभग पूर्ण! केवल 1 खंड शेष",
-    "unlockButton": "चित्र अनलॉक करें",
+    "unlockButton": "खेलकर अनलॉक करें",
     "currentProjectTag": "अनलॉक हो रहा है",
     "favoriteTag": "पसंदीदा",
-    "supporterUnlockButton": "तुरंत अनलॉक करें"
+    "supporterUnlockButton": "रिडीम करें"
   },
   "unlockDialog": {
     "title": "\"{{name}}\" अनलॉक करें?",
@@ -41,7 +41,7 @@
   "supporterBadge": {
     "supporter": "समर्थक",
     "premium": "प्रीमियम",
-    "remaining": "{{count}} शेष"
+    "remaining": "{{count}} टिकट शेष"
   },
   "fullscreenBanner": {
     "nonSupporter": {

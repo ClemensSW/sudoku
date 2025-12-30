@@ -92,7 +92,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
-  const [fullscreenBannerDismissed, setFullscreenBannerDismissed] = useState(false);
   const [footerContentHeight, setFooterContentHeight] = useState(200); // Dynamische Gradient-Höhe
 
   // Supporter hooks
@@ -207,7 +206,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
   const shouldShowFullscreenBanner =
     landscape &&
     !landscape.isComplete &&
-    !fullscreenBannerDismissed &&
     (!isSupporter || !canUnlock);
 
   // Toggle controls visibility on image tap
@@ -241,9 +239,6 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
       setControlsVisible(true);
       headerOpacity.value = 1;
       footerOpacity.value = 1;
-
-      // Reset banner dismissed state when opening modal
-      setFullscreenBannerDismissed(false);
     }
   }, [visible]);
 
@@ -384,18 +379,8 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
           </Text>
         </View>
 
-        {/* Dismiss button */}
-        <TouchableOpacity
-          onPress={(e) => {
-            e.stopPropagation();
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            setFullscreenBannerDismissed(true);
-          }}
-          style={{ padding: 4, marginLeft: 8 }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Feather name="x" size={18} color={colors.textSecondary} />
-        </TouchableOpacity>
+        {/* Arrow icon to indicate clickable */}
+        <Feather name="chevron-right" size={18} color={colors.textSecondary} style={{ marginLeft: 8 }} />
       </TouchableOpacity>
     );
   };
@@ -581,10 +566,55 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
         )}
 
         {/* Action Buttons for incomplete images */}
-        {landscape && !landscape.isComplete && !isCurrentProject && (
+        {landscape && !landscape.isComplete && (
           <View style={styles.footerActionButton}>
-            {canUnlockThisImage ? (
-              // Both buttons side by side wenn Supporter
+            {isCurrentProject && canUnlockThisImage ? (
+              // Current project with tickets: Only "Einlösen" button
+              <View
+                style={{
+                  shadowColor: '#D4AF37',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}
+              >
+                <LinearGradient
+                  colors={['#E5C158', '#D4AF37', '#C19A2E']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.selectProjectButton,
+                      {
+                        backgroundColor: 'transparent',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      },
+                    ]}
+                    onPress={handleSupporterUnlock}
+                    activeOpacity={0.8}
+                  >
+                    <Feather
+                      name="gift"
+                      size={16}
+                      color="#FFFFFF"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={[styles.selectButtonText, { fontWeight: '700', fontSize: typography.size.md }]}>
+                      {t('detailModal.supporterUnlockButton')}
+                    </Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              </View>
+            ) : !isCurrentProject && canUnlockThisImage ? (
+              // Other images with tickets: Both buttons side by side
               <View style={{ flexDirection: 'row', gap: 8, width: '100%' }}>
                 {/* Supporter Unlock Button */}
                 <View
@@ -680,8 +710,8 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                   </LinearGradient>
                 </View>
               </View>
-            ) : (
-              // Only regular unlock button wenn kein Supporter
+            ) : !isCurrentProject ? (
+              // Other images without tickets: Only "Freispielen" button
               <View
                 style={{
                   shadowColor: '#D4AF37',
@@ -725,7 +755,7 @@ const ImageDetailModal: React.FC<ImageDetailModalProps> = ({
                   </TouchableOpacity>
                 </LinearGradient>
               </View>
-            )}
+            ) : null}
           </View>
         )}
       </View>

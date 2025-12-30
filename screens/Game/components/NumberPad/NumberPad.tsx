@@ -233,7 +233,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 {isComplete ? (
                   <Feather
                     name="check"
-                    size={28}
+                    size={24}
                     color={pathColorHex}
                     style={{ opacity: 0.4 }}
                   />

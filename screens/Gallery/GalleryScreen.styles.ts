@@ -86,58 +86,39 @@ export default StyleSheet.create({
   tabsContainer: {
     paddingBottom: 12,
     paddingTop: 12,
-    paddingHorizontal: spacing.sm, // 8px - consistent with AvatarPicker
+    paddingHorizontal: spacing.md,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center", // Zentriert für Shifting Labels
     alignItems: "center",
-    position: "relative", // For absolute positioning of the indicator
-    borderTopWidth: 1, // Obere Grenze statt untere
+    gap: 8, // Abstand zwischen Tabs
+    position: "relative",
+    borderTopWidth: 1,
   },
-  
+
+  // Basis-Style für alle Tabs
   tabButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    // Mehr Größe für bessere Touch-Targets
+    paddingVertical: 10,
+    borderRadius: 22, // Pill-Shape
     minHeight: 44,
-    // Make it expand to fill available space
-    flex: 1,
-    marginHorizontal: 2, // Small margin between tabs
   },
-  
-  // New compact mode styles for very small screens
-  compactTabButton: {
-    paddingHorizontal: spacing.xs,
-    minHeight: 40,
+
+  // Inactive Tab: nur Icon, feste Breite
+  inactiveTabButton: {
+    width: 48,
+    paddingHorizontal: 0,
   },
-  
-  // New styles for small screens
-  smallTabButton: {
-    paddingHorizontal: spacing.xs,
-  },
-  
-  smallTabText: {
-    // fontSize set dynamically via theme.typography (smaller for small screens)
-  },
-  
-  tabIcon: {
-    marginRight: spacing.xs,
-  },
-  
+
+  // Active Tab: Icon + Text, flexible Breite
   activeTabButton: {
-    // Style updated to be more subtle
+    paddingHorizontal: 16,
+    gap: 6, // Abstand zwischen Icon und Text
   },
-  
+
   tabText: {
     // fontSize set dynamically via theme.typography
-    fontWeight: "500",
-    textAlign: 'center',
-  },
-  
-  activeTabText: {
     fontWeight: "600",
   },
   

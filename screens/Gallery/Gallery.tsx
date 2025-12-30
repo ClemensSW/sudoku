@@ -9,6 +9,7 @@ import {
 import { useRouter, Router } from "expo-router";
 import Animated, {
   FadeIn,
+  FadeOut,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -507,21 +508,23 @@ const Gallery: React.FC = () => {
       >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
-          const showTabText = !isCompactMode;
-          const tabLabel = isSmallMode ? tab.shortLabel : tab.label;
+          // Use short labels on small screens, full labels otherwise
+          const tabLabel = isSmallMode || isCompactMode ? tab.shortLabel : tab.label;
+
           return (
             <TouchableOpacity
               key={tab.id}
               style={[
                 styles.tabButton,
-                isCompactMode ? styles.compactTabButton : null,
-                isSmallMode ? styles.smallTabButton : null,
+                // Inactive: feste Breite, nur Icon
+                !isActive && styles.inactiveTabButton,
+                // Active: flexibel mit Hintergrund
                 isActive && [
                   styles.activeTabButton,
                   {
                     backgroundColor: isDark
-                      ? `${progressColor}1F` // ~12% opacity
-                      : `${progressColor}14`, // ~8% opacity
+                      ? `${progressColor}20` // ~12% opacity
+                      : `${progressColor}15`, // ~8% opacity
                   },
                 ],
               ]}
@@ -530,22 +533,22 @@ const Gallery: React.FC = () => {
             >
               <Feather
                 name={tab.icon as any}
-                size={isCompactMode ? 18 : 16}
+                size={isActive ? 18 : 22} // Größer wenn allein
                 color={isActive ? progressColor : colors.textSecondary}
-                style={showTabText ? styles.tabIcon : undefined}
               />
-              {showTabText && (
-                <Text
+              {/* Text nur bei aktivem Tab mit Animation */}
+              {isActive && (
+                <Animated.Text
+                  entering={FadeIn.duration(200)}
+                  exiting={FadeOut.duration(150)}
                   style={[
                     styles.tabText,
-                    isSmallMode && styles.smallTabText,
-                    { color: isActive ? progressColor : colors.textSecondary, fontSize: typography.size.sm },
-                    isActive && styles.activeTabText,
+                    { color: progressColor, fontSize: typography.size.sm },
                   ]}
                   numberOfLines={1}
                 >
                   {tabLabel}
-                </Text>
+                </Animated.Text>
               )}
             </TouchableOpacity>
           );

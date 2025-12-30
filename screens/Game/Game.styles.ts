@@ -6,25 +6,28 @@ export default StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  gameContainer: {
+  // Content-Container für festes Layout (ersetzt ScrollView)
+  gameContent: {
     flex: 1,
-    alignItems: "center",
     paddingHorizontal: 8,
-    paddingBottom: spacing.md,
   },
+  // Board-Container für vertikale Zentrierung
+  boardContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  // Controls am unteren Rand
   controlsContainer: {
     width: "100%",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 0,
+    paddingBottom: spacing.md,
   },
   // Background decorative elements
   topDecoration: {

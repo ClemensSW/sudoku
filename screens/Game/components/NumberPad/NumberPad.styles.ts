@@ -3,27 +3,29 @@ import { spacing } from "@/utils/theme";
 
 export default StyleSheet.create({
   container: {
-    width: "108%", // Increased width to match the game board
+    width: "100%",
     alignSelf: "center",
   },
 
-  // Action Buttons Row
+  // Action Buttons Row - DuoGame-Style
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
-    marginBottom: spacing.md,
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+    marginBottom: spacing.sm,
     width: "100%",
   },
 
-  // Container für jeden ActionButton und Label
+  // Container für jeden ActionButton (ohne Label)
   actionButtonContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    width: 70,
+    paddingHorizontal: 4,
   },
 
   actionButton: {
-    width: 52,
+    width: "100%",
     height: 52,
     borderRadius: 14,
     justifyContent: "center",
@@ -33,15 +35,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 2,
     elevation: 3,
-    marginBottom: 4,
     position: "relative",
-  },
-
-  actionButtonLabel: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: "500",
-    marginTop: 2,
-    textAlign: "center",
   },
 
   // Hinweis Counter Badge
@@ -64,13 +58,13 @@ export default StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // Zahlen in einer Reihe - nur Container-Style
+  // Zahlen in einer Reihe - kompakter wie DuoGame
   numbersRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: 70,
+    height: 50,
   },
 
   // Nur der Container für den Button, keine Styles für den Button selbst
@@ -78,6 +72,6 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 1, // Reduced padding between buttons
+    paddingHorizontal: 1,
   },
 });

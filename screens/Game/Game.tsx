@@ -1,6 +1,6 @@
 // screens/GameScreen/GameScreen.tsx
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, ScrollView, BackHandler } from "react-native";
+import { View, Text, BackHandler } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -384,14 +384,9 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           />
         </Animated.View>
 
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: Math.max(insets.bottom, 20) },
-          ]}
-        >
-          <View style={styles.gameContainer}>
-            {/* Game Board */}
+        <View style={styles.gameContent}>
+          {/* Game Board - vertikal zentriert */}
+          <View style={styles.boardContainer}>
             <GameBoard
               board={gameState.board}
               selectedCell={gameState.selectedCell}
@@ -401,24 +396,24 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
               highlightSameValues={gameSettings.highlightSameValues}
               showErrors={gameSettings.showMistakes}
             />
-
-            {/* Game Controls */}
-            <Animated.View
-              style={[styles.controlsContainer, controlsAnimatedStyle]}
-            >
-              <GameControls
-                onNumberPress={handleNumberPress}
-                onErasePress={gameActions.handleErasePress}
-                onNoteToggle={gameActions.toggleNoteMode}
-                onHintPress={handleHintPress}
-                noteModeActive={gameState.noteModeActive}
-                disabledNumbers={gameState.usedNumbers}
-                hintsRemaining={gameState.hintsRemaining}
-                isGameComplete={gameState.isGameComplete}
-              />
-            </Animated.View>
           </View>
-        </ScrollView>
+
+          {/* Game Controls - am unteren Rand */}
+          <Animated.View
+            style={[styles.controlsContainer, controlsAnimatedStyle]}
+          >
+            <GameControls
+              onNumberPress={handleNumberPress}
+              onErasePress={gameActions.handleErasePress}
+              onNoteToggle={gameActions.toggleNoteMode}
+              onHintPress={handleHintPress}
+              noteModeActive={gameState.noteModeActive}
+              disabledNumbers={gameState.usedNumbers}
+              hintsRemaining={gameState.hintsRemaining}
+              isGameComplete={gameState.isGameComplete}
+            />
+          </Animated.View>
+        </View>
       </View>
 
       {/* Game Completion Flow */}

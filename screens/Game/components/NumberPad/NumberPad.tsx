@@ -116,11 +116,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
               }
             />
           </AnimatedPressable>
-          <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}
-          >
-            {t('controls.note')}
-          </Text>
         </Animated.View>
 
         {/* Löschen-Button */}
@@ -148,11 +143,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
               color={colors.numberPadButtonText}
             />
           </AnimatedPressable>
-          <Text
-            style={[styles.actionButtonLabel, { color: colors.textSecondary, fontSize: typography.size.xs }]}
-          >
-            {t('controls.erase')}
-          </Text>
         </Animated.View>
 
         {/* Hinweis-Button */}
@@ -201,19 +191,6 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 </View>
               )}
             </AnimatedPressable>
-            <Text
-              style={[
-                styles.actionButtonLabel,
-                {
-                  color: hintDisabled
-                    ? colors.buttonTextDisabled
-                    : colors.textSecondary,
-                  fontSize: typography.size.xs,
-                },
-              ]}
-            >
-              {t('controls.hint')}
-            </Text>
           </Animated.View>
         )}
       </View>
@@ -239,19 +216,19 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 style={[
                   {
                     width: "100%",
-                    height: 60,
-                    borderRadius: 12,
+                    height: 44,
+                    borderRadius: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     backgroundColor: isDisabled
                       ? colors.buttonDisabled
                       : colors.primary,
                     shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
-                    opacity: isDisabled ? 0.3 : 1, // Reduzierte Sichtbarkeit für verwendete Zahlen
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 3,
+                    elevation: 3,
+                    opacity: isDisabled ? 0.3 : 1,
                   },
                   useAnimatedStyle(() => ({
                     transform: [{ scale: numberScales[i].value }],

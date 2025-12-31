@@ -1,6 +1,6 @@
 // screens/LeistungScreen/components/ProfileHeader/ProfileHeader.tsx
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, Image, StyleSheet, Pressable, TextInput, Platform } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, StyleSheet, Pressable, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -12,6 +12,7 @@ import LeistungIcon from "@/assets/svg/leistung.svg";
 import LightningIcon from "@/assets/svg/lightning.svg";
 import { useProgressColor } from "@/hooks/useProgressColor";
 import { useLevelInfo } from "@/screens/GameCompletion/components/PlayerProgressionCard/utils/useLevelInfo";
+import NameEditModal from "@/screens/Settings/components/ProfileGroup/components/NameEditModal";
 
 interface ProfileHeaderProps {
   stats: GameStats;
@@ -53,25 +54,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   // Name
   const isDefaultName = !name || name === "User" || name === "Jerome";
-  const [isEditingName, setIsEditingName] = useState(isDefaultName);
-  const [editedName, setEditedName] = useState(isDefaultName ? "" : name);
-  const inputRef = useRef<TextInput>(null);
-
-  // Synchronize editedName with name prop when it changes (fixes immediate display bug)
-  useEffect(() => {
-    if (!isEditingName) {
-      setEditedName(isDefaultName ? "" : name);
-    }
-  }, [name, isDefaultName, isEditingName]);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   // Avatar
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const getAvatarSource = () => getAvatarSourceFromUri(avatarUri, DEFAULT_AVATAR);
 
-  const handleNameEdit = () => {
-    if (isEditingName && onChangeName && editedName.trim()) onChangeName(editedName.trim());
-    setIsEditingName(!isEditingName);
-  };
+  const handleNameChange = (newName: string) => onChangeName?.(newName);
   const openAvatarPicker = () => setShowAvatarPicker(true);
   const closeAvatarPicker = () => setShowAvatarPicker(false);
   const handleAvatarChange = (uri: string | null) => onChangeAvatar?.(uri);
@@ -107,25 +96,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       {/* Name + (optional) Titel als Pill darunter */}
       <View style={styles.nameContainer}>
-        {isEditingName ? (
-          <Pressable onPress={() => inputRef.current?.focus()}>
-            <TextInput
-              ref={inputRef}
-              style={[styles.nameInput, { color: colors.textPrimary, borderColor: progressColor, fontSize: typography.size.xxl }]}
-              value={editedName}
-              onChangeText={setEditedName}
-              onBlur={handleNameEdit}
-              onSubmitEditing={handleNameEdit}
-              placeholder={t("profile.namePlaceholder")}
-              placeholderTextColor={colors.textSecondary}
-              returnKeyType="done"
-            />
-          </Pressable>
-        ) : (
-          <Pressable onPress={() => setIsEditingName(true)}>
-            <Text style={[styles.name, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>{isDefaultName ? "" : name}</Text>
-          </Pressable>
-        )}
+        <Pressable onPress={() => setShowNameModal(true)}>
+          <Text style={[styles.name, { color: colors.textPrimary, fontSize: typography.size.xxl }]}>
+            {isDefaultName ? "" : name}
+          </Text>
+        </Pressable>
 
         {title && (
           <Pressable
@@ -210,6 +185,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         onImageSelected={handleAvatarChange}
         currentAvatarUri={avatarUri ?? null}
       />
+
+      {/* Name Edit Modal */}
+      <NameEditModal
+        visible={showNameModal}
+        onClose={() => setShowNameModal(false)}
+        currentName={name}
+        onSave={handleNameChange}
+      />
     </View>
   );
 };
@@ -285,15 +268,6 @@ const styles = StyleSheet.create({
   /* Name + Titel */
   nameContainer: { marginBottom: 40, alignItems: "center" },
   name: { fontWeight: "700" }, // fontSize set dynamically via theme.typography
-  nameInput: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: "700",
-    borderBottomWidth: 1,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    minWidth: 140,
-    textAlign: "center",
-  },
   titleText: {
     marginTop: 6,
     flexDirection: "row",

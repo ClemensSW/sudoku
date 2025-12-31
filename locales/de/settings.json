@@ -49,13 +49,10 @@
       "subtitle": "Wähle deine bevorzugte Sprache"
     },
     "nameModal": {
-      "title": "Profilname bearbeiten",
-      "placeholder": "Dein Name",
-      "characterCount": "{{count}}/20 Zeichen",
-      "save": "Speichern",
-      "cancel": "Abbrechen",
-      "errorEmpty": "Name darf nicht leer sein",
-      "errorTooLong": "Name ist zu lang (max. 20 Zeichen)"
+      "title": "Name bearbeiten",
+      "label": "Dein Name",
+      "placeholder": "Name eingeben...",
+      "save": "Speichern"
     }
   },
   "gameSettings": {

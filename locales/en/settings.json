@@ -49,13 +49,10 @@
       "subtitle": "Select your preferred language"
     },
     "nameModal": {
-      "title": "Edit Profile Name",
-      "placeholder": "Your name",
-      "characterCount": "{{count}}/20 characters",
-      "save": "Save",
-      "cancel": "Cancel",
-      "errorEmpty": "Name cannot be empty",
-      "errorTooLong": "Name is too long (max. 20 characters)"
+      "title": "Edit Name",
+      "label": "Your Name",
+      "placeholder": "Enter name...",
+      "save": "Save"
     }
   },
   "gameSettings": {

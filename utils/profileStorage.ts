@@ -1,6 +1,7 @@
 // utils/profileStorage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDirty } from "@/utils/cloudSync/dirtyFlags";
+import { generateRandomProfile } from "@/utils/randomProfile";
 
 const NEW_KEY = "user_profile_v1";
 const OLD_KEY = "@sudoku/user_profile"; // Migration von alt -> neu
@@ -57,8 +58,16 @@ export async function loadUserProfile(): Promise<UserProfile> {
       return migrated;
     }
 
-    // 3) Nichts vorhanden -> Default
-    return DEFAULT_PROFILE;
+    // 3) Nichts vorhanden -> Zufälliges Starter-Profil generieren und speichern
+    console.log('[ProfileStorage] No profile found - generating random starter profile');
+    const randomProfile = generateRandomProfile();
+    const newProfile: UserProfile = {
+      ...DEFAULT_PROFILE,
+      name: randomProfile.name,
+      avatarUri: randomProfile.avatarUri,
+    };
+    await saveProfile(newProfile);
+    return newProfile;
   } catch (err) {
     console.error("Fehler beim Laden des Nutzerprofils:", err);
     return DEFAULT_PROFILE;

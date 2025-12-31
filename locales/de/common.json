@@ -1,4 +1,16 @@
 {
+  "starterNames": [
+    "Sudo", "Neunix", "Logix", "Ziff", "Numbro", "Cellix", "Zello",
+    "Zahlenfuchs", "Gridninja", "Denkpanda", "Rätselhamster", "Logikbär",
+    "Denkeule", "Knobelmops", "Sudoschaf", "Gridmaster", "Logiklegende",
+    "Ziffernprofi", "Sudoheld", "Rätselking", "Logikluchs", "Zahlentitan",
+    "Captain Neun", "Dr. Sudoku", "Graf Zahl", "Herr Kästchen",
+    "Professor Grid", "Agent Logik", "Baron Boxfeld", "Sir Rätselalot",
+    "Major Ziffer", "Oma Logik", "Onkel Neuner", "Tante Zelle",
+    "Prinz Puzzle", "Detektiv Drei", "Doktor Denk", "Meister Murmel",
+    "Käpt'n Knobel", "Inspektor Eins", "Monsieur Neun", "Zifferngeist",
+    "Gridphantom", "Nebeldenker", "Rätselorakel", "Logikmagier"
+  ],
   "buttons": {
     "ok": "OK",
     "cancel": "Abbrechen",

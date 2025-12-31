@@ -1,4 +1,16 @@
 {
+  "starterNames": [
+    "Sudo", "Neunix", "Logix", "Ziff", "Numbro", "Cellix", "Zello",
+    "Number Fox", "Grid Ninja", "Think Panda", "Puzzle Hamster", "Logic Bear",
+    "Think Owl", "Puzzle Pug", "Sudo Sheep", "Grid Master", "Logic Legend",
+    "Digit Pro", "Sudo Hero", "Puzzle King", "Logic Lynx", "Number Titan",
+    "Captain Nine", "Dr. Sudoku", "Count Number", "Mr. Grid",
+    "Professor Grid", "Agent Logic", "Baron Boxfield", "Sir Puzzlealot",
+    "Major Digit", "Granny Logic", "Uncle Niner", "Auntie Cell",
+    "Prince Puzzle", "Detective Three", "Doctor Think", "Master Marble",
+    "Cap'n Puzzle", "Inspector One", "Monsieur Nine", "Digit Ghost",
+    "Grid Phantom", "Fog Thinker", "Puzzle Oracle", "Logic Wizard"
+  ],
   "buttons": {
     "ok": "OK",
     "cancel": "Cancel",

@@ -10,7 +10,7 @@ import { triggerHaptic } from "@/utils/haptics";
 import { spacing } from "@/utils/theme";
 import TitlePickerModal from "@/screens/GameCompletion/components/LevelCard/components/TitlePickerModal";
 import { loadUserProfile, updateUserTitle, updateUserAvatar, updateUserName } from "@/utils/profileStorage";
-import EditableNameField from "./components/EditableNameField";
+import NameEditModal from "./components/NameEditModal";
 import AvatarPicker from "@/screens/Leistung/components/AvatarPicker";
 import { getAvatarUri } from "@/screens/Leistung/utils/avatarStorage";
 import { getAvatarSourceFromUri, DEFAULT_AVATAR } from "@/screens/Leistung/utils/defaultAvatars";
@@ -37,7 +37,7 @@ const ProfileGroup: React.FC = () => {
 
   // State for Name
   const [userName, setUserName] = useState<string>("User");
-  const [isEditingName, setIsEditingName] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   // Load data on mount and when user changes (login/logout)
   useEffect(() => {
@@ -87,16 +87,10 @@ const ProfileGroup: React.FC = () => {
     triggerHaptic("success");
   };
 
-  // Name handlers
+  // Name handler
   const handleNameChange = async (newName: string) => {
     await updateUserName(newName);
     setUserName(newName);
-    setIsEditingName(false);
-  };
-
-  const handleStartEditName = () => {
-    triggerHaptic('light');
-    setIsEditingName(true);
   };
 
   // Prepare title options for modal
@@ -129,12 +123,13 @@ const ProfileGroup: React.FC = () => {
           <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
-        {/* Name Button with Inline Edit */}
+        {/* Name Button */}
         <TouchableOpacity
           style={[styles.actionButton, { borderTopWidth: 1, borderTopColor: colors.border }]}
-          onPress={handleStartEditName}
-          activeOpacity={0.7}
-          disabled={isEditingName}
+          onPress={() => {
+            triggerHaptic("light");
+            setShowNameModal(true);
+          }}
         >
           <View style={styles.actionIcon}>
             <IdCardIcon width={48} height={48} />
@@ -143,21 +138,11 @@ const ProfileGroup: React.FC = () => {
             <Text style={[styles.actionTitle, { color: colors.textPrimary, fontSize: typography.size.md }]}>
               {t("appearance.name")}
             </Text>
-            <EditableNameField
-              name={userName}
-              onNameChange={handleNameChange}
-              onStartEdit={handleStartEditName}
-              isEditing={isEditingName}
-              textPrimaryColor={colors.textPrimary}
-              textSecondaryColor={colors.textSecondary}
-              progressColor={progressColor}
-            />
+            <Text style={[styles.actionSubtitle, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
+              {userName}
+            </Text>
           </View>
-          {isEditingName ? (
-            <Feather name="check" size={20} color={colors.textSecondary} />
-          ) : (
-            <Feather name="edit-2" size={20} color={colors.textSecondary} />
-          )}
+          <Feather name="chevron-right" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
         {/* Title Button */}
@@ -206,6 +191,14 @@ const ProfileGroup: React.FC = () => {
         onClose={() => setShowAvatarPicker(false)}
         onImageSelected={handleAvatarChange}
         currentAvatarUri={avatarUri}
+      />
+
+      {/* Name Edit Modal */}
+      <NameEditModal
+        visible={showNameModal}
+        onClose={() => setShowNameModal(false)}
+        currentName={userName}
+        onSave={handleNameChange}
       />
     </>
   );

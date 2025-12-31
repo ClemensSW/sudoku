@@ -133,6 +133,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            autoFocus
             editable={!isLoading}
           />
         </View>

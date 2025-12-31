@@ -168,6 +168,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            autoFocus
             editable={!isLoading}
           />
         </View>

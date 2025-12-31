@@ -22,7 +22,7 @@ for (let i = 17; i <= 161; i++) {
  */
 export function getRandomStarterName(): string {
   try {
-    const names = i18n.t('starterNames', { returnObjects: true });
+    const names = i18n.t('common:starterNames', { returnObjects: true });
 
     if (Array.isArray(names) && names.length > 0) {
       const randomIndex = Math.floor(Math.random() * names.length);

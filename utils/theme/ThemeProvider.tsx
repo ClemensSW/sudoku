@@ -19,6 +19,7 @@ import { Theme } from "./types";
 // Re-export Theme type for convenience
 export type { Theme } from "./types";
 import { loadSettings, saveSettings, DEFAULT_SETTINGS, GameSettings } from "@/utils/storage";
+import { onVisualSettingsRefresh } from "@/utils/events/settingsEvents";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -177,6 +178,41 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error updating font scale:", error);
     }
   }, []);
+
+  // Refresh from storage (called after login/logout via event)
+  const refreshFromStorage = useCallback(async () => {
+    console.log('[ThemeProvider] Refreshing from storage...');
+    try {
+      const settings = await loadSettings();
+
+      if (settings === null) {
+        // Logout: Reset zu System-Theme
+        setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+        setUserHasSetTheme(false);
+        setFontScale(DEFAULT_SETTINGS.fontScale);
+      } else if (settings.darkMode === "light" || settings.darkMode === "dark") {
+        setColorScheme(settings.darkMode);
+        setUserHasSetTheme(true);
+        setFontScale(settings.fontScale ?? DEFAULT_SETTINGS.fontScale);
+      } else {
+        // Follow system theme
+        setColorScheme(systemColorScheme === "dark" ? "dark" : "light");
+        setUserHasSetTheme(false);
+        setFontScale(settings.fontScale ?? DEFAULT_SETTINGS.fontScale);
+      }
+      console.log('[ThemeProvider] Refresh complete');
+    } catch (error) {
+      console.error('[ThemeProvider] Error refreshing:', error);
+    }
+  }, [systemColorScheme]);
+
+  // Subscribe to visual settings refresh events (login/logout)
+  useEffect(() => {
+    const unsubscribe = onVisualSettingsRefresh(() => {
+      refreshFromStorage();
+    });
+    return () => unsubscribe();
+  }, [refreshFromStorage]);
 
   // Only calculate theme if colorScheme is set
   const themeColors = colors[colorScheme === "dark" ? "dark" : "light"];

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { backgroundMusicManager } from '@/utils/backgroundMusic';
 import { loadSettings, DEFAULT_SETTINGS } from '@/utils/storage';
+import { onVisualSettingsRefresh } from '@/utils/events/settingsEvents';
 
 interface BackgroundMusicContextType {
   isPlaying: boolean;
@@ -38,6 +39,15 @@ export const BackgroundMusicProvider: React.FC<BackgroundMusicProviderProps> = (
     return () => {
       backgroundMusicManager.stop();
     };
+  }, []);
+
+  // Subscribe to visual settings refresh events (login/logout)
+  useEffect(() => {
+    const unsubscribe = onVisualSettingsRefresh(() => {
+      console.log('[BackgroundMusicProvider] Refreshing from storage...');
+      syncMusicWithSettings();
+    });
+    return () => unsubscribe();
   }, []);
 
   // Synchronisiere Musik mit Settings

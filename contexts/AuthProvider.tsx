@@ -23,6 +23,7 @@ import { saveStats, saveSettings, saveColorUnlock, resetAllLocalData } from '@/u
 import { saveUserProfile, resetUserProfile } from '@/utils/profileStorage';
 import { resetLandscapeData } from '@/screens/Gallery/utils/landscapes/storage';
 import { hasAnyDirty, clearAllDirty } from '@/utils/cloudSync/dirtyFlags';
+import { emitVisualSettingsRefresh } from '@/utils/events/settingsEvents';
 
 // ===== Types =====
 
@@ -181,6 +182,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
             // Update sync timestamp so UI shows "Gerade eben"
             updateSyncTimestamp();
 
+            // Visual Settings Refresh (Theme, Color, Music)
+            setTimeout(() => {
+              emitVisualSettingsRefresh();
+              console.log('[AuthProvider] ✅ Visual settings refresh triggered after sync');
+            }, 50);
+
             console.log('[AuthProvider] ✅ Sync complete (Cloud → Local)');
           } else {
             console.warn('[AuthProvider] ⚠️ Partial cloud data - using local as fallback');
@@ -294,6 +301,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // 4. Dirty Flags zurücksetzen
       await clearAllDirty();
       console.log('[AuthProvider] ✅ Dirty flags cleared');
+
+      // 5. Visual Settings Refresh (Theme, Color, Music)
+      setTimeout(() => {
+        emitVisualSettingsRefresh();
+        console.log('[AuthProvider] ✅ Visual settings refresh triggered');
+      }, 50);
 
       // Reset sync processed ref
       syncProcessedRef.current = null;

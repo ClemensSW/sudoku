@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useMe
 import { loadColorUnlock, updateSelectedColor as updateStoredColor } from '@/utils/storage';
 import { getColorFromHex } from '@/utils/pathColors';
 import { useTheme } from '@/utils/theme/ThemeProvider';
+import { onVisualSettingsRefresh } from '@/utils/events/settingsEvents';
 
 interface ColorContextType {
   /** The actual display color (theme-aware: light or dark variant) */
@@ -33,6 +34,15 @@ export const ColorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Load initial color from storage
   useEffect(() => {
     loadColor();
+  }, []);
+
+  // Subscribe to visual settings refresh events (login/logout)
+  useEffect(() => {
+    const unsubscribe = onVisualSettingsRefresh(() => {
+      console.log('[ColorProvider] Refreshing from storage...');
+      loadColor();
+    });
+    return () => unsubscribe();
   }, []);
 
   // PERFORMANCE: Memoize display color computation

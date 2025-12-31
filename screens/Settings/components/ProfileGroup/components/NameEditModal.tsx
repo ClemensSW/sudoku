@@ -71,7 +71,6 @@ const NameEditModal: React.FC<NameEditModalProps> = ({
       snapPoints={['100%']}
       keyboardBehavior="fillParent"
       android_keyboardInputMode="adjustResize"
-      managesBottomNav={false}
     >
       <View style={styles.container}>
         {/* Input Container */}

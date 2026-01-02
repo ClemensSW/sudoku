@@ -1,6 +1,7 @@
 // screens/DuoGameScreen/components/DuoGameCell.tsx
+// Gap-basiertes Layout mit Flex (wie Single-Player SudokuCell)
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { SudokuCell } from "@/utils/sudoku";
 import Animated, {
   useAnimatedStyle,
@@ -10,9 +11,9 @@ import Animated, {
   withRepeat,
   Easing,
 } from "react-native-reanimated";
-import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
+import { CELL_SIZE } from "./DuoGameBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getPlayerCellColors, getZoneDividerBorders, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
+import { getPlayerCellColors, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
 import { useProgressColor } from "@/contexts/color/ColorContext";
 
 interface DuoGameCellProps {
@@ -21,6 +22,7 @@ interface DuoGameCellProps {
   col: number;
   player: 0 | 1 | 2; // 0 = neutral/middle, 1 = bottom, 2 = top
   isSelected: boolean;
+  isCheckerboard: boolean; // Schachbrett-Pattern basierend auf Box-Position
   onPress: (row: number, col: number) => void; // stable, shared handler from parent
   rotateForPlayer2?: boolean;
   showErrors?: boolean;
@@ -32,6 +34,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   col,
   player,
   isSelected,
+  isCheckerboard,
   onPress,
   rotateForPlayer2 = true,
   showErrors = true,
@@ -41,10 +44,10 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 
   // Mittlere Zelle (4,4) - der neutrale Treffpunkt
   const isMiddleCell = row === 4 && col === 4;
-  // Row/Col für Schachbrett-Berechnung übergeben
+  // Schachbrett-Pattern wird von Box-Komponente übergeben
   const theme = React.useMemo(
-    () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark, row, col),
-    [player, pathColorHex, isDark, row, col]
+    () => getPlayerCellColors(player as DuoPlayerId, pathColorHex, isDark, isCheckerboard),
+    [player, pathColorHex, isDark, isCheckerboard]
   );
 
   // Pulse animation only when *filled* by the player
@@ -121,39 +124,8 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
 
   const shouldRotateContent = player === 2 && rotateForPlayer2;
 
-  // Intelligente Border-Logik: An 3×3 Grenzen keinen Border, dort ist Grid-Linie
-  const getBorderWidths = () => {
-    const base = 0.5;
-    return {
-      borderTopWidth: base,
-      borderLeftWidth: base,
-      // Unterer Border: Entfernen bei Row 2 und 5 (dort sind horizontale Grid-Linien)
-      borderBottomWidth: (row === 2 || row === 5) ? 0 : base,
-      // Rechter Border: Entfernen bei Col 2 und 5 (dort sind vertikale Grid-Linien)
-      borderRightWidth: (col === 2 || col === 5) ? 0 : base,
-    };
-  };
-
-  // Zonen-Trennlinie in Path Color mit leichter Transparenz
-  const dividerBorders = getZoneDividerBorders(row, col);
-  const dividerBorderWidth = 2;
-  const dividerColor = getDividerColor(pathColorHex); // 70% Opacity
-  const getDividerBorderStyle = () => {
-    const style: any = {};
-    const hasDivider = dividerBorders.bottom;
-
-    // Höherer z-Index für Zellen mit Trennlinie
-    if (hasDivider) {
-      style.zIndex = 10;
-    }
-
-    if (dividerBorders.bottom) {
-      style.borderBottomWidth = dividerBorderWidth;
-      style.borderBottomColor = dividerColor;
-    }
-
-    return style;
-  };
+  // Divider-Farbe für Center Cell (Fluss-Linien)
+  const dividerColor = getDividerColor(pathColorHex);
 
   // Multi-Layer Mulden-Styles für intensive Tiefe (5 Ringe)
   // Light Mode: Hellere Grautöne oben/links, Path Color Töne unten/rechts
@@ -280,19 +252,12 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     const diagonalLength = ringWidth * Math.SQRT2;
 
     return (
-      <TouchableOpacity
+      <Pressable
         style={[
           styles.cellContainer,
-          {
-            backgroundColor: 'transparent',
-            // Zentrierung aufheben damit flex: 1 der Ringe funktioniert
-            justifyContent: 'flex-start',
-            alignItems: 'stretch',
-          },
+          styles.middleCellContainer,
         ]}
         onPress={() => onPress(row, col)}
-        disabled={cell.isInitial}
-        activeOpacity={1}
       >
         {/* Diagonale Flusslinie links-unten → Mitte (animiert) */}
         <Animated.View style={[{
@@ -331,44 +296,52 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
             </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
-  // Normale Zellen
+  // Normale Zellen - Zwei-Layer-Struktur (wie Single-Player SudokuCell)
   return (
-    <TouchableOpacity
-      style={[
-        styles.cellContainer,
-        { backgroundColor: getCellBackgroundColor() },
-        {
-          ...getBorderWidths(),
-          borderColor: "rgba(0, 0, 0, 0.2)",
-        },
-        getDividerBorderStyle(),
-      ]}
+    <Pressable
+      style={styles.cellContainer}
       onPress={() => onPress(row, col)}
-      disabled={cell.isInitial}
-      activeOpacity={cell.isInitial ? 1 : 0.7}
     >
+      {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
+      <View style={[styles.cellBackground, { backgroundColor: getCellBackgroundColor() }]} />
+
+      {/* Content-Layer mit Text oder Notizen */}
       {renderCellContent()}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
+  // Flex-basierter Container (wie Single-Player SudokuCell)
   cellContainer: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
+    flex: 1,
+    aspectRatio: 1,
     position: "relative",
   },
+  // Spezielle Styles für Center Cell (Mulden-Struktur)
+  middleCellContainer: {
+    backgroundColor: 'transparent',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+  },
+  // Hintergrund-Layer - füllt gesamte Zelle
+  cellBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  // Content-Layer für Text/Notizen
   cellContent: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 2,
   },
   cellText: {
     fontSize: Math.max(CELL_SIZE * 0.5, 18),
@@ -424,6 +397,7 @@ function propsEqual(prev: Readonly<DuoGameCellProps>, next: Readonly<DuoGameCell
   return (
     prev.player === next.player &&
     prev.isSelected === next.isSelected &&
+    prev.isCheckerboard === next.isCheckerboard &&
     (prev.showErrors ?? true) === (next.showErrors ?? true) &&
     cellsEqual(prev.cell, next.cell)
   );

@@ -1,6 +1,7 @@
 // screens/DuoGameScreen/components/DuoGameBoard.tsx
+// Gap-basiertes Layout (identisch zu Single-Player SudokuBoard)
 import React from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -8,24 +9,19 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
-import DuoGameCell from "./DuoGameCell";
-import {
-  BOARD_SIZE as SHARED_BOARD_SIZE,
-  CELL_SIZE as SHARED_CELL_SIZE,
-} from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
+import DuoSudokuBox from "./DuoSudokuBox";
+import styles, {
+  BOARD_SIZE,
+  GRID_SIZE,
+  CELL_SIZE,
+  BOX_GAP,
+  CELL_GAP,
+} from "./DuoGameBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getDuoBoardColors, getDividerColor } from "@/utils/duoColors";
+import { getDividerColor } from "@/utils/duoColors";
+import { getGapColor } from "@/utils/theme/colors";
 import { useProgressColor } from "@/contexts/color/ColorContext";
-
-// Use the same board size as regular SudokuBoard
-const BOARD_SIZE = SHARED_BOARD_SIZE;
-const GRID_SIZE = BOARD_SIZE * 0.95;
-// DuoGameBoard has borderWidth: 2 (instead of 1.5 like SudokuBoard)
-// So we need to recalculate CELL_SIZE to account for the thicker border
-const GRID_BORDER_WIDTH = 2;
-const CELL_SIZE = (GRID_SIZE - 2 * GRID_BORDER_WIDTH) / 9;
 
 interface DuoGameBoardProps {
   board: SudokuBoard;
@@ -48,8 +44,10 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
 }) => {
   const { isDark } = useTheme();
   const pathColorHex = useProgressColor();
-  const boardColors = React.useMemo(
-    () => getDuoBoardColors(pathColorHex, isDark),
+
+  // Gap-Farbe für Grid-Linien (wie Single-Player)
+  const gapColor = React.useMemo(
+    () => getGapColor(pathColorHex, isDark),
     [pathColorHex, isDark]
   );
 
@@ -115,48 +113,49 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     [getCellOwner, onCellPress, ownerGrid, player1Cell, player2Cell]
   );
 
-  // --- Render helpers kept pure & small so React.memo on cells can shine ---
-  const isSelected = React.useCallback(
-    (row: number, col: number) =>
-      (player1Cell?.row === row && player1Cell?.col === col) ||
-      (player2Cell?.row === row && player2Cell?.col === col),
-    [player1Cell, player2Cell]
-  );
+  // Berechnung der Positionen für die Stepped-Divider-Extensions
+  // Gap-basiertes Layout: Position = Zellen + Box-Gaps + Cell-Gaps
+  const calculateDividerY = (rowsFromTop: number) => {
+    // Anzahl vollständiger 3x3 Box-Grenzen oberhalb dieser Row
+    const boxGaps = Math.floor(rowsFromTop / 3) * BOX_GAP;
+    // Anzahl Cell-Gaps innerhalb der Boxen
+    const cellGapsWithinBoxes = (rowsFromTop % 3) * CELL_GAP;
+    // Anzahl Cell-Gaps von vorherigen Boxen (2 pro Box)
+    const cellGapsFromPreviousBoxes = Math.floor(rowsFromTop / 3) * 2 * CELL_GAP;
+    // Gesamte Zellen-Höhe
+    const cellsHeight = rowsFromTop * CELL_SIZE;
+    return cellsHeight + boxGaps + cellGapsWithinBoxes + cellGapsFromPreviousBoxes;
+  };
 
-  // Berechnung der Positionen für die Trennlinien-Extensions
-  // Die Zell-Borders sind INNERHALB der Zellen (2px hoch), daher -2 um mit dem Border zu überlappen
-  const gridOffset = (BOARD_SIZE - GRID_SIZE) / 2 + GRID_BORDER_WIDTH;
-  const leftExtensionY = gridOffset + CELL_SIZE * 5 - 2; // Oberkante des Bottom-Borders von Row 4
-  const rightExtensionY = gridOffset + CELL_SIZE * 4 - 2; // Oberkante des Bottom-Borders von Row 3
-  const dividerColor = getDividerColor(pathColorHex); // 70% Opacity für dezentere Linie
+  // Linke Linie: unter Row 4 (nach 5 Reihen)
+  const leftDividerY = calculateDividerY(5);
+  // Rechte Linie: unter Row 3 (nach 4 Reihen)
+  const rightDividerY = calculateDividerY(4);
+  const dividerColor = getDividerColor(pathColorHex);
 
   return (
     <View style={styles.boardContainer}>
-      {/* Linke Trennlinien-Extension (unter Row 4, von Bildschirmrand bis Grid-Rand) */}
+      {/* Linke Trennlinien-Extension (unter Row 4, links vom Board) */}
       <View
         style={[
           styles.dividerExtension,
           {
             left: 0,
-            right: '50%',
-            // Endet am linken Grid-Rand (nicht in der Mitte, um Überlappung mit Cell-Borders zu vermeiden)
-            marginRight: GRID_SIZE / 2,
-            top: leftExtensionY,
+            width: (BOARD_SIZE - GRID_SIZE) / 2 + GRID_SIZE / 2 - CELL_SIZE / 2,
+            top: leftDividerY + (BOARD_SIZE - GRID_SIZE) / 2,
             backgroundColor: dividerColor,
           },
         ]}
       />
 
-      {/* Rechte Trennlinien-Extension (unter Row 3, von Grid-Rand bis Bildschirmrand) */}
+      {/* Rechte Trennlinien-Extension (unter Row 3, rechts vom Board) */}
       <View
         style={[
           styles.dividerExtension,
           {
             right: 0,
-            left: '50%',
-            // Beginnt am rechten Grid-Rand
-            marginLeft: GRID_SIZE / 2,
-            top: rightExtensionY,
+            width: (BOARD_SIZE - GRID_SIZE) / 2 + GRID_SIZE / 2 - CELL_SIZE / 2,
+            top: rightDividerY + (BOARD_SIZE - GRID_SIZE) / 2,
             backgroundColor: dividerColor,
           },
         ]}
@@ -164,86 +163,38 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
 
       <Animated.View style={[
         styles.boardWrapper,
+        styles.boardAnimationContainer,
         animatedStyle,
         {
-          // Leuchtender Path Color Glow (wie LevelCard - nur Shadow, kein Border!)
-          shadowColor: pathColorHex,  // Farbiger Glow-Effekt!
-          shadowOpacity: isDark ? 0.6 : 0.35,  // Stärker im Dark Mode
+          // Leuchtender Path Color Glow (wie Single-Player)
+          shadowColor: pathColorHex,
+          shadowOpacity: isDark ? 0.6 : 0.35,
           shadowRadius: isDark ? 16 : 12,
           elevation: 10,
         }
       ]}>
         <View style={styles.board}>
-          {/* Player areas + subtle lightness gradient (static) */}
-          <View style={styles.playerAreasContainer} pointerEvents="none">
-            {/* Player 2 Zone (oben) - 3% Lightness-Unterschied */}
-            <View
-              style={[
-                styles.playerAreaBackground,
-                { top: 0, height: BOARD_SIZE * 0.47, backgroundColor: boardColors.player2Background },
-              ]}
-            />
-            {/* Lightness-basierter Gradient (kein farbiger Gradient!) */}
-            <LinearGradient
-              colors={[boardColors.player2Background, boardColors.player1Background]}
-              style={[
-                styles.gradientTransition,
-                { top: BOARD_SIZE * 0.47, height: BOARD_SIZE * 0.15 },
-              ]}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-            />
-            {/* Player 1 Zone (unten) - Standard Background */}
-            <View
-              style={[
-                styles.playerAreaBackground,
-                { bottom: 0, height: BOARD_SIZE * 0.45, backgroundColor: boardColors.player1Background },
-              ]}
-            />
-          </View>
-
-          {/* Grid + cells */}
-          <View style={[styles.gridContainer, { borderColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }]}>
-            {/* 3x3 separators - deutlich sichtbar im Dark Mode */}
-            <View style={[
-              styles.gridLine,
-              styles.horizontalGridLine,
-              { top: CELL_SIZE * 3, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
-            ]} />
-            <View style={[
-              styles.gridLine,
-              styles.horizontalGridLine,
-              { top: CELL_SIZE * 6, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
-            ]} />
-            <View style={[
-              styles.gridLine,
-              styles.verticalGridLine,
-              { left: CELL_SIZE * 3, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
-            ]} />
-            <View style={[
-              styles.gridLine,
-              styles.verticalGridLine,
-              { left: CELL_SIZE * 6, backgroundColor: isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.4)' }
-            ]} />
-
-            {/* Cells */}
-            {board.map((rowData, r) => (
-              <View key={`row-${r}`} style={styles.row}>
-                {rowData.map((cellData, c) => (
-                  <DuoGameCell
-                    key={`cell-${r}-${c}`}
-                    cell={cellData}
-                    row={r}
-                    col={c}
-                    player={ownerGrid[r]?.[c] ?? 0}
-                    isSelected={isSelected(r, c)}
-                    onPress={onCellPressStable}
-                    rotateForPlayer2={true}
-                    showErrors={showErrors}
-                  />
-                ))}
-              </View>
-            ))}
+          {/* Grid-Container - backgroundColor zeigt durch die Gaps als Grid-Linien */}
+          <View style={[styles.gridContainer, { backgroundColor: gapColor }]}>
+            <View style={styles.boxesContainer}>
+              {[0, 1, 2].map((boxRow) => (
+                <View key={boxRow} style={styles.boxRow}>
+                  {[0, 1, 2].map((boxCol) => (
+                    <DuoSudokuBox
+                      key={`box-${boxRow}-${boxCol}`}
+                      boxRow={boxRow}
+                      boxCol={boxCol}
+                      board={board}
+                      ownerGrid={ownerGrid}
+                      player1Cell={player1Cell}
+                      player2Cell={player2Cell}
+                      onCellPressStable={onCellPressStable}
+                      showErrors={showErrors}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
           </View>
 
           {/* Loading overlay */}
@@ -257,95 +208,5 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  boardContainer: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 12,
-    overflow: "visible", // Damit die Trennlinien-Extensions nicht abgeschnitten werden
-  },
-  boardWrapper: {
-    borderRadius: 16,
-    overflow: "hidden",
-    // Shadow wird dynamisch gesetzt (Path Color Glow)
-    shadowOffset: { width: 0, height: 6 },
-  },
-  board: {
-    width: BOARD_SIZE,
-    height: BOARD_SIZE,
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  playerAreasContainer: {
-    position: "absolute",
-    width: BOARD_SIZE,
-    height: BOARD_SIZE,
-    overflow: "hidden",
-    borderRadius: 8,
-    zIndex: 0,
-  },
-  playerAreaBackground: {
-    position: "absolute",
-    width: "100%",
-    left: 0,
-    right: 0,
-  },
-  gradientTransition: {
-    position: "absolute",
-    width: "100%",
-    zIndex: 1,
-  },
-  gridContainer: {
-    width: GRID_SIZE,
-    height: GRID_SIZE,
-    borderWidth: 2,
-    // borderColor dynamisch gesetzt (theme-aware)
-    overflow: "hidden",
-    position: "relative",
-    borderRadius: 8,
-    backgroundColor: "transparent",
-    zIndex: 1,
-  },
-  row: {
-    flexDirection: "row",
-    height: CELL_SIZE,
-  },
-  gridLine: {
-    position: "absolute",
-    // backgroundColor dynamisch gesetzt (theme-aware)
-    zIndex: 15, // Höher als Trennlinien-Zellen (z-Index 10), um nicht verdeckt zu werden
-  },
-  horizontalGridLine: {
-    width: GRID_SIZE,
-    height: 2,
-    left: 0,
-  },
-  verticalGridLine: {
-    width: 2,
-    height: GRID_SIZE,
-    top: 0,
-  },
-  loadingOverlay: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-    borderRadius: 8,
-  },
-  dividerExtension: {
-    position: "absolute",
-    height: 2,
-    zIndex: 20, // Über allen anderen Elementen
-  },
-});
 
 export default React.memo(DuoGameBoard);

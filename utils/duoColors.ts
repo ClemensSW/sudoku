@@ -5,60 +5,15 @@
 // Kern-Prinzipien:
 // 1. Nutzt Theme Colors aus colors.ts (maximal konsistent)
 // 2. Beide Spieler absolut gleichwertig (identische Controls)
-// 3. Gradient durch Lightness-Unterschied, nicht durch Farbe
+// 3. Klare Trennung durch Stepped-Divider und Zone-Farben
 // 4. Path Color nur für funktionale States (selected), nicht für Dekoration
 // 5. Professionell & zurückhaltend - Fokus auf Gameplay
+// 6. Gap-basiertes Layout mit opaken Farben (wie Single-Player)
 
-import { colors } from '@/utils/theme/colors';
-import { mixColors, lightenColor } from './colorHelpers';
+import { colors, getDuoZoneBackground } from '@/utils/theme/colors';
+import { mixColors } from './colorHelpers';
 
 export type DuoPlayerId = 0 | 1 | 2;
-
-/**
- * Generiert subtile Zone Colors mit Path Color Tints
- * Player 1: 4% Path Color Tint (farbig, aber sehr dezent)
- * Player 2: Neutral grau (keine Farbe)
- * Dark Mode: Path Color wird aufgehellt für freundlicheren, wärmeren Look
- *
- * Schachbrettmuster: Einheitlich 3% schwarz/weiß für ALLE Blöcke (wie Single-Player)
- */
-function getZoneColors(isDark: boolean, pathColorHex: string) {
-  const baseLight = colors.light.surface;    // #FFFFFF
-  const baseDark = colors.dark.surface;      // #292A2D
-
-  // Einheitliche Schachbrettfarbe für ALLE Blöcke (identisch zu Single-Player)
-  const checkerboardColor = isDark
-    ? 'rgba(255, 255, 255, 0.03)'  // 3% weiß im Dark Mode
-    : 'rgba(0, 0, 0, 0.03)';       // 3% schwarz im Light Mode
-
-  if (isDark) {
-    // Path Color im Dark Mode aufhellen für freundlichen Glow-Effekt
-    const lightenedPathColor = lightenColor(pathColorHex, 70); // 70% heller - sanftes Leuchten
-
-    return {
-      // Player 1 (unten): Dark Background + 4% aufgehellte Path Color
-      player1Background: mixColors(lightenedPathColor, baseDark, 90), // 4% helle Path Color
-      // Player 2 (oben): Neutral Dark Background (keine Farbe)
-      player2Background: baseDark,  // #292A2D
-      // Middle/Neutral: Zwischen beiden
-      neutralBackground: mixColors(lightenedPathColor, baseDark, 98), // 2% helle Path Color
-      // Schachbrett: Einheitlich für alle Zonen
-      checkerboardColor,
-    };
-  } else {
-    // Light Mode bleibt unverändert - originale Path Color
-    return {
-      // Player 1 (unten): Light Background + 4% Path Color Tint
-      player1Background: mixColors(pathColorHex, baseLight, 96), // 4% Path Color
-      // Player 2 (oben): Neutral Light Background (keine Farbe)
-      player2Background: baseLight, // #FFFFFF
-      // Middle/Neutral: Zwischen beiden
-      neutralBackground: mixColors(pathColorHex, baseLight, 98), // 2% Path Color
-      // Schachbrett: Einheitlich für alle Zonen
-      checkerboardColor,
-    };
-  }
-}
 
 /**
  * Gibt die Trennlinien-Farbe mit leichter Transparenz zurück
@@ -94,49 +49,26 @@ export function getZoneDividerBorders(row: number, col: number): {
 }
 
 /**
- * Cell Colors - nutzt Theme Colors + Path Color für Selection & Zone Tint
+ * Cell Colors - nutzt opake Farben aus colors.ts für Gap-Layout-Kompatibilität
  * Player 1 Zone: Subtiler Path Color Tint (4%)
  * Player 2 Zone: Neutral grau
- * Schachbrett: Einheitlich 3% schwarz/weiß für ALLE Zonen (wie Single-Player)
+ * Schachbrett: Path-Color-getönt für P1, neutral für P2
  *
- * @param row - Zeile der Zelle (0-8), optional für Schachbrett-Berechnung
- * @param col - Spalte der Zelle (0-8), optional für Schachbrett-Berechnung
+ * @param isCheckerboard - Ob die Zelle in einer Schachbrett-Box ist (boxRow + boxCol) % 2 === 1
  */
 export const getPlayerCellColors = (
   player: DuoPlayerId,
   pathColorHex: string,
   isDark: boolean,
-  row?: number,
-  col?: number
+  isCheckerboard: boolean = false
 ) => {
-  const zoneColors = getZoneColors(isDark, pathColorHex);
   const themeColors = isDark ? colors.dark : colors.light;
 
-  // Schachbrett-Logik: (boxRow + boxCol) % 2 === 1
-  const isCheckerboardBlock = row !== undefined && col !== undefined
-    ? (Math.floor(row / 3) + Math.floor(col / 3)) % 2 === 1
-    : false;
-
-  // Basis: Zone-abhängiger Background
-  // Schachbrett wird als Overlay über der Zone-Farbe angewendet
-  let cellBackground: string;
-  if (player === 1) {
-    // Player 1 Zone (unten): Path Color Tint + optionales Schachbrett-Overlay
-    cellBackground = isCheckerboardBlock
-      ? zoneColors.checkerboardColor  // Schachbrett überschreibt Zone-Farbe
-      : zoneColors.player1Background; // 4% Path Color
-  } else if (player === 2) {
-    // Player 2 Zone (oben): Neutral + optionales Schachbrett
-    cellBackground = isCheckerboardBlock
-      ? zoneColors.checkerboardColor  // 3% schwarz/weiß
-      : zoneColors.player2Background; // Neutral
-  } else {
-    // Mittlere Zelle (neutral)
-    cellBackground = zoneColors.neutralBackground;
-  }
+  // Verwende opake Farben aus colors.ts für Gap-Layout-Kompatibilität
+  const cellBackground = getDuoZoneBackground(player, pathColorHex, isDark, isCheckerboard);
 
   return {
-    // Cell backgrounds - mit einheitlichem Schachbrett
+    // Cell backgrounds - opake Farben für Gap-Layout
     cellBackground,
     // Selected state nutzt Path Color für BEIDE Spieler (gleichwertig!)
     selectedBackground: pathColorHex,
@@ -160,19 +92,17 @@ export const getPlayerCellColors = (
 };
 
 /**
- * Board Colors - Gradient mit subtilen Path Color Tints
+ * Board Colors - Opake Farben für Gap-Layout
  * Player 1: 4% Path Color Tint
  * Player 2: Neutral grau
- * Gradient: Fließender Übergang zwischen farbig und neutral
+ * Kein Gradient mehr - klare Trennung durch Divider und Zellfarben
  */
 export const getDuoBoardColors = (pathColorHex: string, isDark: boolean) => {
-  const zoneColors = getZoneColors(isDark, pathColorHex);
-
   return {
-    // Zonen-Hintergründe für Gradient
-    player1Background: zoneColors.player1Background,  // Mit Path Color Tint
-    player2Background: zoneColors.player2Background,  // Neutral
-    neutralBackground: zoneColors.neutralBackground,  // Zwischen beiden
+    // Zonen-Hintergründe - nutzen opake Farben aus getDuoZoneBackground
+    player1Background: getDuoZoneBackground(1, pathColorHex, isDark, false),
+    player2Background: getDuoZoneBackground(2, pathColorHex, isDark, false),
+    neutralBackground: getDuoZoneBackground(0, pathColorHex, isDark, false),
   };
 };
 

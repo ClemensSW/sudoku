@@ -6,6 +6,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { loadStats, GameStats } from "@/utils/storage";
+import { applyPendingShields } from "@/utils/dailyStreak";
 import {
   loadUserProfile,
   updateUserName,
@@ -148,7 +149,10 @@ const Leistung: React.FC = () => {
       let cancelled = false;
       (async () => {
         try {
-          // Reload stats (wichtig für Shield-Updates nach Käufen)
+          // NEU: Wende ausstehende Schilde an BEVOR Stats geladen werden
+          await applyPendingShields();
+
+          // Reload stats (jetzt mit korrekten Shield-Daten)
           const loadedStats = await loadStats();
           if (!cancelled) setStats(loadedStats);
 

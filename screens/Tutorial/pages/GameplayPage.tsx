@@ -1,5 +1,5 @@
 // components/Tutorial/pages/GameplayPage.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, {
   FadeIn,
@@ -7,17 +7,58 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withSequence,
-  Easing,
+  SharedValue,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import TutorialPage from "../TutorialPage";
-import { spacing } from "@/utils/theme";
 import { useTranslation } from "react-i18next";
 import { useProgressColor } from "@/hooks/useProgressColor";
 
 // Manuell implementiertes SudokuBoard für die Tutorial-Animation
 import SudokuBoardDemo from "./SudokuBoardDemo";
+
+// Ein gültiges Sudoku mit eindeutiger Lösung in der Mitte (nur 5 passt)
+const exampleGrid = [
+  [0, 0, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 2, 0, 0, 0, 0],
+  [0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 1, 7, 3, 0, 0, 0],
+  [1, 2, 3, 4, 0, 6, 7, 8, 9],
+  [0, 0, 0, 2, 9, 8, 0, 0, 0],
+  [0, 0, 0, 0, 4, 0, 0, 0, 0],
+  [0, 0, 0, 0, 6, 0, 0, 0, 0],
+  [0, 0, 0, 0, 8, 0, 0, 0, 0],
+];
+
+// Target cell and value
+const targetRow = 4;
+const targetCol = 4;
+const targetValue = 5;
+const targetIndex = targetValue - 1; // Array index for button 5 is 4
+
+// AnimatedNumberButton component to properly use hooks at top level
+interface AnimatedNumberButtonProps {
+  num: number;
+  scale: SharedValue<number>;
+  color: string;
+}
+
+const AnimatedNumberButton: React.FC<AnimatedNumberButtonProps> = ({
+  num,
+  scale,
+  color,
+}) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.numberItem, animatedStyle]}>
+      <Text style={[styles.numberText, { color }]}>{num}</Text>
+    </Animated.View>
+  );
+};
 
 interface GameplayPageProps {
   onNext: () => void;
@@ -39,19 +80,6 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
   const { colors, typography } = theme;
   const progressColor = useProgressColor();
 
-  // Ein gültiges Sudoku mit eindeutiger Lösung in der Mitte (nur 5 passt)
-  const exampleGrid = [
-    [0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 2, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 0, 0, 0, 0],
-    [0, 0, 0, 1, 7, 3, 0, 0, 0],
-    [1, 2, 3, 4, 0, 6, 7, 8, 9],
-    [0, 0, 0, 2, 9, 8, 0, 0, 0],
-    [0, 0, 0, 0, 4, 0, 0, 0, 0],
-    [0, 0, 0, 0, 6, 0, 0, 0, 0],
-    [0, 0, 0, 0, 8, 0, 0, 0, 0],
-  ];
-
   // Animation state
   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
     null
@@ -64,30 +92,25 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     ...exampleGrid.map((row) => [...row]),
   ]);
 
-  // Target cell and value
-  const targetRow = 4;
-  const targetCol = 4;
-  const targetValue = 5;
-  const targetIndex = targetValue - 1; // Array index for button 5 is 4
-
-  // Animation values
-  const numberScales = Array.from({ length: 9 }, () => useSharedValue(1));
-  const animationRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Start demo animation on component mount with delay
-  useEffect(() => {
-    startAnimation();
-
-    return () => {
-      // Cleanup any running timers
-      if (animationRef.current) {
-        clearTimeout(animationRef.current);
-      }
-    };
-  }, []);
+  // Animation values - each useSharedValue must be called at top level
+  const numberScale0 = useSharedValue(1);
+  const numberScale1 = useSharedValue(1);
+  const numberScale2 = useSharedValue(1);
+  const numberScale3 = useSharedValue(1);
+  const numberScale4 = useSharedValue(1);
+  const numberScale5 = useSharedValue(1);
+  const numberScale6 = useSharedValue(1);
+  const numberScale7 = useSharedValue(1);
+  const numberScale8 = useSharedValue(1);
+  const numberScales = useMemo(() => [
+    numberScale0, numberScale1, numberScale2,
+    numberScale3, numberScale4, numberScale5,
+    numberScale6, numberScale7, numberScale8,
+  ], [numberScale0, numberScale1, numberScale2, numberScale3, numberScale4, numberScale5, numberScale6, numberScale7, numberScale8]);
+  const animationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Start the animation sequence
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     if (animationRunning) return;
 
     setAnimationRunning(true);
@@ -117,24 +140,42 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
         // Pause vor dem Platzieren der Zahl
         setTimeout(() => {
           // Step 3: Zahl in der Zelle anzeigen
-          const newGrid = [...gridState];
-          newGrid[targetRow][targetCol] = targetValue;
-          setGridState(newGrid);
+          setGridState(prevGrid => {
+            const newGrid = prevGrid.map(row => [...row]);
+            newGrid[targetRow][targetCol] = targetValue;
+            return newGrid;
+          });
           setStepNumber(3);
 
           // Pause am Ende, dann Animation zurücksetzen und neu starten
           animationRef.current = setTimeout(() => {
             setAnimationRunning(false);
-
-            // Warten und dann Animation neu starten
-            animationRef.current = setTimeout(() => {
-              startAnimation();
-            }, 1500);
           }, 2500);
         }, 2500);
       }, 2000);
     }, 500);
-  };
+  }, [animationRunning, numberScales]);
+
+  // Start demo animation on component mount with delay
+  useEffect(() => {
+    startAnimation();
+
+    return () => {
+      // Cleanup any running timers
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+      }
+    };
+  }, [startAnimation]);
+
+  // Restart animation when it finishes
+  useEffect(() => {
+    if (!animationRunning) {
+      animationRef.current = setTimeout(() => {
+        startAnimation();
+      }, 1500);
+    }
+  }, [animationRunning, startAnimation]);
 
   // Get instruction text based on current step
   const getInstructionText = () => {
@@ -155,31 +196,14 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     return (
       <View style={styles.numberPadContainer}>
         <View style={styles.numbersRow}>
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
-            // Animierter Stil für jeden Button
-            const animatedStyle = useAnimatedStyle(() => {
-              return {
-                transform: [{ scale: numberScales[index].value }],
-              };
-            });
-
-            // Minimalistischer Text-Only-Stil wie im echten Spiel
-            return (
-              <Animated.View
-                key={`num-${num}`}
-                style={[styles.numberItem, animatedStyle]}
-              >
-                <Text
-                  style={[
-                    styles.numberText,
-                    { color: progressColor },
-                  ]}
-                >
-                  {num}
-                </Text>
-              </Animated.View>
-            );
-          })}
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => (
+            <AnimatedNumberButton
+              key={`num-${num}`}
+              num={num}
+              scale={numberScales[index]}
+              color={progressColor}
+            />
+          ))}
         </View>
       </View>
     );

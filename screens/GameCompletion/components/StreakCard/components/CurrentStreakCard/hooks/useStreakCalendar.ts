@@ -152,9 +152,17 @@ export const useStreakCalendar = ({ playHistory, firstLaunchDate, currentStreak,
     return 'streak-broken';
   };
 
-  // Progress calculation
+  // Progress calculation - zählt sowohl gespielte Tage als auch Schild-Tage
   const daysInMonth = playHistory ? getDaysInMonth(selectedMonth) : 0;
-  const playedDays = monthData?.days.length || 0;
+  const playedDays = useMemo(() => {
+    if (!monthData) return 0;
+    // Kombiniere days und shieldDays mit Set um Duplikate zu vermeiden
+    const allSuccessfulDays = new Set([
+      ...(monthData.days || []),
+      ...(monthData.shieldDays || [])
+    ]);
+    return allSuccessfulDays.size;
+  }, [monthData]);
   const progressPercentage = daysInMonth > 0 ? (playedDays / daysInMonth) * 100 : 0;
 
   return {

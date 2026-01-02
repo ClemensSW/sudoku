@@ -1,15 +1,15 @@
 import React, { memo } from "react";
-import { Text, Pressable, View, StyleSheet, TextStyle } from "react-native";
+import { Text, Pressable, View, TextStyle } from "react-native";
 import { SudokuCell as SudokuCellType } from "@/utils/sudoku";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
-  FadeIn,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
+import { getRelatedBackgroundColor } from "@/utils/theme/colors";
 import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
@@ -77,7 +77,8 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     } else if (isSelected) {
       return { backgroundColor: pathColorHex };
     } else if (isRelated) {
-      return { backgroundColor: `${pathColorHex}14` };
+      // Vordefinierte opake Farbe für Gap-Layout-Kompatibilität
+      return { backgroundColor: getRelatedBackgroundColor(pathColorHex, theme.isDark) };
     } else {
       // Schachbrettmuster für 3×3-Boxen
       const boxRow = Math.floor(row / 3);
@@ -85,58 +86,56 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       const isAlternateBox = (boxRow + boxCol) % 2 === 1;
 
       if (isAlternateBox) {
-        // Unterschiedliche Farbe für Light und Dark Mode
-        const checkerboardColor = theme.isDark
-          ? 'rgba(255, 255, 255, 0.03)'
-          : 'rgba(0, 0, 0, 0.03)';
-        return { backgroundColor: checkerboardColor };
+        // Vordefinierte opake Schachbrett-Farbe für Gap-Layout
+        return { backgroundColor: colors.cellCheckerboardBackground };
       }
     }
-    return null;
+    // Expliziter Hintergrund für alle Zellen (Gap-Layout erfordert opake Zellen)
+    return { backgroundColor: colors.boardBackgroundColor };
   };
 
   // Text-Styles für verschiedene Zustände - mit Theme-Farben
-const getCellTextStyle = () => {
-  // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
-  let style: TextStyle = {
-    ...baseStyles.cellText,
-    color: colors.cellTextColor, // Default Textfarbe
-    fontWeight: "300", // Hier setzen wir den Standard auf 300 für vom Spieler ausgefüllte Zellen
-  };
+  const getCellTextStyle = () => {
+    // Kombiniere die Basis-TextStyle mit zusätzlichen Werten
+    let style: TextStyle = {
+      ...baseStyles.cellText,
+      color: colors.cellTextColor, // Default Textfarbe
+      fontWeight: "300", // Hier setzen wir den Standard auf 300 für vom Spieler ausgefüllte Zellen
+    };
 
-  // WICHTIG: Initialer Zellenwert
-  if (cell.isInitial) {
-    style.fontWeight = "700";
+    // WICHTIG: Initialer Zellenwert
+    if (cell.isInitial) {
+      style.fontWeight = "700";
 
-    // Wenn die Zelle ausgewählt ist, verwende die Selected-Farbe (weiß)
-    if (isSelected) {
-      style.color = colors.cellSelectedTextColor;
+      // Wenn die Zelle ausgewählt ist, verwende die Selected-Farbe (weiß)
+      if (isSelected) {
+        style.color = colors.cellSelectedTextColor;
+      }
+      // Wenn gleiche Zahlen hervorgehoben werden
+      else if (sameValueHighlight) {
+        style.color = pathColorHex;
+      }
+      // Sonst normale Initial-Farbe
+      else {
+        style.color = colors.cellInitialTextColor;
+      }
     }
-    // Wenn gleiche Zahlen hervorgehoben werden
+    // Gleiche Zahlen als zweithöchste Priorität
     else if (sameValueHighlight) {
       style.color = pathColorHex;
+      style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
     }
-    // Sonst normale Initial-Farbe
-    else {
-      style.color = colors.cellInitialTextColor;
+    // Danach fehlerhafte Zellen
+    else if (showErrors && !cell.isValid) {
+      style.color = colors.cellErrorTextColor;
     }
-  }
-  // Gleiche Zahlen als zweithöchste Priorität
-  else if (sameValueHighlight) {
-    style.color = pathColorHex;
-    style.fontWeight = "700"; // Fetter machen für bessere Sichtbarkeit
-  }
-  // Danach fehlerhafte Zellen
-  else if (showErrors && !cell.isValid) {
-    style.color = colors.cellErrorTextColor;
-  }
-  // Zuletzt ausgewählte Zellen
-  else if (isSelected) {
-    style.color = colors.cellSelectedTextColor;
-  }
+    // Zuletzt ausgewählte Zellen
+    else if (isSelected) {
+      style.color = colors.cellSelectedTextColor;
+    }
 
-  return style;
-};
+    return style;
+  };
 
   // Render Notizen wenn Zelle leer ist
   const renderNotes = () => {
@@ -165,23 +164,13 @@ const getCellTextStyle = () => {
     );
   };
 
-  // Dynamischer Style für Zellenrahmen
-  const cellBorderStyle = {
-    borderColor: colors.boardCellBorderColor,
-  };
-
   return (
     <Pressable
       style={baseStyles.cellContainer}
       onPress={() => onPress(row, col)}
     >
-      {/* Hintergrund-Layer für Hervorhebungen */}
-      {getBackgroundStyle() && (
-        <View style={[baseStyles.cellBackground, getBackgroundStyle()]} />
-      )}
-
-      {/* Grenzen-Layer - immer konsistent */}
-      <View style={[baseStyles.cellBorder, cellBorderStyle]} />
+      {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
+      <View style={[baseStyles.cellBackground, getBackgroundStyle()]} />
 
       {/* Inhalts-Layer mit Text oder Notizen */}
       <Animated.View style={[baseStyles.cellContent, animatedStyles]}>

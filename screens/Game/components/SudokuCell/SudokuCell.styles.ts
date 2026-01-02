@@ -2,16 +2,17 @@ import { StyleSheet } from "react-native";
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 
 export default StyleSheet.create({
-  // Hauptcontainer für die Zelle
+  // Hauptcontainer für die Zelle - flex-basiert für Gap-Layout
   cellContainer: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
+    flex: 1,
+    aspectRatio: 1, // Garantiert quadratische Zellen
     justifyContent: "center",
     alignItems: "center",
-    position: "relative", // Wichtig für absolute Positionierung der Schichten
+    position: "relative",
   },
 
   // Separate Layer für Hintergrund-Hervorhebungen
+  // Füllt die gesamte Zelle - konsistent ohne Borders
   cellBackground: {
     position: "absolute",
     top: 0,
@@ -21,38 +22,23 @@ export default StyleSheet.create({
     zIndex: 1,
   },
 
-  // Separate Layer für Grenzen (immer konsistent)
-  cellBorder: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderWidth: 0.5,
-    borderColor: "rgba(255, 255, 255, 0.15)",
-    zIndex: 2,
-  },
-
   // Inhaltscontainer für Text oder Notizen
   cellContent: {
     width: "100%",
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 3,
+    zIndex: 2,
   },
 
   // Hintergrundstile für verschiedene Zustände
   selectedBackground: {
-    backgroundColor: "#4A7D78", // Neue primäre Teal-Farbe
+    backgroundColor: "#4A7D78",
   },
 
   relatedBackground: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
-
-  // Entfernung des Hintergrunds für sameValueBackground, da wir nur die Textfarbe ändern wollen
-  // sameValueBackground: { ... }, - ENTFERNT
 
   errorBackground: {
     backgroundColor: "rgba(255, 70, 70, 0.3)",
@@ -81,9 +67,8 @@ export default StyleSheet.create({
     color: "#FF9A9A",
   },
 
-  // Die Textfarbe für gleiche Werte bleibt, aber der Hintergrund wird entfernt
   sameValueText: {
-    color: "#6CACA6", // Helleres Teal für gleiche Werte
+    color: "#6CACA6",
     fontWeight: "700",
   },
 

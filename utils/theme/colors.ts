@@ -1,5 +1,7 @@
 // utils/theme/colors.ts - Vollständig TypeScript-kompatibel
 
+import { hexToColorId, PathColorId } from '@/utils/pathColors';
+
 // Light Theme
 const lightColors = {
   // Primary Colors
@@ -32,6 +34,14 @@ const lightColors = {
   cellErrorTextColor: "#D93025",
   cellSameValueTextColor: "#4285F4",
   cellNotesTextColor: "rgba(60, 64, 67, 0.75)",
+
+  // Opake Zellfarben für Gap-Layout (Alpha-Blending vorberechnet)
+  cellCheckerboardBackground: "#EAECED",  // #F1F3F4 + rgba(0,0,0,0.03)
+  cellRelatedBlue: "#E3EAF4",     // #F1F3F4 + #4285F4 @ 8%
+  cellRelatedGreen: "#E2EDE7",    // #F1F3F4 + #34A853 @ 8%
+  cellRelatedYellow: "#F2EDE0",   // #F1F3F4 + #F9AB00 @ 8%
+  cellRelatedRed: "#F0E5E5",      // #F1F3F4 + #EA4335 @ 8%
+  cellRelatedPurple: "#E8E6F5",   // #F1F3F4 + #7C4DFF @ 8%
 
   // Grid
   gridLine: "#E8EAED",
@@ -117,6 +127,14 @@ const darkColors = {
   cellSameValueTextColor: "#8AB4F8",
   cellNotesTextColor: "rgba(232, 234, 237, 0.7)",
 
+  // Opake Zellfarben für Gap-Layout (Alpha-Blending vorberechnet)
+  cellCheckerboardBackground: "#2F3033",  // #292A2D + rgba(255,255,255,0.03)
+  cellRelatedBlue: "#30353D",     // #292A2D + #7EB5F7 @ 8%
+  cellRelatedGreen: "#2D3633",    // #292A2D + #5FBF73 @ 8%
+  cellRelatedYellow: "#3A3832",   // #292A2D + #FFD666 @ 8%
+  cellRelatedRed: "#3A2F32",      // #292A2D + #FF6B6B @ 8%
+  cellRelatedPurple: "#33323D",   // #292A2D + #A78BFA @ 8%
+
   // Grid
   gridLine: "#3C4043",
   gridBold: "#5F6368",
@@ -171,6 +189,28 @@ const darkColors = {
 export const colors = {
   light: lightColors,
   dark: darkColors,
+};
+
+/**
+ * Gibt die vordefinierte Related-Hintergrundfarbe für eine Path-Farbe zurück
+ * Verwendet opake Farben statt Transparenzwerte für Gap-Layout-Kompatibilität
+ */
+export const getRelatedBackgroundColor = (
+  pathColorHex: string,
+  isDark: boolean
+): string => {
+  const colorId = hexToColorId(pathColorHex);
+  const colorMap = isDark ? darkColors : lightColors;
+
+  const relatedColors: Record<PathColorId, string> = {
+    blue: colorMap.cellRelatedBlue,
+    green: colorMap.cellRelatedGreen,
+    yellow: colorMap.cellRelatedYellow,
+    red: colorMap.cellRelatedRed,
+    purple: colorMap.cellRelatedPurple,
+  };
+
+  return relatedColors[colorId] || colorMap.cellRelatedBlue;
 };
 
 export default colors;

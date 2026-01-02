@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SudokuBoard as SudokuBoardType, CellPosition } from "@/utils/sudoku";
-import SudokuCell from "@/screens/Game/components/SudokuCell/SudokuCell";
+import SudokuBox from "./SudokuBox";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
-import styles, { CELL_SIZE } from "./SudokuBoard.styles";
+import styles from "./SudokuBoard.styles";
 
 interface SudokuBoardProps {
   board: SudokuBoardType;
@@ -120,15 +120,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   const gridContainerStyle = useMemo(
     () => ({
       borderColor: colors.boardBorderColor,
-    }),
-    [colors.boardBorderColor]
-  );
-
-  const gridLineStyle = useMemo(
-    () => ({
+      // Hintergrund zeigt durch die Gaps als Grid-Linien
       backgroundColor: colors.boardGridLineColor,
     }),
-    [colors.boardGridLineColor]
+    [colors.boardBorderColor, colors.boardGridLineColor]
   );
 
   return (
@@ -149,74 +144,28 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
           ]}>
           {/* Hauptbrett mit Theme-Farben */}
           <View style={[styles.board, boardStyle]}>
-            {/* Grid-Inhalt */}
+            {/* Grid-Inhalt mit Box-Architektur */}
             <View style={[styles.gridContainer, gridContainerStyle]}>
-              {/* 3x3 Blockgrenzen als absolute Elemente */}
-              {/* Horizontale Linien */}
-              <View
-                style={[
-                  styles.gridLine,
-                  styles.horizontalGridLine,
-                  gridLineStyle,
-                  { top: CELL_SIZE * 3 },
-                ]}
-              />
-              <View
-                style={[
-                  styles.gridLine,
-                  styles.horizontalGridLine,
-                  gridLineStyle,
-                  { top: CELL_SIZE * 6 },
-                ]}
-              />
-
-              {/* Vertikale Linien */}
-              <View
-                style={[
-                  styles.gridLine,
-                  styles.verticalGridLine,
-                  gridLineStyle,
-                  { left: CELL_SIZE * 3 },
-                ]}
-              />
-              <View
-                style={[
-                  styles.gridLine,
-                  styles.verticalGridLine,
-                  gridLineStyle,
-                  { left: CELL_SIZE * 6 },
-                ]}
-              />
-
-              {/* Zeilen und Zellen rendern */}
-              {board.map((row, rowIndex) => (
-                <View key={`row-${rowIndex}`} style={styles.row}>
-                  {row.map((cell, colIndex) => {
-                    const isSelected = !!(
-                      selectedCell &&
-                      selectedCell.row === rowIndex &&
-                      selectedCell.col === colIndex
-                    );
-
-                    // Gleiche Zahlen hervorheben
-                    const sameValue = hasSameValue(rowIndex, colIndex);
-
-                    return (
-                      <SudokuCell
-                        key={`cell-${rowIndex}-${colIndex}`}
-                        cell={cell}
-                        row={rowIndex}
-                        col={colIndex}
-                        isSelected={isSelected}
-                        isRelated={isRelatedCell(rowIndex, colIndex)}
-                        sameValueHighlight={sameValue}
-                        onPress={onCellPress}
+              {/* 9 Boxen (3x3) mit je 9 Zellen (3x3) */}
+              <View style={styles.boxesContainer}>
+                {[0, 1, 2].map((boxRow) => (
+                  <View key={`boxRow-${boxRow}`} style={styles.boxRow}>
+                    {[0, 1, 2].map((boxCol) => (
+                      <SudokuBox
+                        key={`box-${boxRow}-${boxCol}`}
+                        boxRow={boxRow}
+                        boxCol={boxCol}
+                        board={board}
+                        selectedCell={selectedCell}
+                        onCellPress={onCellPress}
+                        isRelatedCell={isRelatedCell}
+                        hasSameValue={hasSameValue}
                         showErrors={showErrors}
                       />
-                    );
-                  })}
-                </View>
-              ))}
+                    ))}
+                  </View>
+                ))}
+              </View>
             </View>
 
             {/* Loading Overlay */}

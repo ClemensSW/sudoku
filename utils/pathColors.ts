@@ -19,7 +19,7 @@ export const PATH_COLORS: Record<PathColorId, PathColor> = {
   // Fundamentals - Blau (Basis und Vertrauen)
   blue: {
     light: '#4285F4', // Google Blue - ausgewogen, vertrauenswürdig
-    dark: '#5E9EFF',  // Softer Pastellblau - weniger aggressiv
+    dark: '#7EB5F7',  // Sanftes Blau - gedämpft, angenehm
   },
 
   // Insight - Grün (Wachstum und Erkenntnis)
@@ -73,7 +73,7 @@ export const hexToColorId = (hex: string): PathColorId => {
   const normalized = hex.toUpperCase();
 
   // Blue (Light und Dark)
-  if (normalized === '#4285F4' || normalized === '#5E9EFF') return 'blue';
+  if (normalized === '#4285F4' || normalized === '#7EB5F7' || normalized === '#5E9EFF') return 'blue';
 
   // Green (Light und Dark)
   if (normalized === '#34A853' || normalized === '#5FBF73') return 'green';
@@ -117,7 +117,7 @@ export const getPathGradient = (colorHex: string, isDark: boolean): [string, str
 
   // Gradient-Definitionen für Dark Mode (sanfter, pastelliger)
   const darkGradients: Record<PathColorId, [string, string, string]> = {
-    blue: ['#7FB3FF', '#5E9EFF', '#4A8AE6'],
+    blue: ['#96C4F9', '#7EB5F7', '#6BA3E5'],
     green: ['#7DD88F', '#5FBF73', '#4DA660'],
     yellow: ['#FFE599', '#FFD666', '#F0C04D'],
     red: ['#FF8A7A', '#FF6B6B', '#F05252'],

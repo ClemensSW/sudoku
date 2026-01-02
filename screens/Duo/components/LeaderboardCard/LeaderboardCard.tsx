@@ -10,7 +10,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { getRankTierName, RankTier } from "@/utils/elo/eloCalculator";
+import { getRankTierName } from "@/utils/elo/eloCalculator";
 import { useCurrentLeague } from "@/hooks/useCurrentLeague";
 import {
   getAvatarSourceFromUri,
@@ -62,12 +62,10 @@ const DUMMY_PLAYERS: LeaguePlayer[] = [
 ];
 
 interface LeaderboardCardProps {
-  elo?: number;
   showDevBadge?: boolean;
 }
 
 const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
-  elo = 1247,
   showDevBadge = true,
 }) => {
   const { t } = useTranslation("duo");
@@ -226,10 +224,16 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                 backgroundColor: isDark
                   ? hexToRGBA(leagueColor, 0.25)
                   : hexToRGBA(leagueColor, 0.15),
+                // Glow effect
+                shadowColor: leagueColor,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: isDark ? 0.5 : 0.35,
+                shadowRadius: 16,
+                elevation: 8,
               },
             ]}
           >
-            <SilverBadgeIcon width={48} height={48} />
+            <SilverBadgeIcon width={56} height={56} />
           </View>
           <Text style={[styles.leagueName, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
             {leagueName}

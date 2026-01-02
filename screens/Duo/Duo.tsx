@@ -222,12 +222,9 @@ const Duo: React.FC = () => {
           </Pressable>
         </Animated.View>
 
-        {/* Leaderboard Card with Progress Bar and Dev Badge */}
+        {/* Leaderboard Card */}
         <View onLayout={(e) => setLeaderboardY(e.nativeEvent.layout.y)}>
-          <LeaderboardCard
-            elo={DUMMY_STATS.elo}
-            showDevBadge={showDevBanner}
-          />
+          <LeaderboardCard showDevBadge={showDevBanner} />
         </View>
 
         {/* Match History */}

@@ -17,48 +17,27 @@ const styles = StyleSheet.create({
     // elevation is set dynamically in component
   },
 
-  // Liga Header - kompakter
+  // Liga Header - minimalistisch mit Glow
   leagueHeader: {
     alignItems: "center",
-    paddingTop: 20,
-    paddingBottom: 16,
+    paddingTop: 28,
+    paddingBottom: 24,
     paddingHorizontal: 16,
   },
   leagueIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
+    // Glow effect applied dynamically in component
   },
   leagueName: {
     // fontSize set dynamically via theme.typography
     fontWeight: "800",
-    letterSpacing: 2,
+    letterSpacing: 3,
     textTransform: "uppercase",
-    marginTop: 12,
-  },
-
-  // Progress bar container
-  progressContainer: {
-    width: "100%",
-    gap: 6,
-    marginTop: 12,
-    paddingHorizontal: 20,
-  },
-  progressTrack: {
-    height: 8,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFillGradient: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 4,
-  },
-  progressText: {
-    fontWeight: "600",
-    textAlign: "center",
+    marginTop: 16,
   },
 
   // Dev Ribbon (corner banner - clipped at card edge)

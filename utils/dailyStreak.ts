@@ -919,3 +919,27 @@ export async function refillShields(
     console.error('[Daily Streak] Error refilling shields:', error);
   }
 }
+
+/**
+ * Fügt +1 Bonus-Schild für einen Einmalkauf hinzu.
+ *
+ * Bonus-Schilde sind permanent und werden NICHT wöchentlich zurückgesetzt.
+ * Sie werden als Fallback verwendet, wenn reguläre Schilde aufgebraucht sind.
+ *
+ * Dies ist die EINZIGE Quelle für Bonus-Schilde.
+ */
+export async function addBonusShieldForPurchase(): Promise<void> {
+  try {
+    const stats = await loadStats();
+    if (!stats.dailyStreak) {
+      console.warn('[Daily Streak] dailyStreak missing, cannot add bonus shield');
+      return;
+    }
+
+    stats.dailyStreak.bonusShields = (stats.dailyStreak.bonusShields || 0) + 1;
+    await saveStats(stats);
+    console.log('[Daily Streak] 🛡️ +1 Bonus shield added for one-time purchase. Total bonus shields:', stats.dailyStreak.bonusShields);
+  } catch (error) {
+    console.error('[Daily Streak] Error adding bonus shield:', error);
+  }
+}

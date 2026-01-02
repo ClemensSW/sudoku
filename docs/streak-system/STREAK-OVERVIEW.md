@@ -117,17 +117,17 @@ Samstag:   App öffnen → nur 2 Schilde verfügbar
 
 | Typ | Beschreibung | Quelle | Verfall |
 |-----|--------------|--------|---------|
-| **Reguläre Schilde** | Wöchentliches Kontingent | Montag-Reset | Jede Woche |
-| **Bonus-Schilde** | Zusätzliche Belohnungen | Events, Achievements | Nie |
+| **Reguläre Schilde** | Wöchentliches Kontingent | Montag-Reset (2/3/4 je nach Abo) | Jede Woche |
+| **Bonus-Schilde** | Permanente Extra-Schilde | +1 pro Einmalkauf im Support-Shop | Nie |
 
 ### Wöchentliche Schild-Anzahl nach Supporter-Status
 
-| Status | Schilde/Woche | Beschreibung |
-|--------|---------------|--------------|
-| **Free** | 2 | Standard für alle Spieler |
-| **Einmalkauf** | 2 | Keine Erhöhung durch Einmalkauf |
-| **Monthly Abo** | 3 | +1 Schild pro Woche |
-| **Yearly Abo** | 4 | +2 Schilde pro Woche |
+| Status | Schilde/Woche | Bonus-Schilde | Beschreibung |
+|--------|---------------|---------------|--------------|
+| **Free** | 2 | - | Standard für alle Spieler |
+| **Einmalkauf** | 2 | +1 pro Kauf | Bonus-Schilde akkumulieren sich |
+| **Monthly Abo** | 3 | - | +1 reguläres Schild pro Woche |
+| **Yearly Abo** | 4 | - | +2 reguläre Schilde pro Woche |
 
 ### Schild-Verbrauch: Prioritätsregel
 
@@ -269,15 +269,25 @@ async function getMaxWeeklyShields(status?: SupporterStatus): Promise<2 | 3 | 4>
 }
 ```
 
-### Schild-Auffüllung nach Kauf
+### Schild-Logik nach Kauf
 
-Nach einem Supporter-Kauf werden die Schilde sofort aufgefüllt:
+Je nach Kauf-Typ werden Schilde unterschiedlich behandelt:
 
+**Einmalkauf → +1 Bonus-Schild (permanent)**
+```typescript
+// utils/dailyStreak.ts - addBonusShieldForPurchase()
+
+await addBonusShieldForPurchase();
+// → bonusShields wird um 1 erhöht (akkumuliert sich)
+// Dies ist die EINZIGE Quelle für Bonus-Schilde!
+```
+
+**Subscription → Reguläre Schilde auffüllen**
 ```typescript
 // utils/dailyStreak.ts - refillShields()
 
 await refillShields('subscription', productId);
-// → shieldsAvailable wird auf maxShields gesetzt
+// → shieldsAvailable wird auf maxShields gesetzt (3 oder 4)
 ```
 
 ---
@@ -484,6 +494,8 @@ Nach applyShieldsAfterSync:
 | `applyPendingShields()` | dailyStreak.ts:512 | Leistung-Screen öffnen | Schilde sofort anwenden |
 | `checkWeeklyShieldReset()` | dailyStreak.ts:776 | Spielstart / Sync | Montag-Reset prüfen |
 | `applyShieldsAfterSync()` | dailyStreak.ts:381 | Nach Cloud-Sync | Lücken nach Merge füllen |
+| `addBonusShieldForPurchase()` | dailyStreak.ts:931 | Einmalkauf | +1 Bonus-Schild hinzufügen |
+| `refillShields()` | dailyStreak.ts:875 | Subscription-Kauf | Reguläre Schilde auffüllen |
 | `useShield()` | dailyStreak.ts:693 | Intern | Ein Schild verbrauchen |
 | `canUseShield()` | dailyStreak.ts:639 | Intern | Prüfen ob Schild verfügbar |
 | `addShieldDayToHistory()` | dailyStreak.ts:95 | Intern | Schild-Tag speichern |

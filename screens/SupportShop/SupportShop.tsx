@@ -228,10 +228,18 @@ const SupportShop: React.FC<SupportShopScreenProps> = ({ onClose, hideNavOnClose
 
         console.log(`Kauf wurde registriert - Type: ${purchaseType}`);
 
-        // Schutzschilder auffüllen (mit productId für sofortige yearly/monthly Detection)
-        const { refillShields } = await import('@/utils/dailyStreak');
-        await refillShields(purchaseType, currentPurchase.productId);
-        console.log(`Schutzschilder aufgefüllt - Type: ${purchaseType}, ProductId: ${currentPurchase.productId}`);
+        // Schilde-Logik je nach Kauf-Typ
+        if (purchaseType === 'one-time') {
+          // Einmalkauf: +1 Bonus-Schild (permanent, einzige Quelle für Bonus-Schilde)
+          const { addBonusShieldForPurchase } = await import('@/utils/dailyStreak');
+          await addBonusShieldForPurchase();
+          console.log(`+1 Bonus-Schild hinzugefügt für Einmalkauf`);
+        } else {
+          // Subscription: Reguläre Schilde auffüllen (3 für Monthly, 4 für Yearly)
+          const { refillShields } = await import('@/utils/dailyStreak');
+          await refillShields(purchaseType, currentPurchase.productId);
+          console.log(`Schutzschilder aufgefüllt - Type: ${purchaseType}, ProductId: ${currentPurchase.productId}`);
+        }
       }
     } catch (error) {
       console.error("Fehler beim Registrieren des Kaufs oder Auffüllen der Shields:", error);

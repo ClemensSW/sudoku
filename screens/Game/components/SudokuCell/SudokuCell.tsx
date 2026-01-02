@@ -9,7 +9,7 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
@@ -36,7 +36,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   // Theme für Farben nutzen
   const theme = useTheme();
   const { colors } = theme;
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
 
   // Animation values
   const scale = useSharedValue(1);

@@ -12,7 +12,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 import styles from "./GameHeader.styles";
 
 interface GameHeaderProps {
@@ -47,7 +47,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const { colors, typography, shadows, isDark } = theme;
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
   const insets = useSafeAreaInsets();
 
   // Timer state

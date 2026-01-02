@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 import { triggerHaptic } from "@/utils/haptics";
 import styles from "./NumberPad.styles";
 import PencilIcon from "@/assets/svg/pencil.svg";
@@ -42,7 +42,7 @@ const NumberPad: React.FC<NumberPadProps> = ({
   const { t } = useTranslation('game');
   const theme = useTheme();
   const { colors, typography } = theme;
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
 
   // Animation values
   const noteScale = useSharedValue(1);
@@ -118,6 +118,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               }
             />
           </AnimatedPressable>
+          <Text style={[styles.actionButtonLabel, { color: colors.textSecondary }]}>
+            {t('controls.note')}
+          </Text>
         </Animated.View>
 
         {/* Löschen-Button */}
@@ -145,6 +148,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
               color={colors.numberPadButtonText}
             />
           </AnimatedPressable>
+          <Text style={[styles.actionButtonLabel, { color: colors.textSecondary }]}>
+            {t('controls.erase')}
+          </Text>
         </Animated.View>
 
         {/* Hinweis-Button */}
@@ -193,6 +199,9 @@ const NumberPad: React.FC<NumberPadProps> = ({
                 </View>
               )}
             </AnimatedPressable>
+            <Text style={[styles.actionButtonLabel, { color: hintDisabled ? colors.buttonTextDisabled : colors.textSecondary }]}>
+              {t('controls.hint')}
+            </Text>
           </Animated.View>
         )}
       </View>

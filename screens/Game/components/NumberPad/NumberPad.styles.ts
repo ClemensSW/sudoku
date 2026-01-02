@@ -16,10 +16,18 @@ export default StyleSheet.create({
     width: "100%",
   },
 
-  // Container für jeden ActionButton (ohne Label)
+  // Container für jeden ActionButton mit Label
   actionButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  // Label unterhalb des Buttons
+  actionButtonLabel: {
+    fontSize: 11,
+    fontWeight: "500",
+    marginTop: 4,
+    textAlign: "center",
   },
 
   actionButton: {

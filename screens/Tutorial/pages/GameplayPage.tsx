@@ -150,7 +150,7 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
     }
   };
 
-  // Render function for the number pad buttons - EXAKT wie im Spiel
+  // Render function for the number pad buttons - minimalistisch wie im Spiel
   const renderNumberButtons = () => {
     return (
       <View style={styles.numberPadContainer}>
@@ -163,46 +163,21 @@ const GameplayPage: React.FC<GameplayPageProps> = ({
               };
             });
 
-            // Die folgenden Stile entsprechen genau dem, was in NumberPad.tsx verwendet wird
+            // Minimalistischer Text-Only-Stil wie im echten Spiel
             return (
-              <View
+              <Animated.View
                 key={`num-${num}`}
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingHorizontal: 1, // Exakt wie in NumberPad.styles.ts
-                }}
+                style={[styles.numberItem, animatedStyle]}
               >
-                <Animated.View
+                <Text
                   style={[
-                    {
-                      width: "100%",
-                      height: 60,
-                      borderRadius: 12,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: progressColor,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
-                      elevation: 5,
-                    },
-                    animatedStyle,
+                    styles.numberText,
+                    { color: progressColor },
                   ]}
                 >
-                  <Text
-                    style={{
-                      fontSize: typography.size.xxl,
-                      fontWeight: "600",
-                      color: colors.buttonText, // Theme-Farbe für den Text
-                    }}
-                  >
-                    {num}
-                  </Text>
-                </Animated.View>
-              </View>
+                  {num}
+                </Text>
+              </Animated.View>
             );
           })}
         </View>
@@ -290,24 +265,33 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   
-  // Number pad styling - EXAKT wie im echten Spiel
+  // Number pad styling - minimalistisch wie im echten Spiel
   numberPadContainer: {
     width: "100%",
-    paddingHorizontal: 8,
     marginTop: 16,
   },
   numbersRow: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    height: 70,
+    paddingVertical: 8,
+  },
+  numberItem: {
+    width: 36,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  numberText: {
+    fontSize: 32,
+    fontWeight: "500",
   },
   
   // Animation helper elements
   arrowContainer: {
     position: "absolute",
-    bottom: 170,
+    bottom: 140,
     alignSelf: "center",
     zIndex: 10,
   },

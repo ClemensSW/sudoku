@@ -111,8 +111,8 @@ const NumberPad: React.FC<NumberPadProps> = ({
             }}
           >
             <PencilIcon
-              width={32}
-              height={32}
+              width={26}
+              height={26}
               color={
                 noteModeActive ? pathColorHex : colors.numberPadButtonText
               }
@@ -143,8 +143,8 @@ const NumberPad: React.FC<NumberPadProps> = ({
             }}
           >
             <EraserIcon
-              width={32}
-              height={32}
+              width={26}
+              height={26}
               color={colors.numberPadButtonText}
             />
           </AnimatedPressable>
@@ -179,8 +179,8 @@ const NumberPad: React.FC<NumberPadProps> = ({
               disabled={hintDisabled}
             >
               <LightBulbIcon
-                width={32}
-                height={32}
+                width={26}
+                height={26}
                 color={
                   hintDisabled
                     ? colors.buttonTextDisabled

@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     // fontSize set dynamically via theme.typography
     fontWeight: "700",
     textAlign: "center",
+    flex: 1,
   },
   content: {
     flex: 1,
@@ -152,22 +153,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     borderRadius: radius.lg,
-    minWidth: 120,
+    minWidth: 110,
+    minHeight: 52,
   },
   backBtn: {
     marginRight: spacing.sm,
-    borderWidth: 1,
   },
   nextBtn: {
     flex: 1,
+    gap: 6,
   },
   buttonText: {
     // fontSize set dynamically via theme.typography
     fontWeight: "600",
-    marginRight: spacing.xs,
   },
 });
 

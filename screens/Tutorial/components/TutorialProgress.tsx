@@ -1,10 +1,6 @@
 // components/Tutorial/components/TutorialProgress.tsx
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { spacing } from "@/utils/theme";
 import { useProgressColor } from "@/hooks/useProgressColor";
@@ -19,7 +15,6 @@ const TutorialProgress: React.FC<TutorialProgressProps> = ({
   totalSteps,
 }) => {
   const theme = useTheme();
-  const { colors } = theme;
   const progressColor = useProgressColor();
 
   // Generate indicators
@@ -62,13 +57,14 @@ const styles = StyleSheet.create({
   indicatorsContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: spacing.sm,
+    gap: 8,
   },
   indicator: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    marginHorizontal: 6,
   },
 });
 

@@ -16,6 +16,9 @@ import {
   StreakStats,
 } from '@/screens/GameCompletion/components/StreakCard/components';
 
+// Dev tool for visual testing
+import StreakDevTool, { MockStreakData } from './StreakDevTool';
+
 interface StreakTabProps {
   stats: GameStats;
   onOpenSupportShop?: () => void;
@@ -30,6 +33,9 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [maxRegularShields, setMaxRegularShields] = useState<2 | 3 | 4>(2);
   const [supporterStatus, setSupporterStatus] = useState<'none' | 'one-time' | 'subscription'>('none');
+
+  // Dev tool mock state (only used in DEV)
+  const [mockData, setMockData] = useState<MockStreakData | null>(null);
 
   // Check premium status for shield count
   // Aktualisiert sich bei jedem Screen-Focus (z.B. nach Kauf im SupportShop)
@@ -78,6 +84,14 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
   // Berechne den nächsten Montag ab HEUTE, nicht ab lastShieldResetDate
   const nextResetDate = getNextMonday(new Date());
 
+  // Display values: Use mock data if available, otherwise real data
+  const displayStreak = mockData?.currentStreak ?? dailyStreak.currentStreak;
+  const displayLongestStreak = mockData?.longestStreak ?? dailyStreak.longestDailyStreak;
+  const displayShieldsAvailable = mockData?.shieldsAvailable ?? dailyStreak.shieldsAvailable;
+  const displayMaxRegular = mockData?.maxRegularShields ?? maxRegularShields;
+  const displayBonusShields = mockData?.bonusShields ?? dailyStreak.bonusShields;
+  const displaySupporterStatus = mockData?.supporterStatus ?? supporterStatus;
+
   return (
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
       <ScrollView
@@ -86,30 +100,39 @@ const StreakTab: React.FC<StreakTabProps> = ({ stats, onOpenSupportShop }) => {
       >
         {/* Hero: Current Streak Card mit integriertem Kalender */}
         <CurrentStreakCard
-          currentStreak={dailyStreak.currentStreak}
-          longestStreak={dailyStreak.longestDailyStreak}
+          currentStreak={displayStreak}
+          longestStreak={displayLongestStreak}
           playHistory={dailyStreak.playHistory}
           firstLaunchDate={dailyStreak.firstLaunchDate}
         />
 
         {/* Schutzschilder - NACH dem Kalender */}
         <ShieldIndicator
-          available={dailyStreak.shieldsAvailable}
-          maxRegular={maxRegularShields}
-          bonusShields={dailyStreak.bonusShields}
+          available={displayShieldsAvailable}
+          maxRegular={displayMaxRegular}
+          bonusShields={displayBonusShields}
           nextResetDate={nextResetDate}
           onOpenSupportShop={onOpenSupportShop}
-          supporterStatus={supporterStatus}
+          supporterStatus={displaySupporterStatus}
         />
 
         {/* Statistiken */}
         <StreakStats
-          currentStreak={dailyStreak.currentStreak}
-          longestStreak={dailyStreak.longestDailyStreak}
+          currentStreak={displayStreak}
+          longestStreak={displayLongestStreak}
           totalDaysPlayed={dailyStreak.totalDaysPlayed}
           completedMonths={dailyStreak.completedMonths.length}
           totalShieldsUsed={dailyStreak.totalShieldsUsed}
         />
+
+        {/* Dev Tool - nur in DEV sichtbar */}
+        {__DEV__ && (
+          <StreakDevTool
+            currentMock={mockData}
+            onSimulate={setMockData}
+            onReset={() => setMockData(null)}
+          />
+        )}
       </ScrollView>
     </Animated.View>
   );

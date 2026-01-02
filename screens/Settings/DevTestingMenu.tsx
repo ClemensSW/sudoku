@@ -18,7 +18,8 @@ import {
   debugPrintQuota
 } from '@/modules/subscriptions/purchaseQuota';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { refillShields, getStreakStats } from '@/utils/dailyStreak';
+import { refillShields, getStreakStats, addBonusShieldForPurchase } from '@/utils/dailyStreak';
+import { loadStats, saveStats } from '@/utils/storage';
 
 const DevTestingMenu: React.FC = () => {
   const theme = useTheme();
@@ -83,12 +84,31 @@ Schutzschilder: ${shieldInfo}
     );
     // Record in quota system
     await recordPurchase('de.playfusiongate.sudokuduo.coffee');
-    // Schutzschilder auffüllen (automatisch)
-    await refillShields('one-time');
+    // +1 Bonus-Schild hinzufügen (neue Logik!)
+    await addBonusShieldForPurchase();
     await updateStatus();
     const quota = await calculateLifetimeQuota();
     const stats = await getStreakStats();
-    Alert.alert('✅ Erfolg', `Einmalkauf simuliert!\n\n• 2× EP aktiv\n• ${quota} Bild(er) (lifetime) freischaltbar\n• Schutzschilder: ${stats?.shieldsAvailable}/${stats?.maxRegularShields}`);
+    Alert.alert('✅ Erfolg', `Einmalkauf simuliert!\n\n• 2× EP aktiv\n• ${quota} Bild(er) (lifetime) freischaltbar\n• +1 Bonus-Schild (jetzt: ${stats?.bonusShields})`);
+  };
+
+  // Separater Button zum Testen: Nur Bonus-Schild hinzufügen
+  const addBonusShield = async () => {
+    await addBonusShieldForPurchase();
+    await updateStatus();
+    const stats = await getStreakStats();
+    Alert.alert('🛡️ Bonus-Schild', `+1 Bonus-Schild hinzugefügt!\n\nTotal: ${stats?.bonusShields} Bonus-Schilde`);
+  };
+
+  // Bonus-Schilde auf 0 zurücksetzen
+  const resetBonusShields = async () => {
+    const stats = await loadStats();
+    if (stats.dailyStreak) {
+      stats.dailyStreak.bonusShields = 0;
+      await saveStats(stats);
+    }
+    await updateStatus();
+    Alert.alert('🛡️ Reset', 'Bonus-Schilde auf 0 zurückgesetzt');
   };
 
   const simulateMultipleCoffeePurchases = async () => {
@@ -234,10 +254,29 @@ Schutzschilder: ${shieldInfo}
       <TestButton
         icon="coffee"
         label="Einmalkauf simulieren"
-        description="2× EP + 1 Bild + Schilder auffüllen"
+        description="2× EP + 1 Bild + 1 Bonus-Schild"
         onPress={simulateOneTimePurchase}
         colors={colors}
         typography={typography}
+      />
+
+      <TestButton
+        icon="shield"
+        label="+1 Bonus-Schild"
+        description="Nur Bonus-Schild hinzufügen"
+        onPress={addBonusShield}
+        colors={colors}
+        typography={typography}
+      />
+
+      <TestButton
+        icon="x-circle"
+        label="Bonus-Schilde zurücksetzen"
+        description="Setzt bonusShields auf 0"
+        onPress={resetBonusShields}
+        colors={colors}
+        typography={typography}
+        isDestructive
       />
 
       <TestButton

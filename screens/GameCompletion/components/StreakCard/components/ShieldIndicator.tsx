@@ -51,6 +51,8 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
 
   const totalShields = available + bonusShields;
   const hasNoShields = totalShields === 0;
+  // Show "+" indicator when total shields exceed maxRegular (indicates bonus shields beyond regular capacity)
+  const showPlusIndicator = totalShields > maxRegular;
 
   const handlePremiumPress = () => {
     if (onOpenSupportShop) {
@@ -113,38 +115,60 @@ const ShieldIndicator: React.FC<ShieldIndicatorProps> = ({
               </View>
             );
           })}
+
+          {/* Bonus indicator after shield icons */}
+          {bonusShields > 0 && (
+            <View style={styles.bonusIconIndicator}>
+              <Text style={[styles.bonusPlusIcon, { color: '#D4AF37' }]}>+{bonusShields}</Text>
+            </View>
+          )}
         </View>
 
         {/* Counter */}
         <View style={styles.counterSection}>
-          <Text style={[styles.counterNumber, { color: hasNoShields ? colors.error : colors.textPrimary, fontSize: typography.size.huge }]}>
-            {totalShields}
-          </Text>
+          <View style={styles.counterRow}>
+            <Text style={[styles.counterNumber, { color: hasNoShields ? colors.error : colors.textPrimary, fontSize: typography.size.huge }]}>
+              {totalShields}
+            </Text>
+            {showPlusIndicator && (
+              <Text style={[styles.plusIndicator, { color: '#D4AF37', fontSize: typography.size.lg }]}>+</Text>
+            )}
+          </View>
           <Text style={[styles.counterLabel, { color: colors.textSecondary, fontSize: typography.size.sm }]}>
             {t('streakTab.shields.availableLabel', { count: totalShields })}
           </Text>
         </View>
       </View>
 
-      {/* Bonus Shields (if available) */}
+      {/* Bonus Shields Card - Same design as Premium Banner (without chevron) */}
       {bonusShields > 0 && (
-        <View style={[styles.bonusCard, { backgroundColor: theme.isDark ? 'rgba(255,215,0,0.12)' : 'rgba(255,215,0,0.1)' }]}>
-          <View style={styles.bonusHeader}>
-            <View style={[styles.bonusIconCircle, { backgroundColor: 'rgba(255,215,0,0.2)' }]}>
-              <Feather name="gift" size={18} color="#FFD700" />
-            </View>
-            <View style={styles.bonusTextContainer}>
-              <Text style={[styles.bonusTitle, { color: colors.textPrimary, fontSize: typography.size.sm }]}>
-                Bonus-Schutzschilde
-              </Text>
-              <Text style={[styles.bonusValue, { color: '#FFD700', fontSize: typography.size.md }]}>
-                +{bonusShields} Extra
-              </Text>
-            </View>
+        <View
+          style={[
+            styles.bonusCard,
+            {
+              backgroundColor: theme.isDark
+                ? 'rgba(212, 175, 55, 0.12)'
+                : 'rgba(212, 175, 55, 0.15)',
+              borderColor: theme.isDark
+                ? 'rgba(212, 175, 55, 0.3)'
+                : 'rgba(193, 154, 46, 0.35)',
+            },
+          ]}
+        >
+          {/* Gift Icon */}
+          <View style={{ marginRight: 12 }}>
+            <GiftIcon width={36} height={36} />
           </View>
-          <Text style={[styles.bonusDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
-            Diese Schutzschilde bleiben dauerhaft verfügbar!
-          </Text>
+
+          {/* Text content */}
+          <View style={styles.bonusTextContainer}>
+            <Text style={[styles.bonusTitle, { color: theme.isDark ? '#D4AF37' : '#C19A2E', fontSize: typography.size.sm }]}>
+              {bonusShields} Bonus-Schutzschild{bonusShields > 1 ? 'e' : ''}
+            </Text>
+            <Text style={[styles.bonusDescription, { color: colors.textSecondary, fontSize: typography.size.xs }]}>
+              Werden als Reserve verwendet
+            </Text>
+          </View>
         </View>
       )}
 
@@ -269,11 +293,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
+  counterRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
   counterNumber: {
     // fontSize set dynamically via theme.typography
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
     letterSpacing: -1,
+  },
+  plusIndicator: {
+    // fontSize set dynamically via theme.typography
+    fontWeight: '700',
+    marginLeft: 2,
+    marginTop: 4,
   },
   counterLabel: {
     // fontSize set dynamically via theme.typography
@@ -282,46 +316,36 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
-  // Bonus Card
-  bonusCard: {
-    padding: spacing.md,
-    borderRadius: radius.lg,
-    marginBottom: spacing.md,
-    borderLeftWidth: 3,
-    borderLeftColor: '#FFD700',
+  // Bonus Icon Indicator (after shield icons)
+  bonusIconIndicator: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: spacing.xs,
   },
-  bonusHeader: {
+  bonusPlusIcon: {
+    fontSize: 24,
+    fontWeight: '800',
+  },
+
+  // Bonus Card (same layout as Premium Card, without chevron)
+  bonusCard: {
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderRadius: radius.lg,
+    padding: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  bonusIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   bonusTextContainer: {
     flex: 1,
   },
   bonusTitle: {
     // fontSize set dynamically via theme.typography
-    fontWeight: '700',
-    letterSpacing: 0.2,
-  },
-  bonusValue: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: '900',
-    letterSpacing: 0.3,
-    marginTop: 2,
+    fontWeight: '600',
   },
   bonusDescription: {
     // fontSize set dynamically via theme.typography
-    fontWeight: '500',
-    lineHeight: 16,
-    marginLeft: 44,
+    marginTop: 2,
   },
 
   // Info Card

@@ -23,20 +23,10 @@ import { useProgressColor } from "@/contexts/color/ColorContext";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
-const NUMBER_BUTTON_SIZE = Math.min((width - 40) / 9, 40);
 // Breite Button-Größen angepasst für alle Szenarien
 const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 95); // Etwas schmaler für drei Buttons
 const ACTION_BUTTON_WIDTH_TWO = Math.min(width / 3 - 8, 110); // Breiter für zwei Buttons
 const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
-
-// Professionelle Schatten-Systeme - neutral wie im normalen Game
-const numberButtonShadow = {
-  shadowColor: "#000",          // Neutral gray shadow (nicht farbig!)
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.15,          // Subtil & professionell
-  shadowRadius: 3,
-  elevation: 3,
-};
 
 const actionButtonShadow = {
   shadowColor: "#000",
@@ -58,6 +48,7 @@ interface DuoGameControlsProps {
   errorsCount: number;
   maxErrors: number;
   showErrors?: boolean; // Prop für Fehleranzeige
+  disabledNumbers?: number[]; // Spielerspezifische abgehakte Zahlen
 }
 
 const DuoGameControls: React.FC<DuoGameControlsProps> = ({
@@ -72,6 +63,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   errorsCount = 0,
   maxErrors = 3,
   showErrors = true, // Standardwert true
+  disabledNumbers = [], // Spielerspezifische abgehakte Zahlen
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
@@ -125,36 +117,24 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
     transform: [{ scale: hintScale.value }],
   }));
 
-  // Get background color based on theme mode
-  const getBackgroundColor = () => {
-    return isDark ? theme.darkBackgroundColor : theme.lightBackgroundColor;
-  };
-
-  // Render number buttons
+  // Render number buttons - Minimalistisches Design wie im Single-Player
   const renderNumberButtons = () => {
     return (
       <View style={styles.numbersRow}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, index) => {
-          const isDisabled = disabled;
+          const isComplete = disabledNumbers.includes(num);
+          const isDisabled = disabled || isComplete;
 
           return (
             <Animated.View
               key={`num-${player}-${num}`}
               style={[
-                styles.numberButtonContainer,
+                styles.numberItem,
                 getNumberAnimatedStyle(index),
               ]}
             >
               <TouchableOpacity
-                style={[
-                  styles.numberButton,
-                  {
-                    backgroundColor: isDisabled
-                      ? theme.numberButton.disabledBackground
-                      : theme.numberButton.background,
-                  },
-                  numberButtonShadow, // Neutral shadow (beide Spieler identisch!)
-                ]}
+                style={styles.numberPressable}
                 onPress={() => {
                   if (!isDisabled) {
                     handleButtonPress(numberScales[index], () =>
@@ -164,20 +144,29 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 }}
                 disabled={isDisabled}
               >
-                <Text
-                  style={[
-                    styles.numberText,
-                    {
-                      color: isDisabled
-                        ? theme.numberButton.disabledTextColor
-                        : theme.numberButton.textColor,
-                    },
-                    // Add underline for 6 and 9 to distinguish them when rotated
-                    (num === 6 || num === 9) && styles.underlinedNumber,
-                  ]}
-                >
-                  {num}
-                </Text>
+                {isComplete ? (
+                  <Feather
+                    name="check"
+                    size={24}
+                    color={pathColorHex}
+                    style={{ opacity: 0.4 }}
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.numberTextMinimal,
+                      {
+                        color: disabled
+                          ? theme.numberButton.disabledTextColor
+                          : pathColorHex,
+                      },
+                      // Add underline for 6 and 9 to distinguish them when rotated
+                      (num === 6 || num === 9) && styles.underlinedNumber,
+                    ]}
+                  >
+                    {num}
+                  </Text>
+                )}
               </TouchableOpacity>
             </Animated.View>
           );
@@ -371,7 +360,6 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
     <Animated.View
       style={[
         styles.container,
-        { backgroundColor: getBackgroundColor() },
         position === "top" && styles.topContainer,
       ]}
       entering={FadeIn.duration(500)}
@@ -389,9 +377,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     paddingHorizontal: 4,
-    paddingVertical: 4,
     alignItems: "center",
-    margin: 4,
     alignSelf: "center",
   },
   topContainer: {
@@ -403,7 +389,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Gleichmäßig verteilt
     alignItems: "center",
     width: "100%",
-    marginVertical: 4,
+    marginBottom: 4,
     paddingHorizontal: 8, // Etwas Abstand zum Rand
     height: ACTION_BUTTON_HEIGHT,
   },
@@ -436,32 +422,32 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
-  // Number buttons styles
+  // Minimalistisches Zahlen-Layout (wie Single-Player)
   numbersRow: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    height: 50,
-    marginTop: 4,
-    marginBottom: 4,
+    paddingVertical: 8,
   },
-  numberButtonContainer: {
-    width: NUMBER_BUTTON_SIZE + 4,
-    height: NUMBER_BUTTON_SIZE + 4,
+  // Container für jede Zahl - FESTE GRÖSSE verhindert Verschiebung
+  numberItem: {
+    width: 36,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
   },
-  numberButton: {
-    width: NUMBER_BUTTON_SIZE,
-    height: "100%",
-    borderRadius: 8,
-    justifyContent: "center",
+  // Pressable-Bereich für Touch-Feedback
+  numberPressable: {
     alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
-  numberText: {
-    fontSize: NUMBER_BUTTON_SIZE * 0.6,
-    fontWeight: "600",
+  // Minimalistischer Zahlen-Text
+  numberTextMinimal: {
+    fontSize: 32,
+    fontWeight: "500",
   },
   // Helper for 6 and 9 when rotated
   underlinedNumber: {

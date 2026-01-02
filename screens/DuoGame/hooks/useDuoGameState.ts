@@ -72,6 +72,9 @@ export interface DuoGameState {
   // NEU: Stats & Streak für Completion Flow
   gameStats: GameStats | null;
   streakInfo: StreakInfo | null;
+  // Spielerspezifische abgehakte Zahlen
+  player1UsedNumbers: number[];
+  player2UsedNumbers: number[];
 }
 
 export interface DuoGameActions {
@@ -157,6 +160,10 @@ export const useDuoGameState = (
   const [gameStats, setGameStats] = useState<GameStats | null>(null);
   const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
 
+  // Spielerspezifische abgehakte Zahlen
+  const [player1UsedNumbers, setPlayer1UsedNumbers] = useState<number[]>([]);
+  const [player2UsedNumbers, setPlayer2UsedNumbers] = useState<number[]>([]);
+
   // Statisch initialisierte Spielerbereiche
   const [playerAreas] = useState<[PlayerArea, PlayerArea]>(() =>
     generateInitialPlayerAreas()
@@ -179,6 +186,41 @@ export const useDuoGameState = (
     });
     return set;
   }, [playerAreas]);
+
+  // Berechne spielerspezifische abgehakte Zahlen
+  const updatePlayerUsedNumbers = useCallback(() => {
+    if (board.length === 0 || solution.length === 0) return;
+
+    const calculateUsedForPlayer = (playerCells: CellPosition[]): number[] => {
+      const used: number[] = [];
+
+      for (let num = 1; num <= 9; num++) {
+        // Zähle Zellen mit dieser Lösung im Spielerbereich
+        const cellsWithSolution = playerCells.filter(
+          cell => solution[cell.row]?.[cell.col] === num
+        );
+
+        // Wenn keine Zellen diese Zahl als Lösung haben, überspringe
+        if (cellsWithSolution.length === 0) continue;
+
+        // Prüfe ob alle korrekt ausgefüllt sind
+        const allFilled = cellsWithSolution.every(
+          cell => board[cell.row]?.[cell.col]?.value === num
+        );
+
+        if (allFilled) used.push(num);
+      }
+      return used;
+    };
+
+    setPlayer1UsedNumbers(calculateUsedForPlayer(playerAreas[0].cells));
+    setPlayer2UsedNumbers(calculateUsedForPlayer(playerAreas[1].cells));
+  }, [board, solution, playerAreas]);
+
+  // Update usedNumbers wenn sich das Board ändert
+  useEffect(() => {
+    updatePlayerUsedNumbers();
+  }, [board, updatePlayerUsedNumbers]);
 
   // Debug-Info-Objekt - WICHTIG: Nicht als Ref verwenden, sondern als normalen State
   const [debugInfo, setDebugInfo] = useState({
@@ -1076,6 +1118,9 @@ const handleNumberPress = useCallback(
       // NEU: Stats & Streak für Completion Flow
       gameStats,
       streakInfo,
+      // Spielerspezifische abgehakte Zahlen
+      player1UsedNumbers,
+      player2UsedNumbers,
     },
     {
       startNewGame,

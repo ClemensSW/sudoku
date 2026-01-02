@@ -445,6 +445,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
           errorsCount={gameState.player2Errors}
           maxErrors={gameState.maxErrors}
           showErrors={gameSettings.showMistakes}
+          disabledNumbers={gameState.player2UsedNumbers}
         />
 
         {/* Game Board */}
@@ -474,6 +475,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
           errorsCount={gameState.player1Errors}
           maxErrors={gameState.maxErrors}
           showErrors={gameSettings.showMistakes}
+          disabledNumbers={gameState.player1UsedNumbers}
         />
       </View>
 

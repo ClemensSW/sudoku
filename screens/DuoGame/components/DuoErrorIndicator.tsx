@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getPlayerErrorIndicatorColors, type DuoPlayerId } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 
 interface DuoErrorIndicatorProps {
   player: 1 | 2;
@@ -30,7 +30,7 @@ const DuoErrorIndicator: React.FC<DuoErrorIndicatorProps> = ({
 }) => {
   // Get theme for warning color and dark mode
   const { colors, typography, isDark } = useTheme();
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
   const theme = React.useMemo(
     () => getPlayerErrorIndicatorColors(player as DuoPlayerId, pathColorHex, isDark),
     [player, pathColorHex, isDark]

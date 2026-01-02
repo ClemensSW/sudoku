@@ -13,7 +13,7 @@ import Animated, {
 import { CELL_SIZE } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getPlayerCellColors, getZoneDividerBorders, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 
 interface DuoGameCellProps {
   cell: SudokuCell;
@@ -37,7 +37,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   showErrors = true,
 }) => {
   const { isDark } = useTheme();
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
 
   // Mittlere Zelle (4,4) - der neutrale Treffpunkt
   const isMiddleCell = row === 4 && col === 4;

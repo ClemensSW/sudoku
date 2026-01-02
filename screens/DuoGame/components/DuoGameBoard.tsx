@@ -17,7 +17,7 @@ import {
 } from "@/screens/Game/components/SudokuBoard/SudokuBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getDuoBoardColors, getDividerColor } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 
 // Use the same board size as regular SudokuBoard
 const BOARD_SIZE = SHARED_BOARD_SIZE;
@@ -47,7 +47,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   showErrors = true,
 }) => {
   const { isDark } = useTheme();
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
   const boardColors = React.useMemo(
     () => getDuoBoardColors(pathColorHex, isDark),
     [pathColorHex, isDark]

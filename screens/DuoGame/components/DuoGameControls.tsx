@@ -19,7 +19,7 @@ import DuoErrorIndicator from "./DuoErrorIndicator";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { getPlayerControlColors, type DuoPlayerId } from "@/utils/duoColors";
-import { useStoredColorHex } from "@/contexts/color/ColorContext";
+import { useProgressColor } from "@/contexts/color/ColorContext";
 
 // Calculate button sizes based on screen dimensions
 const { width } = Dimensions.get("window");
@@ -76,7 +76,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
   const { isDark, typography } = useTheme(); // Get dark mode state and typography
-  const pathColorHex = useStoredColorHex();
+  const pathColorHex = useProgressColor();
   const theme = React.useMemo(
     () => getPlayerControlColors(player as DuoPlayerId, pathColorHex, isDark),
     [player, pathColorHex, isDark]

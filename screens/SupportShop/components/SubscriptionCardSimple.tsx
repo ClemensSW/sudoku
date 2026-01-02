@@ -314,27 +314,6 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                 </View>
               )}
 
-              {/* Best Value Badge */}
-              {!isActive && isBestValue && (
-                <View style={[
-                  styles.badge,
-                  theme.isDark ? {
-                    backgroundColor: 'transparent',
-                    borderWidth: 1.5,
-                    borderColor: progressColor,
-                  } : {
-                    backgroundColor: progressColor,
-                  }
-                ]}>
-                  <Feather name="star" size={12} color={theme.isDark ? progressColor : "#FFFFFF"} />
-                  <Text style={[
-                    styles.badgeText,
-                    { color: theme.isDark ? progressColor : "#FFFFFF" }
-                  ]}>
-                    {t('subscriptions.bestValue')}
-                  </Text>
-                </View>
-              )}
 
               {/* Icon Circle */}
               <View
@@ -465,7 +444,7 @@ const SubscriptionCardSimple: React.FC<SubscriptionCardSimpleProps> = ({
                 onPress={handlePress}
                 variant="primary"
                 customColor={isActive ? 'rgba(255, 255, 255, 0.25)' : progressColor}
-                iconRight={<Feather name={isActive ? 'settings' : 'arrow-right'} size={16} />}
+                iconRight={isActive ? <Feather name="settings" size={16} /> : undefined}
                 disabled={disabled}
                 style={{
                   paddingVertical: 12,

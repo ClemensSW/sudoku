@@ -252,7 +252,6 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
             ]}
           >
             <Text style={styles.subscribeText}>{t('subscription.button')}</Text>
-            <Feather name="arrow-right" size={14} color="white" />
           </View>
         </View>
       </TouchableOpacity>

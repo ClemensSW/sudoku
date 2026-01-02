@@ -12,7 +12,6 @@ import Animated, {
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
 import DuoSudokuBox from "./DuoSudokuBox";
 import styles, {
-  BOARD_SIZE,
   GRID_SIZE,
   CELL_SIZE,
   BOX_GAP,
@@ -113,49 +112,52 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
     [getCellOwner, onCellPress, ownerGrid, player1Cell, player2Cell]
   );
 
-  // Berechnung der Positionen für die Stepped-Divider-Extensions
+  // Berechnung der Positionen für die Stepped-Divider
   // Gap-basiertes Layout: Position = Zellen + Box-Gaps + Cell-Gaps
-  const calculateDividerY = (rowsFromTop: number) => {
-    // Anzahl vollständiger 3x3 Box-Grenzen oberhalb dieser Row
-    const boxGaps = Math.floor(rowsFromTop / 3) * BOX_GAP;
-    // Anzahl Cell-Gaps innerhalb der Boxen
-    const cellGapsWithinBoxes = (rowsFromTop % 3) * CELL_GAP;
+  const calculatePosition = (cellsFromStart: number) => {
+    // Anzahl vollständiger 3x3 Box-Grenzen
+    const boxGaps = Math.floor(cellsFromStart / 3) * BOX_GAP;
+    // Anzahl Cell-Gaps innerhalb der aktuellen Box
+    const cellGapsWithinBoxes = (cellsFromStart % 3) * CELL_GAP;
     // Anzahl Cell-Gaps von vorherigen Boxen (2 pro Box)
-    const cellGapsFromPreviousBoxes = Math.floor(rowsFromTop / 3) * 2 * CELL_GAP;
-    // Gesamte Zellen-Höhe
-    const cellsHeight = rowsFromTop * CELL_SIZE;
-    return cellsHeight + boxGaps + cellGapsWithinBoxes + cellGapsFromPreviousBoxes;
+    const cellGapsFromPreviousBoxes = Math.floor(cellsFromStart / 3) * 2 * CELL_GAP;
+    // Gesamte Zellen-Größe
+    const cellsSize = cellsFromStart * CELL_SIZE;
+    return cellsSize + boxGaps + cellGapsWithinBoxes + cellGapsFromPreviousBoxes;
   };
 
-  // Linke Linie: unter Row 4 (nach 5 Reihen)
-  const leftDividerY = calculateDividerY(5);
-  // Rechte Linie: unter Row 3 (nach 4 Reihen)
-  const rightDividerY = calculateDividerY(4);
+  // Y-Positionen für Divider (relativ zum Grid)
+  // Untere Linie: am BOTTOM der Mittelzelle (nicht am TOP der nächsten Reihe!)
+  const leftDividerY = calculatePosition(5) - 3;
+  const rightDividerY = calculatePosition(4); // Obere Linie: am TOP der Mittelzelle
+
   const dividerColor = getDividerColor(pathColorHex);
 
   return (
     <View style={styles.boardContainer}>
-      {/* Linke Trennlinien-Extension (unter Row 4, links vom Board) */}
+      {/* Stepped Divider - Fluss-Effekt zur Mittelzelle */}
+      {/* Linke Linie: Bildschirmrand links → linke Kante der Mittelzelle */}
       <View
         style={[
           styles.dividerExtension,
           {
             left: 0,
-            width: (BOARD_SIZE - GRID_SIZE) / 2 + GRID_SIZE / 2 - CELL_SIZE / 2,
-            top: leftDividerY + (BOARD_SIZE - GRID_SIZE) / 2,
+            right: '50%',
+            marginRight: CELL_SIZE / 2,  // Stoppt an linker Kante der Mittelzelle
+            top: leftDividerY,
             backgroundColor: dividerColor,
           },
         ]}
       />
-
-      {/* Rechte Trennlinien-Extension (unter Row 3, rechts vom Board) */}
+      {/* Rechte Linie: rechte Kante der Mittelzelle → Bildschirmrand rechts */}
       <View
         style={[
           styles.dividerExtension,
           {
             right: 0,
-            width: (BOARD_SIZE - GRID_SIZE) / 2 + GRID_SIZE / 2 - CELL_SIZE / 2,
-            top: rightDividerY + (BOARD_SIZE - GRID_SIZE) / 2,
+            left: '50%',
+            marginLeft: CELL_SIZE / 2,  // Startet an rechter Kante der Mittelzelle
+            top: rightDividerY,
             backgroundColor: dividerColor,
           },
         ]}

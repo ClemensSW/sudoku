@@ -15,6 +15,7 @@ import { CELL_SIZE } from "./DuoGameBoard.styles";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getPlayerCellColors, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
 import { useProgressColor } from "@/contexts/color/ColorContext";
+import { lightenColor } from "@/utils/colorHelpers";
 
 interface DuoGameCellProps {
   cell: SudokuCell;
@@ -128,50 +129,51 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   const dividerColor = getDividerColor(pathColorHex);
 
   // Multi-Layer Mulden-Styles für intensive Tiefe (5 Ringe)
-  // Light Mode: Hellere Grautöne oben/links, Path Color Töne unten/rechts
+  // Light Mode: Hellere Grautöne oben/links, aufgehellte Path Color unten/rechts
+  // Nutzt lightenColor für echte Helligkeit statt Opacity
   const getMiddleCellRing1Style = () => ({
     flex: 1,
     borderWidth: 2,
-    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(0, 0, 0, 0.40)', // Helleres Grau
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(0, 0, 0, 0.40)',
     borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(0, 0, 0, 0.40)',
-    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.12)' : pathColorHex + '18', // 9% Path Color
-    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.12)' : pathColorHex + '18',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.12)' : lightenColor(pathColorHex, 70),
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.12)' : lightenColor(pathColorHex, 70),
   });
 
   const getMiddleCellRing2Style = () => ({
     flex: 1,
     borderWidth: 1,
-    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.32)', // Helleres Grau
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.32)',
     borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.32)',
-    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.1)' : pathColorHex + '12', // 7% Path Color
-    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.1)' : pathColorHex + '12',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.1)' : lightenColor(pathColorHex, 76),
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.1)' : lightenColor(pathColorHex, 76),
   });
 
   const getMiddleCellRing3Style = () => ({
     flex: 1,
     borderWidth: 1,
-    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.24)', // Helleres Grau
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.24)',
     borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.24)',
-    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : pathColorHex + '0D', // 5% Path Color
-    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.08)' : pathColorHex + '0D',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.08)' : lightenColor(pathColorHex, 80),
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.08)' : lightenColor(pathColorHex, 80),
   });
 
   const getMiddleCellRing4Style = () => ({
     flex: 1,
     borderWidth: 1,
-    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.18)', // Helleres Grau
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.18)',
     borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.18)',
-    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.05)' : pathColorHex + '08', // 3% Path Color
-    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.05)' : pathColorHex + '08',
+    borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.05)' : lightenColor(pathColorHex, 82),
+    borderRightColor: isDark ? 'rgba(255, 255, 255, 0.05)' : lightenColor(pathColorHex, 82),
   });
 
   const getMiddleCellRing5Style = () => ({
     flex: 1,
     borderWidth: 1,
-    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.12)', // Helleres Grau
+    borderTopColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.12)',
     borderLeftColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.12)',
-    borderBottomColor: 'transparent',
-    borderRightColor: 'transparent',
+    borderBottomColor: isDark ? 'transparent' : lightenColor(pathColorHex, 80),
+    borderRightColor: isDark ? 'transparent' : lightenColor(pathColorHex, 80),
     // Hellerer Boden: Dark Mode 50%, Light Mode 25%
     backgroundColor: isDark ? getDividerColor(pathColorHex) : pathColorHex + '40',
     justifyContent: 'center' as const,

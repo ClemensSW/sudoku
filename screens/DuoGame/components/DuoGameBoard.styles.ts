@@ -97,7 +97,7 @@ export default StyleSheet.create({
   // Stepped Divider Extensions (für die stufige Trennlinie)
   dividerExtension: {
     position: "absolute",
-    height: 2,
+    height: BOX_GAP,  // Gleiche Dicke wie Box-Gaps (2.5px)
     zIndex: 20,  // Über allen anderen Elementen
   },
 

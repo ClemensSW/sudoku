@@ -544,6 +544,67 @@ function calculateExpectedStreak(stats: GameStats, lastPlayedDate: string, daysM
 }
 
 /**
+ * Berechnet den aktuellen Streak aus der playHistory.
+ * Zählt konsekutive Tage (gespielt ODER geschützt) rückwärts vom letzten erfolgreichen Tag.
+ *
+ * Diese Funktion ist für den Merge-Service exportiert, um nach dem Sync
+ * den Streak aus der gemergten playHistory neu zu berechnen.
+ */
+export function calculateStreakFromHistory(
+  playHistory: { [yearMonth: string]: MonthlyPlayData } | undefined,
+  lastPlayedDate: string | undefined
+): number {
+  if (!playHistory) return 0;
+
+  // Sammle alle erfolgreichen Tage (gespielt ODER geschützt)
+  const allSuccessfulDays: string[] = [];
+
+  for (const [yearMonth, monthData] of Object.entries(playHistory)) {
+    const [year, month] = yearMonth.split('-').map(Number);
+
+    // Gespielte Tage
+    for (const day of monthData.days || []) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      allSuccessfulDays.push(dateStr);
+    }
+
+    // Geschützte Tage
+    for (const day of monthData.shieldDays || []) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      if (!allSuccessfulDays.includes(dateStr)) {
+        allSuccessfulDays.push(dateStr);
+      }
+    }
+  }
+
+  // Sortiere aufsteigend
+  allSuccessfulDays.sort();
+
+  if (allSuccessfulDays.length === 0) return 0;
+
+  // Zähle konsekutive Tage rückwärts vom letzten erfolgreichen Tag
+  let streak = 0;
+  const lastSuccessfulDay = allSuccessfulDays[allSuccessfulDays.length - 1];
+  let currentDate = new Date(lastSuccessfulDay);
+
+  for (let i = allSuccessfulDays.length - 1; i >= 0; i--) {
+    const dayDate = new Date(allSuccessfulDays[i]);
+    const expectedDate = new Date(currentDate);
+    expectedDate.setDate(expectedDate.getDate() - streak);
+
+    // Prüfe ob der Tag der erwartete konsekutive Tag ist
+    if (dayDate.toISOString().split('T')[0] === expectedDate.toISOString().split('T')[0]) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  console.log(`[calculateStreakFromHistory] Found ${streak} consecutive days from ${lastSuccessfulDay}`);
+  return streak;
+}
+
+/**
  * Wendet ausstehende Schilde automatisch an
  *
  * Wird beim Öffnen des Leistung-Screens aufgerufen, um verpasste Tage

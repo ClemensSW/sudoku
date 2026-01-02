@@ -13,6 +13,7 @@ import type { GameStats, GameSettings, ColorUnlockData, DailyStreakData, Monthly
 import type { LandscapeCollection } from '@/screens/Gallery/utils/landscapes/storage';
 import type { UserProfile } from '@/utils/profileStorage';
 import { isLocalNewer } from './firestoreSchema';
+import { calculateStreakFromHistory } from '@/utils/dailyStreak';
 
 // ===== Helper: Merge Play History (Union Strategy) =====
 
@@ -171,6 +172,20 @@ export function mergeDailyStreak(
     // Timestamp - neuerer Wert
     updatedAt: Math.max(local.updatedAt || 0, cloud.updatedAt || 0),
   };
+
+  // 10. Recalculate currentStreak from merged playHistory to ensure consistency
+  //     This fixes edge cases where shieldDays are preserved (UNION) but currentStreak
+  //     was taken from the "older" device before shields were applied locally.
+  const recalculatedStreak = calculateStreakFromHistory(merged.playHistory, merged.lastPlayedDate);
+  if (recalculatedStreak > merged.currentStreak) {
+    console.log(`[MergeService] Recalculating streak: ${merged.currentStreak} → ${recalculatedStreak}`);
+    merged.currentStreak = recalculatedStreak;
+
+    // Update longestDailyStreak if necessary
+    if (merged.currentStreak > merged.longestDailyStreak) {
+      merged.longestDailyStreak = merged.currentStreak;
+    }
+  }
 
   console.log('[MergeService] DailyStreak merged:', {
     localLastPlayed: local.lastPlayedDate,

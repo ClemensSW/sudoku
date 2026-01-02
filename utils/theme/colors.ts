@@ -36,12 +36,29 @@ const lightColors = {
   cellNotesTextColor: "rgba(60, 64, 67, 0.75)",
 
   // Opake Zellfarben für Gap-Layout (Alpha-Blending vorberechnet)
-  cellCheckerboardBackground: "#EAECED",  // #F1F3F4 + rgba(0,0,0,0.03)
-  cellRelatedBlue: "#E3EAF4",     // #F1F3F4 + #4285F4 @ 8%
-  cellRelatedGreen: "#E2EDE7",    // #F1F3F4 + #34A853 @ 8%
-  cellRelatedYellow: "#F2EDE0",   // #F1F3F4 + #F9AB00 @ 8%
-  cellRelatedRed: "#F0E5E5",      // #F1F3F4 + #EA4335 @ 8%
-  cellRelatedPurple: "#E8E6F5",   // #F1F3F4 + #7C4DFF @ 8%
+  cellCheckerboardBackground: "#E8EAF0",  // Fallback für dunkle Schachbrett-Boxen
+  cellCheckerboardLightBackground: "#FFFFFF",  // Helle Schachbrett-Boxen (reines Weiß)
+
+  // Schachbrett-Farben (Path-Color-getönt, ~12% auf Hellgrau #EDEFF0 - heller & farbiger)
+  cellCheckerBlue: "#D9E2F0",        // Hellgrau + Blue @ 12%
+  cellCheckerGreen: "#D7E6DD",       // Hellgrau + Green @ 12%
+  cellCheckerYellow: "#EFE7D3",      // Hellgrau + Yellow @ 12%
+  cellCheckerRed: "#EDDADA",         // Hellgrau + Red @ 12%
+  cellCheckerPurple: "#E0DCF2",      // Hellgrau + Purple @ 12%
+
+  // Related Highlights (25% opacity) - kräftiger für Kontrast zu Gap-Farben
+  cellRelatedBlue: "#C5D8F4",     // #F1F3F4 + #4285F4 @ 25%
+  cellRelatedGreen: "#C2E0CC",    // #F1F3F4 + #34A853 @ 25%
+  cellRelatedYellow: "#F3E1B7",   // #F1F3F4 + #F9AB00 @ 25%
+  cellRelatedRed: "#EFC7C4",      // #F1F3F4 + #EA4335 @ 25%
+  cellRelatedPurple: "#D4CAF7",   // #F1F3F4 + #7C4DFF @ 25%
+
+  // Gap-Farben (Path-Color-getönt, ~20% auf Dunkelgrau #C8CACC - dunkler als Related)
+  gapColorBlue: "#ADBCD4",        // Dunkelgrau + Blue @ 20%
+  gapColorGreen: "#AAC3B4",       // Dunkelgrau + Green @ 20%
+  gapColorYellow: "#D2C4A3",      // Dunkelgrau + Yellow @ 20%
+  gapColorRed: "#CFAFAE",         // Dunkelgrau + Red @ 20%
+  gapColorPurple: "#B9B1D6",      // Dunkelgrau + Purple @ 20%
 
   // Grid
   gridLine: "#E8EAED",
@@ -128,12 +145,29 @@ const darkColors = {
   cellNotesTextColor: "rgba(232, 234, 237, 0.7)",
 
   // Opake Zellfarben für Gap-Layout (Alpha-Blending vorberechnet)
-  cellCheckerboardBackground: "#2F3033",  // #292A2D + rgba(255,255,255,0.03)
-  cellRelatedBlue: "#30353D",     // #292A2D + #7EB5F7 @ 8%
-  cellRelatedGreen: "#2D3633",    // #292A2D + #5FBF73 @ 8%
-  cellRelatedYellow: "#3A3832",   // #292A2D + #FFD666 @ 8%
-  cellRelatedRed: "#3A2F32",      // #292A2D + #FF6B6B @ 8%
-  cellRelatedPurple: "#33323D",   // #292A2D + #A78BFA @ 8%
+  cellCheckerboardBackground: "#1E2022",  // Fallback für dunkle Schachbrett-Boxen (sehr dunkel)
+  cellCheckerboardLightBackground: "#212224",  // Helle Schachbrett-Boxen (dunkler als Board)
+
+  // Schachbrett-Farben (Path-Color-getönt, ~6% auf Dunkelgrau #1E2022 - sehr dunkel)
+  cellCheckerBlue: "#24292F",        // Dunkelgrau + Blue @ 6%
+  cellCheckerGreen: "#222A27",       // Dunkelgrau + Green @ 6%
+  cellCheckerYellow: "#2C2B26",      // Dunkelgrau + Yellow @ 6%
+  cellCheckerRed: "#2C2526",         // Dunkelgrau + Red @ 6%
+  cellCheckerPurple: "#26262F",      // Dunkelgrau + Purple @ 6%
+
+  // Related Highlights (25% opacity) - kräftiger für Kontrast zu Gap-Farben
+  cellRelatedBlue: "#3E4D60",     // #292A2D + #7EB5F7 @ 25%
+  cellRelatedGreen: "#374F3E",    // #292A2D + #5FBF73 @ 25%
+  cellRelatedYellow: "#5F553B",   // #292A2D + #FFD666 @ 25%
+  cellRelatedRed: "#5F3A3C",      // #292A2D + #FF6B6B @ 25%
+  cellRelatedPurple: "#494260",   // #292A2D + #A78BFA @ 25%
+
+  // Gap-Farben (Path-Color-getönt, ~15% auf Dunkelgrau - subtiler)
+  gapColorBlue: "#3A4048",        // Dunkelgrau + Blue @ 15%
+  gapColorGreen: "#38433C",       // Dunkelgrau + Green @ 15%
+  gapColorYellow: "#46423A",      // Dunkelgrau + Yellow @ 15%
+  gapColorRed: "#463A3A",         // Dunkelgrau + Red @ 15%
+  gapColorPurple: "#403E48",      // Dunkelgrau + Purple @ 15%
 
   // Grid
   gridLine: "#3C4043",
@@ -211,6 +245,48 @@ export const getRelatedBackgroundColor = (
   };
 
   return relatedColors[colorId] || colorMap.cellRelatedBlue;
+};
+
+/**
+ * Gibt die Path-Color-getönte Gap-Farbe für Grid-Linien zurück
+ */
+export const getGapColor = (
+  pathColorHex: string,
+  isDark: boolean
+): string => {
+  const colorId = hexToColorId(pathColorHex);
+  const colorMap = isDark ? darkColors : lightColors;
+
+  const gapColors: Record<PathColorId, string> = {
+    blue: colorMap.gapColorBlue,
+    green: colorMap.gapColorGreen,
+    yellow: colorMap.gapColorYellow,
+    red: colorMap.gapColorRed,
+    purple: colorMap.gapColorPurple,
+  };
+
+  return gapColors[colorId] || colorMap.gapColorBlue;
+};
+
+/**
+ * Gibt die Path-Color-getönte Schachbrett-Farbe für die dunkleren Boxen zurück
+ */
+export const getCheckerboardColor = (
+  pathColorHex: string,
+  isDark: boolean
+): string => {
+  const colorId = hexToColorId(pathColorHex);
+  const colorMap = isDark ? darkColors : lightColors;
+
+  const checkerColors: Record<PathColorId, string> = {
+    blue: colorMap.cellCheckerBlue,
+    green: colorMap.cellCheckerGreen,
+    yellow: colorMap.cellCheckerYellow,
+    red: colorMap.cellCheckerRed,
+    purple: colorMap.cellCheckerPurple,
+  };
+
+  return checkerColors[colorId] || colorMap.cellCheckerBlue;
 };
 
 export default colors;

@@ -3,12 +3,12 @@ import { StyleSheet, Dimensions } from "react-native";
 // Berechnen der optimalen Board-Größe basierend auf Bildschirmbreite
 const { width } = Dimensions.get("window");
 export const BOARD_SIZE = Math.min(width * 0.95, 400);
-export const GRID_SIZE = BOARD_SIZE * 0.95;
+export const GRID_SIZE = BOARD_SIZE;  // Kein Rand mehr zwischen Grid und Board
 
 // Gap-basierte Konstanten (ersetzen Borders)
-export const OUTER_BORDER_WIDTH = 1.5;  // Außenrand des Grids (bleibt als echter Border)
+export const OUTER_BORDER_WIDTH = 0;  // Kein Außenrand mehr
 export const BOX_GAP = 2.5;             // Gap zwischen 3x3 Boxen
-export const CELL_GAP = 0.5;            // Gap zwischen Zellen innerhalb einer Box
+export const CELL_GAP = 1.0;            // Gap zwischen Zellen innerhalb einer Box (min 1.0 für Sichtbarkeit)
 
 // Verfügbarer Innenraum nach Abzug des Außenrands
 const INNER_GRID_SIZE = GRID_SIZE - 2 * OUTER_BORDER_WIDTH;
@@ -61,16 +61,13 @@ export default StyleSheet.create({
     borderWidth: 0,
   },
 
-  // Grid-Container mit Außenrand
+  // Grid-Container ohne Außenrand
   // backgroundColor zeigt durch die Gaps als Grid-Linien
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
     flexDirection: "column",
-    borderWidth: OUTER_BORDER_WIDTH,
-    borderColor: "rgba(255, 255, 255, 0.25)",
     overflow: "hidden",
-    borderRadius: 8,
     // backgroundColor wird dynamisch via Theme gesetzt
   },
 

@@ -113,11 +113,12 @@ export function getFirebaseFirestore(): FirebaseFirestoreTypes.Module {
  * Gibt die Firebase Functions Instanz zurück
  *
  * Note: Functions are deployed to europe-west3 region (Frankfurt, Germany) for GDPR compliance.
- * The region is specified in the backend function definitions, not in the client call.
- * React Native Firebase's namespaced API automatically routes to the correct region.
+ * The client must specify the same region to call the correct endpoint.
  */
 export function getFirebaseFunctions(): FirebaseFunctionsTypes.Module {
-  return functions();
+  // Get the default app, then get functions for the europe-west3 region
+  const app = functions().app;
+  return app.functions('europe-west3');
 }
 
 /**

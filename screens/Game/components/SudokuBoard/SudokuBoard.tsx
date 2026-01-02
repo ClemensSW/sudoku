@@ -12,6 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
+import { getGapColor } from "@/utils/theme/colors";
 import styles from "./SudokuBoard.styles";
 
 interface SudokuBoardProps {
@@ -120,10 +121,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   const gridContainerStyle = useMemo(
     () => ({
       borderColor: colors.boardBorderColor,
-      // Hintergrund zeigt durch die Gaps als Grid-Linien
-      backgroundColor: colors.boardGridLineColor,
+      // Hintergrund zeigt durch die Gaps als Grid-Linien (Path-Color-getönt)
+      backgroundColor: getGapColor(pathColorHex, isDark),
     }),
-    [colors.boardBorderColor, colors.boardGridLineColor]
+    [colors.boardBorderColor, pathColorHex, isDark]
   );
 
   return (

@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
-import { getRelatedBackgroundColor } from "@/utils/theme/colors";
+import { getRelatedBackgroundColor, getCheckerboardColor } from "@/utils/theme/colors";
 import baseStyles from "./SudokuCell.styles";
 
 interface SudokuCellProps {
@@ -86,12 +86,12 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       const isAlternateBox = (boxRow + boxCol) % 2 === 1;
 
       if (isAlternateBox) {
-        // Vordefinierte opake Schachbrett-Farbe für Gap-Layout
-        return { backgroundColor: colors.cellCheckerboardBackground };
+        // Path-Color-getönte Schachbrett-Farbe für dunkle Boxen
+        return { backgroundColor: getCheckerboardColor(pathColorHex, theme.isDark) };
       }
     }
-    // Expliziter Hintergrund für alle Zellen (Gap-Layout erfordert opake Zellen)
-    return { backgroundColor: colors.boardBackgroundColor };
+    // Helle Schachbrett-Boxen (Gap-Layout erfordert opake Zellen)
+    return { backgroundColor: colors.cellCheckerboardLightBackground };
   };
 
   // Text-Styles für verschiedene Zustände - mit Theme-Farben

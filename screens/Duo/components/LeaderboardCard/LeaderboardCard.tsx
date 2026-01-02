@@ -1,13 +1,9 @@
 // screens/Duo/components/LeaderboardCard/LeaderboardCard.tsx
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Image } from "react-native";
 import Animated, {
   FadeIn,
   FadeInDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -30,27 +26,6 @@ import SilverBadgeIcon from "@/assets/svg/silver-badge.svg";
 const PROMOTION_COLOR = "#4CAF50"; // Grün
 const DEMOTION_COLOR = "#E57373"; // Rot
 
-// ELO thresholds for each tier
-const TIER_THRESHOLDS: Record<RankTier, number> = {
-  novice: 0,
-  bronze: 1000,
-  silver: 1200,
-  gold: 1400,
-  diamond: 1600,
-  master: 1800,
-  grandmaster: 2000,
-};
-
-// Next tier mapping
-const NEXT_TIER: Record<RankTier, RankTier | null> = {
-  novice: "bronze",
-  bronze: "silver",
-  silver: "gold",
-  gold: "diamond",
-  diamond: "master",
-  master: "grandmaster",
-  grandmaster: null,
-};
 
 // Helper to convert hex to rgba
 const hexToRGBA = (hex: string, alpha: number): string => {
@@ -102,35 +77,6 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
   // Load current user's profile data (reload on screen focus)
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string>("User");
-
-  // Animation for progress bar
-  const progressWidth = useSharedValue(0);
-
-  // Calculate progress
-  const nextTier = NEXT_TIER[tier];
-  const currentThreshold = TIER_THRESHOLDS[tier];
-  const nextThreshold = nextTier ? TIER_THRESHOLDS[nextTier] : currentThreshold;
-  const tierRange = nextThreshold - currentThreshold;
-  const progressInTier = elo - currentThreshold;
-  const progressPercent = nextTier
-    ? Math.min(100, Math.max(0, (progressInTier / tierRange) * 100))
-    : 100;
-  const pointsToNext = nextTier ? TIER_THRESHOLDS[nextTier] - elo : 0;
-  const nextTierName = nextTier
-    ? t(`rank.${nextTier}`, { defaultValue: getRankTierName(nextTier) })
-    : "";
-
-  // Animate progress bar
-  useEffect(() => {
-    progressWidth.value = withDelay(
-      400,
-      withTiming(progressPercent, { duration: 800 })
-    );
-  }, [progressPercent]);
-
-  const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value}%`,
-  }));
 
   useFocusEffect(
     useCallback(() => {
@@ -264,7 +210,7 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
             >
               <Feather name="tool" size={9} color="#FFFFFF" style={styles.ribbonIcon} />
               <Text style={styles.ribbonText}>
-                {t("devBadge", { defaultValue: "In Entwicklung" })}
+                {t("devBadge", { defaultValue: "In Arbeit" })}
               </Text>
             </LinearGradient>
           </View>
@@ -285,42 +231,9 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
           >
             <SilverBadgeIcon width={48} height={48} />
           </View>
-          <Text style={[styles.leagueName, { color: colors.textPrimary, fontSize: typography.size.lg }]}>
+          <Text style={[styles.leagueName, { color: colors.textPrimary, fontSize: typography.size.xl }]}>
             {leagueName}
           </Text>
-
-          {/* Progress Bar */}
-          <View style={styles.progressContainer}>
-            <View
-              style={[
-                styles.progressTrack,
-                {
-                  backgroundColor: isDark
-                    ? "rgba(255,255,255,0.15)"
-                    : "rgba(0,0,0,0.1)",
-                },
-              ]}
-            >
-              <Animated.View style={[{ height: "100%" }, progressAnimatedStyle]}>
-                <LinearGradient
-                  colors={leagueColors.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.progressFillGradient}
-                />
-              </Animated.View>
-            </View>
-            <Text
-              style={[
-                styles.progressText,
-                { color: colors.textSecondary, fontSize: typography.size.xs },
-              ]}
-            >
-              {nextTier
-                ? `${pointsToNext} → ${nextTierName}`
-                : t("rank.maxRank", { defaultValue: "Max erreicht!" })}
-            </Text>
-          </View>
         </View>
 
         {/* Divider */}

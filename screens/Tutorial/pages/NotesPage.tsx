@@ -132,7 +132,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
             style={[styles.notesButton, { backgroundColor: theme.isDark ? colors.surface : colors.numberPadButton, borderWidth: 2, borderColor: progressColor }]}
             onPress={() => {}}
           >
-            <PencilIcon width={32} height={32} color={progressColor} />
+            <PencilIcon width={26} height={26} color={progressColor} />
           </TouchableOpacity>
           <Text style={[styles.buttonLabel, { color: colors.textPrimary, fontSize: typography.size.md }]}>
             {t('pages.notes.buttonLabel')}
@@ -166,16 +166,16 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
   },
   notesButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
     marginBottom: spacing.sm,
   },
   buttonLabel: {

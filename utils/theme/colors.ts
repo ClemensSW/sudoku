@@ -75,8 +75,12 @@ const lightColors = {
   cellDuoPlayer1CheckerPurple: "#E0DCF2",
   // Player 2: Neutral (identisch zu Single-Player hellen Boxen)
   cellDuoPlayer2Background: "#FFFFFF",
-  // Player 2 Checkerboard: Neutral grau
-  cellDuoPlayer2Checker: "#F0F1F3",      // Neutrales Hellgrau
+  // Player 2 Checkerboard: Subtiler Path-Color-Hauch (~5% auf #F0F1F3)
+  cellDuoPlayer2CheckerBlue: "#E7ECF3",
+  cellDuoPlayer2CheckerGreen: "#E7EDEB",
+  cellDuoPlayer2CheckerYellow: "#F0EEE7",
+  cellDuoPlayer2CheckerRed: "#F0E8EA",
+  cellDuoPlayer2CheckerPurple: "#EAE9F4",
 
   // Grid
   gridLine: "#E8EAED",
@@ -202,7 +206,12 @@ const darkColors = {
   cellDuoPlayer1CheckerPurple: "#2F2E35",
   // Player 2: Neutral (invertiert)
   cellDuoPlayer2Background: "#1E2022",   // Dunkel (getauscht)
-  cellDuoPlayer2Checker: "#292A2D",      // Hell (getauscht)
+  // Player 2 Checkerboard: Neutral (keine Path-Color im Dark Mode)
+  cellDuoPlayer2CheckerBlue: "#292A2D",
+  cellDuoPlayer2CheckerGreen: "#292A2D",
+  cellDuoPlayer2CheckerYellow: "#292A2D",
+  cellDuoPlayer2CheckerRed: "#292A2D",
+  cellDuoPlayer2CheckerPurple: "#292A2D",
 
   // Grid
   gridLine: "#3C4043",
@@ -339,11 +348,19 @@ export const getDuoZoneBackground = (
   const colorId = hexToColorId(pathColorHex);
   const colorMap = isDark ? darkColors : lightColors;
 
-  // Player 2 (oben) = Neutral
+  // Player 2 (oben) = Subtiler Path-Color-Tint im Light Mode
   if (player === 2) {
-    return isCheckerboard
-      ? colorMap.cellDuoPlayer2Checker
-      : colorMap.cellDuoPlayer2Background;
+    if (isCheckerboard) {
+      const checkerColors: Record<PathColorId, string> = {
+        blue: colorMap.cellDuoPlayer2CheckerBlue,
+        green: colorMap.cellDuoPlayer2CheckerGreen,
+        yellow: colorMap.cellDuoPlayer2CheckerYellow,
+        red: colorMap.cellDuoPlayer2CheckerRed,
+        purple: colorMap.cellDuoPlayer2CheckerPurple,
+      };
+      return checkerColors[colorId] || colorMap.cellDuoPlayer2CheckerBlue;
+    }
+    return colorMap.cellDuoPlayer2Background;
   }
 
   // Player 1 (unten) und Player 0 (Mitte) = Path-Color-Tint

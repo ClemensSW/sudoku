@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { getGapColor, getCheckerboardColor } from "@/utils/theme/colors";
 
 interface SudokuBoardDemoProps {
   puzzle: number[][];
@@ -11,10 +12,16 @@ interface SudokuBoardDemoProps {
   onCellPress: (row: number, col: number) => void;
 }
 
-// Berechnen der optimalen Board-Größe
+// Gap-basierte Konstanten (wie im Single Player Game)
 const BOARD_SIZE = 320;
-const GRID_SIZE = BOARD_SIZE * 0.95;
-const CELL_SIZE = GRID_SIZE / 9;
+const GRID_SIZE = BOARD_SIZE;
+
+const BOX_GAP = 2.5;
+const CELL_GAP = 1.0;
+
+const TOTAL_GAP_SPACE = 2 * BOX_GAP + 6 * CELL_GAP;
+const AVAILABLE_CELL_SPACE = GRID_SIZE - TOTAL_GAP_SPACE;
+const CELL_SIZE = AVAILABLE_CELL_SPACE / 9;
 
 const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
   puzzle,
@@ -23,7 +30,7 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
   onCellPress,
 }) => {
   const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = theme;
   const progressColor = useProgressColor();
 
   const renderCell = (row: number, col: number) => {
@@ -32,7 +39,6 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
     const isSelected =
       selectedCell && selectedCell[0] === row && selectedCell[1] === col;
 
-    // Diese Logik entspricht exakt der in SudokuBoard.tsx
     const isInSameRow = selectedCell && selectedCell[0] === row;
     const isInSameCol = selectedCell && selectedCell[1] === col;
     const isInSameBox =
@@ -40,22 +46,26 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
       Math.floor(selectedCell[0] / 3) === Math.floor(row / 3) &&
       Math.floor(selectedCell[1] / 3) === Math.floor(col / 3);
 
-    // Generiere die Theme-konformen Hintergrundfarben mit dynamischer progressColor
-    let backgroundColor = "transparent";
-    let textColor = colors.cellTextColor; // Standard-Textfarbe
+    // Schachbrettmuster für 3×3-Boxen (wie im Single Player Game)
+    const boxRow = Math.floor(row / 3);
+    const boxCol = Math.floor(col / 3);
+    const isAlternateBox = (boxRow + boxCol) % 2 === 1;
+
+    let backgroundColor = isAlternateBox
+      ? getCheckerboardColor(progressColor, isDark)
+      : colors.cellCheckerboardLightBackground;
+    let textColor = colors.cellTextColor;
 
     if (isSelected) {
-      // Ausgewählte Zelle: volle Farbe (keine Transparenz)
       backgroundColor = progressColor;
       textColor = colors.cellSelectedTextColor;
     } else if (isInSameRow || isInSameCol || isInSameBox) {
       // Verwandte Zellen: progressColor mit 35% Transparenz
       backgroundColor = progressColor + '59';
     }
-    
-    // Anfängliche (vorgegebene) Werte haben eine andere Textfarbe/Stil
+
     if (isInitial) {
-      textColor = colors.cellInitialTextColor;
+      textColor = isSelected ? colors.cellSelectedTextColor : colors.cellInitialTextColor;
     }
 
     return (
@@ -63,82 +73,74 @@ const SudokuBoardDemo: React.FC<SudokuBoardDemoProps> = ({
         key={`cell-${row}-${col}`}
         style={[
           styles.cell,
-          (row + 1) % 3 === 0 && row !== 8 && styles.bottomBorder,
-          (col + 1) % 3 === 0 && col !== 8 && styles.rightBorder,
-          { borderColor: colors.boardCellBorderColor },
+          { backgroundColor },
         ]}
       >
-        {/* Hintergrund für Hervorhebungen */}
-        {backgroundColor !== "transparent" && (
-          <View style={[styles.cellBackground, { backgroundColor }]} />
-        )}
+        <View style={styles.cellContent}>
+          <Text
+            style={[
+              styles.cellText,
+              { color: textColor, fontSize: typography.size.lg },
+              isInitial && styles.initialCellText
+            ]}
+          >
+            {value !== 0 ? value.toString() : ""}
+          </Text>
+        </View>
+      </View>
+    );
+  };
 
-        {/* Zelleninhalt */}
-        <Text
-          style={[
-            styles.cellText,
-            { color: textColor, fontSize: typography.size.lg },
-            isInitial && styles.initialCellText
-          ]}
-        >
-          {value !== 0 ? value.toString() : ""}
-        </Text>
+  // Render a 3x3 box
+  const renderBox = (boxRow: number, boxCol: number) => {
+    const startRow = boxRow * 3;
+    const startCol = boxCol * 3;
+
+    return (
+      <View key={`box-${boxRow}-${boxCol}`} style={styles.box}>
+        {[0, 1, 2].map((cellRowOffset) => (
+          <View key={`cellRow-${boxRow}-${boxCol}-${cellRowOffset}`} style={styles.cellRow}>
+            {[0, 1, 2].map((cellColOffset) =>
+              renderCell(startRow + cellRowOffset, startCol + cellColOffset)
+            )}
+          </View>
+        ))}
       </View>
     );
   };
 
   return (
-    <View style={styles.boardWrapper}>
-      <View 
+    <View style={[
+      styles.boardWrapper,
+      {
+        // Farbiger Schatten-Effekt wie im Single Player Game
+        shadowColor: progressColor,
+        shadowOpacity: isDark ? 0.6 : 0.35,
+        shadowRadius: isDark ? 16 : 12,
+        shadowOffset: { width: 0, height: 4 },
+        elevation: 10,
+      },
+    ]}>
+      <View
         style={[
-          styles.board, 
+          styles.board,
           { backgroundColor: colors.boardBackgroundColor }
         ]}
       >
-        <View 
+        <View
           style={[
             styles.gridContainer,
-            { borderColor: colors.boardBorderColor }
+            { backgroundColor: getGapColor(progressColor, isDark) }
           ]}
         >
-          {/* Gridlinien als absolute Elemente */}
-          <View
-            style={[
-              styles.gridLine,
-              styles.horizontalLine,
-              { top: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
-            ]}
-          />
-          <View
-            style={[
-              styles.gridLine,
-              styles.horizontalLine,
-              { top: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
-            ]}
-          />
-          <View
-            style={[
-              styles.gridLine,
-              styles.verticalLine,
-              { left: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
-            ]}
-          />
-          <View
-            style={[
-              styles.gridLine,
-              styles.verticalLine,
-              { left: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
-            ]}
-          />
-
-          {/* Zeilen und Zellen */}
-          {Array.from({ length: 9 }, (_, rowIndex) => (
-            <View key={`row-${rowIndex}`} style={styles.row}>
-              {Array.from({ length: 9 }, (_, colIndex) =>
-                renderCell(rowIndex, colIndex)
-              )}
-            </View>
-          ))}
+          {/* 9 Boxen (3x3) mit je 9 Zellen (3x3) */}
+          <View style={styles.boxesContainer}>
+            {[0, 1, 2].map((boxRow) => (
+              <View key={`boxRow-${boxRow}`} style={styles.boxRow}>
+                {[0, 1, 2].map((boxCol) => renderBox(boxRow, boxCol))}
+              </View>
+            ))}
+          </View>
         </View>
       </View>
     </View>
@@ -149,74 +151,57 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
   },
   board: {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0,
   },
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
     flexDirection: "column",
-    borderWidth: 1.5,
     overflow: "hidden",
-    borderRadius: 8,
-    position: "relative",
   },
-  row: {
+  boxesContainer: {
+    flex: 1,
+    flexDirection: "column",
+    gap: BOX_GAP,
+  },
+  boxRow: {
     flexDirection: "row",
-    height: CELL_SIZE,
+    flex: 1,
+    gap: BOX_GAP,
+  },
+  box: {
+    flexDirection: "column",
+    flex: 1,
+    gap: CELL_GAP,
+  },
+  cellRow: {
+    flexDirection: "row",
+    flex: 1,
+    gap: CELL_GAP,
   },
   cell: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0.5,
     position: "relative",
   },
-  bottomBorder: {
-    borderBottomWidth: 2,
-  },
-  rightBorder: {
-    borderRightWidth: 2,
-  },
-  cellBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
+  cellContent: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
   },
   cellText: {
     // fontSize set dynamically via theme.typography
-    zIndex: 2,
   },
   initialCellText: {
     fontWeight: "bold",
-  },
-  gridLine: {
-    position: "absolute",
-    zIndex: 5,
-  },
-  horizontalLine: {
-    width: GRID_SIZE,
-    height: 1.5,
-    left: 0,
-  },
-  verticalLine: {
-    width: 1.5,
-    height: GRID_SIZE,
-    top: 0,
   },
 });
 

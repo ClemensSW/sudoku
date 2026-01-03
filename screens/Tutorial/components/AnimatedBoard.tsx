@@ -6,11 +6,11 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withDelay,
-  withSequence,
   Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/hooks/useProgressColor";
+import { getGapColor, getCheckerboardColor } from "@/utils/theme/colors";
 
 interface AnimatedBoardProps {
   grid: number[][];
@@ -26,10 +26,16 @@ interface AnimatedBoardProps {
   animationDelay?: number;
 }
 
-// Berechnen der optimalen Board-Größe - exakt wie in SudokuBoardDemo
+// Gap-basierte Konstanten (wie im Single Player Game)
 const BOARD_SIZE = 320;
-const GRID_SIZE = BOARD_SIZE * 0.95;
-const CELL_SIZE = GRID_SIZE / 9;
+const GRID_SIZE = BOARD_SIZE;
+
+const BOX_GAP = 2.5;
+const CELL_GAP = 1.0;
+
+const TOTAL_GAP_SPACE = 2 * BOX_GAP + 6 * CELL_GAP;
+const AVAILABLE_CELL_SPACE = GRID_SIZE - TOTAL_GAP_SPACE;
+const CELL_SIZE = AVAILABLE_CELL_SPACE / 9;
 
 const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   grid,
@@ -45,25 +51,22 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   animationDelay = 0,
 }) => {
   const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = theme;
   const progressColor = useProgressColor();
 
   // Standardfarben für Hervorhebungen, wenn nicht explizit angegeben
-  // Die Farben sind so gewählt, dass sie im Light und Dark Mode gut aussehen
-  // und deutlich unterscheidbar bleiben
-  const defaultHighlightRowColor = theme.isDark 
-    ? "rgba(138, 180, 248, 0.35)" // Blau im Dark Mode
-    : "rgba(66, 133, 244, 0.35)"; // Blau im Light Mode
-    
-  const defaultHighlightColumnColor = theme.isDark 
-    ? "rgba(242, 139, 130, 0.35)" // Rot im Dark Mode
-    : "rgba(234, 67, 53, 0.35)"; // Rot im Light Mode
-    
-  const defaultHighlightBlockColor = theme.isDark 
-    ? "rgba(129, 201, 149, 0.35)" // Grün im Dark Mode
-    : "rgba(52, 168, 83, 0.35)"; // Grün im Light Mode
+  const defaultHighlightRowColor = isDark
+    ? "rgba(138, 180, 248, 0.35)"
+    : "rgba(66, 133, 244, 0.35)";
 
-  // Die finalen, effektiven Highlight-Farben
+  const defaultHighlightColumnColor = isDark
+    ? "rgba(242, 139, 130, 0.35)"
+    : "rgba(234, 67, 53, 0.35)";
+
+  const defaultHighlightBlockColor = isDark
+    ? "rgba(129, 201, 149, 0.35)"
+    : "rgba(52, 168, 83, 0.35)";
+
   const effectiveRowColor = highlightRowColor || defaultHighlightRowColor;
   const effectiveColumnColor = highlightColumnColor || defaultHighlightColumnColor;
   const effectiveBlockColor = highlightBlockColor || defaultHighlightBlockColor;
@@ -74,7 +77,6 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
   const highlightOpacity = useSharedValue(0);
 
   useEffect(() => {
-    // Animate board entry
     scale.value = withDelay(
       animationDelay,
       withTiming(1, {
@@ -85,7 +87,6 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
 
     opacity.value = withDelay(animationDelay, withTiming(1, { duration: 500 }));
 
-    // Animate highlights
     highlightOpacity.value = withDelay(
       animationDelay + 300,
       withTiming(1, { duration: 400 })
@@ -98,7 +99,7 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
       return {
         highlighted: true,
         isSelected: true,
-        color: progressColor, // Dynamische progressColor für ausgewählte Zelle
+        color: progressColor,
       };
     }
 
@@ -172,11 +173,10 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
             key={`note-${row}-${col}-${num}`}
             style={[
               styles.noteText,
-              { 
-                // KORRIGIERT: Setze die Textfarbe basierend auf dem Auswahlstatus
-                color: isSelected 
-                  ? colors.cellSelectedTextColor // Weiß für ausgewählte Zellen
-                  : colors.cellNotesTextColor    // Standardfarbe für nicht ausgewählte
+              {
+                color: isSelected
+                  ? colors.cellSelectedTextColor
+                  : colors.cellNotesTextColor
               },
               cellNotes.includes(num) ? styles.activeNote : styles.hiddenNote,
             ]}
@@ -188,100 +188,108 @@ const AnimatedBoard: React.FC<AnimatedBoardProps> = ({
     );
   };
 
+  // Render a single cell
+  const renderCell = (row: number, col: number) => {
+    const cell = grid[row][col];
+    const isInitial = cell !== 0;
+    const highlightInfo = getCellHighlightInfo(row, col);
+    const isSelected = highlightInfo.isSelected;
+
+    // Schachbrettmuster für 3×3-Boxen (wie im Single Player Game)
+    const boxRow = Math.floor(row / 3);
+    const boxCol = Math.floor(col / 3);
+    const isAlternateBox = (boxRow + boxCol) % 2 === 1;
+
+    const cellBackgroundColor = isAlternateBox
+      ? getCheckerboardColor(progressColor, isDark)
+      : colors.cellCheckerboardLightBackground;
+
+    return (
+      <View
+        key={`cell-${row}-${col}`}
+        style={[
+          styles.cell,
+          { backgroundColor: cellBackgroundColor },
+        ]}
+      >
+        {/* Highlight background */}
+        {highlightInfo.highlighted && (
+          <Animated.View
+            style={[
+              styles.cellBackground,
+              { backgroundColor: highlightInfo.color },
+              highlightStyle,
+            ]}
+          />
+        )}
+
+        {/* Cell content */}
+        <View style={styles.cellContent}>
+          {isInitial ? (
+            <Text style={[
+              styles.cellText,
+              {
+                color: isSelected
+                  ? colors.cellSelectedTextColor
+                  : colors.cellInitialTextColor,
+                fontSize: typography.size.lg,
+              },
+              styles.initialText
+            ]}>
+              {cell}
+            </Text>
+          ) : showNotes ? (
+            renderNotes(row, col)
+          ) : null}
+        </View>
+      </View>
+    );
+  };
+
+  // Render a 3x3 box
+  const renderBox = (boxRow: number, boxCol: number) => {
+    const startRow = boxRow * 3;
+    const startCol = boxCol * 3;
+
+    return (
+      <View key={`box-${boxRow}-${boxCol}`} style={styles.box}>
+        {[0, 1, 2].map((cellRowOffset) => (
+          <View key={`cellRow-${boxRow}-${boxCol}-${cellRowOffset}`} style={styles.cellRow}>
+            {[0, 1, 2].map((cellColOffset) =>
+              renderCell(startRow + cellRowOffset, startCol + cellColOffset)
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
   return (
     <Animated.View style={[styles.container, boardStyle]}>
-      <View style={styles.boardWrapper}>
+      <View style={[
+        styles.boardWrapper,
+        {
+          // Farbiger Schatten-Effekt wie im Single Player Game
+          shadowColor: progressColor,
+          shadowOpacity: isDark ? 0.6 : 0.35,
+          shadowRadius: isDark ? 16 : 12,
+          shadowOffset: { width: 0, height: 4 },
+          elevation: 10,
+        },
+      ]}>
         <View style={[styles.board, { backgroundColor: colors.boardBackgroundColor }]}>
-          <View style={[styles.gridContainer, { borderColor: colors.boardBorderColor }]}>
-            {/* Gridlinien als absolute Elemente */}
-            <View
-              style={[
-                styles.gridLine,
-                styles.horizontalLine,
-                { top: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
-              ]}
-            />
-            <View
-              style={[
-                styles.gridLine,
-                styles.horizontalLine,
-                { top: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
-              ]}
-            />
-            <View
-              style={[
-                styles.gridLine,
-                styles.verticalLine,
-                { left: CELL_SIZE * 3, backgroundColor: colors.boardGridLineColor },
-              ]}
-            />
-            <View
-              style={[
-                styles.gridLine,
-                styles.verticalLine,
-                { left: CELL_SIZE * 6, backgroundColor: colors.boardGridLineColor },
-              ]}
-            />
-            
-            {grid.map((row, rowIndex) => (
-              <View key={`row-${rowIndex}`} style={styles.row}>
-                {row.map((cell, colIndex) => {
-                  const isInitial = cell !== 0;
-                  const highlightInfo = getCellHighlightInfo(rowIndex, colIndex);
-                  const isSelected = highlightInfo.isSelected;
-
-                  return (
-                    <View
-                      key={`cell-${rowIndex}-${colIndex}`}
-                      style={[
-                        styles.cell,
-                        (colIndex + 1) % 3 === 0 &&
-                          colIndex !== 8 &&
-                          styles.rightBorder,
-                        (rowIndex + 1) % 3 === 0 &&
-                          rowIndex !== 8 &&
-                          styles.bottomBorder,
-                        { borderColor: colors.boardCellBorderColor },
-                      ]}
-                    >
-                      {/* Highlight background */}
-                      {highlightInfo.highlighted && (
-                        <Animated.View
-                          style={[
-                            styles.cellBackground,
-                            {
-                              backgroundColor: highlightInfo.color,
-                            },
-                            highlightStyle,
-                          ]}
-                        />
-                      )}
-
-                      {/* Cell content */}
-                      {isInitial ? (
-                        <Text style={[
-                          styles.cellText,
-                          {
-                            // KORRIGIERT: Textfarbe basierend auf Auswahlstatus
-                            color: isSelected
-                              ? colors.cellSelectedTextColor  // Weiß für ausgewählte Zellen
-                              : colors.cellInitialTextColor,   // Theme-Farbe für initiale Zahlen
-                            fontSize: typography.size.lg,
-                          },
-                          styles.initialText
-                        ]}>
-                          {cell}
-                        </Text>
-                      ) : showNotes ? (
-                        renderNotes(rowIndex, colIndex)
-                      ) : (
-                        <Text style={[styles.cellText, { color: colors.cellTextColor }]}></Text>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-            ))}
+          <View style={[
+            styles.gridContainer,
+            { backgroundColor: getGapColor(progressColor, isDark) }
+          ]}>
+            {/* 9 Boxen (3x3) mit je 9 Zellen (3x3) */}
+            <View style={styles.boxesContainer}>
+              {[0, 1, 2].map((boxRow) => (
+                <View key={`boxRow-${boxRow}`} style={styles.boxRow}>
+                  {[0, 1, 2].map((boxCol) => renderBox(boxRow, boxCol))}
+                </View>
+              ))}
+            </View>
           </View>
         </View>
       </View>
@@ -298,44 +306,44 @@ const styles = StyleSheet.create({
   boardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
   },
   board: {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0,
   },
   gridContainer: {
     width: GRID_SIZE,
     height: GRID_SIZE,
     flexDirection: "column",
-    borderWidth: 1.5,
     overflow: "hidden",
-    borderRadius: 8,
-    position: "relative",
   },
-  row: {
+  boxesContainer: {
     flex: 1,
+    flexDirection: "column",
+    gap: BOX_GAP,
+  },
+  boxRow: {
     flexDirection: "row",
+    flex: 1,
+    gap: BOX_GAP,
+  },
+  box: {
+    flexDirection: "column",
+    flex: 1,
+    gap: CELL_GAP,
+  },
+  cellRow: {
+    flexDirection: "row",
+    flex: 1,
+    gap: CELL_GAP,
   },
   cell: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0.5,
     position: "relative",
-  },
-  rightBorder: {
-    borderRightWidth: 1.5,
-  },
-  bottomBorder: {
-    borderBottomWidth: 1.5,
   },
   cellBackground: {
     position: "absolute",
@@ -343,9 +351,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 1,
+  },
+  cellContent: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
   },
   cellText: {
-    // fontSize set dynamically via theme.typography
     fontWeight: "500",
   },
   initialText: {
@@ -370,20 +385,6 @@ const styles = StyleSheet.create({
   },
   hiddenNote: {
     opacity: 0,
-  },
-  gridLine: {
-    position: "absolute",
-    zIndex: 5,
-  },
-  horizontalLine: {
-    width: GRID_SIZE,
-    height: 1.5,
-    left: 0,
-  },
-  verticalLine: {
-    width: 1.5,
-    height: GRID_SIZE,
-    top: 0,
   },
 });
 

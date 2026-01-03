@@ -71,10 +71,18 @@ Play in Deutsch, English or हिन्दी (Hindi) – the app automatically
 📊 **Track Your Performance**
 Keep track of your winning streak, best times and game strength as a percentage. Develop yourself playfully – without pressure.
 
+☁️ **Cloud-Sync & Account**
+Create a free account (Google, Apple or E-Mail) and sync your progress across all devices. Your statistics, settings and streak are always backed up.
+
+🔥 **Daily Streak**
+Play every day and build your streak! Shield protection keeps you from losing progress – motivating and stress-free.
+
 ⚙️ **Smart Settings & Features**
 - Pause function – resume anytime
 - Automatic notes
 - Light & Dark Mode
+- Adjustable font size
+- Background music
 - Highlight cells and numbers
 - Error display & vibration
 - Undo / End game
@@ -115,6 +123,10 @@ Sudoku Duo is a hobby project with heart and attention to detail – developed t
 - Achievement milestones
 
 ### ⚙️ Smart Features
+- Cloud sync with account (Google/Apple/Email)
+- Daily streak with shield protection
+- Background music
+- Adjustable font size (accessibility)
 - Pause & resume functionality
 - Automatic game state saving
 - Configurable haptic feedback

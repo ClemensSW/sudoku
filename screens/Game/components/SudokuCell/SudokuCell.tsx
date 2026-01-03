@@ -104,6 +104,13 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
         )
       );
     }
+
+    // Cleanup: Reset values when animation ends or component unmounts
+    return () => {
+      completionBgOpacity.value = 0;
+      completionScale.value = 1;
+      completionTextScale.value = 1;
+    };
   }, [completionAnimation?.active, completionAnimation?.delay]);
 
   // Animated styles
@@ -280,6 +287,7 @@ export default memo(SudokuCell, (prevProps, nextProps) => {
     prevProps.sameValueHighlight === nextProps.sameValueHighlight &&
     prevProps.showErrors === nextProps.showErrors &&
     prevProps.completionAnimation?.active === nextProps.completionAnimation?.active &&
-    prevProps.completionAnimation?.type === nextProps.completionAnimation?.type
+    prevProps.completionAnimation?.type === nextProps.completionAnimation?.type &&
+    prevProps.completionAnimation?.delay === nextProps.completionAnimation?.delay
   );
 });

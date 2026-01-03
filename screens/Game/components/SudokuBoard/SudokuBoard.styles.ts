@@ -1,28 +1,25 @@
 import { StyleSheet, Dimensions } from "react-native";
 
+// Berechnen der optimalen Board-Größe basierend auf Bildschirmbreite
+const { width } = Dimensions.get("window");
+export const BOARD_SIZE = Math.min(width * 0.95, 400);
+export const GRID_SIZE = BOARD_SIZE;  // Kein Rand mehr zwischen Grid und Board
+
 // Gap-basierte Konstanten (ersetzen Borders)
-// WICHTIG: Ganzzahlige Werte für pixelgenaues Rendering ohne Sub-Pixel-Artefakte
 export const OUTER_BORDER_WIDTH = 0;  // Kein Außenrand mehr
-export const BOX_GAP = 3;               // Gap zwischen 3x3 Boxen (ganzzahlig!)
-export const CELL_GAP = 1;              // Gap zwischen Zellen innerhalb einer Box
+export const BOX_GAP = 2.5;             // Gap zwischen 3x3 Boxen
+export const CELL_GAP = 1.0;            // Gap zwischen Zellen innerhalb einer Box (min 1.0 für Sichtbarkeit)
+
+// Verfügbarer Innenraum nach Abzug des Außenrands
+const INNER_GRID_SIZE = GRID_SIZE - 2 * OUTER_BORDER_WIDTH;
 
 // Gesamter Gap-Raum:
 // - 2 BOX_GAPs (zwischen 3 Boxen horizontal/vertikal)
 // - 6 CELL_GAPs (2 Gaps pro Box × 3 Boxen)
 const TOTAL_GAP_SPACE = 2 * BOX_GAP + 6 * CELL_GAP;
+const AVAILABLE_CELL_SPACE = INNER_GRID_SIZE - TOTAL_GAP_SPACE;
 
-// Berechnen der optimalen Board-Größe basierend auf Bildschirmbreite
-// Wichtig: Auf durch 9 teilbare Größe runden, um Rundungsfehler zu vermeiden
-// (verhindert sichtbaren Gap-Streifen am rechten Rand)
-const { width } = Dimensions.get("window");
-const rawAvailableSpace = Math.min(width * 0.95, 400) - TOTAL_GAP_SPACE;
-const AVAILABLE_CELL_SPACE = Math.floor(rawAvailableSpace / 9) * 9;
-
-// Finale Board-Größe = gerundeter Zellplatz + Gaps
-export const BOARD_SIZE = AVAILABLE_CELL_SPACE + TOTAL_GAP_SPACE;
-export const GRID_SIZE = BOARD_SIZE;  // Kein Rand mehr zwischen Grid und Board
-
-// Jede der 9 Zellen bekommt gleichen Anteil (jetzt ohne Rest)
+// Jede der 9 Zellen bekommt gleichen Anteil
 export const CELL_SIZE = AVAILABLE_CELL_SPACE / 9;
 
 // Box-Größe = 3 Zellen + 2 Cell-Gaps

@@ -9,10 +9,9 @@ export const BOARD_SIZE = SHARED_BOARD_SIZE;
 export const GRID_SIZE = BOARD_SIZE;  // Kein Rand mehr zwischen Grid und Board
 
 // Gap-basierte Konstanten (identisch zu Single-Player)
-// WICHTIG: Ganzzahlige Werte für pixelgenaues Rendering ohne Sub-Pixel-Artefakte
 export const OUTER_BORDER_WIDTH = 0;  // Kein Außenrand mehr
-export const BOX_GAP = 3;             // Gap zwischen 3x3 Boxen (ganzzahlig!)
-export const CELL_GAP = 1;            // Gap zwischen Zellen innerhalb einer Box
+export const BOX_GAP = 2.5;           // Gap zwischen 3x3 Boxen
+export const CELL_GAP = 1.0;          // Gap zwischen Zellen innerhalb einer Box
 
 // Verfügbarer Innenraum nach Abzug des Außenrands
 const INNER_GRID_SIZE = GRID_SIZE - 2 * OUTER_BORDER_WIDTH;

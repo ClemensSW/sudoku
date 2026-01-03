@@ -17,6 +17,10 @@ interface DevLeagueContextType {
   cycleLeague: () => void;
   /** Überschreibung zurücksetzen */
   resetLeague: () => void;
+  /** Online Features aktiviert (nur für Dev) */
+  onlineFeaturesEnabled: boolean;
+  /** Online Features umschalten */
+  toggleOnlineFeatures: () => void;
 }
 
 const DevLeagueContext = createContext<DevLeagueContextType | null>(null);
@@ -37,6 +41,11 @@ interface DevLeagueProviderProps {
 
 export const DevLeagueProvider: React.FC<DevLeagueProviderProps> = ({ children }) => {
   const [overrideLeague, setOverrideLeague] = useState<RankTier | null>(null);
+  const [onlineFeaturesEnabled, setOnlineFeaturesEnabled] = useState(false);
+
+  const toggleOnlineFeatures = useCallback(() => {
+    setOnlineFeaturesEnabled((prev) => !prev);
+  }, []);
 
   const cycleLeague = useCallback(() => {
     setOverrideLeague((current) => {
@@ -60,6 +69,8 @@ export const DevLeagueProvider: React.FC<DevLeagueProviderProps> = ({ children }
         setOverrideLeague,
         cycleLeague,
         resetLeague,
+        onlineFeaturesEnabled,
+        toggleOnlineFeatures,
       }}
     >
       {children}

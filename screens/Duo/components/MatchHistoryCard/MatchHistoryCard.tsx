@@ -6,6 +6,8 @@ import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useCurrentLeague } from "@/hooks/useCurrentLeague";
+import { useDevLeague } from "@/contexts/DevLeagueContext";
+import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
 import styles from "./MatchHistoryCard.styles";
 
 // SVG Icon
@@ -42,6 +44,8 @@ const MatchHistoryCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const { colors, typography, isDark } = useTheme();
   const { colors: leagueColors } = useCurrentLeague();
+  const devLeague = useDevLeague();
+  const onlineFeaturesEnabled = devLeague?.onlineFeaturesEnabled ?? false;
 
   // Theme-aware colors
   const cardBg = isDark ? colors.surface : "#FFFFFF";
@@ -158,6 +162,14 @@ const MatchHistoryCard: React.FC = () => {
             {t("history.noGames", { defaultValue: "Noch keine Spiele" })}
           </Text>
         </View>
+      )}
+
+      {/* Coming Soon Overlay - shown when online features are disabled */}
+      {!onlineFeaturesEnabled && (
+        <ComingSoonOverlay
+          text={t("comingSoon", { defaultValue: "BALD VERFÜGBAR" })}
+          borderRadius={20}
+        />
       )}
     </Animated.View>
   );

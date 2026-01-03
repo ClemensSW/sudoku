@@ -45,6 +45,26 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
+  // Coming Soon Badge on disabled button
+  comingSoonBadge: {
+    position: "absolute",
+    top: -8,
+    right: -4,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    gap: 4,
+  },
+
+  comingSoonText: {
+    color: "#FFFFFF",
+    fontSize: 9,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+
   // Game Mode Cards Section (legacy)
   gameModeSection: {
     paddingHorizontal: 20,

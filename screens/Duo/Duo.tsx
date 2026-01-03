@@ -6,8 +6,10 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, FadeInDown } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useCurrentLeague } from "@/hooks/useCurrentLeague";
+import { useDevLeague } from "@/contexts/DevLeagueContext";
 import { triggerHaptic } from "@/utils/haptics";
 import { loadStats } from "@/utils/storage";
 import { Difficulty } from "@/utils/sudoku";
@@ -36,6 +38,8 @@ const Duo: React.FC = () => {
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
   const { colors: leagueColors } = useCurrentLeague();
+  const devLeague = useDevLeague();
+  const onlineFeaturesEnabled = devLeague?.onlineFeaturesEnabled ?? false;
 
   // State
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
@@ -43,7 +47,6 @@ const Duo: React.FC = () => {
     useState<Difficulty>("medium");
   const [showTutorialOverlay, setShowTutorialOverlay] = useState(false);
   const [leaderboardY, setLeaderboardY] = useState(0);
-  const [showDevBanner, setShowDevBanner] = useState(true);
 
   // Stats for DuoStatsBar
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -198,7 +201,8 @@ const Duo: React.FC = () => {
           </Pressable>
 
           <Pressable
-            onPress={handleOnlinePlay}
+            onPress={onlineFeaturesEnabled ? handleOnlinePlay : undefined}
+            disabled={!onlineFeaturesEnabled}
             style={({ pressed }) => [
               styles.actionButton,
               {
@@ -207,34 +211,54 @@ const Duo: React.FC = () => {
                   ? "rgba(255,255,255,0.08)"
                   : "rgba(0,0,0,0.06)",
                 shadowColor: isDark ? "transparent" : leagueColors.accent,
-                opacity: pressed ? 0.9 : 1,
+                opacity: !onlineFeaturesEnabled ? 0.6 : pressed ? 0.9 : 1,
               },
             ]}
           >
             <Text
               style={[
                 styles.actionButtonText,
-                { color: colors.textPrimary, fontSize: typography.size.md },
+                {
+                  color: !onlineFeaturesEnabled
+                    ? colors.textSecondary
+                    : colors.textPrimary,
+                  fontSize: typography.size.md,
+                },
               ]}
             >
               {t("gameModeModal.online.title", { defaultValue: "Online spielen" })}
             </Text>
+            {/* Coming Soon Badge */}
+            {!onlineFeaturesEnabled && (
+              <View
+                style={[
+                  styles.comingSoonBadge,
+                  {
+                    backgroundColor: isDark
+                      ? "rgba(60, 130, 145, 0.9)"
+                      : "rgba(46, 107, 123, 0.9)",
+                  },
+                ]}
+              >
+                <Feather name="clock" size={10} color="#FFFFFF" />
+                <Text style={styles.comingSoonText}>
+                  {t("comingSoonShort", { defaultValue: "BALD" })}
+                </Text>
+              </View>
+            )}
           </Pressable>
         </Animated.View>
 
         {/* Leaderboard Card */}
         <View onLayout={(e) => setLeaderboardY(e.nativeEvent.layout.y)}>
-          <LeaderboardCard showDevBadge={showDevBanner} />
+          <LeaderboardCard />
         </View>
 
         {/* Match History */}
         <MatchHistoryCard />
 
         {/* Dev League Toggle (only in DEV mode) */}
-        <DevLeagueToggle
-          showDevBanner={showDevBanner}
-          onToggleDevBanner={() => setShowDevBanner((prev) => !prev)}
-        />
+        <DevLeagueToggle />
       </ScrollView>
 
       {/* Tutorial Overlay */}

@@ -2,7 +2,7 @@
  * DevLeagueToggle - Dev-Button zum Testen verschiedener Ligen
  *
  * Zeigt nur im __DEV__ Modus an.
- * Ermöglicht das Durchschalten aller 7 Ligen.
+ * Ermöglicht das Durchschalten aller 7 Ligen und Online Features.
  */
 
 import React from 'react';
@@ -13,15 +13,7 @@ import { useDevLeague, LEAGUE_ORDER } from '@/contexts/DevLeagueContext';
 import { getLeagueColors } from '@/utils/elo/leagueColors';
 import { getRankTierName } from '@/utils/elo/eloCalculator';
 
-interface DevLeagueToggleProps {
-  showDevBanner?: boolean;
-  onToggleDevBanner?: () => void;
-}
-
-const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
-  showDevBanner = true,
-  onToggleDevBanner,
-}) => {
+const DevLeagueToggle: React.FC = () => {
   // Nur im DEV-Modus anzeigen
   if (!__DEV__) return null;
 
@@ -31,7 +23,7 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
   // Wenn kein Provider vorhanden
   if (!devLeague) return null;
 
-  const { overrideLeague, cycleLeague, resetLeague } = devLeague;
+  const { overrideLeague, cycleLeague, resetLeague, onlineFeaturesEnabled, toggleOnlineFeatures } = devLeague;
   const leagueColors = overrideLeague ? getLeagueColors(overrideLeague, isDark) : null;
   const currentIndex = overrideLeague ? LEAGUE_ORDER.indexOf(overrideLeague) : -1;
 
@@ -104,7 +96,7 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
 
         {/* Liga-Dots */}
         <View style={styles.dotsContainer}>
-          {LEAGUE_ORDER.map((tier, index) => {
+          {LEAGUE_ORDER.map((tier) => {
             const tierColors = getLeagueColors(tier, isDark);
             const isActive = tier === overrideLeague;
             return (
@@ -126,44 +118,42 @@ const DevLeagueToggle: React.FC<DevLeagueToggleProps> = ({
           })}
         </View>
 
-        {/* Banner Toggle */}
-        {onToggleDevBanner && (
-          <Pressable
-            onPress={onToggleDevBanner}
-            style={({ pressed }) => [
-              styles.bannerToggle,
-              {
-                backgroundColor: showDevBanner
-                  ? isDark
-                    ? 'rgba(46,107,123,0.3)'
-                    : 'rgba(46,107,123,0.15)'
-                  : isDark
-                    ? 'rgba(255,255,255,0.1)'
-                    : 'rgba(0,0,0,0.05)',
-                borderColor: showDevBanner
-                  ? 'rgba(46,107,123,0.5)'
-                  : isDark
-                    ? 'rgba(255,255,255,0.1)'
-                    : 'rgba(0,0,0,0.08)',
-                opacity: pressed ? 0.7 : 1,
-              },
+        {/* Online Features Toggle */}
+        <Pressable
+          onPress={toggleOnlineFeatures}
+          style={({ pressed }) => [
+            styles.onlineToggle,
+            {
+              backgroundColor: onlineFeaturesEnabled
+                ? isDark
+                  ? 'rgba(76,175,80,0.3)'
+                  : 'rgba(76,175,80,0.15)'
+                : isDark
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.05)',
+              borderColor: onlineFeaturesEnabled
+                ? 'rgba(76,175,80,0.5)'
+                : isDark
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.08)',
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
+        >
+          <Feather
+            name="globe"
+            size={14}
+            color={onlineFeaturesEnabled ? '#4CAF50' : colors.textSecondary}
+          />
+          <Text
+            style={[
+              styles.onlineToggleText,
+              { color: onlineFeaturesEnabled ? '#4CAF50' : colors.textSecondary, fontSize: typography.size.sm },
             ]}
           >
-            <Feather
-              name={showDevBanner ? 'eye' : 'eye-off'}
-              size={14}
-              color={showDevBanner ? '#2E6B7B' : colors.textSecondary}
-            />
-            <Text
-              style={[
-                styles.bannerToggleText,
-                { color: showDevBanner ? '#2E6B7B' : colors.textSecondary, fontSize: typography.size.sm },
-              ]}
-            >
-              {showDevBanner ? 'Banner sichtbar' : 'Banner versteckt'}
-            </Text>
-          </Pressable>
-        )}
+            {onlineFeaturesEnabled ? 'Online Features AN' : 'Online Features AUS'}
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -186,7 +176,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerText: {
-    // fontSize set dynamically via theme.typography
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -207,7 +196,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   leagueText: {
-    // fontSize set dynamically via theme.typography
     fontWeight: '600',
     color: '#FFFFFF',
   },
@@ -230,20 +218,19 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
-  bannerToggle: {
+  onlineToggle: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
     marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 1,
   },
-  bannerToggleText: {
-    // fontSize set dynamically via theme.typography
-    fontWeight: '500',
+  onlineToggleText: {
+    fontWeight: '600',
   },
 });
 

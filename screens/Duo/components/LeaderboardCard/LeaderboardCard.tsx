@@ -5,13 +5,14 @@ import Animated, {
   FadeIn,
   FadeInDown,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getRankTierName } from "@/utils/elo/eloCalculator";
 import { useCurrentLeague } from "@/hooks/useCurrentLeague";
+import { useDevLeague } from "@/contexts/DevLeagueContext";
+import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
 import {
   getAvatarSourceFromUri,
   DEFAULT_AVATAR,
@@ -61,16 +62,12 @@ const DUMMY_PLAYERS: LeaguePlayer[] = [
   { rank: 10, name: "Beginner01", points: 845, avatarUri: "default://avatar61" },
 ];
 
-interface LeaderboardCardProps {
-  showDevBadge?: boolean;
-}
-
-const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
-  showDevBadge = true,
-}) => {
+const LeaderboardCard: React.FC = () => {
   const { t } = useTranslation("duo");
   const { colors, typography, isDark } = useTheme();
   const { tier, colors: leagueColors } = useCurrentLeague();
+  const devLeague = useDevLeague();
+  const onlineFeaturesEnabled = devLeague?.onlineFeaturesEnabled ?? false;
 
   // Load current user's profile data (reload on screen focus)
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
@@ -192,30 +189,7 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
       ]}
       entering={FadeIn.duration(400).delay(100)}
     >
-      {/* Dev Ribbon (Corner Banner) */}
-      {showDevBadge && (
-        <View style={styles.ribbonContainer} pointerEvents="none">
-          <View style={styles.ribbonWrapper}>
-            <LinearGradient
-              colors={
-                isDark
-                  ? ["rgba(46,107,123,0.95)", "rgba(60,130,145,0.9)"]
-                  : ["rgba(46,107,123,1)", "rgba(60,130,145,0.95)"]
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.ribbon}
-            >
-              <Feather name="tool" size={9} color="#FFFFFF" style={styles.ribbonIcon} />
-              <Text style={styles.ribbonText}>
-                {t("devBadge", { defaultValue: "In Arbeit" })}
-              </Text>
-            </LinearGradient>
-          </View>
-        </View>
-      )}
-
-        {/* League Header */}
+      {/* League Header */}
         <View style={styles.leagueHeader}>
           <View
             style={[
@@ -288,6 +262,14 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
 
         {/* Bottom padding */}
         <View style={styles.bottomPadding} />
+
+        {/* Coming Soon Overlay - shown when online features are disabled */}
+        {!onlineFeaturesEnabled && (
+          <ComingSoonOverlay
+            text={t("comingSoon", { defaultValue: "BALD VERFÜGBAR" })}
+            borderRadius={20}
+          />
+        )}
     </Animated.View>
   );
 };

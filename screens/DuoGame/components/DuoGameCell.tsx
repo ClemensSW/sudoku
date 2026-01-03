@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
   withSequence,
   withRepeat,
+  withDelay,
   Easing,
 } from "react-native-reanimated";
 import { CELL_SIZE } from "./DuoGameBoard.styles";
@@ -16,6 +17,13 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getPlayerCellColors, getDividerColor, type DuoPlayerId } from "@/utils/duoColors";
 import { useProgressColor } from "@/contexts/color/ColorContext";
 import { lightenColor } from "@/utils/colorHelpers";
+
+// Completion animation type (matching SudokuCell)
+export interface CompletionAnimationProps {
+  type: 'row' | 'column' | 'box';
+  active: boolean;
+  delay: number; // milliseconds - for withDelay on UI thread
+}
 
 interface DuoGameCellProps {
   cell: SudokuCell;
@@ -27,6 +35,7 @@ interface DuoGameCellProps {
   onPress: (row: number, col: number) => void; // stable, shared handler from parent
   rotateForPlayer2?: boolean;
   showErrors?: boolean;
+  completionAnimation?: CompletionAnimationProps | null;
 }
 
 const DuoGameCell: React.FC<DuoGameCellProps> = ({
@@ -39,6 +48,7 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   onPress,
   rotateForPlayer2 = true,
   showErrors = true,
+  completionAnimation = null,
 }) => {
   const { isDark } = useTheme();
   const pathColorHex = useProgressColor();
@@ -51,6 +61,10 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     [player, pathColorHex, isDark, isCheckerboard]
   );
 
+  // WICHTIG: shouldRotateContent muss VOR animatedStyle definiert werden!
+  // Player 2 (oben) braucht 180° Rotation damit Zahlen lesbar sind
+  const shouldRotateContent = player === 2 && rotateForPlayer2;
+
   // Pulse animation only when *filled* by the player
   const scale = useSharedValue(1);
   React.useEffect(() => {
@@ -62,8 +76,79 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     }
   }, [cell.value, cell.isInitial, scale]);
 
+  // Combined animated style - rotation UND scale müssen zusammen sein!
+  // In React Native überschreibt der letzte transform Style den vorherigen
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: shouldRotateContent
+      ? [{ rotate: '180deg' }, { scale: scale.value }]
+      : [{ scale: scale.value }],
+  }));
+
+  // Completion animation values
+  const completionScale = useSharedValue(1);
+  const completionBgOpacity = useSharedValue(0);
+  const completionTextScale = useSharedValue(1);
+
+  // Trigger completion animation when row/column/box is completed
+  // Uses withDelay for UI-thread staggering (smoother than JS setTimeout)
+  React.useEffect(() => {
+    if (completionAnimation?.active) {
+      const delay = completionAnimation.delay ?? 0;
+
+      // Background flash - path color glow
+      completionBgOpacity.value = withDelay(delay,
+        withSequence(
+          withTiming(0.35, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(0, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+
+      // Cell scale pulse - smoother easing without overshoot
+      completionScale.value = withDelay(delay,
+        withSequence(
+          withTiming(1.08, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(1, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+
+      // Text scale pulse (slightly larger for emphasis)
+      completionTextScale.value = withDelay(delay,
+        withSequence(
+          withTiming(1.12, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(1, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+    }
+
+    // Cleanup: Reset values when animation ends or component unmounts
+    return () => {
+      completionBgOpacity.value = 0;
+      completionScale.value = 1;
+      completionTextScale.value = 1;
+    };
+  }, [completionAnimation?.active, completionAnimation?.delay]);
+
+  // Completion animation styles
+  const completionContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: completionScale.value }],
+  }));
+
+  const completionOverlayStyle = useAnimatedStyle(() => ({
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: pathColorHex,
+    opacity: completionBgOpacity.value,
+    borderRadius: 4,
+    zIndex: 5,
+  }));
+
+  // Text scale animation - nur scale für Completion-Animation
+  // Rotation wird bereits im Parent's animatedStyle gehandhabt
+  const completionTextAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: completionTextScale.value }],
   }));
 
   // Colors für normale Zellen (mittlere Zelle hat eigene Multi-Layer Struktur)
@@ -123,8 +208,6 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
     );
   };
 
-  const shouldRotateContent = player === 2 && rotateForPlayer2;
-
   // Divider-Farbe für Center Cell (Fluss-Linien)
   const dividerColor = getDividerColor(pathColorHex);
 
@@ -181,26 +264,26 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
   });
 
   // Render-Content für Zelle (wiederverwendbar)
+  // Rotation ist bereits in animatedStyle enthalten - nicht styles.rotatedContent verwenden!
   const renderCellContent = () => (
     <Animated.View
       style={[
         styles.cellContent,
         animatedStyle,
-        shouldRotateContent && styles.rotatedContent,
       ]}
     >
       {cell.value !== 0 ? (
-        <Text
+        <Animated.Text
           style={[
             styles.cellText,
             { color: getTextColor() },
             cell.isInitial && styles.initialText,
-            shouldRotateContent && styles.rotatedText,
             shouldUnderlineNumber(cell.value) && styles.underlinedNumber,
+            completionTextAnimStyle,  // Includes rotation for Player 2
           ]}
         >
           {cell.value}
-        </Text>
+        </Animated.Text>
       ) : (
         renderNotes()
       )}
@@ -308,11 +391,16 @@ const DuoGameCell: React.FC<DuoGameCellProps> = ({
       style={styles.cellContainer}
       onPress={() => onPress(row, col)}
     >
-      {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
-      <View style={[styles.cellBackground, { backgroundColor: getCellBackgroundColor() }]} />
+      <Animated.View style={[{ flex: 1, width: '100%', height: '100%' }, completionContainerStyle]}>
+        {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
+        <View style={[styles.cellBackground, { backgroundColor: getCellBackgroundColor() }]} />
 
-      {/* Content-Layer mit Text oder Notizen */}
-      {renderCellContent()}
+        {/* Completion animation overlay */}
+        <Animated.View style={completionOverlayStyle} pointerEvents="none" />
+
+        {/* Content-Layer mit Text oder Notizen */}
+        {renderCellContent()}
+      </Animated.View>
     </Pressable>
   );
 };
@@ -401,7 +489,11 @@ function propsEqual(prev: Readonly<DuoGameCellProps>, next: Readonly<DuoGameCell
     prev.isSelected === next.isSelected &&
     prev.isCheckerboard === next.isCheckerboard &&
     (prev.showErrors ?? true) === (next.showErrors ?? true) &&
-    cellsEqual(prev.cell, next.cell)
+    cellsEqual(prev.cell, next.cell) &&
+    // Completion animation comparison
+    prev.completionAnimation?.active === next.completionAnimation?.active &&
+    prev.completionAnimation?.type === next.completionAnimation?.type &&
+    prev.completionAnimation?.delay === next.completionAnimation?.delay
   );
 }
 

@@ -1,11 +1,12 @@
 // screens/DuoGame/components/DuoSudokuBox.tsx
 // Box-Komponente für 3x3 Zellen im Duo Mode (Gap-basiertes Layout)
 
-import React from "react";
+import React, { useCallback } from "react";
 import { View } from "react-native";
 import { SudokuBoard, CellPosition } from "@/utils/sudoku";
-import DuoGameCell from "./DuoGameCell";
+import DuoGameCell, { CompletionAnimationProps } from "./DuoGameCell";
 import styles from "./DuoGameBoard.styles";
+import { AnimatingCell } from "@/screens/Game/hooks/useCompletionAnimation";
 
 interface DuoSudokuBoxProps {
   boxRow: number;
@@ -16,6 +17,7 @@ interface DuoSudokuBoxProps {
   player2Cell: CellPosition | null;
   onCellPressStable: (row: number, col: number) => void;
   showErrors: boolean;
+  getCellAnimation?: (row: number, col: number) => AnimatingCell | null;
 }
 
 const DuoSudokuBox: React.FC<DuoSudokuBoxProps> = ({
@@ -27,6 +29,7 @@ const DuoSudokuBox: React.FC<DuoSudokuBoxProps> = ({
   player2Cell,
   onCellPressStable,
   showErrors,
+  getCellAnimation,
 }) => {
   // Schachbrett-Pattern: (boxRow + boxCol) % 2 === 1
   const isCheckerboard = (boxRow + boxCol) % 2 === 1;
@@ -35,6 +38,14 @@ const DuoSudokuBox: React.FC<DuoSudokuBoxProps> = ({
   const isSelected = (row: number, col: number) =>
     (player1Cell?.row === row && player1Cell?.col === col) ||
     (player2Cell?.row === row && player2Cell?.col === col);
+
+  // Helper to get completion animation props for a cell (memoized to avoid object recreation)
+  const getCompletionAnimationProps = useCallback((row: number, col: number): CompletionAnimationProps | null => {
+    if (!getCellAnimation) return null;
+    const anim = getCellAnimation(row, col);
+    if (!anim) return null;
+    return { type: anim.type, active: true, delay: anim.delay };
+  }, [getCellAnimation]);
 
   return (
     <View style={styles.box}>
@@ -56,6 +67,7 @@ const DuoSudokuBox: React.FC<DuoSudokuBoxProps> = ({
                 onPress={onCellPressStable}
                 rotateForPlayer2={true}
                 showErrors={showErrors}
+                completionAnimation={getCompletionAnimationProps(row, col)}
               />
             );
           })}
@@ -70,6 +82,10 @@ export default React.memo(DuoSudokuBox, (prev, next) => {
   // Box muss neu rendern wenn:
   // - sich Zellen innerhalb der Box geändert haben
   // - sich die Selektion innerhalb der Box geändert haben könnte
+  // - sich die Animation-Funktion geändert hat (für Completion-Animationen)
+
+  // Wenn getCellAnimation sich geändert hat, muss die Box neu rendern
+  if (prev.getCellAnimation !== next.getCellAnimation) return false;
 
   const boxRowStart = prev.boxRow * 3;
   const boxColStart = prev.boxCol * 3;

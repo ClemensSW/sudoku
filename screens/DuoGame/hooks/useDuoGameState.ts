@@ -75,6 +75,8 @@ export interface DuoGameState {
   // Spielerspezifische abgehakte Zahlen
   player1UsedNumbers: number[];
   player2UsedNumbers: number[];
+  // Für Completion-Animation
+  lastChangedCell: CellPosition | null;
 }
 
 export interface DuoGameActions {
@@ -163,6 +165,9 @@ export const useDuoGameState = (
   // Spielerspezifische abgehakte Zahlen
   const [player1UsedNumbers, setPlayer1UsedNumbers] = useState<number[]>([]);
   const [player2UsedNumbers, setPlayer2UsedNumbers] = useState<number[]>([]);
+
+  // Für Completion-Animation - trackt welche Zelle zuletzt geändert wurde
+  const [lastChangedCell, setLastChangedCell] = useState<CellPosition | null>(null);
 
   // Statisch initialisierte Spielerbereiche
   const [playerAreas] = useState<[PlayerArea, PlayerArea]>(() =>
@@ -540,6 +545,9 @@ export const useDuoGameState = (
         // Reset game completion status
         setIsGameComplete(false);
 
+        // Reset lastChangedCell für Completion-Animation
+        setLastChangedCell(null);
+
         // Wichtig: ZUERST Zähle die anfänglichen leeren Zellen und setze die Fortschrittsvariablen zurück
         countInitialEmptyCells(newBoard);
 
@@ -684,17 +692,20 @@ const handleNumberPress = useCallback(
       // Die Zahl ist die richtige Lösung - immer akzeptieren
       // Auch wenn die aktuelle Zelle einen Regelverstoß darstellt
       triggerHaptic("medium");
-      
+
       // Stelle sicher, dass die Zelle als gültig markiert ist
       const fixedBoard = [...updatedBoard];
       fixedBoard[row][col].isValid = true;
       setBoard(fixedBoard);
-      
+
+      // Für Completion-Animation tracken
+      setLastChangedCell({ row, col });
+
       // Fortschritt aktualisieren, wenn es nicht derselbe Wert ist
       if (!isSameValue) {
         updatePlayerProgress(player);
       }
-      
+
       // Auswahl zurücksetzen
       if (player === 1) {
         setPlayer1Cell(null);
@@ -913,6 +924,9 @@ const handleNumberPress = useCallback(
 
       setBoard(updatedBoard);
 
+      // Für Completion-Animation tracken
+      setLastChangedCell({ row, col });
+
       // WICHTIG: Zähle die gelöste Zelle nur, wenn sie nicht bereits korrekt war
       if (!isSameValue) {
         updatePlayerProgress(player);
@@ -1121,6 +1135,8 @@ const handleNumberPress = useCallback(
       // Spielerspezifische abgehakte Zahlen
       player1UsedNumbers,
       player2UsedNumbers,
+      // Für Completion-Animation
+      lastChangedCell,
     },
     {
       startNewGame,

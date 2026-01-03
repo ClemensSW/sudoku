@@ -21,11 +21,13 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { getDividerColor } from "@/utils/duoColors";
 import { getGapColor } from "@/utils/theme/colors";
 import { useProgressColor } from "@/contexts/color/ColorContext";
+import { useCompletionAnimation } from "@/screens/Game/hooks/useCompletionAnimation";
 
 interface DuoGameBoardProps {
   board: SudokuBoard;
   player1Cell: CellPosition | null;
   player2Cell: CellPosition | null;
+  lastChangedCell?: CellPosition | null;
   getCellOwner: (row: number, col: number) => 0 | 1 | 2;
   onCellPress: (player: 1 | 2, row: number, col: number) => void;
   isLoading?: boolean;
@@ -36,6 +38,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
   board,
   player1Cell,
   player2Cell,
+  lastChangedCell,
   getCellOwner,
   onCellPress,
   isLoading = false,
@@ -43,6 +46,9 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
 }) => {
   const { isDark } = useTheme();
   const pathColorHex = useProgressColor();
+
+  // Completion animation hook
+  const { checkForCompletions, getCellAnimation, reset: resetCompletionAnimation } = useCompletionAnimation();
 
   // Gap-Farbe für Grid-Linien (wie Single-Player)
   const gapColor = React.useMemo(
@@ -73,7 +79,19 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
       duration: 300,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
-  }, [isLoading, scale]);
+    // Reset completion animations when loading new game
+    if (isLoading) {
+      resetCompletionAnimation();
+    }
+  }, [isLoading, scale, resetCompletionAnimation]);
+
+  // Check for row/column/box completions when a cell changes
+  // IMPORTANT: Must also call when lastChangedCell is null to initialize previousBoardRef
+  React.useEffect(() => {
+    if (board.length > 0) {
+      checkForCompletions(board, lastChangedCell ?? null);
+    }
+  }, [board, lastChangedCell, checkForCompletions]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -192,6 +210,7 @@ const DuoGameBoard: React.FC<DuoGameBoardProps> = ({
                       player2Cell={player2Cell}
                       onCellPressStable={onCellPressStable}
                       showErrors={showErrors}
+                      getCellAnimation={getCellAnimation}
                     />
                   ))}
                 </View>

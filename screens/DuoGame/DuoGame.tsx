@@ -453,6 +453,7 @@ const DuoGame: React.FC<DuoGameScreenProps> = ({
           board={gameState.board}
           player1Cell={gameState.player1Cell}
           player2Cell={gameState.player2Cell}
+          lastChangedCell={gameState.lastChangedCell}
           getCellOwner={gameActions.getCellOwner}
           onCellPress={gameActions.handleCellPress}
           isLoading={false}

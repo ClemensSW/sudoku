@@ -14,6 +14,10 @@ interface GameControlsProps {
   disabledNumbers: number[];
   hintsRemaining: number;
   isGameComplete?: boolean;
+  // New props for Hearts display
+  showMistakes: boolean;
+  errorsRemaining: number;
+  maxErrors?: number;
 }
 
 const GameControls: React.FC<GameControlsProps> = ({
@@ -25,6 +29,9 @@ const GameControls: React.FC<GameControlsProps> = ({
   disabledNumbers,
   hintsRemaining,
   isGameComplete = false,
+  showMistakes,
+  errorsRemaining,
+  maxErrors = 3,
 }) => {
   return (
     <View>
@@ -38,6 +45,9 @@ const GameControls: React.FC<GameControlsProps> = ({
           disabledNumbers={disabledNumbers}
           showHint={true}
           hintsRemaining={hintsRemaining}
+          showMistakes={showMistakes}
+          errorsRemaining={errorsRemaining}
+          maxErrors={maxErrors}
         />
       </Animated.View>
     </View>

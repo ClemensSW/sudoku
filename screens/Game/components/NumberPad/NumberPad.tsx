@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   FadeInUp,
@@ -11,10 +11,11 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
 import { triggerHaptic } from "@/utils/haptics";
-import styles from "./NumberPad.styles";
+import styles, { ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH_TWO } from "./NumberPad.styles";
 import PencilIcon from "@/assets/svg/pencil.svg";
 import EraserIcon from "@/assets/svg/eraser.svg";
 import LightBulbIcon from "@/assets/svg/light-bulb.svg";
+import DuoErrorIndicator from "@/screens/DuoGame/components/DuoErrorIndicator";
 
 interface NumberPadProps {
   onNumberPress: (number: number) => void;
@@ -25,6 +26,10 @@ interface NumberPadProps {
   disabledNumbers?: number[];
   showHint?: boolean;
   hintsRemaining?: number;
+  // New props for Hearts display
+  showMistakes?: boolean;
+  errorsRemaining?: number;
+  maxErrors?: number;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -38,10 +43,13 @@ const NumberPad: React.FC<NumberPadProps> = ({
   disabledNumbers = [],
   showHint = true,
   hintsRemaining = 0,
+  showMistakes = true,
+  errorsRemaining = 3,
+  maxErrors = 3,
 }) => {
   const { t } = useTranslation('game');
   const theme = useTheme();
-  const { colors, typography } = theme;
+  const { colors, typography, isDark } = theme;
   const pathColorHex = useProgressColor();
 
   // Animation values
@@ -83,93 +91,117 @@ const NumberPad: React.FC<NumberPadProps> = ({
     transform: [{ scale: hintScale.value }],
   }));
 
-  // Render action buttons
+  // Render action buttons - Duo-style layout
   const renderActionButtons = () => {
     const hintDisabled = hintsRemaining <= 0;
 
+    // Choose button width based on whether we show hearts or delete button
+    const buttonWidth = showMistakes ? ACTION_BUTTON_WIDTH_TWO : ACTION_BUTTON_WIDTH;
+
     return (
       <View style={styles.actionButtonsRow}>
-        {/* Notiz-Button */}
+        {/* Notiz-Button - LEFT */}
         <Animated.View
-          style={styles.actionButtonContainer}
+          style={[styles.actionButtonWrapper, { width: buttonWidth }, noteAnimatedStyle]}
           entering={FadeInUp.delay(100).duration(400)}
         >
-          <AnimatedPressable
+          <TouchableOpacity
             style={[
               styles.actionButton,
               {
-                backgroundColor: theme.isDark
-                  ? colors.surface
-                  : colors.numberPadButton,
+                width: buttonWidth,
+                backgroundColor: isDark ? colors.surface : colors.numberPadButton,
                 borderWidth: noteModeActive ? 2 : 0,
-                borderColor: pathColorHex,
+                borderColor: noteModeActive ? pathColorHex : 'transparent',
               },
-              noteAnimatedStyle,
             ]}
-            onPress={() => {
-              handleButtonPress(noteScale, onNoteToggle);
-            }}
+            onPress={() => handleButtonPress(noteScale, onNoteToggle)}
           >
             <PencilIcon
-              width={32}
-              height={32}
-              color={
-                noteModeActive ? pathColorHex : colors.numberPadButtonText
-              }
+              width={18}
+              height={18}
+              color={noteModeActive ? pathColorHex : colors.numberPadButtonText}
             />
-          </AnimatedPressable>
-          <Text style={[styles.actionButtonLabel, { color: colors.textSecondary }]}>
-            {t('controls.note')}
-          </Text>
+            <Text
+              style={[
+                styles.actionButtonText,
+                {
+                  color: colors.textSecondary,
+                  fontSize: typography.size.xs,
+                },
+              ]}
+            >
+              {t('controls.note')}
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
 
-        {/* Löschen-Button */}
-        <Animated.View
-          style={styles.actionButtonContainer}
-          entering={FadeInUp.delay(200).duration(400)}
-        >
-          <AnimatedPressable
-            style={[
-              styles.actionButton,
-              {
-                backgroundColor: theme.isDark
-                  ? colors.surface
-                  : colors.numberPadButton,
-              },
-              eraseAnimatedStyle,
-            ]}
-            onPress={() => {
-              handleButtonPress(eraseScale, onErasePress);
-            }}
-          >
-            <EraserIcon
-              width={32}
-              height={32}
-              color={colors.numberPadButtonText}
+        {/* Middle: Hearts OR Delete Button */}
+        {showMistakes ? (
+          // Error Indicator (Hearts) - CENTER
+          <View style={styles.errorIndicatorContainer}>
+            <DuoErrorIndicator
+              player={1}
+              errorsCount={maxErrors - errorsRemaining}
+              maxErrors={maxErrors}
+              compact={true}
+              showErrors={showMistakes}
             />
-          </AnimatedPressable>
-          <Text style={[styles.actionButtonLabel, { color: colors.textSecondary }]}>
-            {t('controls.erase')}
-          </Text>
-        </Animated.View>
-
-        {/* Hinweis-Button */}
-        {showHint && onHintPress && (
+          </View>
+        ) : (
+          // Delete Button - CENTER (when showMistakes is false)
           <Animated.View
-            style={styles.actionButtonContainer}
-            entering={FadeInUp.delay(300).duration(400)}
+            style={[styles.actionButtonWrapper, { width: buttonWidth }, eraseAnimatedStyle]}
+            entering={FadeInUp.delay(200).duration(400)}
           >
-            <AnimatedPressable
+            <TouchableOpacity
               style={[
                 styles.actionButton,
                 {
+                  width: buttonWidth,
+                  backgroundColor: isDark ? colors.surface : colors.numberPadButton,
+                },
+              ]}
+              onPress={() => handleButtonPress(eraseScale, onErasePress)}
+            >
+              <EraserIcon
+                width={18}
+                height={18}
+                color={colors.numberPadButtonText}
+              />
+              <Text
+                style={[
+                  styles.actionButtonText,
+                  {
+                    color: colors.textSecondary,
+                    fontSize: typography.size.xs,
+                  },
+                ]}
+              >
+                {t('controls.erase')}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+
+        {/* Hinweis-Button - RIGHT */}
+        {showHint && onHintPress && (
+          <Animated.View
+            style={[styles.actionButtonWrapper, { width: buttonWidth }, hintAnimatedStyle]}
+            entering={FadeInUp.delay(300).duration(400)}
+          >
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                {
+                  width: buttonWidth,
                   backgroundColor: hintDisabled
                     ? colors.buttonDisabled
-                    : theme.isDark
+                    : isDark
                     ? colors.surface
                     : colors.numberPadButton,
                 },
-                hintAnimatedStyle,
+                hintDisabled && styles.disabledButton,
               ]}
               onPress={() => {
                 if (!hintDisabled) {
@@ -179,29 +211,28 @@ const NumberPad: React.FC<NumberPadProps> = ({
               disabled={hintDisabled}
             >
               <LightBulbIcon
-                width={32}
-                height={32}
+                width={18}
+                height={18}
                 color={
                   hintDisabled
                     ? colors.buttonTextDisabled
                     : colors.numberPadButtonText
                 }
               />
-
-              {!hintDisabled && (
-                <View
-                  style={[
-                    styles.hintCountBadge,
-                    { backgroundColor: pathColorHex },
-                  ]}
-                >
-                  <Text style={styles.hintCountText}>{hintsRemaining}</Text>
-                </View>
-              )}
-            </AnimatedPressable>
-            <Text style={[styles.actionButtonLabel, { color: hintDisabled ? colors.buttonTextDisabled : colors.textSecondary }]}>
-              {t('controls.hint')}
-            </Text>
+              <Text
+                style={[
+                  styles.actionButtonText,
+                  {
+                    color: hintDisabled
+                      ? colors.buttonTextDisabled
+                      : colors.textSecondary,
+                    fontSize: typography.size.xs,
+                  },
+                ]}
+              >
+                {t('controls.hint')} {hintsRemaining > 0 ? `(${hintsRemaining})` : ""}
+              </Text>
+            </TouchableOpacity>
           </Animated.View>
         )}
       </View>

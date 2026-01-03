@@ -1,6 +1,6 @@
 // screens/Game/components/GameHeader/GameHeader.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
@@ -9,10 +9,8 @@ import Animated, {
   useSharedValue,
   withSequence,
   withTiming,
-  Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
-import { useProgressColor } from "@/contexts/color/ColorContext";
 import styles from "./GameHeader.styles";
 
 interface GameHeaderProps {
@@ -47,7 +45,6 @@ const GameHeader: React.FC<GameHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const { colors, typography, shadows, isDark } = theme;
-  const pathColorHex = useProgressColor();
   const insets = useSafeAreaInsets();
 
   // Timer state
@@ -55,7 +52,6 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Animation values
-  const heartScale = useSharedValue(1);
   const timerScale = useSharedValue(1);
 
   // Timer logic
@@ -94,21 +90,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
     }
   }, [time, onTimeUpdate]);
 
-  // Heart pulse animation on error
-  useEffect(() => {
-    if (errorsRemaining < maxErrors) {
-      heartScale.value = withSequence(
-        withTiming(1.2, { duration: 200, easing: Easing.out(Easing.ease) }),
-        withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) })
-      );
-    }
-  }, [errorsRemaining, maxErrors, heartScale]);
-
   // Animated styles
-  const heartAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
-  }));
-
   const timerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: timerScale.value }],
   }));
@@ -121,50 +103,6 @@ const GameHeader: React.FC<GameHeaderProps> = ({
       .toString()
       .padStart(2, "0")}`;
   };
-
-  // Get heart color based on remaining errors
-  const getHeartColor = () => {
-    if (errorsRemaining === 0) return colors.error;
-    if (errorsRemaining === 1) return colors.warning;
-    return pathColorHex;
-  };
-
-  // Render hearts
-  const renderHearts = () => {
-    return Array.from({ length: maxErrors }).map((_, index) => {
-      const isFilled = index < errorsRemaining;
-      const isAnimated = index === maxErrors - errorsRemaining;
-
-      return (
-        <Animated.View
-          key={`heart-${index}`}
-          style={[styles.heartWrapper, isAnimated && heartAnimatedStyle]}
-        >
-          <Feather
-            name="heart"
-            size={18}
-            color={isFilled ? getHeartColor() : colors.buttonDisabled}
-            style={!isFilled ? { opacity: 0.4 } : undefined}
-          />
-        </Animated.View>
-      );
-    });
-  };
-
-  // Render infinity heart (when showErrors is false)
-  const renderInfinityHeart = () => (
-    <View style={styles.infinityContainer}>
-      <Feather name="heart" size={18} color={pathColorHex} />
-      <Text
-        style={[
-          styles.infinityText,
-          { color: colors.textSecondary, fontSize: typography.size.lg },
-        ]}
-      >
-        ∞
-      </Text>
-    </View>
-  );
 
   // Container dynamic styles
   const containerStyle = {
@@ -191,13 +129,8 @@ const GameHeader: React.FC<GameHeaderProps> = ({
         <Feather name="chevron-left" size={24} color={colors.textPrimary} />
       </TouchableOpacity>
 
-      {/* Center: Hearts + Timer */}
+      {/* Center: Timer Only (Hearts moved to Controls) */}
       <View style={styles.centerContent}>
-        {/* Hearts */}
-        <View style={styles.heartsContainer}>
-          {showErrors ? renderHearts() : renderInfinityHeart()}
-        </View>
-
         {/* Timer (Pressable for Pause) */}
         <TouchableOpacity
           style={styles.timerContainer}
@@ -219,7 +152,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
           </Animated.Text>
           <Feather
             name="pause"
-            size={14}
+            size={20}
             color={pauseDisabled ? colors.buttonDisabled : colors.textSecondary}
             style={styles.pauseIcon}
           />

@@ -1,5 +1,18 @@
-import { StyleSheet } from "react-native";
-import { spacing } from "@/utils/theme";
+import { StyleSheet, Dimensions } from "react-native";
+
+// Calculate button sizes based on screen dimensions (like DuoGameControls)
+const { width } = Dimensions.get("window");
+const ACTION_BUTTON_WIDTH = Math.min(width / 3 - 16, 95); // For 3 buttons
+const ACTION_BUTTON_WIDTH_TWO = Math.min(width / 3 - 8, 110); // For 2 buttons + hearts
+const ACTION_BUTTON_HEIGHT = 48;
+
+const actionButtonShadow = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.08,
+  shadowRadius: 4,
+  elevation: 2,
+};
 
 export default StyleSheet.create({
   container: {
@@ -7,70 +20,60 @@ export default StyleSheet.create({
     alignSelf: "center",
   },
 
-  // Action Buttons Row - Pill-Shape Style
+  // Action Buttons Row - Duo-style horizontal layout
   actionButtonsRow: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
-    marginBottom: spacing.sm,
     width: "100%",
+    marginBottom: 4,
+    paddingHorizontal: 8,
+    height: ACTION_BUTTON_HEIGHT,
   },
 
-  // Container für jeden ActionButton mit Label
-  actionButtonContainer: {
+  // Wrapper for each action button
+  actionButtonWrapper: {
     alignItems: "center",
     justifyContent: "center",
+    height: ACTION_BUTTON_HEIGHT,
   },
 
-  // Label unterhalb des Buttons
-  actionButtonLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-    marginTop: 4,
-    textAlign: "center",
-  },
-
+  // Action button style - Duo-style
   actionButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    height: ACTION_BUTTON_HEIGHT,
+    borderRadius: 12,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-    position: "relative",
+    ...actionButtonShadow,
   },
 
-  // Hinweis Counter Badge
-  hintCountBadge: {
-    position: "absolute",
-    top: -5,
-    right: -5,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: "center",
+  // Text style for action buttons
+  actionButtonText: {
+    fontWeight: "600",
+    marginLeft: 5,
+  },
+
+  // Disabled button style
+  disabledButton: {
+    opacity: 0.5,
+  },
+
+  // Container for error indicator (hearts)
+  errorIndicatorContainer: {
+    width: ACTION_BUTTON_WIDTH_TWO,
+    height: ACTION_BUTTON_HEIGHT,
     alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "white",
+    justifyContent: "center",
   },
 
-  hintCountText: {
-    color: "white",
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-
-  // Minimalistisches Zahlen-Layout
+  // Minimalistisches Zahlen-Layout (unchanged)
   numbersRow: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    paddingVertical: spacing.sm,
+    paddingVertical: 8,
   },
 
   // Container für jede Zahl - FESTE GRÖSSE verhindert Verschiebung
@@ -96,3 +99,6 @@ export default StyleSheet.create({
     // color wird dynamisch mit pathColorHex gesetzt
   },
 });
+
+// Export constants for use in component
+export { ACTION_BUTTON_WIDTH, ACTION_BUTTON_WIDTH_TWO, ACTION_BUTTON_HEIGHT };

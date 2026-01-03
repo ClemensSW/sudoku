@@ -415,6 +415,9 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
               disabledNumbers={gameState.usedNumbers}
               hintsRemaining={gameState.hintsRemaining}
               isGameComplete={gameState.isGameComplete}
+              showMistakes={gameSettings.showMistakes}
+              errorsRemaining={gameState.errorsRemaining}
+              maxErrors={3}
             />
           </Animated.View>
 

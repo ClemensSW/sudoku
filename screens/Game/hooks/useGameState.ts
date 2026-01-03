@@ -254,6 +254,24 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
         if (isErrorMove) {
           handleError(showMistakes);
+
+          // Auto-delete wrong number after 800ms when showMistakes is enabled (like Duo mode)
+          if (showMistakes) {
+            setTimeout(() => {
+              setBoard(prevBoard => {
+                const clearedBoard = prevBoard.map(row => row.map(cell => ({ ...cell })));
+                // Only clear if the cell still has this incorrect value
+                if (clearedBoard[row][col].value === number && !clearedBoard[row][col].isValid) {
+                  clearedBoard[row][col] = {
+                    ...clearedBoard[row][col],
+                    value: 0,
+                    isValid: true,
+                  };
+                }
+                return clearedBoard;
+              });
+            }, 800);
+          }
         } else {
           triggerHaptic("medium");
         }

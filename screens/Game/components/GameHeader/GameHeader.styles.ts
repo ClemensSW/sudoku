@@ -21,45 +21,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // Center content - Hearts + Timer
+  // Center content - Timer only (hearts moved to controls)
   centerContent: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 24,
-  },
-
-  // Hearts container - compact row
-  heartsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-
-  // Single heart wrapper for animation
-  heartWrapper: {
-    // Used for pulse animation on error
-  },
-
-  // Infinity heart display (when showErrors is false)
-  infinityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-
-  infinityText: {
-    fontWeight: "600",
   },
 
   // Timer container - pressable for pause
   timerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    gap: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 8,
   },
 
@@ -71,7 +47,7 @@ const styles = StyleSheet.create({
 
   // Pause icon next to timer
   pauseIcon: {
-    opacity: 0.7,
+    opacity: 0.8,
   },
 });
 

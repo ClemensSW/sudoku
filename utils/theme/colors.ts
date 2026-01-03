@@ -67,10 +67,14 @@ const lightColors = {
   cellDuoPlayer1Yellow: "#FFFBF5",       // #FFFFFF + #F9AB00 @ 4%
   cellDuoPlayer1Red: "#FEF6F5",          // #FFFFFF + #EA4335 @ 4%
   cellDuoPlayer1Purple: "#F8F5FE",       // #FFFFFF + #7C4DFF @ 4%
+  // Player 1 Checkerboard: Path-Color-getönt (identisch zu cellChecker* im Light Mode)
+  cellDuoPlayer1CheckerBlue: "#D9E2F0",
+  cellDuoPlayer1CheckerGreen: "#D7E6DD",
+  cellDuoPlayer1CheckerYellow: "#EFE7D3",
+  cellDuoPlayer1CheckerRed: "#EDDADA",
+  cellDuoPlayer1CheckerPurple: "#E0DCF2",
   // Player 2: Neutral (identisch zu Single-Player hellen Boxen)
   cellDuoPlayer2Background: "#FFFFFF",
-  // Player 1 Checkerboard: Path-Color-getönt (identisch zu Single-Player Checker)
-  // (Verwendet cellCheckerBlue etc.)
   // Player 2 Checkerboard: Neutral grau
   cellDuoPlayer2Checker: "#F0F1F3",      // Neutrales Hellgrau
 
@@ -183,19 +187,22 @@ const darkColors = {
   gapColorRed: "#463A3A",         // Dunkelgrau + Red @ 15%
   gapColorPurple: "#403E48",      // Dunkelgrau + Purple @ 15%
 
-  // Duo Mode Zone-Farben (Player 1 = Path-Tint aufgehellt, Player 2 = Neutral)
-  // Player 1: 4% aufgehellte Path-Color auf #292A2D
-  cellDuoPlayer1Blue: "#2D3038",         // #292A2D + aufgehelltes Blue @ 4%
-  cellDuoPlayer1Green: "#2C3130",        // #292A2D + aufgehelltes Green @ 4%
-  cellDuoPlayer1Yellow: "#32312E",       // #292A2D + aufgehelltes Yellow @ 4%
-  cellDuoPlayer1Red: "#322D2E",          // #292A2D + aufgehelltes Red @ 4%
-  cellDuoPlayer1Purple: "#2F2E35",       // #292A2D + aufgehelltes Purple @ 4%
-  // Player 2: Neutral (identisch zu Single-Player hellen Boxen)
-  cellDuoPlayer2Background: "#292A2D",
-  // Player 1 Checkerboard: Path-Color-getönt (dunkler als Zone-Background)
-  // (Verwendet cellCheckerBlue etc.)
-  // Player 2 Checkerboard: Neutral dunkel (identisch zu Single-Player Checker fallback)
-  cellDuoPlayer2Checker: "#1E2022",      // Neutrales Dunkelgrau
+  // Duo Mode Zone-Farben (invertiertes Schachbrett: dunkel-hell-dunkel)
+  // Player 1 Zone: Dunkel (cellChecker* Werte für invertiertes Pattern)
+  cellDuoPlayer1Blue: "#24292F",         // cellCheckerBlue Wert
+  cellDuoPlayer1Green: "#222A27",        // cellCheckerGreen Wert
+  cellDuoPlayer1Yellow: "#2C2B26",       // cellCheckerYellow Wert
+  cellDuoPlayer1Red: "#2C2526",          // cellCheckerRed Wert
+  cellDuoPlayer1Purple: "#26262F",       // cellCheckerPurple Wert
+  // Player 1 Checkerboard: Hell (ursprüngliche Zone-Werte)
+  cellDuoPlayer1CheckerBlue: "#2D3038",
+  cellDuoPlayer1CheckerGreen: "#2C3130",
+  cellDuoPlayer1CheckerYellow: "#32312E",
+  cellDuoPlayer1CheckerRed: "#322D2E",
+  cellDuoPlayer1CheckerPurple: "#2F2E35",
+  // Player 2: Neutral (invertiert)
+  cellDuoPlayer2Background: "#1E2022",   // Dunkel (getauscht)
+  cellDuoPlayer2Checker: "#292A2D",      // Hell (getauscht)
 
   // Grid
   gridLine: "#3C4043",
@@ -341,15 +348,15 @@ export const getDuoZoneBackground = (
 
   // Player 1 (unten) und Player 0 (Mitte) = Path-Color-Tint
   if (isCheckerboard) {
-    // Checkerboard verwendet die gleichen Farben wie Single-Player
+    // Duo-spezifische Checker-Farben (invertiertes Pattern)
     const checkerColors: Record<PathColorId, string> = {
-      blue: colorMap.cellCheckerBlue,
-      green: colorMap.cellCheckerGreen,
-      yellow: colorMap.cellCheckerYellow,
-      red: colorMap.cellCheckerRed,
-      purple: colorMap.cellCheckerPurple,
+      blue: colorMap.cellDuoPlayer1CheckerBlue,
+      green: colorMap.cellDuoPlayer1CheckerGreen,
+      yellow: colorMap.cellDuoPlayer1CheckerYellow,
+      red: colorMap.cellDuoPlayer1CheckerRed,
+      purple: colorMap.cellDuoPlayer1CheckerPurple,
     };
-    return checkerColors[colorId] || colorMap.cellCheckerBlue;
+    return checkerColors[colorId] || colorMap.cellDuoPlayer1CheckerBlue;
   }
 
   // Nicht-Checkerboard Zone Background

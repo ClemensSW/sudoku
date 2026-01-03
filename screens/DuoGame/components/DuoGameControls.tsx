@@ -8,6 +8,9 @@ import {
   Dimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import PencilIcon from "@/assets/svg/pencil.svg";
+import EraserIcon from "@/assets/svg/eraser.svg";
+import LightBulbIcon from "@/assets/svg/light-bulb.svg";
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -31,8 +34,8 @@ const ACTION_BUTTON_HEIGHT = 48; // Höhe beibehalten
 const actionButtonShadow = {
   shadowColor: "#000",
   shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.12,
-  shadowRadius: 2,
+  shadowOpacity: 0.08,
+  shadowRadius: 4,
   elevation: 2,
 };
 
@@ -67,7 +70,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
 }) => {
   // Determine player based on position
   const player = position === "top" ? 2 : 1;
-  const { isDark, typography } = useTheme(); // Get dark mode state and typography
+  const { isDark, typography, colors } = useTheme(); // Get dark mode state, typography and colors
   const pathColorHex = useProgressColor();
   const theme = React.useMemo(
     () => getPlayerControlColors(player as DuoPlayerId, pathColorHex, isDark),
@@ -197,11 +200,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               styles.actionButton,
               {
                 width: buttonWidth,
-                backgroundColor: noteMode
-                  ? theme.actionButton.activeBackground     // Subtile Path Color Background
-                  : theme.actionButton.background,          // Neutral wie Number Buttons
+                backgroundColor: isDark ? colors.surface : colors.numberPadButton,
                 borderWidth: noteMode ? 2 : 0,
-                borderColor: noteMode ? theme.actionButton.activeBorderColor : 'transparent',
+                borderColor: noteMode ? pathColorHex : 'transparent',
               },
               actionButtonShadow,
               disabled && styles.disabledButton,
@@ -213,13 +214,13 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             }}
             disabled={disabled}
           >
-            <Feather
-              name="edit-3"
-              size={18}
+            <PencilIcon
+              width={18}
+              height={18}
               color={
                 disabled
-                  ? theme.actionButton.disabledIconColor
-                  : theme.actionButton.iconColor          // Neutral icon color
+                  ? colors.buttonTextDisabled
+                  : noteMode ? pathColorHex : colors.numberPadButtonText
               }
             />
             <Text
@@ -227,8 +228,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 styles.actionButtonText,
                 {
                   color: disabled
-                    ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.textColor,       // Neutral text color
+                    ? colors.buttonTextDisabled
+                    : colors.textSecondary,
                   fontSize: typography.size.xs,
                 },
               ]}
@@ -264,7 +265,7 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 styles.actionButton,
                 {
                   width: buttonWidth,
-                  backgroundColor: theme.actionButton.background,  // Neutral
+                  backgroundColor: isDark ? colors.surface : colors.numberPadButton,
                 },
                 actionButtonShadow,
                 disabled && styles.disabledButton,
@@ -276,13 +277,13 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               }}
               disabled={disabled}
             >
-              <Feather
-                name="trash-2"
-                size={18}
+              <EraserIcon
+                width={18}
+                height={18}
                 color={
                   disabled
-                    ? theme.actionButton.disabledIconColor
-                    : theme.actionButton.iconColor              // Neutral icon
+                    ? colors.buttonTextDisabled
+                    : colors.numberPadButtonText
                 }
               />
               <Text
@@ -290,8 +291,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                   styles.actionButtonText,
                   {
                     color: disabled
-                      ? theme.actionButton.disabledIconColor
-                      : theme.actionButton.textColor,           // Neutral text
+                      ? colors.buttonTextDisabled
+                      : colors.textSecondary,
                     fontSize: typography.size.xs,
                   },
                 ]}
@@ -315,7 +316,9 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
               styles.actionButton,
               {
                 width: buttonWidth,
-                backgroundColor: theme.actionButton.background,  // Neutral
+                backgroundColor: hintDisabled
+                  ? colors.buttonDisabled
+                  : isDark ? colors.surface : colors.numberPadButton,
               },
               actionButtonShadow,
               (hintDisabled || disabled) && styles.disabledButton,
@@ -327,13 +330,13 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
             }}
             disabled={hintDisabled || disabled}
           >
-            <Feather
-              name="help-circle"
-              size={18}
+            <LightBulbIcon
+              width={18}
+              height={18}
               color={
                 hintDisabled || disabled
-                  ? theme.actionButton.disabledIconColor
-                  : theme.actionButton.iconColor              // Neutral icon
+                  ? colors.buttonTextDisabled
+                  : colors.numberPadButtonText
               }
             />
             <Text
@@ -342,8 +345,8 @@ const DuoGameControls: React.FC<DuoGameControlsProps> = ({
                 {
                   color:
                     hintDisabled || disabled
-                      ? theme.actionButton.disabledIconColor
-                      : theme.actionButton.textColor,         // Neutral text
+                      ? colors.buttonTextDisabled
+                      : colors.textSecondary,
                   fontSize: typography.size.xs,
                 },
               ]}

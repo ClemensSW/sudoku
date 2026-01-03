@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { View } from "react-native";
 import { SudokuBoard as BoardType, CellPosition } from "@/utils/sudoku";
 import SudokuCell, { CompletionAnimationProps } from "@/screens/Game/components/SudokuCell/SudokuCell";
@@ -30,13 +30,13 @@ const SudokuBox: React.FC<SudokuBoxProps> = ({
 }) => {
   // Keine Border-Logik mehr nötig - Gaps übernehmen die Trennung
 
-  // Helper to get completion animation props for a cell
-  const getCompletionAnimationProps = (row: number, col: number): CompletionAnimationProps | null => {
+  // Helper to get completion animation props for a cell (memoized to avoid object recreation)
+  const getCompletionAnimationProps = useCallback((row: number, col: number): CompletionAnimationProps | null => {
     if (!getCellAnimation) return null;
     const anim = getCellAnimation(row, col);
     if (!anim) return null;
     return { type: anim.type, active: true, delay: anim.delay };
-  };
+  }, [getCellAnimation]);
 
   // Rendere 3x3 Zellen innerhalb dieser Box
   return (

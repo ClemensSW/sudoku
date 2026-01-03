@@ -260,10 +260,21 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   );
 };
 
-// Performance-Optimierung
+// Performance-Optimierung: Property-by-property statt JSON.stringify
 export default memo(SudokuCell, (prevProps, nextProps) => {
+  // Cell-Vergleich ohne teure Serialisierung
+  const prevCell = prevProps.cell;
+  const nextCell = nextProps.cell;
+  const cellEqual =
+    prevCell.value === nextCell.value &&
+    prevCell.isInitial === nextCell.isInitial &&
+    prevCell.isValid === nextCell.isValid &&
+    prevCell.highlight === nextCell.highlight &&
+    prevCell.notes.length === nextCell.notes.length &&
+    prevCell.notes.every((n, i) => n === nextCell.notes[i]);
+
   return (
-    JSON.stringify(prevProps.cell) === JSON.stringify(nextProps.cell) &&
+    cellEqual &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.isRelated === nextProps.isRelated &&
     prevProps.sameValueHighlight === nextProps.sameValueHighlight &&

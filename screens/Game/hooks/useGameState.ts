@@ -34,6 +34,7 @@ export interface GameState {
   board: SudokuBoardType;
   solution: number[][];
   selectedCell: CellPosition | null;
+  lastChangedCell: CellPosition | null; // Track which cell was last modified for completion animation
   difficulty: Difficulty;
   isGameRunning: boolean;
   isGameComplete: boolean;
@@ -76,6 +77,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
   const [board, setBoard] = useState<SudokuBoardType>([]);
   const [solution, setSolution] = useState<number[][]>([]);
   const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null);
+  const [lastChangedCell, setLastChangedCell] = useState<CellPosition | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>(
     initialDifficulty || "medium"
   );
@@ -157,6 +159,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       setBoard(newBoard);
       setSolution(newSolution);
       setSelectedCell(null);
+      setLastChangedCell(null); // Reset for completion animation
       setIsGameComplete(false);
       setIsGameLost(false);
       setIsUserQuit(false); // Reset user quit flag
@@ -273,6 +276,8 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
             }, 800);
           }
         } else {
+          // Correct number placed - track for completion animation
+          setLastChangedCell({ row, col });
           triggerHaptic("medium");
         }
       } else if (!updatedBoard[row][col].isValid) {
@@ -339,6 +344,10 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
     // Solve the cell
     const updatedBoard = solveCell(board, solution, row, col);
     setBoard(updatedBoard);
+
+    // Track for completion animation
+    setLastChangedCell({ row, col });
+
     triggerHaptic("success");
 
     return { type: "success" };
@@ -504,6 +513,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
 
       // Reset other states
       setSelectedCell(null);
+      setLastChangedCell(null); // Reset for completion animation
       setIsGameComplete(false);
       setIsGameLost(false);
       setIsUserQuit(false);
@@ -524,6 +534,7 @@ export const useGameState = (initialDifficulty?: Difficulty): [GameState, GameSt
       board,
       solution,
       selectedCell,
+      lastChangedCell, // For completion animation detection
       difficulty,
       isGameRunning,
       isGameComplete,

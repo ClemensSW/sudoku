@@ -392,6 +392,7 @@ const Game: React.FC<GameScreenProps> = ({ initialDifficulty, shouldResume = fal
           <GameBoard
             board={gameState.board}
             selectedCell={gameState.selectedCell}
+            lastChangedCell={gameState.lastChangedCell}
             onCellPress={showPauseModal ? undefined : gameActions.handleCellPress}
             isLoading={gameState.isLoading}
             highlightRelated={gameSettings.highlightRelatedCells}

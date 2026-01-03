@@ -6,11 +6,20 @@ import Animated, {
   useSharedValue,
   withTiming,
   withSequence,
+  withDelay,
+  Easing,
 } from "react-native-reanimated";
 import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
 import { getRelatedBackgroundColor, getCheckerboardColor } from "@/utils/theme/colors";
 import baseStyles from "./SudokuCell.styles";
+
+// Completion animation type
+export interface CompletionAnimationProps {
+  type: 'row' | 'column' | 'box';
+  active: boolean;
+  delay: number; // milliseconds - for withDelay on UI thread
+}
 
 interface SudokuCellProps {
   cell: SudokuCellType;
@@ -21,6 +30,7 @@ interface SudokuCellProps {
   sameValueHighlight?: boolean;
   onPress: (row: number, col: number) => void;
   showErrors?: boolean;
+  completionAnimation?: CompletionAnimationProps | null;
 }
 
 const SudokuCell: React.FC<SudokuCellProps> = ({
@@ -32,6 +42,7 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
   sameValueHighlight = false,
   onPress,
   showErrors = true,
+  completionAnimation = null,
 }) => {
   // Theme für Farben nutzen
   const theme = useTheme();
@@ -40,6 +51,11 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
 
   // Animation values
   const scale = useSharedValue(1);
+
+  // Completion animation values
+  const completionScale = useSharedValue(1);
+  const completionBgOpacity = useSharedValue(0);
+  const completionTextScale = useSharedValue(1);
 
   // Trigger animations when cell changes
   React.useEffect(() => {
@@ -58,12 +74,65 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
     }
   }, [cell.value, cell.highlight]);
 
+  // Trigger completion animation when row/column/box is completed
+  // Uses withDelay for UI-thread staggering (smoother than JS setTimeout)
+  React.useEffect(() => {
+    if (completionAnimation?.active) {
+      const delay = completionAnimation.delay ?? 0;
+
+      // Background flash - path color glow
+      completionBgOpacity.value = withDelay(delay,
+        withSequence(
+          withTiming(0.35, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(0, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+
+      // Cell scale pulse - smoother easing without overshoot
+      completionScale.value = withDelay(delay,
+        withSequence(
+          withTiming(1.08, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(1, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+
+      // Text scale pulse (slightly larger for emphasis)
+      completionTextScale.value = withDelay(delay,
+        withSequence(
+          withTiming(1.12, { duration: 150, easing: Easing.out(Easing.quad) }),
+          withTiming(1, { duration: 450, easing: Easing.inOut(Easing.quad) })
+        )
+      );
+    }
+  }, [completionAnimation?.active, completionAnimation?.delay]);
+
   // Animated styles
   const animatedStyles = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }],
     };
   });
+
+  // Completion animation styles
+  const completionContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: completionScale.value }],
+  }));
+
+  const completionOverlayStyle = useAnimatedStyle(() => ({
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: pathColorHex,
+    opacity: completionBgOpacity.value,
+    borderRadius: 4,
+    zIndex: 5,
+  }));
+
+  const completionTextStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: completionTextScale.value }],
+  }));
 
   // Berechne Hintergrund basierend auf Zustand - mit Theme-Farben
   const getBackgroundStyle = () => {
@@ -169,16 +238,23 @@ const SudokuCell: React.FC<SudokuCellProps> = ({
       style={baseStyles.cellContainer}
       onPress={() => onPress(row, col)}
     >
-      {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
-      <View style={[baseStyles.cellBackground, getBackgroundStyle()]} />
+      <Animated.View style={[{ flex: 1, width: '100%', height: '100%' }, completionContainerStyle]}>
+        {/* Hintergrund-Layer - immer sichtbar für Gap-Layout */}
+        <View style={[baseStyles.cellBackground, getBackgroundStyle()]} />
 
-      {/* Inhalts-Layer mit Text oder Notizen */}
-      <Animated.View style={[baseStyles.cellContent, animatedStyles]}>
-        {cell.value !== 0 ? (
-          <Text style={getCellTextStyle()}>{cell.value}</Text>
-        ) : (
-          renderNotes()
-        )}
+        {/* Completion animation overlay */}
+        <Animated.View style={completionOverlayStyle} pointerEvents="none" />
+
+        {/* Inhalts-Layer mit Text oder Notizen */}
+        <Animated.View style={[baseStyles.cellContent, animatedStyles]}>
+          {cell.value !== 0 ? (
+            <Animated.Text style={[getCellTextStyle(), completionTextStyle]}>
+              {cell.value}
+            </Animated.Text>
+          ) : (
+            renderNotes()
+          )}
+        </Animated.View>
       </Animated.View>
     </Pressable>
   );
@@ -191,6 +267,8 @@ export default memo(SudokuCell, (prevProps, nextProps) => {
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.isRelated === nextProps.isRelated &&
     prevProps.sameValueHighlight === nextProps.sameValueHighlight &&
-    prevProps.showErrors === nextProps.showErrors
+    prevProps.showErrors === nextProps.showErrors &&
+    prevProps.completionAnimation?.active === nextProps.completionAnimation?.active &&
+    prevProps.completionAnimation?.type === nextProps.completionAnimation?.type
   );
 });

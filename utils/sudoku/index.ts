@@ -20,6 +20,10 @@ export {
   calculateAllNotes,
   getPossibleValues,
   cloneBoard,
+  isRowComplete,
+  isColumnComplete,
+  isBoxComplete,
+  detectCompletions,
 } from "./helpers";
 
 // Exportiere Generator-Funktionen

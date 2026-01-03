@@ -14,10 +14,12 @@ import { useTheme } from "@/utils/theme/ThemeProvider";
 import { useProgressColor } from "@/contexts/color/ColorContext";
 import { getGapColor } from "@/utils/theme/colors";
 import styles from "./SudokuBoard.styles";
+import { useCompletionAnimation } from "@/screens/Game/hooks/useCompletionAnimation";
 
 interface SudokuBoardProps {
   board: SudokuBoardType;
   selectedCell: CellPosition | null;
+  lastChangedCell?: CellPosition | null;
   onCellPress: (row: number, col: number) => void;
   isLoading?: boolean;
   highlightRelated?: boolean;
@@ -28,6 +30,7 @@ interface SudokuBoardProps {
 const SudokuBoard: React.FC<SudokuBoardProps> = ({
   board,
   selectedCell,
+  lastChangedCell,
   onCellPress,
   isLoading = false,
   highlightRelated = true,
@@ -39,6 +42,9 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   const pathColorHex = useProgressColor();
 
   const [isReady, setIsReady] = useState(false);
+
+  // Completion animation hook
+  const { checkForCompletions, getCellAnimation, reset: resetCompletionAnimation } = useCompletionAnimation();
 
   // Animation values
   const scale = useSharedValue(0.95);
@@ -68,6 +74,8 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
         duration: 250,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
+      // Reset completion animations when loading new game
+      resetCompletionAnimation();
     } else {
       scale.value = withTiming(1, {
         duration: 250,
@@ -75,6 +83,13 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
       });
     }
   }, [isLoading]);
+
+  // Check for row/column/box completions when a cell changes
+  useEffect(() => {
+    if (board.length > 0 && lastChangedCell) {
+      checkForCompletions(board, lastChangedCell);
+    }
+  }, [board, lastChangedCell, checkForCompletions]);
 
   // Animated styles
   const boardAnimatedStyle = useAnimatedStyle(() => {
@@ -162,6 +177,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
                         isRelatedCell={isRelatedCell}
                         hasSameValue={hasSameValue}
                         showErrors={showErrors}
+                        getCellAnimation={getCellAnimation}
                       />
                     ))}
                   </View>

@@ -95,3 +95,11 @@ export interface SudokuGameStats {
   };
   achievements: string[];
 }
+
+// Animation data for completed rows, columns, or boxes
+export interface CompletionAnimationCell {
+  row: number;
+  col: number;
+  type: 'row' | 'column' | 'box';
+  delay: number; // milliseconds before animation starts
+}

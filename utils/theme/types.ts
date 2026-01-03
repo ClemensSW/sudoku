@@ -28,6 +28,7 @@ export interface ThemeColors {
   cellErrorBackground: string;
   cellHintBackground: string;
   cellSuccessBackground: string;
+  cellCheckerboardLightBackground: string;
   cellTextColor: string;
   cellInitialTextColor: string;
   cellSelectedTextColor: string;

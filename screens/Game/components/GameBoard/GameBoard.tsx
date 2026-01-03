@@ -8,6 +8,7 @@ import styles from "./GameBoard.styles";
 interface GameBoardProps {
   board: SudokuBoardType;
   selectedCell: CellPosition | null;
+  lastChangedCell?: CellPosition | null;
   onCellPress: (row: number, col: number) => void;
   isLoading?: boolean;
   highlightRelated?: boolean;
@@ -18,6 +19,7 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({
   board,
   selectedCell,
+  lastChangedCell,
   onCellPress,
   isLoading = false,
   highlightRelated = true,
@@ -29,6 +31,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       <SudokuBoard
         board={board}
         selectedCell={selectedCell}
+        lastChangedCell={lastChangedCell}
         onCellPress={onCellPress}
         isLoading={isLoading}
         highlightRelated={highlightRelated}

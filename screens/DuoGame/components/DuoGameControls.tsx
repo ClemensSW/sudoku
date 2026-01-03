@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   // Action buttons row mit gleichmäßiger Verteilung
   actionButtonsRow: {
     flexDirection: "row",
-    justifyContent: "space-between", // Gleichmäßig verteilt
+    justifyContent: "space-evenly", // Gleichmäßige Abstände überall
     alignItems: "center",
     width: "100%",
     marginBottom: 4,

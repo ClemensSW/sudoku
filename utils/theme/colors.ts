@@ -42,7 +42,7 @@ const lightColors = {
   // Schachbrett-Farben (Path-Color-getönt, ~12% auf Hellgrau #EDEFF0 - heller & farbiger)
   cellCheckerBlue: "#D9E2F0",        // Hellgrau + Blue @ 12%
   cellCheckerGreen: "#D7E6DD",       // Hellgrau + Green @ 12%
-  cellCheckerYellow: "#EFE7D3",      // Hellgrau + Yellow @ 12%
+  cellCheckerYellow: "#F2E3C8",      // Wärmer, weniger Grau
   cellCheckerRed: "#EDDADA",         // Hellgrau + Red @ 12%
   cellCheckerPurple: "#E0DCF2",      // Hellgrau + Purple @ 12%
 
@@ -56,7 +56,7 @@ const lightColors = {
   // Gap-Farben (Path-Color-getönt, ~20% auf Dunkelgrau #C8CACC - dunkler als Related)
   gapColorBlue: "#ADBCD4",        // Dunkelgrau + Blue @ 20%
   gapColorGreen: "#AAC3B4",       // Dunkelgrau + Green @ 20%
-  gapColorYellow: "#D2C4A3",      // Dunkelgrau + Yellow @ 20%
+  gapColorYellow: "#D7BE96",      // Wärmer, mehr Golden
   gapColorRed: "#CFAFAE",         // Dunkelgrau + Red @ 20%
   gapColorPurple: "#B9B1D6",      // Dunkelgrau + Purple @ 20%
 
@@ -70,7 +70,7 @@ const lightColors = {
   // Player 1 Checkerboard: Path-Color-getönt (identisch zu cellChecker* im Light Mode)
   cellDuoPlayer1CheckerBlue: "#D9E2F0",
   cellDuoPlayer1CheckerGreen: "#D7E6DD",
-  cellDuoPlayer1CheckerYellow: "#EFE7D3",
+  cellDuoPlayer1CheckerYellow: "#F2E3C8",
   cellDuoPlayer1CheckerRed: "#EDDADA",
   cellDuoPlayer1CheckerPurple: "#E0DCF2",
   // Player 2: Neutral (identisch zu Single-Player hellen Boxen)
@@ -78,7 +78,7 @@ const lightColors = {
   // Player 2 Checkerboard: Subtiler Path-Color-Hauch (~5% auf #F0F1F3)
   cellDuoPlayer2CheckerBlue: "#E7ECF3",
   cellDuoPlayer2CheckerGreen: "#E7EDEB",
-  cellDuoPlayer2CheckerYellow: "#F0EEE7",
+  cellDuoPlayer2CheckerYellow: "#F3EBE0",
   cellDuoPlayer2CheckerRed: "#F0E8EA",
   cellDuoPlayer2CheckerPurple: "#EAE9F4",
 

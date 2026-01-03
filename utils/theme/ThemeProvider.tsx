@@ -237,7 +237,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     updateFontScale,
   }), [themeColors, scaledTypography, isDark, updateTheme, resetToSystemTheme, userHasSetTheme, fontScale, updateFontScale]);
 
-  // Hide splash screen once app is ready
+  // Hide native splash screen once app is ready (animated splash takes over)
   useEffect(() => {
     if (appIsReady) {
       SplashScreen.hideAsync().catch((error) => {

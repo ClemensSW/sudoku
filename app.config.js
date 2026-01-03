@@ -46,7 +46,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/images/splash-icon.png',
+        foregroundImage: './assets/images/icon.png',
         backgroundColor: '#ffffff',
       },
       softwareKeyboardLayoutMode: 'pan',
@@ -83,9 +83,9 @@ export default {
       favicon: './assets/images/favicon.png',
     },
     splash: {
-      image: './assets/images/splash-icon.png',
+      image: './assets/images/icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#202124',
     },
     experiments: {
       typedRoutes: true,

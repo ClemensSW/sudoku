@@ -1,9 +1,10 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 // Gap-basierte Konstanten (ersetzen Borders)
+// WICHTIG: Ganzzahlige Werte für pixelgenaues Rendering ohne Sub-Pixel-Artefakte
 export const OUTER_BORDER_WIDTH = 0;  // Kein Außenrand mehr
-export const BOX_GAP = 2.5;             // Gap zwischen 3x3 Boxen
-export const CELL_GAP = 1.0;            // Gap zwischen Zellen innerhalb einer Box (min 1.0 für Sichtbarkeit)
+export const BOX_GAP = 3;               // Gap zwischen 3x3 Boxen (ganzzahlig!)
+export const CELL_GAP = 1;              // Gap zwischen Zellen innerhalb einer Box
 
 // Gesamter Gap-Raum:
 // - 2 BOX_GAPs (zwischen 3 Boxen horizontal/vertikal)

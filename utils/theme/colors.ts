@@ -46,12 +46,12 @@ const lightColors = {
   cellCheckerRed: "#EDDADA",         // Hellgrau + Red @ 12%
   cellCheckerPurple: "#E0DCF2",      // Hellgrau + Purple @ 12%
 
-  // Related Highlights (25% opacity) - kräftiger für Kontrast zu Gap-Farben
-  cellRelatedBlue: "#C5D8F4",     // #F1F3F4 + #4285F4 @ 25%
-  cellRelatedGreen: "#C2E0CC",    // #F1F3F4 + #34A853 @ 25%
-  cellRelatedYellow: "#F3E1B7",   // #F1F3F4 + #F9AB00 @ 25%
-  cellRelatedRed: "#EFC7C4",      // #F1F3F4 + #EA4335 @ 25%
-  cellRelatedPurple: "#D4CAF7",   // #F1F3F4 + #7C4DFF @ 25%
+  // Related Highlights (25% opacity auf Weiß) - hell & leuchtend
+  cellRelatedBlue: "#D0E1FC",     // #FFFFFF + #4285F4 @ 25%
+  cellRelatedGreen: "#CCE9D4",    // #FFFFFF + #34A853 @ 25%
+  cellRelatedYellow: "#FEEABF",   // #FFFFFF + #F9AB00 @ 25%
+  cellRelatedRed: "#FAD0CD",      // #FFFFFF + #EA4335 @ 25%
+  cellRelatedPurple: "#DED3FF",   // #FFFFFF + #7C4DFF @ 25%
 
   // Gap-Farben (Path-Color-getönt, ~20% auf Dunkelgrau #C8CACC - dunkler als Related)
   gapColorBlue: "#ADBCD4",        // Dunkelgrau + Blue @ 20%

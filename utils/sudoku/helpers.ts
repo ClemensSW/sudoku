@@ -430,14 +430,15 @@ export function detectCompletions(
         if (!addedCells.has(key)) {
           addedCells.add(key);
 
-          // Calculate distance from center for ripple effect
-          const distance = Math.max(Math.abs(cellRow - centerR), Math.abs(cellCol - centerC));
+          // Calculate Manhattan distance from center for ripple effect
+          // Manhattan gives 5 levels (0,1,2,3,4) vs Chebyshev's 3 levels (0,1,2)
+          const distance = Math.abs(cellRow - centerR) + Math.abs(cellCol - centerC);
 
           animations.push({
             row: cellRow,
             col: cellCol,
             type: 'box',
-            delay: distance * STAGGER_DELAY * 2, // Ripple outward (doubled delay for visibility)
+            delay: distance * STAGGER_DELAY * 2.5, // Ripple outward with extended timing
           });
         }
       }

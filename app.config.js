@@ -11,7 +11,7 @@ export default {
   expo: {
     name: IS_DEV ? 'Sudoku Duo DEV' : IS_PREVIEW ? 'Sudoku Duo PREVIEW' : 'Sudoku Duo',
     slug: 'sudoku-duo',
-    version: '1.5.0',
+    version: '1.5.1',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
     scheme: 'sudokuduo',

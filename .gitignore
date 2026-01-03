@@ -45,6 +45,8 @@ firebase-debug*.log
 firestore-debug.log
 ui-debug.log
 *.log.txt
+google-services.json
+GoogleService-Info.plist
 
 # Firebase Emulator data
 emulator-data/
